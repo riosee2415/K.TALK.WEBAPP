@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   KAKAO_LOGIN_REQUEST,
@@ -11,11 +11,14 @@ import axios from "axios";
 import wrapper from "../store/configureStore";
 import { END } from "redux-saga";
 import {
-  ColWrapper,
-  RowWrapper,
+  Text,
   Image,
   WholeWrapper,
   Wrapper,
+  RsWrapper,
+  CommonButton,
+  SpanText,
+  ATag,
 } from "../components/commonComponents";
 import useWidth from "../hooks/useWidth";
 import Theme from "../components/Theme";
@@ -23,8 +26,6 @@ import styled from "styled-components";
 import { SEO_LIST_REQUEST } from "../reducers/seo";
 import Head from "next/head";
 import Popup from "../components/popup/popup";
-import Mainslider from "../components/slide/MainSlider";
-import ToastEditorComponent from "../components/editor/ToastEditorComponent";
 import { useRef } from "react";
 
 const Home = ({}) => {
@@ -88,14 +89,282 @@ const Home = ({}) => {
       </Head>
 
       <ClientLayout>
-        <WholeWrapper>
-          <Mainslider />
-
-          <ToastEditorComponent
-            action={getEditContent}
-            // placeholder="placeholder"
+        <WholeWrapper padding={width < 800 ? `82px 0` : `100px 0`}>
+          <Image
+            alt="main"
+            src={
+              width < 900
+                ? `https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main-banner/banner1-mobile.png`
+                : `https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main-banner/banner1.png`
+            }
           />
+          <Wrapper margin={`80px 0 0`}>
+            <RsWrapper>
+              <Wrapper
+                fontSize={
+                  width < 900 ? (width < 700 ? `14px` : `16px`) : `24px`
+                }
+                color={Theme.basicTheme_C}
+                fontWeight={`bold`}
+                margin={`0 0 20px`}
+              >
+                <Text>"K-TALK LIVE" RUNS "FREE ONLINE LESSONS"</Text>
+                <Text>EVERY WEEK ALL YEAR ROUND</Text>
+              </Wrapper>
+              <Wrapper dr={`row`} ju={`space-between`}>
+                <Wrapper
+                  shadow={`0 5px 15px rgba(0, 0, 0, 0.05)`}
+                  width={width < 1000 ? `100%` : `49%`}
+                  padding={width < 900 ? `20px 10px` : `35px 30px`}
+                  dr={`row`}
+                  ju={`space-between`}
+                >
+                  <Wrapper
+                    width={`auto`}
+                    fontSize={
+                      width < 900 ? (width < 700 ? `13px` : `15px`) : `20px`
+                    }
+                    al={`flex-start`}
+                  >
+                    <Text fontWeight={`bold`}>For absolute beginners</Text>
+                    <Text fontWeight={`300`}>
+                      three 50-minute sessions a week
+                    </Text>
+                  </Wrapper>
+                  <Wrapper width={`auto`}>
+                    <CommonButton
+                      height={`40px`}
+                      kindOf={`white`}
+                      padding={`5px 5px 5px 8px`}
+                    >
+                      apply here
+                      <Image
+                        alt="icon"
+                        margin={`0 0 0 15px`}
+                        width={width < 900 ? `25px` : `30px`}
+                        src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/blue-btn.png`}
+                      />
+                    </CommonButton>
+                  </Wrapper>
+                </Wrapper>
+                <Wrapper
+                  shadow={`0 5px 15px rgba(0, 0, 0, 0.05)`}
+                  width={width < 1000 ? `100%` : `49%`}
+                  padding={width < 900 ? `20px 10px` : `35px 30px`}
+                  dr={`row`}
+                  ju={`space-between`}
+                >
+                  <Wrapper
+                    width={`auto`}
+                    fontSize={
+                      width < 900 ? (width < 700 ? `13px` : `15px`) : `20px`
+                    }
+                    al={`flex-start`}
+                  >
+                    <Text fontWeight={`bold`}>
+                      For pre-intermediate learners
+                    </Text>
+                    <Text fontWeight={`300`}>2 sessions a week</Text>
+                  </Wrapper>
+                  <Wrapper width={`auto`}>
+                    <CommonButton
+                      height={`40px`}
+                      kindOf={`white`}
+                      padding={`5px 5px 5px 8px`}
+                    >
+                      apply here
+                      <Image
+                        alt="icon"
+                        margin={`0 0 0 15px`}
+                        width={width < 900 ? `25px` : `30px`}
+                        src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/blue-btn.png`}
+                      />
+                    </CommonButton>
+                  </Wrapper>
+                </Wrapper>
+              </Wrapper>
+              <Image
+                alt="icon"
+                margin={`10px 0 60px`}
+                width={width < 800 ? `220px` : `280px`}
+                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/img_free-message.png`}
+              />
 
+              <Wrapper
+                fontSize={
+                  width < 900 ? (width < 700 ? `14px` : `16px`) : `24px`
+                }
+                color={Theme.subTheme_C}
+                fontWeight={`bold`}
+                margin={`0 0 20px`}
+              >
+                "K-talk Live regular paid lessons"
+              </Wrapper>
+
+              <Wrapper
+                shadow={`0 5px 15px rgba(0, 0, 0, 0.05)`}
+                padding={width < 900 ? `20px 10px` : `35px 30px`}
+                dr={`row`}
+                ju={width < 900 ? `center` : `space-between`}
+              >
+                <Wrapper
+                  width={`auto`}
+                  al={`flex-start`}
+                  color={Theme.darkGrey_C}
+                  fontSize={
+                    width < 900 ? (width < 700 ? `12px` : `14px`) : `18px`
+                  }
+                  fontWeight={`300`}
+                >
+                  <Text>
+                    Starts every Monday
+                    <SpanText
+                      fontSize={width < 800 ? `12px` : `15px`}
+                      margin={`0 10px`}
+                    >
+                      |
+                    </SpanText>
+                    Suitable for beginner to advanced
+                    <SpanText
+                      fontSize={width < 800 ? `12px` : `15px`}
+                      margin={`0 10px`}
+                    >
+                      |
+                    </SpanText>
+                    Live online group class taught by native Korean teachers
+                  </Text>
+                  <Text margin={width < 700 ? `10px 0` : `20px 0`}>
+                    3 sessions a week (1 session = 50 minutes)
+                    <SpanText
+                      fontSize={width < 800 ? `12px` : `15px`}
+                      margin={`0 10px`}
+                    >
+                      |
+                    </SpanText>
+                    US $162 for 4 weeks (12 sessions over 4 weeks)
+                    <SpanText
+                      fontSize={width < 800 ? `12px` : `15px`}
+                      margin={`0 10px`}
+                    >
+                      |
+                    </SpanText>
+                    Lessons through Zoom
+                  </Text>
+                  <Text>
+                    Payment through Paypal
+                    <SpanText
+                      fontSize={width < 800 ? `12px` : `15px`}
+                      margin={`0 10px`}
+                    >
+                      |
+                    </SpanText>
+                    Money-back guarantee for all lesson
+                    <SpanText
+                      fontSize={width < 800 ? `12px` : `15px`}
+                      margin={`0 10px`}
+                    >
+                      |
+                    </SpanText>
+                    Not more than 7 learners in a class
+                  </Text>
+                </Wrapper>
+                <Wrapper width={`auto`} margin={width < 900 && `15px 0 0`}>
+                  <CommonButton
+                    height={`40px`}
+                    kindOf={`subTheme`}
+                    padding={`5px 5px 5px 8px`}
+                  >
+                    apply here
+                    <Image
+                      alt="icon"
+                      margin={`0 0 0 15px`}
+                      width={width < 900 ? `25px` : `30px`}
+                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/red-btn.png`}
+                    />
+                  </CommonButton>
+                </Wrapper>
+              </Wrapper>
+              <Wrapper dr={`row`} margin={`60px 0 0`} ju={`space-between`}>
+                <Wrapper
+                  shadow={`0 5px 15px rgba(0, 0, 0, 0.05)`}
+                  padding={`20px 30px`}
+                  dr={`row`}
+                  width={width < 1000 ? `100%` : `35%`}
+                >
+                  <ATag
+                    width={`auto`}
+                    dr={`row`}
+                    href={`mailto:jklc.ktalk@gmail.com`}
+                  >
+                    <Text
+                      fontSize={
+                        width < 900 ? (width < 700 ? `13px` : `14px`) : `18px`
+                      }
+                      fontWeight={`bold`}
+                    >
+                      More infomation
+                    </Text>
+                    <Image
+                      alt="icon"
+                      margin={`0 5px 0 15px`}
+                      width={`24px`}
+                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/icon_mail.png`}
+                    />
+                    <Text fontSize={width < 900 ? `14px` : `18px`}>
+                      jklc.ktalk@gmail.com
+                    </Text>
+                  </ATag>
+                </Wrapper>
+                <Wrapper
+                  shadow={`0 5px 15px rgba(0, 0, 0, 0.05)`}
+                  padding={`20px 30px`}
+                  dr={`row`}
+                  width={width < 1000 ? `100%` : `63%`}
+                >
+                  <ATag
+                    width={`auto`}
+                    dr={`row`}
+                    href={`https://www.instagram.com/ktalk_live/`}
+                    target={`_blank`}
+                    margin={width < 900 && `0 0 15px`}
+                  >
+                    <Image
+                      alt="icon"
+                      margin={`0 5px 0 0px`}
+                      width={`24px`}
+                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/icon_instagram.png`}
+                    />
+                    <Text fontSize={width < 900 ? `14px` : `18px`}>
+                      https://www.instagram.com/ktalk_live/
+                    </Text>
+                  </ATag>
+                  <Image
+                    alt="icon"
+                    margin={`0 15px`}
+                    width={`1px`}
+                    display={width < 900 ? `none` : `block`}
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/dot-line.png`}
+                  />
+                  <ATag
+                    width={`auto`}
+                    dr={`row`}
+                    href={`https://www.facebook.com/KtalkLive`}
+                    target={`_blank`}
+                  >
+                    <Image
+                      alt="icon"
+                      margin={`0 5px 0 0px`}
+                      width={`24px`}
+                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/icon_facebook.png`}
+                    />
+                    <Text fontSize={width < 900 ? `14px` : `18px`}>
+                      https://www.facebook.com/KtalkLive
+                    </Text>
+                  </ATag>
+                </Wrapper>
+              </Wrapper>
+            </RsWrapper>
+          </Wrapper>
           <Popup />
         </WholeWrapper>
       </ClientLayout>

@@ -196,22 +196,25 @@ export const CommonButton = styled(Button)`
   margin: ${(props) => props.margin};
   padding: ${(props) => props.padding};
   font-size: ${(props) => props.fontSize || `1rem`};
-  color: ${(props) => props.color || props.theme.subTheme2_C};
-  border-radius: ${(props) => props.radius || `7px`};
+  color: ${(props) => props.color || props.theme.white_C};
+  border-radius: ${(props) => props.radius || `25px`};
 
-  ${(props) => !props.kindOf && `background : ${props.theme.white_C};`}
+  ${(props) => !props.kindOf && `background : ${props.theme.basicTheme_C};`}
   ${(props) =>
-    props.kindOf === `white` && `background : ${props.theme.basicTheme_C};`}
-  ${(props) => props.kindOf === `white` && `color : ${props.theme.subTheme_C};`}
+    props.kindOf === `white` && `background : ${props.theme.white_C};`}
   ${(props) =>
-    props.kindOf === `white` && `border : 1px solid ${props.theme.subTheme_C};`}
+    props.kindOf === `white` && `color : ${props.theme.basicTheme_C};`}
+  ${(props) =>
+    props.kindOf === `white` &&
+    `border : 1px solid ${props.theme.basicTheme_C};`}
   ${(props) =>
     props.kindOf === `black` && `background : ${props.theme.black_C};`}
   ${(props) => props.kindOf === `black` && `color : ${props.theme.white_C};`}
   
   ${(props) =>
-    props.kindOf === `subTheme` && `background : ${props.theme.subTheme_C};`}
-  ${(props) => props.kindOf === `subTheme` && `color : ${props.theme.white_C};`}
+    props.kindOf === `subTheme` && `background : ${props.theme.white_C};`}
+  ${(props) =>
+    props.kindOf === `subTheme` && `color : ${props.theme.subTheme_C};`}
   ${(props) =>
     props.kindOf === `subTheme` &&
     `border : 1px solid ${props.theme.subTheme_C};`}
@@ -237,10 +240,9 @@ export const CommonButton = styled(Button)`
     ${(props) => props.kindOf === `black` && `color : ${props.theme.black_C};`}
     ${(props) =>
       props.kindOf === `black` && `border : 1px solid ${props.theme.black_C};`}
+    ${(props) => props.kindOf === `subTheme` && `color ${props.theme.white_C};`}
     ${(props) =>
-      props.kindOf === `subTheme` && `color ${props.theme.subTheme_C};`}
-    ${(props) =>
-      props.kindOf === `subTheme` && `background ${props.theme.white_C};`}
+      props.kindOf === `subTheme` && `background ${props.theme.subTheme_C};`}
 
     ${(props) =>
       props.kindOf === `delete` && `background : ${props.theme.white_C};`}
@@ -261,7 +263,7 @@ export const Text = styled.p`
   align-items: ${(props) => props.al};
   justify-content: ${(props) => props.ju};
   font-size: ${(props) => props.fontSize};
-  font-weight: ${(props) => props.fontWeight || `500`};
+  font-weight: ${(props) => props.fontWeight};
   line-height: ${(props) => props.lineHeight};
   color: ${(props) => props.color};
   margin: ${(props) => props.margin || `0`};
@@ -386,6 +388,7 @@ export const ATag = styled.a`
   flex-wrap: ${(props) => props.wrap || `wrap`};
   background: ${(props) => props.bgColor};
   color: ${(props) => props.color};
+  margin: ${(props) => props.margin};
 `;
 
 export const SpanText = styled.span`
@@ -425,12 +428,12 @@ export const SpanText = styled.span`
 export const TextInput = styled.input`
   width: ${(props) => props.width};
   height: ${(props) => props.height || `40px`};
-  border: ${(props) => props.border};
+  border: ${(props) => props.border || `1px solid ${props.theme.grey_C}`};
   border-bottom: ${(props) => props.borderBottom};
   padding: ${(props) => props.padding || `10px`};
   transition: ${(props) => props.transition || props.theme.transition};
   margin: ${(props) => props.margin};
-  background-color: ${(props) => props.bgColor};
+  background-color: ${(props) => props.bgColor || props.theme.lightGrey_C};
   border-radius: ${(props) => props.radius};
   font-size: ${(props) => props.fontSize};
   cursor: ${(props) => props.cursor};
