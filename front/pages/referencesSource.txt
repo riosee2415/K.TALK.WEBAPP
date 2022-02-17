@@ -1,0 +1,71 @@
+1. SearchBox
+
+<SearchForm layout="inline">
+    <SearchFormItem label="사용자명" name="selectUserId">
+        <Select size="small" style={{ width: "200px" }}>
+            <Select.Option value="1">dasdasdasdd</Select.Option>
+        </Select>
+    </SearchFormItem>
+
+    <SearchFormItem>
+        <Button size="small" type="primary" htmlType="submit">
+            검색
+        </Button>
+    </SearchFormItem>
+</SearchForm>
+
+🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀
+
+
+2. Modal Button Area
+
+<Wrapper margin="0px 0px 20px 0px" dr="row" ju="flex-end">
+    <ModalBtn type="dashed" size="small">
+        전체조회
+    </ModalBtn>
+     <ModalBtn type="danger" size="small">
+        주의사항
+    </ModalBtn>
+    <ModalBtn type="primary" size="small">
+        + 추가
+    </ModalBtn>
+</Wrapper>
+
+🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀
+
+
+3. Data Table
+
+const columns = [
+    {
+      title: "번호",
+      dataIndex: "id",
+    },
+
+    {
+      title: "생성일",
+      dataIndex: "createdAt",
+    },
+  ];
+
+
+<Table rowKey="id" columns={columns} dataSource={[]} size="small" />
+
+🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀
+
+4. Guide Modal
+
+ <Modal
+    visible={false}
+    width="900px"
+    onOk={() => {}}
+    onCancel={() => {}}
+    title="주의사항"
+    >
+    <GuideUl>
+        <GuideLi>asdfasdf</GuideLi>
+        <GuideLi isImpo={true}>asdfasdf</GuideLi>
+    </GuideUl>
+</Modal>
+
+🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀
