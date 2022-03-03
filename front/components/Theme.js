@@ -1,8 +1,8 @@
 export default {
   basicTheme_C: "#257CE4",
 
-  subTheme_C: "#FF4F40",
-  subTheme2_C: "#FCDB36",
+  subTheme_C: "#FCFDFF",
+  subTheme2_C: "#FF4F40",
   subTheme3_C: "#2D53A3",
   subTheme4_C: "#FFD321",
   subTheme5_C: "#1E5AA9",
