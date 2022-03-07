@@ -19,7 +19,7 @@ import {
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
 import styled from "styled-components";
-import { Button, Calendar, Checkbox, Form, Input, Select } from "antd";
+import { Button, Calendar, Checkbox, Form, Input, message, Select } from "antd";
 import useWidth from "../../hooks/useWidth";
 import { CalendarOutlined, CaretDownOutlined } from "@ant-design/icons";
 
@@ -164,6 +164,18 @@ const Application = () => {
 
   ////// HANDLER //////
 
+  const submissionHandler = useCallback(() => {
+    if (!titleSelect) {
+      return message.error("Please select a title.");
+    }
+    if (!timeSelect) {
+      return message.error("Please select a time.");
+    }
+    if (!agreeCheck) {
+      return message.error("Please agree to the terms and conditions.");
+    }
+  }, [titleSelect, timeSelect, agreeCheck]);
+
   const dateChagneHandler = useCallback((data) => {
     const birth = data.format("YYYY-MM-DD");
     formRef.current.setFieldsValue({
@@ -302,7 +314,7 @@ const Application = () => {
               Thank you very much!
             </Wrapper>
 
-            <CustomForm onFinish={console.log} form={form} ref={formRef}>
+            <CustomForm onFinish={submissionHandler} form={form} ref={formRef}>
               <Wrapper al={`flex-start`}>
                 <Text
                   fontSize={`18px`}
