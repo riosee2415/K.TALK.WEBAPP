@@ -73,6 +73,12 @@ const CustomCheckBox2 = styled(Checkbox)`
     border-top: 0;
     border-left: 0;
   }
+
+  @media (max-width: 700px) {
+    & .ant-checkbox + span {
+      font-size: 14px !important;
+    }
+  }
 `;
 
 const CustomSelect = styled(Select)`
