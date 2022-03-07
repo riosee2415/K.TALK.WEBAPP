@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import ClientLayout from "../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../reducers/seo";
 import Head from "next/head";
@@ -19,8 +19,9 @@ import {
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
 import styled from "styled-components";
-import { Button, Checkbox, Form, Input, Select } from "antd";
+import { Button, Calendar, Checkbox, Form, Input, Select } from "antd";
 import useWidth from "../../hooks/useWidth";
+import { CalendarOutlined } from "@ant-design/icons";
 
 const CustomForm = styled(Form)`
   width: 718px;
@@ -85,6 +86,20 @@ const CustomSelect = styled(Select)`
   }
 `;
 
+const CusotmInput = styled(TextInput)`
+  border: none;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
+
+  &::placeholder {
+    color: ${Theme.grey_C};
+  }
+`;
+
+const CusotmArea = styled(TextArea)`
+  border: none;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
+`;
+
 const Application = () => {
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
@@ -98,6 +113,10 @@ const Application = () => {
   const [titleSelect, setTitleSelect] = useState(null);
   const [timeSelect, setTimeSelect] = useState(null);
   const [agreeCheck, setAgreeCheck] = useState(false);
+  const [isCalendar, setIsCalendar] = useState(false);
+
+  const [form] = Form.useForm();
+  const formRef = useRef();
 
   ////// REDUX //////
   ////// USEEFFECT //////
@@ -124,7 +143,21 @@ const Application = () => {
     [agreeCheck]
   );
 
+  const calenderToggle = useCallback(() => {
+    setIsCalendar(!isCalendar);
+  }, [isCalendar]);
+
   ////// HANDLER //////
+
+  const dateChagneHandler = useCallback((data) => {
+    const birth = data.format("YYYY-MM-DD");
+    formRef.current.setFieldsValue({
+      date: birth.split("-")[2],
+      month: birth.split("-")[1],
+      year: birth.split("-")[0],
+    });
+  }, []);
+
   ////// DATAVIEW //////
 
   const timeArr = [
@@ -233,7 +266,7 @@ const Application = () => {
               Thank you very much!
             </Wrapper>
 
-            <CustomForm onFinish={console.log}>
+            <CustomForm onFinish={console.log} form={form} ref={formRef}>
               <Wrapper al={`flex-start`}>
                 <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
                   Name in full (First/Last)
@@ -241,7 +274,7 @@ const Application = () => {
                 <Wrapper dr={`row`} ju={`flex-start`}>
                   <Wrapper width={`calc(100% / 2 - 4px)`} margin={`0 8px 0 0`}>
                     <Form.Item name="firstName">
-                      <TextInput
+                      <CusotmInput
                         width={`100%`}
                         placeholder={"First"}
                         radius={`5px`}
@@ -251,7 +284,7 @@ const Application = () => {
 
                   <Wrapper width={`calc(100% / 2 - 4px)`}>
                     <Form.Item name="lastName">
-                      <TextInput
+                      <CusotmInput
                         width={`100%`}
                         placeholder={"Last"}
                         radius={`5px`}
@@ -292,19 +325,20 @@ const Application = () => {
                   </Wrapper>
                   <Wrapper width={`60%`}>
                     <Form.Item name="title">
-                      <TextInput width={"100%"} radius={`5px`} />
+                      <CusotmInput width={"100%"} radius={`5px`} />
                     </Form.Item>
                   </Wrapper>
                 </Wrapper>
               </Wrapper>
-              <Wrapper al={`flex-start`}>
+              <Wrapper al={`flex-start`} position={"relative"}>
                 <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
                   Date of Birth
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
-                  <Wrapper width={`calc(100% / 3 - 6px)`}>
+                  <Wrapper width={`calc(100% / 3 - 16px)`}>
                     <Form.Item name="date">
-                      <TextInput
+                      <CusotmInput
+                        readOnly
                         width={`100%`}
                         radius={`5px`}
                         placeholder={"Date"}
@@ -312,9 +346,10 @@ const Application = () => {
                     </Form.Item>
                   </Wrapper>
 
-                  <Wrapper width={`calc(100% / 3 - 6px)`} margin={`0 9px`}>
+                  <Wrapper width={`calc(100% / 3 - 16px)`} margin={`0 9px`}>
                     <Form.Item name="month">
-                      <TextInput
+                      <CusotmInput
+                        readOnly
                         width={`100%`}
                         radius={`5px`}
                         placeholder={"Month"}
@@ -322,15 +357,33 @@ const Application = () => {
                     </Form.Item>
                   </Wrapper>
 
-                  <Wrapper width={`calc(100% / 3 - 6px)`}>
+                  <Wrapper width={`calc(100% / 3 - 16px)`}>
                     <Form.Item name="year">
-                      <TextInput
+                      <CusotmInput
+                        readOnly
                         width={`100%`}
                         radius={`5px`}
                         placeholder={"Year"}
                       />
                     </Form.Item>
                   </Wrapper>
+                  <Wrapper width={`30px`} margin={`0 0 48px`} fontSize={`30px`}>
+                    <CalendarOutlined onClick={calenderToggle} />
+                  </Wrapper>
+                </Wrapper>
+                <Wrapper
+                  display={isCalendar ? "flex" : "none"}
+                  width={`auto`}
+                  position={width < 1350 ? `static` : `absolute`}
+                  top={`40px`}
+                  right={`-310px`}
+                  border={`1px solid ${Theme.grey_C}`}
+                >
+                  <Calendar
+                    style={{ width: width < 1350 ? `100%` : `300px` }}
+                    fullscreen={false}
+                    onChange={dateChagneHandler}
+                  />
                 </Wrapper>
               </Wrapper>
               <Wrapper al={`flex-start`}>
@@ -340,7 +393,7 @@ const Application = () => {
                 <Wrapper dr={`row`} ju={`flex-start`}>
                   <Wrapper width={`calc(100% / 2 - 4px)`} margin={`0 8px 0 0`}>
                     <Form.Item name="email1">
-                      <TextInput
+                      <CusotmInput
                         width={`100%`}
                         radius={`5px`}
                         placeholder={"Address"}
@@ -350,7 +403,7 @@ const Application = () => {
 
                   <Wrapper width={`calc(100% / 2 - 4px)`}>
                     <Form.Item name="email2">
-                      <TextInput
+                      <CusotmInput
                         width={`100%`}
                         radius={`5px`}
                         placeholder={"@gmail.com"}
@@ -365,7 +418,7 @@ const Application = () => {
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
                   <Form.Item name="nationality">
-                    <TextInput
+                    <CusotmInput
                       width={`100%`}
                       radius={`5px`}
                       placeholder={"Select Nationality"}
@@ -379,7 +432,7 @@ const Application = () => {
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
                   <Form.Item name="CountryOfResidence">
-                    <TextInput
+                    <CusotmInput
                       width={`100%`}
                       radius={`5px`}
                       placeholder={"Nationality"}
@@ -393,7 +446,7 @@ const Application = () => {
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
                   <Form.Item name="LanguageYouUse">
-                    <TextInput
+                    <CusotmInput
                       width={`100%`}
                       radius={`5px`}
                       placeholder={"Select Languge"}
@@ -420,14 +473,14 @@ const Application = () => {
 
                   <Wrapper width={`calc(80% - 4px)`}>
                     <Form.Item name="lastNumber">
-                      <TextInput width={`100%`} radius={`5px`} />
+                      <CusotmInput width={`100%`} radius={`5px`} />
                     </Form.Item>
                   </Wrapper>
                 </Wrapper>
               </Wrapper>
               <Wrapper>
                 <Form.Item>
-                  <TextInput width={`100%`} radius={`5px`} />
+                  <CusotmInput width={`100%`} radius={`5px`} />
                 </Form.Item>
               </Wrapper>
 
@@ -504,7 +557,7 @@ const Application = () => {
                   Do you have any other questions or comments about our program?
                 </Text>
                 <Form.Item name="question">
-                  <TextArea width={`100%`} />
+                  <CusotmArea width={`100%`} />
                 </Form.Item>
               </Wrapper>
 
