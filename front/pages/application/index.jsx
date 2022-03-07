@@ -364,9 +364,11 @@ const Application = () => {
                     </CustomCheckBox>
                   </Wrapper>
                   <Wrapper width={`60%`}>
-                    <Form.Item name="title">
-                      <CusotmInput width={"100%"} radius={`5px`} />
-                    </Form.Item>
+                    {titleSelect === "Others." && (
+                      <Form.Item name="title">
+                        <CusotmInput width={"100%"} radius={`5px`} />
+                      </Form.Item>
+                    )}
                   </Wrapper>
                 </Wrapper>
               </Wrapper>
