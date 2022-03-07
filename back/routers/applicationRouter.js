@@ -1,5 +1,6 @@
 const express = require("express");
 const isAdminCheck = require("../middlewares/isAdminCheck");
+const isNanCheck = require("../middlewares/isNanCheck");
 const { Application } = require("../models");
 const models = require("../models");
 
@@ -13,7 +14,7 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
 
   try {
     const selectQuery = `
-      SELECT	id,
+      SELECT	  id,
                 firstName,
                 lastName,
                 title,
@@ -28,16 +29,65 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
                 comment,
                 isPaid,
                 isComplete,
-                DATE_FORMAT(payDate,     "%Y/%m/%d : %H:%i")						    AS	payDate,
-                DATE_FORMAT(completedAt,     "%Y/%m/%d : %H:%i")						AS	completedAt,
-                DATE_FORMAT(createdAt,     "%Y/%m/%d : %H:%i")							AS	createdAt,
-                DATE_FORMAT(updatedAt,     "%Y/%m/%d : %H:%i") 					      	AS	updatedAt
-        FROM	applications
+                DATE_FORMAT(payDate,       "%Y/%m/%d : %H:%i")						    AS	payDate,
+                DATE_FORMAT(completedAt,   "%Y/%m/%d : %H:%i")						    AS	completedAt,
+                DATE_FORMAT(createdAt,     "%Y/%m/%d : %H:%i")							  AS	createdAt,
+                DATE_FORMAT(updatedAt,     "%Y/%m/%d : %H:%i") 					      AS	updatedAt
+        FROM	  applications
        WHERE    1 = 1
          ${_isComplete ? `AND   isComplete = ${_isComplete}` : ``}
          ${_isPaid ? `AND   isComplete = ${_isPaid}` : ``}
        ORDER    BY  createdAt DESC
       `;
+
+    const lists = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ lists: lists[0] });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("신청서 목록을 불러올 수 없습니다.");
+  }
+});
+
+router.get("/detail/:applicationId", isAdminCheck, async (req, res, next) => {
+  const { applicationId } = req.params;
+
+  if (isNanCheck(applicationId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+  try {
+    const exApp = await Application.findOne({
+      where: { id: parseInt(applicationId) },
+    });
+
+    if (!exApp) {
+      return res.status(401).send("존재하지 않는 신청서입니다.");
+    }
+
+    const selectQuery = `
+     SELECT	    id,
+                firstName,
+                lastName,
+                title,
+                dateOfBirth,
+                gmailAddress,
+                nationality,
+                countryOfResidence,
+                languageYouUse,
+                phoneNumber,
+                phoneNumber2,
+                classHour,
+                comment,
+                isPaid,
+                isComplete,
+                DATE_FORMAT(payDate,       "%Y/%m/%d : %H:%i")						  AS	payDate,
+                DATE_FORMAT(completedAt,   "%Y/%m/%d : %H:%i")						  AS	completedAt,
+                DATE_FORMAT(createdAt,     "%Y/%m/%d : %H:%i")							AS	createdAt,
+                DATE_FORMAT(updatedAt,     "%Y/%m/%d : %H:%i") 					   	AS	updatedAt
+      FROM	    applications
+     WHERE      1 = 1
+       AND      id = ${applicationId}
+    `;
 
     const lists = await models.sequelize.query(selectQuery);
 
