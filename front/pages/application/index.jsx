@@ -78,6 +78,11 @@ const CustomCheckBox2 = styled(Checkbox)`
 const CustomSelect = styled(Select)`
   width: 100%;
 
+  &:not(.ant-select-customize-input) .ant-select-selector {
+    border: none !important;
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
+  }
+
   & .ant-select-selector {
     width: 100% !important;
     height: 40px !important;
@@ -242,14 +247,35 @@ const Application = () => {
             <Wrapper fontSize={`18px`} margin={`10px 0 30px`}>
               for K-talk LIve regular paid Korean lessons
             </Wrapper>
-            <Wrapper>
-              ·Please complete and submit this form so that teachers can contact
-              you for the next step.
-            </Wrapper>
-            <Wrapper>
-              ·If you'd like to apply for our Free Hangeul Lessons, please exit
-              this page and visit our website at
-            </Wrapper>
+            {width < 700 ? (
+              <>
+                <Wrapper>·Please complete and submit this form</Wrapper>
+                <Wrapper>
+                  so that teachers can contact you for the next step.
+                </Wrapper>
+              </>
+            ) : (
+              <Wrapper>
+                ·Please complete and submit this form so that teachers can
+                contact you for the next step.
+              </Wrapper>
+            )}
+
+            {width < 700 ? (
+              <>
+                <Wrapper>
+                  ·If you'd like to apply for our Free Hangeul Lessons,
+                </Wrapper>
+                <Wrapper>
+                  please exit this page and visit our website at
+                </Wrapper>
+              </>
+            ) : (
+              <Wrapper>
+                ·If you'd like to apply for our Free Hangeul Lessons, please
+                exit this page and visit our website at
+              </Wrapper>
+            )}
             <Wrapper dr={`row`}>
               <Text color={Theme.basicTheme_C}>http://ktalklive.com</Text>
               &nbsp;or our FB page at&nbsp;
@@ -268,7 +294,12 @@ const Application = () => {
 
             <CustomForm onFinish={console.log} form={form} ref={formRef}>
               <Wrapper al={`flex-start`}>
-                <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+                <Text
+                  fontSize={`18px`}
+                  fontWeight={`bold`}
+                  margin={`0 0 10px`}
+                  lineHeight={`1.22`}
+                >
                   Name in full (First/Last)
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
@@ -294,7 +325,12 @@ const Application = () => {
                 </Wrapper>
               </Wrapper>
               <Wrapper al={`flex-start`}>
-                <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+                <Text
+                  fontSize={`18px`}
+                  fontWeight={`bold`}
+                  margin={`0 0 10px`}
+                  lineHeight={`1.22`}
+                >
                   Title
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
@@ -331,7 +367,12 @@ const Application = () => {
                 </Wrapper>
               </Wrapper>
               <Wrapper al={`flex-start`} position={"relative"}>
-                <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+                <Text
+                  fontSize={`18px`}
+                  fontWeight={`bold`}
+                  margin={`0 0 10px`}
+                  lineHeight={`1.22`}
+                >
                   Date of Birth
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
@@ -367,7 +408,11 @@ const Application = () => {
                       />
                     </Form.Item>
                   </Wrapper>
-                  <Wrapper width={`30px`} margin={`0 0 48px`} fontSize={`30px`}>
+                  <Wrapper
+                    width={`30px`}
+                    margin={width < 700 ? `0 0 28px` : `0 0 48px`}
+                    fontSize={`30px`}
+                  >
                     <CalendarOutlined onClick={calenderToggle} />
                   </Wrapper>
                 </Wrapper>
@@ -378,6 +423,7 @@ const Application = () => {
                   top={`40px`}
                   right={`-310px`}
                   border={`1px solid ${Theme.grey_C}`}
+                  margin={`0 0 20px`}
                 >
                   <Calendar
                     style={{ width: width < 1350 ? `100%` : `300px` }}
@@ -387,7 +433,12 @@ const Application = () => {
                 </Wrapper>
               </Wrapper>
               <Wrapper al={`flex-start`}>
-                <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+                <Text
+                  fontSize={`18px`}
+                  fontWeight={`bold`}
+                  margin={`0 0 10px`}
+                  lineHeight={`1.22`}
+                >
                   Gmail Address
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
@@ -413,7 +464,12 @@ const Application = () => {
                 </Wrapper>
               </Wrapper>
               <Wrapper al={`flex-start`}>
-                <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+                <Text
+                  fontSize={`18px`}
+                  fontWeight={`bold`}
+                  margin={`0 0 10px`}
+                  lineHeight={`1.22`}
+                >
                   Nationality
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
@@ -427,7 +483,12 @@ const Application = () => {
                 </Wrapper>
               </Wrapper>
               <Wrapper al={`flex-start`}>
-                <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+                <Text
+                  fontSize={`18px`}
+                  fontWeight={`bold`}
+                  margin={`0 0 10px`}
+                  lineHeight={`1.22`}
+                >
                   Country of Residence
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
@@ -441,7 +502,12 @@ const Application = () => {
                 </Wrapper>
               </Wrapper>
               <Wrapper al={`flex-start`}>
-                <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+                <Text
+                  fontSize={`18px`}
+                  fontWeight={`bold`}
+                  margin={`0 0 10px`}
+                  lineHeight={`1.22`}
+                >
                   Language you use
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
@@ -455,7 +521,12 @@ const Application = () => {
                 </Wrapper>
               </Wrapper>
               <Wrapper al={`flex-start`}>
-                <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+                <Text
+                  fontSize={`18px`}
+                  fontWeight={`bold`}
+                  margin={`0 0 10px`}
+                  lineHeight={`1.22`}
+                >
                   Phone number
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
@@ -525,14 +596,21 @@ const Application = () => {
                 fontSize={width < 700 ? `16px` : `18px`}
               >
                 <Text>Do you agree to the terms of our Student Rules?</Text>
-                <Text>
-                  Please make sure you have read our student rules via the
-                  following link.*
-                </Text>
+                {width < 700 ? (
+                  <>
+                    <Text>Please make sure you have read our</Text>
+                    <Text>student rules via the following link.*</Text>
+                  </>
+                ) : (
+                  <Text>
+                    Please make sure you have read our student rules via the
+                    following link.*
+                  </Text>
+                )}
               </Wrapper>
               <Wrapper>
                 <SpanText
-                  fontSize={`16px`}
+                  fontSize={width < 700 ? `14px` : `16px`}
                   margin={`42px 0 28px`}
                   textDecoration={"underline"}
                 >
