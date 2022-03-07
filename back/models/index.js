@@ -9,6 +9,7 @@ const gallary = require("./gallary");
 const question = require("./question");
 const questiontype = require("./questiontype");
 const seo = require("./seo");
+const application = require("./application");
 
 const env = process.env.NODE_ENV || "development";
 const config = require("../config/config")[env];
@@ -31,6 +32,7 @@ db.Gallary = gallary;
 db.Question = question;
 db.QuestionType = questiontype;
 db.Seo = seo;
+db.Application = application;
 
 Object.keys(db).forEach((modelName) => {
   db[modelName].init(sequelize);
