@@ -86,7 +86,7 @@ const CustomSelect = styled(Select)`
   & .ant-select-selector {
     width: 100% !important;
     height: 40px !important;
-    padding: 10px !important;
+    padding: 5px 0 0 10px !important;
     border-radius: 5px;
   }
 
@@ -543,10 +543,10 @@ const Application = () => {
                         return <CaretDownOutlined />;
                       }}
                     >
-                      <Select.Option>test</Select.Option>
-                      <Select.Option>test</Select.Option>
-                      <Select.Option>test</Select.Option>
-                      <Select.Option>test</Select.Option>
+                      <Select.Option value={"1"}>test1</Select.Option>
+                      <Select.Option value={"2"}>test2</Select.Option>
+                      <Select.Option value={"3"}>test3</Select.Option>
+                      <Select.Option value={"4"}>test4</Select.Option>
                     </CustomSelect>
                   </Wrapper>
 
