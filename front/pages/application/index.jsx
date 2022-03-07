@@ -21,7 +21,7 @@ import Theme from "../../components/Theme";
 import styled from "styled-components";
 import { Button, Calendar, Checkbox, Form, Input, Select } from "antd";
 import useWidth from "../../hooks/useWidth";
-import { CalendarOutlined } from "@ant-design/icons";
+import { CalendarOutlined, CaretDownOutlined } from "@ant-design/icons";
 
 const CustomForm = styled(Form)`
   width: 718px;
@@ -88,6 +88,10 @@ const CustomSelect = styled(Select)`
     height: 40px !important;
     padding: 10px !important;
     border-radius: 5px;
+  }
+
+  & .ant-select-arrow span svg {
+    color: ${Theme.black_C};
   }
 `;
 
@@ -534,7 +538,11 @@ const Application = () => {
                     width={`calc(20% - 4px)`}
                     margin={width < 700 ? `0 8px 28px 0` : `0 8px 48px 0`}
                   >
-                    <CustomSelect>
+                    <CustomSelect
+                      suffixIcon={() => {
+                        return <CaretDownOutlined />;
+                      }}
+                    >
                       <Select.Option>test</Select.Option>
                       <Select.Option>test</Select.Option>
                       <Select.Option>test</Select.Option>
