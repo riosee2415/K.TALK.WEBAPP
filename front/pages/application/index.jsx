@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import ClientLayout from "../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../reducers/seo";
 import Head from "next/head";
@@ -6,7 +6,7 @@ import wrapper from "../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   RsWrapper,
   WholeWrapper,
@@ -22,6 +22,7 @@ import styled from "styled-components";
 import { Button, Calendar, Checkbox, Form, Input, message, Select } from "antd";
 import useWidth from "../../hooks/useWidth";
 import { CalendarOutlined, CaretDownOutlined } from "@ant-design/icons";
+import { APP_CREATE_REQUEST } from "../../reducers/application";
 
 const CustomForm = styled(Form)`
   width: 718px;
@@ -121,9 +122,14 @@ const Application = () => {
     (state) => state.seo
   );
 
+  const { st_appCreateDone, st_appCreateError } = useSelector(
+    (state) => state.app
+  );
+
   ////// HOOKS //////
 
   const width = useWidth();
+  const dispatch = useDispatch();
 
   const [titleSelect, setTitleSelect] = useState(null);
   const [timeSelect, setTimeSelect] = useState(null);
@@ -135,6 +141,25 @@ const Application = () => {
 
   ////// REDUX //////
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (st_appCreateDone) {
+      form.resetFields();
+
+      setTitleSelect(null);
+      timeSelect(null);
+      setAgreeCheck(false);
+      setIsCalendar(false);
+
+      return message.success("Your application has been submitted.");
+    }
+  }, [st_appCreateDone]);
+
+  useEffect(() => {
+    if (st_appCreateError) {
+      return message.error(st_appCreateError);
+    }
+  }, [st_appCreateError]);
   ////// TOGGLE //////
 
   const titleSelectToggle = useCallback(
@@ -164,17 +189,39 @@ const Application = () => {
 
   ////// HANDLER //////
 
-  const submissionHandler = useCallback(() => {
-    if (!titleSelect) {
-      return message.error("Please select a title.");
-    }
-    if (!timeSelect) {
-      return message.error("Please select a time.");
-    }
-    if (!agreeCheck) {
-      return message.error("Please agree to the terms and conditions.");
-    }
-  }, [titleSelect, timeSelect, agreeCheck]);
+  const submissionHandler = useCallback(
+    (data) => {
+      if (!titleSelect) {
+        return message.error("Please select a title.");
+      }
+      if (!timeSelect) {
+        return message.error("Please select a time.");
+      }
+      if (!agreeCheck) {
+        return message.error("Please agree to the terms and conditions.");
+      }
+
+      dispatch({
+        type: APP_CREATE_REQUEST,
+        data: {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          title: titleSelect === "Others." ? data.title : titleSelect,
+          dateOfBirth: `${data.year}-${data.month}-${data.date}`,
+          gmailAddress: `${data.firstEmail}${data.lastEmail}`,
+          nationality: data.nationality,
+          countryOfResidence: data.countryOfResidence,
+          languageYouUse: data.languageYouUse,
+          phoneNumber: data.phoneNumber,
+          phoneNumber2: data.phoneNumber2,
+          classHour: timeSelect,
+          terms: agreeCheck,
+          comment: data.comment,
+        },
+      });
+    },
+    [titleSelect, timeSelect, agreeCheck, timeSelect, agreeCheck]
+  );
 
   const dateChagneHandler = useCallback((data) => {
     const birth = data.format("YYYY-MM-DD");
@@ -326,7 +373,7 @@ const Application = () => {
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
                   <Wrapper width={`calc(100% / 2 - 4px)`} margin={`0 8px 0 0`}>
-                    <Form.Item name="firstName">
+                    <Form.Item name="firstName" rules={[{ required: true }]}>
                       <CusotmInput
                         width={`100%`}
                         placeholder={"First"}
@@ -336,7 +383,7 @@ const Application = () => {
                   </Wrapper>
 
                   <Wrapper width={`calc(100% / 2 - 4px)`}>
-                    <Form.Item name="lastName">
+                    <Form.Item name="lastName" rules={[{ required: true }]}>
                       <CusotmInput
                         width={`100%`}
                         placeholder={"Last"}
@@ -401,7 +448,7 @@ const Application = () => {
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
                   <Wrapper width={`calc(100% / 3 - 16px)`}>
-                    <Form.Item name="date">
+                    <Form.Item name="date" rules={[{ requierd: true }]}>
                       <CusotmInput
                         readOnly
                         width={`100%`}
@@ -412,7 +459,7 @@ const Application = () => {
                   </Wrapper>
 
                   <Wrapper width={`calc(100% / 3 - 16px)`} margin={`0 9px`}>
-                    <Form.Item name="month">
+                    <Form.Item name="month" rules={[{ requierd: true }]}>
                       <CusotmInput
                         readOnly
                         width={`100%`}
@@ -423,7 +470,7 @@ const Application = () => {
                   </Wrapper>
 
                   <Wrapper width={`calc(100% / 3 - 16px)`}>
-                    <Form.Item name="year">
+                    <Form.Item name="year" rules={[{ requierd: true }]}>
                       <CusotmInput
                         readOnly
                         width={`100%`}
@@ -467,7 +514,7 @@ const Application = () => {
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
                   <Wrapper width={`calc(100% / 2 - 4px)`} margin={`0 8px 0 0`}>
-                    <Form.Item name="email1">
+                    <Form.Item name="firstEmail" rules={[{ required: true }]}>
                       <CusotmInput
                         width={`100%`}
                         radius={`5px`}
@@ -477,7 +524,7 @@ const Application = () => {
                   </Wrapper>
 
                   <Wrapper width={`calc(100% / 2 - 4px)`}>
-                    <Form.Item name="email2">
+                    <Form.Item name="lastEmail" rules={[{ required: true }]}>
                       <CusotmInput
                         width={`100%`}
                         radius={`5px`}
@@ -497,7 +544,7 @@ const Application = () => {
                   Nationality
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
-                  <Form.Item name="nationality">
+                  <Form.Item name="nationality" rules={[{ required: true }]}>
                     <CusotmInput
                       width={`100%`}
                       radius={`5px`}
@@ -516,7 +563,10 @@ const Application = () => {
                   Country of Residence
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
-                  <Form.Item name="CountryOfResidence">
+                  <Form.Item
+                    name="countryOfResidence"
+                    rules={[{ required: true }]}
+                  >
                     <CusotmInput
                       width={`100%`}
                       radius={`5px`}
@@ -535,7 +585,7 @@ const Application = () => {
                   Language you use
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
-                  <Form.Item name="LanguageYouUse">
+                  <Form.Item name="languageYouUse" rules={[{ required: true }]}>
                     <CusotmInput
                       width={`100%`}
                       radius={`5px`}
@@ -554,24 +604,23 @@ const Application = () => {
                   Phone number
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
-                  <Wrapper
-                    width={`calc(20% - 4px)`}
-                    margin={width < 700 ? `0 8px 28px 0` : `0 8px 48px 0`}
-                  >
-                    <CustomSelect
-                      suffixIcon={() => {
-                        return <CaretDownOutlined />;
-                      }}
-                    >
-                      <Select.Option value={"1"}>test1</Select.Option>
-                      <Select.Option value={"2"}>test2</Select.Option>
-                      <Select.Option value={"3"}>test3</Select.Option>
-                      <Select.Option value={"4"}>test4</Select.Option>
-                    </CustomSelect>
+                  <Wrapper width={`calc(20% - 4px)`} margin={`0 8px 0 0`}>
+                    <Form.Item name="phoneNumber" rules={[{ required: true }]}>
+                      <CustomSelect
+                        suffixIcon={() => {
+                          return <CaretDownOutlined />;
+                        }}
+                      >
+                        <Select.Option value={"1"}>test1</Select.Option>
+                        <Select.Option value={"2"}>test2</Select.Option>
+                        <Select.Option value={"3"}>test3</Select.Option>
+                        <Select.Option value={"4"}>test4</Select.Option>
+                      </CustomSelect>
+                    </Form.Item>
                   </Wrapper>
 
                   <Wrapper width={`calc(80% - 4px)`}>
-                    <Form.Item name="lastNumber">
+                    <Form.Item name="phoneNumber2" rules={[{ required: true }]}>
                       <CusotmInput width={`100%`} radius={`5px`} />
                     </Form.Item>
                   </Wrapper>
@@ -662,7 +711,7 @@ const Application = () => {
                 >
                   Do you have any other questions or comments about our program?
                 </Text>
-                <Form.Item name="question">
+                <Form.Item name="comment" rules={[{ requierd: true }]}>
                   <CusotmArea width={`100%`} />
                 </Form.Item>
               </Wrapper>
