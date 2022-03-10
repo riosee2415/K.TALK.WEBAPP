@@ -117,5 +117,5 @@ const task = cron.schedule(
 // task.start();
 
 app.listen(PORT, () => {
-  console.log(`🍀 ${PORT} NODE WEB_SERVER EXPRESS STARTING!`);
+  console.log(`🍀 ${PORT} NODE WEB_SERVER EXPRESS STARTING!!`);
 });
