@@ -17,6 +17,7 @@ import ClientLayout from "../../components/ClientLayout";
 import {
   Image,
   RsWrapper,
+  SpanText,
   Text,
   WholeWrapper,
   Wrapper,
@@ -162,6 +163,7 @@ const Student = () => {
               bgColor={Theme.white_C}
               radius={`10px`}
               ju={`space-between`}
+              shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
             >
               <Image
                 width={`184px`}
@@ -173,7 +175,7 @@ const Student = () => {
 
               <Wrapper width={`calc(100% - 204px)`}>
                 <Wrapper dr={`row`}>
-                  <Wrapper width={`calc(60% - 1px)`} padding={`0 40px 0 0`}>
+                  <Wrapper width={`calc(65% - 1px)`}>
                     <Wrapper dr={`row`} ju={`flex-start`}>
                       <Text
                         margin={`0 10px 0 0`}
@@ -185,17 +187,24 @@ const Student = () => {
                       <Text>한국어 초급/중급반</Text>
                     </Wrapper>
                     <Wrapper dr={`row`} ju={`flex-start`} color={Theme.grey2_C}>
-                      <Text>강사 이름</Text>
-                      <Text margin={`0 10px`}>|</Text>
-                      <Text>강의 수 : 5/30</Text>
-                      <Text margin={`0 10px`}>|</Text>
-                      <Text>등록상황 : 수료중</Text>
+                      <Text lineHeight={`1.19`}>강사 이름</Text>
+                      <Text lineHeight={`1.19`} margin={`0 10px`}>
+                        |
+                      </Text>
+                      <Text lineHeight={`1.19`}>강의 수 : 5/30</Text>
+                      <Text lineHeight={`1.19`} margin={`0 10px`}>
+                        |
+                      </Text>
+                      <Text lineHeight={`1.19`}>등록상황 : 수료중</Text>
                     </Wrapper>
 
-                    <Wrapper>
+                    <Wrapper margin={`35px 0 0`}>
                       <Wrapper dr={`row`} ju={`flex-start`}>
-                        <Text width={`15%`}>● 출석 상황</Text>
-                        <Wrapper width={`80%`}>
+                        <Text width={`15%`}>
+                          <SpanText color={Theme.subTheme2_C}>●</SpanText>&nbsp;
+                          출석 상황
+                        </Text>
+                        <Wrapper width={`75%`}>
                           <CustomSlide
                             defaultValue={100}
                             disabled={true}
@@ -203,10 +212,20 @@ const Student = () => {
                             bgColor={Theme.subTheme2_C}
                           />
                         </Wrapper>
+                        <Text
+                          width={`10%`}
+                          color={Theme.grey2_C}
+                          padding={`0 0 0 10px`}
+                        >
+                          (100%)
+                        </Text>
                       </Wrapper>
-                      <Wrapper dr={`row`} ju={`flex-start`} margin={`15px 0`}>
-                        <Text width={`15%`}>● 수업 진도</Text>
-                        <Wrapper width={`80%`}>
+                      <Wrapper dr={`row`} ju={`flex-start`} margin={`10px 0`}>
+                        <Text width={`15%`}>
+                          <SpanText color={Theme.basicTheme_C}>●</SpanText>
+                          &nbsp; 수업 진도
+                        </Text>
+                        <Wrapper width={`75%`}>
                           <CustomSlide
                             defaultValue={55}
                             disabled={true}
@@ -214,10 +233,20 @@ const Student = () => {
                             bgColor={Theme.basicTheme_C}
                           />
                         </Wrapper>
+                        <Text
+                          width={`10%`}
+                          color={Theme.grey2_C}
+                          padding={`0 0 0 10px`}
+                        >
+                          (55%)
+                        </Text>
                       </Wrapper>
                       <Wrapper dr={`row`} ju={`flex-start`}>
-                        <Text width={`15%`}>● 성취도</Text>
-                        <Wrapper width={`80%`}>
+                        <Text width={`15%`}>
+                          <SpanText color={Theme.subTheme6_C}>●</SpanText>&nbsp;
+                          성취도
+                        </Text>
+                        <Wrapper width={`75%`}>
                           <CustomSlide
                             defaultValue={100}
                             disabled={true}
@@ -225,6 +254,13 @@ const Student = () => {
                             bgColor={Theme.subTheme6_C}
                           />
                         </Wrapper>
+                        <Text
+                          width={`10%`}
+                          color={Theme.grey2_C}
+                          padding={`0 0 0 10px`}
+                        >
+                          (100%)
+                        </Text>
                       </Wrapper>
                     </Wrapper>
                   </Wrapper>
@@ -232,9 +268,42 @@ const Student = () => {
                   <Wrapper
                     width={`1px`}
                     height={`190px`}
+                    margin={`0 40px`}
                     borderRight={`1px dashed ${Theme.grey_C}`}
                   />
-                  <Wrapper width={`40%`}></Wrapper>
+                  <Wrapper width={`calc(35% - 80px)`}>
+                    <Wrapper
+                      borderBottom={`1px dashed ${Theme.grey_C}`}
+                      al={`flex-start`}
+                      ju={`flex-start`}
+                    >
+                      <Text padding={`16px 0`} color={Theme.basicTheme_C}>
+                        ZOOM 이동
+                      </Text>
+                    </Wrapper>
+                    <Wrapper
+                      borderBottom={`1px dashed ${Theme.grey_C}`}
+                      dr={`row`}
+                      al={`flex-start`}
+                      ju={`flex-start`}
+                    >
+                      <Text padding={`16px 0`}>수료증 신청</Text>
+                      <Text padding={`16px 0`}> | </Text>
+                      <Text padding={`16px 0`}>강의수 늘리기 요청</Text>
+                    </Wrapper>
+                    <Wrapper
+                      borderBottom={`1px dashed ${Theme.grey_C}`}
+                      al={`flex-start`}
+                      ju={`flex-start`}
+                      dr={`row`}
+                    >
+                      <Text padding={`16px 0`}>결석 예고</Text>
+                      <Text padding={`16px 0`}> | </Text>
+                      <Text padding={`16px 0`}>반이동 요청</Text>
+                      <Text padding={`16px 0`}> | </Text>
+                      <Text padding={`16px 0`}>줌 상담신청</Text>
+                    </Wrapper>
+                  </Wrapper>
                 </Wrapper>
               </Wrapper>
               {/** */}
