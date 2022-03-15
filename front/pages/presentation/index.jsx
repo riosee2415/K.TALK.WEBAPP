@@ -6,8 +6,8 @@ import Head from "next/head";
 import axios from "axios";
 import wrapper from "../../store/configureStore";
 
-import styled from "styled-components";
 import { Form, Select, Calendar } from "antd";
+import styled from "styled-components";
 import { CalendarOutlined, CaretDownOutlined } from "@ant-design/icons";
 import ClientLayout from "../../components/ClientLayout";
 import {
