@@ -1,12 +1,15 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import ClientLayout from "../../components/ClientLayout";
-import { SEO_LIST_REQUEST } from "../../reducers/seo";
-import Head from "next/head";
-import wrapper from "../../store/configureStore";
-import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
-import axios from "axios";
-import { END } from "redux-saga";
 import { useSelector, useDispatch } from "react-redux";
+import styled from "styled-components";
+import { Calendar, Checkbox, Form, message, Select } from "antd";
+import { CalendarOutlined, CaretDownOutlined } from "@ant-design/icons";
+
+import { END } from "redux-saga";
+import Head from "next/head";
+import axios from "axios";
+import wrapper from "../../store/configureStore";
+
+import ClientLayout from "../../components/ClientLayout";
 import {
   RsWrapper,
   WholeWrapper,
@@ -18,10 +21,10 @@ import {
   SpanText,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
-import styled from "styled-components";
-import { Button, Calendar, Checkbox, Form, Input, message, Select } from "antd";
 import useWidth from "../../hooks/useWidth";
-import { CalendarOutlined, CaretDownOutlined } from "@ant-design/icons";
+
+import { SEO_LIST_REQUEST } from "../../reducers/seo";
+import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 import { APP_CREATE_REQUEST } from "../../reducers/application";
 
 const CustomForm = styled(Form)`
@@ -259,6 +262,27 @@ const Application = () => {
     "13:00 - 13:50 KST",
     "21:00 - 21:50 KST",
     "05:00 - 05:50 KST",
+  ];
+
+  const firstPhoneArr = [
+    "010",
+    "011",
+    "012",
+    "013",
+    "014",
+    "015",
+    "016",
+    "017",
+    "018",
+    "019",
+    "030",
+    "050",
+    "060",
+    "070",
+    "080",
+    "020",
+    "040",
+    "090",
   ];
 
   return (
@@ -611,10 +635,12 @@ const Application = () => {
                           return <CaretDownOutlined />;
                         }}
                       >
-                        <Select.Option value={"1"}>test1</Select.Option>
-                        <Select.Option value={"2"}>test2</Select.Option>
-                        <Select.Option value={"3"}>test3</Select.Option>
-                        <Select.Option value={"4"}>test4</Select.Option>
+                        {firstPhoneArr &&
+                          firstPhoneArr.map((data) => {
+                            return (
+                              <Select.Option value={data}>{data}</Select.Option>
+                            );
+                          })}
                       </CustomSelect>
                     </Form.Item>
                   </Wrapper>
