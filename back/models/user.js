@@ -20,6 +20,14 @@ module.exports = class User extends Model {
           allowNull: false, // 필수
           unique: true, // 고유한 값
         },
+        birth: {
+          type: DataTypes.DATE,
+          allowNull: false, // 필수
+        },
+        gender: {
+          type: DataTypes.STRING(5),
+          allowNull: false, // 필수
+        },
         mobile: {
           type: DataTypes.STRING(30),
           allowNull: false, // 필수
@@ -29,20 +37,10 @@ module.exports = class User extends Model {
           allowNull: false, // 필수
         },
         level: {
-          // 사용자 권한 [1 : 일반회원, 2 : 비어있음, 3: 운영자, 4: 최고관리자, 5: 개발사]
+          // 사용자 권한 [1 : 일반학생, 2 : 강사, 3: 운영자, 4: 최고관리자, 5: 개발사]
           type: DataTypes.INTEGER,
           allowNull: false, //
           defaultValue: 1,
-        },
-        secret: {
-          type: DataTypes.STRING(10),
-          allowNull: true,
-          defaultValue: null,
-        },
-        terms: {
-          // 이용약관동의
-          type: DataTypes.BOOLEAN,
-          allowNull: false,
         },
       },
       {

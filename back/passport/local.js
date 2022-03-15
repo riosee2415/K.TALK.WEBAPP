@@ -18,7 +18,7 @@ module.exports = () => {
 
           if (!user) {
             return done(null, false, {
-              reason: "존재하지 않는 이메일 입니다.",
+              reason: "존재하지 않는 아이디 입니다.",
             });
           }
 

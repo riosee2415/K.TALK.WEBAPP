@@ -430,4 +430,18 @@ router.get("/logout", function (req, res) {
   });
 });
 
+router.post("/seq/create", isAdminCheck, (req, res, next) => {
+  const { email, username, nickname, birth, gender, mobile, password, level } =
+    req.body;
+
+  console.log(email);
+  console.log(username);
+  console.log(nickname);
+  console.log(birth);
+  console.log(gender);
+  console.log(mobile);
+  console.log(password);
+  console.log(level);
+});
+
 module.exports = router;
