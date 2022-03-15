@@ -430,18 +430,28 @@ router.get("/logout", function (req, res) {
   });
 });
 
-router.post("/seq/create", isAdminCheck, (req, res, next) => {
+// 🍀 회원 신규 등록
+router.post("/seq/create", isAdminCheck, async (req, res, next) => {
   const { email, username, nickname, birth, gender, mobile, password, level } =
     req.body;
 
-  console.log(email);
-  console.log(username);
-  console.log(nickname);
-  console.log(birth);
-  console.log(gender);
-  console.log(mobile);
-  console.log(password);
-  console.log(level);
+  try {
+    const result = await User.create({
+      email,
+      username,
+      nickname,
+      birth,
+      gender,
+      mobile,
+      password,
+      level,
+    });
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("회원 생성에 실패했습니다.");
+  }
 });
 
 module.exports = router;
