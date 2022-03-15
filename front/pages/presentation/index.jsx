@@ -1,12 +1,13 @@
 import React, { useCallback, useState } from "react";
 
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { END } from "redux-saga";
 import Head from "next/head";
 import axios from "axios";
 import wrapper from "../../store/configureStore";
 
-import { Form, Select, Calendar, Input } from "antd";
+import styled from "styled-components";
+import { Form, Select, Calendar } from "antd";
 import { CalendarOutlined, CaretDownOutlined } from "@ant-design/icons";
 import ClientLayout from "../../components/ClientLayout";
 import {
@@ -17,12 +18,11 @@ import {
   TextInput,
   CommonButton,
 } from "../../components/commonComponents";
+import Theme from "../../components/Theme";
 
+import useWidth from "../../hooks/useWidth";
 import { SEO_LIST_REQUEST } from "../../reducers/seo";
 import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
-import Theme from "../../components/Theme";
-import styled from "styled-components";
-import useWidth from "../../hooks/useWidth";
 
 const CustomForm = styled(Form)`
   width: 718px;
@@ -98,6 +98,8 @@ const Presentation = () => {
   const calender2Toggle = useCallback(() => {
     setIsCalendar2(!isCalendar2);
   }, [isCalendar2]);
+
+  ////// HANDLER //////
 
   const dateChagneHandler = useCallback((data) => {
     const birth = data.format("YYYY-MM-DD");
