@@ -457,7 +457,7 @@ const Index = () => {
                               width < 1350
                                 ? width < 1100
                                   ? width < 550
-                                    ? `10px`
+                                    ? `11px`
                                     : `13px`
                                   : `15px`
                                 : `18px`
@@ -486,7 +486,7 @@ const Index = () => {
                               width < 1350
                                 ? width < 1100
                                   ? width < 550
-                                    ? `10px`
+                                    ? `11px`
                                     : `13px`
                                   : `15px`
                                 : `18px`
@@ -495,33 +495,37 @@ const Index = () => {
                             {data.name}
                           </Text>
                           <DashBorder height={width < 1100 ? `25px` : `48px`} />
-                          <Text
-                            fontSize={
-                              width < 1350
-                                ? width < 1100
-                                  ? width < 550
-                                    ? `10px`
-                                    : `13px`
-                                  : `15px`
-                                : `18px`
-                            }
-                          >
-                            {data.type1}
-                          </Text>
-                          <DashBorder height={width < 1100 ? `25px` : `48px`} />
-                          <Text
-                            fontSize={
-                              width < 1350
-                                ? width < 1100
-                                  ? width < 550
-                                    ? `10px`
-                                    : `13px`
-                                  : `15px`
-                                : `18px`
-                            }
-                          >
-                            {data.type2}
-                          </Text>
+                          <Wrapper dr={`row`} width={`auto`}>
+                            <Text
+                              fontSize={
+                                width < 1350
+                                  ? width < 1100
+                                    ? width < 550
+                                      ? `11px`
+                                      : `13px`
+                                    : `15px`
+                                  : `18px`
+                              }
+                            >
+                              {data.type1}
+                            </Text>
+                            <DashBorder
+                              height={width < 1100 ? `25px` : `48px`}
+                            />
+                            <Text
+                              fontSize={
+                                width < 1350
+                                  ? width < 1100
+                                    ? width < 550
+                                      ? `11px`
+                                      : `13px`
+                                    : `15px`
+                                  : `18px`
+                              }
+                            >
+                              {data.type2}
+                            </Text>
+                          </Wrapper>
                         </Wrapper>
                       </Wrapper>
                     );
