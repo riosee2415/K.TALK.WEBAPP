@@ -10,11 +10,12 @@ import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 import { useRouter } from "next/router";
 import Head from "next/head";
 
-import { message, Slider } from "antd";
+import { Empty, message, Pagination, Slider } from "antd";
 import styled from "styled-components";
 import useWidth from "../../hooks/useWidth";
 import ClientLayout from "../../components/ClientLayout";
 import {
+  CommonButton,
   Image,
   RsWrapper,
   SpanText,
@@ -42,6 +43,16 @@ const CustomSlide = styled(Slider)`
   }
 `;
 
+const CustomTableHoverWrapper = styled(Wrapper)`
+  flex-direction: row;
+  padding: 25px 0 20px;
+  background-color: ${Theme.lightGrey_C};
+  cursor: pointer;
+  &:hover {
+    background-color: ${Theme.white_C};
+  }
+`;
+
 const Student = () => {
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
@@ -59,6 +70,112 @@ const Student = () => {
       // return router.push(`/`);
     }
   }, [me]);
+
+  ////// DATAVIEW //////
+
+  const testArr = [
+    {
+      id: 1,
+      name: "강의명",
+      teacher: "강사명",
+      content: "한국어로 편지 쓰기",
+      createdAt: "2022/01/03",
+    },
+    {
+      id: 2,
+      name: "강의명",
+      teacher: "강사명",
+      content: "한국어로 편지 쓰기",
+      createdAt: "2022/01/03",
+    },
+    {
+      id: 3,
+      name: "강의명",
+      teacher: "강사명",
+      content: "한국어로 편지 쓰기",
+      createdAt: "2022/01/03",
+    },
+    {
+      id: 4,
+      name: "강의명",
+      teacher: "강사명",
+      content: "한국어로 편지 쓰기",
+      createdAt: "2022/01/03",
+    },
+    {
+      id: 5,
+      name: "강의명",
+      teacher: "강사명",
+      content: "한국어로 편지 쓰기",
+      createdAt: "2022/01/03",
+    },
+  ];
+
+  const noticeArr = [
+    {
+      id: 1,
+      type: "공지사항",
+      title: "안녕하세요. 강의 공지입니다.",
+      author: "강사명",
+      createdAt: "2022/01/22",
+    },
+    {
+      id: 2,
+      type: "공지사항",
+      title: "안녕하세요. 강의 공지입니다.",
+      author: "강사명",
+      createdAt: "2022/01/22",
+    },
+    {
+      id: 3,
+      type: "공지사항",
+      title: "안녕하세요. 강의 공지입니다.",
+      author: "강사명",
+      createdAt: "2022/01/22",
+    },
+    {
+      id: 4,
+      type: "공지사항",
+      title: "안녕하세요. 강의 공지입니다.",
+      author: "강사명",
+      createdAt: "2022/01/22",
+    },
+    {
+      id: 5,
+      type: "공지사항",
+      title: "안녕하세요. 강의 공지입니다.",
+      author: "강사명",
+      createdAt: "2022/01/22",
+    },
+  ];
+
+  const preparationArr = [
+    {
+      id: 1,
+      title: "자료명",
+      createdAt: "2022/01/22",
+    },
+    {
+      id: 2,
+      title: "자료명",
+      createdAt: "2022/01/22",
+    },
+    {
+      id: 3,
+      title: "자료명",
+      createdAt: "2022/01/22",
+    },
+    {
+      id: 4,
+      title: "자료명",
+      createdAt: "2022/01/22",
+    },
+    {
+      id: 5,
+      title: "자료명",
+      createdAt: "2022/01/22",
+    },
+  ];
   return (
     <>
       <Head>
@@ -151,7 +268,7 @@ const Student = () => {
               </Text>
             </Wrapper>
 
-            <Wrapper al={`flex-start`}>
+            <Wrapper al={`flex-start`} margin={`0 0 20px`}>
               <Text fontSize={`22px`} fontWeight={`bold`}>
                 내 강의정보
               </Text>
@@ -164,6 +281,7 @@ const Student = () => {
               radius={`10px`}
               ju={`space-between`}
               shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
+              margin={`0 0 86px`}
             >
               <Image
                 width={`184px`}
@@ -308,6 +426,155 @@ const Student = () => {
               </Wrapper>
               {/** */}
             </Wrapper>
+            <Wrapper al={`flex-start`} margin={`0 0 20px`}>
+              <Text fontSize={`22px`} fontWeight={`bold`}>
+                숙제보기 / 제출하기
+              </Text>
+            </Wrapper>
+
+            <Wrapper margin={`0 0 60px`}>
+              {testArr &&
+                (testArr.length === 0 ? (
+                  <Wrapper>
+                    <Empty description="숙제가 없습니다." />
+                  </Wrapper>
+                ) : (
+                  testArr.map((data) => {
+                    return (
+                      <Wrapper
+                        key={data.id}
+                        dr={`row`}
+                        shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
+                        radius={`10px`}
+                        padding={`20px`}
+                        margin={`0 0 10px`}
+                      >
+                        <Wrapper width={`55%`} dr={`row`} ju={`flex-start`}>
+                          <Wrapper dr={`row`} width={`25%`} ju={`flex-start`}>
+                            <Image
+                              width={`22px`}
+                              margin={`0 16px 0 0`}
+                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png"
+                              alt="lecture_icon"
+                            />
+                            <Text fontWeight={`bold`}>{data.name}</Text>
+                          </Wrapper>
+
+                          <Wrapper dr={`row`} width={`25%`} ju={`flex-start`}>
+                            <Text fontSize={`14px`}>{data.teacher}강사님</Text>
+                          </Wrapper>
+
+                          <Wrapper dr={`row`} width={`50%`} ju={`flex-start`}>
+                            <Text fontSize={`14px`}>{data.content}</Text>
+                          </Wrapper>
+                        </Wrapper>
+                        <Wrapper width={`45%`} dr={`row`}>
+                          <Wrapper dr={`row`} width={`35%`} ju={`flex-start`}>
+                            <Image
+                              width={`22px`}
+                              margin={`0 16px 0 0`}
+                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_download.png"
+                              alt="lecture_icon"
+                            />
+                            <Text>파일다운로드</Text>
+                          </Wrapper>
+
+                          <Wrapper dr={`row`} width={`35%`} ju={`flex-start`}>
+                            <Image
+                              width={`22px`}
+                              margin={`0 16px 0 0`}
+                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_b.png"
+                              alt="lecture_icon"
+                            />
+                            <Text>{data.createdAt}까지</Text>
+                          </Wrapper>
+
+                          <Wrapper dr={`row`} width={`30%`}>
+                            <Text fontWeight={`bold`}>제출하기</Text>
+                          </Wrapper>
+                        </Wrapper>
+                      </Wrapper>
+                    );
+                  })
+                ))}
+            </Wrapper>
+            <Pagination size="small" />
+
+            <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
+              <Text fontSize={`22px`} fontWeight={`bold`}>
+                공지사항 / 내게 온 쪽지
+              </Text>
+            </Wrapper>
+
+            <Wrapper radius={`10px`} shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}>
+              <Wrapper dr={`row`} fontWeight={`bold`} padding={`20px 0`}>
+                <Wrapper width={`10%`}>구분</Wrapper>
+                <Wrapper width={`70%`}>제목</Wrapper>
+                <Wrapper width={`10%`}>작성자</Wrapper>
+                <Wrapper width={`10%`}>날짜</Wrapper>
+              </Wrapper>
+              {noticeArr &&
+                (noticeArr.length === 0 ? (
+                  <Wrapper>
+                    <Empty description="공지사항이 없습니다." />
+                  </Wrapper>
+                ) : (
+                  noticeArr.map((data) => {
+                    return (
+                      <CustomTableHoverWrapper key={data.id}>
+                        <Wrapper width={`10%`}>{data.type}</Wrapper>
+                        <Wrapper width={`70%`} al={`flex-start`}>
+                          {data.title}
+                        </Wrapper>
+                        <Wrapper width={`10%`}>{data.author}</Wrapper>
+                        <Wrapper width={`10%`}>{data.createdAt}</Wrapper>
+                      </CustomTableHoverWrapper>
+                    );
+                  })
+                ))}
+            </Wrapper>
+            <Wrapper al={`flex-end`} margin={`20px 0 40px`}>
+              <CommonButton radius={`5px`}>쪽지 보내기</CommonButton>
+            </Wrapper>
+            <Pagination size="small" />
+
+            <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
+              <Text fontSize={`22px`} fontWeight={`bold`}>
+                자습하기
+              </Text>
+            </Wrapper>
+
+            <Wrapper radius={`10px`} shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}>
+              <Wrapper dr={`row`} fontWeight={`bold`} padding={`20px 0`}>
+                <Wrapper width={`10%`}>글번호</Wrapper>
+                <Wrapper width={`70%`}>자료명</Wrapper>
+                <Wrapper width={`10%`}>자료</Wrapper>
+                <Wrapper width={`10%`}>날짜</Wrapper>
+              </Wrapper>
+              {preparationArr &&
+                (preparationArr.length === 0 ? (
+                  <Wrapper>
+                    <Empty description="공지사항이 없습니다." />
+                  </Wrapper>
+                ) : (
+                  preparationArr.map((data) => {
+                    return (
+                      <CustomTableHoverWrapper key={data.id}>
+                        <Wrapper width={`10%`}>{data.id}</Wrapper>
+                        <Wrapper width={`70%`} al={`flex-start`}>
+                          {data.title}
+                        </Wrapper>
+                        <Wrapper width={`10%`}>자료 다운로드</Wrapper>
+                        <Wrapper width={`10%`}>{data.createdAt}</Wrapper>
+                      </CustomTableHoverWrapper>
+                    );
+                  })
+                ))}
+            </Wrapper>
+            <Wrapper al={`flex-end`} margin={`20px 0 40px`}>
+              <CommonButton radius={`5px`}>쪽지 보내기</CommonButton>
+            </Wrapper>
+            <Pagination size="small" />
           </RsWrapper>
         </WholeWrapper>
       </ClientLayout>
