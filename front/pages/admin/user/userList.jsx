@@ -11,6 +11,7 @@ import {
   USERLIST_REQUEST,
   USERLIST_UPDATE_REQUEST,
   CREATE_MODAL_TOGGLE,
+  USER_CREATE_REQUEST,
 } from "../../../reducers/user";
 import {
   Table,
@@ -21,6 +22,7 @@ import {
   notification,
   Input,
   Form,
+  Calendar,
 } from "antd";
 import useInput from "../../../hooks/useInput";
 import { SearchOutlined } from "@ant-design/icons";
@@ -68,9 +70,14 @@ const UserList = ({}) => {
     users,
     createModal,
     updateModal,
+    //
     st_userListError,
+    //
     st_userListUpdateDone,
     st_userListUpdateError,
+    //
+    st_userCreateDone,
+    st_userCreateError,
   } = useSelector((state) => state.user);
 
   const [updateData, setUpdateData] = useState(null);
@@ -117,6 +124,23 @@ const UserList = ({}) => {
   }, [st_userListUpdateDone]);
 
   useEffect(() => {
+    if (st_userCreateDone) {
+      const query = router.query;
+
+      createModalToggle();
+
+      dispatch({
+        type: USERLIST_REQUEST,
+        data: {
+          name: query.name ? query.name : ``,
+          email: query.email ? query.email : ``,
+          listType: query.sort,
+        },
+      });
+    }
+  }, [st_userListUpdateDone]);
+
+  useEffect(() => {
     if (st_userListError) {
       return message.error(st_userListError);
     }
@@ -127,6 +151,12 @@ const UserList = ({}) => {
       return message.error(st_userListUpdateError);
     }
   }, [st_userListUpdateError]);
+
+  useEffect(() => {
+    if (st_userCreateError) {
+      return message.error(st_userCreateError);
+    }
+  }, [st_userCreateError]);
 
   useEffect(() => {
     router.push(
@@ -154,6 +184,8 @@ const UserList = ({}) => {
   }, [updateModal]);
 
   const createModalToggle = useCallback(() => {
+    form.resetFields();
+
     dispatch({
       type: CREATE_MODAL_TOGGLE,
     });
@@ -177,6 +209,22 @@ const UserList = ({}) => {
       },
     });
   }, [inputLevel]);
+
+  const onSubmitCreate = useCallback((data) => {
+    dispatch({
+      type: USER_CREATE_REQUEST,
+      data: {
+        email: data.email,
+        username: data.username,
+        nickname: data.nickname,
+        birth: data.birth.format("YYYY-MM-DD"),
+        gender: data.gender,
+        mobile: data.mobile,
+        password: data.password,
+        level: data.level,
+      },
+    });
+  }, []);
 
   ////// DATAVIEW //////
 
@@ -331,9 +379,14 @@ const UserList = ({}) => {
         footer={null}
         width={`700px`}
       >
-        <Form labelCol={{ span: 3 }} wrapperCol={{ span: 21 }} form={form}>
+        <Form
+          labelCol={{ span: 3 }}
+          wrapperCol={{ span: 21 }}
+          form={form}
+          onFinish={onSubmitCreate}
+        >
           <Form.Item label="이메일" rules={[{ required: true }]} name="email">
-            <Input />
+            <Input type="email" />
           </Form.Item>
 
           <Form.Item
@@ -353,7 +406,7 @@ const UserList = ({}) => {
           </Form.Item>
 
           <Form.Item label="생년월일" rules={[{ required: true }]} name="birth">
-            <Input />
+            <Calendar fullscreen={false} />
           </Form.Item>
 
           <Form.Item label="성별" rules={[{ required: true }]} name="gender">
@@ -386,7 +439,11 @@ const UserList = ({}) => {
           </Form.Item>
 
           <Wrapper dr={`row`} ju={`flex-end`}>
-            <Button size="small" style={{ margin: `0 10px 0 0` }}>
+            <Button
+              size="small"
+              style={{ margin: `0 10px 0 0` }}
+              onClick={createModalToggle}
+            >
               취소
             </Button>
             <Button size="small" type="primary" htmlType="submit">
