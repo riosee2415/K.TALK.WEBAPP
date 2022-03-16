@@ -62,10 +62,11 @@ const CustomModal = styled(Modal)`
     font-weight: bold;
   }
 
-  /* & .ant-modal-content .ant-modal-title {
-    font-weight: bold;
-    font-size: 22px;
-  } */
+  @media (max-width: 700px) {
+    & .ant-modal-title {
+      font-size: 16px;
+    }
+  }
 `;
 
 const CustomForm = styled(Form)`
@@ -204,8 +205,6 @@ const Index = () => {
   const width = useWidth();
 
   const formRef = useRef();
-  const formRef2 = useRef();
-  const formRef3 = useRef();
 
   const [form] = Form.useForm();
 
@@ -217,9 +216,10 @@ const Index = () => {
   const [noticeModalToggle, setNoticeModalToggle] = useState(false);
   const [homeWorkModalToggle, setHomeWorkModalToggle] = useState(false);
 
-  const inputDate = useInput("");
+  const [checkedList, setCheckedList] = useState([]);
+  const [checkAll, setCheckAll] = useState(false);
 
-  const [fileName, setFileName] = useState("");
+  const inputDate = useInput("");
 
   ////// REDUX //////
   ////// USEEFFECT //////
@@ -230,6 +230,20 @@ const Index = () => {
       // return router.push(`/`);
     }
   }, [me]);
+
+  useEffect(() => {
+    if (testArr.length !== 0) {
+      let arr = [];
+
+      testArr.map(() => {
+        arr.push(false);
+      });
+
+      console.log(arr);
+      setCheckedList(arr);
+    }
+  }, []);
+
   ////// TOGGLE //////
   ////// HANDLER //////
 
@@ -256,7 +270,6 @@ const Index = () => {
   const onReset = useCallback(() => {
     form.resetFields();
 
-    setFileName("");
     inputDate.setValue("");
     setIsCalendar(false);
     setHomeWorkModalToggle(false);
@@ -264,26 +277,21 @@ const Index = () => {
     setNoteSendToggle(false);
   }, []);
 
-  // const onChangeImages = useCallback((e) => {
-  //   console.log(e.target.files.length, "easdad");
+  const onChangeBoxEachHanlder = useCallback((e, idx2, arr) => {
+    let result = arr.map((data, idx) => {
+      return idx2 === idx ? e.target.checked : data;
+    });
 
-  //   const formData = new FormData();
+    setCheckedList(result);
+  }, []);
 
-  //   setFileName(e.target.files.length !== 0 && e.target.files[0].name);
+  const onChangeBoxAllHanlder = useCallback((e, arr) => {
+    let resultAll = arr.map(() => {
+      return e.target.checked;
+    });
 
-  //   [].forEach.call(e.target.files, (file) => {
-  //     formData.append("image", file);
-  //   });
-
-  //   dispatch({
-  //     type: GALLERY_UPLOAD_REQUEST,
-  //     data: formData,
-  //   });
-  // });
-
-  const clickImageUpload = useCallback(() => {
-    imageInput.current.click();
-  }, [imageInput.current]);
+    setCheckedList(resultAll);
+  }, []);
 
   ////// DATAVIEW //////
 
@@ -526,15 +534,13 @@ const Index = () => {
                               textAlign={`center`}
                               padding={width < 700 ? `30px 15px` : `30px`}
                               cursor={`pointer`}
-                              ju={`center`}
-                              bgColor={Theme.lightGrey_C}
-                              // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
-                            >
+                              al={width < 700 ? `baseline` : `center`}
+                              bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
                               <CustomCheckBox />
                               <Text
-                                isEllipsis
                                 fontSize={width < 700 ? `12px` : `16px`}
-                                width={`25%`}>
+                                width={`25%`}
+                                wordBreak={`break-word`}>
                                 Eric
                               </Text>
                               <Text
@@ -598,7 +604,7 @@ const Index = () => {
                               textAlign={`center`}
                               padding={width < 700 ? `30px 15px` : `30px`}
                               cursor={`pointer`}
-                              ju={`center`}
+                              al={width < 700 ? `baseline` : `center`}
                               bgColor={Theme.lightGrey_C}>
                               <Text
                                 fontSize={width < 700 ? `12px` : `16px`}
@@ -639,7 +645,10 @@ const Index = () => {
                       textAlign={`center`}
                       ju={`center`}
                       padding={width < 700 ? `30px 15px` : `30px`}>
-                      <CustomCheckBox />
+                      <CustomCheckBox
+                        onChange={(e) => onChangeBoxAllHanlder(e, checkedList)}
+                      />
+
                       <Text
                         fontSize={width < 700 ? `12px` : `18px`}
                         fontWeight={`Bold`}
@@ -704,9 +713,13 @@ const Index = () => {
                               cursor={`pointer`}
                               ju={`center`}
                               bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
-                              <CustomCheckBox />
+                              <CustomCheckBox
+                                checked={checkedList[idx]}
+                                onChange={(e) =>
+                                  onChangeBoxEachHanlder(e, idx, checkedList)
+                                }
+                              />
                               <Text
-                                isEllipsis
                                 fontSize={width < 700 ? `12px` : `16px`}
                                 width={`15%`}>
                                 Eric
@@ -754,8 +767,9 @@ const Index = () => {
                 <Wrapper al={`flex-end`} margin={`20px 0 0 0`}>
                   <CommonButton
                     radius={`5px`}
-                    width={`110px`}
-                    height={`38px`}
+                    width={width < 700 ? `90px` : `110px`}
+                    height={width < 700 ? `32px` : `38px`}
+                    fontSize={width < 700 ? `12px` : `14px`}
                     onClick={() => setNoteSendToggle(true)}>
                     쪽지 보내기
                   </CommonButton>
@@ -791,13 +805,13 @@ const Index = () => {
                     <Text
                       fontSize={width < 700 ? `12px` : `18px`}
                       fontWeight={`Bold`}
-                      width={`15%`}>
+                      width={`20%`}>
                       진도
                     </Text>
                     <Text
                       fontSize={width < 700 ? `12px` : `18px`}
                       fontWeight={`Bold`}
-                      width={`calc(100% - 15% - 10% - 15% - 25%)`}>
+                      width={`calc(100% - 15% - 10% - 20% - 25%)`}>
                       수업메모
                     </Text>
                     <Text
@@ -822,9 +836,8 @@ const Index = () => {
                           textAlign={`center`}
                           padding={width < 700 ? `35px 10px` : `35px 30px`}
                           cursor={`pointer`}
-                          bgColor={Theme.lightGrey_C}
-                          // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
-                        >
+                          al={width < 700 ? `baseline` : `center`}
+                          bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
                           <Text
                             fontSize={width < 700 ? `12px` : `16px`}
                             width={`15%`}
@@ -838,12 +851,12 @@ const Index = () => {
                           </Text>
                           <Text
                             fontSize={width < 700 ? `12px` : `16px`}
-                            width={`15%`}>
+                            width={`20%`}>
                             1권 38페이지
                           </Text>
                           <Text
                             fontSize={width < 700 ? `12px` : `16px`}
-                            width={`calc(100% - 15% - 10% - 15% - 25%)`}>
+                            width={`calc(100% - 15% - 10% - 20% - 25%)`}>
                             수업메모 내용입니다.
                           </Text>
                           <Text
@@ -857,7 +870,11 @@ const Index = () => {
                   )}
                 </Wrapper>
                 <Wrapper al={`flex-end`} margin={`20px 0 0 0`}>
-                  <CommonButton radius={`5px`} width={`110px`} height={`38px`}>
+                  <CommonButton
+                    radius={`5px`}
+                    width={width < 700 ? `90px` : `110px`}
+                    height={width < 700 ? `32px` : `38px`}
+                    fontSize={width < 700 ? `12px` : `14px`}>
                     작성하기
                   </CommonButton>
                 </Wrapper>
@@ -980,7 +997,9 @@ const Index = () => {
                   shadow={`0px 5px 15px rgb(0,0,0,0.1)`}
                   radius={`10px`}
                   padding={`35px 20px`}>
-                  <Text width={`50%`}>한국어로 편지 쓰기</Text>
+                  <Text width={`50%`} fontSize={width < 700 ? `14px` : `16px`}>
+                    한국어로 편지 쓰기
+                  </Text>
 
                   <Wrapper width={`40%`} dr={width < 1100 ? `column` : `row`}>
                     <CustomWrapper width={width < 1100 ? `100%` : `50%`}>
@@ -992,7 +1011,9 @@ const Index = () => {
                           cursor: `pointer`,
                         }}
                       />
-                      <Text>파일 업로드</Text>
+                      <Text fontSize={width < 700 ? `14px` : `16px`}>
+                        파일 업로드
+                      </Text>
                     </CustomWrapper>
 
                     <CustomWrapper
@@ -1006,7 +1027,9 @@ const Index = () => {
                           cursor: `pointer`,
                         }}
                       />
-                      <Text>2022/01/31까지</Text>
+                      <Text fontSize={width < 700 ? `14px` : `16px`}>
+                        2022/01/31까지
+                      </Text>
                     </CustomWrapper>
                   </Wrapper>
 
@@ -1024,8 +1047,9 @@ const Index = () => {
               <Wrapper al={`flex-end`} margin={`20px 0 0 0`}>
                 <CommonButton
                   radius={`5px`}
-                  width={`110px`}
-                  height={`38px`}
+                  width={width < 700 ? `90px` : `110px`}
+                  height={width < 700 ? `32px` : `38px`}
+                  fontSize={width < 700 ? `12px` : `14px`}
                   onClick={() => setHomeWorkModalToggle(true)}>
                   숙제 업로드
                 </CommonButton>
@@ -1072,6 +1096,7 @@ const Index = () => {
                     ju={`flex-start`}
                     padding={width < 700 ? `35px 10px` : `35px 30px`}
                     cursor={`pointer`}
+                    al={width < 700 ? `baseline` : `center`}
                     bgColor={Theme.lightGrey_C}
                     // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
                   >
@@ -1097,8 +1122,9 @@ const Index = () => {
                 <Wrapper al={`flex-end`} margin={`20px 0 0 0`}>
                   <CommonButton
                     radius={`5px`}
-                    width={`110px`}
-                    height={`38px`}
+                    width={width < 700 ? `90px` : `110px`}
+                    height={width < 700 ? `32px` : `38px`}
+                    fontSize={width < 700 ? `12px` : `14px`}
                     onClick={() => setNoticeModalToggle(true)}>
                     작성하기
                   </CommonButton>
@@ -1272,19 +1298,28 @@ const Index = () => {
             ref={formRef}
             form={form}
             onFinish={noteSendFinishHandler}>
-            <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+              fontWeight={`bold`}
+              margin={`0 0 10px`}>
               받는 사람
             </Text>
             <Form.Item name="receivePerson" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
-            <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+              fontWeight={`bold`}
+              margin={`0 0 10px`}>
               제목
             </Text>
             <Form.Item name="title1" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
-            <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+              fontWeight={`bold`}
+              margin={`0 0 10px`}>
               내용
             </Text>
             <Form.Item name="content1" rules={[{ required: true }]}>
@@ -1320,13 +1355,19 @@ const Index = () => {
             ref={formRef}
             form={form}
             onFinish={noteSendFinishHandler}>
-            <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+              fontWeight={`bold`}
+              margin={`0 0 10px`}>
               제목
             </Text>
             <Form.Item name="title2" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
-            <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+              fontWeight={`bold`}
+              margin={`0 0 10px`}>
               내용
             </Text>
             <Form.Item name="content2" rules={[{ required: true }]}>
@@ -1361,13 +1402,19 @@ const Index = () => {
             ref={formRef}
             form={form}
             onFinish={homeWorkFinishHandler}>
-            <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+              fontWeight={`bold`}
+              margin={`0 0 10px`}>
               제목
             </Text>
             <Form.Item name="title3" rules={[{ required: true }]}>
               <Input placeholder="" />
             </Form.Item>
-            <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+              fontWeight={`bold`}
+              margin={`0 0 10px`}>
               날짜
             </Text>
             <Form.Item name="date" rules={[{ required: true }]}>
@@ -1408,7 +1455,7 @@ const Index = () => {
               </Wrapper>
             </Form.Item>
 
-            <Text fontSize={`18px`} fontWeight={`bold`}>
+            <Text fontSize={width < 700 ? `14px` : `18px`} fontWeight={`bold`}>
               파일 업로드
             </Text>
             <Form.Item name="file" rules={[{ required: true }]}>
