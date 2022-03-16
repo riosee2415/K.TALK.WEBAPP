@@ -222,7 +222,7 @@ const Index = () => {
                 />
               </Wrapper>
               <Text
-                fontSize={width < 1100 ? `22px` : `28px`}
+                fontSize={width < 700 ? `20px` : `28px`}
                 fontWeight={`bold`}
                 padding={`0 0 0 15px`}
               >
@@ -232,7 +232,7 @@ const Index = () => {
 
             <Wrapper al={`flex-start`} margin={`0 0 20px`}>
               <Text
-                fontSize={width < 1100 ? `18px` : `22px`}
+                fontSize={width < 800 ? `18px` : `22px`}
                 fontWeight={`bold`}
               >
                 무료수업 안내 / 수업스케쥴
@@ -282,7 +282,7 @@ const Index = () => {
                                     ? width < 550
                                       ? `11px`
                                       : `13px`
-                                    : `15px`
+                                    : `14px`
                                   : `18px`
                               }
                               fontWeight={`bold`}
@@ -302,7 +302,7 @@ const Index = () => {
                                     ? width < 550
                                       ? `11px`
                                       : `13px`
-                                    : `15px`
+                                    : `14px`
                                   : `18px`
                               }
                               fontWeight={`bold`}
@@ -321,7 +321,7 @@ const Index = () => {
                                     ? width < 550
                                       ? `11px`
                                       : `13px`
-                                    : `15px`
+                                    : `14px`
                                   : `18px`
                               }
                               fontWeight={`bold`}
@@ -341,7 +341,7 @@ const Index = () => {
                                     ? width < 550
                                       ? `11px`
                                       : `13px`
-                                    : `15px`
+                                    : `14px`
                                   : `18px`
                               }
                               fontWeight={`bold`}
@@ -360,7 +360,7 @@ const Index = () => {
                                     ? width < 550
                                       ? `11px`
                                       : `13px`
-                                    : `15px`
+                                    : `14px`
                                   : `18px`
                               }
                               fontWeight={`bold`}
@@ -380,7 +380,7 @@ const Index = () => {
                                     ? width < 550
                                       ? `11px`
                                       : `13px`
-                                    : `15px`
+                                    : `14px`
                                   : `18px`
                               }
                               fontWeight={`bold`}
@@ -399,7 +399,7 @@ const Index = () => {
                                     ? width < 550
                                       ? `11px`
                                       : `13px`
-                                    : `15px`
+                                    : `14px`
                                   : `18px`
                               }
                               fontWeight={`bold`}
@@ -419,7 +419,7 @@ const Index = () => {
                                     ? width < 550
                                       ? `11px`
                                       : `13px`
-                                    : `15px`
+                                    : `14px`
                                   : `18px`
                               }
                               fontWeight={`bold`}
@@ -459,7 +459,7 @@ const Index = () => {
                                   ? width < 550
                                     ? `11px`
                                     : `13px`
-                                  : `15px`
+                                  : `14px`
                                 : `18px`
                             }
                             margin={width < 550 ? `0 10px 0 0` : `0 30px 0 0`}
@@ -488,7 +488,7 @@ const Index = () => {
                                   ? width < 550
                                     ? `11px`
                                     : `13px`
-                                  : `15px`
+                                  : `14px`
                                 : `18px`
                             }
                           >
@@ -503,7 +503,7 @@ const Index = () => {
                                     ? width < 550
                                       ? `11px`
                                       : `13px`
-                                    : `15px`
+                                    : `14px`
                                   : `18px`
                               }
                             >
@@ -519,7 +519,7 @@ const Index = () => {
                                     ? width < 550
                                       ? `11px`
                                       : `13px`
-                                    : `15px`
+                                    : `14px`
                                   : `18px`
                               }
                             >
@@ -536,7 +536,7 @@ const Index = () => {
 
             <Wrapper al={`flex-start`} margin={`80px 0 20px`}>
               <Text
-                fontSize={width < 1100 ? `18px` : `22px`}
+                fontSize={width < 800 ? `18px` : `22px`}
                 fontWeight={`bold`}
                 margin={`0 0 20px`}
               >
@@ -550,7 +550,7 @@ const Index = () => {
                 shadow={`0 5px 15px rgba(0,0,0,0.05)`}
                 dr={width < 1100 ? `column` : `row`}
                 ju={width < 1100 ? `center` : `flex-start`}
-                al={`center`}
+                al={width < 1100 ? `flex-start` : `center`}
                 margin={`0 0 60px`}
               >
                 <Text
@@ -689,7 +689,7 @@ const Index = () => {
 
             <Wrapper al={`flex-start`} margin={`0 0 90px`}>
               <Text
-                fontSize={width < 1100 ? `18px` : `22px`}
+                fontSize={width < 800 ? `18px` : `22px`}
                 fontWeight={`bold`}
                 margin={`0 0 20px`}
               >
@@ -846,7 +846,7 @@ const Index = () => {
             </Wrapper>
             <Wrapper al={`flex-start`} margin={`0 0 90px`}>
               <Text
-                fontSize={width < 1100 ? `18px` : `22px`}
+                fontSize={width < 800 ? `18px` : `22px`}
                 fontWeight={`bold`}
                 margin={`0 0 20px`}
               >
@@ -992,7 +992,7 @@ const Index = () => {
 
             <Wrapper al={`flex-start`} margin={`0 0 60px`}>
               <Text
-                fontSize={width < 1100 ? `18px` : `22px`}
+                fontSize={width < 800 ? `18px` : `22px`}
                 fontWeight={`bold`}
                 margin={`0 0 20px`}
               >
@@ -1076,7 +1076,7 @@ const Index = () => {
             <Pagination />
             <Wrapper al={`flex-start`} margin={`130px 0 110px`}>
               <Text
-                fontSize={width < 1100 ? `18px` : `22px`}
+                fontSize={width < 800 ? `18px` : `22px`}
                 fontWeight={`bold`}
                 margin={`0 0 20px`}
               >
