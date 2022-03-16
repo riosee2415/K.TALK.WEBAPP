@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 
 import { END } from "redux-saga";
@@ -10,16 +10,7 @@ import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 import { useRouter } from "next/router";
 import Head from "next/head";
 
-import {
-  Button,
-  Empty,
-  Form,
-  Input,
-  message,
-  Modal,
-  Pagination,
-  Slider,
-} from "antd";
+import { Empty, Form, Input, message, Modal, Pagination, Slider } from "antd";
 import styled from "styled-components";
 import useWidth from "../../hooks/useWidth";
 import ClientLayout from "../../components/ClientLayout";
@@ -29,8 +20,6 @@ import {
   RsWrapper,
   SpanText,
   Text,
-  TextArea,
-  TextInput,
   WholeWrapper,
   Wrapper,
 } from "../../components/commonComponents";
@@ -354,7 +343,7 @@ const Student = () => {
                 dr={`row`}
                 ju={`flex-start`}
               >
-                <Wrapper width={`auto`} padding={`5px`} margin={`0 10px 5px 0`}>
+                <Wrapper width={`auto`} margin={`0 10px 5px 0`}>
                   <Image
                     width={`22px`}
                     height={`22px`}
@@ -378,7 +367,12 @@ const Student = () => {
                 dr={`row`}
                 ju={`flex-start`}
               >
-                <Wrapper width={`25%`} dr={`row`} margin={`0 20px 0 0`}>
+                <Wrapper
+                  width={`25%`}
+                  dr={`row`}
+                  ju={`flex-start`}
+                  margin={`0 20px 0 0`}
+                >
                   <Image
                     margin={`0 10px 0 0`}
                     width={`22px`}
