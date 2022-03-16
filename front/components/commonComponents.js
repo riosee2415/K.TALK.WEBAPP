@@ -378,6 +378,7 @@ export const CommonButton = styled(Button)`
 export const Text = styled.p`
   overflow: ${(props) => props.overflow};
   width: ${(props) => props.width};
+  max-width: ${(props) => props.maxWidth};
   height: ${(props) => props.height};
   min-height: ${(props) => props.minHeight};
   max-height: ${(props) => props.maxHeight};

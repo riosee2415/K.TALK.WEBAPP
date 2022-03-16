@@ -24,21 +24,51 @@ import {
   Image,
   ProductWrapper,
 } from "../../components/commonComponents";
-
-import { SearchOutlined } from "@ant-design/icons";
+import { Input, Popconfirm } from "antd";
+import { CloseOutlined, SearchOutlined } from "@ant-design/icons";
 
 const TabWrapper = styled(Wrapper)`
-  width: calc(100% / 5 - 11px);
+  width: 260px;
+  margin: 0 13px 10px 0;
   height: 50px;
   border: 1px solid ${Theme.grey_C};
   border-radius: 10px;
   flex-direction: row;
+  justify-content: flex-start;
   padding: 0 5px;
   &:hover {
     border: 1px solid ${Theme.basicTheme_C};
   }
   &.current {
     border: 1px solid ${Theme.basicTheme_C};
+  }
+  @media (max-width: 700px) {
+    width: 110px;
+  }
+`;
+const CustomPopconfirm = styled(Popconfirm)`
+  & .anticon {
+    display: none !important;
+  }
+`;
+
+const ProductMenu = styled(Wrapper)`
+  bottom: -80px;
+  transition: 0.5s;
+
+  @media (max-width: 1100px) {
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  & .menu {
+    transition: 0.5s;
+    &:hover {
+      background-color: ${Theme.lightGrey_C};
+    }
   }
 `;
 
@@ -52,11 +82,22 @@ const Index = () => {
 
   const width = useWidth();
   const [currentTab, setCurrentTab] = useState(0);
+  const [currentMenu, setCurrentMenu] = useState(null);
   ////// REDUX //////
   ////// USEEFFECT //////
   ////// TOGGLE //////
   ////// HANDLER //////
   ////// DATAVIEW //////
+
+  const testData = [
+    { id: "1", imagePath: "https://via.placeholder.com/203x258" },
+    { id: "2", imagePath: "https://via.placeholder.com/203x258" },
+    { id: "3", imagePath: "https://via.placeholder.com/203x258" },
+    { id: "4", imagePath: "https://via.placeholder.com/203x258" },
+    { id: "5", imagePath: "https://via.placeholder.com/203x258" },
+    { id: "6", imagePath: "https://via.placeholder.com/203x258" },
+    { id: "7", imagePath: "https://via.placeholder.com/203x258" },
+  ];
 
   return (
     <>
@@ -114,78 +155,235 @@ const Index = () => {
             </Wrapper>
 
             <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 40px`}>
-              <TextInput
-                placeholder="학생명으로 검색"
-                prefix={<SearchOutlined />}
-                radius={`25px`}
-                width={`500px`}
-                height={`50px`}
-                bgColor={Theme.lightGrey_C}
-              />
+              <Wrapper
+                position={`relative`}
+                width={width < 700 ? `calc(100% - 100px - 20px)` : `500px`}
+              >
+                <SearchOutlined
+                  style={{
+                    color: Theme.grey2_C,
+                    fontSize: `20px`,
+                    position: "absolute",
+                    left: `15px`,
+                  }}
+                />
+                <TextInput
+                  padding={`0 0 0 55px`}
+                  placeholder="학생명으로 검색"
+                  prefix={<SearchOutlined />}
+                  radius={`25px`}
+                  width={`100%`}
+                  height={`50px`}
+                  bgColor={Theme.lightGrey_C}
+                />
+              </Wrapper>
 
               <CommonButton
                 kindOf={`white2`}
-                width={`160px`}
+                width={width < 700 ? `100px` : `160px`}
                 height={`50px`}
                 shadow={`0 2px 10px rgba(0,0,0,0.05)`}
               >
                 자료 올리기
               </CommonButton>
             </Wrapper>
-            <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 30px`}>
+            <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
               <TabWrapper
                 onClick={() => setCurrentTab(0)}
                 className={currentTab === 0 && `current`}
               >
                 <Wrapper width={`17px`}>
-                  <Image src={``} alt={`file_icon`} />
+                  <Image
+                    src={`https://via.placeholder.com/100x100`}
+                    // alt={`file_icon`}
+                  />
                 </Wrapper>
-                <Text>ILK(아이러브코리아 SB)</Text>
+                <Text
+                  maxWidth={`calc(100% - 17px)`}
+                  isEllipsis
+                  fontSize={width < 700 ? `10px` : `14px`}
+                >
+                  ILK(아이러브코리아 SB)
+                </Text>
               </TabWrapper>
               <TabWrapper
                 onClick={() => setCurrentTab(1)}
                 className={currentTab === 1 && `current`}
               >
                 <Wrapper width={`17px`}>
-                  <Image src={``} alt={`file_icon`} />
+                  <Image
+                    src={`https://via.placeholder.com/100x100`}
+                    // alt={`file_icon`}
+                  />
                 </Wrapper>
-                <Text>ILK(아이러브코리아 SB)</Text>
+                <Text
+                  maxWidth={`calc(100% - 17px)`}
+                  isEllipsis
+                  fontSize={width < 700 ? `10px` : `14px`}
+                >
+                  ILK(아이러브코리아 SB)
+                </Text>
               </TabWrapper>
               <TabWrapper
                 onClick={() => setCurrentTab(2)}
                 className={currentTab === 2 && `current`}
               >
                 <Wrapper width={`17px`}>
-                  <Image src={``} alt={`file_icon`} />
+                  <Image
+                    src={`https://via.placeholder.com/100x100`}
+                    // alt={`file_icon`}
+                  />
                 </Wrapper>
-                <Text>교재명</Text>
+                <Text
+                  maxWidth={`calc(100% - 17px)`}
+                  isEllipsis
+                  fontSize={width < 700 ? `10px` : `14px`}
+                >
+                  교재명
+                </Text>
               </TabWrapper>
               <TabWrapper
                 onClick={() => setCurrentTab(3)}
                 className={currentTab === 3 && `current`}
               >
                 <Wrapper width={`17px`}>
-                  <Image src={``} alt={`file_icon`} />
+                  <Image
+                    src={`https://via.placeholder.com/100x100`}
+                    // alt={`file_icon`}
+                  />
                 </Wrapper>
-                <Text>교재명</Text>
+                <Text
+                  maxWidth={`calc(100% - 17px)`}
+                  isEllipsis
+                  fontSize={width < 700 ? `10px` : `14px`}
+                >
+                  교재명
+                </Text>
               </TabWrapper>
               <TabWrapper
                 onClick={() => setCurrentTab(4)}
                 className={currentTab === 4 && `current`}
               >
                 <Wrapper width={`17px`}>
-                  <Image src={``} alt={`file_icon`} />
+                  <Image
+                    src={`https://via.placeholder.com/100x100`}
+                    // alt={`file_icon`}
+                  />
                 </Wrapper>
-                <Text>교재명</Text>
+                <Text
+                  maxWidth={`calc(100% - 17px)`}
+                  isEllipsis
+                  fontSize={width < 700 ? `10px` : `14px`}
+                >
+                  교재명
+                </Text>
               </TabWrapper>
             </Wrapper>
 
-            <Wrapper dr={`row`} ju={`flex-start`}>
-              <ProductWrapper>
-                <Wrapper>
-                  <Image src={`https://via.placeholder.com/203x258`} />
-                </Wrapper>
-              </ProductWrapper>
+            <Wrapper
+              dr={`row`}
+              al={`flex-start`}
+              ju={`flex-start`}
+              minHeight={`680px`}
+            >
+              {testData &&
+                testData.map((data, idx) => {
+                  return (
+                    <ProductWrapper>
+                      <ProductMenu
+                        display={currentMenu === data.id ? `flex` : `none`}
+                        width={`280px`}
+                        bgColor={Theme.white_C}
+                        position={`absolute`}
+                        zIndex={`999`}
+                        ju={`flex-start`}
+                        radius={`10px`}
+                        shadow={`0 5px 15px rgba(0,0,0,0.05)`}
+                        right={
+                          width < 1280
+                            ? width < 1100
+                              ? `0`
+                              : (idx + 1) % 4 === 0
+                              ? ``
+                              : `-100px`
+                            : (idx + 1) % 6 === 0
+                            ? ``
+                            : `-100px`
+                        }
+                        left={
+                          width < 1280
+                            ? width < 1100
+                              ? `0`
+                              : (idx + 1) % 4 === 0
+                              ? `-100px`
+                              : ``
+                            : (idx + 1) % 6 === 0
+                            ? `-100px`
+                            : ``
+                        }
+                      >
+                        <Wrapper
+                          height={`20px`}
+                          al={`flex-end`}
+                          padding={`20px 20px 0 0`}
+                          margin={`0 0 10px`}
+                        >
+                          <CloseOutlined
+                            onClick={() => {
+                              setCurrentMenu(null);
+                            }}
+                          />
+                        </Wrapper>
+
+                        <Wrapper
+                          className={`menu`}
+                          color={Theme.grey2_C}
+                          fontSize={`16px`}
+                          al={`flex-start`}
+                          height={`40px`}
+                          padding={`0 0 0 30px`}
+                        >
+                          이름 바꾸기
+                        </Wrapper>
+                        <Wrapper
+                          className={`menu`}
+                          color={Theme.grey2_C}
+                          fontSize={`16px`}
+                          al={`flex-start`}
+                          height={`40px`}
+                          padding={`0 0 0 30px`}
+                        >
+                          이동
+                        </Wrapper>
+                        <Wrapper
+                          className={`menu`}
+                          color={Theme.grey2_C}
+                          fontSize={`16px`}
+                          al={`flex-start`}
+                          height={`40px`}
+                          padding={`0 0 0 30px`}
+                        >
+                          다운로드
+                        </Wrapper>
+                        <Wrapper
+                          className={`menu`}
+                          color={Theme.grey2_C}
+                          fontSize={`16px`}
+                          al={`flex-start`}
+                          height={`40px`}
+                          padding={`0 0 0 30px`}
+                          margin={`0 0 20px 0`}
+                        >
+                          삭제
+                        </Wrapper>
+                      </ProductMenu>
+
+                      <Wrapper onClick={() => setCurrentMenu(data.id)}>
+                        <Image src={data.imagePath} />
+                      </Wrapper>
+                    </ProductWrapper>
+                  );
+                })}
             </Wrapper>
           </RsWrapper>
         </WholeWrapper>
