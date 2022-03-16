@@ -94,26 +94,30 @@ const CustomText = styled(Text)`
   }
 
   @media (max-width: 700px) {
-    font-size: 12px;
-    padding: 0 2px;
+    font-size: 14px;
+    &::after {
+      content: "|";
+      padding: 0 5px;
+      color: ${Theme.grey2_C};
+    }
   }
 `;
 
 const CustomText2 = styled(Text)`
   font-size: 18px;
-  font-weight: Bold;
+  font-weight: ${(props) => props.fontWeight || `Bold`};
   color: ${Theme.black_2C};
   margin: 0;
 
   &::after {
     content: "";
-    margin: ${(props) => props.margin || `0 30px 0 30px`};
+    margin: ${(props) => props.margin || `0 20px`};
     border-right: 1px dashed ${Theme.grey2_C};
     color: ${Theme.grey2_C};
   }
 
   @media (max-width: 700px) {
-    font-size: 12px;
+    font-size: 14px;
     &::after {
       margin: ${(props) => props.margin || `0 5px`};
     }
@@ -133,7 +137,7 @@ const CustomText3 = styled(Text)`
   }
 
   @media (max-width: 700px) {
-    font-size: 12px;
+    font-size: 14px;
     &::before {
       margin: 0 10px;
     }
@@ -209,7 +213,7 @@ const Index = () => {
       </Head>
 
       <ClientLayout>
-        <WholeWrapper margin={`100px 0 0`}>
+        <WholeWrapper margin={`100px 0 0`} bgColor={Theme.subTheme_C}>
           <RsWrapper>
             <Wrapper dr={`row`} margin={`70px 0 75px 0`} ju={`flex-start`}>
               <Image
@@ -246,26 +250,26 @@ const Index = () => {
                   textAlign={`center`}
                   padding={width < 700 ? `30px 15px` : `30px`}>
                   <Text
-                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
                     width={`15%`}>
                     글 번호
                   </Text>
                   <Text
-                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
                     width={`50%`}>
                     제목
                   </Text>
                   <Text
-                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
                     width={`15%`}>
                     작성자
                   </Text>
 
                   <Text
-                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
                     width={`20%`}>
                     날짜
@@ -282,18 +286,18 @@ const Index = () => {
                   // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
                 >
                   <Text
-                    fontSize={width < 700 ? `12px` : `16px`}
+                    fontSize={width < 700 ? `14px` : `16px`}
                     width={`15%`}
                     wordBreak={`break-word`}>
                     15
                   </Text>
-                  <Text fontSize={width < 700 ? `12px` : `16px`} width={`50%`}>
+                  <Text fontSize={width < 700 ? `14px` : `16px`} width={`50%`}>
                     안녕하세요. 강사 여러분께 공지사항 알립니다.
                   </Text>
-                  <Text fontSize={width < 700 ? `12px` : `16px`} width={`15%`}>
+                  <Text fontSize={width < 700 ? `14px` : `16px`} width={`15%`}>
                     케이톡 라이브
                   </Text>
-                  <Text fontSize={width < 700 ? `12px` : `16px`} width={`20%`}>
+                  <Text fontSize={width < 700 ? `14px` : `16px`} width={`20%`}>
                     2022/01/22
                   </Text>
                 </Wrapper>
@@ -319,14 +323,18 @@ const Index = () => {
                 shadow={`0px 5px 15px rgb(0,0,0,0.1)`}
                 padding={width < 700 ? `35px 10px` : `35px 30px`}
                 radius={`10px`}>
-                <Wrapper dr={`row`} width={width < 1400 ? `auto` : `45%`}>
-                  <FieldTimeOutlined
-                    style={{
-                      fontSize: width < 700 ? 20 : 34,
-                      margin: 10,
-                      color: Theme.basicTheme_C,
-                    }}
+                <Wrapper
+                  dr={`row`}
+                  width={width < 1400 ? `auto` : `38%`}
+                  ju={`flex-start`}>
+                  <Image
+                    width={`22px`}
+                    height={`22px`}
+                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
+                    alt="clock_icon"
+                    margin={`0 5px 0 0`}
                   />
+
                   <CustomText>화요일</CustomText>
                   <CustomText2 color={Theme.black_2C}>7PM</CustomText2>
 
@@ -339,36 +347,44 @@ const Index = () => {
 
                 <Wrapper
                   dr={`row`}
-                  width={width < 1400 ? `100%` : `55%`}
-                  ju={`space-between`}>
-                  <Wrapper dr={`row`} ju={`flex-start`} width={`auto`}>
-                    <CalendarOutlined
-                      style={{
-                        fontSize: width < 700 ? 20 : 34,
-                        margin: 10,
-                        color: Theme.subTheme4_C,
-                      }}
+                  ju={`space-between`}
+                  width={width < 1400 ? `100%` : `62%`}
+                  margin={width < 700 ? `10px 0 0 0` : `0`}>
+                  <Wrapper dr={`row`} width={`auto`}>
+                    <Image
+                      width={`22px`}
+                      height={`22px`}
+                      src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
+                      alt="calender_icon"
+                      margin={`0 5px 0 0`}
                     />
-                    <CustomText2 color={Theme.black_2C}>2022-01-28</CustomText2>
+                    <CustomText2
+                      color={Theme.black_2C}
+                      fontWeight={`normal`}
+                      width={width < 700 ? `auto` : `140px`}>
+                      2022-01-28
+                    </CustomText2>
 
-                    <CarryOutOutlined
-                      style={{
-                        fontSize: width < 700 ? 20 : 34,
-                        margin: 10,
-                        color: Theme.subTheme2_C,
-                      }}
+                    <Image
+                      width={`22px`}
+                      height={`22px`}
+                      src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
+                      alt="calender_icon"
+                      margin={`0 5px 0 0`}
                     />
                     <Text
                       color={Theme.black_2C}
                       fontSize={width < 700 ? `12px` : `18px`}
-                      fontWeight={`bold`}>
+                      width={width < 700 ? `auto` : `140px`}>
                       NO.12384
                     </Text>
                   </Wrapper>
 
-                  <CustomText3 color={Theme.black_2C} cursor={`pointer`}>
-                    수업 일지 보러가기
-                  </CustomText3>
+                  <Wrapper width={`auto`}>
+                    <CustomText3 color={Theme.black_2C} cursor={`pointer`}>
+                      수업 일지 보러가기
+                    </CustomText3>
+                  </Wrapper>
                 </Wrapper>
               </Wrapper>
 
