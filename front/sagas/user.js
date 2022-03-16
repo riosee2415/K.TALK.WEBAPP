@@ -28,6 +28,11 @@ import {
   KAKAO_LOGIN_REQUEST,
   KAKAO_LOGIN_SUCCESS,
   KAKAO_LOGIN_FAILURE,
+  /////////////////////////////
+  USER_CREATE_REQUEST,
+  USER_CREATE_SUCCESS,
+  USER_CREATE_FAILURE,
+  /////////////////////////////
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -136,6 +141,33 @@ function* signUp(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
+function userCreateAPI(data) {
+  return axios.post(`/api/user/seq/create`, data);
+}
+
+function* userCreate(action) {
+  try {
+    const result = yield call(userCreateAPI, action.data);
+
+    yield put({
+      type: USER_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
 function userListAPI(data) {
   return axios.get(
     `/api/user/list/${data.listType}?name=${data.name}&email=${data.email}`
@@ -233,6 +265,10 @@ function* watchSignUp() {
   yield takeLatest(SIGNUP_REQUEST, signUp);
 }
 
+function* watchUserCreate() {
+  yield takeLatest(USER_CREATE_REQUEST, userCreate);
+}
+
 function* watchUserList() {
   yield takeLatest(USERLIST_REQUEST, userList);
 }
@@ -252,6 +288,7 @@ export default function* userSaga() {
     fork(watchSignin),
     fork(watchSigninAdmin),
     fork(watchSignUp),
+    fork(watchUserCreate),
     fork(watchUserList),
     fork(watchUserListUpdate),
     fork(watchKakaoLogin),

@@ -5,6 +5,7 @@ export const initailState = {
   currentAdminMenu: [],
   users: null,
 
+  createModal: false,
   updateModal: false,
 
   //
@@ -19,6 +20,10 @@ export const initailState = {
   st_signUpLoading: false,
   st_signUpDone: false,
   st_signUpError: null,
+  //
+  st_userCreateLoading: false,
+  st_userCreateDone: false,
+  st_userCreateError: null,
   //
   st_userListLoading: false,
   st_userListDone: false,
@@ -49,6 +54,10 @@ export const SIGNUP_REQUEST = "SIGNUP_REQUEST";
 export const SIGNUP_SUCCESS = "SIGNUP_SUCCESS";
 export const SIGNUP_FAILURE = "SIGNUP_FAILURE";
 
+export const USER_CREATE_REQUEST = "USER_CREATE_REQUEST";
+export const USER_CREATE_SUCCESS = "USER_CREATE_SUCCESS";
+export const USER_CREATE_FAILURE = "USER_CREATE_FAILURE";
+
 export const USERLIST_REQUEST = "USERLIST_REQUEST";
 export const USERLIST_SUCCESS = "USERLIST_SUCCESS";
 export const USERLIST_FAILURE = "USERLIST_FAILURE";
@@ -67,6 +76,8 @@ export const KAKAO_LOGIN_FAILURE = "KAKAO_LOGIN_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
+
+export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
 
 export const CURRENT_ADMINMENU_STATUS = "CURRENT_ADMINMENU_STATUS";
 
@@ -149,6 +160,25 @@ const reducer = (state = initailState, action) =>
         draft.st_signUpLoading = false;
         draft.st_signUpDone = false;
         draft.st_signUpError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case USER_CREATE_REQUEST: {
+        draft.st_userCreateLoading = true;
+        draft.st_userCreateDone = null;
+        draft.st_userCreateError = false;
+        break;
+      }
+      case USER_CREATE_SUCCESS: {
+        draft.st_userCreateLoading = false;
+        draft.st_userCreateDone = true;
+        break;
+      }
+      case USER_CREATE_FAILURE: {
+        draft.st_userCreateLoading = false;
+        draft.st_userCreateDone = false;
+        draft.st_userCreateError = action.error;
         break;
       }
       //////////////////////////////////////////////
@@ -236,6 +266,10 @@ const reducer = (state = initailState, action) =>
 
       case UPDATE_MODAL_CLOSE_REQUEST:
         draft.updateModal = false;
+        break;
+
+      case CREATE_MODAL_TOGGLE:
+        draft.createModal = !draft.createModal;
         break;
 
       default:

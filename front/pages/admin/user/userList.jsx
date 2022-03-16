@@ -10,11 +10,11 @@ import {
   UPDATE_MODAL_OPEN_REQUEST,
   USERLIST_REQUEST,
   USERLIST_UPDATE_REQUEST,
+  CREATE_MODAL_TOGGLE,
 } from "../../../reducers/user";
 import {
   Table,
   Button,
-  Image,
   message,
   Modal,
   Select,
@@ -66,6 +66,7 @@ const UserList = ({}) => {
 
   const {
     users,
+    createModal,
     updateModal,
     st_userListError,
     st_userListUpdateDone,
@@ -79,6 +80,8 @@ const UserList = ({}) => {
 
   const inputSort = useInput("1");
   const inputLevel = useInput("");
+
+  const [form] = Form.useForm();
 
   ////// USEEFFECT //////
   useEffect(() => {
@@ -150,6 +153,12 @@ const UserList = ({}) => {
     });
   }, [updateModal]);
 
+  const createModalToggle = useCallback(() => {
+    dispatch({
+      type: CREATE_MODAL_TOGGLE,
+    });
+  }, [createModal]);
+
   ////// HANDLER //////
 
   const onSubmitUpdate = useCallback(() => {
@@ -195,7 +204,19 @@ const UserList = ({}) => {
     },
     {
       title: "권한",
-      render: (data) => <div>{data.level}</div>,
+      render: (data) => (
+        <div>
+          {data.level === 1
+            ? "일반학생"
+            : data.level === 2
+            ? "강사"
+            : data.level === 3
+            ? "운영자"
+            : data.level === 4
+            ? "최고관리자"
+            : "개발사"}
+        </div>
+      ),
     },
     {
       title: "수정",
@@ -203,7 +224,11 @@ const UserList = ({}) => {
         <Button
           size="small"
           type="primary"
-          onClick={() => updateModalOpen(data)}
+          onClick={() =>
+            data.level === 5
+              ? message.error("개발사는 권한을 수정할 수 없습니다.")
+              : updateModalOpen(data)
+          }
         >
           수정
         </Button>
@@ -264,7 +289,7 @@ const UserList = ({}) => {
             <SearchOutlined />
             검색
           </Button>
-          <Button size="small" type="primary">
+          <Button size="small" type="primary" onClick={createModalToggle}>
             + 회원 생성
           </Button>
         </Input.Group>
@@ -287,25 +312,89 @@ const UserList = ({}) => {
         <Wrapper padding={`10px`} al={`flex-start`}>
           <div>사용자 레벨</div>
           <Select
-            defaultValue="1"
             style={{ width: "100%" }}
-            value={inputLevel.value}
+            value={String(inputLevel.value)}
             onChange={(data) => inputLevel.setValue(data)}
           >
-            <Select.Option value="1">1</Select.Option>
-            <Select.Option value="2">2</Select.Option>
-            <Select.Option value="3">3</Select.Option>
-            <Select.Option value="4">4</Select.Option>
+            <Select.Option value="1">일반학생</Select.Option>
+            <Select.Option value="2">강사</Select.Option>
+            <Select.Option value="3">운영자</Select.Option>
+            <Select.Option value="4">최고관리자</Select.Option>
           </Select>
         </Wrapper>
       </Modal>
 
       <Modal
-        visible={false}
-        onOk={() => {}}
-        onCancel={() => {}}
-        title="Ask"
-      ></Modal>
+        visible={createModal}
+        onCancel={createModalToggle}
+        title="회원 리스트"
+        footer={null}
+        width={`700px`}
+      >
+        <Form labelCol={{ span: 3 }} wrapperCol={{ span: 21 }} form={form}>
+          <Form.Item label="이메일" rules={[{ required: true }]} name="email">
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="회원이름"
+            rules={[{ required: true }]}
+            name="username"
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="닉네임"
+            rules={[{ required: true }]}
+            name="nickname"
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="생년월일" rules={[{ required: true }]} name="birth">
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="성별" rules={[{ required: true }]} name="gender">
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="전화번호"
+            rules={[{ required: true }]}
+            name="mobile"
+          >
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item
+            label="비밀번호"
+            rules={[{ required: true }]}
+            name="password"
+          >
+            <Input type="password" />
+          </Form.Item>
+
+          <Form.Item label="권한" rules={[{ required: true }]} name="lavel">
+            <Select>
+              <Select.Option value="1">일반학생</Select.Option>
+              <Select.Option value="2">강사</Select.Option>
+              <Select.Option value="3">운영자</Select.Option>
+              <Select.Option value="4">최고관리자</Select.Option>
+            </Select>
+          </Form.Item>
+
+          <Wrapper dr={`row`} ju={`flex-end`}>
+            <Button size="small" style={{ margin: `0 10px 0 0` }}>
+              취소
+            </Button>
+            <Button size="small" type="primary" htmlType="submit">
+              생성
+            </Button>
+          </Wrapper>
+        </Form>
+      </Modal>
     </AdminLayout>
   );
 };
