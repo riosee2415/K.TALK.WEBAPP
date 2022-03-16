@@ -191,6 +191,98 @@ export const RsWrapper = styled.article`
   }
 `;
 
+export const ProductWrapper = styled(Wrapper)`
+  width: calc(100% / 6 - (130px / 6));
+  margin: 0 26px 30px 0;
+  position: relative;
+  cursor: pointer;
+  align-items: flex-start;
+
+  &:nth-child(6n) {
+    margin-right: 0;
+  }
+
+  .lineThrough {
+    text-decoration: line-through;
+    color: ${(props) => props.theme.grey_C};
+  }
+
+  img.product {
+    height: 230px;
+  }
+
+  @media (max-width: 1280px) {
+    width: calc(100% / 4 - (81px / 4));
+
+    &:nth-child(6n) {
+      margin: 0 25px 30px 0;
+    }
+    &:nth-child(4n) {
+      margin-right: 0;
+    }
+
+    img.product {
+      height: 299px;
+    }
+  }
+
+  @media (max-width: 1100px) {
+    width: calc(100% / 3 - (54px / 3));
+
+    &:nth-child(4n) {
+      margin: 0 27px 30px 0;
+    }
+
+    &:nth-child(3n) {
+      margin-right: 0;
+    }
+
+    img.product {
+      height: 281px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    img.product {
+      height: 248px;
+    }
+  }
+
+  @media (max-width: 800px) {
+    img.product {
+      height: 215px;
+    }
+  }
+
+  @media (max-width: 700px) {
+    width: calc(100% / 2 - (27px / 2));
+
+    &:nth-child(2n + 1) {
+      margin-right: 27px;
+    }
+
+    &:nth-child(2n) {
+      margin-right: 0;
+    }
+
+    img.product {
+      height: 322px;
+    }
+  }
+
+  @media (max-width: 500px) {
+    width: calc(100% / 2 - (15px / 2));
+
+    &:nth-child(2n + 1) {
+      margin-right: 15px;
+    }
+
+    img.product {
+      height: 170px;
+    }
+  }
+`;
+
 export const CommonButton = styled(Button)`
   width: ${(props) => props.width};
   height: ${(props) => props.height};
@@ -199,8 +291,10 @@ export const CommonButton = styled(Button)`
   font-size: ${(props) => props.fontSize || `1rem`};
   color: ${(props) => props.color || props.theme.white_C};
   border-radius: ${(props) => props.radius || `25px`};
+  box-shadow: ${(props) => props.shadow};
 
   ${(props) => !props.kindOf && `background : ${props.theme.basicTheme_C};`}
+
   ${(props) =>
     props.kindOf === `white` && `background : ${props.theme.white_C};`}
   ${(props) =>
@@ -208,6 +302,12 @@ export const CommonButton = styled(Button)`
   ${(props) =>
     props.kindOf === `white` &&
     `border : 1px solid ${props.theme.basicTheme_C};`}
+  
+  ${(props) =>
+    props.kindOf === `white2` && `background : ${props.theme.white_C};`}
+  ${(props) => props.kindOf === `white2` && `color : ${props.theme.black_C};`}
+  ${(props) => props.kindOf === `white2` && `border : none;`}
+
   ${(props) =>
     props.kindOf === `black` && `background : ${props.theme.black_C};`}
   ${(props) => props.kindOf === `black` && `color : ${props.theme.white_C};`}
@@ -245,6 +345,11 @@ export const CommonButton = styled(Button)`
     ${(props) =>
       props.kindOf === `white` && `background ${props.theme.basicTheme_C};`}
     ${(props) => props.kindOf === `white` && `color ${props.theme.white_C};`}
+    
+    ${(props) =>
+      props.kindOf === `white2` && `background ${props.theme.basicTheme_C};`}
+    ${(props) => props.kindOf === `white2` && `color ${props.theme.white_C};`}
+
     ${(props) =>
       props.kindOf === `black` && `background : ${props.theme.white_C};`}
     ${(props) => props.kindOf === `black` && `color : ${props.theme.black_C};`}
