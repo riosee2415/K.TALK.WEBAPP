@@ -255,18 +255,22 @@ const Student = () => {
       <ClientLayout>
         <WholeWrapper margin={`100px 0 0`} bgColor={Theme.subTheme_C}>
           <RsWrapper>
-            <Wrapper margin={`60px 0`} dr={`row`} ju={`flex-start`}>
+            <Wrapper
+              margin={width < 700 ? `30px 0` : `60px 0`}
+              dr={`row`}
+              ju={`flex-start`}
+            >
               <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
                 <Image
-                  width={`75px`}
-                  height={`75px`}
+                  width={width < 700 ? `65px` : `75px`}
+                  height={width < 700 ? `65px` : `75px`}
                   radius={`100px`}
                   src="https://t1.daumcdn.net/thumb/R720x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/1UzB/image/paEOLJhjPWh-CW7c2KoUJ-tKWs4.jpg"
                   alt="student_thumbnail"
                 />
               </Wrapper>
               <Text
-                fontSize={`28px`}
+                fontSize={width < 700 ? `20px` : `28px`}
                 fontWeight={`bold`}
                 padding={`0 0 0 15px`}
               >
@@ -294,7 +298,11 @@ const Student = () => {
                 dr={`row`}
                 ju={`flex-start`}
               >
-                <Wrapper width={`auto`} padding={`5px`} margin={`0 10px 5px 0`}>
+                <Wrapper
+                  width={`auto`}
+                  padding={width < 700 ? `0` : `5px`}
+                  margin={`0 10px 5px 0`}
+                >
                   <Image
                     width={`22px`}
                     height={`22px`}
@@ -303,7 +311,7 @@ const Student = () => {
                   />
                 </Wrapper>
                 <Text
-                  fontSize={width < 700 ? `16px` : `18px`}
+                  fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`bold`}
                   lineHeight={`1.22`}
                 >
@@ -313,10 +321,12 @@ const Student = () => {
                   width={`1px`}
                   height={`34px`}
                   borderLeft={`1px dashed ${Theme.grey_C}`}
-                  margin={width < 1350 ? `0 10px` : `0 20px`}
+                  margin={
+                    width < 1350 ? (width < 700 ? `0 4px` : `0 10px`) : `0 20px`
+                  }
                 />
                 <Text
-                  fontSize={width < 700 ? `16px` : `18px`}
+                  fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`bold`}
                   lineHeight={`1.22`}
                 >
@@ -326,10 +336,12 @@ const Student = () => {
                   width={`1px`}
                   height={`34px`}
                   borderLeft={`1px dashed ${Theme.grey_C}`}
-                  margin={width < 1350 ? `0 10px` : `0 20px`}
+                  margin={
+                    width < 1350 ? (width < 700 ? `0 4px` : `0 10px`) : `0 20px`
+                  }
                 />
                 <Text
-                  fontSize={width < 700 ? `16px` : `18px`}
+                  fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`bold`}
                   lineHeight={`1.22`}
                 >
@@ -350,7 +362,7 @@ const Student = () => {
                     alt="clender_icon"
                   />
                 </Wrapper>
-                <Text fontSize={width < 700 ? `16px` : `18px`}>
+                <Text fontSize={width < 700 ? `14px` : `18px`}>
                   2022/01/01 ~ 2022/01/28
                   <SpanText
                     fontWeight={`bold`}
@@ -366,7 +378,7 @@ const Student = () => {
                 dr={`row`}
                 ju={`flex-start`}
               >
-                <Wrapper width={`20%`} dr={`row`} margin={`0 20px 0 0`}>
+                <Wrapper width={`25%`} dr={`row`} margin={`0 20px 0 0`}>
                   <Image
                     margin={`0 10px 0 0`}
                     width={`22px`}
@@ -374,11 +386,11 @@ const Student = () => {
                     src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name.png"
                     alt="clender_icon"
                   />
-                  <Text fontSize={width < 700 ? `16px` : `18px`}>○○○</Text>
+                  <Text fontSize={width < 700 ? `14px` : `18px`}>○○○</Text>
                 </Wrapper>
 
                 <Wrapper
-                  width={`calc(80% - 20px)`}
+                  width={`calc(75% - 20px)`}
                   al={`flex-start`}
                   fontSize={width < 700 ? `12px` : `16px`}
                 >
@@ -390,7 +402,7 @@ const Student = () => {
                     >
                       ZOOM ID
                     </SpanText>
-                    4leafsoftware0000000@gmail.com
+                    4leafsoftware@gmail.com
                   </Text>
                   <Text color={Theme.grey2_C}>
                     <SpanText
@@ -463,7 +475,7 @@ const Student = () => {
                           <SpanText color={Theme.subTheme2_C}>●</SpanText>&nbsp;
                           출석 상황
                         </Text>
-                        <Wrapper width={width < 800 ? `90%` : `75%`}>
+                        <Wrapper width={width < 800 ? `80%` : `75%`}>
                           <CustomSlide
                             defaultValue={100}
                             disabled={true}
@@ -484,7 +496,7 @@ const Student = () => {
                           <SpanText color={Theme.basicTheme_C}>●</SpanText>
                           &nbsp; 수업 진도
                         </Text>
-                        <Wrapper width={width < 800 ? `90%` : `75%`}>
+                        <Wrapper width={width < 800 ? `80%` : `75%`}>
                           <CustomSlide
                             defaultValue={55}
                             disabled={true}
@@ -505,7 +517,7 @@ const Student = () => {
                           <SpanText color={Theme.subTheme6_C}>●</SpanText>&nbsp;
                           성취도
                         </Text>
-                        <Wrapper width={width < 800 ? `90%` : `75%`}>
+                        <Wrapper width={width < 800 ? `80%` : `75%`}>
                           <CustomSlide
                             defaultValue={100}
                             disabled={true}
@@ -602,7 +614,7 @@ const Student = () => {
                           <Wrapper dr={`row`} width={`25%`} ju={`flex-start`}>
                             <Image
                               width={`22px`}
-                              margin={width < 700 ? `0` : `0 16px 0 0`}
+                              margin={width < 700 ? `0 5px 0 0` : `0 16px 0 0`}
                               src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png"
                               alt="lecture_icon"
                             />
@@ -629,27 +641,39 @@ const Student = () => {
                           width={width < 700 ? `100%` : `45%`}
                           dr={`row`}
                         >
-                          <Wrapper dr={`row`} width={`35%`} ju={`flex-start`}>
+                          <Wrapper
+                            dr={`row`}
+                            width={width < 700 ? `38%` : `35%`}
+                            ju={`flex-start`}
+                          >
                             <Image
                               width={`22px`}
-                              margin={`0 16px 0 0`}
+                              margin={width < 700 ? `0 5px 0 0` : `0 16px 0 0`}
                               src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_download.png"
                               alt="lecture_icon"
                             />
                             <Text>파일다운로드</Text>
                           </Wrapper>
 
-                          <Wrapper dr={`row`} width={`35%`} ju={`flex-start`}>
+                          <Wrapper
+                            dr={`row`}
+                            width={width < 700 ? `43%` : `35%`}
+                            ju={`flex-start`}
+                          >
                             <Image
                               width={`22px`}
-                              margin={`0 16px 0 0`}
+                              margin={width < 700 ? `0 5px 0 0` : `0 16px 0 0`}
                               src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_b.png"
                               alt="lecture_icon"
                             />
                             <Text>{data.createdAt}까지</Text>
                           </Wrapper>
 
-                          <Wrapper dr={`row`} width={`30%`} cursor={`pointer`}>
+                          <Wrapper
+                            dr={`row`}
+                            width={width < 700 ? `19%` : `30%`}
+                            cursor={`pointer`}
+                          >
                             <Text fontWeight={`bold`}>제출하기</Text>
                           </Wrapper>
                         </Wrapper>
