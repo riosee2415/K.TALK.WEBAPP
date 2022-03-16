@@ -189,16 +189,32 @@ const Presentation = () => {
       <ClientLayout>
         <WholeWrapper margin={`100px 0`}>
           <RsWrapper>
-            <Wrapper margin={`90px 0 68px`}>
-              <Text color={Theme.grey2_C}>
-                For absolute beginners / For pre-intermediate leamers
-              </Text>
-              <Text fontSize={`28px`} fontWeight={`bold`}>
+            <Wrapper margin={width < 700 ? `20px 0 30px` : `90px 0 68px`}>
+              {width < 700 ? (
+                <>
+                  <Text color={Theme.grey2_C}>For absolute beginners</Text>
+                  <Text color={Theme.grey2_C}>
+                    For pre-intermediate leamers
+                  </Text>
+                </>
+              ) : (
+                <Text color={Theme.grey2_C}>
+                  For absolute beginners / For pre-intermediate leamers
+                </Text>
+              )}
+              <Text
+                fontSize={width < 700 ? `20px` : `28px`}
+                fontWeight={`bold`}
+              >
                 설명회 참가신청서 (초급/중급)
               </Text>
             </Wrapper>
             <CustomForm onFinish={submitHandler} form={form}>
-              <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+              <Text
+                fontSize={width < 700 ? `16px` : `18px`}
+                fontWeight={`bold`}
+                margin={`0 0 10px`}
+              >
                 Name in full (First / Last)
               </Text>
               <Wrapper dr={`row`} ju={`space-between`}>
@@ -214,7 +230,11 @@ const Presentation = () => {
                 </Wrapper>
               </Wrapper>
               <Wrapper al={`flex-start`} position={"relative"}>
-                <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+                <Text
+                  fontSize={width < 700 ? `16px` : `18px`}
+                  fontWeight={`bold`}
+                  margin={`0 0 10px`}
+                >
                   Date of Birth
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
@@ -273,7 +293,11 @@ const Presentation = () => {
                 </Wrapper>
               </Wrapper>
 
-              <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+              <Text
+                fontSize={width < 700 ? `16px` : `18px`}
+                fontWeight={`bold`}
+                margin={`0 0 10px`}
+              >
                 Gmail Address
               </Text>
               <Wrapper dr={`row`} ju={`flex-start`}>
@@ -290,7 +314,11 @@ const Presentation = () => {
                 </Wrapper>
               </Wrapper>
 
-              <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+              <Text
+                fontSize={width < 700 ? `16px` : `18px`}
+                fontWeight={`bold`}
+                margin={`0 0 10px`}
+              >
                 Login PW
               </Text>
               <Form.Item name="loginPW" rules={[{ required: true }]}>
@@ -300,13 +328,21 @@ const Presentation = () => {
                   placeholder={"PW"}
                 />
               </Form.Item>
-              <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+              <Text
+                fontSize={width < 700 ? `16px` : `18px`}
+                fontWeight={`bold`}
+                margin={`0 0 10px`}
+              >
                 Country of Residence
               </Text>
               <Form.Item name="countryOfResidence" rules={[{ required: true }]}>
                 <CusotmInput width={`100%`} placeholder={"Nationality"} />
               </Form.Item>
-              <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+              <Text
+                fontSize={width < 700 ? `16px` : `18px`}
+                fontWeight={`bold`}
+                margin={`0 0 10px`}
+              >
                 Phone number
               </Text>
               <Wrapper dr={`row`} ju={`flex-start`}>
@@ -342,15 +378,22 @@ const Presentation = () => {
                 </Wrapper>
               </Wrapper>
 
-              <Wrapper margin={`90px 0 68px`}>
+              <Wrapper margin={width < 700 ? `20px 0 30px` : `90px 0 68px`}>
                 <Text color={Theme.grey2_C}>
                   K-talk Live regular paid lessons
                 </Text>
-                <Text fontSize={`28px`} fontWeight={`bold`}>
+                <Text
+                  fontSize={width < 700 ? `20px` : `28px`}
+                  fontWeight={`bold`}
+                >
                   정규과정 등록신청서
                 </Text>
               </Wrapper>
-              <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+              <Text
+                fontSize={width < 700 ? `16px` : `18px`}
+                fontWeight={`bold`}
+                margin={`0 0 10px`}
+              >
                 Name in full (First / Last)
               </Text>
               <Wrapper dr={`row`} ju={`space-between`}>
@@ -376,7 +419,11 @@ const Presentation = () => {
                 </Wrapper>
               </Wrapper>
               <Wrapper al={`flex-start`} position={"relative"}>
-                <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+                <Text
+                  fontSize={width < 700 ? `16px` : `18px`}
+                  fontWeight={`bold`}
+                  margin={`0 0 10px`}
+                >
                   Date of Birth
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
@@ -435,7 +482,11 @@ const Presentation = () => {
                 </Wrapper>
               </Wrapper>
 
-              <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+              <Text
+                fontSize={width < 700 ? `16px` : `18px`}
+                fontWeight={`bold`}
+                margin={`0 0 10px`}
+              >
                 Gmail Address
               </Text>
               <Wrapper dr={`row`} ju={`flex-start`}>
@@ -462,7 +513,11 @@ const Presentation = () => {
                 </Wrapper>
               </Wrapper>
 
-              <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+              <Text
+                fontSize={width < 700 ? `16px` : `18px`}
+                fontWeight={`bold`}
+                margin={`0 0 10px`}
+              >
                 Login PW
               </Text>
               <Form.Item
@@ -476,7 +531,7 @@ const Presentation = () => {
                 />
               </Form.Item>
               <Text
-                fontSize={`18px`}
+                fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
                 margin={`0 0 10px`}
                 lineHeight={`1.22`}
@@ -490,7 +545,11 @@ const Presentation = () => {
                   placeholder={"Select Nationality"}
                 />
               </Form.Item>
-              <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+              <Text
+                fontSize={width < 700 ? `16px` : `18px`}
+                fontWeight={`bold`}
+                margin={`0 0 10px`}
+              >
                 Country of Residence
               </Text>
               <Form.Item
@@ -508,7 +567,7 @@ const Presentation = () => {
                 />
               </Form.Item>
               <Text
-                fontSize={`18px`}
+                fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
                 margin={`0 0 10px`}
                 lineHeight={`1.22`}
@@ -532,7 +591,11 @@ const Presentation = () => {
                   />
                 </Form.Item>
               </Wrapper>
-              <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+              <Text
+                fontSize={width < 700 ? `16px` : `18px`}
+                fontWeight={`bold`}
+                margin={`0 0 10px`}
+              >
                 Phone number
               </Text>
               <Wrapper dr={`row`} ju={`flex-start`}>
@@ -578,7 +641,11 @@ const Presentation = () => {
                 </Wrapper>
               </Wrapper>
 
-              <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+              <Text
+                fontSize={width < 700 ? `16px` : `18px`}
+                fontWeight={`bold`}
+                margin={`0 0 10px`}
+              >
                 SNS
               </Text>
               <Wrapper dr={`row`} ju={`flex-start`}>
@@ -619,7 +686,11 @@ const Presentation = () => {
                 </Wrapper>
               </Wrapper>
 
-              <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
+              <Text
+                fontSize={width < 700 ? `16px` : `18px`}
+                fontWeight={`bold`}
+                margin={`0 0 10px`}
+              >
                 Occupation
               </Text>
               <Form.Item

@@ -300,6 +300,7 @@ export const Text = styled.p`
   border-bottom: ${(props) => props.borderBottom};
   opacity: ${(props) => props.opacity};
   letter-spacing: ${(props) => props.letterSpacing};
+  word-break: ${(props) => props.wordBreak};
 
   ${(props) =>
     props.isEllipsis

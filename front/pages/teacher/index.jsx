@@ -27,7 +27,34 @@ import {
   SpanText,
   CommonButton,
 } from "../../components/commonComponents";
-import { Pagination } from "antd";
+import { message, Pagination } from "antd";
+
+const CustomPage = styled(Pagination)`
+  & .ant-pagination-next > button {
+    border: none;
+  }
+
+  & .ant-pagination-prev > button {
+    border: none;
+  }
+  & .ant-pagination-item {
+    border: none;
+  }
+
+  & .ant-pagination-item-active a {
+    color: ${Theme.subTheme2_C};
+  }
+
+  & .ant-pagination-item:focus-visible a,
+  .ant-pagination-item:hover a {
+    color: ${Theme.subTheme2_C};
+  }
+
+  & .ant-pagination-item-link svg {
+    font-weight: bold;
+    color: ${Theme.black_2C};
+  }
+`;
 
 const Button = styled.button`
   width: calc(100% / 5 - 30px);
@@ -41,8 +68,10 @@ const Button = styled.button`
   cursor: pointer;
 
   &:hover {
-    border: 1px solid ${Theme.black_3C};
-    transition: all 1s;
+    transition: all 0.2s;
+    border: 1px solid ${Theme.basicTheme_C};
+    background-color: ${Theme.basicTheme_C};
+    color: ${Theme.white_C};
   }
 
   @media (max-width: 700px) {
@@ -62,6 +91,11 @@ const CustomText = styled(Text)`
     padding: 0 10px;
     color: ${Theme.grey2_C};
   }
+
+  @media (max-width: 700px) {
+    font-size: 12px;
+    padding: 0 2px;
+  }
 `;
 
 const CustomText2 = styled(Text)`
@@ -76,6 +110,13 @@ const CustomText2 = styled(Text)`
     border-right: 1px dashed ${Theme.grey2_C};
     color: ${Theme.grey2_C};
   }
+
+  @media (max-width: 700px) {
+    font-size: 12px;
+    &::after {
+      margin: ${(props) => props.margin || `0 5px`};
+    }
+  }
 `;
 
 const CustomText3 = styled(Text)`
@@ -85,9 +126,16 @@ const CustomText3 = styled(Text)`
 
   &::before {
     content: "";
-    margin: ${(props) => props.margin || `0 50px 0 200px`};
+    margin: 0 20px 0 0;
     border-right: 1px dashed ${Theme.grey2_C};
     color: ${Theme.grey2_C};
+  }
+
+  @media (max-width: 700px) {
+    font-size: 12px;
+    &::before {
+      margin: 0 10px;
+    }
   }
 `;
 
@@ -97,11 +145,22 @@ const Index = () => {
     (state) => state.seo
   );
 
+  const { me } = useSelector((state) => state.seo);
+
   ////// HOOKS //////
 
   const width = useWidth();
+
   ////// REDUX //////
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (!me) {
+      message.error("로그인 후 이용해주세요.");
+      // return router.push(`/`);
+    }
+  }, [me]);
+
   ////// TOGGLE //////
   ////// HANDLER //////
   ////// DATAVIEW //////
@@ -159,19 +218,22 @@ const Index = () => {
                 src={`https://via.placeholder.com/75x75`}
                 margin={`0 15px 0 0`}
               />
-              <Text
+
+              <Wrapper
+                dr={`row`}
+                width={`auto`}
                 fontSize={width < 700 ? `20px` : `28px`}
                 color={Theme.black_2C}>
-                안녕하세요,&nbsp;
-                <SpanText color={Theme.basicTheme_C}>000</SpanText>
-                &nbsp;강사님!
-              </Text>
+                <Text>안녕하세요,</Text>&nbsp;
+                <Text color={Theme.basicTheme_C}>000</Text>&nbsp;
+                <Text>강사님!</Text>
+              </Wrapper>
             </Wrapper>
 
             <Wrapper al={`flex-start`}>
               <Text
                 color={Theme.black_2C}
-                fontSize={`22px`}
+                fontSize={width < 700 ? `18px` : `22px`}
                 fontWeight={`Bold`}
                 margin={`0 0 20px`}>
                 공지사항
@@ -181,37 +243,30 @@ const Index = () => {
                 <Wrapper
                   dr={`row`}
                   textAlign={`center`}
-                  height={`65px`}
-                  padding={`0 30px`}>
+                  padding={width < 700 ? `30px 15px` : `30px`}>
                   <Text
-                    fontSize={`18px`}
+                    fontSize={width < 700 ? `12px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`100px`}
-                    display={width < 700 ? `none` : `block`}>
+                    width={`15%`}>
                     글 번호
                   </Text>
                   <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
+                    fontSize={width < 700 ? `12px` : `18px`}
                     fontWeight={`Bold`}
-                    width={
-                      width < 700
-                        ? `calc(100% - 100px)`
-                        : `calc(100% - 100px - 200px - 100px)`
-                    }>
+                    width={`50%`}>
                     제목
                   </Text>
                   <Text
                     fontSize={width < 700 ? `12px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`200px`}
-                    display={width < 700 ? `none` : `block`}>
+                    width={`15%`}>
                     작성자
                   </Text>
 
                   <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
+                    fontSize={width < 700 ? `12px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`100px`}>
+                    width={`20%`}>
                     날짜
                   </Text>
                 </Wrapper>
@@ -220,61 +275,53 @@ const Index = () => {
                   dr={`row`}
                   textAlign={`center`}
                   ju={`flex-start`}
-                  padding={`30px 30px`}
+                  padding={width < 700 ? `30px 15px` : `30px`}
                   cursor={`pointer`}
-                  bgColor={Theme.lightGrey_C}>
+                  bgColor={Theme.lightGrey_C}
+                  // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
+                >
                   <Text
-                    fontSize={`16px`}
-                    width={`100px`}
-                    display={width < 700 ? `none` : `block`}>
+                    fontSize={width < 700 ? `12px` : `16px`}
+                    width={`15%`}
+                    wordBreak={`break-word`}>
                     15
                   </Text>
-                  <Text
-                    fontSize={width < 700 ? `12px` : `16px`}
-                    minWidth={`100px`}
-                    width={
-                      width < 700
-                        ? `calc(100% - 100px)`
-                        : `calc(100% - 100px - 200px - 100px)`
-                    }>
+                  <Text fontSize={width < 700 ? `12px` : `16px`} width={`50%`}>
                     안녕하세요. 강사 여러분께 공지사항 알립니다.
                   </Text>
-                  <Text
-                    fontSize={width < 700 ? `14px` : `16px`}
-                    width={width < 700 ? `100px` : `200px`}
-                    display={width < 700 ? `none` : `block`}>
+                  <Text fontSize={width < 700 ? `12px` : `16px`} width={`15%`}>
                     케이톡 라이브
                   </Text>
-                  <Text
-                    fontSize={width < 700 ? `12px` : `16px`}
-                    width={`100px`}>
+                  <Text fontSize={width < 700 ? `12px` : `16px`} width={`20%`}>
                     2022/01/22
                   </Text>
                 </Wrapper>
               </Wrapper>
 
               <Wrapper margin={`65px 0 85px`}>
-                <Pagination defaultCurrent={6} total={40}></Pagination>
+                <CustomPage defaultCurrent={6} total={40}></CustomPage>
               </Wrapper>
             </Wrapper>
 
             <Wrapper al={`flex-start`}>
               <Text
                 color={Theme.black_2C}
-                fontSize={`22px`}
+                fontSize={width < 700 ? `18px` : `22px`}
                 fontWeight={`Bold`}
                 margin={`0 0 20px`}>
                 내 수업
               </Text>
 
               <Wrapper
+                dr={`row`}
+                ju={`flex-start`}
                 shadow={`0px 5px 15px rgb(0,0,0,0.1)`}
-                padding={`35px 30px`}
+                padding={width < 700 ? `35px 10px` : `35px 30px`}
                 radius={`10px`}>
-                <Wrapper dr={`row`} ju={`flex-start`}>
+                <Wrapper dr={`row`} width={width < 1400 ? `auto` : `45%`}>
                   <FieldTimeOutlined
                     style={{
-                      fontSize: 34,
+                      fontSize: width < 700 ? 20 : 34,
                       margin: 10,
                       color: Theme.basicTheme_C,
                     }}
@@ -287,38 +334,45 @@ const Index = () => {
 
                   <CustomText>금요일</CustomText>
                   <CustomText2 color={Theme.black_2C}>9PM</CustomText2>
+                </Wrapper>
 
-                  <CalendarOutlined
-                    style={{
-                      fontSize: 34,
-                      margin: 10,
-                      color: Theme.subTheme4_C,
-                    }}
-                  />
-                  <CustomText2 color={Theme.black_2C}>2022-01-28</CustomText2>
+                <Wrapper
+                  dr={`row`}
+                  width={width < 1400 ? `100%` : `55%`}
+                  ju={`space-between`}>
+                  <Wrapper dr={`row`} ju={`flex-start`} width={`auto`}>
+                    <CalendarOutlined
+                      style={{
+                        fontSize: width < 700 ? 20 : 34,
+                        margin: 10,
+                        color: Theme.subTheme4_C,
+                      }}
+                    />
+                    <CustomText2 color={Theme.black_2C}>2022-01-28</CustomText2>
 
-                  <CarryOutOutlined
-                    style={{
-                      fontSize: 34,
-                      margin: 10,
-                      color: Theme.subTheme2_C,
-                    }}
-                  />
-                  <Text
-                    color={Theme.black_2C}
-                    fontSize={`18px`}
-                    fontWeight={`bold`}>
-                    NO.12384
-                  </Text>
+                    <CarryOutOutlined
+                      style={{
+                        fontSize: width < 700 ? 20 : 34,
+                        margin: 10,
+                        color: Theme.subTheme2_C,
+                      }}
+                    />
+                    <Text
+                      color={Theme.black_2C}
+                      fontSize={width < 700 ? `12px` : `18px`}
+                      fontWeight={`bold`}>
+                      NO.12384
+                    </Text>
+                  </Wrapper>
 
-                  <CustomText3 color={Theme.black_2C}>
+                  <CustomText3 color={Theme.black_2C} cursor={`pointer`}>
                     수업 일지 보러가기
                   </CustomText3>
                 </Wrapper>
               </Wrapper>
 
               <Wrapper margin={`65px 0 0`}>
-                <Pagination defaultCurrent={6} total={40}></Pagination>
+                <CustomPage defaultCurrent={6} total={40}></CustomPage>
               </Wrapper>
             </Wrapper>
 
