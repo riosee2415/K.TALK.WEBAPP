@@ -272,33 +272,128 @@ const Student = () => {
               </Text>
             </Wrapper>
 
-            <Wrapper al={`flex-start`}>
+            <Wrapper al={`flex-start`} margin={`0 0 20px`}>
               <Text fontSize={`22px`} fontWeight={`bold`}>
                 내 시간표
               </Text>
             </Wrapper>
 
             <Wrapper
-              padding={`40px 30px 35px`}
+              padding={width < 700 ? `15px 10px 10px` : `40px 30px 35px`}
               dr={`row`}
               ju={`flex-start`}
               bgColor={Theme.white_C}
               radius={`10px`}
+              shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
+              margin={`0 0 86px`}
             >
-              <Wrapper width={`auto`} padding={`5px`}>
-                <Image
-                  width={`22px`}
-                  height={`22px`}
-                  src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
-                  alt="clock_icon"
+              <Wrapper
+                width={width < 1280 ? (width < 800 ? `100%` : `60%`) : `37%`}
+                dr={`row`}
+                ju={`flex-start`}
+              >
+                <Wrapper width={`auto`} padding={`5px`} margin={`0 10px 5px 0`}>
+                  <Image
+                    width={`22px`}
+                    height={`22px`}
+                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
+                    alt="clock_icon"
+                  />
+                </Wrapper>
+                <Text
+                  fontSize={width < 700 ? `16px` : `18px`}
+                  fontWeight={`bold`}
+                  lineHeight={`1.22`}
+                >
+                  화요일&nbsp;&nbsp;|&nbsp;&nbsp;7PM
+                </Text>
+                <Wrapper
+                  width={`1px`}
+                  height={`34px`}
+                  borderLeft={`1px dashed ${Theme.grey_C}`}
+                  margin={width < 1350 ? `0 10px` : `0 20px`}
                 />
+                <Text
+                  fontSize={width < 700 ? `16px` : `18px`}
+                  fontWeight={`bold`}
+                  lineHeight={`1.22`}
+                >
+                  수요일&nbsp;&nbsp;|&nbsp;&nbsp;9AM
+                </Text>
+                <Wrapper
+                  width={`1px`}
+                  height={`34px`}
+                  borderLeft={`1px dashed ${Theme.grey_C}`}
+                  margin={width < 1350 ? `0 10px` : `0 20px`}
+                />
+                <Text
+                  fontSize={width < 700 ? `16px` : `18px`}
+                  fontWeight={`bold`}
+                  lineHeight={`1.22`}
+                >
+                  금용리&nbsp;&nbsp;|&nbsp;&nbsp;2PM
+                </Text>
               </Wrapper>
-              <Text fontSize={`18px`} fontWeight={`bold`} lineHeight={`1.22`}>
-                화요일 | 7PM
-              </Text>
-              <Text fontSize={`18px`} fontWeight={`bold`} lineHeight={`1.22`}>
-                수요일 | 9AM
-              </Text>
+
+              <Wrapper
+                width={width < 1280 ? (width < 800 ? `100%` : `40%`) : `25%`}
+                dr={`row`}
+                ju={`flex-start`}
+              >
+                <Wrapper width={`auto`} padding={`5px`} margin={`0 10px 5px 0`}>
+                  <Image
+                    width={`22px`}
+                    height={`22px`}
+                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
+                    alt="clender_icon"
+                  />
+                </Wrapper>
+                <Text fontSize={width < 700 ? `16px` : `18px`}>
+                  2022/01/01 ~ 2022/01/28
+                  <SpanText
+                    fontWeight={`bold`}
+                    color={Theme.red_C}
+                    margin={`0 0 0 15px`}
+                  >
+                    D-5
+                  </SpanText>
+                </Text>
+              </Wrapper>
+              <Wrapper
+                width={width < 1280 ? `100%` : `38%`}
+                dr={`row`}
+                ju={`flex-start`}
+              >
+                <Wrapper width={`20%`} dr={`row`} margin={`0 20px 0 0`}>
+                  <Image
+                    margin={`0 10px 0 0`}
+                    width={`22px`}
+                    height={`22px`}
+                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name.png"
+                    alt="clender_icon"
+                  />
+                  <Text fontSize={width < 700 ? `16px` : `18px`}>○○○</Text>
+                </Wrapper>
+
+                <Wrapper
+                  width={`calc(80% - 20px)`}
+                  al={`flex-start`}
+                  fontSize={width < 700 ? `12px` : `16px`}
+                >
+                  <Text>
+                    <SpanText fontWeight={`bold`} margin={`0 16px 0 0`}>
+                      ZOOM ID
+                    </SpanText>
+                    4leafsoftware0000000@gmail.com
+                  </Text>
+                  <Text>
+                    <SpanText fontWeight={`bold`} margin={`0 14px 0 0`}>
+                      Password
+                    </SpanText>
+                    12345687
+                  </Text>
+                </Wrapper>
+              </Wrapper>
             </Wrapper>
 
             <Wrapper al={`flex-start`} margin={`0 0 20px`}>
@@ -309,24 +404,27 @@ const Student = () => {
 
             <Wrapper
               dr={`row`}
-              padding={`30px`}
+              padding={width < 800 ? `10px` : `30px`}
               bgColor={Theme.white_C}
               radius={`10px`}
               ju={`space-between`}
               shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
               margin={`0 0 86px`}
+              al={width < 1100 && `flex-start`}
             >
               <Image
-                width={`184px`}
-                height={`190px`}
+                width={width < 800 ? `100px` : `184px`}
+                height={width < 800 ? `100px` : `190px`}
                 radius={`5px`}
                 src="https://t1.daumcdn.net/thumb/R720x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/1UzB/image/paEOLJhjPWh-CW7c2KoUJ-tKWs4.jpg"
                 alt="student_thumbnail"
               />
 
-              <Wrapper width={`calc(100% - 204px)`}>
+              <Wrapper
+                width={width < 800 ? `calc(100%)` : `calc(100% - 204px)`}
+              >
                 <Wrapper dr={`row`}>
-                  <Wrapper width={`calc(65% - 1px)`}>
+                  <Wrapper width={width < 1100 ? `100%` : `calc(65% - 1px)`}>
                     <Wrapper dr={`row`} ju={`flex-start`}>
                       <Text
                         margin={`0 10px 0 0`}
@@ -351,11 +449,11 @@ const Student = () => {
 
                     <Wrapper margin={`35px 0 0`}>
                       <Wrapper dr={`row`} ju={`flex-start`}>
-                        <Text width={`15%`}>
+                        <Text width={width < 800 ? `100` : `15%`}>
                           <SpanText color={Theme.subTheme2_C}>●</SpanText>&nbsp;
                           출석 상황
                         </Text>
-                        <Wrapper width={`75%`}>
+                        <Wrapper width={width < 800 ? `90%` : `75%`}>
                           <CustomSlide
                             defaultValue={100}
                             disabled={true}
@@ -372,11 +470,11 @@ const Student = () => {
                         </Text>
                       </Wrapper>
                       <Wrapper dr={`row`} ju={`flex-start`} margin={`10px 0`}>
-                        <Text width={`15%`}>
+                        <Text width={width < 800 ? `100%` : `15%`}>
                           <SpanText color={Theme.basicTheme_C}>●</SpanText>
                           &nbsp; 수업 진도
                         </Text>
-                        <Wrapper width={`75%`}>
+                        <Wrapper width={width < 800 ? `90%` : `75%`}>
                           <CustomSlide
                             defaultValue={55}
                             disabled={true}
@@ -393,11 +491,11 @@ const Student = () => {
                         </Text>
                       </Wrapper>
                       <Wrapper dr={`row`} ju={`flex-start`}>
-                        <Text width={`15%`}>
+                        <Text width={width < 800 ? `100%` : `15%`}>
                           <SpanText color={Theme.subTheme6_C}>●</SpanText>&nbsp;
                           성취도
                         </Text>
-                        <Wrapper width={`75%`}>
+                        <Wrapper width={width < 800 ? `90%` : `75%`}>
                           <CustomSlide
                             defaultValue={100}
                             disabled={true}
@@ -417,12 +515,15 @@ const Student = () => {
                   </Wrapper>
 
                   <Wrapper
+                    display={width < 1100 && `none`}
                     width={`1px`}
                     height={`190px`}
                     margin={`0 40px`}
-                    borderRight={`1px dashed ${Theme.grey_C}`}
+                    borderRight={
+                      width < 1100 ? `0` : `1px dashed ${Theme.grey_C}`
+                    }
                   />
-                  <Wrapper width={`calc(35% - 80px)`}>
+                  <Wrapper width={width < 1100 ? `100%` : `calc(35% - 80px)`}>
                     <Wrapper
                       borderBottom={`1px dashed ${Theme.grey_C}`}
                       al={`flex-start`}
@@ -482,26 +583,42 @@ const Student = () => {
                         padding={`20px`}
                         margin={`0 0 10px`}
                       >
-                        <Wrapper width={`55%`} dr={`row`} ju={`flex-start`}>
+                        <Wrapper
+                          width={width < 700 ? `100%` : `55%`}
+                          margin={width < 700 && `0 0 10px`}
+                          dr={`row`}
+                          ju={`flex-start`}
+                        >
                           <Wrapper dr={`row`} width={`25%`} ju={`flex-start`}>
                             <Image
                               width={`22px`}
-                              margin={`0 16px 0 0`}
+                              margin={width < 700 ? `0` : `0 16px 0 0`}
                               src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png"
                               alt="lecture_icon"
                             />
                             <Text fontWeight={`bold`}>{data.name}</Text>
                           </Wrapper>
 
-                          <Wrapper dr={`row`} width={`25%`} ju={`flex-start`}>
+                          <Wrapper
+                            dr={`row`}
+                            width={width < 700 ? `30%` : `25%`}
+                            ju={`flex-start`}
+                          >
                             <Text fontSize={`14px`}>{data.teacher}강사님</Text>
                           </Wrapper>
 
-                          <Wrapper dr={`row`} width={`50%`} ju={`flex-start`}>
+                          <Wrapper
+                            dr={`row`}
+                            width={width < 700 ? `45%` : `50%`}
+                            ju={`flex-start`}
+                          >
                             <Text fontSize={`14px`}>{data.content}</Text>
                           </Wrapper>
                         </Wrapper>
-                        <Wrapper width={`45%`} dr={`row`}>
+                        <Wrapper
+                          width={width < 700 ? `100%` : `45%`}
+                          dr={`row`}
+                        >
                           <Wrapper dr={`row`} width={`35%`} ju={`flex-start`}>
                             <Image
                               width={`22px`}
@@ -541,10 +658,10 @@ const Student = () => {
 
             <Wrapper radius={`10px`} shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}>
               <Wrapper dr={`row`} fontWeight={`bold`} padding={`20px 0`}>
-                <Wrapper width={`10%`}>구분</Wrapper>
-                <Wrapper width={`70%`}>제목</Wrapper>
-                <Wrapper width={`10%`}>작성자</Wrapper>
-                <Wrapper width={`10%`}>날짜</Wrapper>
+                <Wrapper width={width < 800 ? `20%` : `10%`}>구분</Wrapper>
+                <Wrapper width={width < 800 ? `30%` : `70%`}>제목</Wrapper>
+                <Wrapper width={width < 800 ? `25%` : `10%`}>작성자</Wrapper>
+                <Wrapper width={width < 800 ? `25%` : `10%`}>날짜</Wrapper>
               </Wrapper>
               {noticeArr &&
                 (noticeArr.length === 0 ? (
@@ -555,12 +672,21 @@ const Student = () => {
                   noticeArr.map((data) => {
                     return (
                       <CustomTableHoverWrapper key={data.id}>
-                        <Wrapper width={`10%`}>{data.type}</Wrapper>
-                        <Wrapper width={`70%`} al={`flex-start`}>
+                        <Wrapper width={width < 800 ? `20%` : `10%`}>
+                          {data.type}
+                        </Wrapper>
+                        <Wrapper
+                          width={width < 800 ? `30%` : `70%`}
+                          al={`flex-start`}
+                        >
                           {data.title}
                         </Wrapper>
-                        <Wrapper width={`10%`}>{data.author}</Wrapper>
-                        <Wrapper width={`10%`}>{data.createdAt}</Wrapper>
+                        <Wrapper width={width < 800 ? `25%` : `10%`}>
+                          {data.author}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `25%` : `10%`}>
+                          {data.createdAt}
+                        </Wrapper>
                       </CustomTableHoverWrapper>
                     );
                   })
@@ -579,10 +705,10 @@ const Student = () => {
 
             <Wrapper radius={`10px`} shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}>
               <Wrapper dr={`row`} fontWeight={`bold`} padding={`20px 0`}>
-                <Wrapper width={`10%`}>글번호</Wrapper>
-                <Wrapper width={`70%`}>자료명</Wrapper>
-                <Wrapper width={`10%`}>자료</Wrapper>
-                <Wrapper width={`10%`}>날짜</Wrapper>
+                <Wrapper width={width < 800 ? `20%` : `10%`}>글번호</Wrapper>
+                <Wrapper width={width < 800 ? `30%` : `70%`}>자료명</Wrapper>
+                <Wrapper width={width < 800 ? `25%` : `10%`}>자료</Wrapper>
+                <Wrapper width={width < 800 ? `25%` : `10%`}>날짜</Wrapper>
               </Wrapper>
               {preparationArr &&
                 (preparationArr.length === 0 ? (
@@ -593,12 +719,21 @@ const Student = () => {
                   preparationArr.map((data) => {
                     return (
                       <CustomTableHoverWrapper key={data.id}>
-                        <Wrapper width={`10%`}>{data.id}</Wrapper>
-                        <Wrapper width={`70%`} al={`flex-start`}>
+                        <Wrapper width={width < 800 ? `20%` : `10%`}>
+                          {data.id}
+                        </Wrapper>
+                        <Wrapper
+                          width={width < 800 ? `30%` : `70%`}
+                          al={`flex-start`}
+                        >
                           {data.title}
                         </Wrapper>
-                        <Wrapper width={`10%`}>자료 다운로드</Wrapper>
-                        <Wrapper width={`10%`}>{data.createdAt}</Wrapper>
+                        <Wrapper width={width < 800 ? `25%` : `10%`}>
+                          자료 다운로드
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `25%` : `10%`}>
+                          {data.createdAt}
+                        </Wrapper>
                       </CustomTableHoverWrapper>
                     );
                   })
