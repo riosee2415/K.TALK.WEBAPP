@@ -173,35 +173,39 @@ const UserList = ({}) => {
 
   const columns = [
     {
-      title: "No",
+      title: "번호",
       dataIndex: "id",
     },
 
     {
-      title: "Username",
+      title: "회원이름",
       render: (data) => <div>{data.username}</div>,
     },
     {
-      title: "Nickname",
+      title: "닉네임",
       render: (data) => <div>{data.nickname}</div>,
     },
     {
-      title: "Email",
+      title: "이메일",
       render: (data) => <div>{data.email}</div>,
     },
     {
-      title: "Mobile",
+      title: "전화번호",
       render: (data) => <div>{data.mobile}</div>,
     },
     {
-      title: "Level",
+      title: "권한",
       render: (data) => <div>{data.level}</div>,
     },
     {
-      title: "Update",
+      title: "수정",
       render: (data) => (
-        <Button type="primary" onClick={() => updateModalOpen(data)}>
-          UPDATE
+        <Button
+          size="small"
+          type="primary"
+          onClick={() => updateModalOpen(data)}
+        >
+          수정
         </Button>
       ),
     },
@@ -228,6 +232,7 @@ const UserList = ({}) => {
       <AdminContent>
         <Input.Group compact style={{ margin: ` 0 0 10px 0` }}>
           <Select
+            size="small"
             defaultValue="1"
             style={{ width: "10%" }}
             value={inputSort.value}
@@ -237,16 +242,19 @@ const UserList = ({}) => {
             <Select.Option value="2">이름순</Select.Option>
           </Select>
           <Input
+            size="small"
             style={{ width: "20%" }}
             placeholder="사용자명"
             {...inputName}
           />
           <Input
+            size="small"
             style={{ width: "20%" }}
             placeholder="이메일"
             {...inputEmail}
           />
           <Button
+            size="small"
             onClick={() =>
               moveLinkHandler(
                 `/admin/user/userList?name=${inputName.value}&email=${inputEmail.value}`
@@ -255,6 +263,9 @@ const UserList = ({}) => {
           >
             <SearchOutlined />
             검색
+          </Button>
+          <Button size="small" type="primary">
+            + 회원 생성
           </Button>
         </Input.Group>
 

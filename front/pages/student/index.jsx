@@ -10,7 +10,16 @@ import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 import { useRouter } from "next/router";
 import Head from "next/head";
 
-import { Empty, message, Pagination, Slider } from "antd";
+import {
+  Button,
+  Empty,
+  Form,
+  Input,
+  message,
+  Modal,
+  Pagination,
+  Slider,
+} from "antd";
 import styled from "styled-components";
 import useWidth from "../../hooks/useWidth";
 import ClientLayout from "../../components/ClientLayout";
@@ -20,6 +29,8 @@ import {
   RsWrapper,
   SpanText,
   Text,
+  TextArea,
+  TextInput,
   WholeWrapper,
   Wrapper,
 } from "../../components/commonComponents";
@@ -53,6 +64,26 @@ const CustomTableHoverWrapper = styled(Wrapper)`
   }
 `;
 
+const WordbreakText = styled(Text)`
+  width: 100%;
+  word-wrap: break-all;
+`;
+
+const CustomModal = styled(Modal)`
+  & .ant-modal-header,
+  & .ant-modal-content {
+    border-radius: 5px;
+  }
+`;
+
+const CustomForm = styled(Form)`
+  width: 100%;
+
+  & .ant-form-item {
+    width: 100%;
+  }
+`;
+
 const Student = () => {
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
@@ -62,6 +93,8 @@ const Student = () => {
 
   ////// HOOKS //////
   const router = useRouter();
+
+  const width = useWidth();
 
   ////// USEEFFECT //////
   useEffect(() => {
@@ -576,6 +609,130 @@ const Student = () => {
             </Wrapper>
             <Pagination size="small" />
           </RsWrapper>
+
+          <CustomModal
+            visible={false}
+            width={`1350px`}
+            title="공지사항"
+            footer={null}
+            closable={false}
+          >
+            <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
+              <Text margin={`0 54px 0 0`}>작성자 ooo</Text>
+              <Text>날짜 2022/01/22</Text>
+            </Wrapper>
+
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              제목
+            </Text>
+            <Wrapper padding={`10px`}>
+              <WordbreakText>오늘 공지사항입니다.</WordbreakText>
+            </Wrapper>
+
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              내용
+            </Text>
+            <Wrapper padding={`10px`}>
+              <WordbreakText>오늘 공지사항입니다.</WordbreakText>
+            </Wrapper>
+
+            <Wrapper>
+              <CommonButton
+                kindOf={`grey`}
+                color={Theme.darkGrey_C}
+                radius={`5px`}
+              >
+                돌아가기
+              </CommonButton>
+            </Wrapper>
+          </CustomModal>
+
+          <CustomModal
+            visible={false}
+            width={`1350px`}
+            title="쪽지"
+            footer={null}
+            closable={false}
+          >
+            <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
+              <Text margin={`0 54px 0 0`}>보낸사람 ooo</Text>
+              <Text>날짜 2022/01/22</Text>
+            </Wrapper>
+
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              제목
+            </Text>
+            <Wrapper padding={`10px`}>
+              <WordbreakText>안녕하세요.</WordbreakText>
+            </Wrapper>
+
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              내용
+            </Text>
+            <Wrapper padding={`10px`}>
+              <WordbreakText>안녕하세요.</WordbreakText>
+            </Wrapper>
+
+            <Wrapper dr={`row`}>
+              <CommonButton
+                margin={`0 5px 0 0`}
+                kindOf={`grey`}
+                color={Theme.darkGrey_C}
+                radius={`5px`}
+              >
+                돌아가기
+              </CommonButton>
+              <CommonButton margin={`0 0 0 5px`} radius={`5px`}>
+                답변하기
+              </CommonButton>
+            </Wrapper>
+          </CustomModal>
+
+          <CustomModal
+            visible={false}
+            width={`1350px`}
+            title="쪽지 보내기"
+            footer={null}
+            closable={false}
+          >
+            <CustomForm>
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                받는 사람
+              </Text>
+              <Form.Item>
+                <Input />
+              </Form.Item>
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                제목
+              </Text>
+              <Form.Item>
+                <Input />
+              </Form.Item>
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                내용
+              </Text>
+              <Form.Item>
+                <Input.TextArea style={{ height: `360px` }} />
+              </Form.Item>
+              <Wrapper dr={`row`}>
+                <CommonButton
+                  margin={`0 5px 0 0`}
+                  kindOf={`grey`}
+                  color={Theme.darkGrey_C}
+                  radius={`5px`}
+                >
+                  돌아가기
+                </CommonButton>
+                <CommonButton
+                  margin={`0 0 0 5px`}
+                  radius={`5px`}
+                  htmlType="submit"
+                >
+                  답변하기
+                </CommonButton>
+              </Wrapper>
+            </CustomForm>
+          </CustomModal>
         </WholeWrapper>
       </ClientLayout>
     </>
