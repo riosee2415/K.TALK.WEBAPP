@@ -101,6 +101,7 @@ export const WholeWrapper = styled.section`
 export const Wrapper = styled.div`
   width: ${(props) => props.width || `100%`};
   min-width: ${(props) => props.minWidth};
+  max-width: ${(props) => props.maxWidth};
   height: ${(props) => props.height};
   min-height: ${(props) => props.minHeight};
   display: ${(props) => props.display || `flex`};
@@ -224,6 +225,15 @@ export const CommonButton = styled(Button)`
   ${(props) => props.kindOf === `delete` && `color : ${props.theme.white_C};`}
   ${(props) =>
     props.kindOf === `delete` && `border : 1px solid ${props.theme.red_C};`}
+  
+  ${(props) =>
+    props.kindOf === `subTheme2` && `background : ${props.theme.subTheme2_C};`}
+  ${(props) =>
+    props.kindOf === `subTheme2` && `color : ${props.theme.white_C};`}
+  ${(props) =>
+    props.kindOf === `subTheme2` &&
+    `border : 1px solid ${props.theme.subTheme2};`}
+  
 
 
 
@@ -249,6 +259,14 @@ export const CommonButton = styled(Button)`
     ${(props) => props.kindOf === `delete` && `color : ${props.theme.red_C};`}
     ${(props) =>
       props.kindOf === `delete` && `border : 1px solid ${props.theme.red_C};`}
+    
+    ${(props) =>
+      props.kindOf === `subTheme2` && `background : ${props.theme.white_C};`}
+  ${(props) =>
+      props.kindOf === `subTheme2` && `color : ${props.theme.subTheme2_C};`}
+  ${(props) =>
+      props.kindOf === `subTheme2` &&
+      `border : 1px solid ${props.theme.subTheme2_C};`}
   }
 `;
 
