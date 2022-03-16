@@ -742,7 +742,9 @@ const Student = () => {
             <Wrapper al={`flex-end`} margin={`20px 0 40px`}>
               <CommonButton radius={`5px`}>쪽지 보내기</CommonButton>
             </Wrapper>
-            <Pagination size="small" />
+            <Wrapper margin={`0 0 110px`}>
+              <Pagination size="small" />
+            </Wrapper>
           </RsWrapper>
 
           <CustomModal
