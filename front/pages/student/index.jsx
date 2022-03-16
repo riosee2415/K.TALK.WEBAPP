@@ -57,10 +57,12 @@ const CustomSlide = styled(Slider)`
 const CustomTableHoverWrapper = styled(Wrapper)`
   flex-direction: row;
   padding: 25px 0 20px;
-  background-color: ${Theme.lightGrey_C};
+  background-color: ${(props) =>
+    props.bgColor ? Theme.lightGrey_C : Theme.white_C};
   cursor: pointer;
   &:hover {
-    background-color: ${Theme.white_C};
+    background-color: ${(props) =>
+      props.bgColor ? Theme.white_C : Theme.lightGrey_C};
   }
 `;
 
@@ -380,14 +382,22 @@ const Student = () => {
                   al={`flex-start`}
                   fontSize={width < 700 ? `12px` : `16px`}
                 >
-                  <Text>
-                    <SpanText fontWeight={`bold`} margin={`0 16px 0 0`}>
+                  <Text color={Theme.grey2_C}>
+                    <SpanText
+                      fontWeight={`bold`}
+                      margin={`0 16px 0 0`}
+                      color={Theme.black_C}
+                    >
                       ZOOM ID
                     </SpanText>
                     4leafsoftware0000000@gmail.com
                   </Text>
-                  <Text>
-                    <SpanText fontWeight={`bold`} margin={`0 14px 0 0`}>
+                  <Text color={Theme.grey2_C}>
+                    <SpanText
+                      fontWeight={`bold`}
+                      margin={`0 14px 0 0`}
+                      color={Theme.black_C}
+                    >
                       Password
                     </SpanText>
                     12345687
@@ -639,7 +649,7 @@ const Student = () => {
                             <Text>{data.createdAt}까지</Text>
                           </Wrapper>
 
-                          <Wrapper dr={`row`} width={`30%`}>
+                          <Wrapper dr={`row`} width={`30%`} cursor={`pointer`}>
                             <Text fontWeight={`bold`}>제출하기</Text>
                           </Wrapper>
                         </Wrapper>
@@ -669,9 +679,12 @@ const Student = () => {
                     <Empty description="공지사항이 없습니다." />
                   </Wrapper>
                 ) : (
-                  noticeArr.map((data) => {
+                  noticeArr.map((data, idx) => {
                     return (
-                      <CustomTableHoverWrapper key={data.id}>
+                      <CustomTableHoverWrapper
+                        key={data.id}
+                        bgColor={idx % 2 === 0}
+                      >
                         <Wrapper width={width < 800 ? `20%` : `10%`}>
                           {data.type}
                         </Wrapper>
@@ -716,9 +729,12 @@ const Student = () => {
                     <Empty description="공지사항이 없습니다." />
                   </Wrapper>
                 ) : (
-                  preparationArr.map((data) => {
+                  preparationArr.map((data, idx) => {
                     return (
-                      <CustomTableHoverWrapper key={data.id}>
+                      <CustomTableHoverWrapper
+                        key={data.id}
+                        bgColor={idx % 2 === 0}
+                      >
                         <Wrapper width={width < 800 ? `20%` : `10%`}>
                           {data.id}
                         </Wrapper>
