@@ -29,6 +29,7 @@ import {
   FieldTimeOutlined,
   SearchOutlined,
   DownloadOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 
 import {
@@ -42,6 +43,7 @@ import {
   Calendar,
   message,
   Empty,
+  Upload,
 } from "antd";
 
 const WordbreakText = styled(Text)`
@@ -54,6 +56,16 @@ const CustomModal = styled(Modal)`
   & .ant-modal-content {
     border-radius: 5px;
   }
+
+  & .ant-modal-title {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  /* & .ant-modal-content .ant-modal-title {
+    font-weight: bold;
+    font-size: 22px;
+  } */
 `;
 
 const CustomForm = styled(Form)`
@@ -192,7 +204,11 @@ const Index = () => {
   const width = useWidth();
 
   const formRef = useRef();
+  const formRef2 = useRef();
+  const formRef3 = useRef();
+
   const [form] = Form.useForm();
+
   const imageInput = useRef();
 
   const [isCalendar, setIsCalendar] = useState(false);
@@ -200,6 +216,8 @@ const Index = () => {
   const [noteSendToggle, setNoteSendToggle] = useState(false);
   const [noticeModalToggle, setNoticeModalToggle] = useState(false);
   const [homeWorkModalToggle, setHomeWorkModalToggle] = useState(false);
+
+  const inputDate = useInput("");
 
   const [fileName, setFileName] = useState("");
 
@@ -219,41 +237,49 @@ const Index = () => {
     console.log(data, "data");
     const birth = data.format("YYYY-MM-DD");
     formRef.current.setFieldsValue({
-      date1: birth.split("-")[2],
-      month1: birth.split("-")[1],
-      year1: birth.split("-")[0],
+      date: birth,
     });
+
+    inputDate.setValue(birth);
   }, []);
 
   const noteSendFinishHandler = useCallback((data) => {
     console.log(data, "asda");
   }, []);
 
+  const homeWorkFinishHandler = useCallback((data) => {
+    console.log(data, "asda");
+
+    console.log("Asdasd");
+  }, []);
+
   const onReset = useCallback(() => {
     form.resetFields();
 
     setFileName("");
+    inputDate.setValue("");
+    setIsCalendar(false);
     setHomeWorkModalToggle(false);
     setNoticeModalToggle(false);
     setNoteSendToggle(false);
   }, []);
 
-  const onChangeImages = useCallback((e) => {
-    console.log(e.target.files.length, "easdad");
+  // const onChangeImages = useCallback((e) => {
+  //   console.log(e.target.files.length, "easdad");
 
-    const formData = new FormData();
+  //   const formData = new FormData();
 
-    setFileName(e.target.files.length !== 0 && e.target.files[0].name);
+  //   setFileName(e.target.files.length !== 0 && e.target.files[0].name);
 
-    // [].forEach.call(e.target.files, (file) => {
-    //   formData.append("image", file);
-    // });
+  //   [].forEach.call(e.target.files, (file) => {
+  //     formData.append("image", file);
+  //   });
 
-    // dispatch({
-    //   type: GALLERY_UPLOAD_REQUEST,
-    //   data: formData,
-    // });
-  });
+  //   dispatch({
+  //     type: GALLERY_UPLOAD_REQUEST,
+  //     data: formData,
+  //   });
+  // });
 
   const clickImageUpload = useCallback(() => {
     imageInput.current.click();
@@ -534,7 +560,8 @@ const Index = () => {
                         <Text
                           fontSize={width < 700 ? `12px` : `18px`}
                           fontWeight={`Bold`}
-                          width={`25%`}>
+                          width={`25%`}
+                          wordBreak={`break-word`}>
                           수업료
                         </Text>
 
@@ -800,7 +827,8 @@ const Index = () => {
                         >
                           <Text
                             fontSize={width < 700 ? `12px` : `16px`}
-                            width={`15%`}>
+                            width={`15%`}
+                            wordBreak={`break-word`}>
                             5
                           </Text>
                           <Text
@@ -1049,7 +1077,8 @@ const Index = () => {
                   >
                     <Text
                       fontSize={width < 700 ? `12px` : `16px`}
-                      width={`15%`}>
+                      width={`15%`}
+                      wordBreak={`break-word`}>
                       5
                     </Text>
                     <Text
@@ -1243,19 +1272,19 @@ const Index = () => {
             ref={formRef}
             form={form}
             onFinish={noteSendFinishHandler}>
-            <Text fontSize={`18px`} fontWeight={`bold`}>
+            <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
               받는 사람
             </Text>
             <Form.Item name="receivePerson" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
-            <Text fontSize={`18px`} fontWeight={`bold`}>
+            <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
               제목
             </Text>
             <Form.Item name="title1" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
-            <Text fontSize={`18px`} fontWeight={`bold`}>
+            <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
               내용
             </Text>
             <Form.Item name="content1" rules={[{ required: true }]}>
@@ -1291,13 +1320,13 @@ const Index = () => {
             ref={formRef}
             form={form}
             onFinish={noteSendFinishHandler}>
-            <Text fontSize={`18px`} fontWeight={`bold`}>
+            <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
               제목
             </Text>
             <Form.Item name="title2" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
-            <Text fontSize={`18px`} fontWeight={`bold`}>
+            <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
               내용
             </Text>
             <Form.Item name="content2" rules={[{ required: true }]}>
@@ -1331,7 +1360,7 @@ const Index = () => {
           <CustomForm
             ref={formRef}
             form={form}
-            onFinish={noteSendFinishHandler}>
+            onFinish={homeWorkFinishHandler}>
             <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
               제목
             </Text>
@@ -1344,12 +1373,14 @@ const Index = () => {
             <Form.Item name="date" rules={[{ required: true }]}>
               <Wrapper dr={`row`} ju={`flex-start`}>
                 <Input
-                  placeholder=""
+                  placeholder="날짜를 선택해주세요."
+                  value={inputDate.value}
                   style={{
                     height: `40px`,
                     width: `130px`,
                     margin: `0 10px 0 0`,
                   }}
+                  disabled
                 />
 
                 <CalendarOutlined
@@ -1380,17 +1411,24 @@ const Index = () => {
             <Text fontSize={`18px`} fontWeight={`bold`}>
               파일 업로드
             </Text>
-            <Form.Item  name="file" rules={[{ required: true }]}>
-              {fileName ? fileName : `파일 이름`}
+            <Form.Item name="file" rules={[{ required: true }]}>
+              <Upload>
+                <Button
+                  icon={<UploadOutlined />}
+                  style={{ height: `40px`, width: `150px`, margin: `10px 0 0` }}
+                  onChange={(e) => console.log(e)}
+                  // onClick={clickImageUpload}
+                  // loading={""}
+                  // type="file"
+                  // name="file"
+                  // ref={imageInput}
+                  // onChange={onChangeImages}
+                >
+                  파일 업로드
+                </Button>
+              </Upload>
 
-              <Button
-                style={{ height: `40px`, width: `130px`, margin: `10px 0 0` }}
-                onClick={clickImageUpload}
-                loading={""}>
-                파일 업로드 하기
-              </Button>
-
-              <input
+              {/* <input
                 type="file"
                 name="file"
                 // accept=".png, .jpg .pdf"
@@ -1398,7 +1436,7 @@ const Index = () => {
                 hidden
                 ref={imageInput}
                 onChange={onChangeImages}
-              />
+              /> */}
             </Form.Item>
             <Wrapper dr={`row`}>
               <CommonButton

@@ -27,7 +27,7 @@ import {
   SpanText,
   CommonButton,
 } from "../../components/commonComponents";
-import { Pagination } from "antd";
+import { message, Pagination } from "antd";
 
 const CustomPage = styled(Pagination)`
   & .ant-pagination-next > button {
@@ -145,12 +145,22 @@ const Index = () => {
     (state) => state.seo
   );
 
+  const { me } = useSelector((state) => state.seo);
+
   ////// HOOKS //////
 
   const width = useWidth();
 
   ////// REDUX //////
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (!me) {
+      message.error("로그인 후 이용해주세요.");
+      // return router.push(`/`);
+    }
+  }, [me]);
+
   ////// TOGGLE //////
   ////// HANDLER //////
   ////// DATAVIEW //////
@@ -233,37 +243,30 @@ const Index = () => {
                 <Wrapper
                   dr={`row`}
                   textAlign={`center`}
-                  height={`65px`}
-                  padding={`0 30px`}>
+                  padding={width < 700 ? `30px 15px` : `30px`}>
                   <Text
-                    fontSize={`18px`}
+                    fontSize={width < 700 ? `12px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`100px`}
-                    display={width < 700 ? `none` : `block`}>
+                    width={`15%`}>
                     글 번호
                   </Text>
                   <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
+                    fontSize={width < 700 ? `12px` : `18px`}
                     fontWeight={`Bold`}
-                    width={
-                      width < 700
-                        ? `calc(100% - 100px)`
-                        : `calc(100% - 100px - 200px - 100px)`
-                    }>
+                    width={`50%`}>
                     제목
                   </Text>
                   <Text
                     fontSize={width < 700 ? `12px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`200px`}
-                    display={width < 700 ? `none` : `block`}>
+                    width={`15%`}>
                     작성자
                   </Text>
 
                   <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
+                    fontSize={width < 700 ? `12px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`100px`}>
+                    width={`20%`}>
                     날짜
                   </Text>
                 </Wrapper>
@@ -272,36 +275,24 @@ const Index = () => {
                   dr={`row`}
                   textAlign={`center`}
                   ju={`flex-start`}
-                  padding={`30px 30px`}
+                  padding={width < 700 ? `30px 15px` : `30px`}
                   cursor={`pointer`}
                   bgColor={Theme.lightGrey_C}
                   // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
                 >
                   <Text
-                    fontSize={`16px`}
-                    width={`100px`}
-                    display={width < 700 ? `none` : `block`}>
+                    fontSize={width < 700 ? `12px` : `16px`}
+                    width={`15%`}
+                    wordBreak={`break-word`}>
                     15
                   </Text>
-                  <Text
-                    fontSize={width < 700 ? `12px` : `16px`}
-                    minWidth={`100px`}
-                    width={
-                      width < 700
-                        ? `calc(100% - 100px)`
-                        : `calc(100% - 100px - 200px - 100px)`
-                    }>
+                  <Text fontSize={width < 700 ? `12px` : `16px`} width={`50%`}>
                     안녕하세요. 강사 여러분께 공지사항 알립니다.
                   </Text>
-                  <Text
-                    fontSize={width < 700 ? `14px` : `16px`}
-                    width={width < 700 ? `100px` : `200px`}
-                    display={width < 700 ? `none` : `block`}>
+                  <Text fontSize={width < 700 ? `12px` : `16px`} width={`15%`}>
                     케이톡 라이브
                   </Text>
-                  <Text
-                    fontSize={width < 700 ? `12px` : `16px`}
-                    width={`100px`}>
+                  <Text fontSize={width < 700 ? `12px` : `16px`} width={`20%`}>
                     2022/01/22
                   </Text>
                 </Wrapper>
@@ -374,7 +365,7 @@ const Index = () => {
                     </Text>
                   </Wrapper>
 
-                  <CustomText3 color={Theme.black_2C}>
+                  <CustomText3 color={Theme.black_2C} cursor={`pointer`}>
                     수업 일지 보러가기
                   </CustomText3>
                 </Wrapper>
