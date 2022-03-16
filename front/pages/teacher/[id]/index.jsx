@@ -395,652 +395,719 @@ const Index = () => {
       </Head>
 
       <ClientLayout>
-        <WholeWrapper margin={`100px 0 0`}>
+        <WholeWrapper margin={`100px 0 0`} bgColor={Theme.subTheme_C}>
           <RsWrapper>
-            <Wrapper>
-              <Wrapper dr={`row`} margin={`70px 0 75px 0`} ju={`flex-start`}>
+            <Wrapper
+              dr={`row`}
+              margin={width < 700 ? `30px 0` : `60px 0`}
+              ju={`flex-start`}>
+              <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
                 <Image
-                  width={`75px`}
-                  height={`75px`}
-                  radius={`50%`}
+                  width={width < 700 ? `65px` : `75px`}
+                  height={width < 700 ? `65px` : `75px`}
+                  radius={`100px`}
                   src={`https://via.placeholder.com/75x75`}
                   margin={`0 15px 0 0`}
+                  alt="teacher_thumbnail"
                 />
-
-                <Wrapper
-                  dr={`row`}
-                  width={`auto`}
-                  fontSize={width < 700 ? `20px` : `28px`}
-                  color={Theme.black_2C}>
-                  <Text>안녕하세요,</Text>&nbsp;
-                  <Text color={Theme.basicTheme_C}>000</Text>&nbsp;
-                  <Text>강사님!</Text>
-                </Wrapper>
               </Wrapper>
 
-              <Wrapper>
+              <Wrapper
+                dr={`row`}
+                width={`auto`}
+                fontSize={width < 700 ? `20px` : `28px`}
+                color={Theme.black_2C}>
+                <Text fontWeight={`bold`}>안녕하세요,</Text>&nbsp;
+                <Text color={Theme.basicTheme_C} >
+                  000
+                </Text>
+                &nbsp;
+                <Text fontWeight={`bold`}>강사님!</Text>
+              </Wrapper>
+            </Wrapper>
+
+            <Wrapper>
+              <Wrapper
+                dr={`row`}
+                ju={`flex-start`}
+                shadow={`0px 5px 15px rgb(0,0,0,0.1)`}
+                padding={width < 700 ? `35px 10px` : `35px 30px`}
+                margin={`0 0 20px`}
+                radius={`10px`}>
+                <Wrapper dr={`row`} width={width < 1400 ? `auto` : `45%`}>
+                  <FieldTimeOutlined
+                    style={{
+                      fontSize: width < 700 ? 20 : 34,
+                      margin: 10,
+                      color: Theme.basicTheme_C,
+                    }}
+                  />
+                  <CustomText>화요일</CustomText>
+                  <CustomText2 color={Theme.black_2C}>7PM</CustomText2>
+
+                  <CustomText>수요일</CustomText>
+                  <CustomText2 color={Theme.black_2C}>9PM</CustomText2>
+
+                  <CustomText>금요일</CustomText>
+                  <CustomText2 color={Theme.black_2C}>9PM</CustomText2>
+                </Wrapper>
+
                 <Wrapper
                   dr={`row`}
-                  ju={`flex-start`}
-                  shadow={`0px 5px 15px rgb(0,0,0,0.1)`}
-                  padding={width < 700 ? `35px 10px` : `35px 30px`}
-                  margin={`0 0 20px`}
-                  radius={`10px`}>
-                  <Wrapper dr={`row`} width={width < 1400 ? `auto` : `45%`}>
-                    <FieldTimeOutlined
-                      style={{
-                        fontSize: width < 700 ? 20 : 34,
-                        margin: 10,
-                        color: Theme.basicTheme_C,
-                      }}
-                    />
-                    <CustomText>화요일</CustomText>
-                    <CustomText2 color={Theme.black_2C}>7PM</CustomText2>
+                  width={width < 1400 ? `100%` : `55%`}
+                  ju={`flex-start`}>
+                  <Wrapper dr={`row`} ju={`flex-start`}>
+                    <Wrapper dr={`row`} ju={`flex-start`} width={`70%`}>
+                      <CalendarOutlined
+                        style={{
+                          fontSize: width < 700 ? 20 : 34,
+                          margin: 10,
+                          color: Theme.subTheme4_C,
+                        }}
+                      />
+                      <CustomText2 color={Theme.black_2C}>
+                        2022-01-28
+                      </CustomText2>
 
-                    <CustomText>수요일</CustomText>
-                    <CustomText2 color={Theme.black_2C}>9PM</CustomText2>
+                      <CarryOutOutlined
+                        style={{
+                          fontSize: width < 700 ? 20 : 34,
+                          margin: 10,
+                          color: Theme.subTheme2_C,
+                        }}
+                      />
+                      <CustomText2
+                        color={Theme.black_2C}
+                        fontSize={width < 700 ? `12px` : `18px`}
+                        fontWeight={`bold`}>
+                        NO.12384
+                      </CustomText2>
+                    </Wrapper>
 
-                    <CustomText>금요일</CustomText>
-                    <CustomText2 color={Theme.black_2C}>9PM</CustomText2>
-                  </Wrapper>
+                    <Wrapper dr={`row`} width={`30%`}>
+                      <Text
+                        width={`50px`}
+                        color={Theme.black_2C}
+                        fontSize={width < 700 ? `12px` : `18px`}
+                        margin={width < 700 ? `0` : `0 13px 0 0`}>
+                        진도율
+                      </Text>
 
-                  <Wrapper
-                    dr={`row`}
-                    width={width < 1400 ? `100%` : `55%`}
-                    ju={`flex-start`}>
-                    <Wrapper dr={`row`} ju={`flex-start`}>
-                      <Wrapper dr={`row`} ju={`flex-start`} width={`70%`}>
-                        <CalendarOutlined
-                          style={{
-                            fontSize: width < 700 ? 20 : 34,
-                            margin: 10,
-                            color: Theme.subTheme4_C,
-                          }}
-                        />
-                        <CustomText2 color={Theme.black_2C}>
-                          2022-01-28
-                        </CustomText2>
-
-                        <CarryOutOutlined
-                          style={{
-                            fontSize: width < 700 ? 20 : 34,
-                            margin: 10,
-                            color: Theme.subTheme2_C,
-                          }}
-                        />
-                        <CustomText2
-                          color={Theme.black_2C}
-                          fontSize={width < 700 ? `12px` : `18px`}
-                          fontWeight={`bold`}>
-                          NO.12384
-                        </CustomText2>
-                      </Wrapper>
-
-                      <Wrapper dr={`row`} width={`30%`}>
-                        <Text
-                          width={`50px`}
-                          color={Theme.black_2C}
-                          fontSize={width < 700 ? `12px` : `18px`}
-                          margin={width < 700 ? `0` : `0 13px 0 0`}>
-                          진도율
-                        </Text>
-
-                        <CustomProgress percent={55} />
-                      </Wrapper>
+                      <CustomProgress percent={55} />
                     </Wrapper>
                   </Wrapper>
                 </Wrapper>
+              </Wrapper>
 
-                <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
-                  {width < 700 ? (
-                    <>
-                      <Wrapper
-                        dr={`row`}
-                        textAlign={`center`}
-                        ju={`center`}
-                        padding={width < 700 ? `30px 15px` : `30px`}>
-                        <CustomCheckBox />
-                        <Text
-                          fontSize={width < 700 ? `12px` : `18px`}
-                          fontWeight={`Bold`}
-                          width={`25%`}>
-                          학생명
-                        </Text>
-                        <Text
-                          fontSize={width < 700 ? `12px` : `18px`}
-                          fontWeight={`Bold`}
-                          width={`25%`}>
-                          출생년도
-                        </Text>
-                        <Text
-                          fontSize={width < 700 ? `12px` : `18px`}
-                          fontWeight={`Bold`}
-                          width={`25%`}>
-                          국가
-                        </Text>
-                      </Wrapper>
-
-                      {testArr && testArr.length === 0 ? (
-                        <Wrapper>
-                          <Empty description="조회된 데이터가 없습니다." />
-                        </Wrapper>
-                      ) : (
-                        testArr &&
-                        testArr.map((data, idx) => {
-                          return (
-                            <Wrapper
-                              key={data.id}
-                              dr={`row`}
-                              textAlign={`center`}
-                              padding={width < 700 ? `30px 15px` : `30px`}
-                              cursor={`pointer`}
-                              al={width < 700 ? `baseline` : `center`}
-                              bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
-                              <CustomCheckBox />
-                              <Text
-                                fontSize={width < 700 ? `12px` : `16px`}
-                                width={`25%`}
-                                wordBreak={`break-word`}>
-                                Eric
-                              </Text>
-                              <Text
-                                fontSize={width < 700 ? `12px` : `16px`}
-                                width={`25%`}>
-                                1997
-                              </Text>
-                              <Text
-                                fontSize={width < 700 ? `12px` : `16px`}
-                                width={`25%`}>
-                                인도네시아
-                              </Text>
-                            </Wrapper>
-                          );
-                        })
-                      )}
-
-                      <Wrapper
-                        dr={`row`}
-                        textAlign={`center`}
-                        ju={`center`}
-                        padding={width < 700 ? `30px 15px` : `30px`}>
-                        <Text
-                          fontSize={width < 700 ? `12px` : `18px`}
-                          fontWeight={`Bold`}
-                          width={`25%`}
-                          wordBreak={`break-word`}>
-                          수업료
-                        </Text>
-
-                        <Text
-                          fontSize={width < 700 ? `12px` : `18px`}
-                          fontWeight={`Bold`}
-                          width={`25%`}>
-                          만기일
-                        </Text>
-                        <Text
-                          fontSize={width < 700 ? `12px` : `18px`}
-                          fontWeight={`Bold`}
-                          width={`25%`}>
-                          메모
-                        </Text>
-                        <Text
-                          fontSize={width < 700 ? `12px` : `18px`}
-                          fontWeight={`Bold`}
-                          width={`25%`}>
-                          출석
-                        </Text>
-                      </Wrapper>
-
-                      {testArr && testArr.length === 0 ? (
-                        <Wrapper>
-                          <Empty description="조회된 데이터가 없습니다." />
-                        </Wrapper>
-                      ) : (
-                        testArr &&
-                        testArr.map((data, idx) => {
-                          return (
-                            <Wrapper
-                              dr={`row`}
-                              textAlign={`center`}
-                              padding={width < 700 ? `30px 15px` : `30px`}
-                              cursor={`pointer`}
-                              al={width < 700 ? `baseline` : `center`}
-                              bgColor={Theme.lightGrey_C}>
-                              <Text
-                                fontSize={width < 700 ? `12px` : `16px`}
-                                width={`25%`}>
-                                U$ 16
-                              </Text>
-                              <Text
-                                fontSize={width < 700 ? `12px` : `16px`}
-                                width={`25%`}
-                                wordBreak={`break-word`}>
-                                2022/01/22{" "}
-                                <SpanText color={Theme.red_C}>(D-5)</SpanText>
-                              </Text>
-                              <Text
-                                fontSize={width < 700 ? `12px` : `16px`}
-                                width={`25%`}>
-                                작성하기
-                              </Text>
-
-                              <Text
-                                fontSize={width < 700 ? `12px` : `16px`}
-                                width={`25%`}
-                                color={
-                                  "출석"
-                                    ? `${Theme.basicTheme_C}`
-                                    : `${Theme.red_C}`
-                                }>
-                                출석 | 결석
-                              </Text>
-                            </Wrapper>
-                          );
-                        })
-                      )}
-                    </>
-                  ) : (
+              <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
+                {width < 700 ? (
+                  <>
                     <Wrapper
                       dr={`row`}
                       textAlign={`center`}
                       ju={`center`}
                       padding={width < 700 ? `30px 15px` : `30px`}>
-                      <CustomCheckBox
-                        onChange={(e) => onChangeBoxAllHanlder(e, checkedList)}
-                      />
-
+                      <CustomCheckBox />
                       <Text
                         fontSize={width < 700 ? `12px` : `18px`}
                         fontWeight={`Bold`}
-                        width={`15%`}>
+                        width={`25%`}>
                         학생명
                       </Text>
                       <Text
                         fontSize={width < 700 ? `12px` : `18px`}
                         fontWeight={`Bold`}
-                        width={`10%`}>
+                        width={`25%`}>
                         출생년도
                       </Text>
                       <Text
                         fontSize={width < 700 ? `12px` : `18px`}
                         fontWeight={`Bold`}
-                        width={`10%`}>
+                        width={`25%`}>
                         국가
                       </Text>
+                    </Wrapper>
+
+                    {testArr && testArr.length === 0 ? (
+                      <Wrapper>
+                        <Empty description="조회된 데이터가 없습니다." />
+                      </Wrapper>
+                    ) : (
+                      testArr &&
+                      testArr.map((data, idx) => {
+                        return (
+                          <Wrapper
+                            key={data.id}
+                            dr={`row`}
+                            textAlign={`center`}
+                            padding={width < 700 ? `30px 15px` : `30px`}
+                            cursor={`pointer`}
+                            al={width < 700 ? `baseline` : `center`}
+                            bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
+                            <CustomCheckBox />
+                            <Text
+                              fontSize={width < 700 ? `12px` : `16px`}
+                              width={`25%`}
+                              wordBreak={`break-word`}>
+                              Eric
+                            </Text>
+                            <Text
+                              fontSize={width < 700 ? `12px` : `16px`}
+                              width={`25%`}>
+                              1997
+                            </Text>
+                            <Text
+                              fontSize={width < 700 ? `12px` : `16px`}
+                              width={`25%`}>
+                              인도네시아
+                            </Text>
+                          </Wrapper>
+                        );
+                      })
+                    )}
+
+                    <Wrapper
+                      dr={`row`}
+                      textAlign={`center`}
+                      ju={`center`}
+                      padding={width < 700 ? `30px 15px` : `30px`}>
                       <Text
                         fontSize={width < 700 ? `12px` : `18px`}
                         fontWeight={`Bold`}
-                        width={`15%`}>
+                        width={`25%`}
+                        wordBreak={`break-word`}>
                         수업료
                       </Text>
+
                       <Text
                         fontSize={width < 700 ? `12px` : `18px`}
                         fontWeight={`Bold`}
-                        width={`20%`}>
+                        width={`25%`}>
                         만기일
                       </Text>
                       <Text
                         fontSize={width < 700 ? `12px` : `18px`}
                         fontWeight={`Bold`}
-                        width={`10%`}>
+                        width={`25%`}>
                         메모
                       </Text>
-
                       <Text
                         fontSize={width < 700 ? `12px` : `18px`}
                         fontWeight={`Bold`}
-                        width={`10%`}>
+                        width={`25%`}>
                         출석
                       </Text>
                     </Wrapper>
-                  )}
 
-                  {width > 700 && (
-                    <>
-                      {testArr && testArr.length === 0 ? (
-                        <Wrapper>
-                          <Empty description="조회된 데이터가 없습니다." />
-                        </Wrapper>
-                      ) : (
-                        testArr &&
-                        testArr.map((data, idx) => {
-                          return (
-                            <Wrapper
-                              key={data.id}
-                              dr={`row`}
-                              textAlign={`center`}
-                              padding={width < 700 ? `35px 10px` : `35px 30px`}
-                              cursor={`pointer`}
-                              ju={`center`}
-                              bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
-                              <CustomCheckBox
-                                checked={checkedList[idx]}
-                                onChange={(e) =>
-                                  onChangeBoxEachHanlder(e, idx, checkedList)
-                                }
-                              />
-                              <Text
-                                fontSize={width < 700 ? `12px` : `16px`}
-                                width={`15%`}>
-                                Eric
-                              </Text>
-                              <Text
-                                fontSize={width < 700 ? `12px` : `16px`}
-                                width={`10%`}>
-                                1997
-                              </Text>
-                              <Text
-                                fontSize={width < 700 ? `12px` : `16px`}
-                                width={`10%`}>
-                                인도네시아
-                              </Text>
-                              <Text
-                                fontSize={width < 700 ? `12px` : `16px`}
-                                width={`15%`}>
-                                U$ 16
-                              </Text>
-                              <Text
-                                fontSize={width < 700 ? `12px` : `16px`}
-                                width={`20%`}
-                                wordBreak={`break-word`}>
-                                2022/01/22{" "}
-                                <SpanText color={Theme.red_C}>(D-5)</SpanText>
-                              </Text>
-                              <Text
-                                fontSize={width < 700 ? `12px` : `16px`}
-                                width={`10%`}>
-                                작성하기
-                              </Text>
+                    {testArr && testArr.length === 0 ? (
+                      <Wrapper>
+                        <Empty description="조회된 데이터가 없습니다." />
+                      </Wrapper>
+                    ) : (
+                      testArr &&
+                      testArr.map((data, idx) => {
+                        return (
+                          <Wrapper
+                            dr={`row`}
+                            textAlign={`center`}
+                            padding={width < 700 ? `30px 15px` : `30px`}
+                            cursor={`pointer`}
+                            al={width < 700 ? `baseline` : `center`}
+                            bgColor={Theme.lightGrey_C}>
+                            <Text
+                              fontSize={width < 700 ? `12px` : `16px`}
+                              width={`25%`}>
+                              U$ 16
+                            </Text>
+                            <Text
+                              fontSize={width < 700 ? `12px` : `16px`}
+                              width={`25%`}
+                              wordBreak={`break-word`}>
+                              2022/01/22{" "}
+                              <SpanText color={Theme.red_C}>(D-5)</SpanText>
+                            </Text>
+                            <Text
+                              fontSize={width < 700 ? `12px` : `16px`}
+                              width={`25%`}>
+                              작성하기
+                            </Text>
 
-                              <Text
-                                fontSize={width < 700 ? `12px` : `16px`}
-                                width={`10%`}>
-                                출석 | 결석
-                              </Text>
-                            </Wrapper>
-                          );
-                        })
-                      )}
-                    </>
-                  )}
-                </Wrapper>
-                <Wrapper al={`flex-end`} margin={`20px 0 0 0`}>
-                  <CommonButton
-                    radius={`5px`}
-                    width={width < 700 ? `90px` : `110px`}
-                    height={width < 700 ? `32px` : `38px`}
-                    fontSize={width < 700 ? `12px` : `14px`}
-                    onClick={() => setNoteSendToggle(true)}>
-                    쪽지 보내기
-                  </CommonButton>
-                </Wrapper>
-              </Wrapper>
-
-              <Wrapper al={`flex-start`} margin={`90px 0 0 0`}>
-                <Text
-                  color={Theme.black_2C}
-                  fontSize={width < 700 ? `18px` : `22px`}
-                  fontWeight={`Bold`}
-                  margin={`0 0 20px`}>
-                  강사일지
-                </Text>
-
-                <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
+                            <Text
+                              fontSize={width < 700 ? `12px` : `16px`}
+                              width={`25%`}
+                              color={
+                                "출석"
+                                  ? `${Theme.basicTheme_C}`
+                                  : `${Theme.red_C}`
+                              }>
+                              출석 | 결석
+                            </Text>
+                          </Wrapper>
+                        );
+                      })
+                    )}
+                  </>
+                ) : (
                   <Wrapper
                     dr={`row`}
                     textAlign={`center`}
-                    padding={width < 700 ? `35px 10px` : `35px 30px`}>
+                    ju={`center`}
+                    padding={width < 700 ? `30px 15px` : `30px`}>
+                    <CustomCheckBox
+                      onChange={(e) => onChangeBoxAllHanlder(e, checkedList)}
+                    />
+
                     <Text
                       fontSize={width < 700 ? `12px` : `18px`}
                       fontWeight={`Bold`}
                       width={`15%`}>
-                      글번호
-                    </Text>
-                    <Text
-                      fontSize={width < 700 ? `12px` : `18px`}
-                      fontWeight={`Bold`}
-                      width={`10%`}>
-                      강사명
-                    </Text>
-                    <Text
-                      fontSize={width < 700 ? `12px` : `18px`}
-                      fontWeight={`Bold`}
-                      width={`20%`}>
-                      진도
-                    </Text>
-                    <Text
-                      fontSize={width < 700 ? `12px` : `18px`}
-                      fontWeight={`Bold`}
-                      width={`calc(100% - 15% - 10% - 20% - 25%)`}>
-                      수업메모
-                    </Text>
-                    <Text
-                      fontSize={width < 700 ? `12px` : `18px`}
-                      fontWeight={`Bold`}
-                      width={`25%`}>
-                      날짜
-                    </Text>
-                  </Wrapper>
-
-                  {teacherDiaryArr && teacherDiaryArr.length === 0 ? (
-                    <Wrapper>
-                      <Empty description="조회된 데이터가 없습니다." />
-                    </Wrapper>
-                  ) : (
-                    teacherDiaryArr &&
-                    teacherDiaryArr.map((data, idx) => {
-                      return (
-                        <Wrapper
-                          key={data.id}
-                          dr={`row`}
-                          textAlign={`center`}
-                          padding={width < 700 ? `35px 10px` : `35px 30px`}
-                          cursor={`pointer`}
-                          al={width < 700 ? `baseline` : `center`}
-                          bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
-                          <Text
-                            fontSize={width < 700 ? `12px` : `16px`}
-                            width={`15%`}
-                            wordBreak={`break-word`}>
-                            5
-                          </Text>
-                          <Text
-                            fontSize={width < 700 ? `12px` : `16px`}
-                            width={`10%`}>
-                            홍길동
-                          </Text>
-                          <Text
-                            fontSize={width < 700 ? `12px` : `16px`}
-                            width={`20%`}>
-                            1권 38페이지
-                          </Text>
-                          <Text
-                            fontSize={width < 700 ? `12px` : `16px`}
-                            width={`calc(100% - 15% - 10% - 20% - 25%)`}>
-                            수업메모 내용입니다.
-                          </Text>
-                          <Text
-                            fontSize={width < 700 ? `12px` : `16px`}
-                            width={`25%`}>
-                            2022/01/22
-                          </Text>
-                        </Wrapper>
-                      );
-                    })
-                  )}
-                </Wrapper>
-                <Wrapper al={`flex-end`} margin={`20px 0 0 0`}>
-                  <CommonButton
-                    radius={`5px`}
-                    width={width < 700 ? `90px` : `110px`}
-                    height={width < 700 ? `32px` : `38px`}
-                    fontSize={width < 700 ? `12px` : `14px`}>
-                    작성하기
-                  </CommonButton>
-                </Wrapper>
-                <Wrapper margin={`65px 0 85px`}>
-                  <CustomPage defaultCurrent={6} total={40}></CustomPage>
-                </Wrapper>
-              </Wrapper>
-
-              <Wrapper al={`flex-start`}>
-                <Text
-                  cTolor={Theme.black_2C}
-                  fontSize={width < 700 ? `18px` : `22px`}
-                  fontWeight={`Bold`}>
-                  강사일지
-                </Text>
-
-                <Input
-                  placeholder="학생명으로 검색"
-                  prefix={<SearchOutlined />}
-                  style={{
-                    borderRadius: 25,
-                    marginTop: 25,
-                    marginBottom: 10,
-                    width: `50%`,
-                    height: 39,
-                  }}
-                />
-                <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
-                  <Wrapper
-                    dr={`row`}
-                    textAlign={`center`}
-                    height={`65px`}
-                    padding={`0 30px`}>
-                    <Text
-                      fontSize={width < 700 ? `12px` : `18px`}
-                      fontWeight={`Bold`}
-                      width={`35%`}>
-                      날짜
-                    </Text>
-                    <Text
-                      fontSize={width < 700 ? `12px` : `18px`}
-                      fontWeight={`Bold`}
-                      width={`35%`}>
                       학생명
                     </Text>
                     <Text
                       fontSize={width < 700 ? `12px` : `18px`}
                       fontWeight={`Bold`}
-                      width={`30%`}>
-                      출석여부
+                      width={`10%`}>
+                      출생년도
                     </Text>
-                  </Wrapper>
+                    <Text
+                      fontSize={width < 700 ? `12px` : `18px`}
+                      fontWeight={`Bold`}
+                      width={`10%`}>
+                      국가
+                    </Text>
+                    <Text
+                      fontSize={width < 700 ? `12px` : `18px`}
+                      fontWeight={`Bold`}
+                      width={`15%`}>
+                      수업료
+                    </Text>
+                    <Text
+                      fontSize={width < 700 ? `12px` : `18px`}
+                      fontWeight={`Bold`}
+                      width={`20%`}>
+                      만기일
+                    </Text>
+                    <Text
+                      fontSize={width < 700 ? `12px` : `18px`}
+                      fontWeight={`Bold`}
+                      width={`10%`}>
+                      메모
+                    </Text>
 
-                  <Wrapper
-                    dr={`row`}
-                    textAlign={`center`}
-                    ju={`flex-start`}
-                    padding={width < 700 ? `35px 10px` : `35px 30px`}
-                    cursor={`pointer`}
-                    bgColor={Theme.lightGrey_C}
-                    // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
-                  >
                     <Text
-                      fontSize={width < 700 ? `12px` : `16px`}
-                      width={`35%`}>
-                      2022-01-22
-                    </Text>
-                    <Text
-                      fontSize={width < 700 ? `12px` : `16px`}
-                      width={`35%`}>
-                      ○○○
-                    </Text>
-                    <Text
-                      fontSize={width < 700 ? `12px` : `16px`}
-                      width={`30%`}>
-                      Y
+                      fontSize={width < 700 ? `12px` : `18px`}
+                      fontWeight={`Bold`}
+                      width={`10%`}>
+                      출석
                     </Text>
                   </Wrapper>
+                )}
 
-                  <Wrapper
-                    dr={`row`}
-                    textAlign={`center`}
-                    ju={`flex-start`}
-                    padding={width < 700 ? `35px 10px` : `35px 30px`}
-                    cursor={`pointer`}
-                    bgColor={Theme.lightGrey_C}
-                    // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
-                  >
-                    <Text
-                      fontSize={width < 700 ? `14px` : `16px`}
-                      width={`35%`}>
-                      2022-01-22
-                    </Text>
-                    <Text
-                      fontSize={width < 700 ? `12px` : `16px`}
-                      width={`35%`}>
-                      ○○○
-                    </Text>
-                    <Text
-                      fontSize={width < 700 ? `14px` : `16px`}
-                      width={`30%`}>
-                      Y
-                    </Text>
-                  </Wrapper>
-                </Wrapper>
+                {width > 700 && (
+                  <>
+                    {testArr && testArr.length === 0 ? (
+                      <Wrapper>
+                        <Empty description="조회된 데이터가 없습니다." />
+                      </Wrapper>
+                    ) : (
+                      testArr &&
+                      testArr.map((data, idx) => {
+                        return (
+                          <Wrapper
+                            key={data.id}
+                            dr={`row`}
+                            textAlign={`center`}
+                            padding={width < 700 ? `35px 10px` : `35px 30px`}
+                            cursor={`pointer`}
+                            ju={`center`}
+                            bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
+                            <CustomCheckBox
+                              checked={checkedList[idx]}
+                              onChange={(e) =>
+                                onChangeBoxEachHanlder(e, idx, checkedList)
+                              }
+                            />
+                            <Text
+                              fontSize={width < 700 ? `12px` : `16px`}
+                              width={`15%`}>
+                              Eric
+                            </Text>
+                            <Text
+                              fontSize={width < 700 ? `12px` : `16px`}
+                              width={`10%`}>
+                              1997
+                            </Text>
+                            <Text
+                              fontSize={width < 700 ? `12px` : `16px`}
+                              width={`10%`}>
+                              인도네시아
+                            </Text>
+                            <Text
+                              fontSize={width < 700 ? `12px` : `16px`}
+                              width={`15%`}>
+                              U$ 16
+                            </Text>
+                            <Text
+                              fontSize={width < 700 ? `12px` : `16px`}
+                              width={`20%`}
+                              wordBreak={`break-word`}>
+                              2022/01/22{" "}
+                              <SpanText color={Theme.red_C}>(D-5)</SpanText>
+                            </Text>
+                            <Text
+                              fontSize={width < 700 ? `12px` : `16px`}
+                              width={`10%`}>
+                              작성하기
+                            </Text>
+
+                            <Text
+                              fontSize={width < 700 ? `12px` : `16px`}
+                              width={`10%`}>
+                              출석 | 결석
+                            </Text>
+                          </Wrapper>
+                        );
+                      })
+                    )}
+                  </>
+                )}
               </Wrapper>
+              <Wrapper al={`flex-end`} margin={`20px 0 0 0`}>
+                <CommonButton
+                  radius={`5px`}
+                  width={width < 700 ? `90px` : `110px`}
+                  height={width < 700 ? `32px` : `38px`}
+                  fontSize={width < 700 ? `12px` : `14px`}
+                  onClick={() => setNoteSendToggle(true)}>
+                  쪽지 보내기
+                </CommonButton>
+              </Wrapper>
+            </Wrapper>
 
-              <Wrapper al={`flex-start`}>
-                <Text
-                  cTolor={Theme.black_2C}
-                  fontSize={width < 700 ? `18px` : `22px`}
-                  fontWeight={`Bold`}
-                  margin={`90px 0 20px`}>
-                  숙제관리
-                </Text>
+            <Wrapper al={`flex-start`} margin={`90px 0 0 0`}>
+              <Text
+                color={Theme.black_2C}
+                fontSize={width < 700 ? `18px` : `22px`}
+                fontWeight={`Bold`}
+                margin={`0 0 20px`}>
+                강사일지
+              </Text>
+
+              <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
+                <Wrapper
+                  dr={`row`}
+                  textAlign={`center`}
+                  padding={width < 700 ? `35px 10px` : `35px 30px`}>
+                  <Text
+                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontWeight={`Bold`}
+                    width={`15%`}>
+                    글번호
+                  </Text>
+                  <Text
+                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontWeight={`Bold`}
+                    width={`10%`}>
+                    강사명
+                  </Text>
+                  <Text
+                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontWeight={`Bold`}
+                    width={`20%`}>
+                    진도
+                  </Text>
+                  <Text
+                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontWeight={`Bold`}
+                    width={`calc(100% - 15% - 10% - 20% - 25%)`}>
+                    수업메모
+                  </Text>
+                  <Text
+                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontWeight={`Bold`}
+                    width={`25%`}>
+                    날짜
+                  </Text>
+                </Wrapper>
+
+                {teacherDiaryArr && teacherDiaryArr.length === 0 ? (
+                  <Wrapper>
+                    <Empty description="조회된 데이터가 없습니다." />
+                  </Wrapper>
+                ) : (
+                  teacherDiaryArr &&
+                  teacherDiaryArr.map((data, idx) => {
+                    return (
+                      <Wrapper
+                        key={data.id}
+                        dr={`row`}
+                        textAlign={`center`}
+                        padding={width < 700 ? `35px 10px` : `35px 30px`}
+                        cursor={`pointer`}
+                        al={width < 700 ? `baseline` : `center`}
+                        bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
+                        <Text
+                          fontSize={width < 700 ? `12px` : `16px`}
+                          width={`15%`}
+                          wordBreak={`break-word`}>
+                          5
+                        </Text>
+                        <Text
+                          fontSize={width < 700 ? `12px` : `16px`}
+                          width={`10%`}>
+                          홍길동
+                        </Text>
+                        <Text
+                          fontSize={width < 700 ? `12px` : `16px`}
+                          width={`20%`}>
+                          1권 38페이지
+                        </Text>
+                        <Text
+                          fontSize={width < 700 ? `12px` : `16px`}
+                          width={`calc(100% - 15% - 10% - 20% - 25%)`}>
+                          수업메모 내용입니다.
+                        </Text>
+                        <Text
+                          fontSize={width < 700 ? `12px` : `16px`}
+                          width={`25%`}>
+                          2022/01/22
+                        </Text>
+                      </Wrapper>
+                    );
+                  })
+                )}
+              </Wrapper>
+              <Wrapper al={`flex-end`} margin={`20px 0 0 0`}>
+                <CommonButton
+                  radius={`5px`}
+                  width={width < 700 ? `90px` : `110px`}
+                  height={width < 700 ? `32px` : `38px`}
+                  fontSize={width < 700 ? `12px` : `14px`}>
+                  작성하기
+                </CommonButton>
+              </Wrapper>
+              <Wrapper margin={`65px 0 85px`}>
+                <CustomPage defaultCurrent={6} total={40}></CustomPage>
+              </Wrapper>
+            </Wrapper>
+
+            <Wrapper al={`flex-start`}>
+              <Text
+                cTolor={Theme.black_2C}
+                fontSize={width < 700 ? `18px` : `22px`}
+                fontWeight={`Bold`}>
+                출석부 목록
+              </Text>
+
+              <Input
+                placeholder="학생명으로 검색"
+                prefix={<SearchOutlined />}
+                style={{
+                  borderRadius: 25,
+                  marginTop: 25,
+                  marginBottom: 10,
+                  width: `50%`,
+                  height: 39,
+                }}
+              />
+              <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
+                <Wrapper
+                  dr={`row`}
+                  textAlign={`center`}
+                  height={`65px`}
+                  padding={`0 30px`}>
+                  <Text
+                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontWeight={`Bold`}
+                    width={`35%`}>
+                    날짜
+                  </Text>
+                  <Text
+                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontWeight={`Bold`}
+                    width={`35%`}>
+                    학생명
+                  </Text>
+                  <Text
+                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontWeight={`Bold`}
+                    width={`30%`}>
+                    출석여부
+                  </Text>
+                </Wrapper>
 
                 <Wrapper
                   dr={`row`}
+                  textAlign={`center`}
                   ju={`flex-start`}
-                  shadow={`0px 5px 15px rgb(0,0,0,0.1)`}
-                  radius={`10px`}
-                  padding={`35px 20px`}>
-                  <Text width={`50%`} fontSize={width < 700 ? `14px` : `16px`}>
-                    한국어로 편지 쓰기
+                  padding={width < 700 ? `35px 10px` : `35px 30px`}
+                  cursor={`pointer`}
+                  bgColor={Theme.lightGrey_C}
+                  // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
+                >
+                  <Text fontSize={width < 700 ? `12px` : `16px`} width={`35%`}>
+                    2022-01-22
                   </Text>
+                  <Text fontSize={width < 700 ? `12px` : `16px`} width={`35%`}>
+                    ○○○
+                  </Text>
+                  <Text fontSize={width < 700 ? `12px` : `16px`} width={`30%`}>
+                    Y
+                  </Text>
+                </Wrapper>
 
-                  <Wrapper width={`40%`} dr={width < 1100 ? `column` : `row`}>
-                    <CustomWrapper width={width < 1100 ? `100%` : `50%`}>
-                      <DownloadOutlined
-                        style={{
-                          fontSize: width < 700 ? 15 : 25,
-                          color: Theme.basicTheme_C,
-                          marginRight: 10,
-                          cursor: `pointer`,
-                        }}
-                      />
-                      <Text fontSize={width < 700 ? `14px` : `16px`}>
-                        파일 업로드
-                      </Text>
-                    </CustomWrapper>
+                <Wrapper
+                  dr={`row`}
+                  textAlign={`center`}
+                  ju={`flex-start`}
+                  padding={width < 700 ? `35px 10px` : `35px 30px`}
+                  cursor={`pointer`}
+                  bgColor={Theme.lightGrey_C}
+                  // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
+                >
+                  <Text fontSize={width < 700 ? `14px` : `16px`} width={`35%`}>
+                    2022-01-22
+                  </Text>
+                  <Text fontSize={width < 700 ? `12px` : `16px`} width={`35%`}>
+                    ○○○
+                  </Text>
+                  <Text fontSize={width < 700 ? `14px` : `16px`} width={`30%`}>
+                    Y
+                  </Text>
+                </Wrapper>
+              </Wrapper>
+            </Wrapper>
 
-                    <CustomWrapper
-                      width={width < 1100 ? `100%` : `50%`}
-                      beforeBool={width < 1300 ? false : true}>
-                      <CalendarOutlined
-                        style={{
-                          fontSize: width < 700 ? 15 : 25,
-                          color: Theme.basicTheme_C,
-                          marginRight: 10,
-                          cursor: `pointer`,
-                        }}
-                      />
-                      <Text fontSize={width < 700 ? `14px` : `16px`}>
-                        2022/01/31까지
-                      </Text>
-                    </CustomWrapper>
-                  </Wrapper>
+            <Wrapper al={`flex-start`}>
+              <Text
+                cTolor={Theme.black_2C}
+                fontSize={width < 700 ? `18px` : `22px`}
+                fontWeight={`Bold`}
+                margin={`90px 0 20px`}>
+                숙제관리
+              </Text>
 
-                  <Wrapper width={`10%`} ju={`center`}>
-                    <Text
-                      fontSize={width < 700 ? `14px` : `16px`}
-                      margin={width < 700 ? `0 0 0 5px` : "0"}
-                      fontWeight={`bold`}>
-                      제출 기한
+              <Wrapper
+                dr={`row`}
+                ju={`flex-start`}
+                shadow={`0px 5px 15px rgb(0,0,0,0.1)`}
+                radius={`10px`}
+                padding={`35px 20px`}>
+                <Text width={`50%`} fontSize={width < 700 ? `14px` : `16px`}>
+                  한국어로 편지 쓰기
+                </Text>
+
+                <Wrapper width={`40%`} dr={width < 1100 ? `column` : `row`}>
+                  <CustomWrapper width={width < 1100 ? `100%` : `50%`}>
+                    <DownloadOutlined
+                      style={{
+                        fontSize: width < 700 ? 15 : 25,
+                        color: Theme.basicTheme_C,
+                        marginRight: 10,
+                        cursor: `pointer`,
+                      }}
+                    />
+                    <Text fontSize={width < 700 ? `14px` : `16px`}>
+                      파일 업로드
                     </Text>
-                  </Wrapper>
+                  </CustomWrapper>
+
+                  <CustomWrapper
+                    width={width < 1100 ? `100%` : `50%`}
+                    beforeBool={width < 1300 ? false : true}>
+                    <CalendarOutlined
+                      style={{
+                        fontSize: width < 700 ? 15 : 25,
+                        color: Theme.basicTheme_C,
+                        marginRight: 10,
+                        cursor: `pointer`,
+                      }}
+                    />
+                    <Text fontSize={width < 700 ? `14px` : `16px`}>
+                      2022/01/31까지
+                    </Text>
+                  </CustomWrapper>
+                </Wrapper>
+
+                <Wrapper width={`10%`} ju={`center`}>
+                  <Text
+                    fontSize={width < 700 ? `14px` : `16px`}
+                    margin={width < 700 ? `0 0 0 5px` : "0"}
+                    fontWeight={`bold`}>
+                    제출 기한
+                  </Text>
+                </Wrapper>
+              </Wrapper>
+            </Wrapper>
+
+            <Wrapper al={`flex-end`} margin={`20px 0 0 0`}>
+              <CommonButton
+                radius={`5px`}
+                width={width < 700 ? `90px` : `110px`}
+                height={width < 700 ? `32px` : `38px`}
+                fontSize={width < 700 ? `12px` : `14px`}
+                onClick={() => setHomeWorkModalToggle(true)}>
+                숙제 업로드
+              </CommonButton>
+            </Wrapper>
+
+            <Wrapper margin={`65px 0 85px`}>
+              <CustomPage defaultCurrent={6} total={40}></CustomPage>
+            </Wrapper>
+
+            <Wrapper al={`flex-start`}>
+              <Text
+                color={Theme.black_2C}
+                fontSize={width < 700 ? `18px` : `22px`}
+                fontWeight={`Bold`}
+                margin={`0 0 20px`}>
+                공지사항
+              </Text>
+
+              <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
+                <Wrapper dr={`row`} textAlign={`center`} padding={`30px`}>
+                  <Text
+                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontWeight={`Bold`}
+                    width={`15%`}>
+                    글 번호
+                  </Text>
+                  <Text
+                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontWeight={`Bold`}
+                    width={`60%`}>
+                    제목
+                  </Text>
+                  <Text
+                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontWeight={`Bold`}
+                    width={`25%`}>
+                    날짜
+                  </Text>
+                </Wrapper>
+
+                <Wrapper
+                  dr={`row`}
+                  textAlign={`center`}
+                  ju={`flex-start`}
+                  padding={width < 700 ? `35px 10px` : `35px 30px`}
+                  cursor={`pointer`}
+                  al={width < 700 ? `baseline` : `center`}
+                  bgColor={Theme.lightGrey_C}
+                  // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
+                >
+                  <Text
+                    fontSize={width < 700 ? `12px` : `16px`}
+                    width={`15%`}
+                    wordBreak={`break-word`}>
+                    5
+                  </Text>
+                  <Text fontSize={width < 700 ? `12px` : `16px`} width={`60%`}>
+                    안녕하세요. 오늘 수업 공지입니다.
+                  </Text>
+                  <Text fontSize={width < 700 ? `12px` : `16px`} width={`25%`}>
+                    2022/01/22
+                  </Text>
                 </Wrapper>
               </Wrapper>
 
@@ -1050,165 +1117,83 @@ const Index = () => {
                   width={width < 700 ? `90px` : `110px`}
                   height={width < 700 ? `32px` : `38px`}
                   fontSize={width < 700 ? `12px` : `14px`}
-                  onClick={() => setHomeWorkModalToggle(true)}>
-                  숙제 업로드
+                  onClick={() => setNoticeModalToggle(true)}>
+                  작성하기
                 </CommonButton>
               </Wrapper>
 
               <Wrapper margin={`65px 0 85px`}>
                 <CustomPage defaultCurrent={6} total={40}></CustomPage>
               </Wrapper>
+            </Wrapper>
 
-              <Wrapper al={`flex-start`}>
-                <Text
-                  color={Theme.black_2C}
-                  fontSize={width < 700 ? `18px` : `22px`}
-                  fontWeight={`Bold`}
-                  margin={`0 0 20px`}>
-                  공지사항
-                </Text>
+            <Wrapper al={`flex-start`}>
+              <Text
+                color={Theme.black_2C}
+                fontSize={width < 700 ? `18px` : `22px`}
+                fontWeight={`Bold`}
+                margin={`0 0 20px`}>
+                쪽지함
+              </Text>
 
-                <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
-                  <Wrapper dr={`row`} textAlign={`center`} padding={`30px`}>
-                    <Text
-                      fontSize={width < 700 ? `12px` : `18px`}
-                      fontWeight={`Bold`}
-                      width={`15%`}>
-                      글 번호
-                    </Text>
-                    <Text
-                      fontSize={width < 700 ? `12px` : `18px`}
-                      fontWeight={`Bold`}
-                      width={`60%`}>
-                      제목
-                    </Text>
-                    <Text
-                      fontSize={width < 700 ? `12px` : `18px`}
-                      fontWeight={`Bold`}
-                      width={`25%`}>
-                      날짜
-                    </Text>
-                  </Wrapper>
+              <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
+                <Wrapper dr={`row`} textAlign={`center`} padding={`30px`}>
+                  <Text
+                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontWeight={`Bold`}
+                    width={`15%`}>
+                    글 번호
+                  </Text>
+                  <Text
+                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontWeight={`Bold`}
+                    width={`calc(100% - 15% - 15% - 20%)`}>
+                    제목
+                  </Text>
 
-                  <Wrapper
-                    dr={`row`}
-                    textAlign={`center`}
-                    ju={`flex-start`}
-                    padding={width < 700 ? `35px 10px` : `35px 30px`}
-                    cursor={`pointer`}
-                    al={width < 700 ? `baseline` : `center`}
-                    bgColor={Theme.lightGrey_C}
-                    // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
-                  >
-                    <Text
-                      fontSize={width < 700 ? `12px` : `16px`}
-                      width={`15%`}
-                      wordBreak={`break-word`}>
-                      5
-                    </Text>
-                    <Text
-                      fontSize={width < 700 ? `12px` : `16px`}
-                      width={`60%`}>
-                      안녕하세요. 오늘 수업 공지입니다.
-                    </Text>
-                    <Text
-                      fontSize={width < 700 ? `12px` : `16px`}
-                      width={`25%`}>
-                      2022/01/22
-                    </Text>
-                  </Wrapper>
+                  <Text
+                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontWeight={`Bold`}
+                    width={`15%`}>
+                    작성자
+                  </Text>
+
+                  <Text
+                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontWeight={`Bold`}
+                    width={`20%`}>
+                    날짜
+                  </Text>
                 </Wrapper>
 
-                <Wrapper al={`flex-end`} margin={`20px 0 0 0`}>
-                  <CommonButton
-                    radius={`5px`}
-                    width={width < 700 ? `90px` : `110px`}
-                    height={width < 700 ? `32px` : `38px`}
-                    fontSize={width < 700 ? `12px` : `14px`}
-                    onClick={() => setNoticeModalToggle(true)}>
-                    작성하기
-                  </CommonButton>
-                </Wrapper>
+                <Wrapper
+                  dr={`row`}
+                  textAlign={`center`}
+                  padding={width < 700 ? `35px 10px` : `35px 30px`}
+                  cursor={`pointer`}
+                  bgColor={Theme.lightGrey_C}
+                  // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
+                >
+                  <Text fontSize={width < 700 ? `12px` : `16px`} width={`15%`}>
+                    5
+                  </Text>
+                  <Text
+                    fontSize={width < 700 ? `12px` : `16px`}
+                    width={`calc(100% - 15% - 15% - 20%)`}>
+                    안녕하세요. 오늘 수업 공지입니다.
+                  </Text>
 
-                <Wrapper margin={`65px 0 85px`}>
-                  <CustomPage defaultCurrent={6} total={40}></CustomPage>
+                  <Text fontSize={width < 700 ? `12px` : `16px`} width={`15%`}>
+                    ○○○
+                  </Text>
+                  <Text fontSize={width < 700 ? `12px` : `16px`} width={`20%`}>
+                    2022/01/22
+                  </Text>
                 </Wrapper>
               </Wrapper>
 
-              <Wrapper al={`flex-start`}>
-                <Text
-                  color={Theme.black_2C}
-                  fontSize={width < 700 ? `18px` : `22px`}
-                  fontWeight={`Bold`}
-                  margin={`0 0 20px`}>
-                  쪽지함
-                </Text>
-
-                <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
-                  <Wrapper dr={`row`} textAlign={`center`} padding={`30px`}>
-                    <Text
-                      fontSize={width < 700 ? `12px` : `18px`}
-                      fontWeight={`Bold`}
-                      width={`15%`}>
-                      글 번호
-                    </Text>
-                    <Text
-                      fontSize={width < 700 ? `12px` : `18px`}
-                      fontWeight={`Bold`}
-                      width={`calc(100% - 15% - 15% - 20%)`}>
-                      제목
-                    </Text>
-
-                    <Text
-                      fontSize={width < 700 ? `12px` : `18px`}
-                      fontWeight={`Bold`}
-                      width={`15%`}>
-                      작성자
-                    </Text>
-
-                    <Text
-                      fontSize={width < 700 ? `12px` : `18px`}
-                      fontWeight={`Bold`}
-                      width={`20%`}>
-                      날짜
-                    </Text>
-                  </Wrapper>
-
-                  <Wrapper
-                    dr={`row`}
-                    textAlign={`center`}
-                    padding={width < 700 ? `35px 10px` : `35px 30px`}
-                    cursor={`pointer`}
-                    bgColor={Theme.lightGrey_C}
-                    // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
-                  >
-                    <Text
-                      fontSize={width < 700 ? `12px` : `16px`}
-                      width={`15%`}>
-                      5
-                    </Text>
-                    <Text
-                      fontSize={width < 700 ? `12px` : `16px`}
-                      width={`calc(100% - 15% - 15% - 20%)`}>
-                      안녕하세요. 오늘 수업 공지입니다.
-                    </Text>
-
-                    <Text
-                      fontSize={width < 700 ? `12px` : `16px`}
-                      width={`15%`}>
-                      ○○○
-                    </Text>
-                    <Text
-                      fontSize={width < 700 ? `12px` : `16px`}
-                      width={`20%`}>
-                      2022/01/22
-                    </Text>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper margin={`110px 0`}>
-                  <CustomPage defaultCurrent={6} total={40}></CustomPage>
-                </Wrapper>
+              <Wrapper margin={`110px 0`}>
+                <CustomPage defaultCurrent={6} total={40}></CustomPage>
               </Wrapper>
             </Wrapper>
           </RsWrapper>
