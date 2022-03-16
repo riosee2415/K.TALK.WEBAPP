@@ -441,7 +441,7 @@ const Index = () => {
                     width={width < 1400 ? `100%` : `55%`}
                     ju={`flex-start`}>
                     <Wrapper dr={`row`} ju={`flex-start`}>
-                      <Wrapper dr={`row`} width={width < 700 ? `70%` : `60%`}>
+                      <Wrapper dr={`row`} ju={`flex-start`} width={`70%`}>
                         <CalendarOutlined
                           style={{
                             fontSize: width < 700 ? 20 : 34,
