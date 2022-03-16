@@ -89,7 +89,7 @@ const CustomSelect = styled(Select)`
   width: 100%;
 
   &:not(.ant-select-customize-input) .ant-select-selector {
-    border: none !important;
+    border-radius: 5px;
     box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
   }
 
@@ -97,20 +97,24 @@ const CustomSelect = styled(Select)`
     width: 100% !important;
     height: 40px !important;
     padding: 5px 0 0 10px !important;
-    border-radius: 5px;
   }
 
   & .ant-select-arrow span svg {
     color: ${Theme.black_C};
   }
+
+  & .ant-select-selection-placeholder {
+    color: ${Theme.grey2_C};
+  }
 `;
 
 const CusotmInput = styled(TextInput)`
   border: none;
-  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.16);
+  border-radius: 5px;
 
   &::placeholder {
-    color: ${Theme.grey_C};
+    color: ${Theme.grey2_C};
   }
 `;
 
@@ -334,40 +338,45 @@ const Application = () => {
           margin={width < 700 ? `50px 0 0` : `100px 0 0`}
         >
           <RsWrapper>
-            <Wrapper fontSize={`28px`} fontWeight={`bold`}>
+            <Text fontSize={width < 700 ? `20px` : `28px`} fontWeight={`bold`}>
               Application Form
-            </Wrapper>
-            <Wrapper fontSize={`18px`} margin={`10px 0 30px`}>
+            </Text>
+            <Text
+              fontSize={width < 700 ? `16px` : `18px`}
+              margin={`10px 0 30px`}
+            >
               for K-talk LIve regular paid Korean lessons
-            </Wrapper>
+            </Text>
             {width < 700 ? (
               <>
-                <Wrapper>·Please complete and submit this form</Wrapper>
-                <Wrapper>
+                <Text fontSize={`14px`}>
+                  ·Please complete and submit this form
+                </Text>
+                <Text fontSize={`14px`}>
                   so that teachers can contact you for the next step.
-                </Wrapper>
+                </Text>
               </>
             ) : (
-              <Wrapper>
+              <Text>
                 ·Please complete and submit this form so that teachers can
                 contact you for the next step.
-              </Wrapper>
+              </Text>
             )}
 
             {width < 700 ? (
               <>
-                <Wrapper>
+                <Text fontSize={`14px`}>
                   ·If you'd like to apply for our Free Hangeul Lessons,
-                </Wrapper>
-                <Wrapper>
+                </Text>
+                <Text fontSize={`14px`}>
                   please exit this page and visit our website at
-                </Wrapper>
+                </Text>
               </>
             ) : (
-              <Wrapper>
+              <Text>
                 ·If you'd like to apply for our Free Hangeul Lessons, please
                 exit this page and visit our website at
-              </Wrapper>
+              </Text>
             )}
             <Wrapper dr={`row`}>
               <Text color={Theme.basicTheme_C}>http://ktalklive.com</Text>
@@ -388,7 +397,7 @@ const Application = () => {
             <CustomForm onFinish={submissionHandler} form={form} ref={formRef}>
               <Wrapper al={`flex-start`}>
                 <Text
-                  fontSize={`18px`}
+                  fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
                   margin={`0 0 10px`}
                   lineHeight={`1.22`}
@@ -419,7 +428,7 @@ const Application = () => {
               </Wrapper>
               <Wrapper al={`flex-start`}>
                 <Text
-                  fontSize={`18px`}
+                  fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
                   margin={`0 0 10px`}
                   lineHeight={`1.22`}
@@ -463,7 +472,7 @@ const Application = () => {
               </Wrapper>
               <Wrapper al={`flex-start`} position={"relative"}>
                 <Text
-                  fontSize={`18px`}
+                  fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
                   margin={`0 0 10px`}
                   lineHeight={`1.22`}
@@ -506,7 +515,7 @@ const Application = () => {
                   <Wrapper
                     width={`30px`}
                     margin={width < 700 ? `0 0 28px` : `0 0 48px`}
-                    fontSize={`30px`}
+                    fontSize={width < 700 ? `20px` : `30px`}
                   >
                     <CalendarOutlined onClick={calenderToggle} />
                   </Wrapper>
@@ -529,7 +538,7 @@ const Application = () => {
               </Wrapper>
               <Wrapper al={`flex-start`}>
                 <Text
-                  fontSize={`18px`}
+                  fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
                   margin={`0 0 10px`}
                   lineHeight={`1.22`}
@@ -560,7 +569,7 @@ const Application = () => {
               </Wrapper>
               <Wrapper al={`flex-start`}>
                 <Text
-                  fontSize={`18px`}
+                  fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
                   margin={`0 0 10px`}
                   lineHeight={`1.22`}
@@ -579,7 +588,7 @@ const Application = () => {
               </Wrapper>
               <Wrapper al={`flex-start`}>
                 <Text
-                  fontSize={`18px`}
+                  fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
                   margin={`0 0 10px`}
                   lineHeight={`1.22`}
@@ -601,7 +610,7 @@ const Application = () => {
               </Wrapper>
               <Wrapper al={`flex-start`}>
                 <Text
-                  fontSize={`18px`}
+                  fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
                   margin={`0 0 10px`}
                   lineHeight={`1.22`}
@@ -620,7 +629,7 @@ const Application = () => {
               </Wrapper>
               <Wrapper al={`flex-start`}>
                 <Text
-                  fontSize={`18px`}
+                  fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
                   margin={`0 0 10px`}
                   lineHeight={`1.22`}
@@ -660,14 +669,18 @@ const Application = () => {
 
               <Wrapper al={`flex-start`} margin={`0 0 35px`}>
                 <Text
-                  fontSize={`18px`}
+                  fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
                   margin={`0 0 10px`}
                   lineHeight={`1.22`}
                 >
                   Please choose your available class hours.
                 </Text>
-                <Text fontSize={`18px`} margin={`0 0 10px`} lineHeight={`1.19`}>
+                <Text
+                  fontSize={width < 700 ? `16px` : `18px`}
+                  margin={`0 0 10px`}
+                  lineHeight={`1.19`}
+                >
                   Stated time are in Korean Standard Time(GMT +9). Please check
                   all that apply.
                 </Text>
@@ -680,7 +693,7 @@ const Application = () => {
                         width={
                           width < 700 ? `calc(100% / 2)` : `calc(100% / 3)`
                         }
-                        fontSize={`18px`}
+                        fontSize={width < 700 ? `16px` : `18px`}
                         al={`flex-start`}
                       >
                         <CustomCheckBox2
@@ -696,7 +709,7 @@ const Application = () => {
 
               <Wrapper
                 color={Theme.red_C}
-                fontSize={width < 700 ? `16px` : `18px`}
+                fontSize={width < 700 ? `14px` : `18px`}
               >
                 <Text>Do you agree to the terms of our Student Rules?</Text>
                 {width < 700 ? (
@@ -729,14 +742,24 @@ const Application = () => {
               </Wrapper>
 
               <Wrapper al={`flex-start`}>
-                <Text
-                  fontSize={`18px`}
+                <Wrapper
+                  fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`bold`}
                   margin={`48px 0 10px`}
                   lineHeight={`1.22`}
                 >
-                  Do you have any other questions or comments about our program?
-                </Text>
+                  {width < 700 ? (
+                    <>
+                      <Text>Do you have any other questions or</Text>
+                      <Text>comments about our program?</Text>
+                    </>
+                  ) : (
+                    <Text>
+                      Do you have any other questions or comments about our
+                      program?
+                    </Text>
+                  )}
+                </Wrapper>
                 <Form.Item name="comment" rules={[{ requierd: true }]}>
                   <CusotmArea width={`100%`} />
                 </Form.Item>
