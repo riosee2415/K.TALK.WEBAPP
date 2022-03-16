@@ -270,7 +270,7 @@ const Presentation = () => {
                   <Wrapper
                     width={`30px`}
                     margin={width < 700 ? `0 0 28px` : `0 0 48px`}
-                    fontSize={`30px`}
+                    fontSize={width < 700 ? `20px` : `30px`}
                   >
                     <CalendarOutlined onClick={calenderToggle} />
                   </Wrapper>
@@ -459,7 +459,7 @@ const Presentation = () => {
                   <Wrapper
                     width={`30px`}
                     margin={width < 700 ? `0 0 28px` : `0 0 48px`}
-                    fontSize={`30px`}
+                    fontSize={width < 700 ? `20px` : `30px`}
                   >
                     <CalendarOutlined onClick={calender2Toggle} />
                   </Wrapper>
