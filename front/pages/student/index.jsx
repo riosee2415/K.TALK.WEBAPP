@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 
 import { END } from "redux-saga";
@@ -10,16 +10,7 @@ import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 import { useRouter } from "next/router";
 import Head from "next/head";
 
-import {
-  Button,
-  Empty,
-  Form,
-  Input,
-  message,
-  Modal,
-  Pagination,
-  Slider,
-} from "antd";
+import { Empty, Form, Input, message, Modal, Pagination, Slider } from "antd";
 import styled from "styled-components";
 import useWidth from "../../hooks/useWidth";
 import ClientLayout from "../../components/ClientLayout";
@@ -29,8 +20,6 @@ import {
   RsWrapper,
   SpanText,
   Text,
-  TextArea,
-  TextInput,
   WholeWrapper,
   Wrapper,
 } from "../../components/commonComponents";
