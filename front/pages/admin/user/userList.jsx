@@ -120,6 +120,8 @@ const UserList = ({}) => {
           listType: query.sort,
         },
       });
+
+      return message.error("회원이 수정되었습니다.");
     }
   }, [st_userListUpdateDone]);
 
@@ -137,8 +139,10 @@ const UserList = ({}) => {
           listType: query.sort,
         },
       });
+
+      return message.error("회원이 생성되었습니다.");
     }
-  }, [st_userListUpdateDone]);
+  }, [st_userCreateDone]);
 
   useEffect(() => {
     if (st_userListError) {
