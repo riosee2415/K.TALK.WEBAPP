@@ -43,6 +43,49 @@ const CustomSlide = styled(Slider)`
   }
 `;
 
+const CustomPage = styled(Pagination)`
+  & .ant-pagination-next > button {
+    border: none;
+  }
+
+  & .ant-pagination-prev > button {
+    border: none;
+  }
+
+  & {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  & .ant-pagination-item,
+  & .ant-pagination-next,
+  & .ant-pagination-prev {
+    border: none;
+    width: 28px;
+    height: 28px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: ${Theme.white_C} !important;
+    margin: 0 5px !important;
+  }
+
+  & .ant-pagination-item-active a {
+    color: ${Theme.subTheme2_C};
+  }
+
+  & .ant-pagination-item:focus-visible a,
+  .ant-pagination-item:hover a {
+    color: ${Theme.subTheme2_C};
+  }
+
+  & .ant-pagination-item-link svg {
+    font-weight: bold;
+    color: ${Theme.black_2C};
+  }
+`;
+
 const CustomTableHoverWrapper = styled(Wrapper)`
   flex-direction: row;
   padding: 25px 0 20px;
@@ -730,7 +773,7 @@ const Student = () => {
                   })
                 ))}
             </Wrapper>
-            <Pagination size="small" />
+            <CustomPage size="small" />
 
             <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
               <Text
@@ -789,7 +832,7 @@ const Student = () => {
             <Wrapper al={`flex-end`} margin={`20px 0 40px`}>
               <CommonButton radius={`5px`}>쪽지 보내기</CommonButton>
             </Wrapper>
-            <Pagination size="small" />
+            <CustomPage size="small" />
 
             <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
               <Text
@@ -858,7 +901,7 @@ const Student = () => {
               <CommonButton radius={`5px`}>쪽지 보내기</CommonButton>
             </Wrapper>
             <Wrapper margin={`0 0 110px`}>
-              <Pagination size="small" />
+              <CustomPage size="small" />
             </Wrapper>
           </RsWrapper>
 
