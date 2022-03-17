@@ -64,6 +64,33 @@ const DashBorder = styled(Wrapper)`
   }
 `;
 
+const CustomPage = styled(Pagination)`
+  & .ant-pagination-next > button {
+    border: none;
+  }
+
+  & .ant-pagination-prev > button {
+    border: none;
+  }
+  & .ant-pagination-item {
+    border: none;
+  }
+
+  & .ant-pagination-item-active a {
+    color: ${Theme.subTheme2_C};
+  }
+
+  & .ant-pagination-item:focus-visible a,
+  .ant-pagination-item:hover a {
+    color: ${Theme.subTheme2_C};
+  }
+
+  & .ant-pagination-item-link svg {
+    font-weight: bold;
+    color: ${Theme.black_2C};
+  }
+`;
+
 const Index = () => {
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
@@ -250,19 +277,203 @@ const Index = () => {
                     return (
                       <Wrapper
                         key={data.id}
-                        dr={width < 1100 ? `column` : `row`}
-                        height={width < 1100 ? `auto` : `95px`}
                         shadow={`0px 5px 15px rgba(0, 0, 0, 0.05)`}
                         radius={`10px`}
-                        padding={`20px`}
+                        padding={width < 800 ? `15px` : `20px`}
                         margin={`0 0 10px`}
+                        height={width < 1100 ? `auto` : `95px`}
                       >
                         <Wrapper
-                          width={width < 1100 ? `100%` : `auto`}
-                          margin={width < 1100 ? `0 0 10px` : `0`}
-                          al={`flex-start`}
+                          width={width < 1100 ? `auto` : `100%`}
+                          dr={width < 1100 ? `column` : `row`}
                         >
-                          <Wrapper dr={`row`} width={`auto`} ju={`flex-start`}>
+                          <Wrapper
+                            width={width < 1100 ? `100%` : `auto`}
+                            margin={width < 1100 ? `0 0 10px` : `0`}
+                            al={`flex-start`}
+                          >
+                            <Wrapper
+                              dr={`row`}
+                              width={`auto`}
+                              ju={`flex-start`}
+                            >
+                              <Image
+                                width={width < 550 ? `16px` : `21px`}
+                                margin={
+                                  width < 1100
+                                    ? width < 550
+                                      ? `0 5px 0 0`
+                                      : `0 10px 0 0`
+                                    : `0 16px 0 0`
+                                }
+                                src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
+                                alt="lecture_icon"
+                              />
+                              <Text
+                                fontSize={
+                                  width < 1350
+                                    ? width < 1100
+                                      ? width < 550
+                                        ? `11px`
+                                        : `13px`
+                                      : `14px`
+                                    : `18px`
+                                }
+                                fontWeight={`bold`}
+                              >
+                                {data.time1}
+                              </Text>
+                              <Wrapper
+                                width={`1px`}
+                                height={`13px`}
+                                bgColor={Theme.grey2_C}
+                                margin={width < 430 ? `0 5px` : `0 10px`}
+                              ></Wrapper>
+                              <Text
+                                fontSize={
+                                  width < 1350
+                                    ? width < 1100
+                                      ? width < 550
+                                        ? `11px`
+                                        : `13px`
+                                      : `14px`
+                                    : `18px`
+                                }
+                                fontWeight={`bold`}
+                              >
+                                {data.day1}
+                              </Text>
+
+                              <DashBorder
+                                height={width < 1100 ? `25px` : `34px`}
+                              />
+
+                              <Text
+                                fontSize={
+                                  width < 1350
+                                    ? width < 1100
+                                      ? width < 550
+                                        ? `11px`
+                                        : `13px`
+                                      : `14px`
+                                    : `18px`
+                                }
+                                fontWeight={`bold`}
+                              >
+                                {data.day2}
+                              </Text>
+                              <Wrapper
+                                width={`1px`}
+                                height={`13px`}
+                                bgColor={Theme.grey2_C}
+                                margin={width < 430 ? `0 5px` : `0 10px`}
+                              ></Wrapper>
+                              <Text
+                                fontSize={
+                                  width < 1350
+                                    ? width < 1100
+                                      ? width < 550
+                                        ? `11px`
+                                        : `13px`
+                                      : `14px`
+                                    : `18px`
+                                }
+                                fontWeight={`bold`}
+                              >
+                                {data.time2}
+                              </Text>
+
+                              <DashBorder
+                                height={width < 1100 ? `25px` : `34px`}
+                              />
+
+                              <Text
+                                fontSize={
+                                  width < 1350
+                                    ? width < 1100
+                                      ? width < 550
+                                        ? `11px`
+                                        : `13px`
+                                      : `14px`
+                                    : `18px`
+                                }
+                                fontWeight={`bold`}
+                              >
+                                {data.day3}
+                              </Text>
+                              <Wrapper
+                                width={`1px`}
+                                height={`13px`}
+                                bgColor={Theme.grey2_C}
+                                margin={width < 430 ? `0 5px` : `0 10px`}
+                              ></Wrapper>
+                              <Text
+                                fontSize={
+                                  width < 1350
+                                    ? width < 1100
+                                      ? width < 550
+                                        ? `11px`
+                                        : `13px`
+                                      : `14px`
+                                    : `18px`
+                                }
+                                fontWeight={`bold`}
+                              >
+                                {data.time3}
+                              </Text>
+
+                              <DashBorder
+                                height={width < 1100 ? `25px` : `34px`}
+                              />
+
+                              <Text
+                                fontSize={
+                                  width < 1350
+                                    ? width < 1100
+                                      ? width < 550
+                                        ? `11px`
+                                        : `13px`
+                                      : `14px`
+                                    : `18px`
+                                }
+                                fontWeight={`bold`}
+                              >
+                                {data.day4}
+                              </Text>
+                              <Wrapper
+                                width={`1px`}
+                                height={`13px`}
+                                bgColor={Theme.grey2_C}
+                                margin={width < 430 ? `0 5px` : `0 10px`}
+                              ></Wrapper>
+                              <Text
+                                fontSize={
+                                  width < 1350
+                                    ? width < 1100
+                                      ? width < 550
+                                        ? `11px`
+                                        : `13px`
+                                      : `14px`
+                                    : `18px`
+                                }
+                                fontWeight={`bold`}
+                              >
+                                {data.time4}
+                              </Text>
+                            </Wrapper>
+                          </Wrapper>
+                          <Wrapper
+                            maxWidth={
+                              width < 1350
+                                ? width < 1100
+                                  ? `100%`
+                                  : `calc(100% - 480px)`
+                                : `calc(100% - 570px)`
+                            }
+                            dr={`row`}
+                            ju={`flex-start`}
+                            padding={width < 1100 ? `0` : `0 0 0 30px`}
+                          >
                             <Image
                               width={width < 550 ? `16px` : `21px`}
                               margin={
@@ -272,7 +483,7 @@ const Index = () => {
                                     : `0 10px 0 0`
                                   : `0 16px 0 0`
                               }
-                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
+                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
                               alt="lecture_icon"
                             />
                             <Text
@@ -280,251 +491,77 @@ const Index = () => {
                                 width < 1350
                                   ? width < 1100
                                     ? width < 550
-                                      ? `11px`
+                                      ? `10px`
                                       : `13px`
                                     : `14px`
                                   : `18px`
                               }
-                              fontWeight={`bold`}
+                              margin={width < 550 ? `0 10px 0 0` : `0 30px 0 0`}
                             >
-                              {data.time1}
+                              {width < 550
+                                ? data.period.slice(2, 13) +
+                                  data.period.slice(15, 23)
+                                : data.period}
                             </Text>
-                            <Wrapper
-                              width={`1px`}
-                              height={`13px`}
-                              bgColor={Theme.grey2_C}
-                              margin={width < 430 ? `0 5px` : `0 10px`}
-                            ></Wrapper>
-                            <Text
-                              fontSize={
-                                width < 1350
-                                  ? width < 1100
-                                    ? width < 550
-                                      ? `11px`
-                                      : `13px`
-                                    : `14px`
-                                  : `18px`
-                              }
-                              fontWeight={`bold`}
-                            >
-                              {data.day1}
-                            </Text>
-
-                            <DashBorder
-                              height={width < 1100 ? `25px` : `34px`}
-                            />
-
-                            <Text
-                              fontSize={
-                                width < 1350
-                                  ? width < 1100
-                                    ? width < 550
-                                      ? `11px`
-                                      : `13px`
-                                    : `14px`
-                                  : `18px`
-                              }
-                              fontWeight={`bold`}
-                            >
-                              {data.day2}
-                            </Text>
-                            <Wrapper
-                              width={`1px`}
-                              height={`13px`}
-                              bgColor={Theme.grey2_C}
-                              margin={width < 430 ? `0 5px` : `0 10px`}
-                            ></Wrapper>
-                            <Text
-                              fontSize={
-                                width < 1350
-                                  ? width < 1100
-                                    ? width < 550
-                                      ? `11px`
-                                      : `13px`
-                                    : `14px`
-                                  : `18px`
-                              }
-                              fontWeight={`bold`}
-                            >
-                              {data.time2}
-                            </Text>
-
-                            <DashBorder
-                              height={width < 1100 ? `25px` : `34px`}
-                            />
-
-                            <Text
-                              fontSize={
-                                width < 1350
-                                  ? width < 1100
-                                    ? width < 550
-                                      ? `11px`
-                                      : `13px`
-                                    : `14px`
-                                  : `18px`
-                              }
-                              fontWeight={`bold`}
-                            >
-                              {data.day3}
-                            </Text>
-                            <Wrapper
-                              width={`1px`}
-                              height={`13px`}
-                              bgColor={Theme.grey2_C}
-                              margin={width < 430 ? `0 5px` : `0 10px`}
-                            ></Wrapper>
-                            <Text
-                              fontSize={
-                                width < 1350
-                                  ? width < 1100
-                                    ? width < 550
-                                      ? `11px`
-                                      : `13px`
-                                    : `14px`
-                                  : `18px`
-                              }
-                              fontWeight={`bold`}
-                            >
-                              {data.time3}
-                            </Text>
-
-                            <DashBorder
-                              height={width < 1100 ? `25px` : `34px`}
-                            />
-
-                            <Text
-                              fontSize={
-                                width < 1350
-                                  ? width < 1100
-                                    ? width < 550
-                                      ? `11px`
-                                      : `13px`
-                                    : `14px`
-                                  : `18px`
-                              }
-                              fontWeight={`bold`}
-                            >
-                              {data.day4}
-                            </Text>
-                            <Wrapper
-                              width={`1px`}
-                              height={`13px`}
-                              bgColor={Theme.grey2_C}
-                              margin={width < 430 ? `0 5px` : `0 10px`}
-                            ></Wrapper>
-                            <Text
-                              fontSize={
-                                width < 1350
-                                  ? width < 1100
-                                    ? width < 550
-                                      ? `11px`
-                                      : `13px`
-                                    : `14px`
-                                  : `18px`
-                              }
-                              fontWeight={`bold`}
-                            >
-                              {data.time4}
-                            </Text>
-                          </Wrapper>
-                        </Wrapper>
-                        <Wrapper
-                          maxWidth={
-                            width < 1350
-                              ? width < 1100
-                                ? `100%`
-                                : `calc(100% - 480px)`
-                              : `calc(100% - 570px)`
-                          }
-                          dr={`row`}
-                          ju={`flex-start`}
-                          padding={width < 1100 ? `0` : `0 0 0 30px`}
-                        >
-                          <Image
-                            width={width < 550 ? `16px` : `21px`}
-                            margin={
-                              width < 1100
-                                ? width < 550
-                                  ? `0 5px 0 0`
-                                  : `0 10px 0 0`
-                                : `0 16px 0 0`
-                            }
-                            src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
-                            alt="lecture_icon"
-                          />
-                          <Text
-                            fontSize={
-                              width < 1350
-                                ? width < 1100
+                            <Image
+                              width={width < 550 ? `16px` : `21px`}
+                              margin={
+                                width < 1100
                                   ? width < 550
-                                    ? `11px`
-                                    : `13px`
-                                  : `14px`
-                                : `18px`
-                            }
-                            margin={width < 550 ? `0 10px 0 0` : `0 30px 0 0`}
-                          >
-                            {width < 550
-                              ? data.period.slice(2, 13) +
-                                data.period.slice(15, 23)
-                              : data.period}
-                          </Text>
-                          <Image
-                            width={width < 550 ? `16px` : `21px`}
-                            margin={
-                              width < 1100
-                                ? width < 550
-                                  ? `0 5px 0 0`
-                                  : `0 10px 0 0`
-                                : `0 16px 0 0`
-                            }
-                            src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name.png"
-                            alt="lecture_icon"
-                          />
-                          <Text
-                            fontSize={
-                              width < 1350
-                                ? width < 1100
-                                  ? width < 550
-                                    ? `11px`
-                                    : `13px`
-                                  : `14px`
-                                : `18px`
-                            }
-                          >
-                            {data.name}
-                          </Text>
-                          <DashBorder height={width < 1100 ? `25px` : `48px`} />
-                          <Wrapper dr={`row`} width={`auto`}>
+                                    ? `0 5px 0 0`
+                                    : `0 10px 0 0`
+                                  : `0 16px 0 0`
+                              }
+                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name.png"
+                              alt="lecture_icon"
+                            />
                             <Text
                               fontSize={
                                 width < 1350
                                   ? width < 1100
                                     ? width < 550
-                                      ? `11px`
+                                      ? `10px`
                                       : `13px`
                                     : `14px`
                                   : `18px`
                               }
                             >
-                              {data.type1}
+                              {data.name}
                             </Text>
                             <DashBorder
                               height={width < 1100 ? `25px` : `48px`}
                             />
-                            <Text
-                              fontSize={
-                                width < 1350
-                                  ? width < 1100
-                                    ? width < 550
-                                      ? `11px`
-                                      : `13px`
-                                    : `14px`
-                                  : `18px`
-                              }
-                            >
-                              {data.type2}
-                            </Text>
+                            <Wrapper dr={`row`} width={`auto`}>
+                              <Text
+                                fontSize={
+                                  width < 1350
+                                    ? width < 1100
+                                      ? width < 550
+                                        ? `10px`
+                                        : `13px`
+                                      : `14px`
+                                    : `18px`
+                                }
+                              >
+                                {data.type1}
+                              </Text>
+                              <DashBorder
+                                height={width < 1100 ? `25px` : `48px`}
+                              />
+                              <Text
+                                fontSize={
+                                  width < 1350
+                                    ? width < 1100
+                                      ? width < 550
+                                        ? `10px`
+                                        : `13px`
+                                      : `14px`
+                                    : `18px`
+                                }
+                              >
+                                {data.type2}
+                              </Text>
+                            </Wrapper>
                           </Wrapper>
                         </Wrapper>
                       </Wrapper>
@@ -532,7 +569,7 @@ const Index = () => {
                   })
                 ))}
             </Wrapper>
-            <Pagination size="small" />
+            <CustomPage />
 
             <Wrapper al={`flex-start`} margin={`80px 0 20px`}>
               <Text
@@ -545,7 +582,7 @@ const Index = () => {
 
               <Wrapper
                 radius={`10px`}
-                padding={`30px 40px`}
+                padding={width < 800 ? `15px` : `30px 40px`}
                 bgColor={Theme.white_C}
                 shadow={`0 5px 15px rgba(0,0,0,0.05)`}
                 dr={width < 1100 ? `column` : `row`}
@@ -698,7 +735,9 @@ const Index = () => {
 
               <Wrapper
                 radius={`10px`}
-                padding={width < 1100 ? `20px` : `0 40px`}
+                padding={
+                  width < 1100 ? (width < 800 ? `15px` : `20px`) : `0 40px`
+                }
                 bgColor={Theme.white_C}
                 shadow={`0 5px 15px rgba(0,0,0,0.05)`}
                 dr={`row`}
@@ -855,7 +894,9 @@ const Index = () => {
 
               <Wrapper
                 radius={`10px`}
-                padding={width < 1100 ? `20px` : `0 40px`}
+                padding={
+                  width < 1100 ? (width < 800 ? `15px` : `20px`) : `0 40px`
+                }
                 bgColor={Theme.white_C}
                 shadow={`0 5px 15px rgba(0,0,0,0.05)`}
                 dr={`row`}
@@ -1009,7 +1050,7 @@ const Index = () => {
                   margin={`0 0 30px`}
                   dr={`row`}
                   ju={`space-between`}
-                  padding={`20px`}
+                  padding={width < 800 ? `15px` : `20px`}
                 >
                   <Wrapper
                     dr={`row`}
@@ -1073,7 +1114,7 @@ const Index = () => {
                 </Wrapper>
               </Wrapper>
             </Wrapper>
-            <Pagination />
+            <CustomPage />
             <Wrapper al={`flex-start`} margin={`130px 0 110px`}>
               <Text
                 fontSize={width < 800 ? `18px` : `22px`}

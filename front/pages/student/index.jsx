@@ -46,12 +46,17 @@ const CustomSlide = styled(Slider)`
 const CustomTableHoverWrapper = styled(Wrapper)`
   flex-direction: row;
   padding: 25px 0 20px;
+  font-size: 16px;
   background-color: ${(props) =>
     props.bgColor ? Theme.lightGrey_C : Theme.white_C};
   cursor: pointer;
   &:hover {
     background-color: ${(props) =>
       props.bgColor ? Theme.white_C : Theme.lightGrey_C};
+  }
+
+  @media (max-width: 800px) {
+    font-size: 14px;
   }
 `;
 
@@ -644,15 +649,15 @@ const Student = () => {
                         margin={`0 0 10px`}
                       >
                         <Wrapper
-                          width={width < 700 ? `100%` : `55%`}
-                          margin={width < 700 && `0 0 10px`}
+                          width={width < 900 ? `100%` : `55%`}
+                          margin={width < 900 && `0 0 10px`}
                           dr={`row`}
                           ju={`flex-start`}
                         >
                           <Wrapper dr={`row`} width={`25%`} ju={`flex-start`}>
                             <Image
                               width={`22px`}
-                              margin={width < 700 ? `0 5px 0 0` : `0 16px 0 0`}
+                              margin={width < 900 ? `0 5px 0 0` : `0 16px 0 0`}
                               src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png"
                               alt="lecture_icon"
                             />
@@ -661,7 +666,7 @@ const Student = () => {
 
                           <Wrapper
                             dr={`row`}
-                            width={width < 700 ? `30%` : `25%`}
+                            width={width < 900 ? `30%` : `25%`}
                             ju={`flex-start`}
                           >
                             <Text fontSize={`14px`}>{data.teacher}강사님</Text>
@@ -669,33 +674,36 @@ const Student = () => {
 
                           <Wrapper
                             dr={`row`}
-                            width={width < 700 ? `45%` : `50%`}
+                            width={width < 900 ? `45%` : `50%`}
                             ju={`flex-start`}
                           >
                             <Text fontSize={`14px`}>{data.content}</Text>
                           </Wrapper>
                         </Wrapper>
                         <Wrapper
-                          width={width < 700 ? `100%` : `45%`}
+                          width={width < 900 ? `100%` : `45%`}
                           dr={`row`}
+                          ju={`flex-start`}
                         >
                           <Wrapper
                             dr={`row`}
-                            width={width < 700 ? `10%` : `35%`}
+                            width={width < 900 ? `10%` : `35%`}
                             ju={`flex-start`}
                           >
                             <Image
                               width={`22px`}
-                              margin={width < 700 ? `0 5px 0 0` : `0 16px 0 0`}
+                              margin={width < 900 ? `0 5px 0 0` : `0 16px 0 0`}
                               src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_download.png"
                               alt="lecture_icon"
                             />
-                            {width > 700 && <Text>파일다운로드</Text>}
+                            {width > 900 && <Text>파일다운로드</Text>}
                           </Wrapper>
 
                           <Wrapper
                             dr={`row`}
-                            width={width < 700 ? `62%` : `35%`}
+                            width={
+                              width < 1100 ? `40%` : width < 900 ? `62%` : `35%`
+                            }
                             ju={`flex-start`}
                           >
                             <Image
@@ -709,7 +717,9 @@ const Student = () => {
 
                           <Wrapper
                             dr={`row`}
-                            width={width < 700 ? `28%` : `30%`}
+                            width={
+                              width < 1100 ? `25%` : width < 900 ? `28%` : `30%`
+                            }
                             cursor={`pointer`}
                           >
                             <Text fontWeight={`bold`}>제출하기</Text>
@@ -732,7 +742,12 @@ const Student = () => {
             </Wrapper>
 
             <Wrapper radius={`10px`} shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}>
-              <Wrapper dr={`row`} fontWeight={`bold`} padding={`20px 0`}>
+              <Wrapper
+                dr={`row`}
+                fontWeight={`bold`}
+                padding={`20px 0`}
+                fontSize={width < 800 ? `14px` : `18px`}
+              >
                 <Wrapper width={width < 800 ? `15%` : `10%`}>구분</Wrapper>
                 <Wrapper width={width < 800 ? `45%` : `70%`}>제목</Wrapper>
                 <Wrapper width={width < 800 ? `15%` : `10%`}>작성자</Wrapper>
@@ -786,7 +801,12 @@ const Student = () => {
             </Wrapper>
 
             <Wrapper radius={`10px`} shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}>
-              <Wrapper dr={`row`} fontWeight={`bold`} padding={`20px 0`}>
+              <Wrapper
+                dr={`row`}
+                fontWeight={`bold`}
+                padding={`20px 0`}
+                fontSize={width < 800 ? `14px` : `18px`}
+              >
                 <Wrapper width={width < 800 ? `15%` : `10%`}>글번호</Wrapper>
                 <Wrapper width={width < 800 ? `45%` : `70%`}>자료명</Wrapper>
                 <Wrapper width={width < 800 ? `15%` : `10%`}>자료</Wrapper>
