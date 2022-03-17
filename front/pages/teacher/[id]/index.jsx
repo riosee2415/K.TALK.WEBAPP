@@ -144,8 +144,24 @@ const CustomPage = styled(Pagination)`
   & .ant-pagination-prev > button {
     border: none;
   }
-  & .ant-pagination-item {
+
+  & {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  & .ant-pagination-item,
+  & .ant-pagination-next,
+  & .ant-pagination-prev {
     border: none;
+    width: 28px;
+    height: 28px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: ${Theme.white_C} !important;
+    margin: 0 5px !important;
   }
 
   & .ant-pagination-item-active a {
@@ -160,6 +176,11 @@ const CustomPage = styled(Pagination)`
   & .ant-pagination-item-link svg {
     font-weight: bold;
     color: ${Theme.black_2C};
+  }
+
+  @media (max-width: 800px) {
+    width: 18px;
+    height: 18px !important;
   }
 `;
 
@@ -196,11 +217,16 @@ const CustomText2 = styled(Text)`
     color: ${Theme.grey_C};
   }
 
+  @media (max-width: 1400px) {
+    &::after {
+      border-right: ${(props) => props.borderRightBool && `0px`};
+    }
+  }
+
   @media (max-width: 700px) {
     font-size: 14px;
 
     &::after {
-      border-right: ${(props) => props.borderRightBool && `0px`};
       margin: ${(props) => props.margin || `0 5px`};
     }
   }
