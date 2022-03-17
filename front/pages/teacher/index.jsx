@@ -186,6 +186,25 @@ const Index = () => {
   ////// HANDLER //////
   ////// DATAVIEW //////
 
+  const clockArr = [
+    {
+      name: "월요일",
+      time: "7PM",
+    },
+    {
+      name: "화요일",
+      time: "7PM",
+    },
+    {
+      name: "수요일",
+      time: "7PM",
+    },
+    {
+      name: "금요일",
+      time: "7PM",
+    },
+  ];
+
   return (
     <>
       <Head>
@@ -355,70 +374,68 @@ const Index = () => {
               <Wrapper
                 dr={`row`}
                 ju={`flex-start`}
+                al={`flex-start`}
                 shadow={`0px 5px 15px rgb(0,0,0,0.1)`}
                 padding={width < 700 ? `15px 10px 10px` : `35px 30px`}
                 radius={`10px`}
               >
                 <Wrapper
+                  width={width < 1280 ? (width < 800 ? `100%` : `60%`) : `37%`}
                   dr={`row`}
-                  width={width < 1400 ? `auto` : `38%`}
                   ju={`flex-start`}
+                  al={`flex-start`}
                 >
-                  <Image
-                    width={`22px`}
-                    height={`22px`}
-                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
-                    alt="clock_icon"
-                    margin={`0 5px 0 0`}
-                  />
-
-                  <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
-                    fontWeight={`bold`}
-                    lineHeight={`1.22`}
-                  >
-                    화요일&nbsp;&nbsp;|&nbsp;&nbsp;7PM
-                  </Text>
                   <Wrapper
-                    width={`1px`}
-                    height={`34px`}
-                    borderLeft={`1px dashed ${Theme.grey_C}`}
-                    margin={
-                      width < 1350
-                        ? width < 700
-                          ? `0 4px`
-                          : `0 10px`
-                        : `0 20px`
-                    }
-                  />
-                  <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
-                    fontWeight={`bold`}
-                    lineHeight={`1.22`}
+                    width={`auto`}
+                    padding={width < 700 ? `0` : `5px`}
+                    margin={`0 10px 0 0`}
                   >
-                    수요일&nbsp;&nbsp;|&nbsp;&nbsp;9AM
-                  </Text>
+                    <Image
+                      width={`22px`}
+                      height={`22px`}
+                      src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
+                      alt="clock_icon"
+                    />
+                  </Wrapper>
                   <Wrapper
-                    width={`1px`}
-                    height={`34px`}
-                    borderLeft={`1px dashed ${Theme.grey_C}`}
-                    margin={
-                      width < 1350
-                        ? width < 700
-                          ? `0 4px`
-                          : `0 10px`
-                        : `0 20px`
-                    }
-                  />
-                  <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
-                    fontWeight={`bold`}
-                    lineHeight={`1.22`}
+                    width={`calc(100% - 42px)`}
+                    dr={`row`}
+                    ju={`flex-start`}
                   >
-                    금용리&nbsp;&nbsp;|&nbsp;&nbsp;2PM
-                  </Text>
+                    {clockArr &&
+                      clockArr.length > 0 &&
+                      clockArr.map((data, idx) => {
+                        return (
+                          <>
+                            <Text
+                              fontSize={width < 700 ? `14px` : `18px`}
+                              fontWeight={`bold`}
+                              lineHeight={`1.22`}
+                            >
+                              {data.name}&nbsp;&nbsp;|&nbsp;&nbsp;{data.time}
+                            </Text>
+                            <Wrapper
+                              display={
+                                width < 1280
+                                  ? `flex`
+                                  : (idx + 1) % 3 === 0 && `none`
+                              }
+                              width={`1px`}
+                              height={width < 800 ? `20px` : `34px`}
+                              borderLeft={`1px dashed ${Theme.grey_C}`}
+                              margin={
+                                width < 1350
+                                  ? width < 700
+                                    ? `0 4px`
+                                    : `0 10px`
+                                  : `0 20px`
+                              }
+                            />
+                          </>
+                        );
+                      })}
+                  </Wrapper>
                 </Wrapper>
-
                 <Wrapper
                   dr={`row`}
                   ju={`space-between`}
