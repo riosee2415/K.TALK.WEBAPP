@@ -400,7 +400,7 @@ const Student = () => {
                                 : (idx + 1) % 3 === 0 && `none`
                             }
                             width={`1px`}
-                            height={width < 800 ? `15px` : `34px`}
+                            height={width < 800 ? `20px` : `34px`}
                             borderLeft={`1px dashed ${Theme.grey_C}`}
                             margin={
                               width < 1350
