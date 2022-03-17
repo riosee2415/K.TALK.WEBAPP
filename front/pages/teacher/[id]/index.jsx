@@ -475,9 +475,10 @@ const Index = () => {
                 fontSize={width < 700 ? `20px` : `28px`}
                 padding={`0 0 0 15px`}
                 color={Theme.black_2C}>
-                <Text fontWeight={`bold`}>안녕하세요,</Text>&nbsp;
-                <Text color={Theme.basicTheme_C}>000</Text>&nbsp;
-                <Text fontWeight={`bold`}>강사님!</Text>
+                <Text fontWeight={`bold`}>
+                  안녕하세요,
+                  <SpanText color={Theme.basicTheme_C}> Aaliyah님</SpanText>!
+                </Text>
               </Wrapper>
             </Wrapper>
 
@@ -486,7 +487,7 @@ const Index = () => {
                 dr={`row`}
                 ju={`flex-start`}
                 al={`flex-start`}
-                shadow={`0px 5px 15px rgb(0,0,0,0.1)`}
+                shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
                 padding={width < 700 ? `15px 10px 10px` : `35px 30px`}
                 margin={`0 0 20px`}
                 radius={`10px`}>
@@ -613,7 +614,7 @@ const Index = () => {
                 </Wrapper>
               </Wrapper>
 
-              <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
+              <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
                 {width < 700 ? (
                   <>
                     <Wrapper
@@ -906,7 +907,7 @@ const Index = () => {
                 강사일지
               </Text>
 
-              <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
+              <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
                 <Wrapper dr={`row`} textAlign={`center`} padding={`20px 0`}>
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
@@ -1035,7 +1036,7 @@ const Index = () => {
               </Wrapper>
             </Wrapper>
 
-            <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
+            <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
               <Wrapper
                 dr={`row`}
                 textAlign={width < 700 ? `center` : `left`}
@@ -1093,7 +1094,7 @@ const Index = () => {
               <Wrapper
                 dr={`row`}
                 ju={`flex-start`}
-                shadow={`0px 5px 15px rgb(0,0,0,0.1)`}
+                shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
                 margin={`0 0 10px 0`}
                 padding={`20px`}
                 radius={`10px`}>
@@ -1149,7 +1150,7 @@ const Index = () => {
               <Wrapper
                 dr={`row`}
                 ju={`flex-start`}
-                shadow={`0px 5px 15px rgb(0,0,0,0.1)`}
+                shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
                 margin={`0 0 10px 0`}
                 padding={`20px`}
                 radius={`10px`}>
@@ -1228,7 +1229,7 @@ const Index = () => {
               </Text>
             </Wrapper>
 
-            <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
+            <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
               <Wrapper dr={`row`} textAlign={`center`} padding={`20px 0`}>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
@@ -1302,7 +1303,7 @@ const Index = () => {
             </Wrapper>
 
             <Wrapper>
-              <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
+              <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
                 <Wrapper dr={`row`} textAlign={`center`} padding={`20px 0`}>
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
