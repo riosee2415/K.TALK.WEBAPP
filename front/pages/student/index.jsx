@@ -253,6 +253,25 @@ const Student = () => {
       createdAt: "2022/01/22",
     },
   ];
+
+  const clockArr = [
+    {
+      name: "월요일",
+      time: "7PM",
+    },
+    {
+      name: "화요일",
+      time: "7PM",
+    },
+    {
+      name: "수요일",
+      time: "7PM",
+    },
+    {
+      name: "금요일",
+      time: "7PM",
+    },
+  ];
   return (
     <>
       <Head>
@@ -362,82 +381,39 @@ const Student = () => {
                   dr={`row`}
                   ju={`flex-start`}
                 >
-                  <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
-                    fontWeight={`bold`}
-                    lineHeight={`1.22`}
-                  >
-                    월요일&nbsp;&nbsp;|&nbsp;&nbsp;7PM
-                  </Text>
-                  <Wrapper
-                    width={`1px`}
-                    height={`34px`}
-                    borderLeft={`1px dashed ${Theme.grey_C}`}
-                    margin={
-                      width < 1350
-                        ? width < 700
-                          ? `0 4px`
-                          : `0 10px`
-                        : `0 20px`
-                    }
-                  />
-                  <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
-                    fontWeight={`bold`}
-                    lineHeight={`1.22`}
-                  >
-                    화요일&nbsp;&nbsp;|&nbsp;&nbsp;7PM
-                  </Text>
-                  <Wrapper
-                    width={`1px`}
-                    height={`34px`}
-                    borderLeft={`1px dashed ${Theme.grey_C}`}
-                    margin={
-                      width < 1350
-                        ? width < 700
-                          ? `0 4px`
-                          : `0 10px`
-                        : `0 20px`
-                    }
-                  />
-                  <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
-                    fontWeight={`bold`}
-                    lineHeight={`1.22`}
-                  >
-                    수요일&nbsp;&nbsp;|&nbsp;&nbsp;9AM
-                  </Text>
-                  {/* <Wrapper
-                    width={`1px`}
-                    height={`34px`}
-                    borderLeft={`1px dashed ${Theme.grey_C}`}
-                    margin={
-                      width < 1350
-                        ? width < 700
-                          ? `0 4px`
-                          : `0 10px`
-                        : `0 20px`
-                    }
-                  /> */}
-                  <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
-                    fontWeight={`bold`}
-                    lineHeight={`1.22`}
-                  >
-                    금요일&nbsp;&nbsp;|&nbsp;&nbsp;2PM
-                  </Text>
-                  <Wrapper
-                    width={`1px`}
-                    height={`34px`}
-                    borderLeft={`1px dashed ${Theme.grey_C}`}
-                    margin={
-                      width < 1350
-                        ? width < 700
-                          ? `0 4px`
-                          : `0 10px`
-                        : `0 20px`
-                    }
-                  />
+                  {clockArr &&
+                    clockArr.length > 0 &&
+                    clockArr.map((data, idx) => {
+                      console.log(idx);
+                      return (
+                        <>
+                          <Text
+                            fontSize={width < 700 ? `14px` : `18px`}
+                            fontWeight={`bold`}
+                            lineHeight={`1.22`}
+                          >
+                            {data.name}&nbsp;&nbsp;|&nbsp;&nbsp;{data.time}
+                          </Text>
+                          <Wrapper
+                            display={
+                              width < 1280
+                                ? `flex`
+                                : (idx + 1) % 3 === 0 && `none`
+                            }
+                            width={`1px`}
+                            height={`34px`}
+                            borderLeft={`1px dashed ${Theme.grey_C}`}
+                            margin={
+                              width < 1350
+                                ? width < 700
+                                  ? `0 4px`
+                                  : `0 10px`
+                                : `0 20px`
+                            }
+                          />
+                        </>
+                      );
+                    })}
                 </Wrapper>
               </Wrapper>
 
