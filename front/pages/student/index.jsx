@@ -337,11 +337,13 @@ const Student = () => {
               radius={`10px`}
               shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
               margin={`0 0 86px`}
+              al={`flex-start`}
             >
               <Wrapper
                 width={width < 1280 ? (width < 800 ? `100%` : `60%`) : `37%`}
                 dr={`row`}
                 ju={`flex-start`}
+                al={`flex-start`}
               >
                 <Wrapper
                   width={`auto`}
@@ -355,43 +357,88 @@ const Student = () => {
                     alt="clock_icon"
                   />
                 </Wrapper>
-                <Text
-                  fontSize={width < 700 ? `14px` : `18px`}
-                  fontWeight={`bold`}
-                  lineHeight={`1.22`}
-                >
-                  화요일&nbsp;&nbsp;|&nbsp;&nbsp;7PM
-                </Text>
                 <Wrapper
-                  width={`1px`}
-                  height={`34px`}
-                  borderLeft={`1px dashed ${Theme.grey_C}`}
-                  margin={
-                    width < 1350 ? (width < 700 ? `0 4px` : `0 10px`) : `0 20px`
-                  }
-                />
-                <Text
-                  fontSize={width < 700 ? `14px` : `18px`}
-                  fontWeight={`bold`}
-                  lineHeight={`1.22`}
+                  width={`calc(100% - 42px)`}
+                  dr={`row`}
+                  ju={`flex-start`}
                 >
-                  수요일&nbsp;&nbsp;|&nbsp;&nbsp;9AM
-                </Text>
-                <Wrapper
-                  width={`1px`}
-                  height={`34px`}
-                  borderLeft={`1px dashed ${Theme.grey_C}`}
-                  margin={
-                    width < 1350 ? (width < 700 ? `0 4px` : `0 10px`) : `0 20px`
-                  }
-                />
-                <Text
-                  fontSize={width < 700 ? `14px` : `18px`}
-                  fontWeight={`bold`}
-                  lineHeight={`1.22`}
-                >
-                  금용리&nbsp;&nbsp;|&nbsp;&nbsp;2PM
-                </Text>
+                  <Text
+                    fontSize={width < 700 ? `14px` : `18px`}
+                    fontWeight={`bold`}
+                    lineHeight={`1.22`}
+                  >
+                    월요일&nbsp;&nbsp;|&nbsp;&nbsp;7PM
+                  </Text>
+                  <Wrapper
+                    width={`1px`}
+                    height={`34px`}
+                    borderLeft={`1px dashed ${Theme.grey_C}`}
+                    margin={
+                      width < 1350
+                        ? width < 700
+                          ? `0 4px`
+                          : `0 10px`
+                        : `0 20px`
+                    }
+                  />
+                  <Text
+                    fontSize={width < 700 ? `14px` : `18px`}
+                    fontWeight={`bold`}
+                    lineHeight={`1.22`}
+                  >
+                    화요일&nbsp;&nbsp;|&nbsp;&nbsp;7PM
+                  </Text>
+                  <Wrapper
+                    width={`1px`}
+                    height={`34px`}
+                    borderLeft={`1px dashed ${Theme.grey_C}`}
+                    margin={
+                      width < 1350
+                        ? width < 700
+                          ? `0 4px`
+                          : `0 10px`
+                        : `0 20px`
+                    }
+                  />
+                  <Text
+                    fontSize={width < 700 ? `14px` : `18px`}
+                    fontWeight={`bold`}
+                    lineHeight={`1.22`}
+                  >
+                    수요일&nbsp;&nbsp;|&nbsp;&nbsp;9AM
+                  </Text>
+                  {/* <Wrapper
+                    width={`1px`}
+                    height={`34px`}
+                    borderLeft={`1px dashed ${Theme.grey_C}`}
+                    margin={
+                      width < 1350
+                        ? width < 700
+                          ? `0 4px`
+                          : `0 10px`
+                        : `0 20px`
+                    }
+                  /> */}
+                  <Text
+                    fontSize={width < 700 ? `14px` : `18px`}
+                    fontWeight={`bold`}
+                    lineHeight={`1.22`}
+                  >
+                    금요일&nbsp;&nbsp;|&nbsp;&nbsp;2PM
+                  </Text>
+                  <Wrapper
+                    width={`1px`}
+                    height={`34px`}
+                    borderLeft={`1px dashed ${Theme.grey_C}`}
+                    margin={
+                      width < 1350
+                        ? width < 700
+                          ? `0 4px`
+                          : `0 10px`
+                        : `0 20px`
+                    }
+                  />
+                </Wrapper>
               </Wrapper>
 
               <Wrapper
@@ -422,6 +469,7 @@ const Student = () => {
                 width={width < 1280 ? `100%` : `38%`}
                 dr={`row`}
                 ju={`flex-start`}
+                al={`flex-start`}
               >
                 <Wrapper
                   width={`25%`}
@@ -855,7 +903,7 @@ const Student = () => {
                 padding={`20px 0`}
                 fontSize={width < 800 ? `14px` : `18px`}
               >
-                <Wrapper width={width < 800 ? `15%` : `10%`}>글번호</Wrapper>
+                <Wrapper width={width < 800 ? `15%` : `10%`}>번호</Wrapper>
                 <Wrapper width={width < 800 ? `45%` : `70%`}>자료명</Wrapper>
                 <Wrapper width={width < 800 ? `15%` : `10%`}>자료</Wrapper>
                 <Wrapper width={width < 800 ? `25%` : `10%`}>날짜</Wrapper>
