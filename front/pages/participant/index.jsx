@@ -509,18 +509,17 @@ const Index = () => {
                   ju={`flex-start`}
                   fontSize={width < 700 ? `12px` : `16px`}
                 >
-                  {width > 800 && (
-                    <DashBorder
-                      height={width < 800 ? `20px` : `34px`}
-                      margin={
-                        width < 1350
-                          ? width < 800
-                            ? `0 4px 0 0`
-                            : `0 10px 0 0`
-                          : `0 20px 0 0`
-                      }
-                    />
-                  )}
+                  <DashBorder
+                    height={width < 800 ? `20px` : `34px`}
+                    margin={
+                      width < 1350
+                        ? width < 800
+                          ? `0 4px`
+                          : `0 10px 0 0`
+                        : `0 20px 0 0`
+                    }
+                  />
+
                   <Text fontSize={width < 700 ? `14px` : `18px`}>
                     공지사항 확인
                   </Text>
