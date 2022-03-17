@@ -144,8 +144,24 @@ const CustomPage = styled(Pagination)`
   & .ant-pagination-prev > button {
     border: none;
   }
-  & .ant-pagination-item {
+
+  & {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  & .ant-pagination-item,
+  & .ant-pagination-next,
+  & .ant-pagination-prev {
     border: none;
+    width: 28px;
+    height: 28px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: ${Theme.white_C} !important;
+    margin: 0 5px !important;
   }
 
   & .ant-pagination-item-active a {
@@ -161,6 +177,11 @@ const CustomPage = styled(Pagination)`
     font-weight: bold;
     color: ${Theme.black_2C};
   }
+
+  @media (max-width: 800px) {
+    width: 18px;
+    height: 18px !important;
+  }
 `;
 
 const CustomText = styled(Text)`
@@ -171,7 +192,7 @@ const CustomText = styled(Text)`
   &::after {
     content: "|";
     padding: 0 10px;
-    color: ${Theme.grey2_C};
+    color: ${Theme.grey_C};
   }
 
   @media (max-width: 700px) {
@@ -192,15 +213,20 @@ const CustomText2 = styled(Text)`
   &::after {
     content: "";
     margin: ${(props) => props.margin || `0 20px`};
-    border-right: 1px dashed ${Theme.grey2_C};
-    color: ${Theme.grey2_C};
+    border-right: 1px dashed ${Theme.grey_C};
+    color: ${Theme.grey_C};
+  }
+
+  @media (max-width: 1400px) {
+    &::after {
+      border-right: ${(props) => props.borderRightBool && `0px`};
+    }
   }
 
   @media (max-width: 700px) {
     font-size: 14px;
 
     &::after {
-      border-right: ${(props) => props.borderRightBool && `0px`};
       margin: ${(props) => props.margin || `0 5px`};
     }
   }
@@ -412,25 +438,27 @@ const Index = () => {
         <WholeWrapper margin={`100px 0 0`} bgColor={Theme.subTheme_C}>
           <RsWrapper>
             <Wrapper
-              margin={width < 700 ? `30px 0` : `60px 0`}
               dr={`row`}
+              margin={width < 700 ? `30px 0` : `60px 0`}
               ju={`flex-start`}>
-              <Image
-                width={width < 700 ? `65px` : `75px`}
-                height={width < 700 ? `65px` : `75px`}
-                radius={`50%`}
-                src={`https://via.placeholder.com/75x75`}
-                margin={`0 15px 0 0`}
-              />
+              <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
+                <Image
+                  width={width < 700 ? `65px` : `75px`}
+                  height={width < 700 ? `65px` : `75px`}
+                  radius={`50%`}
+                  src={`https://via.placeholder.com/75x75`}
+                />
+              </Wrapper>
 
               <Wrapper
                 dr={`row`}
                 width={`auto`}
                 fontSize={width < 700 ? `20px` : `28px`}
+                padding={`0 0 0 15px`}
                 color={Theme.black_2C}>
-                <Text>안녕하세요,</Text>&nbsp;
+                <Text fontWeight={`bold`}>안녕하세요,</Text>&nbsp;
                 <Text color={Theme.basicTheme_C}>000</Text>&nbsp;
-                <Text>강사님!</Text>
+                <Text fontWeight={`bold`}>강사님!</Text>
               </Wrapper>
             </Wrapper>
 
@@ -439,7 +467,7 @@ const Index = () => {
                 dr={`row`}
                 ju={`flex-start`}
                 shadow={`0px 5px 15px rgb(0,0,0,0.1)`}
-                padding={width < 700 ? `35px 10px` : `35px 30px`}
+                padding={width < 700 ? `15px 10px 10px` : `35px 30px`}
                 margin={`0 0 20px`}
                 radius={`10px`}>
                 <Wrapper
@@ -461,7 +489,9 @@ const Index = () => {
                   <CustomText2 color={Theme.black_2C}>9PM</CustomText2>
 
                   <CustomText>금요일</CustomText>
-                  <CustomText2 color={Theme.black_2C}>9PM</CustomText2>
+                  <CustomText2 color={Theme.black_2C} borderRightBool={true}>
+                    9PM
+                  </CustomText2>
                 </Wrapper>
 
                 <Wrapper dr={`row`} width={width < 1400 ? `100%` : `60%`}>
@@ -540,7 +570,7 @@ const Index = () => {
                       dr={`row`}
                       textAlign={`center`}
                       ju={`center`}
-                      padding={width < 700 ? `30px 15px` : `30px`}>
+                      padding={`20px 0`}>
                       <CustomCheckBox />
                       <Text
                         fontSize={width < 700 ? `14px` : `18px`}
@@ -574,9 +604,8 @@ const Index = () => {
                             key={data.id}
                             dr={`row`}
                             textAlign={`center`}
-                            padding={width < 700 ? `30px 15px` : `30px`}
+                            padding={`25px 0 20px`}
                             cursor={`pointer`}
-                            al={width < 700 ? `baseline` : `center`}
                             bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
                             <CustomCheckBox />
                             <Text
@@ -604,7 +633,8 @@ const Index = () => {
                       dr={`row`}
                       textAlign={`center`}
                       ju={`center`}
-                      padding={width < 700 ? `30px 15px` : `30px`}>
+                      padding={`20px 0`}
+                      margin={width < 700 ? `20px 0 0` : `0`}>
                       <Text
                         fontSize={width < 700 ? `14px` : `18px`}
                         fontWeight={`Bold`}
@@ -644,9 +674,8 @@ const Index = () => {
                           <Wrapper
                             dr={`row`}
                             textAlign={`center`}
-                            padding={width < 700 ? `30px 15px` : `30px`}
+                            padding={`25px 0 20px`}
                             cursor={`pointer`}
-                            al={width < 700 ? `baseline` : `center`}
                             bgColor={Theme.lightGrey_C}>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
@@ -686,7 +715,7 @@ const Index = () => {
                     dr={`row`}
                     textAlign={`center`}
                     ju={`center`}
-                    padding={width < 700 ? `30px 15px` : `30px`}>
+                    padding={`20px 0px`}>
                     <CustomCheckBox
                       onChange={(e) => onChangeBoxAllHanlder(e, checkedList)}
                     />
@@ -751,7 +780,7 @@ const Index = () => {
                             key={data.id}
                             dr={`row`}
                             textAlign={`center`}
-                            padding={width < 700 ? `35px 10px` : `35px 30px`}
+                            padding={`25px 0 20px`}
                             cursor={`pointer`}
                             ju={`center`}
                             bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
@@ -828,10 +857,7 @@ const Index = () => {
               </Text>
 
               <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
-                <Wrapper
-                  dr={`row`}
-                  textAlign={`center`}
-                  padding={width < 700 ? `35px 10px` : `35px 30px`}>
+                <Wrapper dr={`row`} textAlign={`center`} padding={`20px 0`}>
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
@@ -876,9 +902,8 @@ const Index = () => {
                         key={data.id}
                         dr={`row`}
                         textAlign={`center`}
-                        padding={width < 700 ? `35px 10px` : `35px 30px`}
+                        padding={`25px 0 20px`}
                         cursor={`pointer`}
-                        al={width < 700 ? `baseline` : `center`}
                         bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
@@ -964,7 +989,7 @@ const Index = () => {
               <Wrapper
                 dr={`row`}
                 textAlign={width < 700 ? `center` : `left`}
-                padding={width < 700 ? `35px 10px` : `35px 30px`}>
+                padding={`20px 30px`}>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
@@ -988,7 +1013,7 @@ const Index = () => {
               <Wrapper
                 dr={`row`}
                 ju={`flex-start`}
-                padding={width < 700 ? `35px 10px` : `35px 30px`}
+                padding={`25px 30px 20px`}
                 cursor={`pointer`}
                 bgColor={Theme.lightGrey_C}
                 textAlign={width < 700 ? `center` : `left`}
@@ -1019,8 +1044,65 @@ const Index = () => {
                 dr={`row`}
                 ju={`flex-start`}
                 shadow={`0px 5px 15px rgb(0,0,0,0.1)`}
-                radius={`10px`}
-                padding={width < 700 ? `35px 10px` : `35px 30px`}>
+                margin={`0 0 10px 0`}
+                padding={`20px`}
+                radius={`10px`}>
+                <Text width={`50%`} fontSize={width < 700 ? `14px` : `16px`}>
+                  한국어로 편지 쓰기
+                </Text>
+
+                <Wrapper width={`40%`} dr={width < 1100 ? `column` : `row`}>
+                  <CustomWrapper width={width < 1100 ? `100%` : `50%`}>
+                    <DownloadOutlined
+                      style={{
+                        fontSize: width < 700 ? 15 : 25,
+                        color: Theme.basicTheme_C,
+                        marginRight: 10,
+                        cursor: `pointer`,
+                      }}
+                    />
+
+                    <Text
+                      fontSize={width < 700 ? `14px` : `16px`}
+                      display={width < 700 ? `none` : `block`}>
+                      파일 업로드
+                    </Text>
+                  </CustomWrapper>
+
+                  <CustomWrapper
+                    width={width < 1100 ? `100%` : `50%`}
+                    beforeBool={width < 1300 ? false : true}>
+                    <CalendarOutlined
+                      style={{
+                        fontSize: width < 700 ? 15 : 25,
+                        color: Theme.basicTheme_C,
+                        marginRight: 10,
+                        cursor: `pointer`,
+                      }}
+                    />
+                    <Text fontSize={width < 700 ? `14px` : `16px`}>
+                      2022/01/31까지
+                    </Text>
+                  </CustomWrapper>
+                </Wrapper>
+
+                <Wrapper width={`10%`} ju={`center`}>
+                  <Text
+                    fontSize={width < 700 ? `14px` : `16px`}
+                    margin={width < 700 ? `0 0 0 5px` : "0"}
+                    fontWeight={`bold`}>
+                    제출 기한
+                  </Text>
+                </Wrapper>
+              </Wrapper>
+
+              <Wrapper
+                dr={`row`}
+                ju={`flex-start`}
+                shadow={`0px 5px 15px rgb(0,0,0,0.1)`}
+                margin={`0 0 10px 0`}
+                padding={`20px`}
+                radius={`10px`}>
                 <Text width={`50%`} fontSize={width < 700 ? `14px` : `16px`}>
                   한국어로 편지 쓰기
                 </Text>
@@ -1096,71 +1178,68 @@ const Index = () => {
               </Text>
             </Wrapper>
 
+            <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
+              <Wrapper dr={`row`} textAlign={`center`} padding={`20px 0`}>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={`15%`}>
+                  글번호
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={`60%`}>
+                  제목
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={`25%`}>
+                  날짜
+                </Text>
+              </Wrapper>
+
+              <Wrapper
+                dr={`row`}
+                textAlign={`center`}
+                ju={`flex-start`}
+                padding={`25px 0 20px`}
+                cursor={`pointer`}
+                bgColor={Theme.lightGrey_C}
+                // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
+              >
+                <Text
+                  fontSize={width < 700 ? `14px` : `16px`}
+                  width={`15%`}
+                  wordBreak={`break-word`}>
+                  5
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `16px`}
+                  width={`60%`}
+                  textAlign={`left`}>
+                  안녕하세요. 오늘 수업 공지입니다.
+                </Text>
+                <Text fontSize={width < 700 ? `14px` : `16px`} width={`25%`}>
+                  2022/01/22
+                </Text>
+              </Wrapper>
+            </Wrapper>
+
+            <Wrapper al={`flex-end`} margin={`20px 0 40px`}>
+              <CommonButton
+                radius={`5px`}
+                width={width < 700 ? `90px` : `110px`}
+                height={width < 700 ? `32px` : `38px`}
+                fontSize={width < 700 ? `14px` : `14px`}
+                onClick={() => setNoticeModalToggle(true)}>
+                작성하기
+              </CommonButton>
+            </Wrapper>
+
             <Wrapper>
-              <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
-                <Wrapper
-                  dr={`row`}
-                  textAlign={`center`}
-                  padding={width < 700 ? `35px 10px` : `35px 30px`}>
-                  <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
-                    fontWeight={`Bold`}
-                    width={`15%`}>
-                    글번호
-                  </Text>
-                  <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
-                    fontWeight={`Bold`}
-                    width={`60%`}>
-                    제목
-                  </Text>
-                  <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
-                    fontWeight={`Bold`}
-                    width={`25%`}>
-                    날짜
-                  </Text>
-                </Wrapper>
-
-                <Wrapper
-                  dr={`row`}
-                  textAlign={`center`}
-                  ju={`flex-start`}
-                  padding={width < 700 ? `35px 10px` : `35px 30px`}
-                  cursor={`pointer`}
-                  al={width < 700 ? `baseline` : `center`}
-                  bgColor={Theme.lightGrey_C}
-                  // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
-                >
-                  <Text
-                    fontSize={width < 700 ? `14px` : `16px`}
-                    width={`15%`}
-                    wordBreak={`break-word`}>
-                    5
-                  </Text>
-                  <Text fontSize={width < 700 ? `14px` : `16px`} width={`60%`}>
-                    안녕하세요. 오늘 수업 공지입니다.
-                  </Text>
-                  <Text fontSize={width < 700 ? `14px` : `16px`} width={`25%`}>
-                    2022/01/22
-                  </Text>
-                </Wrapper>
-              </Wrapper>
-
-              <Wrapper al={`flex-end`} margin={`20px 0 40px`}>
-                <CommonButton
-                  radius={`5px`}
-                  width={width < 700 ? `90px` : `110px`}
-                  height={width < 700 ? `32px` : `38px`}
-                  fontSize={width < 700 ? `14px` : `14px`}
-                  onClick={() => setNoticeModalToggle(true)}>
-                  작성하기
-                </CommonButton>
-              </Wrapper>
-
-              <Wrapper>
-                <CustomPage defaultCurrent={6} total={40}></CustomPage>
-              </Wrapper>
+              <CustomPage defaultCurrent={6} total={40}></CustomPage>
             </Wrapper>
 
             <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
@@ -1174,10 +1253,7 @@ const Index = () => {
 
             <Wrapper>
               <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
-                <Wrapper
-                  dr={`row`}
-                  textAlign={`center`}
-                  padding={width < 700 ? `35px 10px` : `35px 30px`}>
+                <Wrapper dr={`row`} textAlign={`center`} padding={`20px 0`}>
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
@@ -1187,7 +1263,7 @@ const Index = () => {
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`calc(100% - 15% - 15% - 20%)`}>
+                    width={`calc(100% - 15% - 15% - 25%)`}>
                     제목
                   </Text>
 
@@ -1201,7 +1277,7 @@ const Index = () => {
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`20%`}>
+                    width={`25%`}>
                     날짜
                   </Text>
                 </Wrapper>
@@ -1209,7 +1285,7 @@ const Index = () => {
                 <Wrapper
                   dr={`row`}
                   textAlign={`center`}
-                  padding={width < 700 ? `35px 10px` : `35px 30px`}
+                  padding={`25px 0 20px`}
                   cursor={`pointer`}
                   bgColor={Theme.lightGrey_C}
                   // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
@@ -1219,14 +1295,15 @@ const Index = () => {
                   </Text>
                   <Text
                     fontSize={width < 700 ? `14px` : `16px`}
-                    width={`calc(100% - 15% - 15% - 20%)`}>
+                    width={`calc(100% - 15% - 15% - 25%)`}
+                    textAlign={`left`}>
                     안녕하세요. 오늘 수업 공지입니다.
                   </Text>
 
                   <Text fontSize={width < 700 ? `14px` : `16px`} width={`15%`}>
                     ○○○
                   </Text>
-                  <Text fontSize={width < 700 ? `14px` : `16px`} width={`20%`}>
+                  <Text fontSize={width < 700 ? `14px` : `16px`} width={`25%`}>
                     2022/01/22
                   </Text>
                 </Wrapper>

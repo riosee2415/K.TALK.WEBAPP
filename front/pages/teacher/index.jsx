@@ -38,8 +38,24 @@ const CustomPage = styled(Pagination)`
   & .ant-pagination-prev > button {
     border: none;
   }
-  & .ant-pagination-item {
+
+  & {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  & .ant-pagination-item,
+  & .ant-pagination-next,
+  & .ant-pagination-prev {
     border: none;
+    width: 28px;
+    height: 28px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: ${Theme.white_C} !important;
+    margin: 0 5px !important;
   }
 
   & .ant-pagination-item-active a {
@@ -54,6 +70,11 @@ const CustomPage = styled(Pagination)`
   & .ant-pagination-item-link svg {
     font-weight: bold;
     color: ${Theme.black_2C};
+  }
+
+  @media (max-width: 800px) {
+    width: 18px;
+    height: 18px !important;
   }
 `;
 
@@ -90,7 +111,7 @@ const CustomText = styled(Text)`
   &::after {
     content: "|";
     padding: 0 10px;
-    color: ${Theme.grey2_C};
+    color: ${Theme.grey_C};
   }
 
   @media (max-width: 700px) {
@@ -98,7 +119,7 @@ const CustomText = styled(Text)`
     &::after {
       content: "|";
       padding: 0 5px;
-      color: ${Theme.grey2_C};
+      color: ${Theme.grey_C};
     }
   }
 `;
@@ -112,8 +133,13 @@ const CustomText2 = styled(Text)`
   &::after {
     content: "";
     margin: ${(props) => props.margin || `0 20px`};
-    border-right: 1px dashed ${Theme.grey2_C};
-    color: ${Theme.grey2_C};
+    border-right: 1px dashed ${Theme.grey_C};
+  }
+
+  @media (max-width: 1400px) {
+    &::after {
+      border-right: ${(props) => props.borderRightBool && `0px`};
+    }
   }
 
   @media (max-width: 700px) {
@@ -127,13 +153,12 @@ const CustomText2 = styled(Text)`
 const CustomText3 = styled(Text)`
   font-size: 18px;
   font-weight: Bold;
-  color: ${Theme.black_2C};
 
   &::before {
     content: "";
     margin: 0 20px 0 0;
-    border-right: 1px dashed ${Theme.grey2_C};
-    color: ${Theme.grey2_C};
+    border-right: 1px dashed ${Theme.grey_C};
+    color: ${Theme.grey_C};
   }
 
   @media (max-width: 700px) {
@@ -215,23 +240,28 @@ const Index = () => {
       <ClientLayout>
         <WholeWrapper margin={`100px 0 0`} bgColor={Theme.subTheme_C}>
           <RsWrapper>
-            <Wrapper dr={`row`} margin={`70px 0 75px 0`} ju={`flex-start`}>
-              <Image
-                width={`75px`}
-                height={`75px`}
-                radius={`50%`}
-                src={`https://via.placeholder.com/75x75`}
-                margin={`0 15px 0 0`}
-              />
+            <Wrapper
+              dr={`row`}
+              margin={width < 700 ? `30px 0` : `60px 0`}
+              ju={`flex-start`}>
+              <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
+                <Image
+                  width={width < 700 ? `65px` : `75px`}
+                  height={width < 700 ? `65px` : `75px`}
+                  radius={`50%`}
+                  src={`https://via.placeholder.com/75x75`}
+                />
+              </Wrapper>
 
               <Wrapper
                 dr={`row`}
                 width={`auto`}
                 fontSize={width < 700 ? `20px` : `28px`}
+                padding={`0 0 0 15px`}
                 color={Theme.black_2C}>
-                <Text>안녕하세요,</Text>&nbsp;
+                <Text fontWeight={`bold`}>안녕하세요,</Text>&nbsp;
                 <Text color={Theme.basicTheme_C}>000</Text>&nbsp;
-                <Text>강사님!</Text>
+                <Text fontWeight={`bold`}>강사님!</Text>
               </Wrapper>
             </Wrapper>
 
@@ -245,10 +275,7 @@ const Index = () => {
               </Text>
 
               <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
-                <Wrapper
-                  dr={`row`}
-                  textAlign={`center`}
-                  padding={width < 700 ? `30px 15px` : `30px`}>
+                <Wrapper dr={`row`} textAlign={`center`} padding={`20px 0`}>
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
@@ -258,7 +285,7 @@ const Index = () => {
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`50%`}>
+                    width={`45%`}>
                     제목
                   </Text>
                   <Text
@@ -271,7 +298,7 @@ const Index = () => {
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`20%`}>
+                    width={`25%`}>
                     날짜
                   </Text>
                 </Wrapper>
@@ -280,7 +307,7 @@ const Index = () => {
                   dr={`row`}
                   textAlign={`center`}
                   ju={`flex-start`}
-                  padding={width < 700 ? `30px 15px` : `30px`}
+                  padding={`25px 0 20px`}
                   cursor={`pointer`}
                   bgColor={Theme.lightGrey_C}
                   // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
@@ -291,13 +318,16 @@ const Index = () => {
                     wordBreak={`break-word`}>
                     15
                   </Text>
-                  <Text fontSize={width < 700 ? `14px` : `16px`} width={`50%`}>
+                  <Text
+                    fontSize={width < 700 ? `14px` : `16px`}
+                    width={`45%`}
+                    textAlign={`left`}>
                     안녕하세요. 강사 여러분께 공지사항 알립니다.
                   </Text>
                   <Text fontSize={width < 700 ? `14px` : `16px`} width={`15%`}>
                     케이톡 라이브
                   </Text>
-                  <Text fontSize={width < 700 ? `14px` : `16px`} width={`20%`}>
+                  <Text fontSize={width < 700 ? `14px` : `16px`} width={`25%`}>
                     2022/01/22
                   </Text>
                 </Wrapper>
@@ -321,7 +351,7 @@ const Index = () => {
                 dr={`row`}
                 ju={`flex-start`}
                 shadow={`0px 5px 15px rgb(0,0,0,0.1)`}
-                padding={width < 700 ? `35px 10px` : `35px 30px`}
+                padding={width < 700 ? `15px 10px 10px` : `35px 30px`}
                 radius={`10px`}>
                 <Wrapper
                   dr={`row`}
@@ -342,7 +372,9 @@ const Index = () => {
                   <CustomText2 color={Theme.black_2C}>9PM</CustomText2>
 
                   <CustomText>금요일</CustomText>
-                  <CustomText2 color={Theme.black_2C}>9PM</CustomText2>
+                  <CustomText2 color={Theme.black_2C} borderRightBool={true}>
+                    9PM
+                  </CustomText2>
                 </Wrapper>
 
                 <Wrapper
