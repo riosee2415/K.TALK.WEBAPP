@@ -388,7 +388,7 @@ const Student = () => {
                       return (
                         <>
                           <Text
-                            fontSize={width < 700 ? `14px` : `18px`}
+                            fontSize={width < 800 ? `14px` : `18px`}
                             fontWeight={`bold`}
                             lineHeight={`1.22`}
                           >
@@ -401,11 +401,11 @@ const Student = () => {
                                 : (idx + 1) % 3 === 0 && `none`
                             }
                             width={`1px`}
-                            height={`34px`}
+                            height={width < 800 ? `15px` : `34px`}
                             borderLeft={`1px dashed ${Theme.grey_C}`}
                             margin={
                               width < 1350
-                                ? width < 700
+                                ? width < 800
                                   ? `0 4px`
                                   : `0 10px`
                                 : `0 20px`
@@ -421,6 +421,7 @@ const Student = () => {
                 width={width < 1280 ? (width < 800 ? `100%` : `40%`) : `25%`}
                 dr={`row`}
                 ju={`flex-start`}
+                margin={width < 800 && `5px 0`}
               >
                 <Wrapper width={`auto`} margin={`0 10px 0 0`}>
                   <Image
