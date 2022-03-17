@@ -403,7 +403,7 @@ const Index = () => {
               >
                 <Wrapper
                   width={`auto`}
-                  padding={width < 700 ? `0` : `5px`}
+                  padding={width < 700 ? `0` : `5px 0`}
                   margin={`0 10px 0 0`}
                 >
                   <Image
@@ -414,7 +414,7 @@ const Index = () => {
                   />
                 </Wrapper>
                 <Wrapper
-                  width={`calc(100% - 42px)`}
+                  width={`calc(100% - 32px)`}
                   dr={`row`}
                   ju={`flex-start`}
                 >
@@ -482,11 +482,10 @@ const Index = () => {
                 al={`flex-start`}
               >
                 <Wrapper
-                  maxWidth={width < 800 ? `100%` : `25%`}
+                  maxWidth={`25%`}
                   width={`auto`}
                   dr={`row`}
                   ju={`flex-start`}
-                  al={`flex-start`}
                   margin={width < 800 ? `0 0 10px` : `0 20px 0 0`}
                 >
                   <Image
@@ -500,12 +499,12 @@ const Index = () => {
                     fontSize={width < 700 ? `14px` : `18px`}
                     width={`calc(100% - 22px - 10px)`}
                   >
-                    오민형 오민형 오민형 오민형 오민형 오민형
+                    오민형
                   </Text>
                 </Wrapper>
 
                 <Wrapper
-                  width={width < 800 ? `100%` : `calc(75% - 20px)`}
+                  width={`calc(75% - 20px)`}
                   dr={`row`}
                   ju={`flex-start`}
                   fontSize={width < 700 ? `12px` : `16px`}
