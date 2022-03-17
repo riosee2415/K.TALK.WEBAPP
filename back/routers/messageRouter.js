@@ -112,6 +112,8 @@ router.post("/create", async (req, res, next) => {
     if (!createResult) {
       return res.status(401).send("처리중 문제가 발생하였습니다.");
     }
+
+    return res.status(201).json({ result: true });
   } catch (error) {
     console.error(error);
     return res.status(401).send("쪽지를 확인할 수 없습니다.");
@@ -151,6 +153,65 @@ router.delete("/delete/:messageId", async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("쪽지를 확인할 수 없습니다.");
+  }
+});
+
+// 단체로 보내기 (한명만 보내기도 가능)
+
+router.post("/many/create", isLoggedIn, async (req, res, next) => {
+  const { content, receiverId } = req.body;
+
+  if (!req.user) {
+    return res.status(403).send("잘못된 요청입니다.");
+  }
+
+  if (!Array.isArray(receiverId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+
+  try {
+    await Promise.all(
+      receiverId.map(async (data) => {
+        await Message.create({
+          receiverId: parseInt(data),
+          senderId: parseInt(req.user.id),
+          content,
+        });
+      })
+    );
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("쪽지를 보낼 수 없습니다.");
+  }
+});
+
+// 모든 사용자에게 보내기 (type 1은 학생, type2는 강사, type3은 전체)
+router.post("/all/create", isLoggedIn, async (req, res, next) => {
+  const { type, content } = req.body;
+
+  if (!req.user) {
+    return res.status(403).send("잘못된 요청입니다.");
+  }
+
+  try {
+    const users = await User.findAll({});
+
+    await Promise.all(
+      users.map(async (data) => {
+        await Message.create({
+          receiverId: parseInt(data.id),
+          senderId: parseInt(req.user.id),
+          content,
+        });
+      })
+    );
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("쪽지를 보낼 수 없습니다.");
   }
 });
 
