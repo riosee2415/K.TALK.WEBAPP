@@ -105,6 +105,7 @@ app.use("/api/seo", seoRouter);
 app.use("/api/edit", editRouter);
 app.use("/api/app", applicationRouter);
 app.use("/api/lecture", lectureRouter);
+app.use("/api/message", messageRouter);
 
 // second minute hour day-of-month month day-of-week
 const task = cron.schedule(

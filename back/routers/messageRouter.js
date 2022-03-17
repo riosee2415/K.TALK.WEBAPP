@@ -1,19 +1,72 @@
 const express = require("express");
+const isLoggedIn = require("../middlewares/isLoggedIn");
 const isNanCheck = require("../middlewares/isNanCheck");
 const { User, Lecture, Message } = require("../models");
+const models = require("../models");
 
 const router = express.Router();
 
-router.get("/list", async (req, res, next) => {
+router.get("/list", isLoggedIn, async (req, res, next) => {
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
   try {
+    const selectQuery = `
+    SELECT	id,
+            senderId,
+            receiverId,
+            receiveLectureId,
+            content,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
+      FROM	Messages
+     WHERE  receiverId = ${req.user.id}
+    `;
+
+    const messages = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ messages: messages[0] });
   } catch (error) {
     console.error(error);
     return res.status(401).send("쪽지를 확인할 수 없습니다.");
   }
 });
 
-router.get("/detail/:messageId", async (req, res, next) => {
+router.get("/detail/:messageId", isLoggedIn, async (req, res, next) => {
+  const { messageId } = req.params;
+
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
+  if (isNanCheck(messageId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
   try {
+    const exMessage = await Message.findOne({
+      where: { id: parseInt(messageId) },
+    });
+
+    if (!exMessage) {
+      return res.status(401).send("존재하지 않는 쪽지입니다.");
+    }
+
+    const selectQuery = `
+    SELECT	id,
+            senderId,
+            receiverId,
+            receiveLectureId,
+            content,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
+      FROM	Messages
+     WHERE  id = ${messageId}
+    `;
+
+    const message = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ message: message[0] });
   } catch (error) {
     console.error(error);
     return res.status(401).send("쪽지를 확인할 수 없습니다.");
@@ -65,20 +118,13 @@ router.post("/create", async (req, res, next) => {
   }
 });
 
-// router.patch("/update", async (req, res, next) => {
-//   try {
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(401).send("쪽지를 확인할 수 없습니다.");
-//   }
-// });
-
 router.delete("/delete/:messageId", async (req, res, next) => {
   const { messageId } = req.params;
 
   if (isNanCheck(messageId)) {
     return res.status(401).send("잘못된 요청입니다.");
   }
+
   try {
     const exMessage = await Message.findOne({
       where: { id: parseInt(messageId) },
