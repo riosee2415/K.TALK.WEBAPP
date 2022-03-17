@@ -187,21 +187,28 @@ const Index = () => {
                 자료 올리기
               </CommonButton>
             </Wrapper>
-            <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
+            <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px 0`}>
               <TabWrapper
                 onClick={() => setCurrentTab(0)}
                 className={currentTab === 0 && `current`}
               >
-                <Wrapper width={`17px`}>
+                <Wrapper
+                  width={`17px`}
+                  margin={width < 800 ? `0 5px 0 0` : `0 20px 0 0`}
+                >
                   <Image
-                    src={`https://via.placeholder.com/100x100`}
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_folder.png`}
                     // alt={`file_icon`}
                   />
                 </Wrapper>
                 <Text
-                  maxWidth={`calc(100% - 17px)`}
+                  maxWidth={
+                    width < 800
+                      ? `calc(100% - 17px - 5px)`
+                      : `calc(100% - 17px - 20px)`
+                  }
                   isEllipsis
-                  fontSize={width < 800 ? `10px` : `14px`}
+                  fontSize={width < 800 ? `10px` : `16px`}
                 >
                   ILK(아이러브코리아 SB)
                 </Text>
@@ -210,16 +217,23 @@ const Index = () => {
                 onClick={() => setCurrentTab(1)}
                 className={currentTab === 1 && `current`}
               >
-                <Wrapper width={`17px`}>
+                <Wrapper
+                  width={`17px`}
+                  margin={width < 800 ? `0 5px 0 0` : `0 20px 0 0`}
+                >
                   <Image
-                    src={`https://via.placeholder.com/100x100`}
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_folder.png`}
                     // alt={`file_icon`}
                   />
                 </Wrapper>
                 <Text
-                  maxWidth={`calc(100% - 17px)`}
+                  maxWidth={
+                    width < 800
+                      ? `calc(100% - 17px - 5px)`
+                      : `calc(100% - 17px - 20px)`
+                  }
                   isEllipsis
-                  fontSize={width < 800 ? `10px` : `14px`}
+                  fontSize={width < 800 ? `10px` : `16px`}
                 >
                   ILK(아이러브코리아 SB)
                 </Text>
@@ -228,16 +242,23 @@ const Index = () => {
                 onClick={() => setCurrentTab(2)}
                 className={currentTab === 2 && `current`}
               >
-                <Wrapper width={`17px`}>
+                <Wrapper
+                  width={`17px`}
+                  margin={width < 800 ? `0 5px 0 0` : `0 20px 0 0`}
+                >
                   <Image
-                    src={`https://via.placeholder.com/100x100`}
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_folder.png`}
                     // alt={`file_icon`}
                   />
                 </Wrapper>
                 <Text
-                  maxWidth={`calc(100% - 17px)`}
+                  maxWidth={
+                    width < 800
+                      ? `calc(100% - 17px - 5px)`
+                      : `calc(100% - 17px - 20px)`
+                  }
                   isEllipsis
-                  fontSize={width < 800 ? `10px` : `14px`}
+                  fontSize={width < 800 ? `10px` : `16px`}
                 >
                   교재명
                 </Text>
@@ -246,16 +267,23 @@ const Index = () => {
                 onClick={() => setCurrentTab(3)}
                 className={currentTab === 3 && `current`}
               >
-                <Wrapper width={`17px`}>
+                <Wrapper
+                  width={`17px`}
+                  margin={width < 800 ? `0 5px 0 0` : `0 20px 0 0`}
+                >
                   <Image
-                    src={`https://via.placeholder.com/100x100`}
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_folder.png`}
                     // alt={`file_icon`}
                   />
                 </Wrapper>
                 <Text
-                  maxWidth={`calc(100% - 17px)`}
+                  maxWidth={
+                    width < 800
+                      ? `calc(100% - 17px - 5px)`
+                      : `calc(100% - 17px - 20px)`
+                  }
                   isEllipsis
-                  fontSize={width < 800 ? `10px` : `14px`}
+                  fontSize={width < 800 ? `10px` : `16px`}
                 >
                   교재명
                 </Text>
@@ -264,16 +292,23 @@ const Index = () => {
                 onClick={() => setCurrentTab(4)}
                 className={currentTab === 4 && `current`}
               >
-                <Wrapper width={`17px`}>
+                <Wrapper
+                  width={`17px`}
+                  margin={width < 800 ? `0 5px 0 0` : `0 20px 0 0`}
+                >
                   <Image
-                    src={`https://via.placeholder.com/100x100`}
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_folder.png`}
                     // alt={`file_icon`}
                   />
                 </Wrapper>
                 <Text
-                  maxWidth={`calc(100% - 17px)`}
+                  maxWidth={
+                    width < 800
+                      ? `calc(100% - 17px - 5px)`
+                      : `calc(100% - 17px - 20px)`
+                  }
                   isEllipsis
-                  fontSize={width < 800 ? `10px` : `14px`}
+                  fontSize={width < 800 ? `10px` : `16px`}
                 >
                   교재명
                 </Text>
@@ -339,42 +374,70 @@ const Index = () => {
                           className={`menu`}
                           color={Theme.grey2_C}
                           fontSize={`16px`}
-                          al={`flex-start`}
+                          dr={`row`}
+                          ju={`flex-start`}
                           height={`40px`}
-                          padding={`0 0 0 30px`}
+                          padding={width < 1100 ? `0 0 0 10px` : `0 0 0 30px`}
                         >
-                          이름 바꾸기
+                          <Wrapper width={`22px`} margin={`0 20px 0 0`}>
+                            <Image
+                              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_change.png`}
+                              alt={`menu_icon`}
+                            />
+                          </Wrapper>
+                          <Text>이름 바꾸기</Text>
                         </Wrapper>
                         <Wrapper
                           className={`menu`}
                           color={Theme.grey2_C}
                           fontSize={`16px`}
-                          al={`flex-start`}
+                          dr={`row`}
+                          ju={`flex-start`}
                           height={`40px`}
-                          padding={`0 0 0 30px`}
+                          padding={width < 1100 ? `0 0 0 10px` : `0 0 0 30px`}
                         >
-                          이동
+                          <Wrapper width={`22px`} margin={`0 20px 0 0`}>
+                            <Image
+                              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_move.png`}
+                              alt={`menu_icon`}
+                            />
+                          </Wrapper>
+                          <Text>이동</Text>
                         </Wrapper>
                         <Wrapper
                           className={`menu`}
                           color={Theme.grey2_C}
                           fontSize={`16px`}
-                          al={`flex-start`}
+                          dr={`row`}
+                          ju={`flex-start`}
                           height={`40px`}
-                          padding={`0 0 0 30px`}
+                          padding={width < 1100 ? `0 0 0 10px` : `0 0 0 30px`}
                         >
-                          다운로드
+                          <Wrapper width={`22px`} margin={`0 20px 0 0`}>
+                            <Image
+                              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_download_gray.png`}
+                              alt={`menu_icon`}
+                            />
+                          </Wrapper>
+                          <Text>다운로드</Text>
                         </Wrapper>
                         <Wrapper
                           className={`menu`}
                           color={Theme.grey2_C}
                           fontSize={`16px`}
-                          al={`flex-start`}
+                          dr={`row`}
+                          ju={`flex-start`}
                           height={`40px`}
-                          padding={`0 0 0 30px`}
+                          padding={width < 1100 ? `0 0 0 10px` : `0 0 0 30px`}
                           margin={`0 0 20px 0`}
                         >
-                          삭제
+                          <Wrapper width={`22px`} margin={`0 20px 0 0`}>
+                            <Image
+                              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_delet.png`}
+                              alt={`menu_icon`}
+                            />
+                          </Wrapper>
+                          <Text>삭제</Text>
                         </Wrapper>
                       </ProductMenu>
 

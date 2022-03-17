@@ -1144,11 +1144,12 @@ const Index = () => {
                     width={width < 1280 ? `30px` : `40px`}
                     height={width < 1280 ? `30px` : `40px`}
                     padding={`5px`}
-                    radius={`50%`}
-                    bgColor={Theme.grey2_C}
-                    margin={`0 20px 0 0`}
+                    margin={width < 800 ? `0 10px 0 0` : `0 20px 0 0`}
                   >
-                    {/* <Image src={``} alt={`sns_icon`} /> */}
+                    <Image
+                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_face-book.png`}
+                      alt={`sns_icon`}
+                    />
                   </Wrapper>
 
                   <Text fontSize={width < 1280 ? `16px` : `18px`}>
@@ -1166,11 +1167,12 @@ const Index = () => {
                     width={width < 1280 ? `30px` : `40px`}
                     height={width < 1280 ? `30px` : `40px`}
                     padding={`5px`}
-                    radius={`50%`}
-                    bgColor={Theme.grey2_C}
-                    margin={`0 20px 0 0`}
+                    margin={width < 800 ? `0 10px 0 0` : `0 20px 0 0`}
                   >
-                    {/* <Image src={``} alt={`sns_icon`} /> */}
+                    <Image
+                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_insta.png`}
+                      alt={`sns_icon`}
+                    />
                   </Wrapper>
 
                   <Text fontSize={width < 1280 ? `16px` : `18px`}>
@@ -1187,11 +1189,12 @@ const Index = () => {
                     width={width < 1280 ? `30px` : `40px`}
                     height={width < 1280 ? `30px` : `40px`}
                     padding={`5px`}
-                    radius={`50%`}
-                    bgColor={Theme.grey2_C}
-                    margin={`0 20px 0 0`}
+                    margin={width < 800 ? `0 10px 0 0` : `0 20px 0 0`}
                   >
-                    {/* <Image src={``} alt={`sns_icon`} /> */}
+                    <Image
+                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_youtube.png`}
+                      alt={`sns_icon`}
+                    />
                   </Wrapper>
 
                   <Text fontSize={width < 1280 ? `16px` : `18px`}>
