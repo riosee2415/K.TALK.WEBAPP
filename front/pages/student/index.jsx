@@ -84,6 +84,11 @@ const CustomPage = styled(Pagination)`
     font-weight: bold;
     color: ${Theme.black_2C};
   }
+
+  @media (max-width: 800px) {
+    width: 18px;
+    height: 18px !important;
+  }
 `;
 
 const CustomTableHoverWrapper = styled(Wrapper)`
