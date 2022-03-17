@@ -56,7 +56,7 @@ const CustomSelect = styled(Select)`
 
   &:not(.ant-select-customize-input) .ant-select-selector {
     border-radius: 5px;
-    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.16);
   }
 
   & .ant-select-selector {
