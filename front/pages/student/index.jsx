@@ -267,10 +267,10 @@ const Student = () => {
       name: "수요일",
       time: "7PM",
     },
-    {
-      name: "금요일",
-      time: "7PM",
-    },
+    // {
+    //   name: "금요일",
+    //   time: "7PM",
+    // },
   ];
   return (
     <>

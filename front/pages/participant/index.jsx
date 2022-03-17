@@ -58,7 +58,7 @@ const DashBorder = styled(Wrapper)`
   width: 1px;
   height: ${(props) => props.height || `34px`};
   border-right: 1px dashed ${Theme.grey_C};
-  margin: ${(props) => props.margin || `0 10px`};
+  margin: ${(props) => props.margin || `0 8px`};
   @media (max-width: 430px) {
     margin: 0 5px;
   }
@@ -115,14 +115,34 @@ const Index = () => {
   const testArr = [
     {
       id: 1,
-      time1: "오후 7시",
-      day1: "목요일",
-      time2: "7PM",
-      day2: "목요일",
-      time3: "7PM",
-      day3: "목요일",
-      time4: "7PM",
-      day4: "목요일",
+      lessons: [
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+      ],
+
       period: "2022/01/01 ~ 2022/01/28",
       name: "오민형",
       type1: "공지사항 확인",
@@ -130,14 +150,34 @@ const Index = () => {
     },
     {
       id: 2,
-      time1: "오후 7시",
-      day1: "목요일",
-      time2: "7PM",
-      day2: "목요일",
-      time3: "7PM",
-      day3: "목요일",
-      time4: "7PM",
-      day4: "목요일",
+      time1: "12PM",
+      lessons: [
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+      ],
       period: "2022/01/01 ~ 2022/01/28",
       name: "오민형",
       type1: "공지사항 확인",
@@ -145,14 +185,34 @@ const Index = () => {
     },
     {
       id: 3,
-      time1: "오후 7시",
-      day1: "목요일",
-      time2: "7PM",
-      day2: "목요일",
-      time3: "7PM",
-      day3: "목요일",
-      time4: "7PM",
-      day4: "목요일",
+      time1: "12PM",
+      lessons: [
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+      ],
       period: "2022/01/01 ~ 2022/01/28",
       name: "오민형",
       type1: "공지사항 확인",
@@ -160,14 +220,34 @@ const Index = () => {
     },
     {
       id: 4,
-      time1: "오후 7시",
-      day1: "목요일",
-      time2: "7PM",
-      day2: "목요일",
-      time3: "7PM",
-      day3: "목요일",
-      time4: "7PM",
-      day4: "목요일",
+      time1: "12PM",
+      lessons: [
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+      ],
       period: "2022/01/01 ~ 2022/01/28",
       name: "오민형",
       type1: "공지사항 확인",
@@ -175,18 +255,57 @@ const Index = () => {
     },
     {
       id: 5,
-      time1: "오후 7시",
-      day1: "목요일",
-      time2: "7PM",
-      day2: "목요일",
-      time3: "7PM",
-      day3: "목요일",
-      time4: "7PM",
-      day4: "목요일",
+      time1: "12PM",
+      lessons: [
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+        {
+          id: 1,
+          time: `0PM`,
+          day: `목요일`,
+        },
+      ],
       period: "2022/01/01 ~ 2022/01/28",
       name: "오민형",
       type1: "공지사항 확인",
       type2: "ZOOM ID PW 확인",
+    },
+  ];
+
+  const clockArr = [
+    {
+      name: "월요일",
+      time: "7PM",
+    },
+    {
+      name: "화요일",
+      time: "7PM",
+    },
+    {
+      name: "수요일",
+      time: "7PM",
+    },
+    {
+      name: "금요일",
+      time: "7PM",
     },
   ];
 
@@ -266,7 +385,7 @@ const Index = () => {
               </Text>
             </Wrapper>
 
-            <Wrapper margin={`0 0 40px`}>
+            {/* <Wrapper margin={`0 0 40px`}>
               {testArr &&
                 (testArr.length === 0 ? (
                   <Wrapper>
@@ -286,6 +405,7 @@ const Index = () => {
                         <Wrapper
                           width={width < 1100 ? `auto` : `100%`}
                           dr={width < 1100 ? `column` : `row`}
+                          ju={`flex-start`}
                         >
                           <Wrapper
                             width={width < 1100 ? `100%` : `auto`}
@@ -304,11 +424,12 @@ const Index = () => {
                                     ? width < 550
                                       ? `0 5px 0 0`
                                       : `0 10px 0 0`
-                                    : `0 16px 0 0`
+                                    : `0 10px 0 0`
                                 }
                                 src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
                                 alt="lecture_icon"
                               />
+
                               <Text
                                 fontSize={
                                   width < 1350
@@ -317,11 +438,11 @@ const Index = () => {
                                         ? `11px`
                                         : `13px`
                                       : `14px`
-                                    : `18px`
+                                    : `17px`
                                 }
                                 fontWeight={`bold`}
                               >
-                                {data.time1}
+                                {data.day1}
                               </Text>
                               <Wrapper
                                 width={`1px`}
@@ -337,11 +458,11 @@ const Index = () => {
                                         ? `11px`
                                         : `13px`
                                       : `14px`
-                                    : `18px`
+                                    : `17px`
                                 }
                                 fontWeight={`bold`}
                               >
-                                {data.day1}
+                                {data.time1}
                               </Text>
 
                               <DashBorder
@@ -356,7 +477,7 @@ const Index = () => {
                                         ? `11px`
                                         : `13px`
                                       : `14px`
-                                    : `18px`
+                                    : `17px`
                                 }
                                 fontWeight={`bold`}
                               >
@@ -376,7 +497,7 @@ const Index = () => {
                                         ? `11px`
                                         : `13px`
                                       : `14px`
-                                    : `18px`
+                                    : `17px`
                                 }
                                 fontWeight={`bold`}
                               >
@@ -395,7 +516,7 @@ const Index = () => {
                                         ? `11px`
                                         : `13px`
                                       : `14px`
-                                    : `18px`
+                                    : `17px`
                                 }
                                 fontWeight={`bold`}
                               >
@@ -415,7 +536,7 @@ const Index = () => {
                                         ? `11px`
                                         : `13px`
                                       : `14px`
-                                    : `18px`
+                                    : `17px`
                                 }
                                 fontWeight={`bold`}
                               >
@@ -434,7 +555,7 @@ const Index = () => {
                                         ? `11px`
                                         : `13px`
                                       : `14px`
-                                    : `18px`
+                                    : `17px`
                                 }
                                 fontWeight={`bold`}
                               >
@@ -454,7 +575,7 @@ const Index = () => {
                                         ? `11px`
                                         : `13px`
                                       : `14px`
-                                    : `18px`
+                                    : `17px`
                                 }
                                 fontWeight={`bold`}
                               >
@@ -472,7 +593,7 @@ const Index = () => {
                             }
                             dr={`row`}
                             ju={`flex-start`}
-                            padding={width < 1100 ? `0` : `0 0 0 30px`}
+                            padding={width < 1100 ? `0` : `0 0 0 20px`}
                           >
                             <Image
                               width={width < 550 ? `16px` : `21px`}
@@ -481,7 +602,7 @@ const Index = () => {
                                   ? width < 550
                                     ? `0 5px 0 0`
                                     : `0 10px 0 0`
-                                  : `0 16px 0 0`
+                                  : `0 10px 0 0`
                               }
                               src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
                               alt="lecture_icon"
@@ -494,9 +615,9 @@ const Index = () => {
                                       ? `10px`
                                       : `13px`
                                     : `14px`
-                                  : `18px`
+                                  : `17px`
                               }
-                              margin={width < 550 ? `0 10px 0 0` : `0 30px 0 0`}
+                              margin={width < 550 ? `0 10px 0 0` : `0 20px 0 0`}
                             >
                               {width < 550
                                 ? data.period.slice(2, 13) +
@@ -510,7 +631,7 @@ const Index = () => {
                                   ? width < 550
                                     ? `0 5px 0 0`
                                     : `0 10px 0 0`
-                                  : `0 16px 0 0`
+                                  : `0 10px 0 0`
                               }
                               src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name.png"
                               alt="lecture_icon"
@@ -523,15 +644,20 @@ const Index = () => {
                                       ? `10px`
                                       : `13px`
                                     : `14px`
-                                  : `18px`
+                                  : `17px`
                               }
                             >
                               {data.name}
                             </Text>
-                            <DashBorder
-                              height={width < 1100 ? `25px` : `48px`}
-                            />
-                            <Wrapper dr={`row`} width={`auto`}>
+                            {width > 1100 && (
+                              <DashBorder
+                                height={width < 1100 ? `25px` : `48px`}
+                              />
+                            )}
+                            <Wrapper
+                              dr={`row`}
+                              width={width < 1100 ? `100%` : `auto`}
+                            >
                               <Text
                                 fontSize={
                                   width < 1350
@@ -540,7 +666,7 @@ const Index = () => {
                                         ? `10px`
                                         : `13px`
                                       : `14px`
-                                    : `18px`
+                                    : `17px`
                                 }
                               >
                                 {data.type1}
@@ -556,7 +682,7 @@ const Index = () => {
                                         ? `10px`
                                         : `13px`
                                       : `14px`
-                                    : `18px`
+                                    : `17px`
                                 }
                               >
                                 {data.type2}
@@ -568,7 +694,165 @@ const Index = () => {
                     );
                   })
                 ))}
+            </Wrapper> */}
+
+            <Wrapper
+              padding={width < 700 ? `15px 10px 10px` : `40px 30px 35px`}
+              dr={`row`}
+              ju={`flex-start`}
+              bgColor={Theme.white_C}
+              radius={`10px`}
+              shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
+              margin={`0 0 86px`}
+              al={`flex-start`}
+            >
+              <Wrapper
+                width={width < 1280 ? (width < 800 ? `100%` : `60%`) : `37%`}
+                dr={`row`}
+                ju={`flex-start`}
+                al={`flex-start`}
+              >
+                <Wrapper
+                  width={`auto`}
+                  padding={width < 700 ? `0` : `5px`}
+                  margin={`0 10px 0 0`}
+                >
+                  <Image
+                    width={`22px`}
+                    height={`22px`}
+                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
+                    alt="clock_icon"
+                  />
+                </Wrapper>
+                <Wrapper
+                  width={`calc(100% - 42px)`}
+                  dr={`row`}
+                  ju={`flex-start`}
+                >
+                  {clockArr &&
+                    clockArr.length > 0 &&
+                    clockArr.map((data, idx) => {
+                      return (
+                        <>
+                          <Text
+                            fontSize={width < 800 ? `14px` : `18px`}
+                            fontWeight={`bold`}
+                            lineHeight={`1.22`}
+                          >
+                            {data.name}&nbsp;&nbsp;|&nbsp;&nbsp;{data.time}
+                          </Text>
+                          <Wrapper
+                            display={
+                              width < 1280
+                                ? `flex`
+                                : (idx + 1) % 3 === 0 && `none`
+                            }
+                            width={`1px`}
+                            height={width < 800 ? `20px` : `34px`}
+                            borderLeft={`1px dashed ${Theme.grey_C}`}
+                            margin={
+                              width < 1350
+                                ? width < 800
+                                  ? `0 4px`
+                                  : `0 10px`
+                                : `0 20px`
+                            }
+                          />
+                        </>
+                      );
+                    })}
+                </Wrapper>
+              </Wrapper>
+
+              <Wrapper
+                width={width < 1280 ? (width < 800 ? `100%` : `40%`) : `230px`}
+                dr={`row`}
+                ju={`flex-start`}
+                margin={
+                  width < 1280 ? (width < 800 ? `5px 0` : `0`) : `0 30px 0 0`
+                }
+              >
+                <Wrapper width={`auto`} margin={`0 10px 0 0`}>
+                  <Image
+                    width={`22px`}
+                    height={`22px`}
+                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
+                    alt="clender_icon"
+                  />
+                </Wrapper>
+                <Text fontSize={width < 700 ? `14px` : `18px`}>
+                  2022/01/01 ~ 2022/01/28
+                </Text>
+              </Wrapper>
+              <Wrapper
+                width={
+                  width < 1280 ? `100%` : `calc(100% - 37% - 230px - 30px)`
+                }
+                dr={`row`}
+                ju={`flex-start`}
+                al={`flex-start`}
+              >
+                <Wrapper
+                  maxWidth={width < 800 ? `100%` : `25%`}
+                  width={`auto`}
+                  dr={`row`}
+                  ju={`flex-start`}
+                  margin={width < 800 ? `0 0 10px` : `0 20px 0 0`}
+                >
+                  <Image
+                    margin={`0 10px 0 0`}
+                    width={`22px`}
+                    height={`22px`}
+                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name.png"
+                    alt="clender_icon"
+                  />
+                  <Text
+                    fontSize={width < 700 ? `14px` : `18px`}
+                    width={`calc(100% - 22px - 10px)`}
+                    isEllipsis
+                  >
+                    오민형 오민형 오민형 오민형 오민형 오민형
+                  </Text>
+                </Wrapper>
+
+                <Wrapper
+                  width={width < 800 ? `100%` : `calc(75% - 20px)`}
+                  dr={`row`}
+                  ju={`flex-start`}
+                  fontSize={width < 700 ? `12px` : `16px`}
+                >
+                  {width > 800 && (
+                    <DashBorder
+                      height={width < 800 ? `20px` : `34px`}
+                      margin={
+                        width < 1350
+                          ? width < 800
+                            ? `0 4px 0 0`
+                            : `0 10px 0 0`
+                          : `0 20px 0 0`
+                      }
+                    />
+                  )}
+                  <Text fontSize={width < 700 ? `14px` : `18px`}>
+                    공지사항 확인
+                  </Text>
+                  <DashBorder
+                    height={width < 800 ? `20px` : `34px`}
+                    margin={
+                      width < 1350
+                        ? width < 800
+                          ? `0 4px`
+                          : `0 10px`
+                        : `0 20px`
+                    }
+                  />
+                  <Text fontSize={width < 700 ? `14px` : `18px`}>
+                    ZOOM ID PW 확인
+                  </Text>
+                </Wrapper>
+              </Wrapper>
             </Wrapper>
+
             <CustomPage />
 
             <Wrapper al={`flex-start`} margin={`80px 0 20px`}>
@@ -1052,11 +1336,7 @@ const Index = () => {
                   ju={`space-between`}
                   padding={width < 800 ? `15px` : `20px`}
                 >
-                  <Wrapper
-                    dr={`row`}
-                    ju={`flex-start`}
-                    width={width < 800 ? `100%` : `auto`}
-                  >
+                  <Wrapper dr={`row`} ju={`flex-start`} width={`auto`}>
                     <Wrapper
                       width={`35px`}
                       padding={`5px`}
@@ -1070,20 +1350,16 @@ const Index = () => {
                     <Text
                       fontsize={`16px`}
                       fontWeight={`700`}
-                      margin={`0 25px 0 0`}
+                      margin={width < 800 ? `0` : `0 25px 0 0`}
                     >
                       컨텐츠명
                     </Text>
-                    <Text fontsize={`16px`}>오민형 강사님</Text>
                   </Wrapper>
+                  <Text fontsize={`16px`}>오민형 강사님</Text>
 
                   {width > 800 && <DashBorder margin={`0`} />}
 
-                  <Wrapper
-                    dr={`row`}
-                    ju={`flex-start`}
-                    width={width < 800 ? `100%` : `auto`}
-                  >
+                  <Wrapper dr={`row`} ju={`flex-start`} width={`auto`}>
                     <Wrapper
                       width={`35px`}
                       padding={`5px`}
@@ -1094,23 +1370,21 @@ const Index = () => {
                         alt={`icon_lecture`}
                       />
                     </Wrapper>
-                    <Text fontsize={`16px`} margin={`0 25px 0 0`}>
-                      파일 다운로드
-                    </Text>
-                    {width < 800 && (
-                      <Text fontsize={`16px`} fontWeight={`700`}>
-                        학습하기
+                    {width > 800 && (
+                      <Text
+                        fontsize={`16px`}
+                        margin={width < 800 ? `0 15px 0 0` : `0 25px 0 0`}
+                      >
+                        파일 다운로드
                       </Text>
                     )}
                   </Wrapper>
 
                   {width > 800 && <DashBorder margin={`0`} />}
 
-                  {width > 800 && (
-                    <Text fontsize={`16px`} fontWeight={`700`}>
-                      학습하기
-                    </Text>
-                  )}
+                  <Text fontsize={`16px`} fontWeight={`700`}>
+                    학습하기
+                  </Text>
                 </Wrapper>
               </Wrapper>
             </Wrapper>
