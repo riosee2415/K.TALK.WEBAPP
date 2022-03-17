@@ -368,7 +368,7 @@ const Index = () => {
                     <Image
                       width={`22px`}
                       height={`22px`}
-                      src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
+                      src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_number.png"
                       alt="calender_icon"
                       margin={`0 5px 0 0`}
                     />
