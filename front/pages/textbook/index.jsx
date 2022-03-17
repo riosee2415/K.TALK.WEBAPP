@@ -147,7 +147,7 @@ const Index = () => {
             <Wrapper al={`flex-start`} margin={`70px 0 30px`}>
               <Text
                 color={Theme.black_2C}
-                fontSize={width < 700 ? `18px` : `22px`}
+                fontSize={width < 800 ? `18px` : `22px`}
                 fontWeight={`Bold`}
               >
                 교재 목록
@@ -157,7 +157,7 @@ const Index = () => {
             <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 40px`}>
               <Wrapper
                 position={`relative`}
-                width={width < 700 ? `calc(100% - 100px - 20px)` : `500px`}
+                width={width < 800 ? `calc(100% - 100px - 20px)` : `500px`}
               >
                 <SearchOutlined
                   style={{
@@ -180,7 +180,7 @@ const Index = () => {
 
               <CommonButton
                 kindOf={`white2`}
-                width={width < 700 ? `100px` : `160px`}
+                width={width < 800 ? `100px` : `160px`}
                 height={`50px`}
                 shadow={`0 2px 10px rgba(0,0,0,0.05)`}
               >
@@ -201,7 +201,7 @@ const Index = () => {
                 <Text
                   maxWidth={`calc(100% - 17px)`}
                   isEllipsis
-                  fontSize={width < 700 ? `10px` : `14px`}
+                  fontSize={width < 800 ? `10px` : `14px`}
                 >
                   ILK(아이러브코리아 SB)
                 </Text>
@@ -219,7 +219,7 @@ const Index = () => {
                 <Text
                   maxWidth={`calc(100% - 17px)`}
                   isEllipsis
-                  fontSize={width < 700 ? `10px` : `14px`}
+                  fontSize={width < 800 ? `10px` : `14px`}
                 >
                   ILK(아이러브코리아 SB)
                 </Text>
@@ -237,7 +237,7 @@ const Index = () => {
                 <Text
                   maxWidth={`calc(100% - 17px)`}
                   isEllipsis
-                  fontSize={width < 700 ? `10px` : `14px`}
+                  fontSize={width < 800 ? `10px` : `14px`}
                 >
                   교재명
                 </Text>
@@ -255,7 +255,7 @@ const Index = () => {
                 <Text
                   maxWidth={`calc(100% - 17px)`}
                   isEllipsis
-                  fontSize={width < 700 ? `10px` : `14px`}
+                  fontSize={width < 800 ? `10px` : `14px`}
                 >
                   교재명
                 </Text>
@@ -273,7 +273,7 @@ const Index = () => {
                 <Text
                   maxWidth={`calc(100% - 17px)`}
                   isEllipsis
-                  fontSize={width < 700 ? `10px` : `14px`}
+                  fontSize={width < 800 ? `10px` : `14px`}
                 >
                   교재명
                 </Text>

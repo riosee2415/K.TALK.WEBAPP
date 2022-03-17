@@ -734,7 +734,7 @@ const Index = () => {
                     <Text>신청하기</Text>
                   </Wrapper>
 
-                  {width > 700 && <DashBorder margin={`0 30px`} />}
+                  {width > 800 && <DashBorder margin={`0 30px`} />}
 
                   <Wrapper
                     width={
@@ -795,7 +795,7 @@ const Index = () => {
                     <Text>신청내역 없음</Text>
                   </Wrapper>
 
-                  {width > 700 && <DashBorder margin={`0 30px`} />}
+                  {width > 800 && <DashBorder margin={`0 30px`} />}
 
                   <Wrapper
                     width={
@@ -1036,7 +1036,7 @@ const Index = () => {
                     <Text fontsize={`16px`}>오민형 강사님</Text>
                   </Wrapper>
 
-                  {width > 700 && <DashBorder margin={`0`} />}
+                  {width > 800 && <DashBorder margin={`0`} />}
 
                   <Wrapper
                     dr={`row`}
@@ -1063,9 +1063,9 @@ const Index = () => {
                     )}
                   </Wrapper>
 
-                  {width > 700 && <DashBorder margin={`0`} />}
+                  {width > 800 && <DashBorder margin={`0`} />}
 
-                  {width > 700 && (
+                  {width > 800 && (
                     <Text fontsize={`16px`} fontWeight={`700`}>
                       학습하기
                     </Text>
