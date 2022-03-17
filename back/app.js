@@ -23,6 +23,10 @@ const questionRouter = require("./routers/questionRouter");
 const seoRouter = require("./routers/seoRouter");
 const editRouter = require("./routers/editRouter");
 const applicationRouter = require("./routers/applicationRouter");
+const messageRouter = require("./routers/messageRouter");
+const commuteRouter = require("./routers/commuteRouter");
+const participantRouter = require("./routers/participantRouter");
+const lectureRouter = require("./routers/lectureRouter");
 
 // Config Settings
 db.sequelize

@@ -10,6 +10,10 @@ const question = require("./question");
 const questiontype = require("./questiontype");
 const seo = require("./seo");
 const application = require("./application");
+const commute = require("./commute");
+const lecture = require("./lecture");
+const message = require("./message");
+const participant = require("./participant");
 
 const env = process.env.NODE_ENV || "development";
 const config = require("../config/config")[env];
@@ -33,6 +37,10 @@ db.Question = question;
 db.QuestionType = questiontype;
 db.Seo = seo;
 db.Application = application;
+db.Lecture = lecture;
+db.Message = message;
+db.Participant = participant;
+db.Commute = commute;
 
 Object.keys(db).forEach((modelName) => {
   db[modelName].init(sequelize);
