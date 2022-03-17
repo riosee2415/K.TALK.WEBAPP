@@ -150,7 +150,7 @@ const Index = () => {
     },
     {
       id: 2,
-      time1: "12PM",
+      time1: "9PM",
       lessons: [
         {
           id: 1,
@@ -469,7 +469,7 @@ const Index = () => {
                     alt="clender_icon"
                   />
                 </Wrapper>
-                <Text fontSize={width < 700 ? `14px` : `18px`}>
+                <Text fontSize={width < 700 ? `14px` : `17px`}>
                   2022/01/01 ~ 2022/01/28
                 </Text>
               </Wrapper>
@@ -486,6 +486,7 @@ const Index = () => {
                   width={`auto`}
                   dr={`row`}
                   ju={`flex-start`}
+                  al={`flex-start`}
                   margin={width < 800 ? `0 0 10px` : `0 20px 0 0`}
                 >
                   <Image
@@ -498,7 +499,6 @@ const Index = () => {
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     width={`calc(100% - 22px - 10px)`}
-                    isEllipsis
                   >
                     오민형 오민형 오민형 오민형 오민형 오민형
                   </Text>
