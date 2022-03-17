@@ -555,7 +555,7 @@ const Index = () => {
                 radius={`10px`}
                 padding={width < 800 ? `15px` : `30px 40px`}
                 bgColor={Theme.white_C}
-                shadow={`0 5px 15px rgba(0,0,0,0.05)`}
+                shadow={`0 5px 15px rgba(0,0,0,0.16)`}
                 dr={width < 1100 ? `column` : `row`}
                 ju={width < 1100 ? `center` : `flex-start`}
                 al={width < 1100 ? `flex-start` : `center`}
@@ -710,7 +710,7 @@ const Index = () => {
                   width < 1100 ? (width < 800 ? `15px` : `20px`) : `0 40px`
                 }
                 bgColor={Theme.white_C}
-                shadow={`0 5px 15px rgba(0,0,0,0.05)`}
+                shadow={`0 5px 15px rgba(0,0,0,0.16)`}
                 dr={`row`}
                 ju={`flex-start`}
                 margin={`0 0 60px`}
@@ -869,7 +869,7 @@ const Index = () => {
                   width < 1100 ? (width < 800 ? `15px` : `20px`) : `0 40px`
                 }
                 bgColor={Theme.white_C}
-                shadow={`0 5px 15px rgba(0,0,0,0.05)`}
+                shadow={`0 5px 15px rgba(0,0,0,0.16)`}
                 dr={`row`}
                 ju={`flex-start`}
                 margin={`0 0 60px`}
@@ -1016,7 +1016,7 @@ const Index = () => {
                   width={width < 1100 ? `100%` : `calc(100% / 2 - 17px)`}
                   minHeight={`75px`}
                   bgColor={Theme.white_C}
-                  shadow={`0px 5px 15px rgba(0, 0, 0, 0.05)`}
+                  shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
                   radius={`10px`}
                   margin={`0 0 30px`}
                   dr={`row`}
@@ -1088,7 +1088,7 @@ const Index = () => {
               <Wrapper
                 minHeight={`75px`}
                 bgColor={Theme.white_C}
-                shadow={`0px 5px 15px rgba(0, 0, 0, 0.05)`}
+                shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
                 radius={`10px`}
                 margin={`0 0 30px`}
                 padding={width < 1100 ? `20px 10px` : `0 5px`}

@@ -182,7 +182,7 @@ const Index = () => {
                 kindOf={`white2`}
                 width={width < 800 ? `100px` : `160px`}
                 height={`50px`}
-                shadow={`0 2px 10px rgba(0,0,0,0.05)`}
+                shadow={`0 2px 10px rgba(0,0,0,0.16)`}
               >
                 자료 올리기
               </CommonButton>
@@ -333,7 +333,7 @@ const Index = () => {
                         zIndex={`999`}
                         ju={`flex-start`}
                         radius={`10px`}
-                        shadow={`0 5px 15px rgba(0,0,0,0.05)`}
+                        shadow={`0 5px 15px rgba(0,0,0,0.16)`}
                         right={
                           width < 1280
                             ? width < 1100
