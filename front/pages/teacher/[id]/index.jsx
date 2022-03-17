@@ -22,11 +22,10 @@ import {
   Image,
   SpanText,
   CommonButton,
+  TextInput,
 } from "../../../components/commonComponents";
 import {
   CalendarOutlined,
-  CarryOutOutlined,
-  FieldTimeOutlined,
   SearchOutlined,
   DownloadOutlined,
   UploadOutlined,
@@ -836,7 +835,7 @@ const Index = () => {
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`10%`}>
+                    width={`15%`}>
                     글번호
                   </Text>
                   <Text
@@ -854,7 +853,7 @@ const Index = () => {
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`30%`}>
+                    width={`25%`}>
                     수업메모
                   </Text>
                   <Text
@@ -883,7 +882,7 @@ const Index = () => {
                         bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
-                          width={`10%`}
+                          width={`15%`}
                           wordBreak={`break-word`}>
                           5
                         </Text>
@@ -899,7 +898,7 @@ const Index = () => {
                         </Text>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
-                          width={`30%`}>
+                          width={`25%`}>
                           수업메모 내용입니다.
                         </Text>
                         <Text
@@ -929,7 +928,7 @@ const Index = () => {
 
             <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
               <Text
-                cTolor={Theme.black_2C}
+                color={Theme.black_2C}
                 fontSize={width < 700 ? `18px` : `22px`}
                 fontWeight={`Bold`}>
                 출석부 목록
@@ -937,24 +936,35 @@ const Index = () => {
             </Wrapper>
 
             <Wrapper al={`flex-start`}>
-              <Input
-                placeholder="학생명으로 검색"
-                prefix={<SearchOutlined />}
-                style={{
-                  borderRadius: 25,
-                  margin: `0px 0 20px`,
-                  width: width < 700 ? `100%` : `50%`,
-                  height: 39,
-                }}
-              />
+              <Wrapper
+                position={`relative`}
+                width={width < 800 ? `calc(100% - 100px - 20px)` : `500px`}
+                height={`39px`}
+                margin={`0 0 20px`}>
+                <SearchOutlined
+                  style={{
+                    color: Theme.grey2_C,
+                    fontSize: `20px`,
+                    position: "absolute",
+                    left: `15px`,
+                  }}
+                />
+                <TextInput
+                  padding={`0 0 0 55px`}
+                  placeholder="학생명으로 검색"
+                  radius={`25px`}
+                  width={`100%`}
+                  height={`50px`}
+                  bgColor={Theme.lightGrey_C}
+                />
+              </Wrapper>
             </Wrapper>
 
             <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
               <Wrapper
                 dr={`row`}
-                textAlign={`center`}
-                height={`65px`}
-                padding={width < 700 ? `30px 15px` : `30px`}>
+                textAlign={width < 700 ? `center` : `left`}
+                padding={width < 700 ? `35px 10px` : `35px 30px`}>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
@@ -977,11 +987,11 @@ const Index = () => {
 
               <Wrapper
                 dr={`row`}
-                textAlign={`center`}
                 ju={`flex-start`}
                 padding={width < 700 ? `35px 10px` : `35px 30px`}
                 cursor={`pointer`}
                 bgColor={Theme.lightGrey_C}
+                textAlign={width < 700 ? `center` : `left`}
                 // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
               >
                 <Text fontSize={width < 700 ? `14px` : `16px`} width={`35%`}>
@@ -1010,7 +1020,7 @@ const Index = () => {
                 ju={`flex-start`}
                 shadow={`0px 5px 15px rgb(0,0,0,0.1)`}
                 radius={`10px`}
-                padding={`35px 20px`}>
+                padding={width < 700 ? `35px 10px` : `35px 30px`}>
                 <Text width={`50%`} fontSize={width < 700 ? `14px` : `16px`}>
                   한국어로 편지 쓰기
                 </Text>
@@ -1091,7 +1101,7 @@ const Index = () => {
                 <Wrapper
                   dr={`row`}
                   textAlign={`center`}
-                  padding={width < 700 ? `30px 15px` : `30px`}>
+                  padding={width < 700 ? `35px 10px` : `35px 30px`}>
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
@@ -1164,7 +1174,10 @@ const Index = () => {
 
             <Wrapper>
               <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
-                <Wrapper dr={`row`} textAlign={`center`} padding={`30px`}>
+                <Wrapper
+                  dr={`row`}
+                  textAlign={`center`}
+                  padding={width < 700 ? `35px 10px` : `35px 30px`}>
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
