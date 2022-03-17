@@ -215,23 +215,25 @@ const Index = () => {
       <ClientLayout>
         <WholeWrapper margin={`100px 0 0`} bgColor={Theme.subTheme_C}>
           <RsWrapper>
-            <Wrapper dr={`row`} margin={`70px 0 75px 0`} ju={`flex-start`}>
-              <Image
-                width={`75px`}
-                height={`75px`}
-                radius={`50%`}
-                src={`https://via.placeholder.com/75x75`}
-                margin={`0 15px 0 0`}
-              />
+            <Wrapper dr={`row`} margin={`30px 0`} ju={`flex-start`}>
+              <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
+                <Image
+                  width={width < 700 ? `65px` : `75px`}
+                  height={width < 700 ? `65px` : `75px`}
+                  radius={`50%`}
+                  src={`https://via.placeholder.com/75x75`}
+                />
+              </Wrapper>
 
               <Wrapper
                 dr={`row`}
                 width={`auto`}
                 fontSize={width < 700 ? `20px` : `28px`}
+                padding={`0 0 0 15px`}
                 color={Theme.black_2C}>
-                <Text>안녕하세요,</Text>&nbsp;
+                <Text fontWeight={`bold`}>안녕하세요,</Text>&nbsp;
                 <Text color={Theme.basicTheme_C}>000</Text>&nbsp;
-                <Text>강사님!</Text>
+                <Text fontWeight={`bold`}>강사님!</Text>
               </Wrapper>
             </Wrapper>
 
@@ -258,7 +260,7 @@ const Index = () => {
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`50%`}>
+                    width={`45%`}>
                     제목
                   </Text>
                   <Text
@@ -271,7 +273,7 @@ const Index = () => {
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`20%`}>
+                    width={`25%`}>
                     날짜
                   </Text>
                 </Wrapper>
@@ -291,13 +293,16 @@ const Index = () => {
                     wordBreak={`break-word`}>
                     15
                   </Text>
-                  <Text fontSize={width < 700 ? `14px` : `16px`} width={`50%`}>
+                  <Text
+                    fontSize={width < 700 ? `14px` : `16px`}
+                    width={`45%`}
+                    textAlign={`left`}>
                     안녕하세요. 강사 여러분께 공지사항 알립니다.
                   </Text>
                   <Text fontSize={width < 700 ? `14px` : `16px`} width={`15%`}>
                     케이톡 라이브
                   </Text>
-                  <Text fontSize={width < 700 ? `14px` : `16px`} width={`20%`}>
+                  <Text fontSize={width < 700 ? `14px` : `16px`} width={`25%`}>
                     2022/01/22
                   </Text>
                 </Wrapper>
