@@ -384,7 +384,6 @@ const Student = () => {
                   {clockArr &&
                     clockArr.length > 0 &&
                     clockArr.map((data, idx) => {
-                      console.log(idx);
                       return (
                         <>
                           <Text
