@@ -171,7 +171,7 @@ const CustomText = styled(Text)`
   &::after {
     content: "|";
     padding: 0 10px;
-    color: ${Theme.grey2_C};
+    color: ${Theme.grey_C};
   }
 
   @media (max-width: 700px) {
@@ -192,8 +192,8 @@ const CustomText2 = styled(Text)`
   &::after {
     content: "";
     margin: ${(props) => props.margin || `0 20px`};
-    border-right: 1px dashed ${Theme.grey2_C};
-    color: ${Theme.grey2_C};
+    border-right: 1px dashed ${Theme.grey_C};
+    color: ${Theme.grey_C};
   }
 
   @media (max-width: 700px) {
@@ -411,7 +411,10 @@ const Index = () => {
       <ClientLayout>
         <WholeWrapper margin={`100px 0 0`} bgColor={Theme.subTheme_C}>
           <RsWrapper>
-            <Wrapper dr={`row`} margin={`30px 0`} ju={`flex-start`}>
+            <Wrapper
+              dr={`row`}
+              margin={width < 700 ? `30px 0` : `60px 0`}
+              ju={`flex-start`}>
               <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
                 <Image
                   width={width < 700 ? `65px` : `75px`}
@@ -438,7 +441,7 @@ const Index = () => {
                 dr={`row`}
                 ju={`flex-start`}
                 shadow={`0px 5px 15px rgb(0,0,0,0.1)`}
-                padding={width < 700 ? `35px 10px` : `35px 30px`}
+                padding={width < 700 ? `15px 10px 10px` : `35px 30px`}
                 margin={`0 0 20px`}
                 radius={`10px`}>
                 <Wrapper
@@ -460,7 +463,9 @@ const Index = () => {
                   <CustomText2 color={Theme.black_2C}>9PM</CustomText2>
 
                   <CustomText>금요일</CustomText>
-                  <CustomText2 color={Theme.black_2C}>9PM</CustomText2>
+                  <CustomText2 color={Theme.black_2C} borderRightBool={true}>
+                    9PM
+                  </CustomText2>
                 </Wrapper>
 
                 <Wrapper dr={`row`} width={width < 1400 ? `100%` : `60%`}>

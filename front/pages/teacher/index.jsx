@@ -90,7 +90,7 @@ const CustomText = styled(Text)`
   &::after {
     content: "|";
     padding: 0 10px;
-    color: ${Theme.grey2_C};
+    color: ${Theme.grey_C};
   }
 
   @media (max-width: 700px) {
@@ -98,7 +98,7 @@ const CustomText = styled(Text)`
     &::after {
       content: "|";
       padding: 0 5px;
-      color: ${Theme.grey2_C};
+      color: ${Theme.grey_C};
     }
   }
 `;
@@ -112,13 +112,13 @@ const CustomText2 = styled(Text)`
   &::after {
     content: "";
     margin: ${(props) => props.margin || `0 20px`};
-    border-right: 1px dashed ${Theme.grey2_C};
-    color: ${Theme.grey2_C};
+    border-right: 1px dashed ${Theme.grey_C};
   }
 
   @media (max-width: 700px) {
     font-size: 14px;
     &::after {
+      border-right: ${(props) => props.borderRightBool && `0px`};
       margin: ${(props) => props.margin || `0 5px`};
     }
   }
@@ -127,13 +127,12 @@ const CustomText2 = styled(Text)`
 const CustomText3 = styled(Text)`
   font-size: 18px;
   font-weight: Bold;
-  color: ${Theme.black_2C};
 
   &::before {
     content: "";
     margin: 0 20px 0 0;
-    border-right: 1px dashed ${Theme.grey2_C};
-    color: ${Theme.grey2_C};
+    border-right: 1px dashed ${Theme.grey_C};
+    color: ${Theme.grey_C};
   }
 
   @media (max-width: 700px) {
@@ -215,7 +214,10 @@ const Index = () => {
       <ClientLayout>
         <WholeWrapper margin={`100px 0 0`} bgColor={Theme.subTheme_C}>
           <RsWrapper>
-            <Wrapper dr={`row`} margin={`30px 0`} ju={`flex-start`}>
+            <Wrapper
+              dr={`row`}
+              margin={width < 700 ? `30px 0` : `60px 0`}
+              ju={`flex-start`}>
               <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
                 <Image
                   width={width < 700 ? `65px` : `75px`}
@@ -247,10 +249,7 @@ const Index = () => {
               </Text>
 
               <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.1)`} radius={`10px`}>
-                <Wrapper
-                  dr={`row`}
-                  textAlign={`center`}
-                  padding={width < 700 ? `30px 15px` : `30px`}>
+                <Wrapper dr={`row`} textAlign={`center`} padding={`20px 0`}>
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
@@ -282,7 +281,7 @@ const Index = () => {
                   dr={`row`}
                   textAlign={`center`}
                   ju={`flex-start`}
-                  padding={width < 700 ? `30px 15px` : `30px`}
+                  padding={`25px 0 20px`}
                   cursor={`pointer`}
                   bgColor={Theme.lightGrey_C}
                   // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
@@ -326,7 +325,7 @@ const Index = () => {
                 dr={`row`}
                 ju={`flex-start`}
                 shadow={`0px 5px 15px rgb(0,0,0,0.1)`}
-                padding={width < 700 ? `35px 10px` : `35px 30px`}
+                padding={width < 700 ? `15px 10px 10px` : `35px 30px`}
                 radius={`10px`}>
                 <Wrapper
                   dr={`row`}
@@ -347,7 +346,9 @@ const Index = () => {
                   <CustomText2 color={Theme.black_2C}>9PM</CustomText2>
 
                   <CustomText>금요일</CustomText>
-                  <CustomText2 color={Theme.black_2C}>9PM</CustomText2>
+                  <CustomText2 color={Theme.black_2C} borderRightBool={true}>
+                    9PM
+                  </CustomText2>
                 </Wrapper>
 
                 <Wrapper
