@@ -222,7 +222,7 @@ const Index = () => {
                 />
               </Wrapper>
               <Text
-                fontSize={width < 700 ? `20px` : `28px`}
+                fontSize={width < 800 ? `20px` : `28px`}
                 fontWeight={`bold`}
                 padding={`0 0 0 15px`}
               >
@@ -710,14 +710,14 @@ const Index = () => {
                   <Wrapper
                     width={
                       width < 1100
-                        ? width < 700
+                        ? width < 800
                           ? `100%`
                           : `calc(50% - 31px)`
                         : `auto`
                     }
                     dr={`row`}
                     ju={`flex-start`}
-                    margin={width < 700 ? `0 0 10px` : `0`}
+                    margin={width < 800 ? `0 0 10px` : `0`}
                   >
                     <Text
                       fontSize={width < 1100 ? `14px` : `18px`}
@@ -739,14 +739,14 @@ const Index = () => {
                   <Wrapper
                     width={
                       width < 1100
-                        ? width < 700
+                        ? width < 800
                           ? `100%`
                           : `calc(50% - 31px)`
                         : `auto`
                     }
                     dr={`row`}
                     ju={`flex-start`}
-                    margin={width < 700 ? `0 0 10px` : `0`}
+                    margin={width < 800 ? `0 0 10px` : `0`}
                   >
                     <Text
                       fontSize={width < 1100 ? `14px` : `18px`}
@@ -771,14 +771,14 @@ const Index = () => {
                   <Wrapper
                     width={
                       width < 1100
-                        ? width < 700
+                        ? width < 800
                           ? `100%`
                           : `calc(50% - 31px)`
                         : `auto`
                     }
                     dr={`row`}
                     ju={`flex-start`}
-                    margin={width < 700 ? `0 0 10px` : `0`}
+                    margin={width < 800 ? `0 0 10px` : `0`}
                   >
                     <Text
                       fontSize={width < 1100 ? `14px` : `18px`}
@@ -800,7 +800,7 @@ const Index = () => {
                   <Wrapper
                     width={
                       width < 1100
-                        ? width < 700
+                        ? width < 800
                           ? `100%`
                           : `calc(50% - 31px)`
                         : `auto`
@@ -809,7 +809,7 @@ const Index = () => {
                     <Wrapper
                       dr={`row`}
                       ju={`flex-start`}
-                      margin={width < 700 ? `0 0 10px` : `0`}
+                      margin={width < 800 ? `0 0 10px` : `0`}
                     >
                       <Text
                         fontWeight={`700`}
@@ -826,7 +826,7 @@ const Index = () => {
                     <Wrapper
                       dr={`row`}
                       ju={`flex-start`}
-                      margin={width < 700 ? `0 0 10px` : `0`}
+                      margin={width < 800 ? `0 0 10px` : `0`}
                     >
                       <Text
                         fontWeight={`700`}
@@ -867,12 +867,12 @@ const Index = () => {
                   <Wrapper
                     dr={`row`}
                     width={
-                      width < 1100 ? (width < 700 ? `100%` : `50%`) : `auto`
+                      width < 1100 ? (width < 800 ? `100%` : `50%`) : `auto`
                     }
                     ju={`flex-start`}
                     margin={
                       width < 1100
-                        ? width < 700
+                        ? width < 800
                           ? `0 0 10px`
                           : `0`
                         : `0 50px 0 0`
@@ -910,12 +910,12 @@ const Index = () => {
                   <Wrapper
                     dr={`row`}
                     width={
-                      width < 1100 ? (width < 700 ? `100%` : `50%`) : `auto`
+                      width < 1100 ? (width < 800 ? `100%` : `50%`) : `auto`
                     }
                     ju={`flex-start`}
                     margin={
                       width < 1100
-                        ? width < 700
+                        ? width < 800
                           ? `0 0 10px`
                           : `0`
                         : `0 50px 0 0`
@@ -941,10 +941,10 @@ const Index = () => {
                   <Wrapper
                     dr={`row`}
                     width={
-                      width < 1100 ? (width < 700 ? `100%` : `50%`) : `auto`
+                      width < 1100 ? (width < 800 ? `100%` : `50%`) : `auto`
                     }
                     ju={`flex-start`}
-                    margin={width < 700 ? `0 0 10px` : `0`}
+                    margin={width < 800 ? `0 0 10px` : `0`}
                   >
                     <Wrapper
                       padding={`5px`}
@@ -966,7 +966,7 @@ const Index = () => {
                   <Wrapper
                     dr={`row`}
                     width={
-                      width < 1100 ? (width < 700 ? `100%` : `50%`) : `auto`
+                      width < 1100 ? (width < 800 ? `100%` : `50%`) : `auto`
                     }
                     ju={`flex-start`}
                   >
@@ -1014,7 +1014,7 @@ const Index = () => {
                   <Wrapper
                     dr={`row`}
                     ju={`flex-start`}
-                    width={width < 700 ? `100%` : `auto`}
+                    width={width < 800 ? `100%` : `auto`}
                   >
                     <Wrapper
                       width={`35px`}
@@ -1041,7 +1041,7 @@ const Index = () => {
                   <Wrapper
                     dr={`row`}
                     ju={`flex-start`}
-                    width={width < 700 ? `100%` : `auto`}
+                    width={width < 800 ? `100%` : `auto`}
                   >
                     <Wrapper
                       width={`35px`}
@@ -1056,7 +1056,7 @@ const Index = () => {
                     <Text fontsize={`16px`} margin={`0 25px 0 0`}>
                       파일 다운로드
                     </Text>
-                    {width < 700 && (
+                    {width < 800 && (
                       <Text fontsize={`16px`} fontWeight={`700`}>
                         학습하기
                       </Text>
