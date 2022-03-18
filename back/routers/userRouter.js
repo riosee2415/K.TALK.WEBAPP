@@ -92,7 +92,9 @@ router.get("/signin", async (req, res, next) => {
     if (req.user) {
       const fullUserWithoutPassword = await User.findOne({
         where: { id: req.user.id },
-        attributes: ["id", "nickname", "email", "level"],
+        attributes: {
+          exclude: ["password"],
+        },
       });
 
       console.log("🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀");
@@ -128,7 +130,9 @@ router.post("/signin", (req, res, next) => {
 
       const fullUserWithoutPassword = await User.findOne({
         where: { id: user.id },
-        attributes: ["id", "nickname", "email", "level", "username"],
+        attributes: {
+          exclude: ["password"],
+        },
       });
 
       return res.status(200).json(fullUserWithoutPassword);
@@ -161,7 +165,9 @@ router.post("/signin/admin", (req, res, next) => {
 
       const fullUserWithoutPassword = await User.findOne({
         where: { id: user.id },
-        attributes: ["id", "nickname", "email", "level", "username"],
+        attributes: {
+          exclude: ["password"],
+        },
       });
 
       return res.status(200).json(fullUserWithoutPassword);
@@ -170,11 +176,7 @@ router.post("/signin/admin", (req, res, next) => {
 });
 
 router.post("/signup", async (req, res, next) => {
-  const { email, username, nickname, mobile, password, terms } = req.body;
-
-  if (!terms) {
-    return res.status(401).send("이용약관에 동의해주세요.");
-  }
+  const { userId, email, username, mobile, password, birth, gender } = req.body;
 
   try {
     const exUser = await User.findOne({
@@ -188,11 +190,12 @@ router.post("/signup", async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const result = await User.create({
+      userId,
       email,
       username,
-      nickname,
       mobile,
-      terms,
+      birth,
+      gender,
       password: hashedPassword,
     });
 
@@ -213,7 +216,7 @@ router.get("/me", isLoggedIn, async (req, res, next) => {
 });
 
 router.post("/me/update", isLoggedIn, async (req, res, next) => {
-  const { id, nickname, mobile } = req.body;
+  const { id, username, mobile } = req.body;
 
   try {
     const exUser = await User.findOne({ where: { id: parseInt(id) } });
@@ -223,7 +226,7 @@ router.post("/me/update", isLoggedIn, async (req, res, next) => {
     }
 
     const updateUser = await User.update(
-      { nickname, mobile },
+      { username, mobile },
       {
         where: { id: parseInt(id) },
       }
@@ -237,12 +240,12 @@ router.post("/me/update", isLoggedIn, async (req, res, next) => {
 });
 
 router.post("/findemail", async (req, res, next) => {
-  const { nickname, mobile } = req.body;
+  const { username, mobile } = req.body;
 
   try {
     const exUser = await User.findOne({
       where: {
-        nickname,
+        username,
         mobile,
       },
     });
@@ -259,16 +262,16 @@ router.post("/findemail", async (req, res, next) => {
 });
 
 router.post("/modifypass", isLoggedIn, async (req, res, next) => {
-  const { email, nickname, mobile } = req.body;
+  const { email, username, mobile } = req.body;
 
   try {
     const cookieEmail = req.user.dataValues.email;
-    const cookieNickname = req.user.dataValues.nickname;
+    const cookieUsername = req.user.dataValues.username;
     const cookieMobile = req.user.dataValues.mobile;
 
     if (
       email === cookieEmail &&
-      nickname === cookieNickname &&
+      username === cookieUsername &&
       mobile === cookieMobile
     ) {
       const currentUserId = req.user.dataValues.id;
@@ -430,27 +433,170 @@ router.get("/logout", function (req, res) {
   });
 });
 
+// router.post("/seq/create", isAdminCheck, async (req, res, next) => {
+//   const { email, username, nickname, birth, gender, mobile, password, level } =
+//     req.body;
+
+//   try {
+//     const result = await User.create({
+//       email,
+//       username,
+//       nickname,
+//       birth,
+//       gender,
+//       mobile,
+//       password,
+//       level,
+//     });
+
+//     return res.status(201).json({ result: true });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(400).send("회원 생성에 실패했습니다.");
+//   }
+// });
+
 // 🍀 회원 신규 등록
-router.post("/seq/create", isAdminCheck, async (req, res, next) => {
-  const { email, username, nickname, birth, gender, mobile, password, level } =
-    req.body;
+
+router.post("/student/create", isAdminCheck, async (req, res, next) => {
+  const {
+    userId,
+    password,
+    username,
+    mobile,
+    email,
+    postNum,
+    address,
+    startDate,
+    endDate,
+    stuLanguage,
+    birth,
+    stuCountry,
+    stuLiveCon,
+    sns,
+    snsId,
+    stuJob,
+    gender,
+  } = req.body;
 
   try {
-    const result = await User.create({
-      email,
-      username,
-      nickname,
-      birth,
-      gender,
-      mobile,
-      password,
-      level,
+    const exUser = await User.findOne({
+      where: { userId },
     });
+
+    if (exUser) {
+      return res.status(401).send("이미 사용중인 아이디입니다.");
+    }
+
+    const exUser2 = await User.findOne({
+      where: { email },
+    });
+
+    if (exUser2) {
+      return res.status(401).send("이미 사용중인 이메일입니다.");
+    }
+
+    const allStudents = await User.findAll({
+      where: { level: 1 },
+    });
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    const result = await User.create({
+      userId,
+      password: hashedPassword,
+      username,
+      mobile,
+      email,
+      postNum,
+      address,
+      startDate,
+      endDate,
+      stuNo: parseInt(allStudents.length) + 1,
+      stuLanguage,
+      birth,
+      stuCountry,
+      stuLiveCon,
+      sns,
+      snsId,
+      stuJob,
+      gender,
+      level: 1,
+    });
+
+    if (!result) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    }
 
     return res.status(201).json({ result: true });
   } catch (error) {
     console.error(error);
     return res.status(400).send("회원 생성에 실패했습니다.");
+  }
+});
+
+router.post("/teacher/create", isAdminCheck, async (req, res, next) => {
+  const {
+    userId,
+    password,
+    username,
+    mobile,
+    email,
+    postNum,
+    address,
+    identifyNum,
+    teaCountry,
+    teaLanguage,
+    bankNo,
+    bankName,
+    birth,
+    gender,
+  } = req.body;
+  try {
+    const exUser = await User.findOne({
+      where: { userId },
+    });
+
+    if (exUser) {
+      return res.status(401).send("이미 사용중인 아이디입니다.");
+    }
+
+    const exUser2 = await User.findOne({
+      where: { email },
+    });
+
+    if (exUser2) {
+      return res.status(401).send("이미 사용중인 이메일입니다.");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    const result = await User.create({
+      userId,
+      password: hashedPassword,
+      username,
+      mobile,
+      email,
+      postNum,
+      address,
+      identifyNum,
+      teaCountry,
+      teaLanguage,
+      bankNo,
+      bankName,
+      birth,
+      gender,
+      level: 2,
+    });
+
+    if (!result) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    }
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("강사 생성에 실패했습니다.");
   }
 });
 

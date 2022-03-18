@@ -5,35 +5,127 @@ module.exports = class User extends Model {
   static init(sequelize) {
     return super.init(
       {
-        // id가 기본적으로 들어있다.
-        email: {
-          type: DataTypes.STRING(60), // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
+        userId: {
+          type: DataTypes.STRING(50),
+          allowNull: false,
+        },
+        password: {
+          type: DataTypes.STRING(100),
           allowNull: false, // 필수
-          unique: true, // 고유한 값
         },
         username: {
           type: DataTypes.STRING(30), // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
-          allowNull: false, // 필수
-        },
-        nickname: {
-          type: DataTypes.STRING(30),
-          allowNull: false, // 필수
-          unique: true, // 고유한 값
-        },
-        birth: {
-          type: DataTypes.DATE,
-          allowNull: false, // 필수
-        },
-        gender: {
-          type: DataTypes.STRING(5),
           allowNull: false, // 필수
         },
         mobile: {
           type: DataTypes.STRING(30),
           allowNull: false, // 필수
         },
-        password: {
+        email: {
+          type: DataTypes.STRING(60), // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
+          allowNull: false, // 필수
+          unique: true, // 고유한 값
+        },
+        status: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          defaultValue: 1,
+        },
+        postNum: {
+          type: DataTypes.STRING(30), // 우편번호
+          allowNull: true,
+        },
+        address: {
+          type: DataTypes.STRING(300), // 주소
+          allowNull: true,
+        },
+        identifyNum: {
+          type: DataTypes.STRING(100), // 주민등록번호
+          allowNull: true,
+        },
+        teaCountry: {
+          type: DataTypes.STRING(100), // 강사 나라
+          allowNull: true,
+        },
+        teaLanguage: {
+          type: DataTypes.STRING(100), // 강사 언어
+          allowNull: true,
+        },
+        startDate: {
           type: DataTypes.STRING(100),
+          allowNull: true,
+        },
+        endDate: {
+          type: DataTypes.STRING(100),
+          allowNull: true,
+        },
+        adminMemo: {
+          type: DataTypes.TEXT, // 관리자 메모
+          allowNull: true,
+        },
+        bankNo: {
+          type: DataTypes.STRING(50), // 계좌번호
+          allowNull: true,
+        },
+        bankName: {
+          type: DataTypes.STRING(100), // 은행이름
+          allowNull: true,
+        },
+        teaMemo: {
+          type: DataTypes.TEXT, // 강사 메모
+          allowNull: true,
+        },
+        stuNo: {
+          type: DataTypes.INTEGER, // 학생번호
+          allowNull: true,
+        },
+        stuLanguage: {
+          type: DataTypes.STRING(100), // 학생 언어
+          allowNull: true,
+        },
+        birth: {
+          type: DataTypes.DATE, // 출생
+          allowNull: false, // 필수
+        },
+        stuCountry: {
+          type: DataTypes.STRING(100), // 학생 나라
+          allowNull: true,
+        },
+        stuLiveCon: {
+          type: DataTypes.STRING(100), // 학생 현재 살고있는 나라
+          allowNull: true,
+        },
+        sns: {
+          type: DataTypes.STRING(50), // sns
+          allowNull: true,
+        },
+        snsId: {
+          type: DataTypes.STRING(50), // sns아이디
+          allowNull: true,
+        },
+        stuJob: {
+          type: DataTypes.STRING(50), // 학생 직업
+          allowNull: true,
+        },
+        stuPayDay: {
+          type: DataTypes.STRING(100), // 학생 결제 일
+          allowNull: true,
+        },
+        stuPayCount: {
+          type: DataTypes.INTEGER, // 학생 결제 횟수
+          allowNull: true,
+          defaultValue: 0,
+        },
+        stuMemo: {
+          type: DataTypes.TEXT, // 학생 메모
+          allowNull: true,
+        },
+        stuReview: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
+        gender: {
+          type: DataTypes.STRING(5),
           allowNull: false, // 필수
         },
         level: {
@@ -52,7 +144,5 @@ module.exports = class User extends Model {
       }
     );
   }
-  static associate(db) {
-    db.User.hasMany(db.Question);
-  }
+  static associate(db) {}
 };
