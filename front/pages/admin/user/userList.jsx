@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import AdminLayout from "../../../components/AdminLayout";
 import PageHeader from "../../../components/admin/PageHeader";
-import AdminTop from "../../../components/admin/AdminTop";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -11,7 +10,6 @@ import {
   USERLIST_REQUEST,
   USERLIST_UPDATE_REQUEST,
   CREATE_MODAL_TOGGLE,
-  USER_CREATE_REQUEST,
   USER_STU_CREATE_REQUEST,
   USER_TEA_CREATE_REQUEST,
   POSTCODE_MODAL_TOGGLE,

@@ -1,17 +1,20 @@
 import React, { useEffect } from "react";
-import ClientLayout from "../../components/ClientLayout";
 import { useSelector } from "react-redux";
-import wrapper from "../../store/configureStore";
-import { END } from "redux-saga";
-import useWidth from "../../hooks/useWidth";
-import Theme from "../../components/Theme";
-import styled from "styled-components";
-import axios from "axios";
-
-import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
-import { SEO_LIST_REQUEST } from "../../reducers/seo";
 
 import Head from "next/head";
+import { useRouter } from "next/router";
+
+import { message, Pagination } from "antd";
+import styled from "styled-components";
+
+import axios from "axios";
+import { END } from "redux-saga";
+import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
+import { SEO_LIST_REQUEST } from "../../reducers/seo";
+import wrapper from "../../store/configureStore";
+
+import useWidth from "../../hooks/useWidth";
+import ClientLayout from "../../components/ClientLayout";
 import {
   RsWrapper,
   WholeWrapper,
@@ -20,7 +23,7 @@ import {
   Text,
   SpanText,
 } from "../../components/commonComponents";
-import { message, Pagination } from "antd";
+import Theme from "../../components/Theme";
 
 const CustomPage = styled(Pagination)`
   & .ant-pagination-next > button {
@@ -174,13 +177,18 @@ const Index = () => {
 
   const width = useWidth();
 
+  const router = useRouter();
+
   ////// REDUX //////
   ////// USEEFFECT //////
 
   useEffect(() => {
     if (!me) {
       message.error("로그인 후 이용해주세요.");
-      // return router.push(`/`);
+      return router.push(`/`);
+    } else if (me.level !== 2) {
+      message.error("강사가 아닙니다.");
+      return router.push(`/`);
     }
   }, [me]);
 
@@ -255,7 +263,8 @@ const Index = () => {
             <Wrapper
               dr={`row`}
               margin={width < 700 ? `30px 0` : `60px 0`}
-              ju={`flex-start`}>
+              ju={`flex-start`}
+            >
               <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
                 <Image
                   width={width < 700 ? `65px` : `75px`}
@@ -270,10 +279,14 @@ const Index = () => {
                 width={`auto`}
                 fontSize={width < 700 ? `20px` : `28px`}
                 padding={`0 0 0 15px`}
-                color={Theme.black_2C}>
+                color={Theme.black_2C}
+              >
                 <Text fontWeight={`bold`}>
                   안녕하세요,
-                  <SpanText color={Theme.basicTheme_C}> Aaliyah님</SpanText>!
+                  <SpanText color={Theme.basicTheme_C}>
+                    {me && me.username}
+                  </SpanText>
+                  님!
                 </Text>
               </Wrapper>
             </Wrapper>
@@ -283,7 +296,8 @@ const Index = () => {
                 color={Theme.black_2C}
                 fontSize={width < 700 ? `18px` : `22px`}
                 fontWeight={`Bold`}
-                margin={`0 0 20px`}>
+                margin={`0 0 20px`}
+              >
                 공지사항
               </Text>
 
@@ -292,26 +306,30 @@ const Index = () => {
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={width < 800 ? `15%` : `10%`}>
+                    width={width < 800 ? `15%` : `10%`}
+                  >
                     번호
                   </Text>
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={width < 800 ? `45%` : `70%`}>
+                    width={width < 800 ? `45%` : `70%`}
+                  >
                     제목
                   </Text>
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={width < 800 ? `15%` : `10%`}>
+                    width={width < 800 ? `15%` : `10%`}
+                  >
                     작성자
                   </Text>
 
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={width < 800 ? `25%` : `10%`}>
+                    width={width < 800 ? `25%` : `10%`}
+                  >
                     날짜
                   </Text>
                 </Wrapper>
@@ -328,23 +346,27 @@ const Index = () => {
                   <Text
                     fontSize={width < 700 ? `14px` : `16px`}
                     width={width < 800 ? `15%` : `10%`}
-                    wordBreak={`break-word`}>
+                    wordBreak={`break-word`}
+                  >
                     15
                   </Text>
                   <Text
                     fontSize={width < 700 ? `14px` : `16px`}
                     width={width < 800 ? `45%` : `70%`}
-                    textAlign={`left`}>
+                    textAlign={`left`}
+                  >
                     안녕하세요. 강사 여러분께 공지사항 알립니다.
                   </Text>
                   <Text
                     fontSize={width < 700 ? `14px` : `16px`}
-                    width={width < 800 ? `15%` : `10%`}>
+                    width={width < 800 ? `15%` : `10%`}
+                  >
                     케이톡 라이브
                   </Text>
                   <Text
                     fontSize={width < 700 ? `14px` : `16px`}
-                    width={width < 800 ? `25%` : `10%`}>
+                    width={width < 800 ? `25%` : `10%`}
+                  >
                     2022/01/22
                   </Text>
                 </Wrapper>
@@ -360,7 +382,8 @@ const Index = () => {
                 color={Theme.black_2C}
                 fontSize={width < 700 ? `18px` : `22px`}
                 fontWeight={`Bold`}
-                margin={`0 0 20px`}>
+                margin={`0 0 20px`}
+              >
                 내 수업
               </Text>
 
@@ -370,16 +393,19 @@ const Index = () => {
                 al={`flex-start`}
                 shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
                 padding={width < 700 ? `15px 10px 10px` : `35px 30px`}
-                radius={`10px`}>
+                radius={`10px`}
+              >
                 <Wrapper
                   width={width < 1280 ? (width < 800 ? `100%` : `60%`) : `37%`}
                   dr={`row`}
                   ju={`flex-start`}
-                  al={`flex-start`}>
+                  al={`flex-start`}
+                >
                   <Wrapper
                     width={`auto`}
                     padding={width < 700 ? `0` : `5px`}
-                    margin={`0 10px 0 0`}>
+                    margin={`0 10px 0 0`}
+                  >
                     <Image
                       width={`22px`}
                       height={`22px`}
@@ -390,7 +416,8 @@ const Index = () => {
                   <Wrapper
                     width={`calc(100% - 42px)`}
                     dr={`row`}
-                    ju={`flex-start`}>
+                    ju={`flex-start`}
+                  >
                     {clockArr &&
                       clockArr.length > 0 &&
                       clockArr.map((data, idx) => {
@@ -399,7 +426,8 @@ const Index = () => {
                             <Text
                               fontSize={width < 700 ? `14px` : `18px`}
                               fontWeight={`bold`}
-                              lineHeight={`1.22`}>
+                              lineHeight={`1.22`}
+                            >
                               {data.name}&nbsp;&nbsp;|&nbsp;&nbsp;{data.time}
                             </Text>
                             <Wrapper
@@ -428,7 +456,8 @@ const Index = () => {
                   dr={`row`}
                   ju={`space-between`}
                   width={width < 1400 ? `100%` : `62%`}
-                  margin={width < 700 ? `10px 0 0 0` : `0`}>
+                  margin={width < 700 ? `10px 0 0 0` : `0`}
+                >
                   <Wrapper dr={`row`} width={`auto`}>
                     <Image
                       width={`22px`}
@@ -440,7 +469,8 @@ const Index = () => {
                     <CustomText2
                       color={Theme.black_2C}
                       fontWeight={`normal`}
-                      width={width < 700 ? `auto` : `140px`}>
+                      width={width < 700 ? `auto` : `140px`}
+                    >
                       2022-01-28
                     </CustomText2>
 
@@ -454,7 +484,8 @@ const Index = () => {
                     <Text
                       color={Theme.black_2C}
                       fontSize={width < 700 ? `12px` : `18px`}
-                      width={width < 700 ? `auto` : `140px`}>
+                      width={width < 700 ? `auto` : `140px`}
+                    >
                       NO.12384
                     </Text>
                   </Wrapper>
@@ -475,7 +506,8 @@ const Index = () => {
             <Wrapper
               dr={`row`}
               margin={`100px 0`}
-              ju={width < 700 ? `flex-start` : "center"}>
+              ju={width < 700 ? `flex-start` : "center"}
+            >
               <Button>교재 찾기</Button>
               <Button>교재 올리기</Button>
               <Button>복무 규정</Button>
