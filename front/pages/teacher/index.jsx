@@ -167,8 +167,9 @@ const Index = () => {
     (state) => state.seo
   );
 
-  const { me } = useSelector((state) => state.seo);
+  const { me } = useSelector((state) => state.user);
 
+  console.log(me, "me");
   ////// HOOKS //////
 
   const width = useWidth();
