@@ -41,6 +41,10 @@ module.exports = class Lecture extends Model {
           type: DataTypes.INTEGER,
           allowNull: false,
         },
+        TeacherId: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+        },
         isDelete: {
           type: DataTypes.BOOLEAN,
           allowNull: false,

@@ -9,6 +9,10 @@ module.exports = class User extends Model {
           type: DataTypes.STRING(50),
           allowNull: false,
         },
+        profileImage: {
+          type: DataTypes.STRING(600), //  프로필사진
+          allowNull: true,
+        },
         password: {
           type: DataTypes.STRING(100),
           allowNull: false, // 필수
@@ -52,11 +56,11 @@ module.exports = class User extends Model {
           allowNull: true,
         },
         startDate: {
-          type: DataTypes.STRING(100),
+          type: DataTypes.STRING(100), // 첫 수업일자
           allowNull: true,
         },
         endDate: {
-          type: DataTypes.STRING(100),
+          type: DataTypes.STRING(100), // 마지막 수업일자
           allowNull: true,
         },
         adminMemo: {
