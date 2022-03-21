@@ -11,30 +11,30 @@ import accept from "./accept";
 import seo from "./seo";
 import editor from "./editor";
 import app from "./application";
+import message from "./message";
 
 const rootReducer = (state, action) => {
   switch (action.type) {
     case HYDRATE:
       console.log("HYDRATE", action);
       return action.payload;
-    default:
-      {
-        const combinedReducer = combineReducers({
-          user,
-          banner,
-          popup,
-          company,
-          notice,
-          gallery,
-          question,
-          accept,
-          seo,
-          editor,
-          app,
-        });
-        return combinedReducer(state, action);
-      }
-      ㅂ;
+    default: {
+      const combinedReducer = combineReducers({
+        user,
+        banner,
+        popup,
+        company,
+        notice,
+        gallery,
+        question,
+        accept,
+        seo,
+        editor,
+        app,
+        message,
+      });
+      return combinedReducer(state, action);
+    }
   }
 };
 
