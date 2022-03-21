@@ -80,6 +80,10 @@ const AppHeader = ({ width }) => {
     });
   }, []);
 
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
+  }, []);
+
   ////////////// - USE EFFECT- //////////////
   useEffect(() => {
     document.addEventListener("scroll", handleScroll);
@@ -120,7 +124,8 @@ const AppHeader = ({ width }) => {
       position={`fixed`}
       top={`0`}
       left={`0`}
-      zIndex={`100`}>
+      zIndex={`100`}
+    >
       <RsWrapper>
         <Wrapper dr={`row`} ju={width < 900 ? `center` : `space-between`}>
           <Image
@@ -129,17 +134,37 @@ const AppHeader = ({ width }) => {
             margin={width < 900 && `0 0 10px`}
             src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/logo/logo.png`}
             cursor={`pointer`}
-            onClick={() => router.push(`/`)}
+            onClick={() => moveLinkHandler(`/`)}
           />
           <Wrapper width={`auto`} dr={`row`}>
             {me && me ? (
-              <CommonButton
-                onClick={() => logoutHandler()}
-                height={width < 700 ? `30px` : `50px`}
-                width={width < 700 ? `auto` : `110px`}
-                fontSize={width < 700 && `11px`}>
-                LOGOUT
-              </CommonButton>
+              <Wrapper dr={`row`}>
+                <CommonButton
+                  onClick={() =>
+                    moveLinkHandler(
+                      me.level === 1
+                        ? "/student"
+                        : me.level === 2
+                        ? "/teacher"
+                        : message.error("회원 또는 강사가 아닙니다.")
+                    )
+                  }
+                  height={width < 700 ? `30px` : `50px`}
+                  width={width < 700 ? `auto` : `110px`}
+                  fontSize={width < 700 && `11px`}
+                  margin={`0 10px 0 0`}
+                >
+                  MYPAGE
+                </CommonButton>
+                <CommonButton
+                  onClick={() => logoutHandler()}
+                  height={width < 700 ? `30px` : `50px`}
+                  width={width < 700 ? `auto` : `110px`}
+                  fontSize={width < 700 && `11px`}
+                >
+                  LOGOUT
+                </CommonButton>
+              </Wrapper>
             ) : (
               <>
                 <TextInput
@@ -168,7 +193,8 @@ const AppHeader = ({ width }) => {
                   onClick={() => loginHandler()}
                   height={width < 700 ? `30px` : `50px`}
                   width={width < 700 ? `auto` : `110px`}
-                  fontSize={width < 700 && `11px`}>
+                  fontSize={width < 700 && `11px`}
+                >
                   LOGIN
                 </CommonButton>
               </>
