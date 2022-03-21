@@ -1,12 +1,12 @@
 const express = require("express");
 const isLoggedIn = require("../middlewares/isLoggedIn");
 const isNanCheck = require("../middlewares/isNanCheck");
-const { User, Lecture, Message } = require("../models");
+const { User, Lecture, Message, Participant } = require("../models");
 const models = require("../models");
 
 const router = express.Router();
 
-router.get("/list", isLoggedIn, async (req, res, next) => {
+router.get("/receiver/list", isLoggedIn, async (req, res, next) => {
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
   }
@@ -14,6 +14,8 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
   try {
     const selectQuery = `
     SELECT	id,
+            title,
+            author,
             senderId,
             receiverId,
             receiveLectureId,
@@ -33,7 +35,36 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.get("/detail/:messageId", isLoggedIn, async (req, res, next) => {
+router.get("/sender/list", isLoggedIn, async (req, res, next) => {
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
+  try {
+    const selectQuery = `
+    SELECT	id,
+            title,
+            author,
+            senderId,
+            receiverId,
+            receiveLectureId,
+            content,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
+      FROM	Messages
+     WHERE  senderId = ${req.user.id}
+    `;
+
+    const messages = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ messages: messages[0] });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("쪽지를 확인할 수 없습니다.");
+  }
+});
+
+router.get("/detail/:messageId", async (req, res, next) => {
   const { messageId } = req.params;
 
   if (!req.user) {
@@ -54,6 +85,8 @@ router.get("/detail/:messageId", isLoggedIn, async (req, res, next) => {
 
     const selectQuery = `
     SELECT	id,
+            title,
+            author,
             senderId,
             receiverId,
             receiveLectureId,
@@ -74,7 +107,8 @@ router.get("/detail/:messageId", isLoggedIn, async (req, res, next) => {
 });
 
 router.post("/create", async (req, res, next) => {
-  const { senderId, receiverId, receiveLectureId, content } = req.body;
+  const { title, author, senderId, receiverId, receiveLectureId, content } =
+    req.body;
   try {
     const exUser = await User.findOne({
       where: { id: parseInt(receiverId) },
@@ -103,6 +137,8 @@ router.post("/create", async (req, res, next) => {
     }
 
     const createResult = await Message.create({
+      title,
+      author,
       senderId: parseInt(senderId),
       receiverId: parseInt(receiverId),
       receiveLectureId: receiveLectureId ? parseInt(receiveLectureId) : null,
@@ -159,7 +195,7 @@ router.delete("/delete/:messageId", async (req, res, next) => {
 // 단체로 보내기 (한명만 보내기도 가능)
 
 router.post("/many/create", isLoggedIn, async (req, res, next) => {
-  const { content, receiverId } = req.body;
+  const { title, author, content, receiverId } = req.body;
 
   if (!req.user) {
     return res.status(403).send("잘못된 요청입니다.");
@@ -175,6 +211,8 @@ router.post("/many/create", isLoggedIn, async (req, res, next) => {
         await Message.create({
           receiverId: parseInt(data),
           senderId: parseInt(req.user.id),
+          title,
+          author,
           content,
         });
       })
@@ -189,7 +227,7 @@ router.post("/many/create", isLoggedIn, async (req, res, next) => {
 
 // 모든 사용자에게 보내기 (type 1은 학생, type2는 강사, type3은 전체)
 router.post("/all/create", isLoggedIn, async (req, res, next) => {
-  const { type, content } = req.body;
+  const { type, title, author, content } = req.body;
 
   if (!req.user) {
     return res.status(403).send("잘못된 요청입니다.");
@@ -198,12 +236,90 @@ router.post("/all/create", isLoggedIn, async (req, res, next) => {
   try {
     const users = await User.findAll({});
 
+    if (type === 1) {
+      const students = await User.findAll({
+        where: { level: 1 },
+      });
+
+      await Promise.all(
+        students.map(async (data) => {
+          await Message.create({
+            receiverId: parseInt(data.id),
+            senderId: parseInt(req.user.id),
+            title,
+            author,
+            content,
+          });
+        })
+      );
+
+      return res.status(201).json({ result: true });
+    }
+
+    if (type === 2) {
+      const teachers = await User.findAll({
+        where: { level: 2 },
+      });
+
+      await Promise.all(
+        teachers.map(async (data) => {
+          await Message.create({
+            receiverId: parseInt(data.id),
+            senderId: parseInt(req.user.id),
+            title,
+            author,
+            content,
+          });
+        })
+      );
+
+      return res.status(201).json({ result: true });
+    }
+
     await Promise.all(
       users.map(async (data) => {
         await Message.create({
           receiverId: parseInt(data.id),
           senderId: parseInt(req.user.id),
+          title,
+          author,
           content,
+        });
+      })
+    );
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("쪽지를 보낼 수 없습니다.");
+  }
+});
+
+//강의 단위로 메시지 보내기
+
+router.post("/lecture/create", isLoggedIn, async (req, res, next) => {
+  const { title, content, LectureId } = req.body;
+  try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의 입니다.");
+    }
+
+    const userList = await Participant.findAll({
+      where: { LectureId: parseInt(LectureId) },
+    });
+
+    await Promise.all(
+      userList.map(async (data) => {
+        await Message.create({
+          title,
+          content,
+          receiveLectureId: parseInt(LectureId),
+          senderId: parseInt(req.user.id),
+          receiverId: parseInt(data.UserId),
         });
       })
     );
