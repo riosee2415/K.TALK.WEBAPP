@@ -45,6 +45,14 @@ import {
   USER_TEA_CREATE_SUCCESS,
   USER_TEA_CREATE_FAILURE,
   /////////////////////////////
+  USER_UPDATE_REQUEST,
+  USER_UPDATE_SUCCESS,
+  USER_UPDATE_FAILURE,
+  /////////////////////////////
+  USER_PROFILE_UPLOAD_REQUEST,
+  USER_PROFILE_UPLOAD_SUCCESS,
+  USER_PROFILE_UPLOAD_FAILURE,
+  /////////////////////////////
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -339,6 +347,60 @@ function* teaCreate(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function meUpdateAPI(data) {
+  return axios.post(`/api/user/me/update`, data);
+}
+
+function* meUpdate(action) {
+  try {
+    const result = yield call(meUpdateAPI, action.data);
+
+    yield put({
+      type: USER_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function profileUploadAPI(data) {
+  return axios.post(`/api/user/image`, data);
+}
+
+function* profileUpload(action) {
+  try {
+    const result = yield call(profileUploadAPI, action.data);
+
+    yield put({
+      type: USER_PROFILE_UPLOAD_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_PROFILE_UPLOAD_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchLoadMyInfo() {
@@ -385,6 +447,14 @@ function* watchTeaCreate() {
   yield takeLatest(USER_TEA_CREATE_REQUEST, teaCreate);
 }
 
+function* watchMeUpdate() {
+  yield takeLatest(USER_UPDATE_REQUEST, meUpdate);
+}
+
+function* watchProfileUpload() {
+  yield takeLatest(USER_PROFILE_UPLOAD_REQUEST, profileUpload);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -399,6 +469,8 @@ export default function* userSaga() {
     fork(watchKakaoLogin),
     fork(watchStuCreate),
     fork(watchTeaCreate),
+    fork(watchMeUpdate),
+    fork(watchProfileUpload),
     //
   ]);
 }

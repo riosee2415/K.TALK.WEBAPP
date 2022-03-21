@@ -5,8 +5,11 @@ export const initailState = {
   currentAdminMenu: [],
   users: null,
 
+  userProfilePath: null,
+
   createModal: false,
   updateModal: false,
+  meUpdateModal: false,
   postCodeModal: false,
 
   //
@@ -53,6 +56,14 @@ export const initailState = {
   st_userTeaCreateLoading: false,
   st_userTeaCreateDone: false,
   st_userTeaCreateError: null,
+  //
+  st_userUserUpdateLoading: false,
+  st_userUserUpdateDone: false,
+  st_userUserUpdateError: null,
+  //
+  st_userProfileUploadLoading: false,
+  st_userProfileUploadDone: false,
+  st_userProfileUploadError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -99,6 +110,14 @@ export const USER_TEA_CREATE_REQUEST = "USER_TEA_CREATE_REQUEST";
 export const USER_TEA_CREATE_SUCCESS = "USER_TEA_CREATE_SUCCESS";
 export const USER_TEA_CREATE_FAILURE = "USER_TEA_CREATE_FAILURE";
 
+export const USER_UPDATE_REQUEST = "USER_UPDATE_REQUEST";
+export const USER_UPDATE_SUCCESS = "USER_UPDATE_SUCCESS";
+export const USER_UPDATE_FAILURE = "USER_UPDATE_FAILURE";
+
+export const USER_PROFILE_UPLOAD_REQUEST = "USER_PROFILE_UPLOAD_REQUEST";
+export const USER_PROFILE_UPLOAD_SUCCESS = "USER_PROFILE_UPLOAD_SUCCESS";
+export const USER_PROFILE_UPLOAD_FAILURE = "USER_PROFILE_UPLOAD_FAILURE";
+
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
 
@@ -106,7 +125,11 @@ export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
 
 export const POSTCODE_MODAL_TOGGLE = "POSTCODE_MODAL_TOGGLE";
 
+export const ME_UPDATE_MODAL_TOGGLE = "ME_UPDATE_MODAL_TOGGLE";
+
 export const CURRENT_ADMINMENU_STATUS = "CURRENT_ADMINMENU_STATUS";
+
+export const USER_PROFILE_IMAGE_PATH = "USER_PROFILE_IMAGE_PATH";
 
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
@@ -327,6 +350,47 @@ const reducer = (state = initailState, action) =>
       }
       //////////////////////////////////////////////
 
+      case USER_UPDATE_REQUEST: {
+        draft.st_userUserUpdateLoading = true;
+        draft.st_userUserUpdateDone = null;
+        draft.st_userUserUpdateError = false;
+        break;
+      }
+      case USER_UPDATE_SUCCESS: {
+        draft.st_userUserUpdateLoading = false;
+        draft.st_userUserUpdateDone = true;
+        draft.st_userUserUpdateError = null;
+        break;
+      }
+      case USER_UPDATE_FAILURE: {
+        draft.st_userUserUpdateLoading = false;
+        draft.st_userUserUpdateDone = false;
+        draft.st_userUserUpdateError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case USER_PROFILE_UPLOAD_REQUEST: {
+        draft.st_userProfileUploadLoading = true;
+        draft.st_userProfileUploadDone = null;
+        draft.st_userProfileUploadError = false;
+        break;
+      }
+      case USER_PROFILE_UPLOAD_SUCCESS: {
+        draft.st_userProfileUploadLoading = false;
+        draft.st_userProfileUploadDone = true;
+        draft.st_userProfileUploadError = null;
+        draft.userProfilePath = action.data.path;
+        break;
+      }
+      case USER_PROFILE_UPLOAD_FAILURE: {
+        draft.st_userProfileUploadLoading = false;
+        draft.st_userProfileUploadDone = false;
+        draft.st_userProfileUploadError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
       case CURRENT_ADMINMENU_STATUS: {
         const exist = draft.currentAdminMenu.filter(
           (data) => data === action.data.key
@@ -359,6 +423,14 @@ const reducer = (state = initailState, action) =>
 
       case POSTCODE_MODAL_TOGGLE:
         draft.postCodeModal = !draft.postCodeModal;
+        break;
+
+      case ME_UPDATE_MODAL_TOGGLE:
+        draft.meUpdateModal = !draft.meUpdateModal;
+        break;
+
+      case USER_PROFILE_IMAGE_PATH:
+        draft.userProfilePath = action.data;
         break;
 
       default:
