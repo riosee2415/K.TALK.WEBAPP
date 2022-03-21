@@ -275,12 +275,6 @@ router.post("/me/update", isLoggedIn, async (req, res, next) => {
   } = req.body;
 
   try {
-    const exUser = await User.findOne({ where: { id: parseInt(id) } });
-
-    if (!exUser) {
-      return res.status(401).send("존재하지 않는 사용자 입니다.");
-    }
-
     const updateUser = await User.update(
       {
         profileImage,
