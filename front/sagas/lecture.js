@@ -16,12 +16,12 @@ import {
   LECTURE_DELETE_REQUEST,
   LECTURE_DELETE_SUCCESS,
   LECTURE_DELETE_FAILURE,
-} from "../reducers/ledture";
+} from "../reducers/lecture";
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function lectureListAPI(data) {
-  return axios.get(`/api/lecture/list/${data.qs}`, data);
+  return axios.get(`/api/lecture/list/${data.sort}`, data);
 }
 
 function* lectureList(action) {

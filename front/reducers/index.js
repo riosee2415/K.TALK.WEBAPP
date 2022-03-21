@@ -12,6 +12,7 @@ import seo from "./seo";
 import editor from "./editor";
 import app from "./application";
 import message from "./message";
+import lecture from "./lecture";
 
 const rootReducer = (state, action) => {
   switch (action.type) {
@@ -32,6 +33,7 @@ const rootReducer = (state, action) => {
         editor,
         app,
         message,
+        lecture,
       });
       return combinedReducer(state, action);
     }
