@@ -41,6 +41,12 @@ const AdminContent = styled.div`
   padding: 20px;
 `;
 
+const CustomFormItem = styled(Form.Item)`
+  & .ant-form-item-control-input-content {
+    display: flex;
+  }
+`;
+
 const LoadNotification = (msg, content) => {
   notification.open({
     message: msg,
@@ -286,11 +292,11 @@ const UserList = ({}) => {
 
   const onSubmitCreate = useCallback(
     (data) => {
-      console.log(data.dates);
-
       if (data.password !== data.repassword) {
         return message.error("비밀번호를 동일하게 입력해주세요.");
       }
+
+      console.log(data);
 
       if (selectUserLevel === "1") {
         dispatch({
@@ -319,14 +325,20 @@ const UserList = ({}) => {
         dispatch({
           type: USER_TEA_CREATE_REQUEST,
           data: {
-            email: data.email,
-            username: data.username,
-            nickname: data.nickname,
-            birth: data.birth.format("YYYY-MM-DD"),
-            gender: data.gender,
-            mobile: data.mobile,
+            userId: data.userId,
             password: data.password,
-            level: data.level,
+            username: data.username,
+            mobile: data.mobile,
+            email: data.email,
+            postNum: data.postNum,
+            address: data.address,
+            identifyNum: `${data.identifyNum.firstIdentifyNum}-${data.identifyNum.endIdentifyNum}`,
+            teaCountry: data.teaCountry,
+            teaLanguage: data.teaLanguage,
+            bankNo: data.bankNo,
+            bankName: data.bankName,
+            birth: data.birth,
+            gender: data.gender,
           },
         });
       } else {
@@ -686,16 +698,67 @@ const UserList = ({}) => {
           ) : (
             selectUserLevel === "2" && (
               <>
-                <Form.Item
-                  label="주민등록번호"
-                  rules={[
-                    { required: true, message: "주민등록번호를 입력해주세요." },
-                  ]}
+                <Form.List
                   name="identifyNum"
+                  rules={[
+                    {
+                      validator: async (_, values) => {
+                        console.log(values);
+                        if (
+                          !values ||
+                          !values.firstIdentifyNum ||
+                          values.firstIdentifyNum.trim().length === 0 ||
+                          !values.endIdentifyNum ||
+                          values.endIdentifyNum.trim().length === 0
+                        ) {
+                          return Promise.reject(
+                            new Error("주민등록번호를 입력해주세요.")
+                          );
+                        }
+                      },
+                    },
+                  ]}
                 >
-                  <Input />
-                </Form.Item>
+                  {(fields, { add, remove }, { errors }) => {
+                    return (
+                      <>
+                        <Form.Item label="주민등록번호">
+                          <Wrapper dr={`row`} ju={`space-between`}>
+                            <Wrapper width={`48%`}>
+                              <Form.Item
+                                style={{ width: `100%`, margin: 0 }}
+                                name="firstIdentifyNum"
+                              >
+                                <Input
+                                  type="number"
+                                  style={{ width: `100%` }}
+                                />
+                              </Form.Item>
+                            </Wrapper>
+                            <Wrapper width={`4%`} margin={`0 0 0`}>
+                              -
+                            </Wrapper>
+                            <Wrapper width={`48%`}>
+                              <Form.Item
+                                style={{ width: `100%`, margin: 0 }}
+                                name="endIdentifyNum"
+                              >
+                                <Input
+                                  type="password"
+                                  style={{ width: `100%` }}
+                                />
+                              </Form.Item>
+                            </Wrapper>
+                          </Wrapper>
 
+                          <Wrapper al={`flex-start`}>
+                            <Form.ErrorList errors={errors} />
+                          </Wrapper>
+                        </Form.Item>
+                      </>
+                    );
+                  }}
+                </Form.List>
                 <Form.Item
                   label="강사 언어"
                   rules={[
