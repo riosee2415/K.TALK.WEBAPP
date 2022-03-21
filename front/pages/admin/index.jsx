@@ -170,7 +170,7 @@ const AdminHome = () => {
                 >
                   Log in
                 </Wrapper>
-                <Wrapper al={`flex-start`}>이메일</Wrapper>
+                <Wrapper al={`flex-start`}>아이디</Wrapper>
                 <Wrapper>
                   <Input
                     {...inputId}
