@@ -156,7 +156,7 @@ router.get("/teacher/list/:TeacherId", async (req, res, next) => {
   }
   try {
     const exTeacher = await User.findOne({
-      where: { Pid: parseInt(TeacherId), level: 2 },
+      where: { id: parseInt(TeacherId), level: 2 },
     });
 
     if (!exTeacher) {
@@ -210,7 +210,7 @@ router.get("/teacher/list/:TeacherId", async (req, res, next) => {
 
 //내 강의를 듣는 학생 목록 조회 [강사]
 
-// router.get("/student/list", async (req, res, next) => {
+// router.get("/student/list", isLoggedIn, async (req, res, next) => {
 //   const {} = req.body;
 //   try {
 //   } catch (error) {
