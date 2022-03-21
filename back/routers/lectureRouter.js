@@ -210,14 +210,14 @@ router.get("/teacher/list/:TeacherId", async (req, res, next) => {
 
 //내 강의를 듣는 학생 목록 조회 [강사]
 
-// router.get("/student/list", isLoggedIn, async (req, res, next) => {
-//   const {} = req.body;
-//   try {
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(401).send("강의를 듣는 학생 목록을 불러올 수 없습니다.");
-//   }
-// });
+router.get("/student/list", async (req, res, next) => {
+  const {} = req.body;
+  try {
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("강의를 듣는 학생 목록을 불러올 수 없습니다.");
+  }
+});
 
 router.post("/create", isAdminCheck, async (req, res, next) => {
   const {

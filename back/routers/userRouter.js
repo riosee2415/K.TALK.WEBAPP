@@ -256,8 +256,23 @@ router.post("/image", upload.single("image"), async (req, res, next) => {
 });
 
 router.post("/me/update", isLoggedIn, async (req, res, next) => {
-  const { id, profileImage, mobile, address, birth, sns, snsId, stuJob } =
-    req.body;
+  const {
+    profileImage,
+    mobile,
+    postNum,
+    address,
+    teaCountry,
+    teaLanguage,
+    bankNo,
+    bankName,
+    stuLanguage,
+    birth,
+    stuCountry,
+    stuLiveCon,
+    sns,
+    snsId,
+    stuJob,
+  } = req.body;
 
   try {
     const exUser = await User.findOne({ where: { id: parseInt(id) } });
@@ -270,14 +285,22 @@ router.post("/me/update", isLoggedIn, async (req, res, next) => {
       {
         profileImage,
         mobile,
+        postNum,
         address,
         birth,
-        sns,
-        snsId,
-        stuJob,
+        teaCountry: req.user.level === 2 ? teaCountry : null,
+        teaLanguage: req.user.level === 2 ? teaLanguage : null,
+        bankNo: req.user.level === 2 ? bankNo : null,
+        bankName: req.user.level === 2 ? bankName : null,
+        stuLanguage: req.user.level === 1 ? stuLanguage : null,
+        stuCountry: req.user.level === 1 ? stuCountry : null,
+        stuLiveCon: req.user.level === 1 ? stuLiveCon : null,
+        sns: req.user.level === 1 ? sns : null,
+        snsId: req.user.level === 1 ? snsId : null,
+        stuJob: req.user.level === 1 ? stuJob : null,
       },
       {
-        where: { id: parseInt(id) },
+        where: { id: parseInt(req.user.id) },
       }
     );
 
@@ -287,6 +310,15 @@ router.post("/me/update", isLoggedIn, async (req, res, next) => {
     return res.status(401).send("정보를 수정할 수 없습니다.");
   }
 });
+
+// router.patch("/stuMemo/update", isAdminCheck, async(req,res,next) => {
+//   try {
+
+//   } catch (error) {
+//     console.error(error)
+//     return res.status(401).send("")
+//   }
+// })
 
 router.post("/findemail", async (req, res, next) => {
   const { username, mobile } = req.body;
