@@ -40,6 +40,14 @@ export const initailState = {
   st_kakaoLoginLoading: false,
   st_kakaoLoginDone: false,
   st_kakaoLoginError: null,
+  //
+  st_userStuCreateLoading: false,
+  st_userStuCreateDone: false,
+  st_userStuCreateError: null,
+  //
+  st_userTeaCreateLoading: false,
+  st_userTeaCreateDone: false,
+  st_userTeaCreateError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -73,6 +81,14 @@ export const LOAD_MY_INFO_FAILURE = "LOAD_MY_INFO_FAILURE";
 export const KAKAO_LOGIN_REQUEST = "KAKAO_LOGIN_REQUEST";
 export const KAKAO_LOGIN_SUCCESS = "KAKAO_LOGIN_SUCCESS";
 export const KAKAO_LOGIN_FAILURE = "KAKAO_LOGIN_FAILURE";
+
+export const USER_STU_CREATE_REQUEST = "USER_STU_CREATE_REQUEST";
+export const USER_STU_CREATE_SUCCESS = "USER_STU_CREATE_SUCCESS";
+export const USER_STU_CREATE_FAILURE = "USER_STU_CREATE_FAILURE";
+
+export const USER_TEA_CREATE_REQUEST = "USER_TEA_CREATE_REQUEST";
+export const USER_TEA_CREATE_SUCCESS = "USER_TEA_CREATE_SUCCESS";
+export const USER_TEA_CREATE_FAILURE = "USER_TEA_CREATE_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -238,6 +254,46 @@ const reducer = (state = initailState, action) =>
         draft.st_kakaoLoginLoading = false;
         draft.st_kakaoLoginDone = false;
         draft.st_kakaoLoginError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case USER_STU_CREATE_REQUEST: {
+        draft.st_userStuCreateLoading = true;
+        draft.st_userStuCreateDone = null;
+        draft.st_userStuCreateError = false;
+        break;
+      }
+      case USER_STU_CREATE_SUCCESS: {
+        draft.st_userStuCreateLoading = false;
+        draft.st_userStuCreateDone = true;
+        draft.st_userStuCreateError = null;
+        break;
+      }
+      case USER_STU_CREATE_FAILURE: {
+        draft.st_userStuCreateLoading = false;
+        draft.st_userStuCreateDone = false;
+        draft.st_userStuCreateError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case USER_TEA_CREATE_REQUEST: {
+        draft.st_userTeaCreateLoading = true;
+        draft.st_userTeaCreateDone = null;
+        draft.st_userTeaCreateError = false;
+        break;
+      }
+      case USER_TEA_CREATE_SUCCESS: {
+        draft.st_userTeaCreateLoading = false;
+        draft.st_userTeaCreateDone = true;
+        draft.st_userTeaCreateError = null;
+        break;
+      }
+      case USER_TEA_CREATE_FAILURE: {
+        draft.st_userTeaCreateLoading = false;
+        draft.st_userTeaCreateDone = false;
+        draft.st_userTeaCreateError = action.error;
         break;
       }
       //////////////////////////////////////////////

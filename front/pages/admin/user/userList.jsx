@@ -81,6 +81,7 @@ const UserList = ({}) => {
   } = useSelector((state) => state.user);
 
   const [updateData, setUpdateData] = useState(null);
+  const [selectUserLevel, setSelectUserLevel] = useState(null);
 
   const inputName = useInput("");
   const inputEmail = useInput("");
@@ -229,6 +230,13 @@ const UserList = ({}) => {
       },
     });
   }, []);
+
+  const changeSelectLevel = useCallback(
+    (level) => {
+      setSelectUserLevel(level);
+    },
+    [selectUserLevel]
+  );
 
   ////// DATAVIEW //////
 
@@ -434,11 +442,9 @@ const UserList = ({}) => {
           </Form.Item>
 
           <Form.Item label="권한" rules={[{ required: true }]} name="lavel">
-            <Select>
+            <Select onChange={changeSelectLevel}>
               <Select.Option value="1">일반학생</Select.Option>
               <Select.Option value="2">강사</Select.Option>
-              <Select.Option value="3">운영자</Select.Option>
-              <Select.Option value="4">최고관리자</Select.Option>
             </Select>
           </Form.Item>
 

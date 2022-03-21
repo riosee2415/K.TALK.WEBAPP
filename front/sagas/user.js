@@ -33,6 +33,14 @@ import {
   USER_CREATE_SUCCESS,
   USER_CREATE_FAILURE,
   /////////////////////////////
+  USER_STU_CREATE_REQUEST,
+  USER_STU_CREATE_SUCCESS,
+  USER_STU_CREATE_FAILURE,
+  /////////////////////////////
+  USER_TEA_CREATE_REQUEST,
+  USER_TEA_CREATE_SUCCESS,
+  USER_TEA_CREATE_FAILURE,
+  /////////////////////////////
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -247,6 +255,60 @@ function* kakaoLogin() {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function stuCreateAPI(data) {
+  return axios.post(`/api/user/student/create`, data);
+}
+
+function* stuCreate(action) {
+  try {
+    const result = yield call(stuCreateAPI, action.data);
+
+    yield put({
+      type: USER_STU_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_STU_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function teaCreateAPI(data) {
+  return axios.post(`/api/user/teacher/create`, data);
+}
+
+function* teaCreate(action) {
+  try {
+    const result = yield call(teaCreateAPI, action.data);
+
+    yield put({
+      type: USER_TEA_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_TEA_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchLoadMyInfo() {
@@ -281,6 +343,14 @@ function* watchKakaoLogin() {
   yield takeLatest(KAKAO_LOGIN_REQUEST, kakaoLogin);
 }
 
+function* watchStuCreate() {
+  yield takeLatest(USER_STU_CREATE_REQUEST, stuCreate);
+}
+
+function* watchTeaCreate() {
+  yield takeLatest(USER_TEA_CREATE_REQUEST, teaCreate);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -292,6 +362,8 @@ export default function* userSaga() {
     fork(watchUserList),
     fork(watchUserListUpdate),
     fork(watchKakaoLogin),
+    fork(watchStuCreate),
+    fork(watchTeaCreate),
     //
   ]);
 }
