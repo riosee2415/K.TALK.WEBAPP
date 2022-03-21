@@ -1,11 +1,14 @@
 import React, { useEffect, useCallback, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import DaumPostCode from "react-daum-postcode";
 
+import DaumPostCode from "react-daum-postcode";
 import moment from "moment";
 
-import { END } from "redux-saga";
+import Head from "next/head";
+import { useRouter } from "next/router";
+
 import axios from "axios";
+import { END } from "redux-saga";
 import wrapper from "../../store/configureStore";
 import { SEO_LIST_REQUEST } from "../../reducers/seo";
 import {
@@ -16,9 +19,6 @@ import {
   USER_PROFILE_UPLOAD_REQUEST,
   USER_UPDATE_REQUEST,
 } from "../../reducers/user";
-
-import { useRouter } from "next/router";
-import Head from "next/head";
 
 import {
   Calendar,
@@ -220,8 +220,8 @@ const Student = () => {
     meUpdateModal,
     postCodeModal,
     userProfilePath,
-    st_userProfileUploadLoading,
     //
+    st_userProfileUploadLoading,
     st_userProfileUploadDone,
     st_userProfileUploadError,
     //
@@ -230,10 +230,8 @@ const Student = () => {
   } = useSelector((state) => state.user);
 
   ////// HOOKS //////
-  const router = useRouter();
-
   const width = useWidth();
-
+  const router = useRouter();
   const dispatch = useDispatch();
 
   const [updateForm] = Form.useForm();
@@ -244,6 +242,9 @@ const Student = () => {
   useEffect(() => {
     if (!me) {
       message.error("로그인 후 이용해주세요.");
+      return router.push(`/`);
+    } else if (me.level !== 1) {
+      message.error("학생이 아닙니다.");
       return router.push(`/`);
     }
   }, [me]);
@@ -331,6 +332,10 @@ const Student = () => {
 
   ////// HANDLER //////
 
+  const clickImageUpload = useCallback(() => {
+    imageInput.current.click();
+  }, []);
+
   const onChangeImages = useCallback((e) => {
     const formData = new FormData();
 
@@ -342,10 +347,6 @@ const Student = () => {
       type: USER_PROFILE_UPLOAD_REQUEST,
       data: formData,
     });
-  }, []);
-
-  const clickImageUpload = useCallback(() => {
-    imageInput.current.click();
   }, []);
 
   const meUpdateHandler = useCallback(
@@ -580,7 +581,11 @@ const Student = () => {
                   fontWeight={`bold`}
                   padding={`0 0 0 15px`}
                 >
-                  안녕하세요, {me && me.username}님!
+                  안녕하세요,&nbsp;
+                  <SpanText color={Theme.basicTheme_C}>
+                    {me && me.username}
+                  </SpanText>
+                  님!
                 </Text>
               </Wrapper>
               <Wrapper width={`auto`}>
@@ -1515,19 +1520,21 @@ const Student = () => {
             </CustomForm>
           </CustomModal>
 
-          <Modal
-            title="우편번호 찾기"
+          <CustomModal
             visible={postCodeModal}
             onCancel={postCodeModalToggle}
             footer={null}
           >
+            <Text fontSize={`22px`} fontWeight={`bold`} margin={`0 0 24px`}>
+              우편번호 찾기
+            </Text>
             <DaumPostCode
               onComplete={(data) => postCodeSubmit(data)}
               width={width < 700 ? `100%` : `600px`}
               autoClose={false}
               animation
             />
-          </Modal>
+          </CustomModal>
         </WholeWrapper>
       </ClientLayout>
     </>
