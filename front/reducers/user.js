@@ -7,6 +7,7 @@ export const initailState = {
 
   createModal: false,
   updateModal: false,
+  postCodeModal: false,
 
   //
   st_loginLoading: false,
@@ -94,6 +95,8 @@ export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
 
 export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
+
+export const POSTCODE_MODAL_TOGGLE = "POSTCODE_MODAL_TOGGLE";
 
 export const CURRENT_ADMINMENU_STATUS = "CURRENT_ADMINMENU_STATUS";
 
@@ -326,6 +329,10 @@ const reducer = (state = initailState, action) =>
 
       case CREATE_MODAL_TOGGLE:
         draft.createModal = !draft.createModal;
+        break;
+
+      case POSTCODE_MODAL_TOGGLE:
+        draft.postCodeModal = !draft.postCodeModal;
         break;
 
       default:

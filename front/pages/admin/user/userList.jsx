@@ -12,6 +12,9 @@ import {
   USERLIST_UPDATE_REQUEST,
   CREATE_MODAL_TOGGLE,
   USER_CREATE_REQUEST,
+  USER_STU_CREATE_REQUEST,
+  USER_TEA_CREATE_REQUEST,
+  POSTCODE_MODAL_TOGGLE,
 } from "../../../reducers/user";
 import {
   Table,
@@ -23,6 +26,7 @@ import {
   Input,
   Form,
   Calendar,
+  DatePicker,
 } from "antd";
 import useInput from "../../../hooks/useInput";
 import { SearchOutlined } from "@ant-design/icons";
@@ -31,6 +35,7 @@ import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
 import { Wrapper } from "../../../components/commonComponents";
+import DaumPostCode from "react-daum-postcode";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -70,6 +75,7 @@ const UserList = ({}) => {
     users,
     createModal,
     updateModal,
+    postCodeModal,
     //
     st_userListError,
     //
@@ -78,6 +84,12 @@ const UserList = ({}) => {
     //
     st_userCreateDone,
     st_userCreateError,
+    //
+    st_userStuCreateDone,
+    st_userStuCreateError,
+    //
+    st_userTeaCreateDone,
+    st_userTeaCreateError,
   } = useSelector((state) => state.user);
 
   const [updateData, setUpdateData] = useState(null);
@@ -122,7 +134,7 @@ const UserList = ({}) => {
         },
       });
 
-      return message.error("회원이 수정되었습니다.");
+      return message.success("회원이 수정되었습니다.");
     }
   }, [st_userListUpdateDone]);
 
@@ -141,9 +153,47 @@ const UserList = ({}) => {
         },
       });
 
-      return message.error("회원이 생성되었습니다.");
+      return message.success("회원이 생성되었습니다.");
     }
   }, [st_userCreateDone]);
+
+  useEffect(() => {
+    if (st_userStuCreateDone) {
+      const query = router.query;
+
+      createModalToggle();
+
+      dispatch({
+        type: USERLIST_REQUEST,
+        data: {
+          name: query.name ? query.name : ``,
+          email: query.email ? query.email : ``,
+          listType: query.sort,
+        },
+      });
+
+      return message.success("학생이 생성되었습니다.");
+    }
+  }, [st_userStuCreateDone]);
+
+  useEffect(() => {
+    if (st_userTeaCreateDone) {
+      const query = router.query;
+
+      createModalToggle();
+
+      dispatch({
+        type: USERLIST_REQUEST,
+        data: {
+          name: query.name ? query.name : ``,
+          email: query.email ? query.email : ``,
+          listType: query.sort,
+        },
+      });
+
+      return message.success("강사가 생성되었습니다.");
+    }
+  }, [st_userTeaCreateDone]);
 
   useEffect(() => {
     if (st_userListError) {
@@ -162,6 +212,18 @@ const UserList = ({}) => {
       return message.error(st_userCreateError);
     }
   }, [st_userCreateError]);
+
+  useEffect(() => {
+    if (st_userStuCreateError) {
+      return message.error(st_userStuCreateError);
+    }
+  }, [st_userStuCreateError]);
+
+  useEffect(() => {
+    if (st_userTeaCreateError) {
+      return message.error(st_userTeaCreateError);
+    }
+  }, [st_userTeaCreateError]);
 
   useEffect(() => {
     router.push(
@@ -190,11 +252,18 @@ const UserList = ({}) => {
 
   const createModalToggle = useCallback(() => {
     form.resetFields();
+    setSelectUserLevel(null);
 
     dispatch({
       type: CREATE_MODAL_TOGGLE,
     });
-  }, [createModal]);
+  }, [createModal, selectUserLevel]);
+
+  const postCodeModalToggle = useCallback(() => {
+    dispatch({
+      type: POSTCODE_MODAL_TOGGLE,
+    });
+  }, [postCodeModal]);
 
   ////// HANDLER //////
 
@@ -215,27 +284,77 @@ const UserList = ({}) => {
     });
   }, [inputLevel]);
 
-  const onSubmitCreate = useCallback((data) => {
-    dispatch({
-      type: USER_CREATE_REQUEST,
-      data: {
-        email: data.email,
-        username: data.username,
-        nickname: data.nickname,
-        birth: data.birth.format("YYYY-MM-DD"),
-        gender: data.gender,
-        mobile: data.mobile,
-        password: data.password,
-        level: data.level,
-      },
-    });
-  }, []);
+  const onSubmitCreate = useCallback(
+    (data) => {
+      console.log(data.dates);
+
+      if (data.password !== data.repassword) {
+        return message.error("비밀번호를 동일하게 입력해주세요.");
+      }
+
+      if (selectUserLevel === "1") {
+        dispatch({
+          type: USER_STU_CREATE_REQUEST,
+          data: {
+            userId: data.userId,
+            password: data.password,
+            username: data.username,
+            mobile: data.mobile,
+            email: data.email,
+            postNum: data.postNum,
+            address: data.address,
+            startDate: data.dates[0].format("YYYY-MM-DD"),
+            endDate: data.dates[1].format("YYYY-MM-DD"),
+            stuLanguage: data.stuLanguage,
+            birth: data.birth.format("YYYY-MM-DD"),
+            stuCountry: data.stuCountry,
+            stuLiveCon: data.stuLiveCon,
+            sns: data.sns,
+            snsId: data.snsId,
+            stuJob: data.stuJob,
+            gender: data.gender,
+          },
+        });
+      } else if (selectUserLevel === "2") {
+        dispatch({
+          type: USER_TEA_CREATE_REQUEST,
+          data: {
+            email: data.email,
+            username: data.username,
+            nickname: data.nickname,
+            birth: data.birth.format("YYYY-MM-DD"),
+            gender: data.gender,
+            mobile: data.mobile,
+            password: data.password,
+            level: data.level,
+          },
+        });
+      } else {
+        return message.error("권한을 선택해주세요.");
+      }
+    },
+    [selectUserLevel]
+  );
 
   const changeSelectLevel = useCallback(
     (level) => {
       setSelectUserLevel(level);
     },
     [selectUserLevel]
+  );
+
+  const postCodeSubmit = useCallback(
+    (data) => {
+      form.setFieldsValue({
+        address: data.address,
+        postNum: data.zonecode,
+      });
+
+      dispatch({
+        type: POSTCODE_MODAL_TOGGLE,
+      });
+    },
+    [postCodeModal]
   );
 
   ////// DATAVIEW //////
@@ -251,8 +370,8 @@ const UserList = ({}) => {
       render: (data) => <div>{data.username}</div>,
     },
     {
-      title: "닉네임",
-      render: (data) => <div>{data.nickname}</div>,
+      title: "회원아이디",
+      render: (data) => <div>{data.userId}</div>,
     },
     {
       title: "이메일",
@@ -389,45 +508,57 @@ const UserList = ({}) => {
         onCancel={createModalToggle}
         title="회원 리스트"
         footer={null}
-        width={`700px`}
+        width={`800px`}
       >
         <Form
-          labelCol={{ span: 3 }}
-          wrapperCol={{ span: 21 }}
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 20 }}
           form={form}
           onFinish={onSubmitCreate}
         >
-          <Form.Item label="이메일" rules={[{ required: true }]} name="email">
+          <Form.Item
+            label="이메일"
+            rules={[{ required: true, message: "이메일을 입력해주세요." }]}
+            name="email"
+          >
             <Input type="email" />
           </Form.Item>
 
           <Form.Item
+            label="회원아이디"
+            rules={[{ required: true, message: "회원아이디를 입력해주세요." }]}
+            name="userId"
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
             label="회원이름"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "회원이름을 입력해주세요." }]}
             name="username"
           >
             <Input />
           </Form.Item>
 
           <Form.Item
-            label="닉네임"
-            rules={[{ required: true }]}
-            name="nickname"
+            label="생년월일"
+            rules={[{ required: true, message: "생년월일을 선택해주세요.." }]}
+            name="birth"
           >
-            <Input />
-          </Form.Item>
-
-          <Form.Item label="생년월일" rules={[{ required: true }]} name="birth">
             <Calendar fullscreen={false} />
           </Form.Item>
 
-          <Form.Item label="성별" rules={[{ required: true }]} name="gender">
+          <Form.Item
+            label="성별"
+            rules={[{ required: true, message: "생별을 입력해주세요." }]}
+            name="gender"
+          >
             <Input />
           </Form.Item>
 
           <Form.Item
             label="전화번호"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "전화번호를 입력해주세요." }]}
             name="mobile"
           >
             <Input type="number" />
@@ -435,18 +566,178 @@ const UserList = ({}) => {
 
           <Form.Item
             label="비밀번호"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "비밀번호를 입력해주세요." }]}
             name="password"
           >
             <Input type="password" />
           </Form.Item>
 
-          <Form.Item label="권한" rules={[{ required: true }]} name="lavel">
+          <Form.Item
+            label="비밀번호 재입력"
+            rules={[{ required: true, message: "비밀번호를 재입력해주세요." }]}
+            name="repassword"
+          >
+            <Input type="password" />
+          </Form.Item>
+          <Wrapper al={`flex-end`}>
+            <Button type="primary" size="small" onClick={postCodeModalToggle}>
+              우편번호 검색
+            </Button>
+          </Wrapper>
+          <Form.Item
+            label="우편번호"
+            rules={[{ required: true, message: "우편번호를 입력해주세요." }]}
+            name="postNum"
+          >
+            <Input readOnly />
+          </Form.Item>
+
+          <Form.Item
+            label="주소"
+            rules={[{ required: true, message: "주소를 입력해주세요." }]}
+            name="address"
+          >
+            <Input readOnly />
+          </Form.Item>
+
+          <Form.Item
+            label="권한"
+            rules={[{ required: true, message: "권한을 선택해주세요." }]}
+            name="lavel"
+          >
             <Select onChange={changeSelectLevel}>
               <Select.Option value="1">일반학생</Select.Option>
               <Select.Option value="2">강사</Select.Option>
             </Select>
           </Form.Item>
+
+          {selectUserLevel === "1" ? (
+            <>
+              <Form.Item
+                label="강의 시작/종료일"
+                rules={[
+                  {
+                    required: true,
+                    message: "강의 시간/종료일을 입력해주세요.",
+                  },
+                ]}
+                name="dates"
+              >
+                <DatePicker.RangePicker />
+              </Form.Item>
+              <Form.Item
+                label="학생 언어"
+                rules={[
+                  { required: true, message: "학생 언어를 입력해주세요." },
+                ]}
+                name="stuLanguage"
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="학생 나라"
+                rules={[
+                  { required: true, message: "학생 나라를 입력해주세요." },
+                ]}
+                name="stuCountry"
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="현재 거주 나라"
+                rules={[
+                  { required: true, message: "학생 거주 나라를 입력해주세요." },
+                ]}
+                name="stuLiveCon"
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="sns"
+                rules={[{ required: true, message: "sns를 입력해주세요." }]}
+                name="sns"
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="sns아이디"
+                rules={[
+                  { required: true, message: "sns아이디를 입력해주세요." },
+                ]}
+                name="snsId"
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="학생직업"
+                rules={[
+                  { required: true, message: "학생직업을 입력해주세요." },
+                ]}
+                name="stuJob"
+              >
+                <Input />
+              </Form.Item>
+            </>
+          ) : (
+            selectUserLevel === "2" && (
+              <>
+                <Form.Item
+                  label="주민등록번호"
+                  rules={[
+                    { required: true, message: "주민등록번호를 입력해주세요." },
+                  ]}
+                  name="identifyNum"
+                >
+                  <Input />
+                </Form.Item>
+
+                <Form.Item
+                  label="강사 언어"
+                  rules={[
+                    { required: true, message: "강사언어를 입력해주세요." },
+                  ]}
+                  name="teaLanguage"
+                >
+                  <Input />
+                </Form.Item>
+
+                <Form.Item
+                  label="강사 나라"
+                  rules={[
+                    { required: true, message: "강사 나라를 입력해주세요." },
+                  ]}
+                  name="teaCountry"
+                >
+                  <Input />
+                </Form.Item>
+
+                <Form.Item
+                  label="은행이름"
+                  rules={[
+                    { required: true, message: "은행이름을 입력해주세요." },
+                  ]}
+                  name="bankName"
+                >
+                  <Input />
+                </Form.Item>
+
+                <Form.Item
+                  label="계좌번호"
+                  rules={[
+                    { required: true, message: "계좌번호를 입력해주세요." },
+                  ]}
+                  name="bankNo"
+                >
+                  <Input />
+                </Form.Item>
+              </>
+            )
+          )}
 
           <Wrapper dr={`row`} ju={`flex-end`}>
             <Button
@@ -461,6 +752,20 @@ const UserList = ({}) => {
             </Button>
           </Wrapper>
         </Form>
+      </Modal>
+      <Modal
+        title="우편번호 찾기"
+        visible={postCodeModal}
+        onCancel={postCodeModalToggle}
+        width={`700px`}
+        footer={null}
+      >
+        <DaumPostCode
+          onComplete={(data) => postCodeSubmit(data)}
+          width={`600px`}
+          autoClose={false}
+          animation
+        />
       </Modal>
     </AdminLayout>
   );
