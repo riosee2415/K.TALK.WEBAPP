@@ -44,7 +44,7 @@ const AdminHome = () => {
   const onLoginHandler = () => {
     dispatch({
       type: LOGIN_ADMIN_REQUEST,
-      data: { email: inputId.value, password: inputPw.value },
+      data: { userId: inputId.value, password: inputPw.value },
     });
   };
 
