@@ -15,11 +15,11 @@ module.exports = class Message extends Model {
         },
         senderId: {
           type: DataTypes.INTEGER,
-          allowNull: true,
+          allowNull: false,
         },
         receiverId: {
           type: DataTypes.INTEGER,
-          allowNull: true,
+          allowNull: false,
         },
         receiveLectureId: {
           type: DataTypes.INTEGER,

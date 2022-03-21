@@ -297,36 +297,38 @@ router.post("/all/create", isLoggedIn, async (req, res, next) => {
 
 //강의 단위로 메시지 보내기
 
-// router.post("/lecture/create", async (req, res, next) => {
-//   const { title, content, LectureId } = req.body;
-//   try {
-//     const exLecture = await Lecture.findOne({
-//       where: { id: parseInt(LectureId) },
-//     });
+router.post("/lecture/create", isLoggedIn, async (req, res, next) => {
+  const { title, content, LectureId } = req.body;
+  try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
 
-//     if (!exLecture) {
-//       return res.status(401).send("존재하지 않는 강의 입니다.");
-//     }
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의 입니다.");
+    }
 
-//     const userList = await Participant.findAll({
-//       where: { LectureId: parseInt(LectureId) },
-//     });
+    const userList = await Participant.findAll({
+      where: { LectureId: parseInt(LectureId) },
+    });
 
-//     await Promise.all(
-//       userList.map(async (data) => {
-//         await Message.create({
-//           title,
-//           content,
-//           receiveLectureId: parseInt(LectureId),
-//           senderId,
-//           receiverId: data.UserId,
-//         });
-//       })
-//     );
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(401).send("쪽지를 보낼 수 없습니다.");
-//   }
-// });
+    await Promise.all(
+      userList.map(async (data) => {
+        await Message.create({
+          title,
+          content,
+          receiveLectureId: parseInt(LectureId),
+          senderId: parseInt(req.user.id),
+          receiverId: parseInt(data.UserId),
+        });
+      })
+    );
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("쪽지를 보낼 수 없습니다.");
+  }
+});
 
 module.exports = router;
