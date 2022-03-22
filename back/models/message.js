@@ -13,6 +13,10 @@ module.exports = class Message extends Model {
           type: DataTypes.STRING(50),
           allowNull: false,
         },
+        level: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+        },
         senderId: {
           type: DataTypes.INTEGER,
           allowNull: false,
