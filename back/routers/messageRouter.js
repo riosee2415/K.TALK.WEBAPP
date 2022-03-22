@@ -1,4 +1,5 @@
 const express = require("express");
+const isAdminCheck = require("../middlewares/isAdminCheck");
 const isLoggedIn = require("../middlewares/isLoggedIn");
 const isNanCheck = require("../middlewares/isNanCheck");
 const { User, Lecture, Message, Participant } = require("../models");
@@ -6,7 +7,7 @@ const models = require("../models");
 
 const router = express.Router();
 
-router.get("/receiver/list", isLoggedIn, async (req, res, next) => {
+router.get("/user/list", isLoggedIn, async (req, res, next) => {
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
   }
@@ -20,6 +21,7 @@ router.get("/receiver/list", isLoggedIn, async (req, res, next) => {
             receiverId,
             receiveLectureId,
             content,
+            level,
             DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	Messages
@@ -35,10 +37,31 @@ router.get("/receiver/list", isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.get("/sender/list", isLoggedIn, async (req, res, next) => {
+// listType이 1이라면 학생에게 온 쪽지 조회 2라면 강사에게 온 쪽지 조회 3이라면 전체 조회
+router.post("/admin/list", isAdminCheck, async (req, res, next) => {
+  const { listType, search } = req.body;
+
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
   }
+
+  let nanFlag = isNaN(listType);
+
+  if (!listType) {
+    nanFlag = false;
+  }
+
+  if (nanFlag) {
+    return res.status(400).send("잘못된 요청 입니다.");
+  }
+
+  let _listType = Number(listType);
+
+  if (_listType > 3 || !listType) {
+    _listType = 3;
+  }
+
+  let _search = search ? search : "";
 
   try {
     const selectQuery = `
@@ -49,10 +72,22 @@ router.get("/sender/list", isLoggedIn, async (req, res, next) => {
             receiverId,
             receiveLectureId,
             content,
+            level,
             DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	Messages
-     WHERE  senderId = ${req.user.id}
+     WHERE  1 = 1
+            ${_search ? `AND author LIKE '%${_search}%'` : ``}
+            ${
+              _listType === 1
+                ? `AND level = 1`
+                : _listType === 2
+                ? `AND level = 2`
+                : _listType === 3
+                ? ``
+                : ``
+            }
+    ORDER   BY createdAt DESC 
     `;
 
     const messages = await models.sequelize.query(selectQuery);
@@ -91,6 +126,7 @@ router.get("/detail/:messageId", async (req, res, next) => {
             receiverId,
             receiveLectureId,
             content,
+            level,
             DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	Messages
@@ -103,6 +139,44 @@ router.get("/detail/:messageId", async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("쪽지를 확인할 수 없습니다.");
+  }
+});
+
+// 사용자가 강사에게 쪽지를 보낼때 필요한 리스트
+router.get("/teacherList", isLoggedIn, async (req, res, next) => {
+  try {
+    const parts = await Participant.findAll({
+      where: { UserId: parseInt(req.user.id) },
+    });
+
+    if (parts.length === 0) {
+      return res.status(401).send("참여중인 강의가 없습니다.");
+    }
+
+    let users = [];
+
+    await Promise.all(
+      parts.map(async (data) => {
+        users = await Lecture.findAll({
+          where: { id: parseInt(data.LectureId) },
+        });
+      })
+    );
+
+    let teachers = [];
+
+    await Promise.all(
+      users.map(async (data) => {
+        teachers = await User.findAll({
+          where: { id: parseInt(data.TeacherId) },
+        });
+      })
+    );
+
+    return res.status(200).json(teachers);
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("강사 목록을 불러올 수 없습니다.");
   }
 });
 
@@ -143,6 +217,7 @@ router.post("/create", async (req, res, next) => {
       receiverId: parseInt(receiverId),
       receiveLectureId: receiveLectureId ? parseInt(receiveLectureId) : null,
       content,
+      level,
     });
 
     if (!createResult) {
@@ -226,7 +301,7 @@ router.post("/many/create", isLoggedIn, async (req, res, next) => {
 });
 
 // 모든 사용자에게 보내기 (type 1은 학생, type2는 강사, type3은 전체)
-router.post("/all/create", isLoggedIn, async (req, res, next) => {
+router.post("/all/create", isAdminCheck, async (req, res, next) => {
   const { type, title, author, content } = req.body;
 
   if (!req.user) {
@@ -245,10 +320,11 @@ router.post("/all/create", isLoggedIn, async (req, res, next) => {
         students.map(async (data) => {
           await Message.create({
             receiverId: parseInt(data.id),
-            senderId: parseInt(req.user.id),
+            senderId: parseInt(req.user.level),
             title,
             author,
             content,
+            level: parseInt(req.user.id),
           });
         })
       );
@@ -265,10 +341,11 @@ router.post("/all/create", isLoggedIn, async (req, res, next) => {
         teachers.map(async (data) => {
           await Message.create({
             receiverId: parseInt(data.id),
-            senderId: parseInt(req.user.id),
+            senderId: parseInt(req.user.level),
             title,
             author,
             content,
+            level: parseInt(req.user.id),
           });
         })
       );
@@ -280,10 +357,11 @@ router.post("/all/create", isLoggedIn, async (req, res, next) => {
       users.map(async (data) => {
         await Message.create({
           receiverId: parseInt(data.id),
-          senderId: parseInt(req.user.id),
+          senderId: parseInt(req.user.level),
           title,
           author,
           content,
+          level: parseInt(req.user.id),
         });
       })
     );
@@ -297,7 +375,7 @@ router.post("/all/create", isLoggedIn, async (req, res, next) => {
 
 //강의 단위로 메시지 보내기
 
-router.post("/lecture/create", isLoggedIn, async (req, res, next) => {
+router.post("/lecture/create", isAdminCheck, async (req, res, next) => {
   const { title, content, LectureId } = req.body;
   try {
     const exLecture = await Lecture.findOne({
@@ -320,6 +398,7 @@ router.post("/lecture/create", isLoggedIn, async (req, res, next) => {
           receiveLectureId: parseInt(LectureId),
           senderId: parseInt(req.user.id),
           receiverId: parseInt(data.UserId),
+          level: parseInt(req.user.level),
         });
       })
     );

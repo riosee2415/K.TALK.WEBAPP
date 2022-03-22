@@ -211,6 +211,63 @@ router.post("/signin/admin", (req, res, next) => {
   })(req, res, next);
 });
 
+router.get(
+  ["/allUsers", "/allUsers/:listType"],
+  isAdminCheck,
+  async (req, res, next) => {
+    const { listType } = req.params;
+
+    let nanFlag = isNaN(listType);
+
+    if (!listType) {
+      nanFlag = false;
+    }
+
+    if (nanFlag) {
+      return res.status(400).send("잘못된 요청 입니다.");
+    }
+
+    let _listType = Number(listType);
+
+    if (_listType > 3 || !listType) {
+      _listType = 3;
+    }
+    try {
+      let users = [];
+
+      switch (_listType) {
+        case 1:
+          users = await User.findAll({
+            where: { level: 1 },
+            order: [["createdAt", "DESC"]],
+          });
+          break;
+
+        case 2:
+          users = await User.findAll({
+            where: { level: 2 },
+            order: [["createdAt", "DESC"]],
+          });
+          break;
+
+        case 3:
+          users = await User.findAll({
+            order: [["createdAt", "DESC"]],
+          });
+          break;
+
+        default:
+          break;
+      }
+
+      return res.status(200).json(users);
+    } catch (error) {
+      console.error(error);
+      return res.status(401).send("사용자 목록을 조회할 수 없습니다.");
+    }
+  }
+);
+
 router.post("/signup", async (req, res, next) => {
   const { userId, email, username, mobile, password, birth, gender } = req.body;
 

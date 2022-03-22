@@ -81,8 +81,8 @@ const AdminHome = () => {
           <Wrapper height={`100%`} padding={`30px`}>
             <Image
               alt="logo"
-              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/SOUL/assets/images/logo/logo_long_black_W.jpg`}
-              width={`300px`}
+              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/logo/logo_footer.png`}
+              width={`150px`}
             />
             <Wrapper width={`80%`}>
               <Wrapper margin={`20px 0`}>
@@ -94,30 +94,54 @@ const AdminHome = () => {
               </Wrapper>
               <RowWrapper gutter={[10, 10]}>
                 <ColWrapper span={6}>
-                  <Link href={`/admin/logs/acceptLogs`}>
-                    <CommonButton width={`200px`}>
-                      접속자 통계 바로가기
+                  <Link href={`/admin/class/list`}>
+                    <CommonButton
+                      kindOf={`black`}
+                      height={`32px`}
+                      radius={`2px`}
+                      width={`200px`}
+                      padding={`0`}
+                    >
+                      클래스 관리
                     </CommonButton>
                   </Link>
                 </ColWrapper>
                 <ColWrapper span={6}>
                   <Link href={`/admin/info/businessInformation`}>
-                    <CommonButton width={`200px`}>
-                      사업자정보 관리 바로가기
+                    <CommonButton
+                      kindOf={`black`}
+                      height={`32px`}
+                      radius={`2px`}
+                      width={`200px`}
+                      padding={`0`}
+                    >
+                      강사 관리
                     </CommonButton>
                   </Link>
                 </ColWrapper>
                 <ColWrapper span={6}>
                   <Link href={`/admin/info/popup`}>
-                    <CommonButton width={`200px`}>
-                      팝업 관리 바로가기
+                    <CommonButton
+                      kindOf={`black`}
+                      height={`32px`}
+                      radius={`2px`}
+                      width={`200px`}
+                      padding={`0`}
+                    >
+                      학생 관리
                     </CommonButton>
                   </Link>
                 </ColWrapper>
                 <ColWrapper span={6}>
                   <Link href={`/admin/board/notice/list`}>
-                    <CommonButton width={`200px`}>
-                      공지사항 관리 바로가기
+                    <CommonButton
+                      kindOf={`black`}
+                      height={`32px`}
+                      radius={`2px`}
+                      width={`200px`}
+                      padding={`0`}
+                    >
+                      게시판 관리
                     </CommonButton>
                   </Link>
                 </ColWrapper>
