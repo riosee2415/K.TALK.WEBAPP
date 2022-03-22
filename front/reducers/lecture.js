@@ -5,6 +5,7 @@ export const initailState = {
   maxPage: 1,
   createModal: false,
   detailModal: false,
+  lectureTearcherList: null,
   //
   st_lectureListLoading: false, // 공지사항 가져오기
   st_lectureListDone: false,
@@ -21,6 +22,10 @@ export const initailState = {
   st_lectureDeleteLoading: false, // 공지사항 삭제
   st_lectureDeleteDone: false,
   st_lectureDeleteError: null,
+  //
+  st_lectureTearcherListLoading: false,
+  st_lectureTearcherListDone: false,
+  st_lectureTearcherListError: null,
   //
 };
 
@@ -39,6 +44,10 @@ export const LECTURE_UPDATE_FAILURE = "LECTURE_UPDATE_FAILURE";
 export const LECTURE_DELETE_REQUEST = "LECTURE_DELETE_REQUEST";
 export const LECTURE_DELETE_SUCCESS = "LECTURE_DELETE_SUCCESS";
 export const LECTURE_DELETE_FAILURE = "LECTURE_DELETE_FAILURE";
+//
+export const LECTURE_TEACHER_LIST_REQUEST = "LECTURE_TEACHER_LIST_REQUEST";
+export const LECTURE_TEACHER_LIST_SUCCESS = "LECTURE_TEACHER_LIST_SUCCESS";
+export const LECTURE_TEACHER_LIST_FAILURE = "LECTURE_TEACHER_LIST_FAILURE";
 //
 export const CREATE_MODAL_OPEN_REQUEST = "CREATE_MODAL_OPEN_REQUEST";
 export const CREATE_MODAL_CLOSE_REQUEST = "CREATE_MODAL_CLOSE_REQUEST";
@@ -122,6 +131,27 @@ const reducer = (state = initailState, action) =>
         draft.st_lectureDeleteError = action.error;
         break;
       }
+
+      ///////////////////////////////////////////////////////
+      case LECTURE_TEACHER_LIST_REQUEST: {
+        draft.st_lectureTeacherListLoading = true;
+        draft.st_lectureTeacherListDone = null;
+        draft.st_lectureTeacherListError = false;
+        break;
+      }
+      case LECTURE_TEACHER_LIST_SUCCESS: {
+        draft.st_lectureTeacherListLoading = false;
+        draft.st_lectureTeacherListDone = true;
+        draft.lectureTearcherList = action.data.list;
+        break;
+      }
+      case LECTURE_TEACHER_LIST_FAILURE: {
+        draft.st_lectureTeacherListLoading = false;
+        draft.st_lectureTeacherListDone = false;
+        draft.st_lectureTeacherListError = action.error;
+        break;
+      }
+
       ///////////////////////////////////////////////////////
       ///////////////////////////////////////////////////////
       ///////////////////////////////////////////////////////

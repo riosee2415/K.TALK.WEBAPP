@@ -16,6 +16,10 @@ import {
   LECTURE_DELETE_REQUEST,
   LECTURE_DELETE_SUCCESS,
   LECTURE_DELETE_FAILURE,
+  //
+  LECTURE_TEACHER_LIST_REQUEST,
+  LECTURE_TEACHER_LIST_SUCCESS,
+  LECTURE_TEACHER_LIST_FAILURE,
 } from "../reducers/lecture";
 
 // SAGA AREA ********************************************************************************************************
@@ -126,6 +130,33 @@ function* lectureDelete(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureTeacherListAPI(data) {
+  return axios.get(`/api/lecture/teacher/list/${data.TeacherId}`);
+}
+
+function* lectureTeacherList(action) {
+  try {
+    const result = yield call(lectureTeacherListAPI, action.data);
+
+    yield put({
+      type: LECTURE_TEACHER_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_TEACHER_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchLectureList() {
   yield takeLatest(LECTURE_LIST_REQUEST, lectureList);
@@ -143,6 +174,10 @@ function* watchLectureDelete() {
   yield takeLatest(LECTURE_DELETE_REQUEST, lectureDelete);
 }
 
+function* watchLectureTeacherList() {
+  yield takeLatest(LECTURE_TEACHER_LIST_REQUEST, lectureTeacherList);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* lectureSaga() {
   yield all([
@@ -150,6 +185,7 @@ export default function* lectureSaga() {
     fork(watchLectureCreate),
     fork(watchLectureUpdate),
     fork(watchLectureDelete),
+    fork(watchLectureTeacherList),
     //
   ]);
 }

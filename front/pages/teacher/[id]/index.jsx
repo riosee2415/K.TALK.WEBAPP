@@ -43,7 +43,12 @@ import {
   message,
   Empty,
   Upload,
+  Select,
 } from "antd";
+import {
+  MESSAGE_DETAIL_REQUEST,
+  MESSAGE_LIST_REQUEST,
+} from "../../../reducers/message";
 
 const WordbreakText = styled(Text)`
   width: 100%;
@@ -234,13 +239,27 @@ const CustomText2 = styled(Text)`
 
 const Index = () => {
   ////// GLOBAL STATE //////
+
+  const { Option } = Select;
+
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
   );
 
+  const {
+    messageList,
+    st_messageListDone,
+    st_messageListError,
+    messageDetail,
+    st_messageDetailDone,
+    st_messageDetailError,
+  } = useSelector((state) => state.message);
+
   const { me } = useSelector((state) => state.user);
 
   ////// HOOKS //////
+
+  const dispatch = useDispatch();
 
   const width = useWidth();
 
@@ -259,9 +278,14 @@ const Index = () => {
   const [checkedList, setCheckedList] = useState([]);
   const [checkAll, setCheckAll] = useState(false);
 
+  const [messageViewToggle, setMessageViewToggle] = useState(false);
+
+  const [selectValue, setSelectValue] = useState("");
+
   const inputDate = useInput("");
 
   ////// REDUX //////
+
   ////// USEEFFECT //////
 
   useEffect(() => {
@@ -284,6 +308,18 @@ const Index = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (st_messageListError) {
+      return message.error(st_messageListError);
+    }
+  }, [st_messageListError]);
+
+  useEffect(() => {
+    if (st_messageDetailDone) {
+      onFill(messageDetail);
+    }
+  }, [st_messageDetailDone]);
+
   ////// TOGGLE //////
   ////// HANDLER //////
 
@@ -297,9 +333,23 @@ const Index = () => {
     inputDate.setValue(birth);
   }, []);
 
-  const noteSendFinishHandler = useCallback((data) => {
-    console.log(data, "asda");
-  }, []);
+  const noteSendFinishHandler = useCallback(
+    (data) => {
+      console.log(data, "asda");
+
+      // dispatch({
+      //   type: MESSAGE_LIST_REQUEST,
+      //   data: {
+      //     senderId: me.id,
+      //     receiverId: selectValue,
+      //     content: value.content2,
+      //   },
+      // });
+
+      console.log();
+    },
+    [me, selectValue]
+  );
 
   const homeWorkFinishHandler = useCallback((data) => {
     console.log(data, "asda");
@@ -311,6 +361,7 @@ const Index = () => {
     form.resetFields();
 
     inputDate.setValue("");
+    setMessageViewToggle(false);
     setIsCalendar(false);
     setHomeWorkModalToggle(false);
     setNoticeModalToggle(false);
@@ -333,6 +384,28 @@ const Index = () => {
     setCheckedList(resultAll);
   }, []);
 
+  const messageViewModalHanlder = useCallback((data) => {
+    setMessageViewToggle(true);
+
+    dispatch({
+      type: MESSAGE_DETAIL_REQUEST,
+      data: {
+        messageId: data.id,
+      },
+    });
+  }, []);
+
+  const onFill = (data) => {
+    console.log(data[0].content, "data!@$");
+    form.setFieldsValue({
+      title1: data[0] && data[0].title,
+      content2: data[0] && data[0].content,
+    });
+  };
+
+  function handleChange(value) {
+    console.log(`selected ${value}`);
+  }
   ////// DATAVIEW //////
 
   const testArr = [
@@ -1333,31 +1406,51 @@ const Index = () => {
                   </Text>
                 </Wrapper>
 
-                <Wrapper
-                  dr={`row`}
-                  textAlign={`center`}
-                  padding={`25px 0 20px`}
-                  cursor={`pointer`}
-                  bgColor={Theme.lightGrey_C}
-                  // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
-                >
-                  <Text fontSize={width < 700 ? `14px` : `16px`} width={`15%`}>
-                    5
-                  </Text>
-                  <Text
-                    fontSize={width < 700 ? `14px` : `16px`}
-                    width={`calc(100% - 15% - 15% - 25%)`}
-                    textAlign={`left`}>
-                    안녕하세요. 오늘 수업 공지입니다.
-                  </Text>
+                {messageList && messageList.length === 0 ? (
+                  <Wrapper margin={`30px 0`}>
+                    <Empty description="조회된 데이터가 없습니다." />
+                  </Wrapper>
+                ) : (
+                  messageList &&
+                  messageList.map((data, idx) => {
+                    console.log(data, "data");
+                    return (
+                      <Wrapper
+                        key={data.id}
+                        dr={`row`}
+                        textAlign={`center`}
+                        padding={`25px 0 20px`}
+                        cursor={`pointer`}
+                        bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                        onClick={() => messageViewModalHanlder(data)}>
+                        <Text
+                          fontSize={width < 700 ? `14px` : `16px`}
+                          width={`15%`}>
+                          {data.id}
+                        </Text>
+                        <Text
+                          fontSize={width < 700 ? `14px` : `16px`}
+                          width={`calc(100% - 15% - 15% - 25%)`}
+                          textAlign={`left`}>
+                          안녕하세요. 오늘 수업 공지입니다.
+                          {data.content}
+                        </Text>
 
-                  <Text fontSize={width < 700 ? `14px` : `16px`} width={`15%`}>
-                    ○○○
-                  </Text>
-                  <Text fontSize={width < 700 ? `14px` : `16px`} width={`25%`}>
-                    2022/01/22
-                  </Text>
-                </Wrapper>
+                        <Text
+                          fontSize={width < 700 ? `14px` : `16px`}
+                          width={`15%`}>
+                          ○○○
+                        </Text>
+                        <Text
+                          fontSize={width < 700 ? `14px` : `16px`}
+                          width={`25%`}>
+                          {/* 2022/01/22 */}
+                          {data.createdAt.slice(0, 13)}
+                        </Text>
+                      </Wrapper>
+                    );
+                  })
+                )}
               </Wrapper>
 
               <Wrapper margin={`110px 0`}>
@@ -1403,7 +1496,7 @@ const Index = () => {
         </CustomModal>
 
         <CustomModal
-          visible={false}
+          visible={messageViewToggle}
           width={`1350px`}
           title="쪽지"
           footer={null}
@@ -1416,15 +1509,20 @@ const Index = () => {
           <Text fontSize={`18px`} fontWeight={`bold`}>
             제목
           </Text>
-          <Wrapper padding={`10px`}>
-            <WordbreakText>안녕하세요.</WordbreakText>
+
+          <Wrapper padding={`10px`} al={`flex-start`}>
+            <Form.Item name="title1">
+              <WordbreakText>안녕하세요.</WordbreakText>
+            </Form.Item>
           </Wrapper>
 
           <Text fontSize={`18px`} fontWeight={`bold`}>
             내용
           </Text>
-          <Wrapper padding={`10px`}>
-            <WordbreakText>안녕하세요.</WordbreakText>
+          <Wrapper padding={`10px`} al={`flex-start`}>
+            <Form.Item name="content1">
+              <WordbreakText> 안녕하세요.</WordbreakText>
+            </Form.Item>
           </Wrapper>
 
           <Wrapper dr={`row`}>
@@ -1432,7 +1530,8 @@ const Index = () => {
               margin={`0 5px 0 0`}
               kindOf={`grey`}
               color={Theme.darkGrey_C}
-              radius={`5px`}>
+              radius={`5px`}
+              onClick={() => onReset()}>
               돌아가기
             </CommonButton>
             <CommonButton margin={`0 0 0 5px`} radius={`5px`}>
@@ -1458,7 +1557,17 @@ const Index = () => {
               받는 사람
             </Text>
             <Form.Item name="receivePerson" rules={[{ required: true }]}>
-              <Input />
+              <Select
+                value={selectValue}
+                style={{ width: `100%` }}
+                onChange={handleChange}>
+                <Option value="jack">Jack</Option>
+                <Option value="lucy">Lucy</Option>
+                <Option value="disabled" disabled>
+                  Disabled
+                </Option>
+                <Option value="Yiminghe">yiminghe</Option>
+              </Select>
             </Form.Item>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
@@ -1492,7 +1601,7 @@ const Index = () => {
                 margin={`0 0 0 5px`}
                 radius={`5px`}
                 htmlType="submit">
-                답변하기
+                쪽지 보내기
               </CommonButton>
             </Wrapper>
           </CustomForm>
@@ -1661,6 +1770,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: SEO_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: MESSAGE_LIST_REQUEST,
     });
 
     // 구현부 종료

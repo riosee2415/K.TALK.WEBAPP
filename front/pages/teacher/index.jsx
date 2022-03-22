@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import ClientLayout from "../../components/ClientLayout";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import wrapper from "../../store/configureStore";
 import { END } from "redux-saga";
 import useWidth from "../../hooks/useWidth";
@@ -20,7 +20,8 @@ import {
   Text,
   SpanText,
 } from "../../components/commonComponents";
-import { message, Pagination } from "antd";
+import { Empty, message, Pagination } from "antd";
+import { LECTURE_TEACHER_LIST_REQUEST } from "../../reducers/lecture";
 
 const CustomPage = styled(Pagination)`
   & .ant-pagination-next > button {
@@ -167,9 +168,16 @@ const Index = () => {
     (state) => state.seo
   );
 
+  const dispatch = useDispatch();
+
   const { me } = useSelector((state) => state.user);
 
-  console.log(me, "me");
+  const {
+    lectureTearcherList,
+    st_lectureTearcherListDone,
+    st_lectureTearcherListError,
+  } = useSelector((state) => state.lecture);
+
   ////// HOOKS //////
 
   const width = useWidth();
@@ -181,6 +189,13 @@ const Index = () => {
     if (!me) {
       message.error("로그인 후 이용해주세요.");
       // return router.push(`/`);
+    } else {
+      dispatch({
+        type: LECTURE_TEACHER_LIST_REQUEST,
+        data: {
+          TeacherId: me.id,
+        },
+      });
     }
   }, [me]);
 
@@ -252,31 +267,36 @@ const Index = () => {
       <ClientLayout>
         <WholeWrapper margin={`100px 0 0`} bgColor={Theme.subTheme_C}>
           <RsWrapper>
-            <Wrapper
-              dr={`row`}
-              margin={width < 700 ? `30px 0` : `60px 0`}
-              ju={`flex-start`}>
-              <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
-                <Image
-                  width={width < 700 ? `65px` : `75px`}
-                  height={width < 700 ? `65px` : `75px`}
-                  radius={`50%`}
-                  src={`https://via.placeholder.com/75x75`}
-                />
-              </Wrapper>
-
+            {me && me && (
               <Wrapper
                 dr={`row`}
-                width={`auto`}
-                fontSize={width < 700 ? `20px` : `28px`}
-                padding={`0 0 0 15px`}
-                color={Theme.black_2C}>
-                <Text fontWeight={`bold`}>
-                  안녕하세요,
-                  <SpanText color={Theme.basicTheme_C}> Aaliyah님</SpanText>!
-                </Text>
+                margin={width < 700 ? `30px 0` : `60px 0`}
+                ju={`flex-start`}>
+                <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
+                  <Image
+                    width={width < 700 ? `65px` : `75px`}
+                    height={width < 700 ? `65px` : `75px`}
+                    radius={`50%`}
+                    src={`https://via.placeholder.com/75x75`}
+                  />
+                </Wrapper>
+
+                <Wrapper
+                  dr={`row`}
+                  width={`auto`}
+                  fontSize={width < 700 ? `20px` : `28px`}
+                  padding={`0 0 0 15px`}
+                  color={Theme.black_2C}>
+                  <Text fontWeight={`bold`}>
+                    안녕하세요,
+                    <SpanText color={Theme.basicTheme_C}>
+                      {`${me.userId}`}님
+                    </SpanText>
+                    !
+                  </Text>
+                </Wrapper>
               </Wrapper>
-            </Wrapper>
+            )}
 
             <Wrapper al={`flex-start`}>
               <Text
@@ -424,6 +444,7 @@ const Index = () => {
                       })}
                   </Wrapper>
                 </Wrapper>
+
                 <Wrapper
                   dr={`row`}
                   ju={`space-between`}
