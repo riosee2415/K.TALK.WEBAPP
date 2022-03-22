@@ -59,7 +59,6 @@ const AdminMenu = () => {
         onClick={clickAction}
         style={{ width: `100%` }}
         defaultOpenKeys={currentAdminMenu}
-        selectedKeys={[current]}
         mode="inline"
         selectedKeys={router.pathname}
         disabled={false}
@@ -110,6 +109,21 @@ const AdminMenu = () => {
           </Menu.Item>
           <Menu.Item key="/admin/info/popup">
             <MenuName>팝업 관리</MenuName>
+          </Menu.Item>
+
+          {/* <SubMenu key="sub3" title="Submenu">
+            <Menu.Item key="7">Option 7</Menu.Item>
+            <Menu.Item key="8">Option 8</Menu.Item>
+          </SubMenu> */}
+        </SubMenu>
+        <SubMenu
+          key="sub8"
+          icon={<AppstoreOutlined />}
+          title="클래스 관리"
+          onTitleClick={titleClickHandler("sub8")}
+        >
+          <Menu.Item key="/admin/class/list">
+            <MenuName>클래스 목록, 검색, 정렬</MenuName>
           </Menu.Item>
 
           {/* <SubMenu key="sub3" title="Submenu">
