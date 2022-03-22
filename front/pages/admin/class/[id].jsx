@@ -116,15 +116,156 @@ const DetailClass = () => {
     },
     {
       title: "수업료",
+      dataIndex: "price",
     },
     {
       title: "만기일",
+      dataIndex: "endDate",
     },
     {
       title: "메모",
+      dataIndex: "adminMemo",
     },
     {
       title: "출석률",
+      dataIndex: "temp",
+    },
+  ];
+
+  const stuDatum = [
+    {
+      id: 1,
+      username: "수강학생",
+      birth: "2022/03/22",
+      stuCountry: "stuCountry",
+      price: "price",
+      endDate: "endDate",
+      adminMemo: "adminMemo",
+      temp: "temp",
+    },
+    {
+      id: 2,
+      username: "수강학생",
+      birth: "2022/03/22",
+      stuCountry: "stuCountry",
+      price: "price",
+      endDate: "endDate",
+      adminMemo: "adminMemo",
+      temp: "temp",
+    },
+    {
+      id: 3,
+      username: "수강학생",
+      birth: "2022/03/22",
+      stuCountry: "stuCountry",
+      price: "price",
+      endDate: "endDate",
+      adminMemo: "adminMemo",
+      temp: "temp",
+    },
+    {
+      id: 4,
+      username: "수강학생",
+      birth: "2022/03/22",
+      stuCountry: "stuCountry",
+      price: "price",
+      endDate: "endDate",
+      adminMemo: "adminMemo",
+      temp: "temp",
+    },
+    {
+      id: 5,
+      username: "수강학생",
+      birth: "2022/03/22",
+      stuCountry: "stuCountry",
+      price: "price",
+      endDate: "endDate",
+      adminMemo: "adminMemo",
+      temp: "temp",
+    },
+    {
+      id: 6,
+      username: "수강학생",
+      birth: "2022/03/22",
+      stuCountry: "stuCountry",
+      price: "price",
+      endDate: "endDate",
+      adminMemo: "adminMemo",
+      temp: "temp",
+    },
+    {
+      id: 7,
+      username: "수강학생",
+      birth: "2022/03/22",
+      stuCountry: "stuCountry",
+      price: "price",
+      endDate: "endDate",
+      adminMemo: "adminMemo",
+      temp: "temp",
+    },
+  ];
+
+  const lectureColumns = [
+    {
+      title: "날짜",
+      dataIndex: "lecDate",
+    },
+    {
+      title: "강사명",
+      dataIndex: "teaName",
+    },
+    {
+      title: "진도",
+      dataIndex: "course",
+    },
+    {
+      title: "수업메모",
+      dataIndex: "memo",
+    },
+  ];
+
+  const lectureDatum = [
+    {
+      id: 1,
+      lecDate: "2022-03-22",
+      teaName: "강사명",
+      course: "진도",
+      memo: "메모",
+    },
+    {
+      id: 2,
+      lecDate: "2022-03-22",
+      teaName: "강사명",
+      course: "진도",
+      memo: "메모",
+    },
+    {
+      id: 3,
+      lecDate: "2022-03-22",
+      teaName: "강사명",
+      course: "진도",
+      memo: "메모",
+    },
+    {
+      id: 4,
+      lecDate: "2022-03-22",
+      teaName: "강사명",
+      course: "진도",
+      memo: "메모",
+    },
+    {
+      id: 5,
+      lecDate: "2022-03-22",
+      teaName: "강사명",
+      course: "진도",
+      memo: "메모",
+    },
+    {
+      id: 6,
+      lecDate: "2022-03-22",
+      teaName: "강사명",
+      course: "진도",
+      memo: "메모",
     },
   ];
 
@@ -275,13 +416,29 @@ const DetailClass = () => {
           수강 학생 목록
         </Text>
 
-        <Table columns={stuColumns} rowSelection pagination={{ pageSize: 5 }} />
+        <Table
+          columns={stuColumns}
+          dataSource={stuDatum}
+          rowSelection
+          pagination={false}
+        />
 
-        <Wrapper al={`flex-end`}>
+        <Wrapper al={`flex-end`} margin={`10px 0 32px`}>
           <CommonButton kindOf={`white`} radius={`5px`}>
             추가하기
           </CommonButton>
         </Wrapper>
+
+        <Text fontSize={`18px`} fontWeight={`bold`}>
+          강의 일지
+        </Text>
+
+        <Table
+          columns={lectureColumns}
+          dataSource={lectureDatum}
+          rowSelection
+          pagination={false}
+        />
       </AdminContent>
     </AdminLayout>
   );
