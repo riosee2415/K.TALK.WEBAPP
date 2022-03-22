@@ -1,22 +1,21 @@
 const DataTypes = require("sequelize");
 const { Model } = DataTypes;
 
-// 숙제
-module.exports = class Homework extends Model {
+module.exports = class Book extends Model {
   static init(sequelize) {
     return super.init(
       {
-        title: {
-          type: DataTypes.STRING(300),
-          allowNull: false, // 필수
+        thumbnail: {
+          type: DataTypes.STRING(600),
+          allowNull: false,
         },
-        date: {
+        title: {
           type: DataTypes.STRING(100),
-          allowNull: false, // 필수
+          allowNull: false,
         },
         file: {
           type: DataTypes.STRING(600),
-          allowNull: false, // 필수
+          allowNull: false,
         },
         isDelete: {
           type: DataTypes.BOOLEAN,
@@ -25,8 +24,8 @@ module.exports = class Homework extends Model {
         },
       },
       {
-        modelName: "Homework",
-        tableName: "homeworks",
+        modelName: "Book",
+        tableName: "books",
         charset: "utf8mb4",
         collate: "utf8mb4_general_ci", // 한글 저장
         sequelize,
@@ -34,6 +33,7 @@ module.exports = class Homework extends Model {
     );
   }
   static associate(db) {
-    db.Homework.belongsTo(db.Lecture);
+    db.Book.belongsTo(db.Lecture);
+    db.Book.belongsTo(db.BookFolder);
   }
 };
