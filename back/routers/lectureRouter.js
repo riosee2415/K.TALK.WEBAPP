@@ -2,7 +2,7 @@ const express = require("express");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isLoggedIn = require("../middlewares/isLoggedIn");
 const isNanCheck = require("../middlewares/isNanCheck");
-const { Lecture, User, Participant } = require("../models");
+const { Lecture, User, Participant, LectureDiary } = require("../models");
 const models = require("../models");
 
 const router = express.Router();
@@ -395,7 +395,23 @@ router.delete("/delete/:lectureId", isAdminCheck, async (req, res, next) => {
 ///////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////// - 강의 일지 작성 -///////////////////////////////////////
 
-router.get("/diary/list", async (req, res, next) => {});
+router.get("/diary/list", async (req, res, next) => {
+  const { page } = req.query;
+  try {
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("강의 일지 목록을 불러올 수 없습니다.");
+  }
+});
+
+router.get("/diary/admin/list", async (req, res, next) => {
+  try {
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("강의 일지 목록을 불러올 수 없습니다.");
+  }
+});
+
 router.post("/diary/create", isLoggedIn, async (req, res, next) => {
   const { author, process, lectureMemo, LectureId } = req.body;
 
@@ -415,8 +431,21 @@ router.post("/diary/create", isLoggedIn, async (req, res, next) => {
     });
 
     if (!exLecture) {
-      return res.status(401).send("");
+      return res.status(401).send("존재하지 않는 강의입니다.");
     }
+
+    if (!exLecture.TeacherId !== req.user.id) {
+      return res.status(401).send("자신의 강의가 아닙니다.");
+    }
+
+    const createResult = await LectureDiary.create({
+      author,
+      process,
+      lectureMemo,
+      LectureId: parseInt(LectureId),
+    });
+
+    return res.status(201).json({ result: true });
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의 일지를 작성할 수 없습니다.");
