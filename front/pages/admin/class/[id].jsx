@@ -9,7 +9,7 @@ const DetailClass = () => {
       <PageHeader
         breadcrumbs={["클래스 관리", "클래스 상세보기"]}
         title={`클래스 등록`}
-        subTitle={`클래스를 등록할 할 수 있습니다.`}
+        subTitle={`클래스별 상세 설정을 할 수 있습니다.`}
       />
     </AdminLayout>
   );
