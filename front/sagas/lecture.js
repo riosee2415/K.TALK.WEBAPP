@@ -20,6 +20,14 @@ import {
   LECTURE_TEACHER_LIST_REQUEST,
   LECTURE_TEACHER_LIST_SUCCESS,
   LECTURE_TEACHER_LIST_FAILURE,
+  //
+  LECTURE_STUDENT_LIST_REQUEST,
+  LECTURE_STUDENT_LIST_SUCCESS,
+  LECTURE_STUDENT_LIST_FAILURE,
+  //
+  LECTURE_DETAIL_LECTURE_REQUEST,
+  LECTURE_DETAIL_LECTURE_SUCCESS,
+  LECTURE_DETAIL_LECTURE_FAILURE,
 } from "../reducers/lecture";
 
 // SAGA AREA ********************************************************************************************************
@@ -157,6 +165,60 @@ function* lectureTeacherList(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureStudentListAPI(data) {
+  return axios.post(`/api/lecture/student/list`, data);
+}
+
+function* lectureStudentList(action) {
+  try {
+    const result = yield call(lectureStudentListAPI, action.data);
+
+    yield put({
+      type: LECTURE_STUDENT_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_STUDENT_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureDetailLectureAPI(data) {
+  return axios.get(`/api/lecture/detail/${data.LectureId}`);
+}
+
+function* lectureDetailLecture(action) {
+  try {
+    const result = yield call(lectureDetailLectureAPI, action.data);
+
+    yield put({
+      type: LECTURE_DETAIL_LECTURE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_DETAIL_LECTURE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchLectureList() {
   yield takeLatest(LECTURE_LIST_REQUEST, lectureList);
@@ -178,6 +240,14 @@ function* watchLectureTeacherList() {
   yield takeLatest(LECTURE_TEACHER_LIST_REQUEST, lectureTeacherList);
 }
 
+function* watchLectureStudentList() {
+  yield takeLatest(LECTURE_STUDENT_LIST_REQUEST, lectureStudentList);
+}
+
+function* watchLectureDetailLecture() {
+  yield takeLatest(LECTURE_DETAIL_LECTURE_REQUEST, lectureDetailLecture);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* lectureSaga() {
   yield all([
@@ -186,6 +256,8 @@ export default function* lectureSaga() {
     fork(watchLectureUpdate),
     fork(watchLectureDelete),
     fork(watchLectureTeacherList),
+    fork(watchLectureStudentList),
+    fork(watchLectureDetailLecture),
     //
   ]);
 }

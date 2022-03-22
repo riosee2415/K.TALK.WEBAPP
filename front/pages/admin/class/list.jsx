@@ -99,6 +99,8 @@ const List = () => {
   const dispatch = useDispatch();
   const { lectures } = useSelector((state) => state.lecture);
 
+  console.log(lectures);
+
   ////// USEEFFECT //////
   useEffect(() => {
     dispatch({
