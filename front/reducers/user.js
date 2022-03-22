@@ -4,6 +4,7 @@ export const initailState = {
   me: null,
   currentAdminMenu: [],
   users: null,
+  allUsers: null,
 
   userProfilePath: null,
 
@@ -36,6 +37,10 @@ export const initailState = {
   st_userListLoading: false,
   st_userListDone: false,
   st_userListError: null,
+  //
+  st_userAllListLoading: false,
+  st_userAllListDone: false,
+  st_userAllListError: null,
   //
   st_userListUpdateLoading: false,
   st_userListUpdateDone: false,
@@ -89,6 +94,10 @@ export const USER_CREATE_FAILURE = "USER_CREATE_FAILURE";
 export const USERLIST_REQUEST = "USERLIST_REQUEST";
 export const USERLIST_SUCCESS = "USERLIST_SUCCESS";
 export const USERLIST_FAILURE = "USERLIST_FAILURE";
+
+export const USER_ALL_LIST_REQUEST = "USER_ALL_LIST_REQUEST";
+export const USER_ALL_LIST_SUCCESS = "USER_ALL_LIST_SUCCESS";
+export const USER_ALL_LIST_FAILURE = "USER_ALL_LIST_FAILURE";
 
 export const USERLIST_UPDATE_REQUEST = "USERLIST_UPDATE_REQUEST";
 export const USERLIST_UPDATE_SUCCESS = "USERLIST_UPDATE_SUCCESS";
@@ -267,6 +276,26 @@ const reducer = (state = initailState, action) =>
         draft.st_userListLoading = false;
         draft.st_userListDone = false;
         draft.st_userListError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case USER_ALL_LIST_REQUEST: {
+        draft.st_userAllListLoading = true;
+        draft.st_userAllListDone = null;
+        draft.st_userAllListError = false;
+        break;
+      }
+      case USER_ALL_LIST_SUCCESS: {
+        draft.st_userAllListLoading = false;
+        draft.st_userAllListDone = true;
+        draft.allUsers = action.data;
+        break;
+      }
+      case USER_ALL_LIST_FAILURE: {
+        draft.st_userAllListLoading = false;
+        draft.st_userAllListDone = false;
+        draft.st_userAllListError = action.error;
         break;
       }
       //////////////////////////////////////////////

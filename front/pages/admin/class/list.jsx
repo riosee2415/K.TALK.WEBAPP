@@ -24,7 +24,10 @@ import {
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 
-import { LECTURE_LIST_REQUEST } from "../../../reducers/lecture";
+import {
+  LECTURE_DELETE_REQUEST,
+  LECTURE_LIST_REQUEST,
+} from "../../../reducers/lecture";
 
 import { withRouter } from "next/router";
 import useInput from "../../../hooks/useInput";
@@ -69,6 +72,14 @@ const NoticeTable = styled(Table)`
   width: 95%;
 `;
 
+const CustomButton = styled(Button)`
+  padding: 0;
+  width: 80px;
+  height: 35px;
+  border-radius: 5px;
+  font-size: 14px;
+`;
+
 const LoadNotification = (msg, content) => {
   notification.open({
     message: msg,
@@ -100,12 +111,14 @@ const List = () => {
   ////// HOOKS //////
   const width = useWidth();
   const [currentSort, setCurrentSort] = useState(1);
+  const [deletePopVisible, setDeletePopVisible] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   ////// REDUX //////
   const dispatch = useDispatch();
-  const { lectures } = useSelector((state) => state.lecture);
-
-  console.log(lectures);
+  const { lectures, st_lectureDeleteDone, st_lectureDeleteError } = useSelector(
+    (state) => state.lecture
+  );
 
   ////// USEEFFECT //////
   useEffect(() => {
@@ -117,13 +130,55 @@ const List = () => {
     });
   }, [currentSort]);
 
+  useEffect(() => {
+    if (st_lectureDeleteDone) {
+      message.success("클래스가 삭제되었습니다.");
+      dispatch({
+        type: LECTURE_LIST_REQUEST,
+        data: {
+          sort: currentSort,
+        },
+      });
+    }
+  }, [st_lectureDeleteDone, currentSort]);
+
+  useEffect(() => {
+    if (st_lectureDeleteError) {
+      message.error(st_lectureDeleteError);
+    }
+  }, [st_lectureDeleteError]);
+
   ////// HANDLER ///////
 
   const comboChangeHandler = useCallback((e) => {
     setCurrentSort(e);
   }, []);
 
+  const deleteClassHandler = useCallback(() => {
+    if (!deleteId) {
+      return LoadNotification(
+        "ADMIN SYSTEM ERROR",
+        "일시적인 장애가 발생되었습니다. 잠시 후 다시 시도해주세요."
+      );
+    }
+    dispatch({
+      type: LECTURE_DELETE_REQUEST,
+      data: { lectureId: deleteId },
+    });
+
+    setDeleteId(null);
+    setDeletePopVisible((prev) => !prev);
+  }, [deleteId]);
+
   ////// TOGGLE ///////
+
+  const deletePopToggle = useCallback(
+    (id) => {
+      setDeleteId(id);
+      setDeletePopVisible((prev) => !prev);
+    },
+    [deletePopVisible, deleteId]
+  );
 
   ////// DATAVIEW //////
 
@@ -233,7 +288,6 @@ const List = () => {
           </Select>
         </Wrapper>
         <Wrapper dr={`row`} ju={`flex-start`}>
-          {console.log(lectures)}
           {lectures &&
             (lectures.length === 0 ? (
               <Wrapper>
@@ -329,7 +383,8 @@ const List = () => {
                             {data.viewLv}
                           </Text>
                           <Text>
-                            수업 시작일 : {data.startDate.replace(/\//g, "-")}
+                            수업 시작일 :{" "}
+                            {data.startDate.replace(/\//g, "-").slice(0, 10)}
                           </Text>
                         </Wrapper>
                       </Wrapper>
@@ -388,24 +443,45 @@ const List = () => {
                         </Text>
                       </Wrapper>
                     </Wrapper>
-
-                    <CommonButton
-                      padding={`0`}
-                      width={`120px`}
-                      height={`38px`}
-                      radius={`5px`}
-                      onClick={() => moveLinkHandler(`/admin/class/${data.id}`)}
-                    >
-                      자세히 보기
-                    </CommonButton>
+                    <Wrapper dr={`row`}>
+                      <CommonButton
+                        padding={`0`}
+                        width={`80px`}
+                        height={`35px`}
+                        radius={`5px`}
+                        margin={`0 10px 0 0`}
+                        fontSize={`14px`}
+                        onClick={() =>
+                          moveLinkHandler(`/admin/class/${data.id}`)
+                        }
+                      >
+                        자세히 보기
+                      </CommonButton>
+                      <CustomButton
+                        type={`danger`}
+                        onClick={() => deletePopToggle(data.id)}
+                      >
+                        삭제
+                      </CustomButton>
+                    </Wrapper>
                   </Wrapper>
                 );
               })
             ))}
+          {console.log(deletePopVisible)}
         </Wrapper>
       </AdminContent>
 
-      {/* CREATE MODAL */}
+      {/* DELETE MODAL */}
+      <Modal
+        visible={deletePopVisible}
+        onOk={deleteClassHandler}
+        onCancel={() => deletePopToggle(null)}
+        title="정말 삭제하시겠습니까?"
+      >
+        <Wrapper>삭제 된 데이터는 다시 복구할 수 없습니다.</Wrapper>
+        <Wrapper>정말 삭제하시겠습니까?</Wrapper>
+      </Modal>
     </AdminLayout>
   );
 };

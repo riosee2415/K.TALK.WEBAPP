@@ -21,6 +21,10 @@ import {
   USERLIST_SUCCESS,
   USERLIST_FAILURE,
   /////////////////////////////
+  USER_ALL_LIST_REQUEST,
+  USER_ALL_LIST_SUCCESS,
+  USER_ALL_LIST_FAILURE,
+  /////////////////////////////
   USERLIST_UPDATE_REQUEST,
   USERLIST_UPDATE_SUCCESS,
   USERLIST_UPDATE_FAILURE,
@@ -242,6 +246,35 @@ function* userList(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
+function userAllListAPI(data) {
+  return axios.get(`/api/user/allUsers/${data.type}`);
+}
+// 1 => 학생 리스트
+// 2 => 강사 리스트
+// 3 => 전체 리스트
+
+function* userAllList(action) {
+  try {
+    const result = yield call(userAllListAPI, action.data);
+    yield put({
+      type: USER_ALL_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_ALL_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
 function userListUpdateAPI(data) {
   return axios.patch(`/api/user/level/update`, data);
 }
@@ -431,6 +464,10 @@ function* watchUserList() {
   yield takeLatest(USERLIST_REQUEST, userList);
 }
 
+function* watchAllUserList() {
+  yield takeLatest(USER_ALL_LIST_REQUEST, userAllList);
+}
+
 function* watchUserListUpdate() {
   yield takeLatest(USERLIST_UPDATE_REQUEST, userListUpdate);
 }
@@ -465,6 +502,7 @@ export default function* userSaga() {
     fork(watchSignUp),
     fork(watchUserCreate),
     fork(watchUserList),
+    fork(watchAllUserList),
     fork(watchUserListUpdate),
     fork(watchKakaoLogin),
     fork(watchStuCreate),
