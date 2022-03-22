@@ -144,6 +144,9 @@ router.get("/detail/:messageId", async (req, res, next) => {
 
 // 사용자가 강사에게 쪽지를 보낼때 필요한 리스트
 router.get("/teacherList", isLoggedIn, async (req, res, next) => {
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
   try {
     const parts = await Participant.findAll({
       where: { UserId: parseInt(req.user.id) },
@@ -228,6 +231,43 @@ router.post("/create", async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("쪽지를 확인할 수 없습니다.");
+  }
+});
+
+//관리자에게 쓰기
+router.post("/forAdminCreate", isLoggedIn, async (req, res, next) => {
+  const { title, author, content } = req.body;
+
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
+  try {
+    const exAdmin = await User.findAll({
+      where: { level: 4 },
+    });
+
+    if (exAdmin === 0) {
+      return res.status(401).send("관리자가 존재하지 않습니다.");
+    }
+
+    await Promise.all(
+      exAdmin.map(async (data) => {
+        await Message.create({
+          title,
+          author,
+          senderId: parseInt(req.user.id),
+          receiverId: parseInt(data.id),
+          content,
+          level: parseInt(req.user.level),
+        });
+      })
+    );
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("관리자에게 쪽지를 쓸 수 없습니다.");
   }
 });
 
