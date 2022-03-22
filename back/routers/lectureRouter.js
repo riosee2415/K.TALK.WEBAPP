@@ -2,7 +2,7 @@ const express = require("express");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isLoggedIn = require("../middlewares/isLoggedIn");
 const isNanCheck = require("../middlewares/isNanCheck");
-const { Lecture, User } = require("../models");
+const { Lecture, User, Participant } = require("../models");
 const models = require("../models");
 
 const router = express.Router();
@@ -210,14 +210,50 @@ router.get("/teacher/list/:TeacherId", async (req, res, next) => {
 
 //내 강의를 듣는 학생 목록 조회 [강사]
 
-// router.get("/student/list", isLoggedIn, async (req, res, next) => {
-//   const {} = req.body;
-//   try {
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(401).send("강의를 듣는 학생 목록을 불러올 수 없습니다.");
-//   }
-// });
+router.post("/student/list", async (req, res, next) => {
+  const { TeacherId } = req.body;
+  try {
+    const exTeacher = await User.findOne({
+      where: { id: parseInt(TeacherId), level: 2 },
+    });
+
+    if (!exTeacher) {
+      return res.status(401).send("존재하지 않는 사용자 입니다.");
+    }
+
+    if (exTeacher.level !== 2) {
+      return res.status(401).send("해당 사용자는 강사가 아닙니다.");
+    }
+
+    const myLectures = await Lecture.findAll({
+      where: { TeacherId: parseInt(TeacherId) },
+    });
+
+    let studentIds = [];
+
+    await Promise.all(
+      myLectures.map(async (data) => {
+        studentIds = await Participant.findAll({
+          where: { LectureId: parseInt(data.id) },
+        });
+      })
+    );
+
+    let students = [];
+    await Promise.all(
+      studentIds.map(async (data) => {
+        students = await User.findAll({
+          where: { id: parseInt(data.UserId) },
+        });
+      })
+    );
+
+    return res.status(200).json(students);
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("강의를 듣는 학생 목록을 불러올 수 없습니다.");
+  }
+});
 
 router.post("/create", isAdminCheck, async (req, res, next) => {
   const {

@@ -1,16 +1,35 @@
-import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useCallback, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-import { END } from "redux-saga";
+import DaumPostCode from "react-daum-postcode";
+import moment from "moment";
+
+import Head from "next/head";
+import { useRouter } from "next/router";
+
 import axios from "axios";
+import { END } from "redux-saga";
 import wrapper from "../../store/configureStore";
 import { SEO_LIST_REQUEST } from "../../reducers/seo";
-import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
+import {
+  LOAD_MY_INFO_REQUEST,
+  ME_UPDATE_MODAL_TOGGLE,
+  POSTCODE_MODAL_TOGGLE,
+  USER_PROFILE_IMAGE_PATH,
+  USER_PROFILE_UPLOAD_REQUEST,
+  USER_UPDATE_REQUEST,
+} from "../../reducers/user";
 
-import { useRouter } from "next/router";
-import Head from "next/head";
-
-import { Empty, Form, Input, message, Modal, Pagination, Slider } from "antd";
+import {
+  Calendar,
+  Empty,
+  Form,
+  Input,
+  message,
+  Modal,
+  Pagination,
+  Slider,
+} from "antd";
 import styled from "styled-components";
 import useWidth from "../../hooks/useWidth";
 import ClientLayout from "../../components/ClientLayout";
@@ -22,8 +41,57 @@ import {
   Text,
   WholeWrapper,
   Wrapper,
+  TextInput,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
+
+const PROFILE_WIDTH = `184`;
+const PROFILE_HEIGHT = `190`;
+
+const ProfileWrapper = styled.div`
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ProfileImage = styled.img`
+  width: 184px;
+  height: 190px;
+  object-fit: cover;
+  border-radius: 5px;
+`;
+const UploadWrapper = styled.div`
+  width: 184px;
+  margin: 5px 0;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+`;
+
+const GuideWrapper = styled.section`
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
+
+  border-radius: 3px;
+  background-color: #eeeeee;
+`;
+
+const GuideText = styled.div`
+  font-size: 13.5px;
+  color: #5e5e5e;
+  font-weight: 700;
+`;
+
+const PreviewGuide = styled.p`
+  font-weight: 700;
+  color: #b1b1b1;
+`;
 
 const CustomSlide = styled(Slider)`
   width: 100%;
@@ -128,25 +196,198 @@ const CustomForm = styled(Form)`
   }
 `;
 
+const CusotmInput = styled(TextInput)`
+  border: none;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.16);
+  border-radius: 5px;
+
+  &::placeholder {
+    color: ${Theme.grey2_C};
+  }
+
+  &:focus {
+    border: 1px solid ${Theme.basicTheme_C};
+  }
+`;
+
 const Student = () => {
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
   );
-  const { me } = useSelector((state) => state.user);
+  const {
+    me,
+    meUpdateModal,
+    postCodeModal,
+    userProfilePath,
+    //
+    st_userProfileUploadLoading,
+    st_userProfileUploadDone,
+    st_userProfileUploadError,
+    //
+    st_userUserUpdateDone,
+    st_userUserUpdateError,
+  } = useSelector((state) => state.user);
 
   ////// HOOKS //////
-  const router = useRouter();
-
   const width = useWidth();
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const [updateForm] = Form.useForm();
+
+  const imageInput = useRef();
 
   ////// USEEFFECT //////
   useEffect(() => {
     if (!me) {
       message.error("로그인 후 이용해주세요.");
-      // return router.push(`/`);
+      return router.push(`/`);
+    } else if (me.level !== 1) {
+      message.error("학생이 아닙니다.");
+      return router.push(`/`);
     }
   }, [me]);
+
+  useEffect(() => {
+    if (st_userProfileUploadDone) {
+      return message.success("프로필 사진이 업로드되었습니다.");
+    }
+  }, [st_userProfileUploadDone]);
+
+  useEffect(() => {
+    if (st_userUserUpdateDone) {
+      dispatch({
+        type: LOAD_MY_INFO_REQUEST,
+      });
+
+      updateForm.resetFields();
+      dispatch({
+        type: USER_PROFILE_IMAGE_PATH,
+        data: null,
+      });
+
+      dispatch({
+        type: ME_UPDATE_MODAL_TOGGLE,
+      });
+
+      return message.success("회원 정보가 수정되었습니다.");
+    }
+  }, [st_userUserUpdateDone]);
+
+  useEffect(() => {
+    if (st_userProfileUploadError) {
+      return message.error(st_userProfileUploadError);
+    }
+  }, [st_userProfileUploadError]);
+
+  useEffect(() => {
+    if (st_userUserUpdateError) {
+      return message.error(st_userUserUpdateError);
+    }
+  }, [st_userUserUpdateError]);
+
+  useEffect(() => {
+    if (meUpdateModal) {
+      updateForm.setFieldsValue({
+        mobile: me.mobile,
+        postNum: me.postNum,
+        address: me.address,
+        stuLanguage: me.stuLanguage,
+        stuCountry: me.stuCountry,
+        stuLiveCon: me.stuLiveCon,
+        sns: me.sns,
+        snsId: me.snsId,
+        stuJob: me.stuJob,
+        birth: moment(me.birth),
+      });
+
+      if (me.profileImage)
+        dispatch({
+          type: USER_PROFILE_IMAGE_PATH,
+          data: me.profileImage,
+        });
+    } else {
+      updateForm.resetFields();
+      dispatch({
+        type: USER_PROFILE_IMAGE_PATH,
+        data: null,
+      });
+    }
+  }, [meUpdateModal]);
+
+  ////// TOGGLE //////
+
+  const meUpdateModalToggle = useCallback(() => {
+    dispatch({
+      type: ME_UPDATE_MODAL_TOGGLE,
+    });
+  }, [meUpdateModal]);
+
+  const postCodeModalToggle = useCallback(() => {
+    dispatch({
+      type: POSTCODE_MODAL_TOGGLE,
+    });
+  }, [postCodeModal]);
+
+  ////// HANDLER //////
+
+  const clickImageUpload = useCallback(() => {
+    imageInput.current.click();
+  }, []);
+
+  const onChangeImages = useCallback((e) => {
+    const formData = new FormData();
+
+    [].forEach.call(e.target.files, (file) => {
+      formData.append("image", file);
+    });
+
+    dispatch({
+      type: USER_PROFILE_UPLOAD_REQUEST,
+      data: formData,
+    });
+  }, []);
+
+  const meUpdateHandler = useCallback(
+    (data) => {
+      if (!userProfilePath || userProfilePath.trim().length === 0) {
+        return message.error("프로필 사진을 업로드해주세요");
+      }
+
+      dispatch({
+        type: USER_UPDATE_REQUEST,
+        data: {
+          profileImage: userProfilePath,
+          mobile: data.mobile,
+          postNum: data.postNum,
+          address: data.address,
+          stuLanguage: data.stuLanguage,
+          stuCountry: data.stuCountry,
+          stuLiveCon: data.stuLiveCon,
+          sns: data.sns,
+          snsId: data.snsId,
+          stuJob: data.stuJob,
+          birth: data.birth.format("YYYY-MM-DD"),
+        },
+      });
+    },
+    [userProfilePath]
+  );
+
+  const postCodeSubmit = useCallback(
+    (data) => {
+      updateForm.setFieldsValue({
+        address: data.address,
+        postNum: data.zonecode,
+      });
+
+      dispatch({
+        type: POSTCODE_MODAL_TOGGLE,
+      });
+    },
+    [postCodeModal]
+  );
 
   ////// DATAVIEW //////
 
@@ -319,24 +560,39 @@ const Student = () => {
             <Wrapper
               margin={width < 700 ? `30px 0` : `60px 0`}
               dr={`row`}
-              ju={`flex-start`}
+              ju={`space-between`}
             >
-              <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
-                <Image
-                  width={width < 700 ? `65px` : `75px`}
-                  height={width < 700 ? `65px` : `75px`}
-                  radius={`100px`}
-                  src="https://t1.daumcdn.net/thumb/R720x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/1UzB/image/paEOLJhjPWh-CW7c2KoUJ-tKWs4.jpg"
-                  alt="student_thumbnail"
-                />
+              <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
+                <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
+                  <Image
+                    width={width < 700 ? `65px` : `75px`}
+                    height={width < 700 ? `65px` : `75px`}
+                    radius={`100px`}
+                    src={
+                      me && me.profileImage
+                        ? me.profileImage
+                        : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile.png"
+                    }
+                    alt="student_thumbnail"
+                  />
+                </Wrapper>
+                <Text
+                  fontSize={width < 700 ? `20px` : `28px`}
+                  fontWeight={`bold`}
+                  padding={`0 0 0 15px`}
+                >
+                  안녕하세요,&nbsp;
+                  <SpanText color={Theme.basicTheme_C}>
+                    {me && me.username}
+                  </SpanText>
+                  님!
+                </Text>
               </Wrapper>
-              <Text
-                fontSize={width < 700 ? `20px` : `28px`}
-                fontWeight={`bold`}
-                padding={`0 0 0 15px`}
-              >
-                안녕하세요, Aaliyah님!
-              </Text>
+              <Wrapper width={`auto`}>
+                <CommonButton radius={`5px`} onClick={meUpdateModalToggle}>
+                  회원정보 수정
+                </CommonButton>
+              </Wrapper>
             </Wrapper>
 
             <Wrapper al={`flex-start`} margin={`0 0 20px`}>
@@ -529,7 +785,7 @@ const Student = () => {
                         width={width < 800 ? `80px` : `184px`}
                         height={width < 800 ? `80px` : `190px`}
                         radius={`5px`}
-                        src="https://t1.daumcdn.net/thumb/R720x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/1UzB/image/paEOLJhjPWh-CW7c2KoUJ-tKWs4.jpg"
+                        src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile_big.png"
                         alt="student_thumbnail"
                       />
                       <Wrapper
@@ -1056,6 +1312,228 @@ const Student = () => {
                 </CommonButton>
               </Wrapper>
             </CustomForm>
+          </CustomModal>
+          <CustomModal
+            width={`700px`}
+            visible={meUpdateModal}
+            footer={null}
+            onCancel={meUpdateModalToggle}
+          >
+            <Text fontSize={`22px`} fontWeight={`bold`} margin={`0 0 24px`}>
+              회원정보 수정
+            </Text>
+
+            <ProfileWrapper>
+              <GuideWrapper>
+                <GuideText>
+                  프로필 이미지 사이즈는 가로 {PROFILE_WIDTH}px 과 세로
+                  {PROFILE_HEIGHT}px을 기준으로 합니다.
+                </GuideText>
+                <GuideText>
+                  이미지 사이즈가 상이할 경우 화면에 올바르지 않게 보일 수
+                  있으니 이미지 사이즈를 확인해주세요.
+                </GuideText>
+              </GuideWrapper>
+
+              <ProfileImage
+                src={
+                  userProfilePath
+                    ? `${userProfilePath}`
+                    : `https://via.placeholder.com/${PROFILE_WIDTH}x${PROFILE_HEIGHT}`
+                }
+                alt="main_GALLEY_image"
+              />
+              <PreviewGuide>
+                {userProfilePath && `이미지 미리보기 입니다.`}
+              </PreviewGuide>
+
+              <UploadWrapper>
+                <input
+                  type="file"
+                  name="image"
+                  accept=".png, .jpg"
+                  // multiple
+                  hidden
+                  ref={imageInput}
+                  onChange={onChangeImages}
+                />
+                <CommonButton
+                  type="primary"
+                  onClick={clickImageUpload}
+                  loading={st_userProfileUploadLoading}
+                  radius={`5px`}
+                >
+                  UPLOAD
+                </CommonButton>
+              </UploadWrapper>
+            </ProfileWrapper>
+
+            <CustomForm form={updateForm} onFinish={meUpdateHandler}>
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                전화번호
+              </Text>
+              <Form.Item
+                name="mobile"
+                rules={[
+                  { required: true, message: "전화번호를 입력해주세요." },
+                ]}
+              >
+                <CusotmInput
+                  width={`100%`}
+                  placeholder="전화번호를 입력해주세요."
+                />
+              </Form.Item>
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                우편번호
+              </Text>
+              <Wrapper dr={`row`}>
+                <Wrapper width={width < 700 ? `65%` : `80%`}>
+                  <Form.Item
+                    name="postNum"
+                    rules={[
+                      { required: true, message: "우편번호를 입력해주세요." },
+                    ]}
+                  >
+                    <CusotmInput width={`100%`} readOnly />
+                  </Form.Item>
+                </Wrapper>
+                <CommonButton
+                  width={width < 700 ? `35%` : `20%`}
+                  height={`40px`}
+                  radius={`5px`}
+                  margin={`0 0 24px`}
+                  onClick={postCodeModalToggle}
+                >
+                  우편번호 찾기
+                </CommonButton>
+              </Wrapper>
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                주소
+              </Text>
+              <Form.Item
+                name="address"
+                rules={[{ required: true, message: "주소를 입력해주세요." }]}
+              >
+                <CusotmInput width={`100%`} readOnly />
+              </Form.Item>
+
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                학생 언어
+              </Text>
+              <Form.Item
+                name="stuLanguage"
+                rules={[
+                  { required: true, message: "학생 언어를 입력해주세요." },
+                ]}
+              >
+                <CusotmInput
+                  width={`100%`}
+                  placeholder="학생 언어를 입력해주세요."
+                />
+              </Form.Item>
+
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                학생 나라
+              </Text>
+              <Form.Item
+                name="stuCountry"
+                rules={[
+                  { required: true, message: "학생 나라를 입력해주세요." },
+                ]}
+              >
+                <CusotmInput
+                  width={`100%`}
+                  placeholder="학생 나라를 입력해주세요."
+                />
+              </Form.Item>
+
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                현재 거주 나라
+              </Text>
+              <Form.Item
+                name="stuLiveCon"
+                rules={[
+                  { required: true, message: "현재 거주 나라를 입력해주세요." },
+                ]}
+              >
+                <CusotmInput
+                  width={`100%`}
+                  placeholder="현재 거주 나라를 입력해주세요."
+                />
+              </Form.Item>
+
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                sns
+              </Text>
+              <Form.Item
+                name="sns"
+                rules={[{ required: true, message: "sns를 입력해주세요." }]}
+              >
+                <CusotmInput width={`100%`} placeholder="sns를 입력해주세요." />
+              </Form.Item>
+
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                sns아이디
+              </Text>
+              <Form.Item
+                name="snsId"
+                rules={[
+                  { required: true, message: "sns아이디를 입력해주세요." },
+                ]}
+              >
+                <CusotmInput
+                  width={`100%`}
+                  placeholder="sns아이디를 입력해주세요."
+                />
+              </Form.Item>
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                학생직업
+              </Text>
+              <Form.Item
+                name="stuJob"
+                rules={[
+                  { required: true, message: "학생 직업을 입력해주세요." },
+                ]}
+              >
+                <CusotmInput
+                  width={`100%`}
+                  placeholder="학생직업을 입력해주세요."
+                />
+              </Form.Item>
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                생년월일
+              </Text>
+              <Form.Item
+                name="birth"
+                rules={[
+                  { required: true, message: "생년월일를 입력해주세요." },
+                ]}
+              >
+                <Calendar fullscreen={false} />
+              </Form.Item>
+
+              <Wrapper>
+                <CommonButton height={`40px`} radius={`5px`} htmlType="submit">
+                  회원정보 수정
+                </CommonButton>
+              </Wrapper>
+            </CustomForm>
+          </CustomModal>
+
+          <CustomModal
+            visible={postCodeModal}
+            onCancel={postCodeModalToggle}
+            footer={null}
+          >
+            <Text fontSize={`22px`} fontWeight={`bold`} margin={`0 0 24px`}>
+              우편번호 찾기
+            </Text>
+            <DaumPostCode
+              onComplete={(data) => postCodeSubmit(data)}
+              width={width < 700 ? `100%` : `600px`}
+              autoClose={false}
+              animation
+            />
           </CustomModal>
         </WholeWrapper>
       </ClientLayout>

@@ -256,28 +256,45 @@ router.post("/image", upload.single("image"), async (req, res, next) => {
 });
 
 router.post("/me/update", isLoggedIn, async (req, res, next) => {
-  const { id, profileImage, mobile, address, birth, sns, snsId, stuJob } =
-    req.body;
+  const {
+    profileImage,
+    mobile,
+    postNum,
+    address,
+    teaCountry,
+    teaLanguage,
+    bankNo,
+    bankName,
+    stuLanguage,
+    birth,
+    stuCountry,
+    stuLiveCon,
+    sns,
+    snsId,
+    stuJob,
+  } = req.body;
 
   try {
-    const exUser = await User.findOne({ where: { id: parseInt(id) } });
-
-    if (!exUser) {
-      return res.status(401).send("존재하지 않는 사용자 입니다.");
-    }
-
     const updateUser = await User.update(
       {
         profileImage,
         mobile,
+        postNum,
         address,
         birth,
-        sns,
-        snsId,
-        stuJob,
+        teaCountry: req.user.level === 2 ? teaCountry : null,
+        teaLanguage: req.user.level === 2 ? teaLanguage : null,
+        bankNo: req.user.level === 2 ? bankNo : null,
+        bankName: req.user.level === 2 ? bankName : null,
+        stuLanguage: req.user.level === 1 ? stuLanguage : null,
+        stuCountry: req.user.level === 1 ? stuCountry : null,
+        stuLiveCon: req.user.level === 1 ? stuLiveCon : null,
+        sns: req.user.level === 1 ? sns : null,
+        snsId: req.user.level === 1 ? snsId : null,
+        stuJob: req.user.level === 1 ? stuJob : null,
       },
       {
-        where: { id: parseInt(id) },
+        where: { id: parseInt(req.user.id) },
       }
     );
 
@@ -285,6 +302,99 @@ router.post("/me/update", isLoggedIn, async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("정보를 수정할 수 없습니다.");
+  }
+});
+
+router.patch("/teaMemo/update", isAdminCheck, async (req, res, next) => {
+  const { id, teaMemo } = req.body;
+  try {
+    const exUser = await User.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exUser) {
+      return res.status(401).send("존재하지 않는 사용자입니다.");
+    }
+
+    const updateResult = await User.update(
+      {
+        teaMemo,
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("메모를 작성할 수 없습니다.");
+  }
+});
+
+router.patch("/stuMemo/update", isAdminCheck, async (req, res, next) => {
+  const { id, stuMemo } = req.body;
+  try {
+    const exUser = await User.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exUser) {
+      return res.status(401).send("존재하지 않는 사용자입니다.");
+    }
+
+    const updateResult = await User.update(
+      {
+        stuMemo,
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("메모를 작성할 수 없습니다.");
+  }
+});
+
+router.patch("/adminMemo/update", isAdminCheck, async (req, res, next) => {
+  const { id, adminMemo } = req.body;
+  try {
+    const exUser = await User.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exUser) {
+      return res.status(401).send("존재하지 않는 사용자입니다.");
+    }
+
+    const updateResult = await User.update(
+      {
+        adminMemo,
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("메모를 작성할 수 없습니다.");
   }
 });
 
