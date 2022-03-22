@@ -2,7 +2,13 @@ const express = require("express");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isLoggedIn = require("../middlewares/isLoggedIn");
 const isNanCheck = require("../middlewares/isNanCheck");
-const { Lecture, User, Participant, LectureDiary } = require("../models");
+const {
+  Lecture,
+  User,
+  Participant,
+  LectureDiary,
+  Homework,
+} = require("../models");
 const models = require("../models");
 
 const router = express.Router();
@@ -500,6 +506,10 @@ router.post("/diary/admin/list", async (req, res, next) => {
        ${_TeacherId ? `AND B.TeacherId = ${_TeacherId}` : ``}
      ORDER  BY createdAt DESC
     `;
+
+    const list = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ list: list[0] });
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의 일지 목록을 불러올 수 없습니다.");
@@ -556,7 +566,51 @@ router.post("/diary/create", isLoggedIn, async (req, res, next) => {
 ///////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// - 숙제 작성 - ////////////////////////////////////////
 
-router.get("/homework/list", async (req, res, next) => {});
-router.post("/homework/update", async (req, res, next) => {});
+router.get("/homework/list", async (req, res, next) => {
+  try {
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("숙제 목록을 불러올 수 없습니다.");
+  }
+});
+router.post("/homework/create", async (req, res, next) => {
+  const { title, date, file, LectureId } = req.body;
+  try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의입니다.");
+    }
+
+    const exLecture2 = await Lecture.findOne({
+      title,
+      date,
+      file,
+      LectureId,
+    });
+
+    if (exLecture2) {
+      return res.status(401).send("이미 해당 강의에 숙제가 존재합니다.");
+    }
+
+    const createResult = await Homework.create({
+      title,
+      date,
+      file,
+      LectureId: parseInt(LectureId),
+    });
+
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    }
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("숙제를 등록할 수 없습니다.");
+  }
+});
 
 module.exports = router;

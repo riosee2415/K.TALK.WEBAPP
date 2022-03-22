@@ -34,7 +34,8 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
                 C.startLv,
                 C.endLv,
                 C.startDate,
-                C.endDate 
+                C.endDate,
+                C.price
         FROM	participants				A
        INNER
         JOIN	users						B
@@ -59,7 +60,8 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
                 C.startLv,
                 C.endLv,
                 C.startDate,
-                C.endDate 
+                C.endDate,
+                C.price
         FROM	participants				A
        INNER
         JOIN	users						B
@@ -111,7 +113,8 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
                 C.startLv,
                 C.endLv,
                 C.startDate,
-                C.endDate 
+                C.endDate,
+                C.price
         FROM	participants				A
        INNER
         JOIN	users						B
