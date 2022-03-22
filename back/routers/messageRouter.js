@@ -184,8 +184,15 @@ router.get("/teacherList", isLoggedIn, async (req, res, next) => {
 });
 
 router.post("/create", async (req, res, next) => {
-  const { title, author, senderId, receiverId, receiveLectureId, content } =
-    req.body;
+  const {
+    title,
+    author,
+    senderId,
+    receiverId,
+    receiveLectureId,
+    content,
+    level,
+  } = req.body;
   try {
     const exUser = await User.findOne({
       where: { id: parseInt(receiverId) },
