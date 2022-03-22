@@ -271,7 +271,7 @@ const Index = () => {
 
   const [isCalendar, setIsCalendar] = useState(false);
 
-  const [noteSendToggle, setNoteSendToggle] = useState(false);
+  const [messageSendModalToggle, setMessageSendModalToggle] = useState(false);
   const [noticeModalToggle, setNoticeModalToggle] = useState(false);
   const [homeWorkModalToggle, setHomeWorkModalToggle] = useState(false);
 
@@ -294,6 +294,8 @@ const Index = () => {
       // return router.push(`/`);
     }
   }, [me]);
+
+  console.log(me, "me");
 
   useEffect(() => {
     if (testArr.length !== 0) {
@@ -321,6 +323,10 @@ const Index = () => {
   }, [st_messageDetailDone]);
 
   ////// TOGGLE //////
+
+  const messageSendModalHandler = useCallback(() => {
+    setMessageSendModalToggle((prev) => !prev);
+  }, []);
   ////// HANDLER //////
 
   const dateChagneHandler = useCallback((data) => {
@@ -334,8 +340,8 @@ const Index = () => {
   }, []);
 
   const noteSendFinishHandler = useCallback(
-    (data) => {
-      console.log(data, "asda");
+    (value) => {
+      console.log(value, "value");
 
       // dispatch({
       //   type: MESSAGE_LIST_REQUEST,
@@ -351,6 +357,8 @@ const Index = () => {
     [me, selectValue]
   );
 
+  const noticeFinishHandler = useCallback((value) => {}, []);
+
   const homeWorkFinishHandler = useCallback((data) => {
     console.log(data, "asda");
 
@@ -365,7 +373,7 @@ const Index = () => {
     setIsCalendar(false);
     setHomeWorkModalToggle(false);
     setNoticeModalToggle(false);
-    setNoteSendToggle(false);
+    setMessageSendModalToggle(false);
   }, []);
 
   const onChangeBoxEachHanlder = useCallback((e, idx2, arr) => {
@@ -723,6 +731,7 @@ const Index = () => {
                     ) : (
                       testArr &&
                       testArr.map((data, idx) => {
+                        console.log(data, "data");
                         return (
                           <Wrapper
                             key={data.id}
@@ -938,7 +947,7 @@ const Index = () => {
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`20%`}
                               wordBreak={`break-word`}>
-                              2022/01/22{" "}
+                              2022/01/22
                               <SpanText color={Theme.red_C}>(D-5)</SpanText>
                             </Text>
                             <Text
@@ -965,7 +974,7 @@ const Index = () => {
                   width={width < 700 ? `100px` : `110px`}
                   height={width < 700 ? `32px` : `38px`}
                   fontSize={`14px`}
-                  onClick={() => setNoteSendToggle(true)}>
+                  onClick={() => messageSendModalHandler()}>
                   쪽지 보내기
                 </CommonButton>
               </Wrapper>
@@ -1541,7 +1550,7 @@ const Index = () => {
         </CustomModal>
 
         <CustomModal
-          visible={noteSendToggle}
+          visible={messageSendModalToggle}
           width={`1350px`}
           title="쪽지 보내기"
           footer={null}
@@ -1613,10 +1622,7 @@ const Index = () => {
           title="공지사항 글 작성하기"
           footer={null}
           closable={false}>
-          <CustomForm
-            ref={formRef}
-            form={form}
-            onFinish={noteSendFinishHandler}>
+          <CustomForm ref={formRef} form={form} onFinish={noticeFinishHandler}>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
@@ -1770,10 +1776,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: SEO_LIST_REQUEST,
-    });
-
-    context.store.dispatch({
-      type: MESSAGE_LIST_REQUEST,
     });
 
     // 구현부 종료

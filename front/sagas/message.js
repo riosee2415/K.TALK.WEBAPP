@@ -1,9 +1,14 @@
 import { all, call, delay, fork, put, takeLatest } from "redux-saga/effects";
 import axios from "axios";
 import {
-  MESSAGE_LIST_REQUEST,
-  MESSAGE_LIST_SUCCESS,
-  MESSAGE_LIST_FAILURE,
+  MESSAGE_RECEIVER_LIST_REQUEST,
+  MESSAGE_RECEIVER_LIST_SUCCESS,
+  MESSAGE_RECEIVER_LIST_FAILURE,
+
+  /////////////////////////////////
+  MESSAGE_SENDER_LIST_REQUEST,
+  MESSAGE_SENDER_LIST_SUCCESS,
+  MESSAGE_SENDER_LIST_FAILURE,
 
   /////////////////////////////////
   MESSAGE_DETAIL_REQUEST,
@@ -33,22 +38,45 @@ import {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function messageListAPI(data) {
-  return axios.get(`/api/message/list`);
+function messageReceiverAPI(data) {
+  return axios.get(`/api/message/receiver/list`);
 }
 
-function* messageList(action) {
+function* messageReceiver(action) {
   try {
-    const result = yield call(messageListAPI, action.data);
+    const result = yield call(messageReceiverAPI, action.data);
 
     yield put({
-      type: MESSAGE_LIST_SUCCESS,
+      type: MESSAGE_RECEIVER_LIST_SUCCESS,
       data: result.data,
     });
   } catch (err) {
     console.error(err);
     yield put({
-      type: MESSAGE_LIST_FAILURE,
+      type: MESSAGE_RECEIVER_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function messageSenderAPI(data) {
+  return axios.get(`/api/message/sender/list`);
+}
+
+function* messageSender(action) {
+  try {
+    const result = yield call(messageSenderAPI, action.data);
+
+    yield put({
+      type: MESSAGE_SENDER_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: MESSAGE_SENDER_LIST_FAILURE,
       error: err.response.data,
     });
   }
@@ -80,6 +108,7 @@ function* messageDetail(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function messageCreateAPI(data) {
+  console.log(data, "SGA");
   return axios.post(`/api/message/create`, data);
 }
 
@@ -174,8 +203,12 @@ function* messageAllCreate(action) {
 // ******************************************************************************************************************
 
 //////////////////////////////////////////////////////////////
-function* watchMessageList() {
-  yield takeLatest(MESSAGE_LIST_REQUEST, messageList);
+function* watchMessageReceiver() {
+  yield takeLatest(MESSAGE_RECEIVER_LIST_REQUEST, messageReceiver);
+}
+
+function* watchMessageSender() {
+  yield takeLatest(MESSAGE_SENDER_LIST_REQUEST, messageSender);
 }
 
 function* watchMessageDetail() {
@@ -201,7 +234,8 @@ function* watchMessageAllCreate() {
 //////////////////////////////////////////////////////////////
 export default function* messagerSaga() {
   yield all([
-    fork(watchMessageList),
+    fork(watchMessageReceiver),
+    fork(watchMessageSender),
     fork(watchMessageDetail),
     fork(watchMessageCreate),
     fork(watchMessageDelete),

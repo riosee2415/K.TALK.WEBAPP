@@ -1,12 +1,17 @@
 import produce from "../util/produce";
 
 export const initialState = {
-  messageList: [],
+  messageReceiver: [],
+  messageSender: [],
   messageDetail: [],
   //
-  st_messageListLoading: false,
-  st_messageListDone: false,
-  st_messageListError: null,
+  st_messageReceiverListLoading: false,
+  st_messageReceiverListDone: false,
+  st_messageReceiverListError: null,
+  //
+  st_messageSenderListLoading: false,
+  st_messageSenderListDone: false,
+  st_messageSenderListError: null,
   //
   st_messageDetailLoading: false,
   st_messageDetailDone: false,
@@ -29,25 +34,29 @@ export const initialState = {
   st_messageAllCreateError: null,
 };
 
-export const MESSAGE_LIST_REQUEST = "MESSAGE_LIST_REQUEST";
-export const MESSAGE_LIST_SUCCESS = "MESSAGE_LIST_SUCCESS";
-export const MESSAGE_LIST_FAILURE = "MESSAGE_LIST_FAILURE";
+export const MESSAGE_RECEIVER_LIST_REQUEST = "MESSAGE_RECEIVER_LIST_REQUEST";
+export const MESSAGE_RECEIVER_LIST_SUCCESS = "MESSAGE_RECEIVER_LIST_SUCCESS";
+export const MESSAGE_RECEIVER_LIST_FAILURE = "MESSAGE_RECEIVER_LIST_FAILURE";
 
-export const MESSAGE_DETAIL_REQUEST = "MESSAGE__DETAIL_REQUEST";
-export const MESSAGE_DETAIL_SUCCESS = "MESSAGE__DETAIL_SUCCESS";
-export const MESSAGE_DETAIL_FAILURE = "MESSAGE__DETAIL_FAILURE";
+export const MESSAGE_SENDER_LIST_REQUEST = "MESSAGE_SENDER_LIST_REQUEST";
+export const MESSAGE_SENDER_LIST_SUCCESS = "MESSAGE_SENDER_LIST_SUCCESS";
+export const MESSAGE_SENDER_LIST_FAILURE = "MESSAGE_SENDER_LIST_FAILURE";
 
-export const MESSAGE_CREATE_REQUEST = "MESSAGE__CREATE_REQUEST";
-export const MESSAGE_CREATE_SUCCESS = "MESSAGE__CREATE_SUCCESS";
-export const MESSAGE_CREATE_FAILURE = "MESSAGE__CREATE_FAILURE";
+export const MESSAGE_DETAIL_REQUEST = "MESSAGE_DETAIL_REQUEST";
+export const MESSAGE_DETAIL_SUCCESS = "MESSAGE_DETAIL_SUCCESS";
+export const MESSAGE_DETAIL_FAILURE = "MESSAGE_DETAIL_FAILURE";
 
-export const MESSAGE_DELETE_REQUEST = "MESSAGE__DELETE_REQUEST";
-export const MESSAGE_DELETE_SUCCESS = "MESSAGE__DELETE_SUCCESS";
-export const MESSAGE_DELETE_FAILURE = "MESSAGE__DELETE_FAILURE";
+export const MESSAGE_CREATE_REQUEST = "MESSAGE_CREATE_REQUEST";
+export const MESSAGE_CREATE_SUCCESS = "MESSAGE_CREATE_SUCCESS";
+export const MESSAGE_CREATE_FAILURE = "MESSAGE_CREATE_FAILURE";
 
-export const MESSAGE_MANY_CREATE_REQUEST = "MESSAGE__MANY_CREATE_REQUEST";
-export const MESSAGE_MANY_CREATE_SUCCESS = "MESSAGE__MANY_CREATE_SUCCESS";
-export const MESSAGE_MANY_CREATE_FAILURE = "MESSAGE__MANY_CREATE_FAILURE";
+export const MESSAGE_DELETE_REQUEST = "MESSAGE_DELETE_REQUEST";
+export const MESSAGE_DELETE_SUCCESS = "MESSAGE_DELETE_SUCCESS";
+export const MESSAGE_DELETE_FAILURE = "MESSAGE_DELETE_FAILURE";
+
+export const MESSAGE_MANY_CREATE_REQUEST = "MESSAGE_MANY_CREATE_REQUEST";
+export const MESSAGE_MANY_CREATE_SUCCESS = "MESSAGE_MANY_CREATE_SUCCESS";
+export const MESSAGE_MANY_CREATE_FAILURE = "MESSAGE_MANY_CREATE_FAILURE";
 
 export const MESSAGE_ALL_CREATE_REQUEST = "MESSAGE_ALL_CREATE_REQUEST";
 export const MESSAGE_ALL_CREATE_SUCCESS = "MESSAGE_ALL_CREATE_SUCCESS";
@@ -56,22 +65,43 @@ export const MESSAGE_ALL_CREATE_FAILURE = "MESSAGE_ALL_CREATE_FAILURE";
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
-      case MESSAGE_LIST_REQUEST: {
-        draft.st_messageListLoading = true;
-        draft.st_messageListDone = null;
-        draft.st_messageListError = false;
+      case MESSAGE_RECEIVER_LIST_REQUEST: {
+        draft.st_messageReceiverListLoading = true;
+        draft.st_messageReceiverListDone = null;
+        draft.st_messageReceiverListError = false;
         break;
       }
-      case MESSAGE_LIST_SUCCESS: {
-        draft.st_messageListLoading = false;
-        draft.st_messageListDone = true;
-        draft.messageList = action.data.messages;
+      case MESSAGE_RECEIVER_LIST_SUCCESS: {
+        draft.st_messageReceiverListLoading = false;
+        draft.st_messageReceiverListDone = true;
+        draft.messageReceiver = action.data.messages;
         break;
       }
-      case MESSAGE_LIST_FAILURE: {
-        draft.st_messageListLoading = false;
-        draft.st_messageListDone = false;
-        draft.st_messageListError = action.error;
+      case MESSAGE_RECEIVER_LIST_FAILURE: {
+        draft.st_messageReceiverListLoading = false;
+        draft.st_messageReceiverListDone = false;
+        draft.st_messageReceiverListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case MESSAGE_SENDER_LIST_REQUEST: {
+        draft.st_messageSenderListLoading = true;
+        draft.st_messageSenderListDone = null;
+        draft.st_messageSenderListError = false;
+        break;
+      }
+      case MESSAGE_SENDER_LIST_SUCCESS: {
+        draft.st_messageSenderListLoading = false;
+        draft.st_messageSenderListDone = true;
+        draft.messageSender = action.data.messages;
+        break;
+      }
+      case MESSAGE_SENDER_LIST_FAILURE: {
+        draft.st_messageSenderListLoading = false;
+        draft.st_messageSenderListDone = false;
+        draft.st_messageSenderListError = action.error;
         break;
       }
 

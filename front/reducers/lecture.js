@@ -6,6 +6,7 @@ export const initailState = {
   createModal: false,
   detailModal: false,
   lectureTearcherList: null,
+  lectureStudentList: null,
   //
   st_lectureListLoading: false, // 공지사항 가져오기
   st_lectureListDone: false,
@@ -23,9 +24,13 @@ export const initailState = {
   st_lectureDeleteDone: false,
   st_lectureDeleteError: null,
   //
-  st_lectureTearcherListLoading: false,
+  st_lectureStudentListLoading: false,
   st_lectureTearcherListDone: false,
   st_lectureTearcherListError: null,
+  //
+  st_lectureStdentListLoading: false,
+  st_lectureStdentListDone: false,
+  st_lectureStdentListError: null,
   //
 };
 
@@ -48,6 +53,10 @@ export const LECTURE_DELETE_FAILURE = "LECTURE_DELETE_FAILURE";
 export const LECTURE_TEACHER_LIST_REQUEST = "LECTURE_TEACHER_LIST_REQUEST";
 export const LECTURE_TEACHER_LIST_SUCCESS = "LECTURE_TEACHER_LIST_SUCCESS";
 export const LECTURE_TEACHER_LIST_FAILURE = "LECTURE_TEACHER_LIST_FAILURE";
+//
+export const LECTURE_STUDENT_LIST_REQUEST = "LECTURE_STUDENT_LIST_REQUEST";
+export const LECTURE_STUDENT_LIST_SUCCESS = "LECTURE_STUDENT_LIST_SUCCESS";
+export const LECTURE_STUDENT_LIST_FAILURE = "LECTURE_STUDENT_LIST_FAILURE";
 //
 export const CREATE_MODAL_OPEN_REQUEST = "CREATE_MODAL_OPEN_REQUEST";
 export const CREATE_MODAL_CLOSE_REQUEST = "CREATE_MODAL_CLOSE_REQUEST";
@@ -149,6 +158,26 @@ const reducer = (state = initailState, action) =>
         draft.st_lectureTeacherListLoading = false;
         draft.st_lectureTeacherListDone = false;
         draft.st_lectureTeacherListError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      case LECTURE_STUDENT_LIST_REQUEST: {
+        draft.st_lectureStudentListLoading = true;
+        draft.st_lectureStudentListDone = null;
+        draft.st_lectureStudentListError = false;
+        break;
+      }
+      case LECTURE_STUDENT_LIST_SUCCESS: {
+        draft.st_lectureStudentListLoading = false;
+        draft.st_lectureStudentListDone = true;
+        draft.lectureStudentList = action.data;
+        break;
+      }
+      case LECTURE_STUDENT_LIST_FAILURE: {
+        draft.st_lectureStudentListLoading = false;
+        draft.st_lectureStudentListDone = false;
+        draft.st_lectureStudentListError = action.error;
         break;
       }
 
