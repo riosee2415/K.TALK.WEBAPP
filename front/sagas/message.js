@@ -1,21 +1,25 @@
 import { all, call, delay, fork, put, takeLatest } from "redux-saga/effects";
 import axios from "axios";
 import {
-  MESSAGE_RECEIVER_LIST_REQUEST,
-  MESSAGE_RECEIVER_LIST_SUCCESS,
-  MESSAGE_RECEIVER_LIST_FAILURE,
+  MESSAGE_USER_LIST_REQUEST,
+  MESSAGE_USER_LIST_SUCCESS,
+  MESSAGE_USER_LIST_FAILURE,
 
   /////////////////////////////////
-  MESSAGE_SENDER_LIST_REQUEST,
-  MESSAGE_SENDER_LIST_SUCCESS,
-  MESSAGE_SENDER_LIST_FAILURE,
-
+  MESSAGE_ADMIN_LIST_REQUEST,
+  MESSAGE_ADMIN_LIST_SUCCESS,
+  MESSAGE_ADMIN_LIST_FAILURE,
   /////////////////////////////////
   MESSAGE_DETAIL_REQUEST,
   MESSAGE_DETAIL_SUCCESS,
   MESSAGE_DETAIL_FAILURE,
 
   /////////////////////////////////
+  MESSAGE_TEACHER_LIST_REQUEST,
+  MESSAGE_TEACHER_LIST_SUCCESS,
+  MESSAGE_TEACHER_LIST_FAILURE,
+
+  /////////////////////////////////////
   MESSAGE_CREATE_REQUEST,
   MESSAGE_CREATE_SUCCESS,
   MESSAGE_CREATE_FAILURE,
@@ -34,26 +38,36 @@ import {
   MESSAGE_ALL_CREATE_REQUEST,
   MESSAGE_ALL_CREATE_SUCCESS,
   MESSAGE_ALL_CREATE_FAILURE,
+
+  //////////////////////////////////
+  MESSAGE_LECTURE_CREATE_REQUEST,
+  MESSAGE_LECTURE_CREATE_SUCCESS,
+  MESSAGE_LECTURE_CREATE_FAILURE,
+
+  //////////////////////////////////
+  MESSAGE_FOR_ADMIN_CREATE_REQUEST,
+  MESSAGE_FOR_ADMIN_CREATE_SUCCESS,
+  MESSAGE_FOR_ADMIN_CREATE_FAILURE,
 } from "../reducers/message";
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function messageReceiverAPI(data) {
-  return axios.get(`/api/message/receiver/list`);
+function messageUserListAPI(data) {
+  return axios.get(`/api/message/user/list`);
 }
 
-function* messageReceiver(action) {
+function* messageUserList(action) {
   try {
-    const result = yield call(messageReceiverAPI, action.data);
+    const result = yield call(messageUserListAPI, action.data);
 
     yield put({
-      type: MESSAGE_RECEIVER_LIST_SUCCESS,
+      type: MESSAGE_USER_LIST_SUCCESS,
       data: result.data,
     });
   } catch (err) {
     console.error(err);
     yield put({
-      type: MESSAGE_RECEIVER_LIST_FAILURE,
+      type: MESSAGE_USER_LIST_FAILURE,
       error: err.response.data,
     });
   }
@@ -61,22 +75,22 @@ function* messageReceiver(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function messageSenderAPI(data) {
-  return axios.get(`/api/message/sender/list`);
+function messageAdminListAPI(data) {
+  return axios.post(`/api/message/admin/list`, data);
 }
 
-function* messageSender(action) {
+function* messageAdminList(action) {
   try {
-    const result = yield call(messageSenderAPI, action.data);
+    const result = yield call(messageAdminListAPI, action.data);
 
     yield put({
-      type: MESSAGE_SENDER_LIST_SUCCESS,
+      type: MESSAGE_ADMIN_LIST_SUCCESS,
       data: result.data,
     });
   } catch (err) {
     console.error(err);
     yield put({
-      type: MESSAGE_SENDER_LIST_FAILURE,
+      type: MESSAGE_ADMIN_LIST_FAILURE,
       error: err.response.data,
     });
   }
@@ -107,8 +121,30 @@ function* messageDetail(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
+function messageTearcherListAPI(data) {
+  return axios.get(`/api/message/teacherList`);
+}
+
+function* messageTearcherList(action) {
+  try {
+    const result = yield call(messageTearcherListAPI, action.data);
+
+    yield put({
+      type: MESSAGE_TEACHER_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: MESSAGE_TEACHER_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
 function messageCreateAPI(data) {
-  console.log(data, "SGA");
   return axios.post(`/api/message/create`, data);
 }
 
@@ -198,21 +234,71 @@ function* messageAllCreate(action) {
   }
 }
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function messageLectureCreateAPI(data) {
+  return axios.post(`/api/message/lecture/create`, data);
+}
+
+function* messageLectureCreate(action) {
+  try {
+    const result = yield call(messageLectureCreateAPI, action.data);
+
+    yield put({
+      type: MESSAGE_LECTURE_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: MESSAGE_LECTURE_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function messageForAdminCreateAPI(data) {
+  return axios.post(`/api/message/forAdminCreate`, data);
+}
+
+function* messageForAdminCreate(action) {
+  try {
+    const result = yield call(messageForAdminCreateAPI, action.data);
+
+    yield put({
+      type: MESSAGE_FOR_ADMIN_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: MESSAGE_FOR_ADMIN_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
 //////////////////////////////////////////////////////////////
-function* watchMessageReceiver() {
-  yield takeLatest(MESSAGE_RECEIVER_LIST_REQUEST, messageReceiver);
+function* watchMessageUserList() {
+  yield takeLatest(MESSAGE_USER_LIST_REQUEST, messageUserList);
 }
 
-function* watchMessageSender() {
-  yield takeLatest(MESSAGE_SENDER_LIST_REQUEST, messageSender);
+function* watchMessageAdminList() {
+  yield takeLatest(MESSAGE_ADMIN_LIST_REQUEST, messageAdminList);
 }
 
 function* watchMessageDetail() {
   yield takeLatest(MESSAGE_DETAIL_REQUEST, messageDetail);
+}
+
+function* watchMessageTearcherList() {
+  yield takeLatest(MESSAGE_TEACHER_LIST_REQUEST, messageTearcherList);
 }
 
 function* watchMessageCreate() {
@@ -231,16 +317,27 @@ function* watchMessageAllCreate() {
   yield takeLatest(MESSAGE_ALL_CREATE_REQUEST, messageAllCreate);
 }
 
+function* watchMessageLectureCreate() {
+  yield takeLatest(MESSAGE_LECTURE_CREATE_REQUEST, messageLectureCreate);
+}
+
+function* watchMessageForAdminCreate() {
+  yield takeLatest(MESSAGE_FOR_ADMIN_CREATE_REQUEST, messageForAdminCreate);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* messagerSaga() {
   yield all([
-    fork(watchMessageReceiver),
-    fork(watchMessageSender),
+    fork(watchMessageUserList),
+    fork(watchMessageAdminList),
     fork(watchMessageDetail),
+    fork(watchMessageTearcherList),
     fork(watchMessageCreate),
     fork(watchMessageDelete),
     fork(watchMessageManyCreate),
     fork(watchMessageAllCreate),
+    fork(watchMessageLectureCreate),
+    fork(watchMessageForAdminCreate),
     //
   ]);
 }

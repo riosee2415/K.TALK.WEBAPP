@@ -46,9 +46,10 @@ import {
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
 import {
-  MESSAGE_RECEIVER_LIST_REQUEST,
-  MESSAGE_SENDER_LIST_REQUEST,
   MESSAGE_CREATE_REQUEST,
+  MESSAGE_FOR_ADMIN_CREATE_REQUEST,
+  MESSAGE_TEACHER_LIST_REQUEST,
+  MESSAGE_USER_LIST_REQUEST,
 } from "../../reducers/message";
 
 const PROFILE_WIDTH = `184`;
@@ -239,11 +240,19 @@ const Student = () => {
   } = useSelector((state) => state.user);
 
   const {
-    messageReceiver,
-    st_messageReceiverListDone,
-    st_messageReceiverListError,
+    messageTeacherList,
+    st_messageTeacherListDone,
+    st_messageTeacherListError,
+
     st_messageCreateDone,
     st_messageCreateError,
+
+    st_messageForAdminCreateDone,
+    st_messageForAdminCreateError,
+
+    messageUserList,
+    st_messageUserListDone,
+    st_messageUserListError,
   } = useSelector((state) => state.message);
 
   ////// HOOKS //////
@@ -254,16 +263,23 @@ const Student = () => {
   const [updateForm] = Form.useForm();
 
   const formRef = useRef();
+
   const [form] = Form.useForm();
+  const [answerform] = Form.useForm();
 
   const imageInput = useRef();
 
   const [messageSendModal, setMessageSendModal] = useState(false);
   const [messageViewModal, setMessageViewModal] = useState(false);
 
+  const [messageDatum, setMessageDatum] = useState();
+
+  const [adminSendMessageToggle, setAdminSendMessageToggle] = useState(false);
+
   const [selectValue, setSelectValue] = useState("");
 
   ////// USEEFFECT //////
+
   useEffect(() => {
     if (!me) {
       message.error("로그인 후 이용해주세요.");
@@ -273,6 +289,12 @@ const Student = () => {
       return router.push(`/`);
     }
   }, [me]);
+
+  useEffect(() => {
+    dispatch({
+      type: MESSAGE_TEACHER_LIST_REQUEST,
+    });
+  }, []);
 
   useEffect(() => {
     if (st_userProfileUploadDone) {
@@ -342,23 +364,38 @@ const Student = () => {
   }, [meUpdateModal]);
 
   useEffect(() => {
-    dispatch({
-      type: MESSAGE_RECEIVER_LIST_REQUEST,
-    });
-  }, []);
-
-  useEffect(() => {
     if (st_messageCreateDone) {
       onReset();
 
-      return message.success("쪽지를 보냈습니다.");
+      return message.success("해당 강사님에게 쪽지를 보냈습니다.");
     }
   }, [st_messageCreateDone]);
+
+  useEffect(() => {
+    if (st_messageForAdminCreateError) {
+      return message.error(st_messageForAdminCreateError);
+    }
+  }, [st_messageForAdminCreateError]);
+
+  useEffect(() => {
+    if (st_messageForAdminCreateDone) {
+      onReset();
+      return message.success("관리자에게 쪽지를 보냈습니다.");
+    }
+  }, [st_messageForAdminCreateDone]);
+
+  useEffect(() => {
+    if (st_messageTeacherListError) {
+      return message.error(st_messageTeacherListError);
+    }
+  }, [st_messageTeacherListError]);
 
   const onReset = useCallback(() => {
     form.resetFields();
 
-    messageSendModalHandler();
+    // messageViewModalHandler();
+    setMessageSendModal(false);
+    setMessageViewModal(false);
   }, []);
 
   ////// TOGGLE //////
@@ -379,8 +416,16 @@ const Student = () => {
     setMessageSendModal((prev) => !prev);
   }, []);
 
-  const messageViewModalHandler = useCallback(() => {
+  const messageViewModalHandler = useCallback((data) => {
     setMessageViewModal((prev) => !prev);
+
+    // console.log(data, "dta");
+    onFiil(data);
+    setMessageDatum(data);
+  }, []);
+
+  const adminSendMessageToggleHandler = useCallback(() => {
+    setAdminSendMessageToggle((prev) => !prev);
   }, []);
 
   ////// HANDLER //////
@@ -445,24 +490,71 @@ const Student = () => {
 
   const sendMessageFinishHandler = useCallback(
     (data) => {
-      console.log(me, "asdasdasdasda");
+      // console.log(data, "data");
 
       dispatch({
         type: MESSAGE_CREATE_REQUEST,
         data: {
           title: data.title,
-          content: data.content,
           author: me.userId,
           senderId: me.id,
           receiverId: data.receivePerson,
+          content: data.content,
+          level: me.level,
         },
       });
     },
     [me]
   );
 
+  const sendMessageAdminFinishHandler = useCallback(
+    (data) => {
+      dispatch({
+        type: MESSAGE_FOR_ADMIN_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          author: me.userId,
+          content: data.content,
+        },
+      });
+    },
+    [me]
+  );
+
+  {
+    console.log(messageDatum, "ASKDJAQWIDJI");
+  }
+
+  const answerFinishHandler = useCallback((data, messageData) => {
+    console.log(data, "data");
+
+    console.log(messageData, "messageData");
+    dispatch({
+      type: MESSAGE_CREATE_REQUEST,
+      data: {
+        title: data.messageTitle,
+        author: messageData.author,
+        senderId: messageData.receiverId,
+        receiverId: messageData.senderId,
+        content: data.messageContent,
+        level: messageData.level,
+      },
+    });
+  }, []);
+
   const receiveSelectHandler = useCallback((value) => {
     console.log(`selected ${value}`);
+
+    setSelectValue(value);
+  }, []);
+
+  const onFiil = useCallback((data) => {
+    if (data) {
+      answerform.setFieldsValue({
+        messageTitle: data.title,
+        messageContent: data.content,
+      });
+    }
   }, []);
 
   ////// DATAVIEW //////
@@ -1098,7 +1190,7 @@ const Student = () => {
               <Text
                 fontSize={width < 800 ? `18px` : `22px`}
                 fontWeight={`bold`}>
-                공지사항 / 내게 온 쪽지
+                공지사항
               </Text>
             </Wrapper>
 
@@ -1108,7 +1200,7 @@ const Student = () => {
                 fontWeight={`bold`}
                 padding={`20px 0`}
                 fontSize={width < 800 ? `14px` : `18px`}>
-                <Wrapper width={width < 800 ? `15%` : `10%`}>구분</Wrapper>
+                <Wrapper width={width < 800 ? `15%` : `10%`}>번호</Wrapper>
                 <Wrapper width={width < 800 ? `45%` : `70%`}>제목</Wrapper>
                 <Wrapper width={width < 800 ? `15%` : `10%`}>작성자</Wrapper>
                 <Wrapper width={width < 800 ? `25%` : `10%`}>날짜</Wrapper>
@@ -1125,7 +1217,7 @@ const Student = () => {
                         key={data.id}
                         bgColor={idx % 2 === 0}>
                         <Wrapper width={width < 800 ? `15%` : `10%`}>
-                          {data.type}
+                          {data.id}
                         </Wrapper>
                         <Wrapper
                           width={width < 800 ? `45%` : `70%`}
@@ -1144,6 +1236,60 @@ const Student = () => {
                   })
                 ))}
             </Wrapper>
+
+            <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
+              <Text
+                fontSize={width < 800 ? `18px` : `22px`}
+                fontWeight={`bold`}>
+                내게 온 쪽지
+              </Text>
+            </Wrapper>
+
+            <Wrapper radius={`10px`} shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}>
+              <Wrapper
+                dr={`row`}
+                fontWeight={`bold`}
+                padding={`20px 0`}
+                fontSize={width < 800 ? `14px` : `18px`}>
+                <Wrapper width={width < 800 ? `15%` : `10%`}>번호</Wrapper>
+                <Wrapper width={width < 800 ? `45%` : `70%`}>제목</Wrapper>
+                <Wrapper width={width < 800 ? `15%` : `10%`}>작성자</Wrapper>
+                <Wrapper width={width < 800 ? `25%` : `10%`}>날짜</Wrapper>
+              </Wrapper>
+              {messageUserList &&
+                (messageUserList.length === 0 ? (
+                  <Wrapper margin={`50px 0`}>
+                    <Empty description="내게 온 쪽지가 없습니다." />
+                  </Wrapper>
+                ) : (
+                  messageUserList.map((data, idx) => {
+                    console.log(data, "data");
+                    return (
+                      <CustomTableHoverWrapper
+                        key={data.id}
+                        bgColor={idx % 2 === 0}
+                        onClick={() => messageViewModalHandler(data)}>
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.id}
+                        </Wrapper>
+                        <Wrapper
+                          width={width < 800 ? `45%` : `70%`}
+                          al={`flex-start`}
+                          padding={`0 0 0 10px`}>
+                          {data.title}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.author}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `25%` : `10%`}>
+                          {data.createdAt.slice(0, 14)}
+                        </Wrapper>
+                      </CustomTableHoverWrapper>
+                    );
+                  })
+                ))}
+            </Wrapper>
+
             <Wrapper al={`flex-end`} margin={`20px 0 40px`}>
               <CommonButton
                 radius={`5px`}
@@ -1254,75 +1400,127 @@ const Student = () => {
           </CustomModal>
 
           <CustomModal
-            visible={false}
+            visible={messageViewModal}
             width={`1350px`}
             title="쪽지"
             footer={null}
             closable={false}>
-            <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
-              <Text margin={`0 54px 0 0`}>보낸사람 ooo</Text>
-              <Text>날짜 2022/01/22</Text>
-            </Wrapper>
+            <CustomForm
+              form={answerform}
+              onFinish={(data) => answerFinishHandler(data, messageDatum)}>
+              <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
+                <Text margin={`0 54px 0 0`}>
+                  {messageDatum && messageDatum.author}
+                </Text>
+                <Text>{`날짜 ${messageDatum && messageDatum.createdAt}`}</Text>
+              </Wrapper>
 
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              제목
-            </Text>
-            <Wrapper padding={`10px`}>
-              <WordbreakText>안녕하세요.</WordbreakText>
-            </Wrapper>
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                제목
+              </Text>
+              <Wrapper padding={`10px`}>
+                <Form.Item
+                  name="messageTitle"
+                  rules={[{ required: true, message: "제목을 입력해주세요." }]}>
+                  <CusotmInput width={`100%`} />
+                </Form.Item>
+              </Wrapper>
 
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              내용
-            </Text>
-            <Wrapper padding={`10px`}>
-              <WordbreakText>안녕하세요.</WordbreakText>
-            </Wrapper>
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                내용
+              </Text>
+              <Wrapper padding={`10px`}>
+                <Form.Item
+                  name="messageContent"
+                  rules={[{ required: true, message: "내용을 입력해주세요." }]}>
+                  <Input.TextArea style={{ height: `360px` }} />
+                </Form.Item>
+              </Wrapper>
 
-            <Wrapper dr={`row`}>
-              <CommonButton
-                margin={`0 5px 0 0`}
-                kindOf={`grey`}
-                color={Theme.darkGrey_C}
-                radius={`5px`}>
-                돌아가기
-              </CommonButton>
-              <CommonButton margin={`0 0 0 5px`} radius={`5px`}>
-                답변하기
-              </CommonButton>
-            </Wrapper>
+              <Wrapper dr={`row`}>
+                <CommonButton
+                  margin={`0 5px 0 0`}
+                  kindOf={`grey`}
+                  color={Theme.darkGrey_C}
+                  radius={`5px`}
+                  onClick={() => messageViewModalHandler()}>
+                  돌아가기
+                </CommonButton>
+                <CommonButton
+                  margin={`0 0 0 5px`}
+                  radius={`5px`}
+                  htmlType="submit">
+                  답변하기
+                </CommonButton>
+              </Wrapper>
+            </CustomForm>
           </CustomModal>
 
           <CustomModal
             visible={messageSendModal}
             width={`1350px`}
-            title="쪽지 보내기"
+            title={
+              adminSendMessageToggle
+                ? "관리자에게 쪽지 보내기"
+                : "강사에게 쪽지"
+            }
             footer={null}
             closable={false}>
             <CustomForm
               ref={formRef}
               form={form}
-              onFinish={sendMessageFinishHandler}>
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                받는 사람
-              </Text>
-              <Form.Item
-                name="receivePerson"
-                rules={[{ required: true, message: "선택해주세요." }]}>
-                <Select
-                  value={selectValue}
-                  style={{ width: `100%` }}
-                  onChange={receiveSelectHandler}>
-                  {messageReceiver && messageReceiver.length === 0 ? (
-                    <Option value="lucy">Lucy</Option>
-                  ) : (
-                    messageReceiver &&
-                    messageReceiver.map((data, idx) => {
-                      console.log(data, idx, "asda");
-                      return <Option value={data.id}>{data.author}</Option>;
-                    })
-                  )}
-                </Select>
-              </Form.Item>
+              onFinish={(data) =>
+                adminSendMessageToggle
+                  ? sendMessageAdminFinishHandler(data)
+                  : sendMessageFinishHandler(data)
+              }>
+              <Wrapper al={`flex-end`}>
+                <CommonButton
+                  margin={`0 0 0 5px`}
+                  radius={`5px`}
+                  width={`100px`}
+                  height={`32px`}
+                  size="small"
+                  onClick={() => adminSendMessageToggleHandler()}>
+                  {!adminSendMessageToggle ? " 관라자에게" : "학생에게"}
+                </CommonButton>
+              </Wrapper>
+
+              {!adminSendMessageToggle && (
+                <>
+                  <Text fontSize={`18px`} fontWeight={`bold`}>
+                    받는 사람
+                  </Text>
+
+                  <Form.Item
+                    name="receivePerson"
+                    rules={[
+                      {
+                        required: true,
+                        message: "강사님 이름을 선택해주세요.",
+                      },
+                    ]}>
+                    <Select
+                      value={selectValue}
+                      style={{ width: `100%` }}
+                      onChange={receiveSelectHandler}>
+                      {messageTeacherList && messageTeacherList.length === 0 ? (
+                        <Option value="참여 중인 강의가 없습니다.">
+                          참여 중인 강의가 없습니다.
+                        </Option>
+                      ) : (
+                        messageTeacherList &&
+                        messageTeacherList.map((data, idx) => {
+                          return (
+                            <Option value={data.id}>{data.username}</Option>
+                          );
+                        })
+                      )}
+                    </Select>
+                  </Form.Item>
+                </>
+              )}
+
               <Text fontSize={`18px`} fontWeight={`bold`}>
                 제목
               </Text>
@@ -1588,6 +1786,14 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: SEO_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: MESSAGE_TEACHER_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: MESSAGE_USER_LIST_REQUEST,
     });
 
     // 구현부 종료

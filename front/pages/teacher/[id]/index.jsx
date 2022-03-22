@@ -46,9 +46,25 @@ import {
   Select,
 } from "antd";
 import {
+  MESSAGE_CREATE_REQUEST,
   MESSAGE_DETAIL_REQUEST,
-  MESSAGE_LIST_REQUEST,
+  MESSAGE_USER_LIST_REQUEST,
 } from "../../../reducers/message";
+import { useRouter } from "next/router";
+
+const CusotmInput = styled(TextInput)`
+  border: none;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.16);
+  border-radius: 5px;
+
+  &::placeholder {
+    color: ${Theme.grey2_C};
+  }
+
+  &:focus {
+    border: 1px solid ${Theme.basicTheme_C};
+  }
+`;
 
 const WordbreakText = styled(Text)`
   width: 100%;
@@ -248,16 +264,40 @@ const Index = () => {
 
   const {
     messageList,
+    messageDetail,
+
     st_messageListDone,
     st_messageListError,
-    messageDetail,
+
     st_messageDetailDone,
     st_messageDetailError,
+
+    st_messageForAdminCreateDone,
+    st_messageForAdminCreateError,
+
+    st_messageTeacherListDone,
+    st_messageTeacherListError,
+
+    messageUserList,
+    st_messageUserListDone,
+    st_messageUserListError,
+
+    st_messageCreateDone,
+    st_messageCreateError,
   } = useSelector((state) => state.message);
+
+  useEffect(() => {
+    if (st_messageCreateDone) {
+      onReset();
+      return message.success("답변을 완료 했습니다.");
+    }
+  }, [st_messageCreateDone]);
 
   const { me } = useSelector((state) => state.user);
 
   ////// HOOKS //////
+
+  const router = useRouter();
 
   const dispatch = useDispatch();
 
@@ -266,6 +306,7 @@ const Index = () => {
   const formRef = useRef();
 
   const [form] = Form.useForm();
+  const [answerform] = Form.useForm();
 
   const imageInput = useRef();
 
@@ -284,6 +325,8 @@ const Index = () => {
 
   const inputDate = useInput("");
 
+  const [messageDatum, setMessageDatum] = useState();
+
   ////// REDUX //////
 
   ////// USEEFFECT //////
@@ -291,11 +334,12 @@ const Index = () => {
   useEffect(() => {
     if (!me) {
       message.error("로그인 후 이용해주세요.");
-      // return router.push(`/`);
+      return router.push(`/`);
+    } else if (me.level !== 2) {
+      message.error("강사가 아닙니다.");
+      return router.push(`/`);
     }
   }, [me]);
-
-  console.log(me, "me");
 
   useEffect(() => {
     if (testArr.length !== 0) {
@@ -395,25 +439,44 @@ const Index = () => {
   const messageViewModalHanlder = useCallback((data) => {
     setMessageViewToggle(true);
 
-    dispatch({
-      type: MESSAGE_DETAIL_REQUEST,
-      data: {
-        messageId: data.id,
-      },
-    });
+    setMessageDatum(data);
+    onFillAnswer(data);
   }, []);
 
   const onFill = (data) => {
-    console.log(data[0].content, "data!@$");
     form.setFieldsValue({
       title1: data[0] && data[0].title,
       content2: data[0] && data[0].content,
     });
   };
 
+  const onFillAnswer = (data) => {
+    answerform.setFieldsValue({
+      messageTitle: data.title,
+      messageContent: data.content,
+    });
+  };
+
   function handleChange(value) {
     console.log(`selected ${value}`);
   }
+
+  const answerFinishHandler = useCallback((data, messageData) => {
+    console.log(data, "data");
+    console.log(messageData, "messageData");
+
+    dispatch({
+      type: MESSAGE_CREATE_REQUEST,
+      data: {
+        title: data.messageTitle,
+        author: messageData.author,
+        senderId: messageData.receiverId,
+        receiverId: messageData.senderId,
+        content: data.messageContent,
+        level: messageData.level,
+      },
+    });
+  }, []);
   ////// DATAVIEW //////
 
   const testArr = [
@@ -546,7 +609,12 @@ const Index = () => {
                   width={width < 700 ? `65px` : `75px`}
                   height={width < 700 ? `65px` : `75px`}
                   radius={`50%`}
-                  src={`https://via.placeholder.com/75x75`}
+                  src={
+                    me && me.profileImage
+                      ? me.profileImage
+                      : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile.png"
+                  }
+                  alt="teacher_thumbnail"
                 />
               </Wrapper>
 
@@ -557,8 +625,11 @@ const Index = () => {
                 padding={`0 0 0 15px`}
                 color={Theme.black_2C}>
                 <Text fontWeight={`bold`}>
-                  안녕하세요,
-                  <SpanText color={Theme.basicTheme_C}> Aaliyah님</SpanText>!
+                  안녕하세요,&nbsp;
+                  <SpanText color={Theme.basicTheme_C}>
+                    {me && me.username}님
+                  </SpanText>
+                  !
                 </Text>
               </Wrapper>
             </Wrapper>
@@ -1415,46 +1486,44 @@ const Index = () => {
                   </Text>
                 </Wrapper>
 
-                {messageList && messageList.length === 0 ? (
+                {messageUserList && messageUserList.length === 0 ? (
                   <Wrapper margin={`30px 0`}>
                     <Empty description="조회된 데이터가 없습니다." />
                   </Wrapper>
                 ) : (
-                  messageList &&
-                  messageList.map((data, idx) => {
-                    console.log(data, "data");
+                  messageUserList &&
+                  messageUserList.map((data2, idx) => {
                     return (
                       <Wrapper
-                        key={data.id}
+                        key={data2.id}
                         dr={`row`}
                         textAlign={`center`}
                         padding={`25px 0 20px`}
                         cursor={`pointer`}
                         bgColor={idx % 2 === 0 && Theme.lightGrey_C}
-                        onClick={() => messageViewModalHanlder(data)}>
+                        onClick={() => messageViewModalHanlder(data2)}>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
                           width={`15%`}>
-                          {data.id}
+                          {data2.id}
                         </Text>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
                           width={`calc(100% - 15% - 15% - 25%)`}
                           textAlign={`left`}>
-                          안녕하세요. 오늘 수업 공지입니다.
-                          {data.content}
+                          {data2.title}
                         </Text>
 
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
                           width={`15%`}>
-                          ○○○
+                          {data2.author}
                         </Text>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
                           width={`25%`}>
                           {/* 2022/01/22 */}
-                          {data.createdAt.slice(0, 13)}
+                          {data2.createdAt.slice(0, 13)}
                         </Text>
                       </Wrapper>
                     );
@@ -1510,43 +1579,55 @@ const Index = () => {
           title="쪽지"
           footer={null}
           closable={false}>
-          <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
-            <Text margin={`0 54px 0 0`}>보낸사람 ooo</Text>
-            <Text>날짜 2022/01/22</Text>
-          </Wrapper>
+          <CustomForm
+            form={answerform}
+            onFinish={(data) => answerFinishHandler(data, messageDatum)}>
+            <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
+              <Text margin={`0 54px 0 0`}>
+                {messageDatum && messageDatum.author}
+              </Text>
+              <Text>{`날짜 ${messageDatum && messageDatum.createdAt}`}</Text>
+            </Wrapper>
 
-          <Text fontSize={`18px`} fontWeight={`bold`}>
-            제목
-          </Text>
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              제목
+            </Text>
+            <Wrapper padding={`10px`}>
+              <Form.Item
+                name="messageTitle"
+                rules={[{ required: true, message: "제목을 입력해주세요." }]}>
+                <CusotmInput width={`100%`} />
+              </Form.Item>
+            </Wrapper>
 
-          <Wrapper padding={`10px`} al={`flex-start`}>
-            <Form.Item name="title1">
-              <WordbreakText>안녕하세요.</WordbreakText>
-            </Form.Item>
-          </Wrapper>
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              내용
+            </Text>
+            <Wrapper padding={`10px`}>
+              <Form.Item
+                name="messageContent"
+                rules={[{ required: true, message: "내용을 입력해주세요." }]}>
+                <Input.TextArea style={{ height: `360px` }} />
+              </Form.Item>
+            </Wrapper>
 
-          <Text fontSize={`18px`} fontWeight={`bold`}>
-            내용
-          </Text>
-          <Wrapper padding={`10px`} al={`flex-start`}>
-            <Form.Item name="content1">
-              <WordbreakText> 안녕하세요.</WordbreakText>
-            </Form.Item>
-          </Wrapper>
-
-          <Wrapper dr={`row`}>
-            <CommonButton
-              margin={`0 5px 0 0`}
-              kindOf={`grey`}
-              color={Theme.darkGrey_C}
-              radius={`5px`}
-              onClick={() => onReset()}>
-              돌아가기
-            </CommonButton>
-            <CommonButton margin={`0 0 0 5px`} radius={`5px`}>
-              답변하기
-            </CommonButton>
-          </Wrapper>
+            <Wrapper dr={`row`}>
+              <CommonButton
+                margin={`0 5px 0 0`}
+                kindOf={`grey`}
+                color={Theme.darkGrey_C}
+                radius={`5px`}
+                onClick={() => onReset()}>
+                돌아가기
+              </CommonButton>
+              <CommonButton
+                margin={`0 0 0 5px`}
+                radius={`5px`}
+                htmlType="submit">
+                답변하기
+              </CommonButton>
+            </Wrapper>
+          </CustomForm>
         </CustomModal>
 
         <CustomModal
@@ -1585,7 +1666,7 @@ const Index = () => {
               제목
             </Text>
             <Form.Item name="title1" rules={[{ required: true }]}>
-              <Input />
+              <CusotmInput />
             </Form.Item>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
@@ -1630,7 +1711,7 @@ const Index = () => {
               제목
             </Text>
             <Form.Item name="title2" rules={[{ required: true }]}>
-              <Input />
+              <CusotmInput />
             </Form.Item>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
@@ -1677,7 +1758,7 @@ const Index = () => {
               제목
             </Text>
             <Form.Item name="title3" rules={[{ required: true }]}>
-              <Input placeholder="" />
+              <CusotmInput placeholder="" />
             </Form.Item>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
@@ -1687,7 +1768,7 @@ const Index = () => {
             </Text>
             <Form.Item name="date" rules={[{ required: true }]}>
               <Wrapper dr={`row`} ju={`flex-start`}>
-                <Input
+                <CusotmInput
                   placeholder="날짜를 선택해주세요."
                   value={inputDate.value}
                   style={{
@@ -1776,6 +1857,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: SEO_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: MESSAGE_USER_LIST_REQUEST,
     });
 
     // 구현부 종료
