@@ -1,16 +1,26 @@
 import produce from "../util/produce";
 
 export const initialState = {
-  messageList: [],
-  messageDetail: [],
+  messageUserList: [],
+  messageAdminList: [],
+  messageTeacherList: [],
   //
-  st_messageListLoading: false,
-  st_messageListDone: false,
-  st_messageListError: null,
+  st_messageUserListLoading: false,
+  st_messageUserListDone: false,
+  st_messageUserListError: null,
+  //
+  st_messageAdminListLoading: false,
+  st_messageAdminListDone: false,
+  st_messageAdminListError: null,
   //
   st_messageDetailLoading: false,
   st_messageDetailDone: false,
   st_messageDetailError: null,
+  //
+  //
+  st_messageTeacherListLoading: false,
+  st_messageTeacherListDone: false,
+  st_messageTeacherListError: null,
   //
   st_messageCreateLoading: false,
   st_messageCreateDone: false,
@@ -27,51 +37,99 @@ export const initialState = {
   st_messageAllCreateLoading: false,
   st_messageAllCreateDone: false,
   st_messageAllCreateError: null,
+  //
+  st_messageLectureCreateLoading: false,
+  st_messageLectureCreateDone: false,
+  st_messageLectureCreateError: null,
+  //
+  st_messageForAdminCreateLoading: false,
+  st_messageForAdminCreateDone: false,
+  st_messageForAdminCreateError: null,
 };
 
-export const MESSAGE_LIST_REQUEST = "MESSAGE_LIST_REQUEST";
-export const MESSAGE_LIST_SUCCESS = "MESSAGE_LIST_SUCCESS";
-export const MESSAGE_LIST_FAILURE = "MESSAGE_LIST_FAILURE";
+export const MESSAGE_USER_LIST_REQUEST = "MESSAGE_USER_LIST_REQUEST";
+export const MESSAGE_USER_LIST_SUCCESS = "MESSAGE_USER_LIST_SUCCESS";
+export const MESSAGE_USER_LIST_FAILURE = "MESSAGE_USER_LIST_FAILURE";
 
-export const MESSAGE_DETAIL_REQUEST = "MESSAGE__DETAIL_REQUEST";
-export const MESSAGE_DETAIL_SUCCESS = "MESSAGE__DETAIL_SUCCESS";
-export const MESSAGE_DETAIL_FAILURE = "MESSAGE__DETAIL_FAILURE";
+export const MESSAGE_ADMIN_LIST_REQUEST = "MESSAGE_ADMIN_LIST_REQUEST";
+export const MESSAGE_ADMIN_LIST_SUCCESS = "MESSAGE_ADMIN_LIST_SUCCESS";
+export const MESSAGE_ADMIN_LIST_FAILURE = "MESSAGE_ADMIN_LIST_FAILURE";
 
-export const MESSAGE_CREATE_REQUEST = "MESSAGE__CREATE_REQUEST";
-export const MESSAGE_CREATE_SUCCESS = "MESSAGE__CREATE_SUCCESS";
-export const MESSAGE_CREATE_FAILURE = "MESSAGE__CREATE_FAILURE";
+export const MESSAGE_DETAIL_REQUEST = "MESSAGE_DETAIL_REQUEST";
+export const MESSAGE_DETAIL_SUCCESS = "MESSAGE_DETAIL_SUCCESS";
+export const MESSAGE_DETAIL_FAILURE = "MESSAGE_DETAIL_FAILURE";
 
-export const MESSAGE_DELETE_REQUEST = "MESSAGE__DELETE_REQUEST";
-export const MESSAGE_DELETE_SUCCESS = "MESSAGE__DELETE_SUCCESS";
-export const MESSAGE_DELETE_FAILURE = "MESSAGE__DELETE_FAILURE";
+export const MESSAGE_TEACHER_LIST_REQUEST = "MESSAGE_TEACHER_LIST_REQUEST";
+export const MESSAGE_TEACHER_LIST_SUCCESS = "MESSAGE_TEACHER_LIST_SUCCESS";
+export const MESSAGE_TEACHER_LIST_FAILURE = "MESSAGE_TEACHER_LIST_FAILURE";
 
-export const MESSAGE_MANY_CREATE_REQUEST = "MESSAGE__MANY_CREATE_REQUEST";
-export const MESSAGE_MANY_CREATE_SUCCESS = "MESSAGE__MANY_CREATE_SUCCESS";
-export const MESSAGE_MANY_CREATE_FAILURE = "MESSAGE__MANY_CREATE_FAILURE";
+export const MESSAGE_CREATE_REQUEST = "MESSAGE_CREATE_REQUEST";
+export const MESSAGE_CREATE_SUCCESS = "MESSAGE_CREATE_SUCCESS";
+export const MESSAGE_CREATE_FAILURE = "MESSAGE_CREATE_FAILURE";
+
+export const MESSAGE_DELETE_REQUEST = "MESSAGE_DELETE_REQUEST";
+export const MESSAGE_DELETE_SUCCESS = "MESSAGE_DELETE_SUCCESS";
+export const MESSAGE_DELETE_FAILURE = "MESSAGE_DELETE_FAILURE";
+
+export const MESSAGE_MANY_CREATE_REQUEST = "MESSAGE_MANY_CREATE_REQUEST";
+export const MESSAGE_MANY_CREATE_SUCCESS = "MESSAGE_MANY_CREATE_SUCCESS";
+export const MESSAGE_MANY_CREATE_FAILURE = "MESSAGE_MANY_CREATE_FAILURE";
 
 export const MESSAGE_ALL_CREATE_REQUEST = "MESSAGE_ALL_CREATE_REQUEST";
 export const MESSAGE_ALL_CREATE_SUCCESS = "MESSAGE_ALL_CREATE_SUCCESS";
 export const MESSAGE_ALL_CREATE_FAILURE = "MESSAGE_ALL_CREATE_FAILURE";
 
+export const MESSAGE_LECTURE_CREATE_REQUEST = "MESSAGE_LECTURE_CREATE_REQUEST";
+export const MESSAGE_LECTURE_CREATE_SUCCESS = "MESSAGE_LECTURE_CREATE_SUCCESS";
+export const MESSAGE_LECTURE_CREATE_FAILURE = "MESSAGE_LECTURE_CREATE_FAILURE";
+
+export const MESSAGE_FOR_ADMIN_CREATE_REQUEST =
+  "MESSAGE_FOR_ADMIN_CREATE_REQUEST";
+export const MESSAGE_FOR_ADMIN_CREATE_SUCCESS =
+  "MESSAGE_FOR_ADMIN_CREATE_SUCCESS";
+export const MESSAGE_FOR_ADMIN_CREATE_FAILURE =
+  "MESSAGE_FOR_ADMIN_CREATE_FAILURE";
+
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
-      case MESSAGE_LIST_REQUEST: {
-        draft.st_messageListLoading = true;
-        draft.st_messageListDone = null;
-        draft.st_messageListError = false;
+      case MESSAGE_USER_LIST_REQUEST: {
+        draft.st_messageUserListLoading = true;
+        draft.st_messageUserListDone = null;
+        draft.st_messageUserListError = false;
         break;
       }
-      case MESSAGE_LIST_SUCCESS: {
-        draft.st_messageListLoading = false;
-        draft.st_messageListDone = true;
-        draft.messageList = action.data.messages;
+      case MESSAGE_USER_LIST_SUCCESS: {
+        draft.st_messageUserListLoading = false;
+        draft.st_messageUserListDone = true;
+        draft.messageUserList = action.data.messages;
         break;
       }
-      case MESSAGE_LIST_FAILURE: {
-        draft.st_messageListLoading = false;
-        draft.st_messageListDone = false;
-        draft.st_messageListError = action.error;
+      case MESSAGE_USER_LIST_FAILURE: {
+        draft.st_messageUserListLoading = false;
+        draft.st_messageUserListDone = false;
+        draft.st_messageUserListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case MESSAGE_ADMIN_LIST_REQUEST: {
+        draft.st_messageAdminListLoading = true;
+        draft.st_messageAdminListDone = null;
+        draft.st_messageAdminListError = false;
+        break;
+      }
+      case MESSAGE_ADMIN_LIST_SUCCESS: {
+        draft.st_messageAdminListLoading = false;
+        draft.st_messageAdminListDone = true;
+        draft.messageAdminList = action.data.messages;
+        break;
+      }
+      case MESSAGE_ADMIN_LIST_FAILURE: {
+        draft.st_messageAdminListLoading = false;
+        draft.st_messageAdminListDone = false;
+        draft.st_messageAdminListError = action.error;
         break;
       }
 
@@ -93,6 +151,27 @@ const reducer = (state = initialState, action) =>
         draft.st_messageDetailLoading = false;
         draft.st_messageDetailDone = false;
         draft.st_messageDetailError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case MESSAGE_TEACHER_LIST_REQUEST: {
+        draft.st_messageTeacherListLoading = true;
+        draft.st_messageTeacherListDone = null;
+        draft.st_messageTeacherListError = false;
+        break;
+      }
+      case MESSAGE_TEACHER_LIST_SUCCESS: {
+        draft.st_messageTeacherListLoading = false;
+        draft.st_messageTeacherListDone = true;
+        draft.messageTeacherList = action.data;
+        break;
+      }
+      case MESSAGE_TEACHER_LIST_FAILURE: {
+        draft.st_messageTeacherListLoading = false;
+        draft.st_messageTeacherListDone = false;
+        draft.st_messageTeacherListError = action.error;
         break;
       }
 
@@ -173,6 +252,42 @@ const reducer = (state = initialState, action) =>
         draft.st_messageAllCreateLoading = false;
         draft.st_messageAllCreateDone = false;
         draft.st_messageAllCreateError = action.error;
+        break;
+      }
+
+      case MESSAGE_LECTURE_CREATE_REQUEST: {
+        draft.st_messageLectureCreateLoading = true;
+        draft.st_messageLectureCreateDone = null;
+        draft.st_messageLectureCreateError = false;
+        break;
+      }
+      case MESSAGE_LECTURE_CREATE_SUCCESS: {
+        draft.st_messageLectureCreateLoading = false;
+        draft.st_messageLectureCreateDone = true;
+        break;
+      }
+      case MESSAGE_LECTURE_CREATE_FAILURE: {
+        draft.st_messageLectureCreateLoading = false;
+        draft.st_messageLectureCreateDone = false;
+        draft.st_messageLectureCreateError = action.error;
+        break;
+      }
+
+      case MESSAGE_FOR_ADMIN_CREATE_REQUEST: {
+        draft.st_messageForAdminCreateLoading = true;
+        draft.st_messageForAdminCreateDone = null;
+        draft.st_messageForAdminCreateError = false;
+        break;
+      }
+      case MESSAGE_FOR_ADMIN_CREATE_SUCCESS: {
+        draft.st_messageForAdminCreateLoading = false;
+        draft.st_messageForAdminCreateDone = true;
+        break;
+      }
+      case MESSAGE_FOR_ADMIN_CREATE_FAILURE: {
+        draft.st_messageForAdminCreateLoading = false;
+        draft.st_messageForAdminCreateDone = false;
+        draft.st_messageForAdminCreateError = action.error;
         break;
       }
 

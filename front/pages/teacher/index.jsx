@@ -504,7 +504,7 @@ const Index = () => {
                         ? me.profileImage
                         : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile.png"
                     }
-                    alt="student_thumbnail"
+                    alt="teacher_thumbnail"
                   />
                 </Wrapper>
                 <Text

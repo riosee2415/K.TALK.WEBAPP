@@ -2,7 +2,13 @@ const express = require("express");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isLoggedIn = require("../middlewares/isLoggedIn");
 const isNanCheck = require("../middlewares/isNanCheck");
-const { Lecture, User, Participant, LectureDiary } = require("../models");
+const {
+  Lecture,
+  User,
+  Participant,
+  LectureDiary,
+  Homework,
+} = require("../models");
 const models = require("../models");
 
 const router = express.Router();
@@ -395,17 +401,115 @@ router.delete("/delete/:lectureId", isAdminCheck, async (req, res, next) => {
 ///////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////// - 강의 일지 작성 -///////////////////////////////////////
 
-router.get("/diary/list", async (req, res, next) => {
-  const { page } = req.query;
+router.post("/diary/list", isLoggedIn, async (req, res, next) => {
+  const { page, LectureId } = req.body;
+
+  const LIMIT = 10;
+
+  const _page = page ? page : 1;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 10;
+
   try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의입니다.");
+    }
+
+    if (!exLecture.TeacherId !== req.user.id) {
+      return res.status(401).send("자신의 강의가 아닙니다.");
+    }
+
+    const lengthQuery = `
+    SELECT	id,
+            author,
+            process,
+            lectureMemo,
+            createdAt,
+            updatedAt,
+            LectureId
+      FROM	lectureDiarys
+     WHERE  LectureId = ${LectureId}
+      `;
+
+    const diaryQuery = `
+    SELECT	id,
+            author,
+            process,
+            lectureMemo,
+            createdAt,
+            updatedAt,
+            LectureId
+      FROM	lectureDiarys
+     WHERE  LectureId = ${LectureId}
+     LIMIT  ${LIMIT}
+    OFFSET  ${OFFSET}
+     ORDER  BY createdAt DESC
+    `;
+
+    const length = await models.sequelize.query(lengthQuery);
+    const diarys = await models.sequelize.query(diaryQuery);
+
+    const diaryLen = length[0].length;
+
+    const lastPage =
+      diaryLen % LIMIT > 0 ? diaryLen / LIMIT + 1 : diaryLen / LIMIT;
+
+    return res
+      .status(200)
+      .json({ diarys: diarys[0], lastPage: parseInt(lastPage) });
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의 일지 목록을 불러올 수 없습니다.");
   }
 });
 
-router.get("/diary/admin/list", async (req, res, next) => {
+router.post("/diary/admin/list", async (req, res, next) => {
+  const { TeacherId } = req.body;
+
+  const _TeacherId = TeacherId || null;
+
   try {
+    const selectQuery = `
+    SELECT	A.id,
+            A.author,
+            A.process,
+            A.lectureMemo,
+            A.createdAt,
+            A.updatedAt,
+            A.LectureId,
+            B.course,
+            B.lecDate,
+            B.lecTime,
+            B.startLv,
+            B.endLv,
+            B.startDate,
+            B.endDate,
+            B.memo,
+            B.price,
+            C.username,
+            C.level,
+            C.teaCountry,
+            C.teaLanguage
+      FROM	lectureDiarys			A
+     INNER
+      JOIN	lectures				B
+        ON	A.LectureId = B.id 
+     INNER
+      JOIN	users 					C
+        ON	B.TeacherId = C.id 
+     WHERE  1 = 1
+       ${_TeacherId ? `AND B.TeacherId = ${_TeacherId}` : ``}
+     ORDER  BY createdAt DESC
+    `;
+
+    const list = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ list: list[0] });
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의 일지 목록을 불러올 수 없습니다.");
@@ -445,6 +549,10 @@ router.post("/diary/create", isLoggedIn, async (req, res, next) => {
       LectureId: parseInt(LectureId),
     });
 
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    }
+
     return res.status(201).json({ result: true });
   } catch (error) {
     console.error(error);
@@ -458,7 +566,51 @@ router.post("/diary/create", isLoggedIn, async (req, res, next) => {
 ///////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// - 숙제 작성 - ////////////////////////////////////////
 
-router.get("/homework/list", async (req, res, next) => {});
-router.post("/homework/update", async (req, res, next) => {});
+router.get("/homework/list", async (req, res, next) => {
+  try {
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("숙제 목록을 불러올 수 없습니다.");
+  }
+});
+router.post("/homework/create", async (req, res, next) => {
+  const { title, date, file, LectureId } = req.body;
+  try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의입니다.");
+    }
+
+    const exLecture2 = await Lecture.findOne({
+      title,
+      date,
+      file,
+      LectureId,
+    });
+
+    if (exLecture2) {
+      return res.status(401).send("이미 해당 강의에 숙제가 존재합니다.");
+    }
+
+    const createResult = await Homework.create({
+      title,
+      date,
+      file,
+      LectureId: parseInt(LectureId),
+    });
+
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    }
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("숙제를 등록할 수 없습니다.");
+  }
+});
 
 module.exports = router;

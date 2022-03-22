@@ -26,7 +26,7 @@ export const initailState = {
   st_lectureDeleteDone: false,
   st_lectureDeleteError: null,
   //
-  st_lectureTearcherListLoading: false,
+  st_lectureStudentListLoading: false,
   st_lectureTearcherListDone: false,
   st_lectureTearcherListError: null,
   //
