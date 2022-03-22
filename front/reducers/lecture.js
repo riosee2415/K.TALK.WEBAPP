@@ -8,6 +8,7 @@ export const initailState = {
   detailLectures: null,
   createModal: false,
   detailModal: false,
+  updateModal: false,
   //
   st_lectureListLoading: false, // 공지사항 가져오기
   st_lectureListDone: false,
@@ -72,6 +73,9 @@ export const CREATE_MODAL_CLOSE_REQUEST = "CREATE_MODAL_CLOSE_REQUEST";
 
 export const DETAIL_MODAL_OPEN_REQUEST = "DETAIL_MODAL_OPEN_REQUEST";
 export const DETAIL_MODAL_CLOSE_REQUEST = "DETAIL_MODAL_CLOSE_REQUEST";
+
+export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
+export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
 
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
@@ -229,6 +233,15 @@ const reducer = (state = initailState, action) =>
 
       case DETAIL_MODAL_CLOSE_REQUEST:
         draft.detailModal = false;
+        break;
+      ///////////////////////////////////////////////////////
+
+      case UPDATE_MODAL_OPEN_REQUEST:
+        draft.updateModal = true;
+        break;
+
+      case UPDATE_MODAL_CLOSE_REQUEST:
+        draft.updateModal = false;
         break;
       ///////////////////////////////////////////////////////
 

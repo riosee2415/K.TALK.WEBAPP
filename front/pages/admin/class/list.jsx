@@ -16,6 +16,7 @@ import {
   Col,
   message,
   Empty,
+  DatePicker,
 } from "antd";
 import {
   CloseOutlined,
@@ -27,6 +28,9 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   LECTURE_DELETE_REQUEST,
   LECTURE_LIST_REQUEST,
+  UPDATE_MODAL_OPEN_REQUEST,
+  UPDATE_MODAL_CLOSE_REQUEST,
+  LECTURE_UPDATE_REQUEST,
 } from "../../../reducers/lecture";
 
 import { withRouter } from "next/router";
@@ -35,37 +39,25 @@ import useInput from "../../../hooks/useInput";
 import { END } from "redux-saga";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
+import {
+  LOAD_MY_INFO_REQUEST,
+  USER_ALL_LIST_REQUEST,
+} from "../../../reducers/user";
 import wrapper from "../../../store/configureStore";
 import {
   CommonButton,
   Image,
   RowWrapper,
   Text,
+  TextInput,
   Wrapper,
 } from "../../../components/commonComponents";
 import Theme from "../../../components/Theme";
 import useWidth from "../../../hooks/useWidth";
+import moment from "moment";
 
 const AdminContent = styled.div`
   padding: 20px;
-`;
-
-const FileBox = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-`;
-
-const Filename = styled.span`
-  margin-right: 15px;
-  color: #555;
-  font-size: 13px;
-`;
-
-const SearchRow = styled(Row)`
-  margin-bottom: 10px;
 `;
 
 const NoticeTable = styled(Table)`
@@ -80,6 +72,25 @@ const CustomButton = styled(Button)`
   font-size: 14px;
 `;
 
+const CusotmInput = styled(TextInput)`
+  width: 100%;
+  &::placeholder {
+    color: ${Theme.grey2_C};
+  }
+`;
+
+const DateInput = styled(DatePicker)`
+  width: ${(props) => props.width || `100%`};
+  &::placeholder {
+    color: ${Theme.grey2_C};
+  }
+`;
+
+const FormItem = styled(Form.Item)`
+  width: ${(props) => props.width || `calc(100% - 100px)`};
+  margin: 0;
+`;
+
 const LoadNotification = (msg, content) => {
   notification.open({
     message: msg,
@@ -89,7 +100,6 @@ const LoadNotification = (msg, content) => {
 };
 
 const List = () => {
-  const week = ["일", "월", "화", "수", "목", "금", "토"];
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
   const { me, st_loadMyInfoDone } = useSelector((state) => state.user);
 
@@ -111,14 +121,31 @@ const List = () => {
   ////// HOOKS //////
   const width = useWidth();
   const [currentSort, setCurrentSort] = useState(1);
+
   const [deletePopVisible, setDeletePopVisible] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
+  const [updateData, setUpdateData] = useState(null);
+  const formRef = useRef();
+  const [form] = Form.useForm();
+
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const inputPeriod = useInput(``);
+
   ////// REDUX //////
   const dispatch = useDispatch();
-  const { lectures, st_lectureDeleteDone, st_lectureDeleteError } = useSelector(
-    (state) => state.lecture
-  );
+
+  const {
+    lectures,
+    st_lectureDeleteDone,
+    st_lectureDeleteError,
+    updateModal,
+    st_lectureUpdateDone,
+    st_lectureUpdateError,
+  } = useSelector((state) => state.lecture);
+
+  const { allUsers } = useSelector((state) => state.user);
 
   ////// USEEFFECT //////
   useEffect(() => {
@@ -129,6 +156,15 @@ const List = () => {
       },
     });
   }, [currentSort]);
+
+  useEffect(() => {
+    dispatch({
+      type: USER_ALL_LIST_REQUEST,
+      data: {
+        type: 2,
+      },
+    });
+  }, [router.query]);
 
   useEffect(() => {
     if (st_lectureDeleteDone) {
@@ -148,7 +184,92 @@ const List = () => {
     }
   }, [st_lectureDeleteError]);
 
+  useEffect(() => {
+    if (st_lectureUpdateDone) {
+      message.success("클래스가 수정되었습니다.");
+      dispatch({
+        type: LECTURE_LIST_REQUEST,
+        data: {
+          sort: currentSort,
+        },
+      });
+      updateModalClose();
+    }
+  }, [st_lectureUpdateDone, currentSort]);
+
+  useEffect(() => {
+    if (st_lectureUpdateError) {
+      message.error(st_lectureUpdateError);
+    }
+  }, [st_lectureUpdateError]);
+
+  useEffect(() => {
+    if (startDate && inputPeriod.value && formRef.current) {
+      const startDateData = new Date(startDate);
+      const endDateData = moment(
+        new Date(
+          startDateData.getFullYear(),
+          startDateData.getMonth(),
+          startDateData.getDate() + 7 * inputPeriod.value
+        )
+      ).format("YYYY-MM-DD");
+      formRef.current.setFieldsValue({
+        endDate: endDateData,
+      });
+
+      setEndDate(endDateData);
+    }
+  }, [startDate, inputPeriod, formRef]);
+
+  useEffect(() => {
+    if (updateData) {
+      setTimeout(() => {
+        onFill(updateData);
+      }, 500);
+    }
+  }, [updateData]);
+
   ////// HANDLER ///////
+
+  const startDateChangeHandler = useCallback((e) => {
+    const startDateData = new Date(e.format("YYYY-MM-DD"));
+
+    setStartDate(startDateData);
+  }, []);
+
+  const onSubmitUpdate = useCallback(
+    (data) => {
+      let UserId = null;
+      for (let i = 0; i < allUsers.length; i++) {
+        if (allUsers[i].username === data.UserId) {
+          UserId = allUsers[i].id;
+        }
+      }
+
+      // console.log();
+
+      dispatch({
+        type: LECTURE_UPDATE_REQUEST,
+        data: {
+          id: updateData.id,
+          course: data.course,
+          UserId,
+          startLv: data.startLv,
+          endLv: data.endLv,
+          price: data.price,
+          lecTime: data.lecTime,
+          lecDate: data.lecDate,
+          startDate: moment(data.startDate).format("YYYY-MM-DD"),
+          endDate: data.endDate,
+        },
+      });
+    },
+    [updateData, allUsers]
+  );
+
+  const updateModalOk = useCallback(() => {
+    formRef.current.submit();
+  }, []);
 
   const comboChangeHandler = useCallback((e) => {
     setCurrentSort(e);
@@ -170,7 +291,50 @@ const List = () => {
     setDeletePopVisible((prev) => !prev);
   }, [deleteId]);
 
+  const onFill = useCallback(
+    (data) => {
+      let UserId = null;
+      for (let i = 0; i < allUsers.length; i++) {
+        console.log(allUsers[i], data.teacherName, "onFia");
+        if (allUsers[i].username === data.teacherName) {
+          UserId = allUsers[i].username;
+        }
+      }
+
+      form.setFieldsValue({
+        course: data.course,
+        UserId,
+        startLv: data.startLv,
+        endLv: data.endLv,
+        price: data.price,
+        lecTime: data.lecTime,
+        lecDate: parseInt(data.lecDate.replace("주", "")),
+
+        startDate: moment(data.startDate, "YYYY-MM-DD"),
+        // endDate: moment(data.startDate, "YYYY-MM-DD"),
+      });
+      inputPeriod.setValue(parseInt(data.lecDate.replace("주", "")));
+      setStartDate(data.startDate);
+    },
+    [inputPeriod, allUsers]
+  );
   ////// TOGGLE ///////
+  const updateModalOpen = useCallback(
+    (data) => {
+      dispatch({
+        type: UPDATE_MODAL_OPEN_REQUEST,
+      });
+      setUpdateData(data);
+    },
+    [updateModal]
+  );
+
+  const updateModalClose = useCallback(() => {
+    dispatch({
+      type: UPDATE_MODAL_CLOSE_REQUEST,
+    });
+    setUpdateData(null);
+  }, [updateModal]);
 
   const deletePopToggle = useCallback(
     (id) => {
@@ -181,6 +345,7 @@ const List = () => {
   );
 
   ////// DATAVIEW //////
+  const week = ["일", "월", "화", "수", "목", "금", "토"];
 
   const columns = [
     {
@@ -274,9 +439,18 @@ const List = () => {
           </Wrapper>
         </Wrapper>
         <Wrapper al={`flex-start`} margin={`0 0 10px`}>
-          <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 16px`}>
-            클래스 목록
-          </Text>
+          <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 16px`}>
+            <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 20px 0 0`}>
+              클래스 목록
+            </Text>
+            <Button
+              size="small"
+              type="primary"
+              onClick={() => moveLinkHandler(`/admin/class/create`)}
+            >
+              새 클래스 추가
+            </Button>
+          </Wrapper>
           <Select
             style={{ width: `200px` }}
             placeholder={`정렬을 선택해주세요.`}
@@ -457,6 +631,17 @@ const List = () => {
                       >
                         자세히 보기
                       </CommonButton>
+                      <CommonButton
+                        padding={`0`}
+                        width={`80px`}
+                        height={`35px`}
+                        radius={`5px`}
+                        margin={`0 10px 0 0`}
+                        fontSize={`14px`}
+                        onClick={() => updateModalOpen(data)}
+                      >
+                        수정
+                      </CommonButton>
                       <CustomButton
                         type={`danger`}
                         onClick={() => deletePopToggle(data.id)}
@@ -468,7 +653,6 @@ const List = () => {
                 );
               })
             ))}
-          {console.log(deletePopVisible)}
         </Wrapper>
       </AdminContent>
 
@@ -481,6 +665,151 @@ const List = () => {
       >
         <Wrapper>삭제 된 데이터는 다시 복구할 수 없습니다.</Wrapper>
         <Wrapper>정말 삭제하시겠습니까?</Wrapper>
+      </Modal>
+      {/* UPDATE MODAL */}
+      <Modal
+        visible={updateModal}
+        width={`1100px`}
+        title={`클래스 수정`}
+        onOk={updateModalOk}
+        onCancel={updateModalClose}
+      >
+        <Form form={form} ref={formRef} onFinish={onSubmitUpdate}>
+          <Wrapper padding={`0 50px`}>
+            <Wrapper dr={`row`} margin={`0 0 20px`}>
+              <Text width={`100px`}>강의명</Text>
+              <FormItem
+                rules={[{ required: true, message: "강의명을 입력해주세요." }]}
+                name={`course`}
+              >
+                <CusotmInput />
+              </FormItem>
+            </Wrapper>
+
+            {/* defaultValue={updateData && updateData.teacherName} */}
+            <Wrapper dr={`row`} margin={`0 0 20px`}>
+              <Text width={`100px`}>강사</Text>
+              <FormItem
+                rules={[{ required: true, message: "강사를 선택해주세요." }]}
+                name={`UserId`}
+              >
+                <Select size={`large`}>
+                  {allUsers &&
+                    allUsers.map((data) => {
+                      return (
+                        <Select.Option key={data.id} value={data.username}>
+                          {data.username}
+                        </Select.Option>
+                      );
+                    })}
+                </Select>
+                {/* <CusotmInput /> */}
+              </FormItem>
+            </Wrapper>
+
+            <Wrapper dr={`row`} margin={`0 0 20px`}>
+              <Text width={`100px`}>시작 레벨</Text>
+              <FormItem
+                rules={[
+                  { required: true, message: "시작 레벨을 입력해주세요." },
+                ]}
+                name={`startLv`}
+              >
+                <CusotmInput />
+              </FormItem>
+            </Wrapper>
+
+            <Wrapper dr={`row`} margin={`0 0 20px`}>
+              <Text width={`100px`}>끝 레벨</Text>
+              <FormItem
+                rules={[{ required: true, message: "끝 레벨을 입력해주세요." }]}
+                name={`endLv`}
+              >
+                <CusotmInput />
+              </FormItem>
+            </Wrapper>
+
+            <Wrapper dr={`row`} margin={`0 0 20px`}>
+              <Text width={`100px`}>가격</Text>
+              <FormItem
+                rules={[{ required: true, message: "가격을 입력해주세요." }]}
+                name={`price`}
+                width={`calc(100% - 130px)`}
+              >
+                <CusotmInput type={`number`} />
+              </FormItem>
+              <Text margin={`0 0 0 10px`}>원</Text>
+            </Wrapper>
+
+            <Wrapper dr={`row`} margin={`0 0 20px`}>
+              <Text width={`100px`}>강의 시간</Text>
+              <FormItem
+                rules={[
+                  { required: true, message: "강의 시간을 입력해주세요." },
+                ]}
+                name={`lecTime`}
+                width={`calc(100% - 130px)`}
+              >
+                <CusotmInput type={`number`} />
+              </FormItem>
+              <Text margin={`0 0 0 10px`}>분</Text>
+            </Wrapper>
+
+            <Wrapper dr={`row`} margin={`0 0 20px`}>
+              <Text width={`100px`}>강의 기간</Text>
+              <FormItem
+                rules={[
+                  { required: true, message: "강의 기간을 입력해주세요." },
+                ]}
+                name={`lecDate`}
+                width={`calc(100% - 130px)`}
+              >
+                <CusotmInput
+                  onChange={startDateChangeHandler}
+                  type={`number`}
+                  {...inputPeriod}
+                />
+              </FormItem>
+              <Text margin={`0 0 0 10px`}>주</Text>
+            </Wrapper>
+
+            <Wrapper dr={`row`} margin={`0 0 20px`}>
+              <Text width={`100px`}>시작 날짜</Text>
+              <FormItem
+                rules={[
+                  { required: true, message: "시작 날짜를 입력해주세요." },
+                ]}
+                name={`startDate`}
+              >
+                <DateInput
+                  format={`YYYY-MM-DD`}
+                  size={`large`}
+                  onChange={startDateChangeHandler}
+                  defaultValue={
+                    updateData && moment(updateData.startDate, "YYYY-MM-DD")
+                  }
+                />
+              </FormItem>
+            </Wrapper>
+
+            <Wrapper dr={`row`} margin={`0 0 20px`}>
+              <Text width={`100px`}>종료 날짜</Text>
+              <FormItem
+                rules={[
+                  { required: true, message: "종료 날짜를 입력해주세요." },
+                ]}
+                name={`endDate`}
+              >
+                <CusotmInput
+                  format={`YYYY-MM-DD`}
+                  size={`large`}
+                  readOnly={true}
+                  value={endDate && endDate}
+                />
+              </FormItem>
+            </Wrapper>
+          </Wrapper>
+        </Form>
       </Modal>
     </AdminLayout>
   );

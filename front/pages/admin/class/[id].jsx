@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import router, { useRouter } from "next/router";
@@ -9,7 +9,7 @@ import { END } from "redux-saga";
 import AdminLayout from "../../../components/AdminLayout";
 import PageHeader from "../../../components/admin/PageHeader";
 
-import { Button, Slider, Table } from "antd";
+import { Form, Slider, Table } from "antd";
 import styled from "styled-components";
 import {
   Text,
@@ -17,6 +17,7 @@ import {
   Image,
   SpanText,
   CommonButton,
+  TextInput,
 } from "../../../components/commonComponents";
 import Theme from "../../../components/Theme";
 
@@ -76,9 +77,10 @@ const DetailClass = () => {
 
   const dispatch = useDispatch();
 
-  console.log(detailLectures);
-  console.log(lectureStudentList);
+  // console.log(detailLectures);
+  // console.log(lectureStudentList);
 
+  ////// REDUX //////
   ////// USEEFFECT //////
 
   useEffect(() => {
@@ -102,6 +104,10 @@ const DetailClass = () => {
       });
     }
   }, [detailLectures]);
+
+  ////// HANDLER //////
+
+  ////// TOGGLE //////
 
   ////// DATAVIEW //////
 
