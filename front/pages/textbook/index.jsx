@@ -46,9 +46,22 @@ const TabWrapper = styled(Wrapper)`
     width: 110px;
   }
 `;
-const CustomPopconfirm = styled(Popconfirm)`
-  & .anticon {
-    display: none !important;
+const CusotmInput = styled(TextInput)`
+  border: none;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.16);
+
+  padding: 0 0 0 55px;
+  border-radius: 25px;
+  width: 100%;
+  height: 50px;
+  background-color: ${Theme.lightGrey_C};
+
+  &::placeholder {
+    color: ${Theme.grey2_C};
+  }
+
+  &:focus {
+    border: 1px solid ${Theme.basicTheme_C};
   }
 `;
 
@@ -167,15 +180,7 @@ const Index = () => {
                     left: `15px`,
                   }}
                 />
-                <TextInput
-                  padding={`0 0 0 55px`}
-                  placeholder="학생명으로 검색"
-                  prefix={<SearchOutlined />}
-                  radius={`25px`}
-                  width={`100%`}
-                  height={`50px`}
-                  bgColor={Theme.lightGrey_C}
-                />
+                <CusotmInput placeholder="학생명으로 검색" />
               </Wrapper>
 
               <CommonButton
