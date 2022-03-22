@@ -72,9 +72,11 @@ const LoadNotification = (msg, content) => {
   });
 };
 
-const List = ({ router }) => {
+const List = () => {
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
   const { me, st_loadMyInfoDone } = useSelector((state) => state.user);
+
+  const router = useRouter();
 
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
@@ -141,148 +143,172 @@ const List = ({ router }) => {
           </Select>
         </Wrapper>
         <Wrapper dr={`row`} ju={`flex-start`}>
-          {lectures && lectures.length === 0 ? (
-            <Wrapper>
-              <Empty description={`조회된 강의가 없습니다.`} />
-            </Wrapper>
-          ) : (
-            lectures &&
-            lectures.map((data) => {
-              return (
-                <Wrapper
-                  width={`calc(100% / 3 - 20px)`}
-                  minHeight={`370px`}
-                  radius={`10px`}
-                  shadow={`0 5px 15px rgba(0,0,0,0.05)`}
-                  margin={`0 20px 30px 0`}
-                  padding={`20px`}
-                  ju={`space-between`}
-                >
-                  <Wrapper>
-                    <Wrapper
-                      dr={`row`}
-                      ju={`space-between`}
-                      al={`flex-start`}
-                      padding={`0 0 20px`}
-                      borderBottom={`1px solid ${Theme.grey2_C}`}
-                    >
-                      <Wrapper width={`auto`}>
-                        <Wrapper
-                          dr={`row`}
-                          ju={`flex-start`}
-                          margin={`0 0 15px`}
-                        >
+          {lectures &&
+            (lectures.length === 0 ? (
+              <Wrapper>
+                <Empty description={`조회된 강의가 없습니다.`} />
+              </Wrapper>
+            ) : (
+              lectures.map((data) => {
+                return (
+                  <Wrapper
+                    width={`calc(100% / 3 - 20px)`}
+                    minHeight={`370px`}
+                    radius={`10px`}
+                    shadow={`0 5px 15px rgba(0,0,0,0.05)`}
+                    margin={`0 20px 30px 0`}
+                    padding={`20px`}
+                    ju={`space-between`}
+                  >
+                    <Wrapper>
+                      <Wrapper
+                        dr={`row`}
+                        ju={`space-between`}
+                        al={`flex-start`}
+                        padding={`0 0 20px`}
+                        borderBottom={`1px solid ${Theme.grey2_C}`}
+                      >
+                        <Wrapper width={`auto`}>
                           <Wrapper
-                            width={`34px`}
-                            padding={`0 5px`}
-                            margin={`0 10px 0 0`}
+                            dr={`row`}
+                            ju={`flex-start`}
+                            margin={`0 0 15px`}
                           >
-                            <Image
-                              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png`}
-                              alt={`icon_lecture`}
-                            />
+                            <Wrapper
+                              width={`34px`}
+                              padding={`0 5px`}
+                              margin={`0 10px 0 0`}
+                            >
+                              <Image
+                                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png`}
+                                alt={`icon_lecture`}
+                              />
+                            </Wrapper>
+                            <Text fontSize={`16px`} fontWeight={`700`}>
+                              수업 시간 / 요일
+                            </Text>
                           </Wrapper>
-                          <Text fontSize={`16px`} fontWeight={`700`}>
-                            수업 시간 / 요일
-                          </Text>
-                        </Wrapper>
 
-                        <Wrapper
-                          dr={`row`}
-                          ju={`flex-start`}
-                          margin={`0 0 15px`}
-                        >
                           <Wrapper
-                            width={`34px`}
-                            padding={`0 5px`}
-                            margin={`0 10px 0 0`}
+                            dr={`row`}
+                            ju={`flex-start`}
+                            margin={`0 0 15px`}
                           >
-                            <Image
-                              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name_yellow.png`}
-                              alt={`icon_lecture`}
-                            />
+                            <Wrapper
+                              width={`34px`}
+                              padding={`0 5px`}
+                              margin={`0 10px 0 0`}
+                            >
+                              <Image
+                                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name_yellow.png`}
+                                alt={`icon_lecture`}
+                              />
+                            </Wrapper>
+                            <Text fontSize={`16px`} fontWeight={`700`}>
+                              오민형
+                            </Text>
                           </Wrapper>
-                          <Text fontSize={`16px`} fontWeight={`700`}>
-                            오민형
-                          </Text>
-                        </Wrapper>
 
-                        <Wrapper dr={`row`} ju={`flex-start`}>
-                          <Wrapper
-                            width={`34px`}
-                            padding={`0 5px`}
-                            margin={`0 10px 0 0`}
-                          >
-                            <Image
-                              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png`}
-                              alt={`icon_lecture`}
-                            />
+                          <Wrapper dr={`row`} ju={`flex-start`}>
+                            <Wrapper
+                              width={`34px`}
+                              padding={`0 5px`}
+                              margin={`0 10px 0 0`}
+                            >
+                              <Image
+                                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png`}
+                                alt={`icon_lecture`}
+                              />
+                            </Wrapper>
+                            <Text fontSize={`16px`} fontWeight={`700`}>
+                              NO.{data.id}
+                            </Text>
                           </Wrapper>
-                          <Text fontSize={`16px`} fontWeight={`700`}>
-                            NO.{data.id}
+                        </Wrapper>
+                        <Wrapper
+                          width={width < 1350 ? `100%` : `auto`}
+                          fontSize={`15px`}
+                          color={Theme.grey2_C}
+                          al={width < 1350 ? `flex-start` : `flex-end`}
+                          margin={width < 1350 ? `20px 0 0` : `0`}
+                        >
+                          <Text fontSize={`14px`} fontWeight={`bold`}>
+                            1권 1페이지
+                          </Text>
+                          <Text>
+                            수업 시작일 : {data.startDate.replace(/\//g, "-")}
                           </Text>
                         </Wrapper>
                       </Wrapper>
                       <Wrapper
-                        width={width < 1350 ? `100%` : `auto`}
-                        fontSize={`15px`}
-                        color={Theme.grey2_C}
-                        al={width < 1350 ? `flex-start` : `flex-end`}
-                        margin={width < 1350 ? `20px 0 0` : `0`}
+                        margin={`20px 0 0`}
+                        dr={`row`}
+                        ju={`space-between`}
                       >
-                        <Text fontSize={`14px`} fontWeight={`bold`}>
-                          1권 1페이지
+                        <Text
+                          width={`calc(100% / 2 - 10px)`}
+                          margin={`0 0 12px`}
+                        >
+                          Julieta Lopez
                         </Text>
-                        <Text>
-                          수업 시작일 : {data.startDate.replace(/\//g, "-")}
+                        <Text
+                          width={`calc(100% / 2 - 10px)`}
+                          margin={`0 0 12px`}
+                        >
+                          Julieta Lopez
+                        </Text>
+                        <Text
+                          width={`calc(100% / 2 - 10px)`}
+                          margin={`0 0 12px`}
+                        >
+                          Julieta Lopez
+                        </Text>
+                        <Text
+                          width={`calc(100% / 2 - 10px)`}
+                          margin={`0 0 12px`}
+                        >
+                          Julieta Lopez
+                        </Text>
+                        <Text
+                          width={`calc(100% / 2 - 10px)`}
+                          margin={`0 0 12px`}
+                        >
+                          Julieta Lopez
+                        </Text>
+                        <Text
+                          width={`calc(100% / 2 - 10px)`}
+                          margin={`0 0 12px`}
+                        >
+                          Julieta Lopez
+                        </Text>
+                        <Text
+                          width={`calc(100% / 2 - 10px)`}
+                          margin={`0 0 12px`}
+                        >
+                          Julieta Lopez
+                        </Text>
+                        <Text
+                          width={`calc(100% / 2 - 10px)`}
+                          margin={`0 0 12px`}
+                        >
+                          Julieta Lopez
                         </Text>
                       </Wrapper>
                     </Wrapper>
-                    <Wrapper
-                      margin={`20px 0 0`}
-                      dr={`row`}
-                      ju={`space-between`}
-                    >
-                      <Text width={`calc(100% / 2 - 10px)`} margin={`0 0 12px`}>
-                        Julieta Lopez
-                      </Text>
-                      <Text width={`calc(100% / 2 - 10px)`} margin={`0 0 12px`}>
-                        Julieta Lopez
-                      </Text>
-                      <Text width={`calc(100% / 2 - 10px)`} margin={`0 0 12px`}>
-                        Julieta Lopez
-                      </Text>
-                      <Text width={`calc(100% / 2 - 10px)`} margin={`0 0 12px`}>
-                        Julieta Lopez
-                      </Text>
-                      <Text width={`calc(100% / 2 - 10px)`} margin={`0 0 12px`}>
-                        Julieta Lopez
-                      </Text>
-                      <Text width={`calc(100% / 2 - 10px)`} margin={`0 0 12px`}>
-                        Julieta Lopez
-                      </Text>
-                      <Text width={`calc(100% / 2 - 10px)`} margin={`0 0 12px`}>
-                        Julieta Lopez
-                      </Text>
-                      <Text width={`calc(100% / 2 - 10px)`} margin={`0 0 12px`}>
-                        Julieta Lopez
-                      </Text>
-                    </Wrapper>
-                  </Wrapper>
 
-                  <CommonButton
-                    padding={`0`}
-                    width={`120px`}
-                    height={`38px`}
-                    radius={`5px`}
-                  >
-                    {" "}
-                    자세히 보기
-                  </CommonButton>
-                </Wrapper>
-              );
-            })
-          )}
+                    <CommonButton
+                      padding={`0`}
+                      width={`120px`}
+                      height={`38px`}
+                      radius={`5px`}
+                      onClick={() => moveLinkHandler(`/admin/class/${data.id}`)}
+                    >
+                      자세히 보기
+                    </CommonButton>
+                  </Wrapper>
+                );
+              })
+            ))}
         </Wrapper>
       </AdminContent>
 
@@ -313,4 +339,4 @@ export const getServerSideProps = wrapper.getServerSideProps(
   }
 );
 
-export default withRouter(List);
+export default List;
