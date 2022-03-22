@@ -37,6 +37,7 @@ import wrapper from "../../../store/configureStore";
 import {
   CommonButton,
   Image,
+  RowWrapper,
   Text,
   Wrapper,
 } from "../../../components/commonComponents";
@@ -64,6 +65,10 @@ const SearchRow = styled(Row)`
   margin-bottom: 10px;
 `;
 
+const NoticeTable = styled(Table)`
+  width: 95%;
+`;
+
 const LoadNotification = (msg, content) => {
   notification.open({
     message: msg,
@@ -73,6 +78,7 @@ const LoadNotification = (msg, content) => {
 };
 
 const List = () => {
+  const week = ["일", "월", "화", "수", "목", "금", "토"];
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
   const { me, st_loadMyInfoDone } = useSelector((state) => state.user);
 
@@ -119,6 +125,26 @@ const List = () => {
 
   ////// DATAVIEW //////
 
+  const columns = [
+    {
+      title: "No",
+      dataIndex: "id",
+    },
+    {
+      title: "Title",
+      dataIndex: "title",
+    },
+    {
+      title: "Author",
+      dataIndex: "author",
+    },
+
+    {
+      title: "CreatedAt",
+      render: (data) => <div>{data.createdAt.substring(0, 10)}</div>,
+    },
+  ];
+
   return (
     <AdminLayout>
       <PageHeader
@@ -128,6 +154,68 @@ const List = () => {
       />
 
       <AdminContent>
+        <Wrapper dr={`row`}>
+          <Wrapper
+            width={width < 1350 ? `100%` : `calc(100% / 2 )`}
+            margin={`0 0 30px`}
+            al={`flex-start`}
+            ju={`flex-start`}
+          >
+            <Text fontSize={`18px`} fontWeight={`700`}>
+              강사 게시판
+            </Text>
+            <RowWrapper margin={`16px 0 10px 0`} gutter={5}>
+              <Col>
+                <Button type="primary">전체보기</Button>
+              </Col>
+              <Col>
+                <Button>글 찾기</Button>
+              </Col>
+              <Col>
+                <Button>쪽지 보내기</Button>
+              </Col>
+            </RowWrapper>
+            <NoticeTable
+              rowKey="id"
+              columns={columns}
+              // dataSource={notices ? notices : []}
+              size="small"
+            />
+            <Wrapper al={`flex-end`} width={`95%`} margin={`10px 0 0`}>
+              <Button>글쓰기</Button>
+            </Wrapper>
+          </Wrapper>
+          <Wrapper
+            width={width < 1350 ? `100%` : `calc(100% / 2 )`}
+            margin={`0 0 30px`}
+            al={`flex-start`}
+            ju={`flex-start`}
+          >
+            <Text fontSize={`18px`} fontWeight={`700`}>
+              학생 게시판
+            </Text>
+            <RowWrapper margin={`16px 0 10px 0`} gutter={5}>
+              <Col>
+                <Button type="primary">전체보기</Button>
+              </Col>
+              <Col>
+                <Button>글 찾기</Button>
+              </Col>
+              <Col>
+                <Button>쪽지 보내기</Button>
+              </Col>
+            </RowWrapper>
+            <NoticeTable
+              rowKey="id"
+              columns={columns}
+              // dataSource={notices ? notices : []}
+              size="small"
+            />
+            <Wrapper al={`flex-end`} width={`95%`} margin={`10px 0 0`}>
+              <Button>글쓰기</Button>
+            </Wrapper>
+          </Wrapper>
+        </Wrapper>
         <Wrapper al={`flex-start`} margin={`0 0 10px`}>
           <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 16px`}>
             클래스 목록
@@ -143,6 +231,7 @@ const List = () => {
           </Select>
         </Wrapper>
         <Wrapper dr={`row`} ju={`flex-start`}>
+          {console.log(lectures)}
           {lectures &&
             (lectures.length === 0 ? (
               <Wrapper>
@@ -184,8 +273,10 @@ const List = () => {
                                 alt={`icon_lecture`}
                               />
                             </Wrapper>
+
                             <Text fontSize={`16px`} fontWeight={`700`}>
-                              수업 시간 / 요일
+                              {data.lecTime}분 /&nbsp;
+                              {week[new Date(data.startDate).getDay()]}요일
                             </Text>
                           </Wrapper>
 
@@ -205,7 +296,7 @@ const List = () => {
                               />
                             </Wrapper>
                             <Text fontSize={`16px`} fontWeight={`700`}>
-                              오민형
+                              {data.teacherName}
                             </Text>
                           </Wrapper>
 
@@ -216,7 +307,7 @@ const List = () => {
                               margin={`0 10px 0 0`}
                             >
                               <Image
-                                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png`}
+                                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_number.png`}
                                 alt={`icon_lecture`}
                               />
                             </Wrapper>
@@ -233,7 +324,7 @@ const List = () => {
                           margin={width < 1350 ? `20px 0 0` : `0`}
                         >
                           <Text fontSize={`14px`} fontWeight={`bold`}>
-                            1권 1페이지
+                            {data.viewLv}
                           </Text>
                           <Text>
                             수업 시작일 : {data.startDate.replace(/\//g, "-")}
