@@ -423,7 +423,7 @@ router.post("/all/create", isAdminCheck, async (req, res, next) => {
 //강의 단위로 메시지 보내기
 
 router.post("/lecture/create", isAdminCheck, async (req, res, next) => {
-  const { title, content, LectureId } = req.body;
+  const { title, content, author, LectureId } = req.body;
   try {
     const exLecture = await Lecture.findOne({
       where: { id: parseInt(LectureId) },
@@ -442,6 +442,7 @@ router.post("/lecture/create", isAdminCheck, async (req, res, next) => {
         await Message.create({
           title,
           content,
+          author,
           receiveLectureId: parseInt(LectureId),
           senderId: parseInt(req.user.id),
           receiverId: parseInt(data.UserId),
