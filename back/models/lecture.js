@@ -60,5 +60,7 @@ module.exports = class Lecture extends Model {
       }
     );
   }
-  static associate(db) {}
+  static associate(db) {
+    db.Lecture.hasMany(db.Participant);
+  }
 };

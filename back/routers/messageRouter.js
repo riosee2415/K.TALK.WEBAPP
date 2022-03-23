@@ -7,13 +7,14 @@ const models = require("../models");
 
 const router = express.Router();
 
+// 쪽지 사용자 리스트 (강사 or 학생)
 router.get("/user/list", isLoggedIn, async (req, res, next) => {
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
   }
 
   try {
-    const selectQuery = `
+    const lengthQuery = `
     SELECT	id,
             title,
             author,
@@ -28,9 +29,35 @@ router.get("/user/list", isLoggedIn, async (req, res, next) => {
      WHERE  receiverId = ${req.user.id}
     `;
 
-    const messages = await models.sequelize.query(selectQuery);
+    const selectQuery = `
+    SELECT	id,
+            title,
+            author,
+            senderId,
+            receiverId,
+            receiveLectureId,
+            content,
+            level,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
+      FROM	Messages
+     WHERE  receiverId = ${req.user.id}
+     LIMIT  ${LIMIT}
+    OFFSET  ${OFFSET}
+     ORDER  BY createdAt  DESC
+    `;
 
-    return res.status(200).json({ messages: messages[0] });
+    const length = await models.sequelize.query(lengthQuery);
+    const message = await models.sequelize.query(selectQuery);
+
+    const messagelen = length[0].length;
+
+    const lastPage =
+      messagelen % LIMIT > 0 ? messagelen / LIMIT + 1 : messagelen / LIMIT;
+
+    return res
+      .status(200)
+      .json({ message: message[0], lastPage: parseInt(lastPage) });
   } catch (error) {
     console.error(error);
     return res.status(401).send("쪽지를 확인할 수 없습니다.");
@@ -99,6 +126,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
   }
 });
 
+// 쪽지 상세
 router.get("/detail/:messageId", async (req, res, next) => {
   const { messageId } = req.params;
 
@@ -183,6 +211,7 @@ router.get("/teacherList", isLoggedIn, async (req, res, next) => {
   }
 });
 
+// 쪽지 쓰기 1:1
 router.post("/create", async (req, res, next) => {
   const {
     title,
@@ -254,7 +283,7 @@ router.post("/forAdminCreate", isLoggedIn, async (req, res, next) => {
       where: { level: 4 },
     });
 
-    if (exAdmin === 0) {
+    if (exAdmin.length === 0) {
       return res.status(401).send("관리자가 존재하지 않습니다.");
     }
 

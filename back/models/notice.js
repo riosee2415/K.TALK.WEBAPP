@@ -23,11 +23,11 @@ module.exports = class Notice extends Model {
         },
         senderId: {
           type: DataTypes.INTEGER,
-          allowNull: false,
+          allowNull: true,
         },
         receiverId: {
           type: DataTypes.INTEGER,
-          allowNull: false,
+          allowNull: true,
         },
         LectureId: {
           type: DataTypes.INTEGER,

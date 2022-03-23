@@ -101,6 +101,30 @@ router.get(["/list", "/list/:sort"], async (req, res, next) => {
   }
 });
 
+// 관리자에서 확인하는 모든 강의
+router.get("/allLectures", isAdminCheck, async (req, res, next) => {
+  try {
+    const lecture = await Lecture.findAll({
+      where: { isDelete: false },
+      include: [
+        {
+          model: Participant,
+          include: [
+            {
+              model: User,
+            },
+          ],
+        },
+      ],
+    });
+
+    return res.status(200).json(lecture);
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("모든 강의 목록을 불러올 수 없습니다.");
+  }
+});
+
 router.get("/detail/:LectureId", async (req, res, next) => {
   const { LectureId } = req.params;
 
@@ -566,6 +590,7 @@ router.get("/homework/list", async (req, res, next) => {
     return res.status(401).send("숙제 목록을 불러올 수 없습니다.");
   }
 });
+
 router.post("/homework/create", async (req, res, next) => {
   const { title, date, file, LectureId } = req.body;
   try {

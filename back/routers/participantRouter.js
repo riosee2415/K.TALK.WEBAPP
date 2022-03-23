@@ -6,6 +6,7 @@ const models = require("../models");
 
 const router = express.Router();
 
+// 참여목록
 router.get("/list", isLoggedIn, async (req, res, next) => {
   const { page } = req.query;
   if (!req.user) {
@@ -93,7 +94,7 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
 });
 
 // 강의별 참여 목록
-router.post("/leture/list", async (req, res, next) => {
+router.post("/leture/list", isLoggedIn, async (req, res, next) => {
   const { LectureId } = req.body;
 
   const _LectureId = LectureId || ``;
@@ -122,9 +123,10 @@ router.post("/leture/list", async (req, res, next) => {
        INNER
         JOIN	lectures					  C
           ON	A.LectureId = C.id
-       WHERE    1 = 1
+       WHERE  1 = 1
          ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
-      ORDER    BY A.createdAt DESC
+         AND  C.TeacherId = ${req.user.id}
+       ORDER  BY A.createdAt DESC
 `;
 
     const partList = await models.sequelize.query(selectQuery);
@@ -136,6 +138,7 @@ router.post("/leture/list", async (req, res, next) => {
   }
 });
 
+// 관리자에서 보는 참여 목록
 router.post("/admin/list", isAdminCheck, async (req, res, next) => {
   const { UserId, LectureId } = req.body;
 

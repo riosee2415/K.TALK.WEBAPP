@@ -1,4 +1,5 @@
 const express = require("express");
+const { Commute, Lecture, User, Participant } = require("../models");
 
 const router = express.Router();
 
@@ -10,24 +11,47 @@ router.get("/list", async (req, res, next) => {
   }
 });
 
+// 출석 create
 router.post("/create", async (req, res, next) => {
+  const { time, LectureId, UserId } = req.body;
   try {
-  } catch (error) {
-    console.error(error);
-    return res.status(401).send("출석 목록을 불러올 수 없습니다.");
-  }
-});
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
 
-router.patch("/update", async (req, res, next) => {
-  try {
-  } catch (error) {
-    console.error(error);
-    return res.status(401).send("출석 목록을 불러올 수 없습니다.");
-  }
-});
+    const exUser = await User.findOne({
+      where: { id: parseInt(UserId) },
+    });
 
-router.delete("/delete/:commuteId", async (req, res, next) => {
-  try {
+    const exPart = await Participant.findOne({
+      where: { LectureId: parseInt(LectureId), UserId: parseInt(UserId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의입니다.");
+    }
+
+    if (!exUser) {
+      return res.status(401).send("존재하지 않는 사용자입니다.");
+    }
+
+    if (!exPart) {
+      return res
+        .status(401)
+        .send("해당 학생은 해당 강의에 참여하고 있지 않습니다.");
+    }
+
+    const createResult = await Commute.create({
+      time,
+      LectureId: parseInt(LectureId),
+      UserId: parseInt(UserId),
+    });
+
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    }
+
+    return res.status(201).json({ result: true });
   } catch (error) {
     console.error(error);
     return res.status(401).send("출석 목록을 불러올 수 없습니다.");

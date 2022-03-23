@@ -11,11 +11,6 @@ const isLoggedIn = require("../middlewares/isLoggedIn");
 
 const router = express.Router();
 
-// 관리자는 강사 전체, 강의 전체, 학생 전체에게 공지사항을 등록할 수 있다.
-// 강사는 자신의 강의에 공지사항을 등록할 수 있다.
-
-// 학생이 확인할 수 있는것은 강의 별 공지사항, 자신에게 온 공지사항.
-
 try {
   fs.accessSync("uploads");
 } catch (error) {
@@ -65,6 +60,79 @@ const upload = multer({
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// 강의에 등록된 공지사항
+router.post("/lecture/list", async (req, res, next) => {
+  const { page, LectureId } = req.body;
+
+  const LIMIT = 10;
+
+  const _page = page ? page : 1;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 10;
+
+  const _LectureId = LectureId || null;
+
+  try {
+    const lengthQuery = `
+    SELECT	id,
+            title,
+            content,
+            author,
+            level,
+            senderId,
+            receiverId,
+            LectureId,
+            file,
+            isDelete,
+            DATE_FORMAT(deletedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	deletedAt,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
+      FROM	notices
+     WHERE	1 = 1
+     ${_LectureId ? `AND LectureId = ${_LectureId}` : ``}
+    `;
+
+    const selectQuery = `
+    SELECT	id,
+            title,
+            content,
+            author,
+            level,
+            senderId,
+            receiverId,
+            LectureId,
+            file,
+            isDelete,
+            DATE_FORMAT(deletedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	deletedAt,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
+      FROM	notices
+     WHERE	1 = 1
+    ${_LectureId ? `AND LectureId = ${_LectureId}` : ``}
+     LIMIT  ${LIMIT}
+    OFFSET  ${OFFSET}
+     ORDER  BY createdAt DESC
+    `;
+
+    const length = await models.sequelize.query(lengthQuery);
+    const notice = await models.sequelize.query(selectQuery);
+
+    const noticelen = length[0].length;
+
+    const lastPage =
+      noticelen % LIMIT > 0 ? noticelen / LIMIT + 1 : noticelen / LIMIT;
+
+    return res
+      .status(200)
+      .json({ notice: notice[0], lastPage: parseInt(lastPage) });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("공지사항 목록을 불러올 수 업습니다.");
+  }
+});
+
+// 사용자 공지사항 (강사 or 학생)
 router.get("/list", isLoggedIn, async (req, res, next) => {
   const { page } = req.query;
 
@@ -76,51 +144,158 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
   const OFFSET = __page * 10;
 
   try {
-    const totalNotices = await Notice.findAll({
-      where: {
-        isDelete: false,
-        where: { receiverId: parseInt(req.user.id) },
-      },
-    });
+    const lengthQuery = `
+    SELECT	id,
+            title,
+            content,
+            author,
+            senderId,
+            receiverId,
+            LectureId,
+            file,
+            isDelete,
+            DATE_FORMAT(deletedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	deletedAt,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
+      FROM	notices
+     WHERE	1 = 1
+       AND receiverId = ${req.user.id}
+    `;
 
-    const noticeLen = totalNotices.length;
+    const selectQuery = `
+    SELECT	id,
+            title,
+            content,
+            author,
+            senderId,
+            receiverId,
+            LectureId,
+            file,
+            isDelete,
+            DATE_FORMAT(deletedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	deletedAt,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
+      FROM	notices
+     WHERE	1 = 1
+       AND receiverId = ${req.user.id}
+     LIMIT  ${LIMIT}
+    OFFSET  ${OFFSET}
+     ORDER  BY createdAt DESC
+    `;
+
+    const length = await models.sequelize.query(lengthQuery);
+    const notice = await models.sequelize.query(selectQuery);
+
+    const noticelen = length[0].length;
 
     const lastPage =
-      noticeLen % LIMIT > 0 ? noticeLen / LIMIT + 1 : noticeLen / LIMIT;
+      noticelen % LIMIT > 0 ? noticelen / LIMIT + 1 : noticelen / LIMIT;
 
-    const notices = await Notice.findAll({
-      offset: OFFSET,
-      limit: LIMIT,
-      where: {
-        isDelete: false,
-        where: { receiverId: parseInt(req.user.id) },
-      },
-      order: [["createdAt", "DESC"]],
-    });
+    return res
+      .status(200)
+      .json({ notice: notice[0], lastPage: parseInt(lastPage) });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("공지사항 목록을 불러올 수 업습니다.");
+  }
+});
+// 공지사항 디테일
+router.get("/detail/:noticeId", async (req, res, next) => {
+  const { noticeId } = req.params;
 
-    return res.status(200).json({ notices, lastPage: parseInt(lastPage) });
+  try {
+    const selectQuery = `
+    SELECT	id,
+            title,
+            content,
+            author,
+            senderId,
+            receiverId,
+            LectureId,
+            file,
+            isDelete,
+            DATE_FORMAT(deletedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	deletedAt,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
+      FROM	notices
+     WHERE	1 = 1
+       AND  isDelete = FALSE
+       AND  id = ${noticeId}
+    `;
+
+    const notice = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ notice: notice[0] });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("공지사항 목록을 불러올 수 업습니다.");
+  }
+});
+// 관리자 공지사항
+router.get("/admin/list", isAdminCheck, async (req, res, next) => {
+  try {
+    const selectQuery = `
+    SELECT	id,
+            title,
+            content,
+            author,
+            senderId,
+            receiverId,
+            LectureId,
+            file,
+            isDelete,
+            DATE_FORMAT(deletedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	deletedAt,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
+      FROM	notices
+     WHERE	isDelete = FALSE
+     ORDER  BY createdAt DESC
+    `;
+
+    const notice = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ notice: notice[0] });
   } catch (error) {
     console.error(error);
     return res.status(401).send("공지사항 목록을 불러올 수 업습니다.");
   }
 });
 
-router.post("/create", async (req, res, next) => {
-  const { title, content, author, senderId, receiverId, file } = req.body;
+//강사가 강의에 공지사항 작성하기 (강의에 참여하고 있는 사람에게 작성하기)
+router.post("/create", isLoggedIn, async (req, res, next) => {
+  const { title, content, author, LectureId, file } = req.body;
 
   try {
-    const createResult = await Notice.create({
-      title,
-      content,
-      author,
-      senderId: parseInt(senderId),
-      receiverId: parseInt(receiverId),
-      file,
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
     });
 
-    if (!createResult) {
-      return res.status(401).send("게시글을 등록할 수 없습니다. [CODE 076]");
+    if (!exLecture) {
+      return res.status(401).send("해당 강의가 존재하지 않습니다.");
     }
+
+    const partUsers = await Participant.findAll({
+      where: { LectureId: parseInt(LectureId) },
+    });
+
+    if (partUsers.length === 0) {
+      return res.status(401).send("해당 강의에 참여하고 있는 학생이 없습니다.");
+    }
+
+    await Promise.all(
+      partUsers.map(async (data) => {
+        await Notice.create({
+          title,
+          content,
+          author,
+          senderId: parseInt(req.user.id),
+          receiverId: parseInt(data.UserId),
+          LectureId: parseInt(LectureId),
+          file: file ? file : null,
+          level: parseInt(req.user.level),
+        });
+      })
+    );
 
     return res.status(201).json({ result: true });
   } catch (error) {
@@ -130,7 +305,6 @@ router.post("/create", async (req, res, next) => {
 });
 
 // 관리자 등록
-
 router.post("/admin/create", isAdminCheck, async (req, res, next) => {
   const { type, title, content, author, LectureId, file } = req.body;
 
@@ -215,14 +389,40 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
       );
       return res.status(201).json({ result: true });
     }
+    //모든 사용자에게 공지사항 작성
+    const allusers = await User.findAll({
+      where: {
+        level: {
+          [Op.lt]: 3,
+        },
+      },
+    });
+
+    await Promise.all(
+      allusers.map(async (data) => {
+        await Notice.create({
+          title,
+          content,
+          author,
+          senderId: parseInt(req.user.id),
+          receiverId: parseInt(data.id),
+          LectureId: LectureId ? parseInt(LectureId) : null,
+          file: file ? file : null,
+          level: parseInt(req.user.level),
+        });
+      })
+    );
+
+    return res.status(201).json({ result: true });
   } catch (error) {
     console.error(error);
     return res.status(401).send("게시글을 등록할 수 없습니다. [CODE 077]");
   }
 });
 
-router.patch("/update", isAdminCheck, async (req, res, next) => {
-  const { id, title, content, type, isTop } = req.body;
+// 공지사항 수정
+router.patch("/update", isLoggedIn, async (req, res, next) => {
+  const { id, title, content } = req.body;
 
   try {
     const exNotice = await Notice.findOne({ where: { id: parseInt(id) } });
@@ -238,7 +438,7 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
         file,
       },
       {
-        where: { id: parseInt(id) },
+        where: { id: parseInt(id), senderId: parseInt(req.user.id) },
       }
     );
 
@@ -253,7 +453,7 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
   }
 });
 
-router.delete("/delete/:noticeId", isAdminCheck, async (req, res, next) => {
+router.delete("/delete/:noticeId", isLoggedIn, async (req, res, next) => {
   const { noticeId } = req.params;
 
   try {
@@ -271,7 +471,7 @@ router.delete("/delete/:noticeId", isAdminCheck, async (req, res, next) => {
         deletedAt: new Date(),
       },
       {
-        where: { id: parseInt(noticeId) },
+        where: { id: parseInt(noticeId), senderId: parseInt(req.user.id) },
       }
     );
 
@@ -283,36 +483,6 @@ router.delete("/delete/:noticeId", isAdminCheck, async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("게시글을 삭제할 수 없습니다. [CODE 097]");
-  }
-});
-
-router.get("/list/:noticeId", async (req, res, next) => {
-  const { noticeId } = req.params;
-
-  try {
-    const exNotice = await Notice.findOne({
-      where: { id: parseInt(noticeId) },
-    });
-
-    const nextHit = exNotice.dataValues.hit + 1;
-
-    await Notice.update(
-      {
-        hit: nextHit,
-      },
-      {
-        where: { id: parseInt(noticeId) },
-      }
-    );
-
-    if (!exNotice) {
-      return res.status(401).send("존재하지 않는 게시글 입니다.");
-    }
-
-    return res.status(200).json(exNotice);
-  } catch (error) {
-    console.error(error);
-    return res.status(401).send("게시글 정보를 불러올 수 없습니다. [CODE 107]");
   }
 });
 
