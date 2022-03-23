@@ -216,41 +216,34 @@ router.get("/teacher/list/:TeacherId", async (req, res, next) => {
 
 //내 강의를 듣는 학생 목록 조회 [강사]
 
-router.post("/student/list", async (req, res, next) => {
-  const { TeacherId } = req.body;
+router.post("/student/list", isLoggedIn, async (req, res, next) => {
+  const { LectureId } = req.body;
+
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
   try {
-    const exTeacher = await User.findOne({
-      where: { id: parseInt(TeacherId), level: 2 },
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId), TeacherId: parseInt(req.user.id) },
     });
 
-    if (!exTeacher) {
-      return res.status(401).send("존재하지 않는 사용자 입니다.");
+    if (!exLecture) {
+      return res.status(401).send("해당 강의가 존재하지 않습니다.");
     }
 
-    if (exTeacher.level !== 2) {
-      return res.status(401).send("해당 사용자는 강사가 아닙니다.");
-    }
-
-    const myLectures = await Lecture.findAll({
-      where: { TeacherId: parseInt(TeacherId) },
+    const myusers = await Participant.findAll({
+      where: { LectureId: parseInt(LectureId) },
     });
-
-    let studentIds = [];
-
-    await Promise.all(
-      myLectures.map(async (data) => {
-        studentIds = await Participant.findAll({
-          where: { LectureId: parseInt(data.id) },
-        });
-      })
-    );
 
     let students = [];
+
     await Promise.all(
-      studentIds.map(async (data) => {
-        students = await User.findAll({
-          where: { id: parseInt(data.UserId) },
-        });
+      myusers.map(async (data) => {
+        students.push(
+          await User.findOne({
+            where: { id: parseInt(data.UserId) },
+          })
+        );
       })
     );
 

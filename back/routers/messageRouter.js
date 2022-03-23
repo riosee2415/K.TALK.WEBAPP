@@ -437,6 +437,10 @@ router.post("/lecture/create", isAdminCheck, async (req, res, next) => {
       where: { LectureId: parseInt(LectureId) },
     });
 
+    if (userList.length === 0) {
+      return res.status(401).send("해당 강의에 참여하고 있는 학생이 없습니다.");
+    }
+
     await Promise.all(
       userList.map(async (data) => {
         await Message.create({
