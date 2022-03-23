@@ -2,11 +2,12 @@ const express = require("express");
 const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
-const { Notice, User, Lecture } = require("../models");
+const { Notice, User, Lecture, Participant } = require("../models");
 const { Op } = require("sequelize");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const AWS = require("aws-sdk");
 const multerS3 = require("multer-s3");
+const isLoggedIn = require("../middlewares/isLoggedIn");
 
 const router = express.Router();
 
@@ -64,7 +65,7 @@ const upload = multer({
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-router.get("/list", async (req, res, next) => {
+router.get("/list", isLoggedIn, async (req, res, next) => {
   const { page } = req.query;
 
   const LIMIT = 10;
@@ -78,6 +79,7 @@ router.get("/list", async (req, res, next) => {
     const totalNotices = await Notice.findAll({
       where: {
         isDelete: false,
+        where: { receiverId: parseInt(req.user.id) },
       },
     });
 
@@ -91,6 +93,7 @@ router.get("/list", async (req, res, next) => {
       limit: LIMIT,
       where: {
         isDelete: false,
+        where: { receiverId: parseInt(req.user.id) },
       },
       order: [["createdAt", "DESC"]],
     });
@@ -151,6 +154,7 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
           });
         })
       );
+      return res.status(201).json({ result: true });
     }
 
     if (type === 2) {
@@ -172,6 +176,7 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
           });
         })
       );
+      return res.status(201).json({ result: true });
     }
 
     if (LectureId) {
@@ -184,18 +189,32 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
         return res.status(401).send("해당 강의가 존재하지 않습니다.");
       }
 
-      const createResult = await Notice.create({
-        title,
-        content,
-        author,
-        senderId: parseInt(req.user.id),
-        LectureId: parseInt(data.id),
-        file: file ? file : null,
-        level: parseInt(req.user.level),
+      const partUsers = await Participant.findAll({
+        where: { LectureId: parseInt(LectureId) },
       });
-    }
 
-    return res.status(201).json({ result: true });
+      if (partUsers.length === 0) {
+        return res
+          .status(401)
+          .send("해당 강의에 참여하고 있는 학생이 없습니다.");
+      }
+
+      await Promise.all(
+        partUsers.map(async (data) => {
+          await Notice.create({
+            title,
+            content,
+            author,
+            senderId: parseInt(req.user.id),
+            receiverId: parseInt(data.UserId),
+            LectureId: parseInt(LectureId),
+            file: file ? file : null,
+            level: parseInt(req.user.level),
+          });
+        })
+      );
+      return res.status(201).json({ result: true });
+    }
   } catch (error) {
     console.error(error);
     return res.status(401).send("게시글을 등록할 수 없습니다. [CODE 077]");

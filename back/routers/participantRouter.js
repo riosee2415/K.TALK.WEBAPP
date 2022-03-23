@@ -92,6 +92,50 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
   }
 });
 
+// 강의별 참여 목록
+router.post("/leture/list", async (req, res, next) => {
+  const { LectureId } = req.body;
+
+  const _LectureId = LectureId || ``;
+
+  try {
+    const selectQuery = `
+      SELECT	A.id,
+              A.UserId,
+              A.LectureId,
+              DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
+              B.userId,
+              B.username,
+              B.level,
+              C.course,
+              C.lecDate,
+              C.lecTime,
+              C.startLv,
+              C.endLv,
+              C.startDate,
+              C.endDate,
+              C.price
+        FROM	participants				A
+       INNER
+        JOIN	users						    B
+          ON	A.UserId  = B.id
+       INNER
+        JOIN	lectures					  C
+          ON	A.LectureId = C.id
+       WHERE    1 = 1
+         ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
+      ORDER    BY A.createdAt DESC
+`;
+
+    const partList = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ partList: partList[0] });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("강의 별 목록을 불러올 수 없습니다.");
+  }
+});
+
 router.post("/admin/list", isAdminCheck, async (req, res, next) => {
   const { UserId, LectureId } = req.body;
 
