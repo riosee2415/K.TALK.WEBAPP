@@ -336,6 +336,7 @@ router.post("/many/create", isLoggedIn, async (req, res, next) => {
           title,
           author,
           content,
+          level: parseInt(req.user.level),
         });
       })
     );

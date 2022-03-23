@@ -2,13 +2,18 @@ const express = require("express");
 const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
-const { Notice } = require("../models");
+const { Notice, User, Lecture } = require("../models");
 const { Op } = require("sequelize");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const AWS = require("aws-sdk");
 const multerS3 = require("multer-s3");
 
 const router = express.Router();
+
+// 관리자는 강사 전체, 강의 전체, 학생 전체에게 공지사항을 등록할 수 있다.
+// 강사는 자신의 강의에 공지사항을 등록할 수 있다.
+
+// 학생이 확인할 수 있는것은 강의 별 공지사항, 자신에게 온 공지사항.
 
 try {
   fs.accessSync("uploads");
@@ -60,12 +65,11 @@ const upload = multer({
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 router.get("/list", async (req, res, next) => {
-  const { page, search } = req.query;
+  const { page } = req.query;
 
   const LIMIT = 10;
 
   const _page = page ? page : 1;
-  const _search = search ? search : "";
 
   const __page = _page - 1;
   const OFFSET = __page * 10;
@@ -73,9 +77,6 @@ router.get("/list", async (req, res, next) => {
   try {
     const totalNotices = await Notice.findAll({
       where: {
-        title: {
-          [Op.like]: `%${_search}%`,
-        },
         isDelete: false,
       },
     });
@@ -89,9 +90,6 @@ router.get("/list", async (req, res, next) => {
       offset: OFFSET,
       limit: LIMIT,
       where: {
-        title: {
-          [Op.like]: `%${_search}%`,
-        },
         isDelete: false,
       },
       order: [["createdAt", "DESC"]],
@@ -104,72 +102,137 @@ router.get("/list", async (req, res, next) => {
   }
 });
 
-router.post(
-  "/create",
-  isAdminCheck,
-  upload.single("file"),
-  async (req, res, next) => {
-    const { title, content, type, isTop } = req.body;
+router.post("/create", async (req, res, next) => {
+  const { title, content, author, senderId, receiverId, file } = req.body;
 
-    try {
+  try {
+    const createResult = await Notice.create({
+      title,
+      content,
+      author,
+      senderId: parseInt(senderId),
+      receiverId: parseInt(receiverId),
+      file,
+    });
+
+    if (!createResult) {
+      return res.status(401).send("게시글을 등록할 수 없습니다. [CODE 076]");
+    }
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("게시글을 등록할 수 없습니다. [CODE 077]");
+  }
+});
+
+// 관리자 등록
+
+router.post("/admin/create", isAdminCheck, async (req, res, next) => {
+  const { type, title, content, author, LectureId, file } = req.body;
+
+  try {
+    if (type === 1) {
+      // 학생 전체
+      const users = await User.findAll({
+        where: { level: 1 },
+      });
+
+      await Promise.all(
+        users.map(async (data) => {
+          await Notice.create({
+            title,
+            content,
+            author,
+            senderId: parseInt(req.user.id),
+            receiverId: parseInt(data.id),
+            file: file ? file : null,
+            level: parseInt(req.user.level),
+          });
+        })
+      );
+    }
+
+    if (type === 2) {
+      // 강사 전체
+      const users = await User.findAll({
+        where: { level: 2 },
+      });
+
+      await Promise.all(
+        users.map(async (data) => {
+          await Notice.create({
+            title,
+            content,
+            author,
+            senderId: parseInt(req.user.id),
+            receiverId: parseInt(data.id),
+            file: file ? file : null,
+            level: parseInt(req.user.level),
+          });
+        })
+      );
+    }
+
+    if (LectureId) {
+      // 강의에 공지사항 등록
+      const exLecture = await Lecture.findOne({
+        where: { id: parseInt(LectureId) },
+      });
+
+      if (!exLecture) {
+        return res.status(401).send("해당 강의가 존재하지 않습니다.");
+      }
+
       const createResult = await Notice.create({
         title,
         content,
-        type,
-        isTop: Boolean(isTop),
-        file: req.file ? req.file.location : null,
+        author,
+        senderId: parseInt(req.user.id),
+        LectureId: parseInt(data.id),
+        file: file ? file : null,
+        level: parseInt(req.user.level),
       });
-
-      if (!createResult) {
-        return res.status(401).send("게시글을 등록할 수 없습니다. [CODE 076]");
-      }
-
-      return res.status(201).json({ result: true });
-    } catch (error) {
-      console.error(error);
-      return res.status(401).send("게시글을 등록할 수 없습니다. [CODE 077]");
     }
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("게시글을 등록할 수 없습니다. [CODE 077]");
   }
-);
+});
 
-router.patch(
-  "/update",
-  upload.single("file"),
-  isAdminCheck,
-  async (req, res, next) => {
-    const { id, title, content, type, isTop } = req.body;
+router.patch("/update", isAdminCheck, async (req, res, next) => {
+  const { id, title, content, type, isTop } = req.body;
 
-    try {
-      const exNotice = await Notice.findOne({ where: { id: parseInt(id) } });
+  try {
+    const exNotice = await Notice.findOne({ where: { id: parseInt(id) } });
 
-      if (!exNotice) {
-        return res.status(401).send("존재하지 않는 게시글 입니다.");
-      }
-
-      const updateResult = await Notice.update(
-        {
-          title,
-          content,
-          type,
-          isTop: Boolean(isTop),
-          file: req.file ? req.file.path : exNotice.dataValues.file,
-        },
-        {
-          where: { id: parseInt(id) },
-        }
-      );
-
-      if (updateResult[0] > 0) {
-        return res.status(200).json({ result: true });
-      } else {
-        return res.status(200).json({ result: false });
-      }
-    } catch (error) {
-      console.error(error);
-      return res.status(401).send("게시글을 수정할 수 없습니다. [CODE 087]");
+    if (!exNotice) {
+      return res.status(401).send("존재하지 않는 게시글 입니다.");
     }
+
+    const updateResult = await Notice.update(
+      {
+        title,
+        content,
+        file,
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("게시글을 수정할 수 없습니다. [CODE 087]");
   }
-);
+});
 
 router.delete("/delete/:noticeId", isAdminCheck, async (req, res, next) => {
   const { noticeId } = req.params;

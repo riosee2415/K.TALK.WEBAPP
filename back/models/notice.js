@@ -5,38 +5,36 @@ module.exports = class Notice extends Model {
   static init(sequelize) {
     return super.init(
       {
-        // id가 기본적으로 들어있다.
         title: {
-          type: DataTypes.STRING(300), // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
-          allowNull: false, // 필수
-        },
-        type: {
-          // ["공지사항", "새소식"]
-          type: DataTypes.STRING(30), // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
-          allowNull: false, // 필수
-          defaultValue: "공지사항",
-        },
-        isTop: {
-          type: DataTypes.BOOLEAN,
+          type: DataTypes.STRING(300),
           allowNull: false,
-          defaultValue: false,
         },
         content: {
           type: DataTypes.TEXT,
-          allowNull: false, // 필수
+          allowNull: false,
         },
         author: {
           type: DataTypes.STRING(30),
           allowNull: false,
-          defaultValue: "관리자",
         },
-        hit: {
+        level: {
           type: DataTypes.INTEGER,
           allowNull: false,
-          defaultValue: 0,
+        },
+        senderId: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+        },
+        receiverId: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+        },
+        LectureId: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
         },
         file: {
-          type: DataTypes.STRING(600), // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
+          type: DataTypes.STRING(600),
           allowNull: true,
         },
         isDelete: {
