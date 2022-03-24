@@ -3,9 +3,12 @@ import produce from "../util/produce";
 export const initailState = {
   lectures: null,
   maxPage: 1,
-  lectureTearcherList: null,
+  lectureTeacherList: null,
   lectureStudentList: null,
   detailLectures: null,
+
+  lectureDiaryList: null,
+
   createModal: false,
   detailModal: false,
   updateModal: false,
@@ -26,9 +29,9 @@ export const initailState = {
   st_lectureDeleteDone: false,
   st_lectureDeleteError: null,
   //
-  st_lectureStudentListLoading: false,
-  st_lectureTearcherListDone: false,
-  st_lectureTearcherListError: null,
+  st_lectureTeacherListLoading: false,
+  st_lectureTeacherListDone: false,
+  st_lectureTeacherListError: null,
   //
   st_lectureStudentListLoading: false,
   st_lectureStudentListDone: false,
@@ -38,6 +41,13 @@ export const initailState = {
   st_lectureDetailLectureDone: false,
   st_lectureDetailLectureError: null,
   //
+  st_lectureDiaryListLoading: false,
+  st_lectureDiaryListDone: false,
+  st_lectureDiaryListError: null,
+  //
+  st_lectureDiaryAdminListLoading: false,
+  st_lectureDiaryAdminListDone: false,
+  st_lectureDiaryAdminListError: null,
 };
 
 export const LECTURE_LIST_REQUEST = "LECTURE_LIST_REQUEST";
@@ -68,6 +78,18 @@ export const LECTURE_DETAIL_LECTURE_REQUEST = "LECTURE_DETAIL_LECTURE_REQUEST";
 export const LECTURE_DETAIL_LECTURE_SUCCESS = "LECTURE_DETAIL_LECTURE_SUCCESS";
 export const LECTURE_DETAIL_LECTURE_FAILURE = "LECTURE_DETAIL_LECTURE_FAILURE";
 //
+export const LECTURE_DIARY_LIST_REQUEST = "LECTURE_DIARY_LIST_REQUEST";
+export const LECTURE_DIARY_LIST_SUCCESS = "LECTURE_DIARY_LIST_SUCCESS";
+export const LECTURE_DIARY_LIST_FAILURE = "LECTURE_DIARY_LIST_FAILURE";
+//
+export const LECTURE_DIARY_ADMIN_LIST_REQUEST =
+  "LECTURE_DIARY_ADMIN_LIST_REQUEST";
+export const LECTURE_DIARY_ADMIN_LIST_SUCCESS =
+  "LECTURE_DIARY_ADMIN_LIST_SUCCESS";
+export const LECTURE_DIARY_ADMIN_LIST_FAILURE =
+  "LECTURE_DIARY_ADMIN_LIST_FAILURE";
+//
+
 export const CREATE_MODAL_OPEN_REQUEST = "CREATE_MODAL_OPEN_REQUEST";
 export const CREATE_MODAL_CLOSE_REQUEST = "CREATE_MODAL_CLOSE_REQUEST";
 
@@ -164,7 +186,7 @@ const reducer = (state = initailState, action) =>
       case LECTURE_TEACHER_LIST_SUCCESS: {
         draft.st_lectureTeacherListLoading = false;
         draft.st_lectureTeacherListDone = true;
-        draft.lectureTearcherList = action.data.list;
+        draft.lectureTeacherList = action.data.list;
         break;
       }
       case LECTURE_TEACHER_LIST_FAILURE: {

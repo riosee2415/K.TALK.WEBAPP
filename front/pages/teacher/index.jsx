@@ -20,7 +20,10 @@ import {
   USER_UPDATE_REQUEST,
 } from "../../reducers/user";
 
-import { Calendar, message, Pagination, Modal, Form } from "antd";
+import { PARTICIPANT_LIST_REQUEST } from "../../reducers/participant";
+import { LECTURE_TEACHER_LIST_REQUEST } from "../../reducers/lecture";
+
+import { Calendar, message, Pagination, Modal, Form, Empty } from "antd";
 import styled from "styled-components";
 import useWidth from "../../hooks/useWidth";
 import ClientLayout from "../../components/ClientLayout";
@@ -35,6 +38,7 @@ import {
   CommonButton,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
+import { NOTICE_LIST_REQUEST } from "../../reducers/notice";
 
 const PROFILE_WIDTH = `184`;
 const PROFILE_HEIGHT = `190`;
@@ -272,11 +276,28 @@ const Index = () => {
     st_userUserUpdateError,
   } = useSelector((state) => state.user);
 
+  // const { partList, st_participantListDone, st_participantListError } =
+  //   useSelector((state) => state.participant);
+
   const {
-    lectureTearcherList,
-    st_lectureTearcherListDone,
-    st_lectureTearcherListError,
+    lectureTeacherList,
+    st_lectureTeacherListDone,
+    st_lectureTeacherListError,
   } = useSelector((state) => state.lecture);
+
+  const { noticeList, noticeLastPage, st_noticeListDone, st_noticeListError } =
+    useSelector((state) => state.notice);
+
+  useEffect(() => {
+    if (st_noticeListDone) {
+    }
+  }, [st_noticeListDone]);
+
+  useEffect(() => {
+    if (st_noticeListError) {
+      return message.error(st_noticeListError);
+    }
+  }, [st_noticeListError]);
 
   ////// HOOKS //////
 
@@ -290,6 +311,21 @@ const Index = () => {
 
   ////// REDUX //////
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    dispatch({
+      type: LECTURE_TEACHER_LIST_REQUEST,
+      data: {
+        TeacherId: me.id,
+      },
+    });
+  }, [me]);
+
+  useEffect(() => {
+    dispatch({
+      type: NOTICE_LIST_REQUEST,
+    });
+  }, []);
 
   useEffect(() => {
     if (!me) {
@@ -422,6 +458,10 @@ const Index = () => {
     },
     [userProfilePath]
   );
+
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
+  }, []);
 
   ////// DATAVIEW //////
 
@@ -563,38 +603,47 @@ const Index = () => {
                   </Text>
                 </Wrapper>
 
-                <Wrapper
-                  dr={`row`}
-                  textAlign={`center`}
-                  ju={`flex-start`}
-                  padding={`25px 0 20px`}
-                  cursor={`pointer`}
-                  bgColor={Theme.lightGrey_C}
-                  // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
-                >
-                  <Text
-                    fontSize={width < 700 ? `14px` : `16px`}
-                    width={width < 800 ? `15%` : `10%`}
-                    wordBreak={`break-word`}>
-                    15
-                  </Text>
-                  <Text
-                    fontSize={width < 700 ? `14px` : `16px`}
-                    width={width < 800 ? `45%` : `70%`}
-                    textAlign={`left`}>
-                    안녕하세요. 강사 여러분께 공지사항 알립니다.
-                  </Text>
-                  <Text
-                    fontSize={width < 700 ? `14px` : `16px`}
-                    width={width < 800 ? `15%` : `10%`}>
-                    케이톡 라이브
-                  </Text>
-                  <Text
-                    fontSize={width < 700 ? `14px` : `16px`}
-                    width={width < 800 ? `25%` : `10%`}>
-                    2022/01/22
-                  </Text>
-                </Wrapper>
+                {noticeList && noticeList.length === 0 ? (
+                  <Wrapper>
+                    <Empty description="조회된 공지사항 리스트가 없습니다." />
+                  </Wrapper>
+                ) : (
+                  noticeList &&
+                  noticeList.map((data) => {
+                    return (
+                      <Wrapper
+                        dr={`row`}
+                        textAlign={`center`}
+                        ju={`flex-start`}
+                        padding={`25px 0 20px`}
+                        cursor={`pointer`}
+                        bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
+                        <Text
+                          fontSize={width < 700 ? `14px` : `16px`}
+                          width={width < 800 ? `15%` : `10%`}
+                          wordBreak={`break-word`}>
+                          {data.id}
+                        </Text>
+                        <Text
+                          fontSize={width < 700 ? `14px` : `16px`}
+                          width={width < 800 ? `45%` : `70%`}
+                          textAlign={`left`}>
+                          {data.title}
+                        </Text>
+                        <Text
+                          fontSize={width < 700 ? `14px` : `16px`}
+                          width={width < 800 ? `15%` : `10%`}>
+                          {data.author}
+                        </Text>
+                        <Text
+                          fontSize={width < 700 ? `14px` : `16px`}
+                          width={width < 800 ? `25%` : `10%`}>
+                          {data.createdAt.slice(0, 10)}
+                        </Text>
+                      </Wrapper>
+                    );
+                  })
+                )}
               </Wrapper>
 
               <Wrapper margin={`65px 0 85px`}>
@@ -611,43 +660,51 @@ const Index = () => {
                 내 수업
               </Text>
 
-              <Wrapper
-                dr={`row`}
-                ju={`flex-start`}
-                al={`flex-start`}
-                shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
-                padding={width < 700 ? `15px 10px 10px` : `35px 30px`}
-                radius={`10px`}>
-                <Wrapper
-                  width={width < 1280 ? (width < 800 ? `100%` : `60%`) : `37%`}
-                  dr={`row`}
-                  ju={`flex-start`}
-                  al={`flex-start`}>
-                  <Wrapper
-                    width={`auto`}
-                    padding={width < 700 ? `0` : `5px`}
-                    margin={`0 10px 0 0`}>
-                    <Image
-                      width={`22px`}
-                      height={`22px`}
-                      src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
-                      alt="clock_icon"
-                    />
-                  </Wrapper>
-                  <Wrapper
-                    width={`calc(100% - 42px)`}
-                    dr={`row`}
-                    ju={`flex-start`}>
-                    {clockArr &&
-                      clockArr.length > 0 &&
-                      clockArr.map((data, idx) => {
-                        return (
-                          <>
+              {lectureTeacherList && lectureTeacherList.length === 0
+                ? ""
+                : lectureTeacherList &&
+                  lectureTeacherList.map((data, idx) => {
+                    return (
+                      <Wrapper
+                        dr={`row`}
+                        ju={`flex-start`}
+                        al={`flex-start`}
+                        shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
+                        padding={width < 700 ? `15px 10px 10px` : `35px 30px`}
+                        radius={`10px`}>
+                        <Wrapper
+                          width={
+                            width < 1280
+                              ? width < 800
+                                ? `100%`
+                                : `60%`
+                              : `37%`
+                          }
+                          dr={`row`}
+                          ju={`flex-start`}
+                          al={`flex-start`}>
+                          <Wrapper
+                            width={`auto`}
+                            padding={width < 700 ? `0` : `5px`}
+                            margin={`0 10px 0 0`}>
+                            <Image
+                              width={`22px`}
+                              height={`22px`}
+                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
+                              alt="clock_icon"
+                            />
+                          </Wrapper>
+
+                          <Wrapper
+                            width={`calc(100% - 42px)`}
+                            dr={`row`}
+                            ju={`flex-start`}>
                             <Text
                               fontSize={width < 700 ? `14px` : `18px`}
                               fontWeight={`bold`}
                               lineHeight={`1.22`}>
-                              {data.name}&nbsp;&nbsp;|&nbsp;&nbsp;{data.time}
+                              {data.name}&nbsp;&nbsp;|&nbsp;&nbsp;
+                              {data.time}
                             </Text>
                             <Wrapper
                               display={
@@ -666,54 +723,59 @@ const Index = () => {
                                   : `0 20px`
                               }
                             />
-                          </>
-                        );
-                      })}
-                  </Wrapper>
-                </Wrapper>
+                          </Wrapper>
+                        </Wrapper>
 
-                <Wrapper
-                  dr={`row`}
-                  ju={`space-between`}
-                  width={width < 1400 ? `100%` : `62%`}
-                  margin={width < 700 ? `10px 0 0 0` : `0`}>
-                  <Wrapper dr={`row`} width={`auto`}>
-                    <Image
-                      width={`22px`}
-                      height={`22px`}
-                      src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
-                      alt="calender_icon"
-                      margin={`0 5px 0 0`}
-                    />
-                    <CustomText2
-                      color={Theme.black_2C}
-                      fontWeight={`normal`}
-                      width={width < 700 ? `auto` : `140px`}>
-                      2022-01-28
-                    </CustomText2>
+                        <Wrapper
+                          dr={`row`}
+                          ju={`space-between`}
+                          width={width < 1400 ? `100%` : `62%`}
+                          margin={width < 700 ? `10px 0 0 0` : `0`}>
+                          <Wrapper dr={`row`} width={`auto`}>
+                            <Image
+                              width={`22px`}
+                              height={`22px`}
+                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
+                              alt="calender_icon"
+                              margin={`0 5px 0 0`}
+                            />
+                            <CustomText2
+                              color={Theme.black_2C}
+                              fontWeight={`normal`}
+                              width={width < 700 ? `auto` : `140px`}>
+                              2022-01-28
+                              {/* {data.startDate} */}
+                            </CustomText2>
 
-                    <Image
-                      width={`22px`}
-                      height={`22px`}
-                      src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_number.png"
-                      alt="calender_icon"
-                      margin={`0 5px 0 0`}
-                    />
-                    <Text
-                      color={Theme.black_2C}
-                      fontSize={width < 700 ? `12px` : `18px`}
-                      width={width < 700 ? `auto` : `140px`}>
-                      NO.12384
-                    </Text>
-                  </Wrapper>
+                            <Image
+                              width={`22px`}
+                              height={`22px`}
+                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_number.png"
+                              alt="calender_icon"
+                              margin={`0 5px 0 0`}
+                            />
+                            <Text
+                              color={Theme.black_2C}
+                              fontSize={width < 700 ? `12px` : `18px`}
+                              width={width < 700 ? `auto` : `140px`}>
+                              {`NO.${data.id}`}
+                            </Text>
+                          </Wrapper>
 
-                  <Wrapper width={`auto`}>
-                    <CustomText3 color={Theme.black_2C} cursor={`pointer`}>
-                      수업 일지 보러가기
-                    </CustomText3>
-                  </Wrapper>
-                </Wrapper>
-              </Wrapper>
+                          <Wrapper width={`auto`}>
+                            <CustomText3
+                              onClick={() =>
+                                moveLinkHandler(`/teacher/${data.id}`)
+                              }
+                              color={Theme.black_2C}
+                              cursor={`pointer`}>
+                              수업 일지 보러가기
+                            </CustomText3>
+                          </Wrapper>
+                        </Wrapper>
+                      </Wrapper>
+                    );
+                  })}
 
               <Wrapper margin={`65px 0 0`}>
                 <CustomPage defaultCurrent={6} total={40}></CustomPage>
@@ -943,6 +1005,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
     context.store.dispatch({
       type: SEO_LIST_REQUEST,
     });
+
+    // context.store.dispatch({
+    //   type: NOTICE_LIST_REQUEST,
+    // });
 
     // 구현부 종료
     context.store.dispatch(END);

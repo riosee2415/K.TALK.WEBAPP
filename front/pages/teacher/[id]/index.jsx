@@ -57,6 +57,10 @@ import {
   LECTURE_STUDENT_LIST_REQUEST,
   LECTURE_TEACHER_LIST_REQUEST,
 } from "../../../reducers/lecture";
+import {
+  PARTICIPANT_LECTURE_LIST_REQUEST,
+  PARTICIPANT_LIST_REQUEST,
+} from "../../../reducers/participant";
 
 const CusotmInput = styled(TextInput)`
   border: none;
@@ -293,13 +297,19 @@ const Index = () => {
     st_messageCreateError,
   } = useSelector((state) => state.message);
 
-  const {
-    lectureStudentList,
-    st_lectureStudentListDone,
-    st_lectureStudentListError,
-  } = useSelector((state) => state.lecture);
+  // const { st_partLectureListDone, st_partLectureListError } = useSelector(
+  //   (state) => state.lecture
+  // );
 
   const { me } = useSelector((state) => state.user);
+
+  const {
+    partLectureList,
+    st_participantLectureListDone,
+    st_participantLectureListError,
+  } = useSelector((state) => state.participant);
+
+  console.log(partLectureList, "partLectureList");
 
   ////// HOOKS //////
 
@@ -350,20 +360,19 @@ const Index = () => {
   }, [me]);
 
   useEffect(() => {
-    if (lectureStudentList && lectureStudentList.length !== 0) {
+    if (partLectureList && partLectureList.length !== 0) {
       let arr = [];
 
-      lectureStudentList.map((data) => {
+      partLectureList.map((data) => {
         arr.push({
           ...data,
           isCheck: false,
         });
       });
 
-      console.log(arr, "arr");
       setCheckedList(arr);
     }
-  }, [lectureStudentList, st_messageForAdminCreateDone]);
+  }, [partLectureList, st_messageForAdminCreateDone]);
 
   useEffect(() => {
     dispatch({
@@ -374,7 +383,7 @@ const Index = () => {
     });
 
     dispatch({
-      type: LECTURE_STUDENT_LIST_REQUEST,
+      type: PARTICIPANT_LECTURE_LIST_REQUEST,
       data: {
         LectureId: router.query.id,
       },
@@ -400,17 +409,7 @@ const Index = () => {
     }
   }, [st_messageCreateDone]);
 
-  useEffect(() => {
-    if (st_lectureStudentListDone) {
-    }
-  }, [st_lectureStudentListDone]);
-
-  useEffect(() => {
-    if (st_lectureStudentListError) {
-      return message.error(st_lectureStudentListError);
-    }
-  }, [st_lectureStudentListError]);
-
+  ////////////////////////
   useEffect(() => {
     if (st_messageForAdminCreateDone) {
       onReset();
@@ -872,13 +871,13 @@ const Index = () => {
                       </Text>
                     </Wrapper>
 
-                    {lectureStudentList && lectureStudentList.length === 0 ? (
+                    {partLectureList && partLectureList.length === 0 ? (
                       <Wrapper>
                         <Empty description="조회된 데이터가 없습니다." />
                       </Wrapper>
                     ) : (
-                      lectureStudentList &&
-                      lectureStudentList.map((data, idx) => {
+                      partLectureList &&
+                      partLectureList.map((data, idx) => {
                         return (
                           <Wrapper
                             key={data.id}
@@ -949,13 +948,13 @@ const Index = () => {
                       </Text>
                     </Wrapper>
 
-                    {lectureStudentList && lectureStudentList.length === 0 ? (
+                    {partLectureList && partLectureList.length === 0 ? (
                       <Wrapper>
                         <Empty description="조회된 데이터가 없습니다." />
                       </Wrapper>
                     ) : (
-                      lectureStudentList &&
-                      lectureStudentList.map((data, idx) => {
+                      partLectureList &&
+                      partLectureList.map((data, idx) => {
                         return (
                           <Wrapper
                             dr={`row`}
@@ -1057,13 +1056,13 @@ const Index = () => {
 
                 {width > 700 && (
                   <>
-                    {lectureStudentList && lectureStudentList.length === 0 ? (
+                    {partLectureList && partLectureList.length === 0 ? (
                       <Wrapper>
                         <Empty description="조회된 데이터가 없습니다." />
                       </Wrapper>
                     ) : (
-                      lectureStudentList &&
-                      lectureStudentList.map((data, idx) => {
+                      partLectureList &&
+                      partLectureList.map((data, idx) => {
                         return (
                           <Wrapper
                             key={data.id}
@@ -1092,31 +1091,32 @@ const Index = () => {
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`10%`}>
                               {/* 1997 */}
-                              {data.birth.slice(0, 10)}
+                              {/* {data.birth.slice(0, 10)} */}
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`10%`}>
-                              {data.stuCountry}
+                              {/* {data.stuCountry} */}
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`15%`}>
-                              U$ 16
+                              {/* 16 */}
+                              {`U$ ${data.price}`}
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`20%`}
                               wordBreak={`break-word`}>
                               {/* 2022/01/22 */}
-                              {data.endDate}
+                              {data.startDate.slice(0, 10)}
                               <SpanText color={Theme.red_C}>(D-5)</SpanText>
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`10%`}>
                               작성하기
-                              {data.stuMemo}
+                              {/* {data.stuMemo} */}
                             </Text>
 
                             <Text
@@ -1127,7 +1127,7 @@ const Index = () => {
                                   ? `${Theme.basicTheme_C}`
                                   : `${Theme.red_C}`
                               }>
-                              {data.status ? "출석" : "결석"}
+                              {"출석"}
                             </Text>
                           </Wrapper>
                         );
