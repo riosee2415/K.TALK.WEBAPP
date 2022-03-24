@@ -1,10 +1,16 @@
 const express = require("express");
 const { Commute, Lecture, User, Participant } = require("../models");
+const moment = require("moment");
 
 const router = express.Router();
 
 router.get("/list", async (req, res, next) => {
   try {
+    const list = await Commute.findAll({});
+
+    const today = moment().format("YYYY-MM-DD");
+
+    return res.status(200).json({ list, today });
   } catch (error) {
     console.error(error);
     return res.status(401).send("출석 목록을 불러올 수 없습니다.");

@@ -107,6 +107,8 @@ router.post("/leture/list", isLoggedIn, async (req, res, next) => {
               B.userId,
               B.username,
               B.level,
+              B.birth,
+              B.stuCountry,
               C.course,
               C.lecDate,
               C.lecTime,

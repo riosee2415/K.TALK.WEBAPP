@@ -9,9 +9,18 @@ const router = express.Router();
 
 // 쪽지 사용자 리스트 (강사 or 학생)
 router.get("/user/list", isLoggedIn, async (req, res, next) => {
+  const { page } = req.query;
+
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
   }
+
+  const LIMIT = 5;
+
+  const _page = page ? page : 1;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 5;
 
   try {
     const lengthQuery = `

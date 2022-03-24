@@ -461,7 +461,7 @@ router.post("/diary/list", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의입니다.");
     }
 
-    if (!exLecture.TeacherId !== req.user.id) {
+    if (exLecture.TeacherId !== req.user.id) {
       return res.status(401).send("자신의 강의가 아닙니다.");
     }
 
@@ -487,9 +487,9 @@ router.post("/diary/list", isLoggedIn, async (req, res, next) => {
             LectureId
       FROM	lectureDiarys
      WHERE  LectureId = ${LectureId}
+     ORDER  BY createdAt DESC
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
-     ORDER  BY createdAt DESC
     `;
 
     const length = await models.sequelize.query(lengthQuery);
@@ -579,7 +579,7 @@ router.post("/diary/create", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의입니다.");
     }
 
-    if (!exLecture.TeacherId !== req.user.id) {
+    if (exLecture.TeacherId !== req.user.id) {
       return res.status(401).send("자신의 강의가 아닙니다.");
     }
 
