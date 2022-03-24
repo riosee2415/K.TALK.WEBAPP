@@ -794,6 +794,12 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 숙제입니다.");
     }
 
+    const today = moment().format("YYYY-MM-DD");
+
+    if (new Date(exHomework.date) < new Date(today)) {
+      return res.status(401).send("숙제 제출기한이 지났습니다.");
+    }
+
     const createResult = await Submit.create({
       file,
       LectureId: parseInt(LectureId),
