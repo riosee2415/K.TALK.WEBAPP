@@ -4,13 +4,10 @@ const moment = require("moment");
 
 const router = express.Router();
 
-router.get("/list", async (req, res, next) => {
+router.post("/list", async (req, res, next) => {
+  const { LectureId, UserId } = req.body;
   try {
-    const list = await Commute.findAll({});
-
-    const today = moment().format("YYYY-MM-DD");
-
-    return res.status(200).json({ list, today });
+    return res.status(200).json({ exCommute, today });
   } catch (error) {
     console.error(error);
     return res.status(401).send("출석 목록을 불러올 수 없습니다.");
@@ -45,6 +42,18 @@ router.post("/create", async (req, res, next) => {
       return res
         .status(401)
         .send("해당 학생은 해당 강의에 참여하고 있지 않습니다.");
+    }
+
+    const exCommute = await Commute.findOne({
+      where: { LectureId: parseInt(LectureId), UserId: parseInt(UserId) },
+    });
+
+    let extime = exCommute.time.substring(0, 10);
+
+    const today = moment(time).format("YYYY-MM-DD");
+
+    if (extime === today) {
+      return res.status(401).send("이미 해당 학생은 강의에 출석했습니다.");
     }
 
     const createResult = await Commute.create({
