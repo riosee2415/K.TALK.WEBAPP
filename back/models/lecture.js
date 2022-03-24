@@ -5,6 +5,19 @@ module.exports = class Lecture extends Model {
   static init(sequelize) {
     return super.init(
       {
+        time: {
+          type: DataTypes.STRING(30),
+          allowNull: false,
+        },
+        day: {
+          type: DataTypes.STRING(50),
+          allowNull: false,
+        },
+        count: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          defaultValue: 0,
+        },
         course: {
           type: DataTypes.STRING(100),
           allowNull: false,

@@ -48,7 +48,7 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
 `;
 
     const selectQuery = `
-      SELECT	A.id,
+        SELECT	A.id,
                 A.UserId,
                 A.LectureId,
                 DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
@@ -63,17 +63,16 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
                 C.startDate,
                 C.endDate,
                 C.price
-        FROM	participants				A
+        FROM	  participants				A
+       INNER 
+        JOIN  	users						B
+          ON	  A.UserId  = B.id
        INNER
-        JOIN	users						B
-          ON	A.UserId  = B.id
-       INNER
-        JOIN	lectures					C
-          ON	A.LectureId = C.id
+        JOIN	  lectures					C
+          ON	  A.LectureId = C.id
        WHERE    A.UserId = ${req.user.id}
        LIMIT    ${LIMIT}
       OFFSET    ${OFFSET}
-       ORDER    BY A.createdAt DESC
 `;
 
     const length = await models.sequelize.query(lengthQuery);

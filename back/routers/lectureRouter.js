@@ -38,6 +38,9 @@ router.get(["/list", "/list/:sort"], async (req, res, next) => {
   try {
     const selectQuery = `
       SELECT	X.id,
+              X.time,
+              X.day,
+              X.count,
               X.course,
               X.lecDate,
               X.lecTime,
@@ -58,6 +61,9 @@ router.get(["/list", "/list/:sort"], async (req, res, next) => {
               FROM	(
                       SELECT	DISTINCT
                               A.id,
+                              A.time,
+                              A.day,
+                              A.count,
                               A.course,
                               A.lecDate,
                               A.lecTime,
@@ -135,6 +141,9 @@ router.get("/detail/:LectureId", async (req, res, next) => {
     const selectQuery = `
      SELECT   DISTINCT
               A.id,
+              A.time,
+              A.day,
+              A.count,
               A.course,
               A.lecDate,
               A.lecTime,
@@ -196,6 +205,9 @@ router.get("/teacher/list/:TeacherId", async (req, res, next) => {
     const selectQuery = `
     SELECT   DISTINCT
              A.id,
+             A.time,
+             A.day,
+             A.count,
              A.course,
              A.lecDate,
              A.lecTime,
@@ -280,6 +292,9 @@ router.post("/student/list", isLoggedIn, async (req, res, next) => {
 
 router.post("/create", isAdminCheck, async (req, res, next) => {
   const {
+    time,
+    day,
+    count,
     course,
     lecDate,
     lecTime,
@@ -301,6 +316,9 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
     }
 
     const createResult = await Lecture.create({
+      time,
+      day,
+      count,
       course,
       lecDate,
       lecTime,
@@ -327,6 +345,9 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
 router.patch("/update", isAdminCheck, async (req, res, next) => {
   const {
     id,
+    time,
+    day,
+    count,
     course,
     lecDate,
     lecTime,
@@ -349,6 +370,9 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
 
     const updateResult = await Lecture.update(
       {
+        time,
+        day,
+        count,
         course,
         lecDate,
         lecTime,
