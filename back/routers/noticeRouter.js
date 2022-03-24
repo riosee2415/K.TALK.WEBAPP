@@ -110,9 +110,9 @@ router.post("/lecture/list", async (req, res, next) => {
       FROM	notices
      WHERE	1 = 1
     ${_LectureId ? `AND LectureId = ${_LectureId}` : ``}
+     ORDER  BY createdAt DESC
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
-     ORDER  BY createdAt DESC
     `;
 
     const length = await models.sequelize.query(lengthQuery);

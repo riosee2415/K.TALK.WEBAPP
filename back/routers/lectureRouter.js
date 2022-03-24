@@ -643,8 +643,19 @@ router.post("/diary/create", isLoggedIn, async (req, res, next) => {
 ///////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// - 숙제 작성 - ////////////////////////////////////////
 
-router.get("/homework/list", async (req, res, next) => {
+router.post("/homework/list", async (req, res, next) => {
+  const { LectureId } = req.body;
   try {
+    const selectQuery = `
+      SELECT  id,
+              title,
+              date,
+              file,
+              isDelete,
+              LectureId
+        FROM  homeworks
+       WHERE  LectureId = ${LectureId}
+    `;
   } catch (error) {
     console.error(error);
     return res.status(401).send("숙제 목록을 불러올 수 없습니다.");
