@@ -704,17 +704,6 @@ router.post("/homework/create", async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의입니다.");
     }
 
-    const exLecture2 = await Lecture.findOne({
-      title,
-      date,
-      file,
-      LectureId,
-    });
-
-    if (exLecture2) {
-      return res.status(401).send("이미 해당 강의에 숙제가 존재합니다.");
-    }
-
     const createResult = await Homework.create({
       title,
       date,
@@ -746,11 +735,80 @@ router.post("/submit/list", isLoggedIn, async (req, res, next) => {
     }
 
     const selectQuery = `
-      
+    SELECT	A.id,
+            A.file,
+            A.isComplete,
+            DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            A.LectureId,
+            A.UserId,
+            A.HomeworkId,
+            B.userId,
+            B.username,
+            B.level,
+            C.title,
+            C.date,
+            D.course
+      FROM	submits				A
+     INNER
+      JOIN	users				B
+        ON	A.UserId = B.id
+     INNER
+      JOIN	homeworks			C
+        ON	A.HomeworkId = C.id
+     INNER
+      JOIN	lectures			D
+        ON	A.LectureId = D.id
+     WHERE  A.LectureId = ${LectureId}
     `;
+
+    const submits = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ submits: submits[0] });
   } catch (error) {
     console.error(error);
     return res.status(401).send("숙제 제출 목록을 불러올 수 없습니다.");
+  }
+});
+
+// 학생 숙제 제출
+router.post("/create", isLoggedIn, async (req, res, next) => {
+  const { HomeworkId, LectureId, file } = req.body;
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+  try {
+    const exPart = await Participant.findOne({
+      where: { LectureId: parseInt(LectureId), UserId: parseInt(req.user.id) },
+    });
+
+    if (!exPart) {
+      return res.status(401).send("해당 강의에 참여하고 있지 않습니다.");
+    }
+
+    const exHomework = await Homework.findOne({
+      where: { id: parseInt(HomeworkId), LectureId: parseInt(LectureId) },
+    });
+
+    if (!exHomework) {
+      return res.status(401).send("존재하지 않는 숙제입니다.");
+    }
+
+    const createResult = await Submit.create({
+      file,
+      LectureId: parseInt(LectureId),
+      UserId: parseInt(req.user.id),
+      HomeworkId: parseInt(HomeworkId),
+    });
+
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    }
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("숙제를 제출할 수 없습니다.");
   }
 });
 

@@ -310,7 +310,11 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
 
 // 관리자 등록
 router.post("/admin/create", isAdminCheck, async (req, res, next) => {
-  const { type, title, content, author, LectureId, file } = req.body;
+  const { type, title, content, author, file } = req.body;
+
+  if (req.user.level < 3) {
+    return res.status(403).send("관리자만 게시글을 등록할 수 있습니다.");
+  }
 
   try {
     if (type === 1) {
@@ -359,42 +363,6 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
       return res.status(201).json({ result: true });
     }
 
-    if (LectureId) {
-      // 강의에 공지사항 등록
-      const exLecture = await Lecture.findOne({
-        where: { id: parseInt(LectureId) },
-      });
-
-      if (!exLecture) {
-        return res.status(401).send("해당 강의가 존재하지 않습니다.");
-      }
-
-      const partUsers = await Participant.findAll({
-        where: { LectureId: parseInt(LectureId) },
-      });
-
-      if (partUsers.length === 0) {
-        return res
-          .status(401)
-          .send("해당 강의에 참여하고 있는 학생이 없습니다.");
-      }
-
-      await Promise.all(
-        partUsers.map(async (data) => {
-          await Notice.create({
-            title,
-            content,
-            author,
-            senderId: parseInt(req.user.id),
-            receiverId: parseInt(data.UserId),
-            LectureId: parseInt(LectureId),
-            file: file ? file : null,
-            level: parseInt(req.user.level),
-          });
-        })
-      );
-      return res.status(201).json({ result: true });
-    }
     //모든 사용자에게 공지사항 작성
     const allusers = await User.findAll({
       where: {
@@ -422,7 +390,48 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
     return res.status(201).json({ result: true });
   } catch (error) {
     console.error(error);
-    return res.status(401).send("게시글을 등록할 수 없습니다. [CODE 077]");
+    return res.status(401).send("게시글을 등록할 수 없습니다.");
+  }
+});
+
+router.post("/lecture/create", isAdminCheck, async (req, res, next) => {
+  const { title, content, author, file, LectureId } = req.body;
+  try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("해당 강의가 존재하지 않습니다.");
+    }
+
+    const partUsers = await Participant.findAll({
+      where: { LectureId: parseInt(LectureId) },
+    });
+
+    if (partUsers.length === 0) {
+      return res.status(401).send("해당 강의에 참여하고 있는 학생이 없습니다.");
+    }
+
+    await Promise.all(
+      partUsers.map(async (data) => {
+        await Notice.create({
+          title,
+          content,
+          author,
+          senderId: parseInt(req.user.id),
+          receiverId: parseInt(data.UserId),
+          LectureId: parseInt(LectureId),
+          file: file ? file : null,
+          level: parseInt(req.user.level),
+        });
+      })
+    );
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("게시글을 등록할 수 없습니다.");
   }
 });
 
