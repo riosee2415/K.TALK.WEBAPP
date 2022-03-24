@@ -13,6 +13,7 @@ import editor from "./editor";
 import app from "./application";
 import message from "./message";
 import lecture from "./lecture";
+import participant from "./participant";
 
 const rootReducer = (state, action) => {
   switch (action.type) {
@@ -34,6 +35,7 @@ const rootReducer = (state, action) => {
         app,
         message,
         lecture,
+        participant,
       });
       return combinedReducer(state, action);
     }

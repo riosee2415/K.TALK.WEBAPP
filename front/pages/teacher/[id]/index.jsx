@@ -48,9 +48,15 @@ import {
 import {
   MESSAGE_CREATE_REQUEST,
   MESSAGE_DETAIL_REQUEST,
+  MESSAGE_MANY_CREATE_REQUEST,
   MESSAGE_USER_LIST_REQUEST,
+  MESSAGE_FOR_ADMIN_CREATE_REQUEST,
 } from "../../../reducers/message";
 import { useRouter } from "next/router";
+import {
+  LECTURE_STUDENT_LIST_REQUEST,
+  LECTURE_TEACHER_LIST_REQUEST,
+} from "../../../reducers/lecture";
 
 const CusotmInput = styled(TextInput)`
   border: none;
@@ -275,6 +281,7 @@ const Index = () => {
     st_messageForAdminCreateDone,
     st_messageForAdminCreateError,
 
+    lectureTearcherList,
     st_messageTeacherListDone,
     st_messageTeacherListError,
 
@@ -286,12 +293,11 @@ const Index = () => {
     st_messageCreateError,
   } = useSelector((state) => state.message);
 
-  useEffect(() => {
-    if (st_messageCreateDone) {
-      onReset();
-      return message.success("답변을 완료 했습니다.");
-    }
-  }, [st_messageCreateDone]);
+  const {
+    lectureStudentList,
+    st_lectureStudentListDone,
+    st_lectureStudentListError,
+  } = useSelector((state) => state.lecture);
 
   const { me } = useSelector((state) => state.user);
 
@@ -315,6 +321,8 @@ const Index = () => {
   const [messageSendModalToggle, setMessageSendModalToggle] = useState(false);
   const [noticeModalToggle, setNoticeModalToggle] = useState(false);
   const [homeWorkModalToggle, setHomeWorkModalToggle] = useState(false);
+
+  const [adminSendMessageToggle, setAdminSendMessageToggle] = useState(false);
 
   const [checkedList, setCheckedList] = useState([]);
   const [checkAll, setCheckAll] = useState(false);
@@ -342,17 +350,36 @@ const Index = () => {
   }, [me]);
 
   useEffect(() => {
-    if (testArr.length !== 0) {
+    if (lectureStudentList && lectureStudentList.length !== 0) {
       let arr = [];
 
-      testArr.map(() => {
-        arr.push(false);
+      lectureStudentList.map((data) => {
+        arr.push({
+          ...data,
+          isCheck: false,
+        });
       });
 
-      console.log(arr);
+      console.log(arr, "arr");
       setCheckedList(arr);
     }
-  }, []);
+  }, [lectureStudentList, st_messageForAdminCreateDone]);
+
+  useEffect(() => {
+    dispatch({
+      type: LECTURE_TEACHER_LIST_REQUEST,
+      data: {
+        TeacherId: me && me.id,
+      },
+    });
+
+    dispatch({
+      type: LECTURE_STUDENT_LIST_REQUEST,
+      data: {
+        LectureId: router.query.id,
+      },
+    });
+  }, [me, router.query]);
 
   useEffect(() => {
     if (st_messageListError) {
@@ -366,11 +393,55 @@ const Index = () => {
     }
   }, [st_messageDetailDone]);
 
+  useEffect(() => {
+    if (st_messageCreateDone) {
+      onReset();
+      return message.success("답변을 완료 했습니다.");
+    }
+  }, [st_messageCreateDone]);
+
+  useEffect(() => {
+    if (st_lectureStudentListDone) {
+    }
+  }, [st_lectureStudentListDone]);
+
+  useEffect(() => {
+    if (st_lectureStudentListError) {
+      return message.error(st_lectureStudentListError);
+    }
+  }, [st_lectureStudentListError]);
+
+  useEffect(() => {
+    if (st_messageForAdminCreateDone) {
+      onReset();
+      return message.success("관리자에게 쪽지를 보냈습니다.");
+    }
+  }, [st_messageForAdminCreateDone]);
+
+  useEffect(() => {
+    if (st_messageForAdminCreateError) {
+      return message.error(st_messageForAdminCreateError);
+    }
+  }, [st_messageForAdminCreateError]);
+
   ////// TOGGLE //////
 
-  const messageSendModalHandler = useCallback(() => {
-    setMessageSendModalToggle((prev) => !prev);
+  const adminSendMessageToggleHandler = useCallback(() => {
+    setAdminSendMessageToggle((prev) => !prev);
   }, []);
+
+  const messageSendModalHandler = useCallback(() => {
+    let result = checkedList.filter((data, idx) => {
+      return data.isCheck ? true : false;
+    });
+
+    if (result.length !== 0) {
+      setMessageSendModalToggle((prev) => !prev);
+      setCheckedList(result);
+    } else {
+      return message.error("체크 박스를 선택해주세요.");
+    }
+  }, [checkedList]);
   ////// HANDLER //////
 
   const dateChagneHandler = useCallback((data) => {
@@ -385,29 +456,22 @@ const Index = () => {
 
   const noteSendFinishHandler = useCallback(
     (value) => {
-      console.log(value, "value");
-
-      // dispatch({
-      //   type: MESSAGE_LIST_REQUEST,
-      //   data: {
-      //     senderId: me.id,
-      //     receiverId: selectValue,
-      //     content: value.content2,
-      //   },
-      // });
-
-      console.log();
+      dispatch({
+        type: MESSAGE_MANY_CREATE_REQUEST,
+        data: {
+          title: value.title1,
+          author: me.username,
+          content: value.content1,
+          receiverId: checkedList.map((data) => data.id),
+        },
+      });
     },
-    [me, selectValue]
+    [me, selectValue, checkedList]
   );
 
   const noticeFinishHandler = useCallback((value) => {}, []);
 
-  const homeWorkFinishHandler = useCallback((data) => {
-    console.log(data, "asda");
-
-    console.log("Asdasd");
-  }, []);
+  const homeWorkFinishHandler = useCallback((data) => {}, []);
 
   const onReset = useCallback(() => {
     form.resetFields();
@@ -418,21 +482,24 @@ const Index = () => {
     setHomeWorkModalToggle(false);
     setNoticeModalToggle(false);
     setMessageSendModalToggle(false);
+    setAdminSendMessageToggle(false);
   }, []);
 
   const onChangeBoxEachHanlder = useCallback((e, idx2, arr) => {
     let result = arr.map((data, idx) => {
-      return idx2 === idx ? e.target.checked : data;
+      return idx2 === idx ? { ...data, isCheck: e.target.checked } : data;
     });
 
     setCheckedList(result);
   }, []);
 
   const onChangeBoxAllHanlder = useCallback((e, arr) => {
-    let resultAll = arr.map(() => {
-      return e.target.checked;
+    console.log(arr);
+    let resultAll = arr.map((data) => {
+      return { ...data, isCheck: e.target.checked };
     });
 
+    console.log(resultAll, "resultAll");
     setCheckedList(resultAll);
   }, []);
 
@@ -457,14 +524,7 @@ const Index = () => {
     });
   };
 
-  function handleChange(value) {
-    console.log(`selected ${value}`);
-  }
-
   const answerFinishHandler = useCallback((data, messageData) => {
-    console.log(data, "data");
-    console.log(messageData, "messageData");
-
     dispatch({
       type: MESSAGE_CREATE_REQUEST,
       data: {
@@ -477,9 +537,24 @@ const Index = () => {
       },
     });
   }, []);
+
+  const sendMessageAdminFinishHandler = useCallback(
+    (data) => {
+      dispatch({
+        type: MESSAGE_FOR_ADMIN_CREATE_REQUEST,
+        data: {
+          title: data.title1,
+          author: me.username,
+          content: data.content1,
+        },
+      });
+    },
+    [me]
+  );
+
   ////// DATAVIEW //////
 
-  const testArr = [
+  const testdata = [
     {
       id: 1,
       student: "Eric1",
@@ -774,7 +849,9 @@ const Index = () => {
                       textAlign={`center`}
                       ju={`center`}
                       padding={`20px 0`}>
-                      <CustomCheckBox />
+                      <CustomCheckBox
+                        onChange={(e) => onChangeBoxAllHanlder(e, checkedList)}
+                      />
                       <Text
                         fontSize={width < 700 ? `14px` : `18px`}
                         fontWeight={`Bold`}
@@ -795,14 +872,13 @@ const Index = () => {
                       </Text>
                     </Wrapper>
 
-                    {testArr && testArr.length === 0 ? (
+                    {lectureStudentList && lectureStudentList.length === 0 ? (
                       <Wrapper>
                         <Empty description="조회된 데이터가 없습니다." />
                       </Wrapper>
                     ) : (
-                      testArr &&
-                      testArr.map((data, idx) => {
-                        console.log(data, "data");
+                      lectureStudentList &&
+                      lectureStudentList.map((data, idx) => {
                         return (
                           <Wrapper
                             key={data.id}
@@ -811,22 +887,28 @@ const Index = () => {
                             padding={`25px 0 20px`}
                             cursor={`pointer`}
                             bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
-                            <CustomCheckBox />
+                            <CustomCheckBox
+                              checked={checkedList[idx].isCheck}
+                              onChange={(e) =>
+                                onChangeBoxEachHanlder(e, idx, checkedList)
+                              }
+                            />
+
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`25%`}
                               wordBreak={`break-word`}>
-                              Eric
+                              {data.username}
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`25%`}>
-                              1997
+                              {data.birth.slice(0, 10)}
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`25%`}>
-                              인도네시아
+                              {data.stuCountry}
                             </Text>
                           </Wrapper>
                         );
@@ -867,13 +949,13 @@ const Index = () => {
                       </Text>
                     </Wrapper>
 
-                    {testArr && testArr.length === 0 ? (
+                    {lectureStudentList && lectureStudentList.length === 0 ? (
                       <Wrapper>
                         <Empty description="조회된 데이터가 없습니다." />
                       </Wrapper>
                     ) : (
-                      testArr &&
-                      testArr.map((data, idx) => {
+                      lectureStudentList &&
+                      lectureStudentList.map((data, idx) => {
                         return (
                           <Wrapper
                             dr={`row`}
@@ -890,13 +972,16 @@ const Index = () => {
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`25%`}
                               wordBreak={`break-word`}>
-                              2022/01/22{" "}
+                              {/* 2022/01/22 */}
+
+                              {data.endDate}
                               <SpanText color={Theme.red_C}>(D-5)</SpanText>
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`25%`}>
-                              작성하기
+                              {/* 작성하기 */}
+                              {data.stuMemo}
                             </Text>
 
                             <Text
@@ -907,7 +992,7 @@ const Index = () => {
                                   ? `${Theme.basicTheme_C}`
                                   : `${Theme.red_C}`
                               }>
-                              출석 | 결석
+                              {data.status ? "출석" : "결석"}
                             </Text>
                           </Wrapper>
                         );
@@ -972,13 +1057,13 @@ const Index = () => {
 
                 {width > 700 && (
                   <>
-                    {testArr && testArr.length === 0 ? (
+                    {lectureStudentList && lectureStudentList.length === 0 ? (
                       <Wrapper>
                         <Empty description="조회된 데이터가 없습니다." />
                       </Wrapper>
                     ) : (
-                      testArr &&
-                      testArr.map((data, idx) => {
+                      lectureStudentList &&
+                      lectureStudentList.map((data, idx) => {
                         return (
                           <Wrapper
                             key={data.id}
@@ -989,7 +1074,11 @@ const Index = () => {
                             ju={`center`}
                             bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
                             <CustomCheckBox
-                              checked={checkedList[idx]}
+                              checked={
+                                checkedList &&
+                                checkedList[idx] &&
+                                checkedList[idx].isCheck
+                              }
                               onChange={(e) =>
                                 onChangeBoxEachHanlder(e, idx, checkedList)
                               }
@@ -997,17 +1086,18 @@ const Index = () => {
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`15%`}>
-                              Eric
+                              {data.username}
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`10%`}>
-                              1997
+                              {/* 1997 */}
+                              {data.birth.slice(0, 10)}
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`10%`}>
-                              인도네시아
+                              {data.stuCountry}
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
@@ -1018,19 +1108,26 @@ const Index = () => {
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`20%`}
                               wordBreak={`break-word`}>
-                              2022/01/22
+                              {/* 2022/01/22 */}
+                              {data.endDate}
                               <SpanText color={Theme.red_C}>(D-5)</SpanText>
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`10%`}>
                               작성하기
+                              {data.stuMemo}
                             </Text>
 
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
-                              width={`10%`}>
-                              출석 | 결석
+                              width={`10%`}
+                              color={
+                                "출석"
+                                  ? `${Theme.basicTheme_C}`
+                                  : `${Theme.red_C}`
+                              }>
+                              {data.status ? "출석" : "결석"}
                             </Text>
                           </Wrapper>
                         );
@@ -1633,32 +1730,61 @@ const Index = () => {
         <CustomModal
           visible={messageSendModalToggle}
           width={`1350px`}
-          title="쪽지 보내기"
+          title={
+            adminSendMessageToggle ? "관리자에게 쪽지 보내기" : "강사에게 쪽지"
+          }
           footer={null}
           closable={false}>
           <CustomForm
             ref={formRef}
             form={form}
-            onFinish={noteSendFinishHandler}>
-            <Text
-              fontSize={width < 700 ? `14px` : `18px`}
-              fontWeight={`bold`}
-              margin={`0 0 10px`}>
-              받는 사람
-            </Text>
-            <Form.Item name="receivePerson" rules={[{ required: true }]}>
-              <Select
-                value={selectValue}
-                style={{ width: `100%` }}
-                onChange={handleChange}>
-                <Option value="jack">Jack</Option>
-                <Option value="lucy">Lucy</Option>
-                <Option value="disabled" disabled>
-                  Disabled
-                </Option>
-                <Option value="Yiminghe">yiminghe</Option>
-              </Select>
-            </Form.Item>
+            onFinish={
+              adminSendMessageToggle
+                ? sendMessageAdminFinishHandler
+                : noteSendFinishHandler
+            }>
+            <Wrapper al={`flex-end`}>
+              <CommonButton
+                margin={`0 0 0 5px`}
+                radius={`5px`}
+                width={`100px`}
+                height={`32px`}
+                size="small"
+                onClick={() => adminSendMessageToggleHandler()}>
+                {!adminSendMessageToggle ? " 관라자에게" : "학생에게"}
+              </CommonButton>
+            </Wrapper>
+
+            {!adminSendMessageToggle && (
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`bold`}
+                margin={`0 0 10px`}>
+                받는 사람
+              </Text>
+            )}
+
+            {!adminSendMessageToggle && (
+              <Wrapper al={`flex-start`} margin={`15px 0`}>
+                {checkedList && checkedList.length === 0 ? (
+                  <Wrapper>
+                    <Empty description="단체로 선택하신 박스가 없습니다." />
+                  </Wrapper>
+                ) : (
+                  <Wrapper dr={`row`} width={`auto`} ju={`flex-start`}>
+                    {checkedList &&
+                      checkedList.map((data, idx) => {
+                        return (
+                          <Text margin={`0 5px 0`} color={Theme.basicTheme_C}>
+                            {data.username}
+                          </Text>
+                        );
+                      })}
+                  </Wrapper>
+                )}
+              </Wrapper>
+            )}
+
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
@@ -1666,7 +1792,7 @@ const Index = () => {
               제목
             </Text>
             <Form.Item name="title1" rules={[{ required: true }]}>
-              <CusotmInput />
+              <CusotmInput width={`100%`} />
             </Form.Item>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
@@ -1711,7 +1837,7 @@ const Index = () => {
               제목
             </Text>
             <Form.Item name="title2" rules={[{ required: true }]}>
-              <CusotmInput />
+              <CusotmInput width={`100%`} />
             </Form.Item>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}

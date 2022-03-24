@@ -444,8 +444,7 @@ const NoticeList = ({ router }) => {
                 moveLinkHandler(
                   `/admin/board/notice/list?page=${currentPage}&search=${inputSearch.value}`
                 )
-              }
-            >
+              }>
               <SearchOutlined />
               검색
             </Button>
@@ -472,15 +471,13 @@ const NoticeList = ({ router }) => {
         width={`1100px`}
         title={`새로운 공지사항 작성`}
         onOk={createModalOk}
-        onCancel={updateData ? updateModalClose : createModalClose}
-      >
+        onCancel={updateData ? updateModalClose : createModalClose}>
         <Wrapper padding={`10px`}>
           <Form
             style={{ width: `100%` }}
             onFinish={updateData ? onSubmitUpdate : onSubmit}
             form={form}
-            ref={formRef}
-          >
+            ref={formRef}>
             <Form.Item name={"title"} label="제목" rules={[{ required: true }]}>
               <Input allowClear placeholder="Title..." />
             </Form.Item>
@@ -494,8 +491,7 @@ const NoticeList = ({ router }) => {
                 filterOption={(input, option) =>
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
-                }
-              >
+                }>
                 <Select.Option value="공지사항">공지사항</Select.Option>
                 <Select.Option value="새소식">새소식</Select.Option>
               </Select>
@@ -514,8 +510,7 @@ const NoticeList = ({ router }) => {
             <Form.Item
               name={"content"}
               label="본문"
-              rules={[{ required: true }]}
-            >
+              rules={[{ required: true }]}>
               <Input.TextArea
                 allowClear
                 placeholder="Content..."
@@ -556,8 +551,7 @@ const NoticeList = ({ router }) => {
         visible={deletePopVisible}
         onOk={deleteNoticeHandler}
         onCancel={deletePopToggle(null)}
-        title="정말 삭제하시겠습니까?"
-      >
+        title="정말 삭제하시겠습니까?">
         <Wrapper>삭제 된 데이터는 다시 복구할 수 없습니다.</Wrapper>
         <Wrapper>정말 삭제하시겠습니까?</Wrapper>
       </Modal>

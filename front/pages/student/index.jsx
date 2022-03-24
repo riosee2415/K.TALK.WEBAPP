@@ -521,14 +521,7 @@ const Student = () => {
     [me]
   );
 
-  {
-    console.log(messageDatum, "ASKDJAQWIDJI");
-  }
-
   const answerFinishHandler = useCallback((data, messageData) => {
-    console.log(data, "data");
-
-    console.log(messageData, "messageData");
     dispatch({
       type: MESSAGE_CREATE_REQUEST,
       data: {
@@ -543,8 +536,6 @@ const Student = () => {
   }, []);
 
   const receiveSelectHandler = useCallback((value) => {
-    console.log(`selected ${value}`);
-
     setSelectValue(value);
   }, []);
 
