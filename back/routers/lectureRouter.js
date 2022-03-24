@@ -8,6 +8,7 @@ const {
   Participant,
   LectureDiary,
   Homework,
+  Submit,
 } = require("../models");
 const models = require("../models");
 const fs = require("fs");
@@ -646,7 +647,7 @@ router.post("/diary/create", isLoggedIn, async (req, res, next) => {
 router.post("/homework/list", async (req, res, next) => {
   const { LectureId } = req.body;
   try {
-    const selectQuery = `
+    const lengthQuery = `
       SELECT  id,
               title,
               date,
@@ -656,6 +657,32 @@ router.post("/homework/list", async (req, res, next) => {
         FROM  homeworks
        WHERE  LectureId = ${LectureId}
     `;
+
+    const homeworkQuery = `
+      SELECT  id,
+              title,
+              date,
+              file,
+              isDelete,
+              LectureId
+        FROM  homeworks
+       WHERE  LectureId = ${LectureId}
+       ORDER  BY  createdAt DESC
+       LIMIT  ${LIMIT}
+      OFFSET  ${OFFSET}
+    `;
+
+    const length = await models.sequelize.query(lengthQuery);
+    const homeworks = await models.sequelize.query(homeworkQuery);
+
+    const homeworkLen = length[0].length;
+
+    const lastPage =
+      homeworkLen % LIMIT > 0 ? homeworkLen / LIMIT + 1 : homeworkLen / LIMIT;
+
+    return res
+      .status(200)
+      .json({ homeworks: homeworks[0], lastPage: parseInt(lastPage) });
   } catch (error) {
     console.error(error);
     return res.status(401).send("숙제 목록을 불러올 수 없습니다.");
@@ -703,6 +730,27 @@ router.post("/homework/create", async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("숙제를 등록할 수 없습니다.");
+  }
+});
+
+// 강사 숙제 작성 목록 확인하기.
+router.post("/submit/list", isLoggedIn, async (req, res, next) => {
+  const { LectureId } = req.body;
+  try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId), TeacherId: parseInt(req.user.id) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의입니다.");
+    }
+
+    const selectQuery = `
+      
+    `;
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("숙제 제출 목록을 불러올 수 없습니다.");
   }
 });
 

@@ -1,4 +1,5 @@
 const Sequelize = require("sequelize");
+
 const user = require("./user");
 const mainbanner = require("./mainbanner");
 const companyinfo = require("./companyinfo");
@@ -17,6 +18,8 @@ const participant = require("./participant");
 const lecturediary = require("./lecturediary");
 const bookfolder = require("./bookfolder");
 const book = require("./book");
+const homework = require("./homework");
+const submit = require("./submit");
 
 const env = process.env.NODE_ENV || "development";
 const config = require("../config/config")[env];
@@ -47,6 +50,8 @@ db.Commute = commute;
 db.LectureDiary = lecturediary;
 db.BookFolder = bookfolder;
 db.Book = book;
+db.Homework = homework;
+db.Submit = submit;
 
 Object.keys(db).forEach((modelName) => {
   db[modelName].init(sequelize);

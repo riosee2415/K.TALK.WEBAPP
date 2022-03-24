@@ -26,6 +26,7 @@ module.exports = class Submit extends Model {
   }
   static associate(db) {
     db.Submit.belongsTo(db.Lecture);
+    db.Submit.belongsTo(db.User);
     db.Submit.belongsTo(db.Homework);
   }
 };

@@ -7,7 +7,14 @@ const router = express.Router();
 router.post("/list", async (req, res, next) => {
   const { LectureId, UserId } = req.body;
   try {
-    return res.status(200).json({ exCommute, today });
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("출석부 목록을 불러올 수 없습니다.");
+    }
+    return res.status(200).json({});
   } catch (error) {
     console.error(error);
     return res.status(401).send("출석 목록을 불러올 수 없습니다.");

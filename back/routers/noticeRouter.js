@@ -261,6 +261,10 @@ router.get("/admin/list", isAdminCheck, async (req, res, next) => {
   }
 });
 
+router.post("/file", upload.single("file"), async (req, res, next) => {
+  return res.json({ path: req.file.location });
+});
+
 //강사가 강의에 공지사항 작성하기 (강의에 참여하고 있는 사람에게 작성하기)
 router.post("/create", isLoggedIn, async (req, res, next) => {
   const { title, content, author, LectureId, file } = req.body;
@@ -323,6 +327,7 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
             author,
             senderId: parseInt(req.user.id),
             receiverId: parseInt(data.id),
+            LectureId: null,
             file: file ? file : null,
             level: parseInt(req.user.level),
           });
@@ -345,6 +350,7 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
             author,
             senderId: parseInt(req.user.id),
             receiverId: parseInt(data.id),
+            LectureId: null,
             file: file ? file : null,
             level: parseInt(req.user.level),
           });
@@ -406,7 +412,7 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
           author,
           senderId: parseInt(req.user.id),
           receiverId: parseInt(data.id),
-          LectureId: LectureId ? parseInt(LectureId) : null,
+          LectureId: null,
           file: file ? file : null,
           level: parseInt(req.user.level),
         });
