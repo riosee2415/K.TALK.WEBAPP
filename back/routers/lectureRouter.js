@@ -645,7 +645,15 @@ router.post("/diary/create", isLoggedIn, async (req, res, next) => {
 ////////////////////////////////// - 숙제 작성 - ////////////////////////////////////////
 
 router.post("/homework/list", async (req, res, next) => {
-  const { LectureId } = req.body;
+  const { LectureId, page } = req.body;
+
+  const LIMIT = 5;
+
+  const _page = page ? page : 1;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 5;
+
   try {
     const lengthQuery = `
       SELECT  id,
@@ -772,7 +780,7 @@ router.post("/submit/list", isLoggedIn, async (req, res, next) => {
 });
 
 // 학생 숙제 제출
-router.post("/create", isLoggedIn, async (req, res, next) => {
+router.post("/submit/create", isLoggedIn, async (req, res, next) => {
   const { HomeworkId, LectureId, file } = req.body;
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");

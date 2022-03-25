@@ -18,15 +18,7 @@ module.exports = class Notice extends Model {
           allowNull: false,
         },
         level: {
-          type: DataTypes.INTEGER,
-          allowNull: false,
-        },
-        senderId: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        receiverId: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.INTEGER, // 권한 [1 : 일반학생, 2 : 강사, 3 : 전체]
           allowNull: true,
         },
         LectureId: {

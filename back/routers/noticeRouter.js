@@ -77,6 +77,7 @@ router.post("/lecture/list", async (req, res, next) => {
   try {
     const lengthQuery = `
     SELECT	id,
+          
             title,
             content,
             author,
@@ -96,6 +97,7 @@ router.post("/lecture/list", async (req, res, next) => {
 
     const selectQuery = `
     SELECT	id,
+          
             title,
             content,
             author,
@@ -150,8 +152,7 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
             title,
             content,
             author,
-            senderId,
-            receiverId,
+            level,
             LectureId,
             file,
             isDelete,
@@ -160,7 +161,17 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	notices
      WHERE	1 = 1
-       AND receiverId = ${req.user.id}
+      ${
+        req.user.id === 1
+          ? ` AND level = 1
+              AND level = 3`
+          : req.user.id === 2
+          ? `
+          AND level = 2
+          AND level = 3
+          `
+          : ` AND level = 3`
+      }
     `;
 
     const selectQuery = `
@@ -168,8 +179,7 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
             title,
             content,
             author,
-            senderId,
-            receiverId,
+            level,
             LectureId,
             file,
             isDelete,
@@ -178,7 +188,17 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	notices
      WHERE	1 = 1
-       AND  receiverId = ${req.user.id}
+     ${
+       req.user.id === 1
+         ? ` AND level = 1
+            AND level = 3`
+         : req.user.id === 2
+         ? `
+        AND level = 2
+        AND level = 3
+        `
+         : ` AND level = 3`
+     }
      ORDER  BY createdAt DESC
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
@@ -210,10 +230,9 @@ router.get("/detail/:noticeId", async (req, res, next) => {
             title,
             content,
             author,
-            senderId,
-            receiverId,
             LectureId,
             file,
+            level,
             isDelete,
             DATE_FORMAT(deletedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	deletedAt,
             DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
@@ -233,15 +252,36 @@ router.get("/detail/:noticeId", async (req, res, next) => {
   }
 });
 // 관리자 공지사항
-router.get("/admin/list", isAdminCheck, async (req, res, next) => {
+// level: 1 === 학생
+// level: 2 === 강사
+// level: 3 === 전체
+
+router.post("/admin/list", isAdminCheck, async (req, res, next) => {
+  const { level } = req.body;
+
+  let nanFlag = isNaN(level);
+
+  if (!level) {
+    nanFlag = false;
+  }
+
+  if (nanFlag) {
+    return res.status(400).send("잘못된 요청 입니다.");
+  }
+
+  let _level = Number(level);
+
+  if (_level > 3 || !level) {
+    _level = 3;
+  }
+
   try {
     const selectQuery = `
     SELECT	id,
             title,
             content,
             author,
-            senderId,
-            receiverId,
+            level,
             LectureId,
             file,
             isDelete,
@@ -250,6 +290,15 @@ router.get("/admin/list", isAdminCheck, async (req, res, next) => {
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	notices
      WHERE	isDelete = FALSE
+     ${
+       _level === 1
+         ? `AND level = 1`
+         : _level === 2
+         ? `AND level = 2`
+         : _level === 3
+         ? `AND level = 3`
+         : `AND level = 3`
+     }
      ORDER  BY createdAt DESC
     `;
 
@@ -279,15 +328,16 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("해당 강의가 존재하지 않습니다.");
     }
 
+    if (exLecture.TeacherId !== req.user.id) {
+      return res.status(401).send("자신의 강의에만 등록할 수 있습니다.");
+    }
+
     const createResult = await Notice.create({
       title,
       content,
       author,
-      senderId: parseInt(req.user.id),
-      receiverId: parseInt(data.UserId),
       LectureId: parseInt(LectureId),
       file: file ? file : null,
-      level: parseInt(req.user.level),
     });
 
     if (!createResult) {
@@ -303,123 +353,25 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
 
 // 관리자 등록
 router.post("/admin/create", isAdminCheck, async (req, res, next) => {
-  const { type, title, content, author, file } = req.body;
+  const { title, content, author, file, level } = req.body;
 
   if (req.user.level < 3) {
     return res.status(403).send("관리자만 게시글을 등록할 수 있습니다.");
   }
 
   try {
-    if (type === 1) {
-      // 학생 전체
-      const users = await User.findAll({
-        where: { level: 1 },
-      });
-
-      await Promise.all(
-        users.map(async (data) => {
-          await Notice.create({
-            title,
-            content,
-            author,
-            senderId: parseInt(req.user.id),
-            receiverId: parseInt(data.id),
-            LectureId: null,
-            file: file ? file : null,
-            level: parseInt(req.user.level),
-          });
-        })
-      );
-      return res.status(201).json({ result: true });
-    }
-
-    if (type === 2) {
-      // 강사 전체
-      const users = await User.findAll({
-        where: { level: 2 },
-      });
-
-      await Promise.all(
-        users.map(async (data) => {
-          await Notice.create({
-            title,
-            content,
-            author,
-            senderId: parseInt(req.user.id),
-            receiverId: parseInt(data.id),
-            LectureId: null,
-            file: file ? file : null,
-            level: parseInt(req.user.level),
-          });
-        })
-      );
-      return res.status(201).json({ result: true });
-    }
-
-    //모든 사용자에게 공지사항 작성
-    const allusers = await User.findAll({
-      where: {
-        level: {
-          [Op.lt]: 3,
-        },
-      },
+    const createResult = await Notice.create({
+      title,
+      content,
+      author,
+      LectureId: null,
+      file: file ? file : null,
+      level: parseInt(level) === 1 ? 1 : level === 2 ? 2 : level === 3 ? 3 : 3,
     });
 
-    await Promise.all(
-      allusers.map(async (data) => {
-        await Notice.create({
-          title,
-          content,
-          author,
-          senderId: parseInt(req.user.id),
-          receiverId: parseInt(data.id),
-          LectureId: null,
-          file: file ? file : null,
-          level: parseInt(req.user.level),
-        });
-      })
-    );
-
-    return res.status(201).json({ result: true });
-  } catch (error) {
-    console.error(error);
-    return res.status(401).send("게시글을 등록할 수 없습니다.");
-  }
-});
-
-router.post("/lecture/create", isAdminCheck, async (req, res, next) => {
-  const { title, content, author, file, LectureId } = req.body;
-  try {
-    const exLecture = await Lecture.findOne({
-      where: { id: parseInt(LectureId) },
-    });
-
-    if (!exLecture) {
-      return res.status(401).send("해당 강의가 존재하지 않습니다.");
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
     }
-
-    const partUsers = await Participant.findAll({
-      where: { LectureId: parseInt(LectureId) },
-    });
-
-    if (partUsers.length === 0) {
-      return res.status(401).send("해당 강의에 참여하고 있는 학생이 없습니다.");
-    }
-
-    await Promise.all(
-      partUsers.map(async (data) => {
-        await Notice.create({
-          title,
-          content,
-          author,
-          senderId: parseInt(req.user.id),
-          receiverId: parseInt(data.UserId),
-          LectureId: parseInt(LectureId),
-          file: file ? file : null,
-          level: parseInt(req.user.level),
-        });
-      })
-    );
 
     return res.status(201).json({ result: true });
   } catch (error) {
