@@ -31,6 +31,7 @@ router.post("/list", async (req, res, next) => {
             A.time,
             DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
             DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            A.isAtt,
             A.LectureId,
             A.UserId,
             B.course,
@@ -54,6 +55,7 @@ router.post("/list", async (req, res, next) => {
     const selectQuery = `
     SELECT	A.id,
             A.time,
+            A.isAtt,
             DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
             DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
             A.LectureId,
