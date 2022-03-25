@@ -1,7 +1,7 @@
 const express = require("express");
 const passport = require("passport");
 const bcrypt = require("bcrypt");
-const { User } = require("../models");
+const { User, Participant, Lecture } = require("../models");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isLoggedIn = require("../middlewares/isLoggedIn");
 const { Op } = require("sequelize");
@@ -693,6 +693,7 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
     snsId,
     stuJob,
     gender,
+    LectureId,
   } = req.body;
 
   try {
@@ -743,6 +744,19 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
     if (!result) {
       return res.status(401).send("처리중 문제가 발생하였습니다.");
     }
+
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의 입니다.");
+    }
+
+    await Participant.create({
+      LectureId: parseInt(LectureId),
+      UserId: parseInt(result.id),
+    });
 
     return res.status(201).json({ result: true });
   } catch (error) {
