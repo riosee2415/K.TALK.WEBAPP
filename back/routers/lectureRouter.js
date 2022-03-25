@@ -733,7 +733,16 @@ router.post("/homework/create", async (req, res, next) => {
 
 // 강사 숙제 작성 목록 확인하기.
 router.post("/submit/list", isLoggedIn, async (req, res, next) => {
-  const { LectureId } = req.body;
+  const { LectureId, search, page } = req.body;
+
+  const LIMIT = 5;
+
+  const _page = page ? page : 1;
+  const _search = search ? search : ``;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 5;
+
   try {
     const exLecture = await Lecture.findOne({
       where: { id: parseInt(LectureId), TeacherId: parseInt(req.user.id) },
@@ -742,6 +751,35 @@ router.post("/submit/list", isLoggedIn, async (req, res, next) => {
     if (!exLecture) {
       return res.status(401).send("존재하지 않는 강의입니다.");
     }
+
+    const lengthQuery = `
+    SELECT	A.id,
+            A.file,
+            A.isComplete,
+            DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            A.LectureId,
+            A.UserId,
+            A.HomeworkId,
+            B.userId,
+            B.username,
+            B.level,
+            C.title,
+            C.date,
+            D.course
+      FROM	submits				A
+     INNER
+      JOIN	users				B
+        ON	A.UserId = B.id
+     INNER
+      JOIN	homeworks			C
+        ON	A.HomeworkId = C.id
+     INNER
+      JOIN	lectures			D
+        ON	A.LectureId = D.id
+     WHERE  A.LectureId = ${LectureId}
+     ${_search ? `AND B.username LIKE '%${_search}%'` : ``}
+    `;
 
     const selectQuery = `
     SELECT	A.id,
@@ -769,11 +807,23 @@ router.post("/submit/list", isLoggedIn, async (req, res, next) => {
       JOIN	lectures			D
         ON	A.LectureId = D.id
      WHERE  A.LectureId = ${LectureId}
+     ${_search ? `AND B.username LIKE '%${_search}%'` : ``}
+     ORDER  BY  createdAt DESC
+     LIMIT  ${LIMIT}
+    OFFSET  ${OFFSET}
     `;
 
+    const length = await models.sequelize.query(lengthQuery);
     const submits = await models.sequelize.query(selectQuery);
 
-    return res.status(200).json({ submits: submits[0] });
+    const submitslen = length[0].length;
+
+    const lastPage =
+      submitslen % LIMIT > 0 ? submitslen / LIMIT + 1 : submitslen / LIMIT;
+
+    return res
+      .status(200)
+      .json({ submits: submits[0], lastPage: parseInt(lastPage) });
   } catch (error) {
     console.error(error);
     return res.status(401).send("숙제 제출 목록을 불러올 수 없습니다.");
