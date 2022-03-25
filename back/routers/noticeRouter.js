@@ -438,7 +438,7 @@ router.post("/lecture/create", isAdminCheck, async (req, res, next) => {
 
 // 공지사항 수정
 router.patch("/update", isLoggedIn, async (req, res, next) => {
-  const { id, title, content } = req.body;
+  const { id, title, content, file } = req.body;
 
   try {
     const exNotice = await Notice.findOne({ where: { id: parseInt(id) } });

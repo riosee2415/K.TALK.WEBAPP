@@ -4,8 +4,9 @@ const moment = require("moment");
 
 const router = express.Router();
 
+//출석부 목록
 router.post("/list", async (req, res, next) => {
-  const { LectureId, UserId } = req.body;
+  const { LectureId, UserId, search, page } = req.body;
   try {
     const exLecture = await Lecture.findOne({
       where: { id: parseInt(LectureId) },
@@ -14,6 +15,12 @@ router.post("/list", async (req, res, next) => {
     if (!exLecture) {
       return res.status(401).send("출석부 목록을 불러올 수 없습니다.");
     }
+
+    // const selectQuery = `
+    //   SELECT
+    //     FROM
+    // `;
+
     return res.status(200).json({});
   } catch (error) {
     console.error(error);
