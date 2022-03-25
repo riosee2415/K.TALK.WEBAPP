@@ -51,9 +51,9 @@ router.get("/user/list", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	Messages
      WHERE  receiverId = ${req.user.id}
+     ORDER  BY createdAt  DESC
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
-     ORDER  BY createdAt  DESC
     `;
 
     const length = await models.sequelize.query(lengthQuery);
