@@ -279,28 +279,20 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("해당 강의가 존재하지 않습니다.");
     }
 
-    const partUsers = await Participant.findAll({
-      where: { LectureId: parseInt(LectureId) },
+    const createResult = await Notice.create({
+      title,
+      content,
+      author,
+      senderId: parseInt(req.user.id),
+      receiverId: parseInt(data.UserId),
+      LectureId: parseInt(LectureId),
+      file: file ? file : null,
+      level: parseInt(req.user.level),
     });
 
-    if (partUsers.length === 0) {
-      return res.status(401).send("해당 강의에 참여하고 있는 학생이 없습니다.");
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
     }
-
-    await Promise.all(
-      partUsers.map(async (data) => {
-        await Notice.create({
-          title,
-          content,
-          author,
-          senderId: parseInt(req.user.id),
-          receiverId: parseInt(data.UserId),
-          LectureId: parseInt(LectureId),
-          file: file ? file : null,
-          level: parseInt(req.user.level),
-        });
-      })
-    );
 
     return res.status(201).json({ result: true });
   } catch (error) {
