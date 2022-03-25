@@ -65,12 +65,12 @@ const upload = multer({
 router.post("/lecture/list", async (req, res, next) => {
   const { page, LectureId } = req.body;
 
-  const LIMIT = 10;
+  const LIMIT = 5;
 
   const _page = page ? page : 1;
 
   const __page = _page - 1;
-  const OFFSET = __page * 10;
+  const OFFSET = __page * 5;
 
   const _LectureId = LectureId || null;
 

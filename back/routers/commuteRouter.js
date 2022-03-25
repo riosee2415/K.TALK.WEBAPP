@@ -16,10 +16,10 @@ router.post("/list", async (req, res, next) => {
       return res.status(401).send("출석부 목록을 불러올 수 없습니다.");
     }
 
-    // const selectQuery = `
-    //   SELECT
-    //     FROM
-    // `;
+    const selectQuery = `
+      SELECT
+        FROM  
+    `;
 
     return res.status(200).json({});
   } catch (error) {
@@ -30,7 +30,7 @@ router.post("/list", async (req, res, next) => {
 
 // 출석 create
 router.post("/create", async (req, res, next) => {
-  const { time, LectureId, UserId } = req.body;
+  const { time, LectureId, UserId, isAtt } = req.body;
   try {
     const exLecture = await Lecture.findOne({
       where: { id: parseInt(LectureId) },
@@ -74,6 +74,7 @@ router.post("/create", async (req, res, next) => {
       time,
       LectureId: parseInt(LectureId),
       UserId: parseInt(UserId),
+      isAtt,
     });
 
     if (!createResult) {

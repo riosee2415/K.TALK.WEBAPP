@@ -9,6 +9,11 @@ module.exports = class Commute extends Model {
           type: DataTypes.STRING(100),
           allowNull: false, // 필수
         },
+        isAtt: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+        },
       },
       {
         modelName: "Commute",
