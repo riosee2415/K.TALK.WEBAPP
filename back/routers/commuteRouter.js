@@ -48,7 +48,6 @@ router.post("/list", async (req, res, next) => {
      WHERE  1 = 1
        AND  A.LectureId = ${LectureId}
     ${_search ? `AND C.username LIKE '%${_search}%'` : ``}
-     ORDER  BY A.createdAt DESC
     `;
 
     const selectQuery = `
@@ -74,9 +73,9 @@ router.post("/list", async (req, res, next) => {
      WHERE  1 = 1
        AND  A.LectureId = ${LectureId}
        ${_search ? `AND C.username LIKE '%${_search}%'` : ``}
-     LIMIT  ${LIIMT}
-    OFFSET  ${OFFSET}
      ORDER  BY A.createdAt DESC
+     LIMIT  ${LIMIT}
+    OFFSET  ${OFFSET}
     `;
 
     const length = await models.sequelize.query(lengthQuery);
@@ -110,6 +109,7 @@ router.post("/create", async (req, res, next) => {
 
     const exPart = await Participant.findOne({
       where: { LectureId: parseInt(LectureId), UserId: parseInt(UserId) },
+      // order: [["createdAt", "DESC"]],
     });
 
     if (!exLecture) {
@@ -126,17 +126,20 @@ router.post("/create", async (req, res, next) => {
         .send("해당 학생은 해당 강의에 참여하고 있지 않습니다.");
     }
 
-    // const exCommute = await Commute.findOne({
-    //   where: { LectureId: parseInt(LectureId), UserId: parseInt(UserId) },
-    // });
+    const exCommute = await Commute.findOne({
+      where: { LectureId: parseInt(LectureId), UserId: parseInt(UserId) },
+    });
 
-    // let extime = exCommute.time.substring(0, 10);
+    let extime = exCommute.time.substring(0, 10);
 
-    // const today = moment().format("YYYY-MM-DD");
+    const today = moment().format("YYYY-MM-DD");
 
-    // if (extime === today) {
-    //   return res.status(401).send("이미 해당 학생은 강의에 출석했습니다.");
-    // }
+    console.log(extime);
+    console.log(today);
+
+    if (extime === today) {
+      return res.status(401).send("이미 해당 학생은 강의에 출석했습니다.");
+    }
 
     const createResult = await Commute.create({
       time,
@@ -152,7 +155,7 @@ router.post("/create", async (req, res, next) => {
     return res.status(201).json({ result: true });
   } catch (error) {
     console.error(error);
-    return res.status(401).send("출석 목록을 불러올 수 없습니다.");
+    return res.status(401).send("출석을 처리할 수 없습니다.");
   }
 });
 
