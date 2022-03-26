@@ -431,7 +431,7 @@ router.delete("/delete/:noticeId", isLoggedIn, async (req, res, next) => {
         deletedAt: new Date(),
       },
       {
-        where: { id: parseInt(noticeId), senderId: parseInt(req.user.id) },
+        where: { id: parseInt(noticeId) },
       }
     );
 

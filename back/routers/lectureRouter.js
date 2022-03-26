@@ -146,28 +146,58 @@ router.get(["/list", "/list/:sort"], async (req, res, next) => {
 });
 
 // 관리자에서 확인하는 모든 강의
-router.get("/allLectures", isAdminCheck, async (req, res, next) => {
-  try {
-    const lecture = await Lecture.findAll({
-      where: { isDelete: false },
-      include: [
-        {
-          model: Participant,
-          include: [
-            {
-              model: User,
-            },
-          ],
-        },
-      ],
-    });
+router.get(
+  ["/allLectures", "/allLectures/:listType"],
+  isAdminCheck,
+  async (req, res, next) => {
+    const { listType } = req.params;
 
-    return res.status(200).json(lecture);
-  } catch (error) {
-    console.error(error);
-    return res.status(401).send("모든 강의 목록을 불러올 수 없습니다.");
+    let nanFlag = isNaN(listType);
+
+    if (!listType) {
+      nanFlag = false;
+    }
+
+    if (nanFlag) {
+      return res.status(400).send("잘못된 요청 입니다.");
+    }
+
+    let _listType = Number(listType);
+
+    if (_listType > 2 || !listType) {
+      _listType = 2;
+    }
+
+    try {
+      const lecture = await Lecture.findAll({
+        where: { isDelete: false },
+        include: [
+          {
+            model: Participant,
+            include: [
+              {
+                model: User,
+                order: [["createdAt", "DESC"]],
+              },
+            ],
+          },
+        ],
+        order: [
+          _listType === 1
+            ? ["course", "DESC"]
+            : _listType === 2
+            ? ["createdAt", "DESC"]
+            : ["course", "DESC"],
+        ],
+      });
+
+      return res.status(200).json(lecture);
+    } catch (error) {
+      console.error(error);
+      return res.status(401).send("모든 강의 목록을 불러올 수 없습니다.");
+    }
   }
-});
+);
 
 router.get("/detail/:LectureId", async (req, res, next) => {
   const { LectureId } = req.params;
