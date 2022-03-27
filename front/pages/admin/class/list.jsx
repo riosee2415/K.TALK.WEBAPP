@@ -17,6 +17,7 @@ import {
   message,
   Empty,
   DatePicker,
+  TimePicker,
 } from "antd";
 import {
   CloseOutlined,
@@ -31,6 +32,7 @@ import {
   UPDATE_MODAL_OPEN_REQUEST,
   UPDATE_MODAL_CLOSE_REQUEST,
   LECTURE_UPDATE_REQUEST,
+  LECTURE_ALL_LIST_REQUEST,
 } from "../../../reducers/lecture";
 
 import { withRouter } from "next/router";
@@ -49,6 +51,7 @@ import {
   Image,
   RowWrapper,
   Text,
+  TextArea,
   TextInput,
   Wrapper,
 } from "../../../components/commonComponents";
@@ -56,12 +59,19 @@ import Theme from "../../../components/Theme";
 import useWidth from "../../../hooks/useWidth";
 import moment from "moment";
 
-const AdminContent = styled.div`
-  padding: 20px;
+const CustomArea = styled(TextArea)`
+  width: 100%;
+  border-radius: 0;
+  &::placeholder {
+    color: ${Theme.grey2_C};
+  }
+  &:focus {
+    border: 1px solid ${Theme.grey2_C};
+  }
 `;
 
-const NoticeTable = styled(Table)`
-  width: 95%;
+const AdminContent = styled.div`
+  padding: 20px;
 `;
 
 const CustomButton = styled(Button)`
@@ -99,6 +109,13 @@ const LoadNotification = (msg, content) => {
   });
 };
 
+const TimeInput = styled(TimePicker)`
+  width: ${(props) => props.width || `100%`};
+  &::placeholder {
+    color: ${Theme.grey2_C};
+  }
+`;
+
 const List = () => {
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
   const { me, st_loadMyInfoDone } = useSelector((state) => state.user);
@@ -132,12 +149,14 @@ const List = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const inputPeriod = useInput(``);
+  const inputCnt = useInput();
+  const inputStartDate = useInput();
 
   ////// REDUX //////
   const dispatch = useDispatch();
 
   const {
-    lectures,
+    allLectures,
     st_lectureDeleteDone,
     st_lectureDeleteError,
     updateModal,
@@ -150,9 +169,9 @@ const List = () => {
   ////// USEEFFECT //////
   useEffect(() => {
     dispatch({
-      type: LECTURE_LIST_REQUEST,
+      type: LECTURE_ALL_LIST_REQUEST,
       data: {
-        sort: currentSort,
+        listType: currentSort,
       },
     });
   }, [currentSort]);
@@ -170,9 +189,9 @@ const List = () => {
     if (st_lectureDeleteDone) {
       message.success("클래스가 삭제되었습니다.");
       dispatch({
-        type: LECTURE_LIST_REQUEST,
+        type: LECTURE_ALL_LIST_REQUEST,
         data: {
-          sort: currentSort,
+          listType: currentSort,
         },
       });
     }
@@ -188,9 +207,9 @@ const List = () => {
     if (st_lectureUpdateDone) {
       message.success("클래스가 수정되었습니다.");
       dispatch({
-        type: LECTURE_LIST_REQUEST,
+        type: LECTURE_ALL_LIST_REQUEST,
         data: {
-          sort: currentSort,
+          listType: currentSort,
         },
       });
       updateModalClose();
@@ -229,6 +248,8 @@ const List = () => {
     }
   }, [updateData]);
 
+  useEffect(() => {}, []);
+
   ////// HANDLER ///////
 
   const startDateChangeHandler = useCallback((e) => {
@@ -239,28 +260,20 @@ const List = () => {
 
   const onSubmitUpdate = useCallback(
     (data) => {
-      let UserId = null;
-      for (let i = 0; i < allUsers.length; i++) {
-        if (allUsers[i].username === data.UserId) {
-          UserId = allUsers[i].id;
-        }
-      }
-
-      // console.log();
-
       dispatch({
         type: LECTURE_UPDATE_REQUEST,
         data: {
           id: updateData.id,
+          time: moment(data.time, "HH:mm").format("HH:mm"),
+          day: data.day,
+          count: data.cnt,
           course: data.course,
-          UserId,
+          lecDate: parseInt(data.lecDate),
           startLv: data.startLv,
-          endLv: data.endLv,
+          startDate: moment(data.startDate, "YYYY-MM-DD").format("YYYY-MM-DD"),
+          memo: data.memo,
           price: data.price,
-          lecTime: data.lecTime,
-          lecDate: data.lecDate,
-          startDate: moment(data.startDate).format("YYYY-MM-DD"),
-          endDate: data.endDate,
+          UserId: data.UserId,
         },
       });
     },
@@ -293,31 +306,35 @@ const List = () => {
 
   const onFill = useCallback(
     (data) => {
-      let UserId = null;
-      for (let i = 0; i < allUsers.length; i++) {
-        console.log(allUsers[i], data.teacherName, "onFia");
-        if (allUsers[i].username === data.teacherName) {
-          UserId = allUsers[i].username;
-        }
-      }
-
-      form.setFieldsValue({
-        course: data.course,
-        UserId,
-        startLv: data.startLv,
-        endLv: data.endLv,
-        price: data.price,
-        lecTime: data.lecTime,
-        lecDate: parseInt(data.lecDate.replace("주", "")),
-
-        startDate: moment(data.startDate, "YYYY-MM-DD"),
-        // endDate: moment(data.startDate, "YYYY-MM-DD"),
-      });
       inputPeriod.setValue(parseInt(data.lecDate.replace("주", "")));
       setStartDate(data.startDate);
+
+      form.setFieldsValue({
+        time: moment(data.time, "HH:mm"),
+        day: data.day,
+        cnt: data.count,
+        allCnt: data.count * parseInt(data.lecDate.replace("주", "")),
+        course: data.course,
+        lecDate: parseInt(data.lecDate.replace("주", "")),
+        startLv: data.startLv,
+        startDate: moment(data.startDate, "YYYY-MM-DD"),
+        memo: data.memo,
+        price: data.price,
+        UserId: data.TeacherId,
+      });
+
+      // inputStartDate, setValue(data.startDate);
     },
-    [inputPeriod, allUsers]
+    [inputStartDate, inputPeriod, allUsers, inputPeriod]
   );
+  useEffect(() => {
+    if (inputCnt.value && inputPeriod.value && form) {
+      form.setFieldsValue({
+        allCnt: inputPeriod.value * inputCnt.value,
+      });
+    }
+  }, [inputCnt, inputPeriod, form]);
+
   ////// TOGGLE ///////
   const updateModalOpen = useCallback(
     (data) => {
@@ -367,6 +384,7 @@ const List = () => {
     },
   ];
 
+  console.log(updateData && updateData);
   return (
     <AdminLayout>
       <PageHeader
@@ -376,68 +394,6 @@ const List = () => {
       />
 
       <AdminContent>
-        <Wrapper dr={`row`}>
-          <Wrapper
-            width={width < 1350 ? `100%` : `calc(100% / 2 )`}
-            margin={`0 0 30px`}
-            al={`flex-start`}
-            ju={`flex-start`}
-          >
-            <Text fontSize={`18px`} fontWeight={`700`}>
-              강사 게시판
-            </Text>
-            <RowWrapper margin={`16px 0 10px 0`} gutter={5}>
-              <Col>
-                <Button type="primary">전체보기</Button>
-              </Col>
-              <Col>
-                <Button>글 찾기</Button>
-              </Col>
-              <Col>
-                <Button>쪽지 보내기</Button>
-              </Col>
-            </RowWrapper>
-            <NoticeTable
-              rowKey="id"
-              columns={columns}
-              // dataSource={notices ? notices : []}
-              size="small"
-            />
-            <Wrapper al={`flex-end`} width={`95%`} margin={`10px 0 0`}>
-              <Button>글쓰기</Button>
-            </Wrapper>
-          </Wrapper>
-          <Wrapper
-            width={width < 1350 ? `100%` : `calc(100% / 2 )`}
-            margin={`0 0 30px`}
-            al={`flex-start`}
-            ju={`flex-start`}
-          >
-            <Text fontSize={`18px`} fontWeight={`700`}>
-              학생 게시판
-            </Text>
-            <RowWrapper margin={`16px 0 10px 0`} gutter={5}>
-              <Col>
-                <Button type="primary">전체보기</Button>
-              </Col>
-              <Col>
-                <Button>글 찾기</Button>
-              </Col>
-              <Col>
-                <Button>쪽지 보내기</Button>
-              </Col>
-            </RowWrapper>
-            <NoticeTable
-              rowKey="id"
-              columns={columns}
-              // dataSource={notices ? notices : []}
-              size="small"
-            />
-            <Wrapper al={`flex-end`} width={`95%`} margin={`10px 0 0`}>
-              <Button>글쓰기</Button>
-            </Wrapper>
-          </Wrapper>
-        </Wrapper>
         <Wrapper al={`flex-start`} margin={`0 0 10px`}>
           <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 16px`}>
             <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 20px 0 0`}>
@@ -456,19 +412,18 @@ const List = () => {
             placeholder={`정렬을 선택해주세요.`}
             onChange={(e) => comboChangeHandler(e)}
           >
-            <Select.Option value={`1`}>인원수순</Select.Option>
+            <Select.Option value={`1`}>강의명순</Select.Option>
             <Select.Option value={`2`}>생성일순</Select.Option>
-            <Select.Option value={`3`}>강의명순</Select.Option>
           </Select>
         </Wrapper>
         <Wrapper dr={`row`} ju={`flex-start`}>
-          {lectures &&
-            (lectures.length === 0 ? (
+          {allLectures &&
+            (allLectures.length === 0 ? (
               <Wrapper>
                 <Empty description={`조회된 강의가 없습니다.`} />
               </Wrapper>
             ) : (
-              lectures.map((data) => {
+              allLectures.map((data) => {
                 return (
                   <Wrapper
                     width={`calc(100% / 3 - 20px)`}
@@ -505,8 +460,8 @@ const List = () => {
                             </Wrapper>
 
                             <Text fontSize={`16px`} fontWeight={`700`}>
-                              {data.lecTime}분 /&nbsp;
-                              {week[new Date(data.startDate).getDay()]}요일
+                              {data.time.slice(11, 16)}&nbsp;/&nbsp;
+                              {data.day}
                             </Text>
                           </Wrapper>
 
@@ -554,7 +509,7 @@ const List = () => {
                           margin={width < 1350 ? `20px 0 0` : `0`}
                         >
                           <Text fontSize={`14px`} fontWeight={`bold`}>
-                            {data.viewLv}
+                            {data.startLv}
                           </Text>
                           <Text>
                             수업 시작일 :{" "}
@@ -567,54 +522,7 @@ const List = () => {
                         dr={`row`}
                         ju={`space-between`}
                       >
-                        <Text
-                          width={`calc(100% / 2 - 10px)`}
-                          margin={`0 0 12px`}
-                        >
-                          Julieta Lopez
-                        </Text>
-                        <Text
-                          width={`calc(100% / 2 - 10px)`}
-                          margin={`0 0 12px`}
-                        >
-                          Julieta Lopez
-                        </Text>
-                        <Text
-                          width={`calc(100% / 2 - 10px)`}
-                          margin={`0 0 12px`}
-                        >
-                          Julieta Lopez
-                        </Text>
-                        <Text
-                          width={`calc(100% / 2 - 10px)`}
-                          margin={`0 0 12px`}
-                        >
-                          Julieta Lopez
-                        </Text>
-                        <Text
-                          width={`calc(100% / 2 - 10px)`}
-                          margin={`0 0 12px`}
-                        >
-                          Julieta Lopez
-                        </Text>
-                        <Text
-                          width={`calc(100% / 2 - 10px)`}
-                          margin={`0 0 12px`}
-                        >
-                          Julieta Lopez
-                        </Text>
-                        <Text
-                          width={`calc(100% / 2 - 10px)`}
-                          margin={`0 0 12px`}
-                        >
-                          Julieta Lopez
-                        </Text>
-                        <Text
-                          width={`calc(100% / 2 - 10px)`}
-                          margin={`0 0 12px`}
-                        >
-                          Julieta Lopez
-                        </Text>
+                        {data.Participants.username}
                       </Wrapper>
                     </Wrapper>
                     <Wrapper dr={`row`}>
@@ -697,7 +605,7 @@ const List = () => {
                   {allUsers &&
                     allUsers.map((data) => {
                       return (
-                        <Select.Option key={data.id} value={data.username}>
+                        <Select.Option key={data.id} value={data.id}>
                           {data.username}
                         </Select.Option>
                       );
@@ -708,22 +616,10 @@ const List = () => {
             </Wrapper>
 
             <Wrapper dr={`row`} margin={`0 0 20px`}>
-              <Text width={`100px`}>시작 레벨</Text>
+              <Text width={`100px`}>레벨</Text>
               <FormItem
-                rules={[
-                  { required: true, message: "시작 레벨을 입력해주세요." },
-                ]}
+                rules={[{ required: true, message: "레벨을 입력해주세요." }]}
                 name={`startLv`}
-              >
-                <CusotmInput />
-              </FormItem>
-            </Wrapper>
-
-            <Wrapper dr={`row`} margin={`0 0 20px`}>
-              <Text width={`100px`}>끝 레벨</Text>
-              <FormItem
-                rules={[{ required: true, message: "끝 레벨을 입력해주세요." }]}
-                name={`endLv`}
               >
                 <CusotmInput />
               </FormItem>
@@ -742,17 +638,15 @@ const List = () => {
             </Wrapper>
 
             <Wrapper dr={`row`} margin={`0 0 20px`}>
-              <Text width={`100px`}>강의 시간</Text>
+              <Text width={`100px`}>수업 시간</Text>
               <FormItem
                 rules={[
-                  { required: true, message: "강의 시간을 입력해주세요." },
+                  { required: true, message: "수업 시간을 입력해주세요." },
                 ]}
-                name={`lecTime`}
-                width={`calc(100% - 130px)`}
+                name={`time`}
               >
-                <CusotmInput type={`number`} />
+                <TimeInput size={`large`} format={`HH:mm`} />
               </FormItem>
-              <Text margin={`0 0 0 10px`}>분</Text>
             </Wrapper>
 
             <Wrapper dr={`row`} margin={`0 0 20px`}>
@@ -774,6 +668,44 @@ const List = () => {
             </Wrapper>
 
             <Wrapper dr={`row`} margin={`0 0 20px`}>
+              <Text width={`100px`}>횟수</Text>
+              <FormItem
+                rules={[{ required: true, message: "횟수를 입력해주세요." }]}
+                name={`cnt`}
+                width={`calc(100% - 130px)`}
+              >
+                <CusotmInput type={`number`} {...inputCnt} />
+              </FormItem>
+              <Text width={`30px`} padding={`0 0 0 10px`}>
+                회
+              </Text>
+            </Wrapper>
+
+            <Wrapper dr={`row`} margin={`0 0 20px`}>
+              <Text width={`100px`}>진행 요일</Text>
+              <FormItem
+                rules={[{ required: true, message: "요일을 입력해주세요." }]}
+                name={`day`}
+              >
+                <CusotmInput />
+              </FormItem>
+            </Wrapper>
+
+            <Wrapper dr={`row`} margin={`0 0 20px`}>
+              <Text width={`100px`}>총 횟수</Text>
+              <FormItem
+                // rules={[{ required: true, message: "횟수를 입력해주세요." }]}
+                name={`allCnt`}
+                width={`calc(100% - 130px)`}
+              >
+                <CusotmInput type={`number`} readOnly={true} />
+              </FormItem>
+              <Text width={`30px`} padding={`0 0 0 10px`}>
+                회
+              </Text>
+            </Wrapper>
+
+            <Wrapper dr={`row`} margin={`0 0 20px`}>
               <Text width={`100px`}>시작 날짜</Text>
               <FormItem
                 rules={[
@@ -785,7 +717,8 @@ const List = () => {
                   format={`YYYY-MM-DD`}
                   size={`large`}
                   onChange={startDateChangeHandler}
-                  defaultValue={
+                  // {...inputStartDate}
+                  value={
                     updateData && moment(updateData.startDate, "YYYY-MM-DD")
                   }
                 />
@@ -806,6 +739,18 @@ const List = () => {
                   readOnly={true}
                   value={endDate && endDate}
                 />
+              </FormItem>
+            </Wrapper>
+
+            <Wrapper dr={`row`} margin={`0 0 20px`} al={`flex-start`}>
+              <Text width={`100px`} margin={`8px 0 0`}>
+                메모
+              </Text>
+              <FormItem
+                rules={[{ required: true, message: "메모를 작성해주세요." }]}
+                name={`memo`}
+              >
+                <CustomArea />
               </FormItem>
             </Wrapper>
           </Wrapper>

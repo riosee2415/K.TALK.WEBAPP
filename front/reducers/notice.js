@@ -4,6 +4,8 @@ export const initailState = {
   noticeLectureList: null,
   noticeLectureLastPage: 1,
 
+  uploadPath: null,
+
   noticeList: null,
   noticeLastPage: 1,
 
@@ -32,9 +34,17 @@ export const initailState = {
   st_noticeCreateDone: false,
   st_noticeCreateError: null,
   //
+  st_noticeUploadLoading: false,
+  st_noticeUploadDone: false,
+  st_noticeUploadError: null,
+  //
   st_noticeAdminCreateLoading: false,
   st_noticeAdminCreateDone: false,
   st_noticeAdminCreateError: null,
+  //
+  st_noticeLectureCreate: false,
+  st_noticeLectureCreate: false,
+  st_noticeLectureCreate: null,
   //
   st_noticeUpdateLoading: false,
   st_noticeUpdateDone: false,
@@ -73,9 +83,19 @@ export const NOTICE_CREATE_REQUEST = "NOTICE_CREATE_REQUEST";
 export const NOTICE_CREATE_SUCCESS = "NOTICE_CREATE_SUCCESS";
 export const NOTICE_CREATE_FAILURE = "NOTICE_CREATE_FAILURE";
 //
+export const NOTICE_UPLOAD_REQUEST = "NOTICE_UPLOAD_REQUEST";
+export const NOTICE_UPLOAD_SUCCESS = "NOTICE_UPLOAD_SUCCESS";
+export const NOTICE_UPLOAD_FAILURE = "NOTICE_UPLOAD_FAILURE";
+//
+export const NOTICE_FILE_INIT = "NOTICE_FILE_INIT";
+//
 export const NOTICE_ADMIN_CREATE_REQUEST = "NOTICE_ADMIN_CREATE_REQUEST";
 export const NOTICE_ADMIN_CREATE_SUCCESS = "NOTICE_ADMIN_CREATE_SUCCESS";
 export const NOTICE_ADMIN_CREATE_FAILURE = "NOTICE_ADMIN_CREATE_FAILURE";
+//
+export const NOTICE_LECTURE_CREATE_REQUEST = "NOTICE_LECTURE_CREATE_REQUEST";
+export const NOTICE_LECTURE_CREATE_SUCCESS = "NOTICE_LECTURE_CREATE_SUCCESS";
+export const NOTICE_LECTURE_CREATE_FAILURE = "NOTICE_LECTURE_CREATE_FAILURE";
 //
 export const NOTICE_UPDATE_REQUEST = "NOTICE_UPDATE_REQUEST";
 export const NOTICE_UPDATE_SUCCESS = "NOTICE_UPDATE_SUCCESS";
@@ -111,7 +131,7 @@ const reducer = (state = initailState, action) =>
       case NOTICE_LECTURE_LIST_SUCCESS: {
         draft.st_noticeListLoading = false;
         draft.st_noticeListDone = true;
-        draft.notices = action.data.notices;
+        draft.noticeLectureList = action.data.notice;
         draft.maxPage = action.data.lastPage;
         break;
       }
@@ -133,7 +153,7 @@ const reducer = (state = initailState, action) =>
       case NOTICE_LIST_SUCCESS: {
         draft.st_noticeListLoading = false;
         draft.st_noticeListDone = true;
-        draft.notices = action.data.notices;
+        draft.notices = action.data.notice;
         draft.maxPage = action.data.lastPage;
         break;
       }
@@ -177,7 +197,7 @@ const reducer = (state = initailState, action) =>
       case NOTICE_ADMIN_LIST_SUCCESS: {
         draft.st_noticeListLoading = false;
         draft.st_noticeListDone = true;
-        draft.notices = action.data.notices;
+        draft.notices = action.data.notice;
         draft.maxPage = action.data.lastPage;
         break;
       }
@@ -231,6 +251,26 @@ const reducer = (state = initailState, action) =>
       }
       ///////////////////////////////////////////////////////
 
+      case NOTICE_UPLOAD_REQUEST: {
+        draft.st_noticeUploadLoading = true;
+        draft.st_noticeUploadDone = null;
+        draft.st_noticeUploadError = false;
+        break;
+      }
+      case NOTICE_UPLOAD_SUCCESS: {
+        draft.st_noticeUploadLoading = false;
+        draft.st_noticeUploadDone = true;
+        draft.uploadPath = action.data.path;
+        break;
+      }
+      case NOTICE_UPLOAD_FAILURE: {
+        draft.st_noticeUploadLoading = false;
+        draft.st_noticeUploadDone = false;
+        draft.st_noticeUploadError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+
       case NOTICE_ADMIN_CREATE_REQUEST: {
         draft.st_noticeCreateLoading = true;
         draft.st_noticeCreateDone = null;
@@ -246,6 +286,26 @@ const reducer = (state = initailState, action) =>
         draft.st_noticeCreateLoading = false;
         draft.st_noticeCreateDone = false;
         draft.st_noticeCreateError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case NOTICE_LECTURE_CREATE_REQUEST: {
+        draft.st_noticeLectureCreateLoading = true;
+        draft.st_noticeLectureCreateDone = null;
+        draft.st_noticeLectureCreateError = false;
+        break;
+      }
+      case NOTICE_LECTURE_CREATE_SUCCESS: {
+        draft.st_noticeLectureCreateLoading = false;
+        draft.st_noticeLectureCreateDone = true;
+        break;
+      }
+      case NOTICE_LECTURE_CREATE_FAILURE: {
+        draft.st_noticeLectureCreateLoading = false;
+        draft.st_noticeLectureCreateDone = false;
+        draft.st_noticeLectureCreateError = action.error;
         break;
       }
 
@@ -307,6 +367,9 @@ const reducer = (state = initailState, action) =>
         draft.detailModal = false;
         break;
       ///////////////////////////////////////////////////////
+      case NOTICE_FILE_INIT:
+        draft.uploadPath = null;
+        break;
 
       default:
         break;

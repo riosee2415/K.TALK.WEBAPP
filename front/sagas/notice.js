@@ -40,15 +40,20 @@ import {
   NOTICE_PREV_REQUEST,
   NOTICE_PREV_SUCCESS,
   NOTICE_PREV_FAILURE,
+  //////////////////////////////////////,
+  NOTICE_UPLOAD_REQUEST,
+  NOTICE_UPLOAD_SUCCESS,
+  NOTICE_UPLOAD_FAILURE,
+  //////////////////////////////////////,
+  NOTICE_LECTURE_CREATE_REQUEST,
+  NOTICE_LECTURE_CREATE_SUCCESS,
+  NOTICE_LECTURE_CREATE_FAILURE,
 } from "../reducers/notice";
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function noticeLectureListAPI(data) {
-  return axios.post(
-    `/api/notice/lecture/list?page=${data.page}&LectureId=${data.LectureId}`,
-    data
-  );
+  return axios.post(`/api/notice/lecture/list`, data);
 }
 
 function* noticeLectureList(action) {
@@ -71,7 +76,7 @@ function* noticeLectureList(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function noticeListAPI(data) {
-  return axios.get(`/api/notice/list`, data);
+  return axios.get(`/api/notice/list${data.qs}`, data);
 }
 
 function* noticeList(action) {
@@ -117,7 +122,7 @@ function* noticeDetail(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function noticeAdminListAPI(data) {
-  return axios.get(`/api/notice/admin/list`, data);
+  return axios.post(`/api/notice/admin/list`, data);
 }
 
 function* noticeAdminList(action) {
@@ -186,6 +191,60 @@ function* noticeAdminCreate(action) {
     console.error(err);
     yield put({
       type: NOTICE_ADMIN_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function noticeLectureCreateAPI(data) {
+  return axios.post(`/api/notice/admin/lecture/create`, data);
+}
+
+function* noticeLectureCreate(action) {
+  try {
+    const result = yield call(noticeLectureCreateAPI, action.data);
+
+    yield put({
+      type: NOTICE_LECTURE_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: NOTICE_LECTURE_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function noticeFileAPI(data) {
+  return axios.post(`/api/notice/file`, data);
+}
+
+function* noticeFile(action) {
+  try {
+    const result = yield call(noticeFileAPI, action.data);
+
+    yield put({
+      type: NOTICE_UPLOAD_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: NOTICE_UPLOAD_FAILURE,
       error: err.response.data,
     });
   }
@@ -329,6 +388,14 @@ function* watchNoticeAdminCreate() {
   yield takeLatest(NOTICE_ADMIN_CREATE_REQUEST, noticeAdminCreate);
 }
 
+function* watchNoticeLectureCreate() {
+  yield takeLatest(NOTICE_LECTURE_CREATE_REQUEST, noticeLectureCreate);
+}
+
+function* watchNoticeFileCreate() {
+  yield takeLatest(NOTICE_UPLOAD_REQUEST, noticeFile);
+}
+
 function* watchNoticeUpdate() {
   yield takeLatest(NOTICE_UPDATE_REQUEST, noticeUpdate);
 }
@@ -354,6 +421,8 @@ export default function* noticeSaga() {
     fork(watchNoticeAdminList),
     fork(watchNoticeCreate),
     fork(watchNoticeAdminCreate),
+    fork(watchNoticeLectureCreate),
+    fork(watchNoticeFileCreate),
     fork(watchNoticeUpdate),
     fork(watchNoticeDelete),
     fork(watchNoticeNext),

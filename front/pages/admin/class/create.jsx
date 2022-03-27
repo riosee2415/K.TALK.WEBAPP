@@ -17,11 +17,13 @@ import {
   message,
   Empty,
   DatePicker,
+  TimePicker,
 } from "antd";
 import {
   CloseOutlined,
   CheckOutlined,
   SearchOutlined,
+  MinusCircleOutlined,
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -123,6 +125,13 @@ const DateInput = styled(DatePicker)`
   }
 `;
 
+const TimeInput = styled(TimePicker)`
+  width: ${(props) => props.width || `100%`};
+  &::placeholder {
+    color: ${Theme.grey2_C};
+  }
+`;
+
 const List = () => {
   const week = ["일", "월", "화", "수", "목", "금", "토"];
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
@@ -147,6 +156,7 @@ const List = () => {
   const formRef = useRef();
   const [form] = Form.useForm();
   const inputPeriod = useInput();
+  const inputCnt = useInput();
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
@@ -172,6 +182,10 @@ const List = () => {
     if (st_lectureCreateDone) {
       message.success("강의가 생성되었습니다.");
       form.resetFields();
+      form.setFieldsValue({
+        allCnt: null,
+        endDate: null,
+      });
     }
   }, [st_lectureCreateDone]);
 
@@ -182,7 +196,7 @@ const List = () => {
   }, [st_lectureCreateError]);
 
   useEffect(() => {
-    if (startDate && inputPeriod.value && formRef.current) {
+    if (startDate && inputPeriod.value && form) {
       const endDateData = moment(
         new Date(
           startDate.getFullYear(),
@@ -190,12 +204,20 @@ const List = () => {
           startDate.getDate() + 7 * inputPeriod.value
         )
       ).format("YYYY-MM-DD");
-      formRef.current.setFieldsValue({
+      form.setFieldsValue({
         endDate: endDateData,
       });
       setEndDate(endDateData);
     }
-  }, [startDate, inputPeriod, formRef]);
+  }, [startDate, inputPeriod, form]);
+
+  useEffect(() => {
+    if (inputCnt.value && inputPeriod.value && form) {
+      form.setFieldsValue({
+        allCnt: inputPeriod.value * inputCnt.value,
+      });
+    }
+  }, [inputCnt, inputPeriod, form]);
 
   ////// HANDLER ///////
 
@@ -210,16 +232,19 @@ const List = () => {
     dispatch({
       type: LECTURE_CREATE_REQUEST,
       data: {
+        time: data.time,
+        day: data.day,
+        count: data.cnt,
         course: data.course,
-        UserId: data.UserId,
-        startLv: data.startLv,
-        endLv: data.endLv,
-        price: data.price,
-        lecTime: data.lecTime,
         lecDate: data.lecDate,
+        lecTime: "-",
+        startLv: data.startLv,
+        endLv: "-",
         startDate: data.startDate,
         endDate: data.endDate,
         memo: data.memo,
+        price: data.price,
+        UserId: data.UserId,
       },
     });
   }, []);
@@ -269,20 +294,10 @@ const List = () => {
           </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`100px`}>시작 레벨</Text>
+            <Text width={`100px`}>레벨</Text>
             <FormItem
-              rules={[{ required: true, message: "시작 레벨을 입력해주세요." }]}
+              rules={[{ required: true, message: "레벨을 입력해주세요." }]}
               name={`startLv`}
-            >
-              <CusotmInput />
-            </FormItem>
-          </Wrapper>
-
-          <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`100px`}>끝 레벨</Text>
-            <FormItem
-              rules={[{ required: true, message: "끝 레벨을 입력해주세요." }]}
-              name={`endLv`}
             >
               <CusotmInput />
             </FormItem>
@@ -297,19 +312,19 @@ const List = () => {
             >
               <CusotmInput type={`number`} />
             </FormItem>
-            <Text margin={`0 0 0 10px`}>원</Text>
+            <Text width={`30px`} padding={`0 0 0 10px`}>
+              원
+            </Text>
           </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`100px`}>강의 시간</Text>
+            <Text width={`100px`}>수업 시간</Text>
             <FormItem
-              rules={[{ required: true, message: "강의 시간을 입력해주세요." }]}
-              name={`lecTime`}
-              width={`calc(100% - 130px)`}
+              rules={[{ required: true, message: "수업 시간을 입력해주세요." }]}
+              name={`time`}
             >
-              <CusotmInput type={`number`} />
+              <TimeInput size={`large`} format={`HH:mm`} />
             </FormItem>
-            <Text margin={`0 0 0 10px`}>분</Text>
           </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
@@ -325,7 +340,48 @@ const List = () => {
                 {...inputPeriod}
               />
             </FormItem>
-            <Text margin={`0 0 0 10px`}>주</Text>
+            <Text width={`30px`} padding={`0 0 0 10px`}>
+              주
+            </Text>
+          </Wrapper>
+
+          <Wrapper dr={`row`} margin={`0 0 20px`}>
+            <Text width={`100px`}>횟수</Text>
+            <FormItem
+              rules={[{ required: true, message: "횟수를 입력해주세요." }]}
+              name={`cnt`}
+              {...inputCnt}
+              width={`calc(100% - 130px)`}
+            >
+              <CusotmInput type={`number`} />
+            </FormItem>
+            <Text width={`30px`} padding={`0 0 0 10px`}>
+              회
+            </Text>
+          </Wrapper>
+
+          <Wrapper dr={`row`} margin={`0 0 20px`}>
+            <Text width={`100px`}>진행 요일</Text>
+            <FormItem
+              rules={[{ required: true, message: "요일을 입력해주세요." }]}
+              name={`day`}
+            >
+              <CusotmInput />
+            </FormItem>
+          </Wrapper>
+
+          <Wrapper dr={`row`} margin={`0 0 20px`}>
+            <Text width={`100px`}>총 횟수</Text>
+            <FormItem
+              rules={[{ required: true, message: "횟수를 입력해주세요." }]}
+              name={`allCnt`}
+              width={`calc(100% - 130px)`}
+            >
+              <CusotmInput type={`number`} readOnly={true} />
+            </FormItem>
+            <Text width={`30px`} padding={`0 0 0 10px`}>
+              회
+            </Text>
           </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
@@ -343,7 +399,15 @@ const List = () => {
           </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`100px`}>종료 날짜</Text>
+            <Text
+              width={`100px`}
+              onClick={() => {
+                setEndDate(null);
+                console.log("");
+              }}
+            >
+              종료 날짜
+            </Text>
             <FormItem
               rules={[{ required: true, message: "종료 날짜를 입력해주세요." }]}
               name={`endDate`}
@@ -352,7 +416,6 @@ const List = () => {
                 format={`YYYY-MM-DD`}
                 size={`large`}
                 readOnly={true}
-                value={endDate && endDate}
               />
             </FormItem>
           </Wrapper>

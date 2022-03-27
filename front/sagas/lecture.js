@@ -28,6 +28,10 @@ import {
   LECTURE_DETAIL_LECTURE_REQUEST,
   LECTURE_DETAIL_LECTURE_SUCCESS,
   LECTURE_DETAIL_LECTURE_FAILURE,
+  //
+  LECTURE_ALL_LIST_REQUEST,
+  LECTURE_ALL_LIST_SUCCESS,
+  LECTURE_ALL_LIST_FAILURE,
 } from "../reducers/lecture";
 
 // SAGA AREA ********************************************************************************************************
@@ -48,6 +52,33 @@ function* lectureList(action) {
     console.error(err);
     yield put({
       type: LECTURE_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureAllListAPI(data) {
+  return axios.get(`/api/lecture/allLectures/${data.listType}`, data);
+}
+
+function* lectureAllList(action) {
+  try {
+    const result = yield call(lectureAllListAPI, action.data);
+
+    yield put({
+      type: LECTURE_ALL_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_ALL_LIST_FAILURE,
       error: err.response.data,
     });
   }
@@ -224,6 +255,10 @@ function* watchLectureList() {
   yield takeLatest(LECTURE_LIST_REQUEST, lectureList);
 }
 
+function* watchLectureAllList() {
+  yield takeLatest(LECTURE_ALL_LIST_REQUEST, lectureAllList);
+}
+
 function* watchLectureCreate() {
   yield takeLatest(LECTURE_CREATE_REQUEST, lectureCreate);
 }
@@ -252,6 +287,7 @@ function* watchLectureDetailLecture() {
 export default function* lectureSaga() {
   yield all([
     fork(watchLectureList),
+    fork(watchLectureAllList),
     fork(watchLectureCreate),
     fork(watchLectureUpdate),
     fork(watchLectureDelete),

@@ -28,17 +28,30 @@ import {
   NOTICE_CREATE_REQUEST,
   NOTICE_UPDATE_REQUEST,
   NOTICE_DELETE_REQUEST,
-  NOTICE_LIST_REQUEST,
+  NOTICE_UPLOAD_REQUEST,
+  NOTICE_LECTURE_CREATE_REQUEST,
+  NOTICE_ADMIN_CREATE_REQUEST,
+  NOTICE_LECTURE_LIST_REQUEST,
+  NOTICE_ADMIN_LIST_REQUEST,
 } from "../../../../reducers/notice";
 import { withRouter } from "next/router";
 import useInput from "../../../../hooks/useInput";
+import useWidth from "../../../../hooks/useWidth";
 
 import { END } from "redux-saga";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { LOAD_MY_INFO_REQUEST } from "../../../../reducers/user";
 import wrapper from "../../../../store/configureStore";
-import { Wrapper } from "../../../../components/commonComponents";
+import {
+  CommonButton,
+  RowWrapper,
+  Text,
+  Wrapper,
+} from "../../../../components/commonComponents";
+import { LECTURE_LIST_REQUEST } from "../../../../reducers/lecture";
+import ToastEditorComponent from "../../../../components/editor/ToastEditorComponent";
+import ToastEditorComponent2 from "../../../../components/editor/ToastEditorComponent2";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -88,11 +101,6 @@ const NoticeList = ({ router }) => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [isTop, setIsTop] = useState(false);
-  const isTopChange = (e) => {
-    setIsTop(e);
-  };
-
   const realFile = useInput(null);
   const filename = useInput(null);
 
@@ -103,10 +111,15 @@ const NoticeList = ({ router }) => {
 
   ////// HOOKS //////
   const dispatch = useDispatch();
+  const width = useWidth();
 
   const fileRef = useRef();
   const formRef = useRef();
   const [state, setState] = useState(null);
+  const [isLectureBoard, setIsLectureBoard] = useState(false);
+
+  const [currentListType, setCurrentListType] = useState(null);
+  const [contentData, setContentData] = useState("");
 
   const searchValue = useInput("");
   const inputSearch = useInput("");
@@ -116,6 +129,8 @@ const NoticeList = ({ router }) => {
   ////// REDUX //////
   const {
     notices,
+    noticeLectureList,
+    uploadPath,
     maxPage,
     createModal,
     detailModal,
@@ -128,6 +143,8 @@ const NoticeList = ({ router }) => {
     st_noticeUpdateError,
     st_noticeDeleteError,
   } = useSelector((state) => state.notice);
+
+  const { lectures } = useSelector((state) => state.lecture);
 
   const getQs = () => {
     const qs = router.query;
@@ -150,6 +167,7 @@ const NoticeList = ({ router }) => {
   };
 
   ////// USEEFFECT //////
+
   useEffect(() => {
     if (st_noticeListError) {
       return message.error(st_noticeListError);
@@ -176,47 +194,29 @@ const NoticeList = ({ router }) => {
 
   useEffect(() => {
     if (st_noticeCreateDone) {
-      const qs = getQs();
-      dispatch({
-        type: NOTICE_LIST_REQUEST,
-        data: {
-          qs,
-        },
-      });
+      setCurrentListType(1);
 
       dispatch({
         type: CREATE_MODAL_CLOSE_REQUEST,
       });
     }
-  }, [st_noticeCreateDone, router.query]);
+  }, [st_noticeCreateDone]);
 
   useEffect(() => {
     if (st_noticeUpdateDone) {
-      const qs = getQs();
-      dispatch({
-        type: NOTICE_LIST_REQUEST,
-        data: {
-          qs,
-        },
-      });
+      setCurrentListType(1);
 
       dispatch({
         type: CREATE_MODAL_CLOSE_REQUEST,
       });
     }
-  }, [st_noticeUpdateDone, router.query]);
+  }, [st_noticeUpdateDone]);
 
   useEffect(() => {
     if (st_noticeDeleteDone) {
-      const qs = getQs();
-      dispatch({
-        type: NOTICE_LIST_REQUEST,
-        data: {
-          qs,
-        },
-      });
+      setCurrentListType(1);
     }
-  }, [st_noticeDeleteDone, router.query]);
+  }, [st_noticeDeleteDone, currentListType]);
 
   useEffect(() => {
     if (!createModal) {
@@ -225,14 +225,16 @@ const NoticeList = ({ router }) => {
   }, [createModal]);
 
   useEffect(() => {
-    const qs = getQs();
-    dispatch({
-      type: NOTICE_LIST_REQUEST,
-      data: {
-        qs,
-      },
-    });
-  }, [router.query]);
+    const level = currentListType === 4 ? null : currentListType;
+    if (currentListType !== 4) {
+      dispatch({
+        type: NOTICE_ADMIN_LIST_REQUEST,
+        data: {
+          level,
+        },
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (updateData) {
@@ -241,6 +243,29 @@ const NoticeList = ({ router }) => {
       }, 500);
     }
   }, [updateData]);
+
+  useEffect(() => {
+    const qs = getQs();
+    const level = currentListType === 4 ? null : currentListType;
+    if (currentListType !== 4) {
+      dispatch({
+        type: NOTICE_ADMIN_LIST_REQUEST,
+        data: {
+          level,
+        },
+      });
+    }
+  }, [currentListType]);
+
+  useEffect(() => {
+    const qs = getQs();
+    dispatch({
+      type: LECTURE_LIST_REQUEST,
+      data: {
+        sort: 1,
+      },
+    });
+  }, [router.query]);
 
   ////// TOGGLE ///////
   const createModalOpen = useCallback(() => {
@@ -282,63 +307,106 @@ const NoticeList = ({ router }) => {
   );
 
   const onFill = useCallback((data) => {
+    const type = data.LectureId
+      ? "강의 게시판"
+      : data.level === 2
+      ? "강사 게시판"
+      : data.level === 1
+      ? "학생 게시판"
+      : "전체 이용자 게시판";
+
     formRef.current.setFieldsValue({
       title: data.title,
       content: data.content,
-      type: data.type,
-      isTop: data.isTop,
+      type,
+      author: data.author,
     });
-
-    setIsTop(data.isTop);
   }, []);
 
   const onSubmit = useCallback(
     (value) => {
-      const formData = new FormData();
+      if (!contentData || contentData.trim() === "") {
+        return LoadNotification(
+          "ADMIN SYSTEM ERROR",
+          "작성하기 버튼을 눌러주세요."
+        );
+      }
 
-      formData.append("title", value.title);
-      formData.append("content", value.content);
-      formData.append("type", value.type);
-      formData.append("isTop", isTop);
-      formData.append("file", realFile.value);
+      const level =
+        value.type === "강사 게시판"
+          ? 2
+          : value.type === "학생 게시판"
+          ? 1
+          : null;
 
-      dispatch({
-        type: NOTICE_CREATE_REQUEST,
-        data: formData,
-      });
+      if (value.type === "강의 게시판") {
+        dispatch({
+          type: NOTICE_LECTURE_CREATE_REQUEST,
+          data: {
+            title: value.title,
+            content: contentData,
+            author: value.author,
+            LectureId: value.lecture,
+            file: uploadPath,
+          },
+        });
+      } else {
+        dispatch({
+          type: NOTICE_ADMIN_CREATE_REQUEST,
+          data: {
+            level,
+            title: value.title,
+            content: contentData,
+            author: value.author,
+            file: uploadPath,
+          },
+        });
+      }
     },
-    [isTop, realFile.value]
+    [uploadPath, contentData]
   );
 
   const onSubmitUpdate = useCallback(
     (value) => {
-      const formData = new FormData();
-
-      formData.append("id", updateData.id);
-      formData.append("title", value.title);
-      formData.append("content", value.content);
-      formData.append("type", value.type);
-      formData.append("isTop", isTop);
-      formData.append("file", realFile.value);
-
+      if (!contentData || contentData.trim() === "") {
+        return LoadNotification(
+          "ADMIN SYSTEM ERROR",
+          "작성하기 버튼을 눌러주세요."
+        );
+      }
+      console.log(contentData);
       dispatch({
         type: NOTICE_UPDATE_REQUEST,
-        data: formData,
+        data: {
+          id: updateData.id,
+          title: value.title,
+          content: contentData,
+          file: uploadPath,
+        },
       });
     },
-    [isTop, realFile.value, updateData]
+    [uploadPath, updateData, contentData]
   );
+
+  console.log(updateData && updateData);
 
   const createModalOk = useCallback(() => {
     formRef.current.submit();
-  }, [isTop, realFile.value]);
+  }, [realFile.value]);
 
   const fileChangeHandler = useCallback(
     (e) => {
-      const currentFile = e.target.files[0];
+      const formData = new FormData();
+      filename.setValue(e.target.files[0].name);
 
-      realFile.setValue(currentFile);
-      filename.setValue(currentFile.name);
+      [].forEach.call(e.target.files, (file) => {
+        formData.append("file", file);
+      });
+
+      dispatch({
+        type: NOTICE_UPLOAD_REQUEST,
+        data: formData,
+      });
     },
     [realFile.value]
   );
@@ -346,21 +414,6 @@ const NoticeList = ({ router }) => {
   const fileUploadClick = useCallback(() => {
     fileRef.current.click();
   }, [fileRef.current]);
-
-  const otherPageCall = useCallback(
-    (changePage) => {
-      setCurrentPage(changePage);
-      const queryString = `?page=${changePage}&search=${searchValue}`;
-
-      dispatch({
-        type: NOTICE_LIST_REQUEST,
-        data: {
-          qs: queryString || "",
-        },
-      });
-    },
-    [searchValue]
-  );
 
   const deleteNoticeHandler = useCallback(() => {
     if (!deleteId) {
@@ -378,6 +431,46 @@ const NoticeList = ({ router }) => {
     setDeletePopVisible((prev) => !prev);
   }, [deleteId]);
 
+  const noticeTypeChangeHandler = useCallback((e) => {
+    if (e === "강의 게시판") {
+      setIsLectureBoard(true);
+    } else {
+      setIsLectureBoard(false);
+    }
+  }, []);
+
+  const otherPageCall = useCallback(
+    (changePage) => {
+      setCurrentPage(changePage);
+      const queryString = `?page=${changePage}`;
+
+      dispatch({
+        type: NOTICE_ADMIN_LIST_REQUEST,
+        data: {
+          qs: queryString || "",
+        },
+      });
+    },
+    [searchValue]
+  );
+
+  const listChangeHandler = useCallback(
+    (LectureId) => {
+      dispatch({
+        type: NOTICE_LECTURE_LIST_REQUEST,
+        data: {
+          page: currentPage,
+          LectureId,
+        },
+      });
+    },
+    [currentPage]
+  );
+
+  const getEditContent = (contentValue) => {
+    setContentData(contentValue);
+  };
+
   ////// DATAVIEW //////
   const columns = [
     {
@@ -393,12 +486,8 @@ const NoticeList = ({ router }) => {
       dataIndex: "author",
     },
     {
-      title: "Hit",
-      dataIndex: "hit",
-    },
-    {
       title: "CreatedAt",
-      render: (data) => <div>{data.createdAt.substring(0, 10)}</div>,
+      render: (data) => <div>{data.createdAt.substring(0, 13)}</div>,
     },
     {
       title: "UPDATE",
@@ -429,40 +518,84 @@ const NoticeList = ({ router }) => {
       <AdminTop createButton={true} createButtonAction={createModalOpen} />
 
       <AdminContent>
-        <Row gutter={[10, 10]} style={{ padding: "0 0 10px 0" }}>
-          <Col span={`6`}>
-            <Input
-              style={{ width: "100%" }}
-              placeholder="검색어"
-              {...inputSearch}
-            />
-          </Col>
-
+        <RowWrapper margin={`0 0 10px`} gutter={5}>
           <Col>
             <Button
-              onClick={() =>
-                moveLinkHandler(
-                  `/admin/board/notice/list?page=${currentPage}&search=${inputSearch.value}`
-                )
-              }>
-              <SearchOutlined />
-              검색
+              type={currentListType === 1 && `primary`}
+              onClick={() => setCurrentListType(1)}
+            >
+              학생 게시판
             </Button>
           </Col>
-        </Row>
-        <Table
-          rowKey="id"
-          columns={columns}
-          dataSource={notices ? notices : []}
-          size="small"
-          pagination={{
-            defaultCurrent: 1,
-            current: parseInt(currentPage),
+          <Col>
+            <Button
+              type={currentListType === 2 && `primary`}
+              onClick={() => setCurrentListType(2)}
+            >
+              강사 게시판
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              type={currentListType === 4 && `primary`}
+              onClick={() => setCurrentListType(4)}
+            >
+              강의 게시판
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              type={currentListType === 3 && `primary`}
+              onClick={() => setCurrentListType(3)}
+            >
+              전체 이용자 게시판
+            </Button>
+          </Col>
+        </RowWrapper>
+        {currentListType === 4 && (
+          <RowWrapper margin={`0 0 10px`}>
+            <Text lineHeight={`2rem`}>강의 선택 :&nbsp;</Text>
+            <Select
+              onChange={listChangeHandler}
+              showSearch
+              placeholder="Select a Lecture"
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+              style={{ width: `300px` }}
+            >
+              {lectures &&
+                lectures.map((data) => {
+                  return (
+                    <Select.Option value={data.id}>{data.course}</Select.Option>
+                  );
+                })}
+            </Select>
+          </RowWrapper>
+        )}
 
-            total: maxPage * 10,
-            onChange: (page) => otherPageCall(page),
-          }}
-        />
+        {currentListType === 4 ? (
+          <Table
+            rowKey="id"
+            columns={columns}
+            dataSource={noticeLectureList ? noticeLectureList : []}
+            size="small"
+            pagination={{
+              defaultCurrent: 1,
+              current: parseInt(currentPage),
+              onChange: (page) => otherPageCall(page),
+              total: maxPage * 10,
+            }}
+          />
+        ) : (
+          <Table
+            rowKey="id"
+            columns={columns}
+            dataSource={notices ? notices : []}
+            size="small"
+          />
+        )}
       </AdminContent>
 
       {/* CREATE MODAL */}
@@ -471,51 +604,99 @@ const NoticeList = ({ router }) => {
         width={`1100px`}
         title={`새로운 공지사항 작성`}
         onOk={createModalOk}
-        onCancel={updateData ? updateModalClose : createModalClose}>
+        onCancel={updateData ? updateModalClose : createModalClose}
+      >
         <Wrapper padding={`10px`}>
           <Form
             style={{ width: `100%` }}
             onFinish={updateData ? onSubmitUpdate : onSubmit}
             form={form}
-            ref={formRef}>
+            ref={formRef}
+          >
             <Form.Item name={"title"} label="제목" rules={[{ required: true }]}>
               <Input allowClear placeholder="Title..." />
             </Form.Item>
 
             <Form.Item name={"type"} label="유형" rules={[{ required: true }]}>
               <Select
+                disabled={updateData ? true : false}
                 showSearch
+                onChange={(e) => noticeTypeChangeHandler(e)}
                 style={{ width: 200 }}
                 placeholder="Select a Type"
                 optionFilterProp="children"
                 filterOption={(input, option) =>
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
-                }>
-                <Select.Option value="공지사항">공지사항</Select.Option>
-                <Select.Option value="새소식">새소식</Select.Option>
+                }
+              >
+                <Select.Option value="강사 게시판">강사 게시판</Select.Option>
+                <Select.Option value="학생 게시판">학생 게시판</Select.Option>
+                <Select.Option value="강의 게시판">강의 게시판</Select.Option>
+                <Select.Option value="전체 이용자 게시판">
+                  전체 이용자 게시판
+                </Select.Option>
               </Select>
             </Form.Item>
+            {isLectureBoard === true && (
+              <Form.Item
+                name={"lecture"}
+                label="강의"
+                rules={[{ required: true }]}
+              >
+                <Select
+                  disabled={updateData ? true : false}
+                  showSearch
+                  style={{ width: 200 }}
+                  placeholder="Select a Lecture"
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {lectures &&
+                    lectures.map((data) => {
+                      return (
+                        <Select.Option value={data.id}>
+                          {data.course}
+                        </Select.Option>
+                      );
+                    })}
+                </Select>
+              </Form.Item>
+            )}
 
-            <Form.Item name={"isTop"} label="상단">
-              <Switch
-                checkedChildren={<CheckOutlined />}
-                unCheckedChildren={<CloseOutlined />}
-                defaultChecked={false}
-                checked={isTop}
-                onChange={isTopChange}
-              />
+            <Form.Item
+              name={"author"}
+              label="작성자"
+              rules={[{ required: true }]}
+            >
+              <Input allowClear placeholder="Title..." />
             </Form.Item>
 
             <Form.Item
               name={"content"}
               label="본문"
-              rules={[{ required: true }]}>
-              <Input.TextArea
+              rules={[{ required: true }]}
+            >
+              {/* <Input.TextArea
                 allowClear
                 placeholder="Content..."
                 autoSize={{ minRows: 10, maxRows: 10 }}
-              />
+              /> */}
+              {updateData ? (
+                <ToastEditorComponent2
+                  action={getEditContent}
+                  updateData={updateData}
+                />
+              ) : (
+                <ToastEditorComponent
+                  action={getEditContent}
+                  placeholder="내용을 입력해주세요."
+                />
+              )}
             </Form.Item>
 
             <Form.Item>
@@ -551,7 +732,8 @@ const NoticeList = ({ router }) => {
         visible={deletePopVisible}
         onOk={deleteNoticeHandler}
         onCancel={deletePopToggle(null)}
-        title="정말 삭제하시겠습니까?">
+        title="정말 삭제하시겠습니까?"
+      >
         <Wrapper>삭제 된 데이터는 다시 복구할 수 없습니다.</Wrapper>
         <Wrapper>정말 삭제하시겠습니까?</Wrapper>
       </Modal>

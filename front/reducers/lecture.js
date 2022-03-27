@@ -2,6 +2,7 @@ import produce from "../util/produce";
 
 export const initailState = {
   lectures: null,
+  allLectures: null,
   maxPage: 1,
   lectureTeacherList: null,
   lectureStudentList: null,
@@ -48,6 +49,10 @@ export const initailState = {
   st_lectureDiaryAdminListLoading: false,
   st_lectureDiaryAdminListDone: false,
   st_lectureDiaryAdminListError: null,
+  //
+  st_lectureAllListLoading: false,
+  st_lectureAllListDone: false,
+  st_lectureAllListError: null,
 };
 
 export const LECTURE_LIST_REQUEST = "LECTURE_LIST_REQUEST";
@@ -89,6 +94,10 @@ export const LECTURE_DIARY_ADMIN_LIST_SUCCESS =
 export const LECTURE_DIARY_ADMIN_LIST_FAILURE =
   "LECTURE_DIARY_ADMIN_LIST_FAILURE";
 //
+export const LECTURE_ALL_LIST_REQUEST = "LECTURE_ALL_LIST_REQUEST";
+export const LECTURE_ALL_LIST_SUCCESS = "LECTURE_ALL_LIST_SUCCESS";
+export const LECTURE_ALL_LIST_FAILURE = "LECTURE_ALL_LIST_FAILURE";
+//
 
 export const CREATE_MODAL_OPEN_REQUEST = "CREATE_MODAL_OPEN_REQUEST";
 export const CREATE_MODAL_CLOSE_REQUEST = "CREATE_MODAL_CLOSE_REQUEST";
@@ -119,6 +128,26 @@ const reducer = (state = initailState, action) =>
         draft.st_lectureListLoading = false;
         draft.st_lectureListDone = false;
         draft.st_lectureListError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      case LECTURE_ALL_LIST_REQUEST: {
+        draft.st_lectureAllListLoading = true;
+        draft.st_lectureAllListDone = null;
+        draft.st_lectureAllListError = false;
+        break;
+      }
+      case LECTURE_ALL_LIST_SUCCESS: {
+        draft.st_lectureAllListLoading = false;
+        draft.st_lectureAllListDone = true;
+        draft.allLectures = action.data;
+        // draft.maxPage = action.data.lastPage;
+        break;
+      }
+      case LECTURE_ALL_LIST_FAILURE: {
+        draft.st_lectureAllListLoading = false;
+        draft.st_lectureAllListDone = false;
+        draft.st_lectureAllListError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////
