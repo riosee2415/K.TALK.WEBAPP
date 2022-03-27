@@ -351,6 +351,42 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
   }
 });
 
+// 관리자 강의 공지사항 등록
+router.post("/admin/lecture/create", isAdminCheck, async (req, res, next) => {
+  const { title, content, author, LectureId, file } = req.body;
+
+  try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("해당 강의가 존재하지 않습니다.");
+    }
+
+    if (exLecture.TeacherId !== req.user.id) {
+      return res.status(401).send("자신의 강의에만 등록할 수 있습니다.");
+    }
+
+    const createResult = await Notice.create({
+      title,
+      content,
+      author,
+      LectureId: parseInt(LectureId),
+      file: file ? file : null,
+    });
+
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    }
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("게시글을 등록할 수 없습니다. [CODE 077]");
+  }
+});
+
 // 관리자 등록
 router.post("/admin/create", isAdminCheck, async (req, res, next) => {
   const { title, content, author, file, level } = req.body;
