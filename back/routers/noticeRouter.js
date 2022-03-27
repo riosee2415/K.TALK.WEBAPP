@@ -77,7 +77,6 @@ router.post("/lecture/list", async (req, res, next) => {
   try {
     const lengthQuery = `
     SELECT	id,
-          
             title,
             content,
             author,
@@ -90,12 +89,12 @@ router.post("/lecture/list", async (req, res, next) => {
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	notices
      WHERE	1 = 1
+       AND  isDelete = FALSE
      ${_LectureId ? `AND LectureId = ${_LectureId}` : ``}
     `;
 
     const selectQuery = `
     SELECT	id,
-          
             title,
             content,
             author,
@@ -108,6 +107,7 @@ router.post("/lecture/list", async (req, res, next) => {
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	notices
      WHERE	1 = 1
+       AND  isDelete = FALSE
     ${_LectureId ? `AND LectureId = ${_LectureId}` : ``}
      ORDER  BY createdAt DESC
      LIMIT  ${LIMIT}
@@ -157,6 +157,7 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	notices
      WHERE	1 = 1
+       AND  isDelete = FALSE
       ${
         req.user.id === 1
           ? ` AND level = 1
@@ -184,6 +185,7 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	notices
      WHERE	1 = 1
+       AND  isDelete = FALSE
      ${
        req.user.id === 1
          ? ` AND level = 1
