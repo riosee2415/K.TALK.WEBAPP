@@ -397,6 +397,7 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
       memo,
       price,
       TeacherId: parseInt(UserId),
+      teacherName: exTeacher.username,
     });
 
     if (!createResult) {
