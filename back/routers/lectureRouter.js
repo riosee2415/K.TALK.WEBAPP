@@ -437,6 +437,14 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의입니다.");
     }
 
+    const exTeacher = await User.findOne({
+      where: { id: parseInt(UserId), level: 2 },
+    });
+
+    if (exTeacher.level !== 2) {
+      return res.status(401).send("해당 사용자는 강사가 아닙니다.");
+    }
+
     const updateResult = await Lecture.update(
       {
         time,
@@ -452,6 +460,7 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
         memo,
         price,
         TeacherId: parseInt(UserId),
+        teacherName: exTeacher.username,
       },
       {
         where: { id: parseInt(id) },
