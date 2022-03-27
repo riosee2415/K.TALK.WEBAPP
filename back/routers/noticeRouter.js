@@ -432,7 +432,7 @@ router.patch("/update", isLoggedIn, async (req, res, next) => {
         file,
       },
       {
-        where: { id: parseInt(id), senderId: parseInt(req.user.id) },
+        where: { id: parseInt(id) },
       }
     );
 
