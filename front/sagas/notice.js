@@ -124,7 +124,6 @@ function* noticeDetail(action) {
 function noticeAdminListAPI(data) {
   return axios.post(`/api/notice/admin/list`, data);
 }
-
 function* noticeAdminList(action) {
   try {
     const result = yield call(noticeAdminListAPI, action.data);
