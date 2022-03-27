@@ -4,11 +4,18 @@ export const initailState = {
   lectures: null,
   allLectures: null,
   maxPage: 1,
+  lectureLastPage: 1,
   lectureTeacherList: null,
   lectureStudentList: null,
-  detailLectures: null,
-
+  lectureDetail: null,
+  lectureHomeworkList: null,
+  lectureHomeworkLastPage: null,
   lectureDiaryList: null,
+  lectureDiaryLastPage: 1,
+  lectureDiaryAdminList: null,
+  lecturePath: null,
+  lectureSubmitList: null,
+  lectureSubmitLastPage: 1,
 
   createModal: false,
   detailModal: false,
@@ -38,9 +45,9 @@ export const initailState = {
   st_lectureStudentListDone: false,
   st_lectureStudentListError: null,
   //
-  st_lectureDetailLectureLoading: false,
-  st_lectureDetailLectureDone: false,
-  st_lectureDetailLectureError: null,
+  st_lectureDetailLoading: false,
+  st_lectureDetailDone: false,
+  st_lectureDetailError: null,
   //
   st_lectureDiaryListLoading: false,
   st_lectureDiaryListDone: false,
@@ -53,6 +60,29 @@ export const initailState = {
   st_lectureAllListLoading: false,
   st_lectureAllListDone: false,
   st_lectureAllListError: null,
+  st_lectureDiaryCreateLoading: false,
+  st_lectureDiaryCreateDone: false,
+  st_lectureDiaryCreateError: null,
+  //
+  st_lectureHomeWorkListLoading: false,
+  st_lectureHomeWorkListDone: false,
+  st_lectureHomeWorkListError: null,
+  //
+  st_lectureHomeWorkCreateLoading: false,
+  st_lectureHomeWorkCreateDone: false,
+  st_lectureHomeWorkCreateError: null,
+  //
+  st_lectureFileLoading: false,
+  st_lectureFileDone: false,
+  st_lectureFileError: null,
+  //
+  st_lectureSubmitListLoading: false,
+  st_lectureSubmitListDone: false,
+  st_lectureSubmitListError: null,
+  //
+  st_lectureSubmitCreateLoading: false,
+  st_lectureSubmitCreateDone: false,
+  st_lectureSubmitCreateError: null,
 };
 
 export const LECTURE_LIST_REQUEST = "LECTURE_LIST_REQUEST";
@@ -79,9 +109,9 @@ export const LECTURE_STUDENT_LIST_REQUEST = "LECTURE_STUDENT_LIST_REQUEST";
 export const LECTURE_STUDENT_LIST_SUCCESS = "LECTURE_STUDENT_LIST_SUCCESS";
 export const LECTURE_STUDENT_LIST_FAILURE = "LECTURE_STUDENT_LIST_FAILURE";
 //
-export const LECTURE_DETAIL_LECTURE_REQUEST = "LECTURE_DETAIL_LECTURE_REQUEST";
-export const LECTURE_DETAIL_LECTURE_SUCCESS = "LECTURE_DETAIL_LECTURE_SUCCESS";
-export const LECTURE_DETAIL_LECTURE_FAILURE = "LECTURE_DETAIL_LECTURE_FAILURE";
+export const LECTURE_DETAIL_REQUEST = "LECTURE_DETAIL_REQUEST";
+export const LECTURE_DETAIL_SUCCESS = "LECTURE_DETAIL_SUCCESS";
+export const LECTURE_DETAIL_FAILURE = "LECTURE_DETAIL_FAILURE";
 //
 export const LECTURE_DIARY_LIST_REQUEST = "LECTURE_DIARY_LIST_REQUEST";
 export const LECTURE_DIARY_LIST_SUCCESS = "LECTURE_DIARY_LIST_SUCCESS";
@@ -98,7 +128,33 @@ export const LECTURE_ALL_LIST_REQUEST = "LECTURE_ALL_LIST_REQUEST";
 export const LECTURE_ALL_LIST_SUCCESS = "LECTURE_ALL_LIST_SUCCESS";
 export const LECTURE_ALL_LIST_FAILURE = "LECTURE_ALL_LIST_FAILURE";
 //
+export const LECTURE_DIARY_CREATE_REQUEST = "LECTURE_DIARY_CREATE_REQUEST";
+export const LECTURE_DIARY_CREATE_SUCCESS = "LECTURE_DIARY_CREATE_SUCCESS";
+export const LECTURE_DIARY_CREATE_FAILURE = "LECTURE_DIARY_CREATE_FAILURE";
+//
+export const LECTURE_HOMEWORK_LIST_REQUEST = "LECTURE_HOMEWORK_LIST_REQUEST";
+export const LECTURE_HOMEWORK_LIST_SUCCESS = "LECTURE_HOMEWORK_LIST_SUCCESS";
+export const LECTURE_HOMEWORK_LIST_FAILURE = "LECTURE_HOMEWORK_LIST_FAILURE";
+//
+export const LECTURE_HOMEWORK_CREATE_REQUEST =
+  "LECTURE_HOMEWORK_CREATE_REQUEST";
+export const LECTURE_HOMEWORK_CREATE_SUCCESS =
+  "LECTURE_HOMEWORK_CREATE_SUCCESS";
+export const LECTURE_HOMEWORK_CREATE_FAILURE =
+  "LECTURE_HOMEWORK_CREATE_FAILURE";
 
+export const LECTURE_FILE_REQUEST = "LECTURE_FILE_REQUEST";
+export const LECTURE_FILE_SUCCESS = "LECTURE_FILE_SUCCESS";
+export const LECTURE_FILE_FAILURE = "LECTURE_FILE_FAILURE";
+//
+export const LECTURE_SUBMIT_LIST_REQUEST = "LECTURE_SUBMIT_LIST_REQUEST";
+export const LECTURE_SUBMIT_LIST_SUCCESS = "LECTURE_SUBMIT_LIST_SUCCESS";
+export const LECTURE_SUBMIT_LIST_FAILURE = "LECTURE_SUBMIT_LIST_FAILURE";
+//
+export const LECTURE_SUBMIT_CREATE_REQUEST = "LECTURE_SUBMIT_CREATE_REQUEST";
+export const LECTURE_SUBMIT_CREATE_SUCCESS = "LECTURE_SUBMIT_CREATE_SUCCESS";
+export const LECTURE_SUBMIT_CREATE_FAILURE = "LECTURE_SUBMIT_CREATE_FAILURE";
+//
 export const CREATE_MODAL_OPEN_REQUEST = "CREATE_MODAL_OPEN_REQUEST";
 export const CREATE_MODAL_CLOSE_REQUEST = "CREATE_MODAL_CLOSE_REQUEST";
 
@@ -121,7 +177,7 @@ const reducer = (state = initailState, action) =>
         draft.st_lectureListLoading = false;
         draft.st_lectureListDone = true;
         draft.lectures = action.data;
-        // draft.maxPage = action.data.lastPage;
+        draft.lectureLastPage = action.data.lastPage;
         break;
       }
       case LECTURE_LIST_FAILURE: {
@@ -246,22 +302,191 @@ const reducer = (state = initailState, action) =>
       }
 
       ///////////////////////////////////////////////////////
-      case LECTURE_DETAIL_LECTURE_REQUEST: {
-        draft.st_lectureDetailLectureLoading = true;
-        draft.st_lectureDetailLectureDone = null;
-        draft.st_lectureDetailLectureError = false;
+      case LECTURE_DETAIL_REQUEST: {
+        draft.st_lectureDetailLoading = true;
+        draft.st_lectureDetailDone = null;
+        draft.st_lectureDetailError = false;
         break;
       }
-      case LECTURE_DETAIL_LECTURE_SUCCESS: {
-        draft.st_lectureDetailLectureLoading = false;
-        draft.st_lectureDetailLectureDone = true;
-        draft.detailLectures = action.data.list;
+      case LECTURE_DETAIL_SUCCESS: {
+        draft.st_lectureDetailLoading = false;
+        draft.st_lectureDetailDone = true;
+        draft.lectureDetail = action.data.list;
         break;
       }
-      case LECTURE_DETAIL_LECTURE_FAILURE: {
-        draft.st_lectureDetailLectureLoading = false;
-        draft.st_lectureDetailLectureDone = false;
-        draft.st_lectureDetailLectureError = action.error;
+      case LECTURE_DETAIL_FAILURE: {
+        draft.st_lectureDetailLoading = false;
+        draft.st_lectureDetailDone = false;
+        draft.st_lectureDetailError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case LECTURE_DIARY_LIST_REQUEST: {
+        draft.st_lectureDiaryListLoading = true;
+        draft.st_lectureDiaryListDone = null;
+        draft.st_lectureDiaryListError = false;
+        break;
+      }
+      case LECTURE_DIARY_LIST_SUCCESS: {
+        draft.st_lectureDiaryListLoading = false;
+        draft.st_lectureDiaryListDone = true;
+        draft.lectureDiaryList = action.data.diarys;
+        draft.lectureDiaryLastPage = action.data.lastPage;
+        break;
+      }
+
+      case LECTURE_DIARY_LIST_FAILURE: {
+        draft.st_lectureDiaryListLoading = false;
+        draft.st_lectureDiaryListDone = false;
+        draft.st_lectureDiaryListError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case LECTURE_DIARY_ADMIN_LIST_REQUEST: {
+        draft.st_lectureDiaryAdminListLoading = true;
+        draft.st_lectureDiaryAdminListDone = null;
+        draft.st_lectureDiaryAdminListError = false;
+        break;
+      }
+      case LECTURE_DIARY_ADMIN_LIST_SUCCESS: {
+        draft.st_lectureDiaryAdminListLoading = false;
+        draft.st_lectureDiaryAdminListDone = true;
+        draft.lectureDiaryAdminList = action.data.list;
+        break;
+      }
+      case LECTURE_DIARY_ADMIN_LIST_FAILURE: {
+        draft.st_lectureDiaryAdminListLoading = false;
+        draft.st_lectureDiaryAdminListDone = false;
+        draft.st_lectureDiaryAdminListError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case LECTURE_DIARY_CREATE_REQUEST: {
+        draft.st_lectureDiaryCreateLoading = true;
+        draft.st_lectureDiaryCreateDone = null;
+        draft.st_lectureDiaryCreateError = false;
+        break;
+      }
+      case LECTURE_DIARY_CREATE_SUCCESS: {
+        draft.st_lectureDiaryCreateLoading = false;
+        draft.st_lectureDiaryCreateDone = true;
+        break;
+      }
+      case LECTURE_DIARY_CREATE_FAILURE: {
+        draft.st_lectureDiaryCreateLoading = false;
+        draft.st_lectureDiaryCreateDone = false;
+        draft.st_lectureDiaryCreateError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case LECTURE_HOMEWORK_LIST_REQUEST: {
+        draft.st_lectureHomeWorkLoading = true;
+        draft.st_lectureHomeWorkDone = null;
+        draft.st_lectureHomeWorkError = false;
+        break;
+      }
+      case LECTURE_HOMEWORK_LIST_SUCCESS: {
+        draft.st_lectureHomeWorkLoading = false;
+        draft.st_lectureHomeWorkDone = true;
+        draft.lectureHomeworkList = action.data.homeworks;
+        draft.lectureHomeworkLastPage = action.data.lastPage;
+        break;
+      }
+      case LECTURE_HOMEWORK_LIST_FAILURE: {
+        draft.st_lectureHomeWorkLoading = false;
+        draft.st_lectureHomeWorkDone = false;
+        draft.st_lectureHomeWorkError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case LECTURE_HOMEWORK_CREATE_REQUEST: {
+        draft.st_lectureHomeWorkCreateLoading = true;
+        draft.st_lectureHomeWorkCreateDone = null;
+        draft.st_lectureHomeWorkCreateError = false;
+        break;
+      }
+      case LECTURE_HOMEWORK_CREATE_SUCCESS: {
+        draft.st_lectureHomeWorkCreateLoading = false;
+        draft.st_lectureHomeWorkCreateDone = true;
+        break;
+      }
+      case LECTURE_HOMEWORK_CREATE_FAILURE: {
+        draft.st_lectureHomeWorkCreateLoading = false;
+        draft.st_lectureHomeWorkCreateDone = false;
+        draft.st_lectureHomeWorkCreateError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case LECTURE_FILE_REQUEST: {
+        draft.st_lectureFileLoading = true;
+        draft.st_lectureFileDone = null;
+        draft.st_lectureFileError = false;
+        break;
+      }
+      case LECTURE_FILE_SUCCESS: {
+        draft.st_lectureFileLoading = false;
+        draft.st_lectureFileDone = true;
+        draft.lecturePath = action.data.path;
+        break;
+      }
+      case LECTURE_FILE_FAILURE: {
+        draft.st_lectureFileLoading = false;
+        draft.st_lectureFileDone = false;
+        draft.st_lectureFileError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case LECTURE_SUBMIT_LIST_REQUEST: {
+        draft.st_lectureSubmitListLoading = true;
+        draft.st_lectureSubmitListDone = null;
+        draft.st_lectureSubmitListError = false;
+        break;
+      }
+      case LECTURE_SUBMIT_LIST_SUCCESS: {
+        draft.st_lectureSubmitListLoading = false;
+        draft.st_lectureSubmitListDone = true;
+        draft.lectureSubmitList = action.data.submits;
+        draft.lectureSubmitLastPage = action.data.lastPage;
+        break;
+      }
+      case LECTURE_SUBMIT_LIST_FAILURE: {
+        draft.st_lectureSubmitListLoading = false;
+        draft.st_lectureSubmitListDone = false;
+        draft.st_lectureSubmitListError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case LECTURE_SUBMIT_CREATE_REQUEST: {
+        draft.st_lectureSubmitCreateLoading = true;
+        draft.st_lectureSubmitCreateDone = null;
+        draft.st_lectureSubmitCreateError = false;
+        break;
+      }
+      case LECTURE_SUBMIT_CREATE_SUCCESS: {
+        draft.st_lectureSubmitCreateLoading = false;
+        draft.st_lectureSubmitCreateDone = true;
+        break;
+      }
+      case LECTURE_SUBMIT_CREATE_FAILURE: {
+        draft.st_lectureSubmitCreateLoading = false;
+        draft.st_lectureSubmitCreateDone = false;
+        draft.st_lectureSubmitCreateError = action.error;
         break;
       }
 

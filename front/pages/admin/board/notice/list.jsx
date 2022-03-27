@@ -131,7 +131,7 @@ const NoticeList = ({ router }) => {
     notices,
     noticeLectureList,
     uploadPath,
-    maxPage,
+    noticeLectureLastPage,
     createModal,
     detailModal,
     st_noticeCreateDone,
@@ -585,7 +585,7 @@ const NoticeList = ({ router }) => {
               defaultCurrent: 1,
               current: parseInt(currentPage),
               onChange: (page) => otherPageCall(page),
-              total: maxPage * 10,
+              total: noticeLectureLastPage * 10,
             }}
           />
         ) : (

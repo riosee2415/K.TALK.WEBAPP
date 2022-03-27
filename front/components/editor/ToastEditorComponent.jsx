@@ -1,4 +1,10 @@
-import React, { useState, forwardRef, useRef, useCallback } from "react";
+import React, {
+  useState,
+  forwardRef,
+  useRef,
+  useCallback,
+  useEffect,
+} from "react";
 import dynamic from "next/dynamic";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { Button } from "antd";
@@ -26,7 +32,15 @@ const EditorWithForwardedRef = React.forwardRef((props, ref) => (
 
 const ToastEditorComponent = (props) => {
   const dispatch = useDispatch();
-  const { heightMin, onChange } = props;
+  const { heightMin, onChange, value } = props;
+
+  const [content, setContent] = useState(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setContent(value);
+    }, 500);
+  }, [value]);
 
   const editorRef = useRef(null);
 
@@ -57,41 +71,47 @@ const ToastEditorComponent = (props) => {
 
   return (
     <>
-      <EditorWrapper margin="20px 0px">
-        <EditorWithForwardedRef
-          {...props}
-          placeholder={props.placeholder || "내용을 입력해주세요."}
-          previewStyle="vertical"
-          setHeight="600px"
-          initialEditType="wysiwyg"
-          //   initialEditType="markdown"
-          useCommandShortcut={true}
-          ref={editorRef}
-          hideModeSwitch={true}
-          hooks={{
-            addImageBlobHook: async (blob, callback) => {
-              const uploadedImageURL = await uploadImage(blob);
-              callback(uploadedImageURL, "alt text");
-              return false;
-            },
-          }}
-          events={{
-            load: function (param) {
-              setEditor(param);
-            },
-            change: handleChange,
-            keydown: function (editorType, event) {
-              if (event.which === 13 && tributeRef.current.isActive) {
+      {content ? (
+        <EditorWrapper margin="20px 0px">
+          <EditorWithForwardedRef
+            {...props}
+            placeholder={props.placeholder || "내용을 입력해주세요."}
+            previewStyle="vertical"
+            setHeight="600px"
+            initialEditType="wysiwyg"
+            //   initialEditType="markdown"
+            initialValue={content}
+            useCommandShortcut={true}
+            init
+            ref={editorRef}
+            hideModeSwitch={true}
+            hooks={{
+              addImageBlobHook: async (blob, callback) => {
+                const uploadedImageURL = await uploadImage(blob);
+                callback(uploadedImageURL, "alt text");
                 return false;
-              }
-            },
-          }}
-        />
-      </EditorWrapper>
+              },
+            }}
+            events={{
+              load: function (param) {
+                setEditor(param);
+              },
+              change: handleChange,
+              keydown: function (editorType, event) {
+                if (event.which === 13 && tributeRef.current.isActive) {
+                  return false;
+                }
+              },
+            }}
+          />
+        </EditorWrapper>
+      ) : (
+        ""
+      )}
 
       <Wrapper margin="10px 0px" dr="row" ju="flex-end" width="90%">
         <Button type="primary" onClick={getContentInEditor}>
-          작성하기
+          수정하기
         </Button>
       </Wrapper>
     </>

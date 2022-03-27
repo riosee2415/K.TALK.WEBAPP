@@ -52,6 +52,8 @@ import {
   MESSAGE_USER_LIST_REQUEST,
 } from "../../reducers/message";
 
+import { NOTICE_LIST_REQUEST } from "../../reducers/notice";
+
 const PROFILE_WIDTH = `184`;
 const PROFILE_HEIGHT = `190`;
 
@@ -255,6 +257,9 @@ const Student = () => {
     st_messageUserListError,
   } = useSelector((state) => state.message);
 
+  const { noticeList, noticeLastPage, st_noticeListDone, st_noticeListError } =
+    useSelector((state) => state.notice);
+
   ////// HOOKS //////
   const width = useWidth();
   const router = useRouter();
@@ -272,11 +277,18 @@ const Student = () => {
   const [messageSendModal, setMessageSendModal] = useState(false);
   const [messageViewModal, setMessageViewModal] = useState(false);
 
+  const [noticeViewModal, setNoticeViewModal] = useState(false);
+  const [noticeViewDatum, setNoticeViewDatum] = useState(null);
+
   const [messageDatum, setMessageDatum] = useState();
 
   const [adminSendMessageToggle, setAdminSendMessageToggle] = useState(false);
 
   const [selectValue, setSelectValue] = useState("");
+
+  const [currentPage1, setCurrentPage1] = useState(1);
+  const [currentPage2, setCurrentPage2] = useState(1);
+  const [currentPage3, setCurrentPage3] = useState(1);
 
   ////// USEEFFECT //////
 
@@ -293,6 +305,20 @@ const Student = () => {
   useEffect(() => {
     dispatch({
       type: MESSAGE_TEACHER_LIST_REQUEST,
+    });
+
+    dispatch({
+      type: MESSAGE_USER_LIST_REQUEST,
+      data: {
+        page: 1,
+      },
+    });
+
+    dispatch({
+      type: NOTICE_LIST_REQUEST,
+      data: {
+        page: 1,
+      },
     });
   }, []);
 
@@ -393,7 +419,7 @@ const Student = () => {
   const onReset = useCallback(() => {
     form.resetFields();
 
-    // messageViewModalHandler();
+    setNoticeViewModal(false);
     setMessageSendModal(false);
     setMessageViewModal(false);
   }, []);
@@ -548,6 +574,26 @@ const Student = () => {
     }
   }, []);
 
+  const noticeChangePage = useCallback((page) => {
+    setCurrentPage2(page);
+
+    dispatch({
+      type: NOTICE_LIST_REQUEST,
+      data: {
+        page,
+      },
+    });
+  }, []);
+
+  const onClickNoticeHandler = useCallback((data) => {
+    setNoticeViewDatum(data);
+    setNoticeViewModal(true);
+  }, []);
+
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
+  }, []);
+
   ////// DATAVIEW //////
 
   const testArr = [
@@ -585,44 +631,6 @@ const Student = () => {
       teacher: "강사명",
       content: "한국어로 편지 쓰기",
       createdAt: "2022/01/03",
-    },
-  ];
-
-  const noticeArr = [
-    {
-      id: 1,
-      type: "공지사항",
-      title: "안녕하세요. 강의 공지입니다.",
-      author: "강사명",
-      createdAt: "2022/01/22",
-    },
-    {
-      id: 2,
-      type: "공지사항",
-      title: "안녕하세요. 강의 공지입니다.",
-      author: "강사명",
-      createdAt: "2022/01/22",
-    },
-    {
-      id: 3,
-      type: "공지사항",
-      title: "안녕하세요. 강의 공지입니다.",
-      author: "강사명",
-      createdAt: "2022/01/22",
-    },
-    {
-      id: 4,
-      type: "공지사항",
-      title: "안녕하세요. 강의 공지입니다.",
-      author: "강사명",
-      createdAt: "2022/01/22",
-    },
-    {
-      id: 5,
-      type: "공지사항",
-      title: "안녕하세요. 강의 공지입니다.",
-      author: "강사명",
-      createdAt: "2022/01/22",
     },
   ];
 
@@ -1076,6 +1084,15 @@ const Student = () => {
               </Wrapper>
               {/** */}
             </Wrapper>
+
+            <CommonButton
+              radius={`10px`}
+              height={`34px`}
+              width={`107px`}
+              onClick={() => moveLinkHandler(`student/lectureAll`)}>
+              전체보기
+            </CommonButton>
+
             <Wrapper al={`flex-start`} margin={`0 0 20px`}>
               <Text
                 fontSize={width < 800 ? `18px` : `22px`}
@@ -1185,7 +1202,10 @@ const Student = () => {
               </Text>
             </Wrapper>
 
-            <Wrapper radius={`10px`} shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}>
+            <Wrapper
+              radius={`10px`}
+              shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}
+              margin={`0 0 60px`}>
               <Wrapper
                 dr={`row`}
                 fontWeight={`bold`}
@@ -1196,15 +1216,16 @@ const Student = () => {
                 <Wrapper width={width < 800 ? `15%` : `10%`}>작성자</Wrapper>
                 <Wrapper width={width < 800 ? `25%` : `10%`}>날짜</Wrapper>
               </Wrapper>
-              {noticeArr &&
-                (noticeArr.length === 0 ? (
+              {noticeList &&
+                (noticeList.length === 0 ? (
                   <Wrapper>
                     <Empty description="공지사항이 없습니다." />
                   </Wrapper>
                 ) : (
-                  noticeArr.map((data, idx) => {
+                  noticeList.map((data, idx) => {
                     return (
                       <CustomTableHoverWrapper
+                        onClick={() => onClickNoticeHandler(data)}
                         key={data.id}
                         bgColor={idx % 2 === 0}>
                         <Wrapper width={width < 800 ? `15%` : `10%`}>
@@ -1220,13 +1241,21 @@ const Student = () => {
                           {data.author}
                         </Wrapper>
                         <Wrapper width={width < 800 ? `25%` : `10%`}>
-                          {data.createdAt}
+                          {moment(data.createdAt, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )}
                         </Wrapper>
                       </CustomTableHoverWrapper>
                     );
                   })
                 ))}
             </Wrapper>
+            <CustomPage
+              size="small"
+              current={currentPage1}
+              tota={noticeLastPage * 10}
+              onChange={(page) => noticeChangePage(page)}
+            />
 
             <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
               <Text
@@ -1254,7 +1283,6 @@ const Student = () => {
                   </Wrapper>
                 ) : (
                   messageUserList.map((data, idx) => {
-                    console.log(data, "data");
                     return (
                       <CustomTableHoverWrapper
                         key={data.id}
@@ -1273,7 +1301,9 @@ const Student = () => {
                           {data.author}
                         </Wrapper>
                         <Wrapper width={width < 800 ? `25%` : `10%`}>
-                          {data.createdAt.slice(0, 14)}
+                          {moment(data.createdAt, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )}
                         </Wrapper>
                       </CustomTableHoverWrapper>
                     );
@@ -1288,17 +1318,20 @@ const Student = () => {
                 쪽지 보내기
               </CommonButton>
             </Wrapper>
-            <CustomPage size="small" />
 
-            <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
+            <Wrapper margin={`0 0 110px`}>
+              <CustomPage size="small" />
+            </Wrapper>
+
+            {/* <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
               <Text
                 fontSize={width < 800 ? `18px` : `22px`}
                 fontWeight={`bold`}>
                 자습하기
               </Text>
-            </Wrapper>
+            </Wrapper> */}
 
-            <Wrapper radius={`10px`} shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}>
+            {/* <Wrapper radius={`10px`} shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}>
               <Wrapper
                 dr={`row`}
                 fontWeight={`bold`}
@@ -1352,36 +1385,46 @@ const Student = () => {
             <Wrapper al={`flex-end`} margin={`20px 0 40px`}></Wrapper>
             <Wrapper margin={`0 0 110px`}>
               <CustomPage size="small" />
-            </Wrapper>
+            </Wrapper> */}
           </RsWrapper>
 
           <CustomModal
-            visible={false}
+            visible={noticeViewModal}
             width={`1350px`}
             title="공지사항"
             footer={null}
             closable={false}>
             <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
-              <Text margin={`0 54px 0 0`}>작성자 ooo</Text>
-              <Text>날짜 2022/01/22</Text>
+              <Text margin={`0 54px 0 0`}>
+                {`작성자 ${noticeViewDatum && noticeViewDatum.author}`}
+              </Text>
+              <Text>{`날짜 ${moment(
+                noticeViewDatum && noticeViewDatum.createdAt,
+                "YYYY/MM/DD"
+              ).format("YYYY/MM/DD")}`}</Text>
             </Wrapper>
 
             <Text fontSize={`18px`} fontWeight={`bold`}>
               제목
             </Text>
             <Wrapper padding={`10px`}>
-              <WordbreakText>오늘 공지사항입니다.</WordbreakText>
+              <WordbreakText>
+                {noticeViewDatum && noticeViewDatum.title}
+              </WordbreakText>
             </Wrapper>
 
             <Text fontSize={`18px`} fontWeight={`bold`}>
               내용
             </Text>
             <Wrapper padding={`10px`}>
-              <WordbreakText>오늘 공지사항입니다.</WordbreakText>
+              <WordbreakText>
+                {noticeViewDatum && noticeViewDatum.content}
+              </WordbreakText>
             </Wrapper>
 
             <Wrapper>
               <CommonButton
+                onClick={() => onReset()}
                 kindOf={`grey`}
                 color={Theme.darkGrey_C}
                 radius={`5px`}>
@@ -1453,7 +1496,7 @@ const Student = () => {
             title={
               adminSendMessageToggle
                 ? "관리자에게 쪽지 보내기"
-                : "강사에게 쪽지"
+                : "강사에게 쪽지 보내기"
             }
             footer={null}
             closable={false}>
@@ -1781,10 +1824,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: MESSAGE_TEACHER_LIST_REQUEST,
-    });
-
-    context.store.dispatch({
-      type: MESSAGE_USER_LIST_REQUEST,
     });
 
     // 구현부 종료

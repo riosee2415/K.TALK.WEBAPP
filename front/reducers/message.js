@@ -2,6 +2,7 @@ import produce from "../util/produce";
 
 export const initialState = {
   messageUserList: [],
+  messageUserLastPage: 1,
   messageAdminList: [],
   messageTeacherList: [],
   //
@@ -102,7 +103,8 @@ const reducer = (state = initialState, action) =>
       case MESSAGE_USER_LIST_SUCCESS: {
         draft.st_messageUserListLoading = false;
         draft.st_messageUserListDone = true;
-        draft.messageUserList = action.data.messages;
+        draft.messageUserList = action.data.message;
+        draft.messageUserLastPage = action.data.lastPage;
         break;
       }
       case MESSAGE_USER_LIST_FAILURE: {

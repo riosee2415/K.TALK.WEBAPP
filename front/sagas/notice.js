@@ -53,7 +53,7 @@ import {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function noticeLectureListAPI(data) {
-  return axios.post(`/api/notice/lecture/list`, data);
+  return axios.post(`/api/notice/lecture/list?page${data.page}`, data);
 }
 
 function* noticeLectureList(action) {
@@ -427,6 +427,7 @@ export default function* noticeSaga() {
     fork(watchNoticeDelete),
     fork(watchNoticeNext),
     fork(watchNoticePrev),
+
     //
   ]);
 }

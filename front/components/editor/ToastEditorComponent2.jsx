@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  forwardRef,
-  useRef,
-  useCallback,
-  useEffect,
-} from "react";
+import React, { useState, forwardRef, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { Button } from "antd";
@@ -16,7 +10,7 @@ import axios from "axios";
 
 const EditorWrapper = styled(Wrapper)`
   & > div {
-    width: 100%;
+    width: 90%;
   }
 
   & > div {
@@ -30,25 +24,11 @@ const EditorWithForwardedRef = React.forwardRef((props, ref) => (
   <Editor {...props} forwardedRef={ref} />
 ));
 
-const ToastEditorComponent2 = (props) => {
+const ToastEditorComponent = (props) => {
   const dispatch = useDispatch();
   const { heightMin, onChange } = props;
-  const { createModal } = useSelector((state) => state.notice);
-
-  const [value, setValue] = useState(null);
 
   const editorRef = useRef(null);
-
-  useEffect(() => {
-    if (createModal) {
-      setTimeout(() => {
-        setValue(props.updateData.content);
-      }, 500);
-    }
-    if (!createModal) {
-      setValue(null);
-    }
-  }, [props.updateData, value, createModal]);
 
   const handleChange = useCallback(() => {
     if (!editorRef.current) {
@@ -65,7 +45,7 @@ const ToastEditorComponent2 = (props) => {
     formData.append("image", blob);
     formData.append("path", "issue");
 
-    const result = await axios.post(`${backURL}/api/news/image`, formData);
+    const result = await axios.post(`${backURL}/api/edit/image`, formData);
 
     return result.data.path;
   }, []);
@@ -78,47 +58,44 @@ const ToastEditorComponent2 = (props) => {
   return (
     <>
       <EditorWrapper margin="20px 0px">
-        {value ? (
-          <EditorWithForwardedRef
-            {...props}
-            placeholder={props.placeholder || "내용을 입력해주세요."}
-            previewStyle="vertical"
-            setHeight="600px"
-            initialEditType="wysiwyg"
-            //   initialEditType="markdown"
-            useCommandShortcut={true}
-            ref={editorRef}
-            hideModeSwitch={true}
-            initialValue={value}
-            hooks={{
-              addImageBlobHook: async (blob, callback) => {
-                const uploadedImageURL = await uploadImage(blob);
-                callback(uploadedImageURL, "alt text");
+        <EditorWithForwardedRef
+          {...props}
+          placeholder={props.placeholder || "내용을 입력해주세요."}
+          previewStyle="vertical"
+          setHeight="600px"
+          initialEditType="wysiwyg"
+          //   initialEditType="markdown"
+          useCommandShortcut={true}
+          ref={editorRef}
+          hideModeSwitch={true}
+          hooks={{
+            addImageBlobHook: async (blob, callback) => {
+              const uploadedImageURL = await uploadImage(blob);
+              callback(uploadedImageURL, "alt text");
+              return false;
+            },
+          }}
+          events={{
+            load: function (param) {
+              setEditor(param);
+            },
+            change: handleChange,
+            keydown: function (editorType, event) {
+              if (event.which === 13 && tributeRef.current.isActive) {
                 return false;
-              },
-            }}
-            events={{
-              load: function (param) {
-                setEditor(param);
-              },
-              change: handleChange,
-              keydown: function (editorType, event) {
-                if (event.which === 13 && tributeRef.current.isActive) {
-                  return false;
-                }
-              },
-            }}
-          />
-        ) : null}
+              }
+            },
+          }}
+        />
       </EditorWrapper>
 
-      <Wrapper margin="10px 0px" dr="row" ju="flex-end">
+      <Wrapper margin="10px 0px" dr="row" ju="flex-end" width="90%">
         <Button type="primary" onClick={getContentInEditor}>
-          저장하기
+          작성하기
         </Button>
       </Wrapper>
     </>
   );
 };
 
-export default ToastEditorComponent2;
+export default ToastEditorComponent;
