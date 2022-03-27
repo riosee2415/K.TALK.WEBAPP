@@ -9,9 +9,12 @@ import useInput from "../../../hooks/useInput";
 import Theme from "../../../components/Theme";
 import styled from "styled-components";
 import axios from "axios";
+import moment from "moment";
 
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import { SEO_LIST_REQUEST } from "../../../reducers/seo";
+import ToastEditorComponent2 from "../../../components/editor/ToastEditorComponent2";
+import ToastEditorComponent from "../../../components/editor/ToastEditorComponent";
 
 import Head from "next/head";
 import {
@@ -44,6 +47,7 @@ import {
   Empty,
   Upload,
   Select,
+  Popconfirm,
 } from "antd";
 import {
   MESSAGE_CREATE_REQUEST,
@@ -54,13 +58,41 @@ import {
 } from "../../../reducers/message";
 import { useRouter } from "next/router";
 import {
+  LECTURE_CREATE_REQUEST,
+  LECTURE_DIARY_CREATE_REQUEST,
+  LECTURE_DIARY_LIST_REQUEST,
+  LECTURE_FILE_REQUEST,
+  LECTURE_HOMEWORK_CREATE_REQUEST,
+  LECTURE_HOMEWORK_LIST_REQUEST,
   LECTURE_STUDENT_LIST_REQUEST,
+  LECTURE_SUBMIT_LIST_REQUEST,
   LECTURE_TEACHER_LIST_REQUEST,
 } from "../../../reducers/lecture";
 import {
   PARTICIPANT_LECTURE_LIST_REQUEST,
   PARTICIPANT_LIST_REQUEST,
 } from "../../../reducers/participant";
+import {
+  NOTICE_CREATE_REQUEST,
+  NOTICE_LECTURE_LIST_REQUEST,
+  NOTICE_DETAIL_REQUEST,
+  NOTICE_UPDATE_REQUEST,
+  DETAIL_MODAL_OPEN_REQUEST,
+  DETAIL_MODAL_CLOSE_REQUEST,
+} from "../../../reducers/notice";
+import {
+  COMMUTE_CREATE_REQUEST,
+  COMMUTE_LIST_REQUEST,
+} from "../../../reducers/commute";
+import { saveAs } from "file-saver";
+
+const CustomPopconfirm = styled(Popconfirm)`
+  position: static;
+
+  & span {
+    display: none;
+  }
+`;
 
 const CusotmInput = styled(TextInput)`
   border: none;
@@ -290,6 +322,7 @@ const Index = () => {
     st_messageTeacherListError,
 
     messageUserList,
+    messageUserLastPage,
     st_messageUserListDone,
     st_messageUserListError,
 
@@ -297,11 +330,31 @@ const Index = () => {
     st_messageCreateError,
   } = useSelector((state) => state.message);
 
-  // const { st_partLectureListDone, st_partLectureListError } = useSelector(
-  //   (state) => state.lecture
-  // );
-
   const { me } = useSelector((state) => state.user);
+
+  const {
+    lectureDiaryList,
+    lectureDiaryLastPage,
+
+    st_lectureDiaryListDone,
+    st_lectureDiaryListError,
+
+    st_lectureDiaryCreateDone,
+    st_lectureDiaryCreateError,
+
+    lecturePath,
+    st_lectureFileLoading,
+    st_lectureFileDone,
+    st_lectureFileError,
+
+    lectureHomeworkList,
+    lectureHomeworkLastPage,
+    st_lectureHomeWorkDone,
+    st_lectureHomeWorkError,
+
+    st_lectureHomeWorkCreateDone,
+    st_lectureHomeWorkCreateError,
+  } = useSelector((state) => state.lecture);
 
   const {
     partLectureList,
@@ -309,7 +362,34 @@ const Index = () => {
     st_participantLectureListError,
   } = useSelector((state) => state.participant);
 
-  console.log(partLectureList, "partLectureList");
+  const {
+    noticeLectureList,
+    noticeLectureLastPage,
+    st_noticeLectureListDone,
+    st_noticeLectureListError,
+
+    st_noticeCreateDone,
+    st_noticeCreateError,
+
+    st_noticeUpdateDone,
+    st_noticeUpdateError,
+
+    noticeDetail,
+    st_noticeDetailDone,
+    st_noticeDetailError,
+    detailModal,
+  } = useSelector((state) => state.notice);
+
+  const {
+    commuteList,
+    commuteLastPage,
+
+    st_commuteListDone,
+    st_commuteListError,
+
+    st_commuteCreateDone,
+    st_commuteCreateError,
+  } = useSelector((state) => state.commute);
 
   ////// HOOKS //////
 
@@ -323,6 +403,7 @@ const Index = () => {
 
   const [form] = Form.useForm();
   const [answerform] = Form.useForm();
+  const [noticeform] = Form.useForm();
 
   const imageInput = useRef();
 
@@ -331,8 +412,11 @@ const Index = () => {
   const [messageSendModalToggle, setMessageSendModalToggle] = useState(false);
   const [noticeModalToggle, setNoticeModalToggle] = useState(false);
   const [homeWorkModalToggle, setHomeWorkModalToggle] = useState(false);
+  const [diaryModalToggle, setDiaryModalToggle] = useState(false);
 
   const [adminSendMessageToggle, setAdminSendMessageToggle] = useState(false);
+
+  const [studentToggle, setStudentToggle] = useState(false);
 
   const [checkedList, setCheckedList] = useState([]);
   const [checkAll, setCheckAll] = useState(false);
@@ -341,23 +425,34 @@ const Index = () => {
 
   const [selectValue, setSelectValue] = useState("");
 
+  const [fileName, setFileName] = useState("");
+  const [filePath, setFilePath] = useState("");
+
   const inputDate = useInput("");
+  const inputCommuteSearch = useInput("");
 
   const [messageDatum, setMessageDatum] = useState();
+
+  const [currentPage1, setCurrentPage1] = useState(1);
+  const [currentPage2, setCurrentPage2] = useState(1);
+  const [currentPage3, setCurrentPage3] = useState(1);
+  const [currentPage4, setCurrentPage4] = useState(1);
+
+  const [noticeContent, setNoticeContent] = useState("");
 
   ////// REDUX //////
 
   ////// USEEFFECT //////
 
-  useEffect(() => {
-    if (!me) {
-      message.error("로그인 후 이용해주세요.");
-      return router.push(`/`);
-    } else if (me.level !== 2) {
-      message.error("강사가 아닙니다.");
-      return router.push(`/`);
-    }
-  }, [me]);
+  // useEffect(() => {
+  //   if (!me) {
+  //     message.error("로그인 후 이용해주세요.");
+  //     return router.push(`/`);
+  //   } else if (me.level !== 2) {
+  //     message.error("강사가 아닙니다.");
+  //     return router.push(`/`);
+  //   }
+  // }, [me]);
 
   useEffect(() => {
     if (partLectureList && partLectureList.length !== 0) {
@@ -386,6 +481,31 @@ const Index = () => {
       type: PARTICIPANT_LECTURE_LIST_REQUEST,
       data: {
         LectureId: router.query.id,
+      },
+    });
+
+    dispatch({
+      type: LECTURE_DIARY_LIST_REQUEST,
+      data: {
+        page: 1,
+        LectureId: router.query.id,
+      },
+    });
+
+    dispatch({
+      type: LECTURE_HOMEWORK_LIST_REQUEST,
+      data: {
+        LectureId: parseInt(router.query.id),
+        page: 1,
+      },
+    });
+
+    dispatch({
+      type: COMMUTE_LIST_REQUEST,
+      data: {
+        LectureId: parseInt(router.query.id),
+        page: 1,
+        search: "",
       },
     });
   }, [me, router.query]);
@@ -423,7 +543,127 @@ const Index = () => {
     }
   }, [st_messageForAdminCreateError]);
 
+  useEffect(() => {
+    if (st_lectureHomeWorkCreateDone) {
+      onReset();
+
+      return message.success("숙제를 업로드 했습니다.");
+    }
+  }, [st_lectureHomeWorkCreateDone]);
+
+  useEffect(() => {
+    if (st_lectureHomeWorkCreateError) {
+      setFileName("");
+      return message.error(st_lectureHomeWorkCreateError);
+    }
+  }, [st_lectureHomeWorkCreateError]);
+
+  useEffect(() => {
+    if (st_lectureFileDone) {
+      setFilePath(lecturePath);
+    }
+  }, [st_lectureFileDone]);
+
+  useEffect(() => {
+    if (st_noticeDetailDone) {
+      onFillNotice(noticeDetail);
+    }
+  }, [st_noticeDetailDone]);
+
+  useEffect(() => {
+    if (st_noticeCreateDone) {
+      dispatch({
+        type: DETAIL_MODAL_CLOSE_REQUEST,
+      });
+
+      return message.success("공지사항이 작성 되었습니다.");
+    }
+  }, [st_noticeCreateDone]);
+
+  useEffect(() => {
+    if (st_noticeCreateError) {
+      return message.error(st_noticeCreateError);
+    }
+  }, [st_noticeCreateError]);
+
+  useEffect(() => {
+    dispatch({
+      type: MESSAGE_USER_LIST_REQUEST,
+      data: {
+        page: 1,
+      },
+    });
+
+    dispatch({
+      type: NOTICE_LECTURE_LIST_REQUEST,
+      data: {
+        page: 1,
+        LectureId: router.query.id,
+      },
+    });
+  }, []);
+
+  useEffect(() => {
+    if (st_lectureDiaryCreateDone) {
+      onReset();
+
+      dispatch({
+        type: LECTURE_DIARY_LIST_REQUEST,
+        data: {
+          page: 1,
+          LectureId: router.query.id,
+        },
+      });
+
+      return message.success("강사일지 작성을 완료했습니다.");
+    }
+  }, [st_lectureDiaryCreateDone]);
+
+  useEffect(() => {
+    if (st_lectureDiaryCreateError) {
+      return message.error(st_lectureDiaryCreateError);
+    }
+  }, [st_lectureDiaryCreateError]);
+
+  useEffect(() => {
+    if (st_noticeUpdateDone) {
+      onReset();
+      return message.success("해당 게시글을 수정했습니다.");
+    }
+  }, [st_noticeUpdateDone]);
+
+  useEffect(() => {
+    if (st_noticeUpdateError) {
+      return message.error(st_noticeUpdateError);
+    }
+  }, [st_noticeUpdateError]);
+
+  useEffect(() => {
+    if (st_commuteCreateDone) {
+      return message.success("해당 학생을 출석을 완료 했습니다.");
+    }
+  }, [st_commuteCreateDone]);
+
+  useEffect(() => {
+    if (st_commuteCreateError) {
+      return message.error(st_commuteCreateError);
+    }
+  }, [st_commuteCreateError]);
+
   ////// TOGGLE //////
+
+  const studentToggleHanlder = useCallback(() => {
+    setStudentToggle(true);
+
+    dispatch({
+      type: LECTURE_SUBMIT_LIST_REQUEST,
+      data: {
+        LectureId: router.query.id,
+        search: "",
+        page: 1,
+      },
+    });
+  }, []);
 
   const adminSendMessageToggleHandler = useCallback(() => {
     setAdminSendMessageToggle((prev) => !prev);
@@ -468,12 +708,114 @@ const Index = () => {
     [me, selectValue, checkedList]
   );
 
-  const noticeFinishHandler = useCallback((value) => {}, []);
+  const noticeFinishHandler = useCallback(
+    (value) => {
+      if (!noticeContent || noticeContent.trim() === "") {
+        return message.error("내용을 입력해주시고 작성하기 버튼을 눌러주세요.");
+      } else {
+        dispatch({
+          type: NOTICE_CREATE_REQUEST,
+          data: {
+            title: value.title2,
+            content: noticeContent,
+            author: me.username,
+            LectureId: router.query.id,
+          },
+        });
+      }
+    },
+    [me, noticeContent]
+  );
 
-  const homeWorkFinishHandler = useCallback((data) => {}, []);
+  const noticeViewFinishHandler = useCallback(
+    (value) => {
+      if (!noticeContent || noticeContent.trim() === "") {
+        return message.error(
+          "내용을 입력해주시고 수정하기를 버튼을 눌러주세요."
+        );
+      } else {
+        if (noticeDetail.length !== 0) {
+          dispatch({
+            type: NOTICE_UPDATE_REQUEST,
+            data: {
+              id: noticeDetail[0].id,
+              title: value.noticeTitle,
+              content: noticeContent,
+            },
+          });
+        }
+      }
+    },
+    [noticeContent, noticeDetail]
+  );
+
+  const homeWorkFinishHandler = useCallback(
+    (value) => {
+      if (filePath) {
+        dispatch({
+          type: LECTURE_HOMEWORK_CREATE_REQUEST,
+          data: {
+            title: value.title3,
+            date: value.date,
+            file: filePath,
+            LectureId: router.query.id,
+          },
+        });
+
+        imageInput.current.value = "";
+      } else {
+        return message.error("파일을 업로드 해주세요.");
+      }
+    },
+    [lecturePath, filePath]
+  );
+
+  const onChangeHomeWorkPage = useCallback((page) => {
+    setCurrentPage4(page);
+    dispatch({
+      type: LECTURE_HOMEWORK_LIST_REQUEST,
+      data: {
+        LectureId: parseInt(router.query.id),
+        page,
+      },
+    });
+  }, []);
+
+  const onChangeImages = useCallback((e) => {
+    const formData = new FormData();
+
+    [].forEach.call(e.target.files, (file) => {
+      formData.append("file", file);
+    });
+
+    dispatch({
+      type: LECTURE_FILE_REQUEST,
+      data: formData,
+    });
+
+    setFileName(e.target.files[0] && e.target.files[0].name);
+    e.target.value == "";
+  }, []);
+
+  const diaryFinishHandler = useCallback(
+    (value) => {
+      dispatch({
+        type: LECTURE_DIARY_CREATE_REQUEST,
+        data: {
+          author: me.username,
+          process: value.process,
+          lectureMemo: value.lectureMemo,
+          LectureId: router.query.id,
+        },
+      });
+    },
+    [me]
+  );
 
   const onReset = useCallback(() => {
     form.resetFields();
+    answerform.resetFields();
+    noticeform.resetFields();
 
     inputDate.setValue("");
     setMessageViewToggle(false);
@@ -482,6 +824,15 @@ const Index = () => {
     setNoticeModalToggle(false);
     setMessageSendModalToggle(false);
     setAdminSendMessageToggle(false);
+    setDiaryModalToggle(false);
+    setStudentToggle(false);
+    setNoticeContent("");
+    setFileName("");
+    setFilePath("");
+
+    dispatch({
+      type: DETAIL_MODAL_CLOSE_REQUEST,
+    });
   }, []);
 
   const onChangeBoxEachHanlder = useCallback((e, idx2, arr) => {
@@ -498,7 +849,6 @@ const Index = () => {
       return { ...data, isCheck: e.target.checked };
     });
 
-    console.log(resultAll, "resultAll");
     setCheckedList(resultAll);
   }, []);
 
@@ -521,6 +871,17 @@ const Index = () => {
       messageTitle: data.title,
       messageContent: data.content,
     });
+  };
+
+  const onFillNotice = (data) => {
+    if (data.length !== 0) {
+      console.log(data, "data");
+      console.log(data[0].content, "content");
+      noticeform.setFieldsValue({
+        noticeTitle: data[0].title,
+        noticeContent: data[0].content,
+      });
+    }
   };
 
   const answerFinishHandler = useCallback((data, messageData) => {
@@ -551,6 +912,113 @@ const Index = () => {
     [me]
   );
 
+  const diaryCreateToggleHandler = useCallback(() => {
+    setDiaryModalToggle((prev) => !prev);
+  }, []);
+
+  const onChangeDiaryPage = useCallback((page) => {
+    setCurrentPage1(page);
+
+    dispatch({
+      type: LECTURE_DIARY_LIST_REQUEST,
+      data: {
+        page,
+        LectureId: router.query.id,
+      },
+    });
+  }, []);
+
+  const onChangeMessagePage = useCallback((page) => {
+    setCurrentPage2(page);
+
+    dispatch({
+      type: MESSAGE_USER_LIST_REQUEST,
+      data: {
+        page,
+      },
+    });
+  }, []);
+
+  const onChangeNoticePage = useCallback((page) => {
+    setCurrentPage3(page);
+
+    dispatch({
+      type: NOTICE_LECTURE_LIST_REQUEST,
+      data: {
+        page,
+        LectureId: router.query.id,
+      },
+    });
+  }, []);
+
+  const noticeDetailHandler = useCallback((id) => {
+    dispatch({
+      type: NOTICE_DETAIL_REQUEST,
+      data: {
+        noticeId: id,
+      },
+    });
+
+    dispatch({
+      type: DETAIL_MODAL_OPEN_REQUEST,
+    });
+
+    setNoticeViewModalToggle(true);
+  }, []);
+
+  const clickImageUpload = useCallback(() => {
+    imageInput.current.click();
+  }, [imageInput.current]);
+
+  const getEditContent = useCallback((contentValue) => {
+    setNoticeContent(contentValue);
+  }, []);
+
+  const getEditContentUpdate = useCallback((contentValue) => {
+    setNoticeContent(contentValue);
+  }, []);
+
+  const onCommuteHandler = useCallback(
+    (data, isAtt) => {
+      dispatch({
+        type: COMMUTE_CREATE_REQUEST,
+        data: {
+          time: moment().format("YYYY-MM-DD HH:MM"),
+          LectureId: data.LectureId,
+          UserId: data.UserId,
+          isAtt: isAtt,
+        },
+      });
+    },
+
+    []
+  );
+
+  const commuteSearchHandler = useCallback(() => {
+    dispatch({
+      type: COMMUTE_LIST_REQUEST,
+      data: {
+        LectureId: parseInt(router.query.id),
+        page: 1,
+        search: inputCommuteSearch.value,
+      },
+    });
+  }, [inputCommuteSearch.value]);
+
+  const fileDownloadHandler = useCallback(async (filePath) => {
+    let blob = await fetch(filePath).then((r) => r.blob());
+
+    const file = new Blob([blob]);
+
+    const ext = filePath.substring(
+      filePath.lastIndexOf(".") + 1,
+      filePath.length
+    );
+
+    const originName = `첨부파일.${ext}`;
+
+    saveAs(file, originName);
+  }, []);
   ////// DATAVIEW //////
 
   const testdata = [
@@ -872,7 +1340,7 @@ const Index = () => {
                     </Wrapper>
 
                     {partLectureList && partLectureList.length === 0 ? (
-                      <Wrapper>
+                      <Wrapper margin={`50px 0`}>
                         <Empty description="조회된 데이터가 없습니다." />
                       </Wrapper>
                     ) : (
@@ -884,10 +1352,11 @@ const Index = () => {
                             dr={`row`}
                             textAlign={`center`}
                             padding={`25px 0 20px`}
-                            cursor={`pointer`}
                             bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
                             <CustomCheckBox
-                              checked={checkedList[idx].isCheck}
+                              checked={
+                                checkedList[idx] && checkedList[idx].isCheck
+                              }
                               onChange={(e) =>
                                 onChangeBoxEachHanlder(e, idx, checkedList)
                               }
@@ -949,7 +1418,7 @@ const Index = () => {
                     </Wrapper>
 
                     {partLectureList && partLectureList.length === 0 ? (
-                      <Wrapper>
+                      <Wrapper margin={`50px 0`}>
                         <Empty description="조회된 데이터가 없습니다." />
                       </Wrapper>
                     ) : (
@@ -960,30 +1429,36 @@ const Index = () => {
                             dr={`row`}
                             textAlign={`center`}
                             padding={`25px 0 20px`}
-                            cursor={`pointer`}
                             bgColor={Theme.lightGrey_C}>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`25%`}>
-                              U$ 16
+                              {`U$ ${data.price}`}
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`25%`}
                               wordBreak={`break-word`}>
                               {/* 2022/01/22 */}
-
                               {data.endDate}
-                              <SpanText color={Theme.red_C}>(D-5)</SpanText>
+                              <SpanText color={Theme.red_C}>
+                                {`(${moment
+                                  .duration(
+                                    moment(data.endDate, "YYYY-MM-DD").diff(
+                                      moment(data.startDate, "YYYY-MM-DD")
+                                    )
+                                  )
+                                  .asDays()})`}
+                              </SpanText>
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`25%`}>
-                              {/* 작성하기 */}
-                              {data.stuMemo}
+                              작성하기
                             </Text>
 
                             <Text
+                              cursor={`pointer`}
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`25%`}
                               color={
@@ -1057,7 +1532,7 @@ const Index = () => {
                 {width > 700 && (
                   <>
                     {partLectureList && partLectureList.length === 0 ? (
-                      <Wrapper>
+                      <Wrapper margin={`50px 0`}>
                         <Empty description="조회된 데이터가 없습니다." />
                       </Wrapper>
                     ) : (
@@ -1069,7 +1544,6 @@ const Index = () => {
                             dr={`row`}
                             textAlign={`center`}
                             padding={`25px 0 20px`}
-                            cursor={`pointer`}
                             ju={`center`}
                             bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
                             <CustomCheckBox
@@ -1091,12 +1565,12 @@ const Index = () => {
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`10%`}>
                               {/* 1997 */}
-                              {/* {data.birth.slice(0, 10)} */}
+                              {data.birth.slice(0, 10)}
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`10%`}>
-                              {/* {data.stuCountry} */}
+                              {data.stuCountry}
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
@@ -1108,27 +1582,43 @@ const Index = () => {
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`20%`}
                               wordBreak={`break-word`}>
-                              {/* 2022/01/22 */}
-                              {data.startDate.slice(0, 10)}
-                              <SpanText color={Theme.red_C}>(D-5)</SpanText>
+                              {data.endDate.slice(0, 10)}
+                              <SpanText
+                                color={Theme.red_C}
+                                margin={`0 0 0 5px`}>
+                                {`(D-${moment
+                                  .duration(
+                                    moment(data.endDate, "YYYY-MM-DD").diff(
+                                      moment(data.startDate, "YYYY-MM-DD")
+                                    )
+                                  )
+                                  .asDays()})`}
+                              </SpanText>
                             </Text>
                             <Text
+                              cursor={`pointer`}
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`10%`}>
                               작성하기
-                              {/* {data.stuMemo} */}
                             </Text>
 
-                            <Text
-                              fontSize={width < 700 ? `14px` : `16px`}
-                              width={`10%`}
-                              color={
-                                "출석"
-                                  ? `${Theme.basicTheme_C}`
-                                  : `${Theme.red_C}`
-                              }>
-                              {"출석"}
-                            </Text>
+                            <CustomPopconfirm
+                              okText="출석"
+                              cancelText="결석"
+                              onConfirm={() => onCommuteHandler(data, true)}
+                              onCancel={() => onCommuteHandler(data, false)}>
+                              <Text
+                                cursor={`pointer`}
+                                fontSize={width < 700 ? `14px` : `16px`}
+                                width={`10%`}
+                                color={
+                                  "출석"
+                                    ? `${Theme.basicTheme_C}`
+                                    : `${Theme.red_C}`
+                                }>
+                                {"출석"}
+                              </Text>
+                            </CustomPopconfirm>
                           </Wrapper>
                         );
                       })
@@ -1191,13 +1681,13 @@ const Index = () => {
                   </Text>
                 </Wrapper>
 
-                {teacherDiaryArr && teacherDiaryArr.length === 0 ? (
-                  <Wrapper>
+                {lectureDiaryList && lectureDiaryList.length === 0 ? (
+                  <Wrapper margin={`50px 0`}>
                     <Empty description="조회된 데이터가 없습니다." />
                   </Wrapper>
                 ) : (
-                  teacherDiaryArr &&
-                  teacherDiaryArr.map((data, idx) => {
+                  lectureDiaryList &&
+                  lectureDiaryList.map((data, idx) => {
                     return (
                       <Wrapper
                         key={data.id}
@@ -1210,27 +1700,27 @@ const Index = () => {
                           fontSize={width < 700 ? `14px` : `16px`}
                           width={`15%`}
                           wordBreak={`break-word`}>
-                          5
+                          {data.id}
                         </Text>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
                           width={`15%`}>
-                          홍길동
+                          {data.author}
                         </Text>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
                           width={`20%`}>
-                          1권 38페이지
+                          {data.process}
                         </Text>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
                           width={`25%`}>
-                          수업메모 내용입니다.
+                          {data.lectureMemo}
                         </Text>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
                           width={`25%`}>
-                          2022/01/22
+                          {data.createdAt.slice(0, 10)}
                         </Text>
                       </Wrapper>
                     );
@@ -1242,13 +1732,17 @@ const Index = () => {
                   radius={`5px`}
                   width={width < 700 ? `100px` : `110px`}
                   height={width < 700 ? `32px` : `38px`}
-                  fontSize={`14px`}>
+                  fontSize={`14px`}
+                  onClick={() => diaryCreateToggleHandler()}>
                   작성하기
                 </CommonButton>
               </Wrapper>
 
               <Wrapper>
-                <CustomPage defaultCurrent={6} total={40}></CustomPage>
+                <CustomPage
+                  current={currentPage1}
+                  total={lectureDiaryLastPage * 10}
+                  onChange={(page) => onChangeDiaryPage(page)}></CustomPage>
               </Wrapper>
             </Wrapper>
 
@@ -1282,6 +1776,8 @@ const Index = () => {
                   width={`100%`}
                   height={`50px`}
                   bgColor={Theme.lightGrey_C}
+                  {...inputCommuteSearch}
+                  onKeyDown={(e) => e.keyCode === 13 && commuteSearchHandler()}
                 />
               </Wrapper>
             </Wrapper>
@@ -1311,25 +1807,40 @@ const Index = () => {
                 </Text>
               </Wrapper>
 
-              <Wrapper
-                dr={`row`}
-                ju={`flex-start`}
-                padding={`25px 30px 20px`}
-                cursor={`pointer`}
-                bgColor={Theme.lightGrey_C}
-                textAlign={width < 700 ? `center` : `left`}
-                // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
-              >
-                <Text fontSize={width < 700 ? `14px` : `16px`} width={`35%`}>
-                  2022-01-22
-                </Text>
-                <Text fontSize={width < 700 ? `14px` : `16px`} width={`35%`}>
-                  ○○○
-                </Text>
-                <Text fontSize={width < 700 ? `14px` : `16px`} width={`30%`}>
-                  Y
-                </Text>
-              </Wrapper>
+              {commuteList && commuteList.length === 0 ? (
+                <Wrapper margin={`50px 0`}>
+                  <Empty description="조회된 데이터가 없습니다." />
+                </Wrapper>
+              ) : (
+                commuteList &&
+                commuteList.map((data, idx) => {
+                  return (
+                    <Wrapper
+                      dr={`row`}
+                      ju={`flex-start`}
+                      padding={`25px 30px 20px`}
+                      cursor={`pointer`}
+                      textAlign={width < 700 ? `center` : `left`}
+                      bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={`35%`}>
+                        {data.time}
+                      </Text>
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={`35%`}>
+                        {data.username}
+                      </Text>
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={`30%`}>
+                        {data.isAtt ? "Y" : "N"}
+                      </Text>
+                    </Wrapper>
+                  );
+                })
+              )}
             </Wrapper>
 
             <Wrapper al={`flex-start`}>
@@ -1341,120 +1852,106 @@ const Index = () => {
                 숙제관리
               </Text>
 
-              <Wrapper
-                dr={`row`}
-                ju={`flex-start`}
-                shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
-                margin={`0 0 10px 0`}
-                padding={`20px`}
-                radius={`10px`}>
-                <Text width={`50%`} fontSize={width < 700 ? `14px` : `16px`}>
-                  한국어로 편지 쓰기
-                </Text>
+              {lectureHomeworkList && lectureHomeworkList.length === 0
+                ? ""
+                : lectureHomeworkList &&
+                  lectureHomeworkList.map((data, idx) => {
+                    console.log(data, "data");
+                    return (
+                      <Wrapper
+                        dr={`row`}
+                        ju={`flex-start`}
+                        shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
+                        margin={`0 0 10px 0`}
+                        padding={`20px`}
+                        radius={`10px`}>
+                        <Text
+                          width={`50%`}
+                          fontSize={width < 700 ? `14px` : `16px`}>
+                          {/* 한국어로 편지 쓰기 */}
+                          {data.title}
+                        </Text>
 
-                <Wrapper width={`40%`} dr={width < 1100 ? `column` : `row`}>
-                  <CustomWrapper width={width < 1100 ? `100%` : `50%`}>
-                    <DownloadOutlined
-                      style={{
-                        fontSize: width < 700 ? 15 : 25,
-                        color: Theme.basicTheme_C,
-                        marginRight: 10,
-                        cursor: `pointer`,
-                      }}
-                    />
+                        <Wrapper
+                          width={`40%`}
+                          dr={width < 1100 ? `column` : `row`}>
+                          <CustomWrapper width={width < 1100 ? `100%` : `50%`}>
+                            <DownloadOutlined
+                              onClick={() => fileDownloadHandler(data.file)}
+                              style={{
+                                fontSize: width < 700 ? 15 : 25,
+                                color: Theme.basicTheme_C,
+                                marginRight: 10,
+                                cursor: `pointer`,
+                              }}
+                            />
 
-                    <Text
-                      fontSize={width < 700 ? `14px` : `16px`}
-                      display={width < 700 ? `none` : `block`}>
-                      파일 업로드
-                    </Text>
-                  </CustomWrapper>
+                            <Text
+                              fontSize={width < 700 ? `14px` : `16px`}
+                              display={width < 700 ? `none` : `block`}>
+                              파일 업로드
+                            </Text>
+                          </CustomWrapper>
 
-                  <CustomWrapper
-                    width={width < 1100 ? `100%` : `50%`}
-                    beforeBool={width < 1300 ? false : true}>
-                    <CalendarOutlined
-                      style={{
-                        fontSize: width < 700 ? 15 : 25,
-                        color: Theme.basicTheme_C,
-                        marginRight: 10,
-                        cursor: `pointer`,
-                      }}
-                    />
-                    <Text fontSize={width < 700 ? `14px` : `16px`}>
-                      2022/01/31까지
-                    </Text>
-                  </CustomWrapper>
-                </Wrapper>
+                          <CustomWrapper
+                            width={width < 1100 ? `100%` : `50%`}
+                            beforeBool={width < 1300 ? false : true}>
+                            <CalendarOutlined
+                              style={{
+                                fontSize: width < 700 ? 15 : 25,
+                                color: Theme.basicTheme_C,
+                                marginRight: 10,
+                                cursor: `pointer`,
+                              }}
+                            />
+                            <Text fontSize={width < 700 ? `14px` : `16px`}>
+                              {`${data.date}까지`}
+                            </Text>
+                          </CustomWrapper>
+                        </Wrapper>
 
-                <Wrapper width={`10%`} ju={`center`}>
-                  <Text
-                    fontSize={width < 700 ? `14px` : `16px`}
-                    margin={width < 700 ? `0 0 0 5px` : "0"}
-                    fontWeight={`bold`}>
-                    제출 기한
-                  </Text>
-                </Wrapper>
-              </Wrapper>
-
-              <Wrapper
-                dr={`row`}
-                ju={`flex-start`}
-                shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
-                margin={`0 0 10px 0`}
-                padding={`20px`}
-                radius={`10px`}>
-                <Text width={`50%`} fontSize={width < 700 ? `14px` : `16px`}>
-                  한국어로 편지 쓰기
-                </Text>
-
-                <Wrapper width={`40%`} dr={width < 1100 ? `column` : `row`}>
-                  <CustomWrapper width={width < 1100 ? `100%` : `50%`}>
-                    <DownloadOutlined
-                      style={{
-                        fontSize: width < 700 ? 15 : 25,
-                        color: Theme.basicTheme_C,
-                        marginRight: 10,
-                        cursor: `pointer`,
-                      }}
-                    />
-
-                    <Text
-                      fontSize={width < 700 ? `14px` : `16px`}
-                      display={width < 700 ? `none` : `block`}>
-                      파일 업로드
-                    </Text>
-                  </CustomWrapper>
-
-                  <CustomWrapper
-                    width={width < 1100 ? `100%` : `50%`}
-                    beforeBool={width < 1300 ? false : true}>
-                    <CalendarOutlined
-                      style={{
-                        fontSize: width < 700 ? 15 : 25,
-                        color: Theme.basicTheme_C,
-                        marginRight: 10,
-                        cursor: `pointer`,
-                      }}
-                    />
-                    <Text fontSize={width < 700 ? `14px` : `16px`}>
-                      2022/01/31까지
-                    </Text>
-                  </CustomWrapper>
-                </Wrapper>
-
-                <Wrapper width={`10%`} ju={`center`}>
-                  <Text
-                    fontSize={width < 700 ? `14px` : `16px`}
-                    margin={width < 700 ? `0 0 0 5px` : "0"}
-                    fontWeight={`bold`}>
-                    제출 기한
-                  </Text>
-                </Wrapper>
-              </Wrapper>
+                        <Wrapper width={`10%`} ju={`center`}>
+                          <Text
+                            fontSize={width < 700 ? `14px` : `16px`}
+                            margin={width < 700 ? `0 0 0 5px` : "0"}
+                            fontWeight={`bold`}
+                            color={
+                              moment
+                                .duration(
+                                  moment(data.date, "YYYY-MM-DD").diff(
+                                    moment(new Date(), "YYYY-MM-DD")
+                                  )
+                                )
+                                .asDays() < 1
+                                ? `${Theme.red_C}`
+                                : ""
+                            }>
+                            {moment
+                              .duration(
+                                moment(data.date, "YYYY-MM-DD").diff(
+                                  moment(new Date(), "YYYY-MM-DD")
+                                )
+                              )
+                              .asDays() < 1
+                              ? "기간 만료"
+                              : "제출 기간"}
+                          </Text>
+                        </Wrapper>
+                      </Wrapper>
+                    );
+                  })}
             </Wrapper>
 
-            <Wrapper al={`flex-end`} margin={`20px 0 40px`}>
+            <Wrapper dr={`row`} ju={`space-between`} margin={`20px 0 40px`}>
+              <CommonButton
+                radius={`5px`}
+                width={width < 700 ? `100px` : `110px`}
+                height={width < 700 ? `32px` : `38px`}
+                fontSize={`14px`}
+                onClick={() => studentToggleHanlder()}>
+                학생 숙제
+              </CommonButton>
+
               <CommonButton
                 radius={`5px`}
                 width={width < 700 ? `100px` : `110px`}
@@ -1466,7 +1963,10 @@ const Index = () => {
             </Wrapper>
 
             <Wrapper>
-              <CustomPage defaultCurrent={6} total={40}></CustomPage>
+              <CustomPage
+                current={currentPage4}
+                total={lectureHomeworkLastPage * 10}
+                onChange={(page) => onChangeHomeWorkPage(page)}></CustomPage>
             </Wrapper>
 
             <Wrapper al={`flex-start`}>
@@ -1501,31 +2001,45 @@ const Index = () => {
                 </Text>
               </Wrapper>
 
-              <Wrapper
-                dr={`row`}
-                textAlign={`center`}
-                ju={`flex-start`}
-                padding={`25px 0 20px`}
-                cursor={`pointer`}
-                bgColor={Theme.lightGrey_C}
-                // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
-              >
-                <Text
-                  fontSize={width < 700 ? `14px` : `16px`}
-                  width={`15%`}
-                  wordBreak={`break-word`}>
-                  5
-                </Text>
-                <Text
-                  fontSize={width < 700 ? `14px` : `16px`}
-                  width={`60%`}
-                  textAlign={`left`}>
-                  안녕하세요. 오늘 수업 공지입니다.
-                </Text>
-                <Text fontSize={width < 700 ? `14px` : `16px`} width={`25%`}>
-                  2022/01/22
-                </Text>
-              </Wrapper>
+              {noticeLectureList && noticeLectureList.length === 0 ? (
+                <Wrapper margin={`50px 0`}>
+                  <Empty description="조회된 데이터가 없습니다." />
+                </Wrapper>
+              ) : (
+                noticeLectureList &&
+                noticeLectureList.map((data) => {
+                  return (
+                    <Wrapper
+                      onClick={() => noticeDetailHandler(data.id)}
+                      dr={`row`}
+                      textAlign={`center`}
+                      ju={`flex-start`}
+                      padding={`25px 0 20px`}
+                      cursor={`pointer`}
+                      bgColor={Theme.lightGrey_C}
+                      // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
+                    >
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={`15%`}
+                        wordBreak={`break-word`}>
+                        {data.id}
+                      </Text>
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={`60%`}
+                        textAlign={`left`}>
+                        {data.title}
+                      </Text>
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={`25%`}>
+                        {data.createdAt.slice(0, 10)}
+                      </Text>
+                    </Wrapper>
+                  );
+                })
+              )}
             </Wrapper>
 
             <Wrapper al={`flex-end`} margin={`20px 0 40px`}>
@@ -1540,7 +2054,10 @@ const Index = () => {
             </Wrapper>
 
             <Wrapper>
-              <CustomPage defaultCurrent={6} total={40}></CustomPage>
+              <CustomPage
+                total={noticeLectureLastPage * 10}
+                current={currentPage3}
+                onChange={(page) => onChangeNoticePage(page)}></CustomPage>
             </Wrapper>
 
             <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
@@ -1584,7 +2101,7 @@ const Index = () => {
                 </Wrapper>
 
                 {messageUserList && messageUserList.length === 0 ? (
-                  <Wrapper margin={`30px 0`}>
+                  <Wrapper margin={`50px 0`}>
                     <Empty description="조회된 데이터가 없습니다." />
                   </Wrapper>
                 ) : (
@@ -1629,45 +2146,85 @@ const Index = () => {
               </Wrapper>
 
               <Wrapper margin={`110px 0`}>
-                <CustomPage defaultCurrent={6} total={40}></CustomPage>
+                <CustomPage
+                  current={currentPage2}
+                  total={messageUserLastPage * 10}
+                  onChange={(page) => onChangeMessagePage(page)}></CustomPage>
               </Wrapper>
             </Wrapper>
           </RsWrapper>
         </WholeWrapper>
 
         <CustomModal
-          visible={false}
+          visible={detailModal}
           width={`1350px`}
           title="공지사항"
           footer={null}
           closable={false}>
-          <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
-            <Text margin={`0 54px 0 0`}>작성자 ooo</Text>
-            <Text>날짜 2022/01/22</Text>
-          </Wrapper>
+          <CustomForm form={noticeform} onFinish={noticeViewFinishHandler}>
+            <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
+              <Text margin={`0 54px 0 0`}>
+                {`작성자 ${
+                  noticeDetail && noticeDetail[0] && noticeDetail[0].author
+                }`}
+              </Text>
+              <Text>
+                {`날짜 ${
+                  noticeDetail &&
+                  noticeDetail[0] &&
+                  noticeDetail[0].createdAt.slice(0, 14)
+                }`}
+              </Text>
+            </Wrapper>
 
-          <Text fontSize={`18px`} fontWeight={`bold`}>
-            제목
-          </Text>
-          <Wrapper padding={`10px`}>
-            <WordbreakText>오늘 공지사항입니다.</WordbreakText>
-          </Wrapper>
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              제목
+            </Text>
 
-          <Text fontSize={`18px`} fontWeight={`bold`}>
-            내용
-          </Text>
-          <Wrapper padding={`10px`}>
-            <WordbreakText>오늘 공지사항입니다.</WordbreakText>
-          </Wrapper>
+            <Form.Item
+              name="noticeTitle"
+              rules={[{ required: true, message: "제목을 입력해주세요." }]}>
+              <CusotmInput width={`100%`}></CusotmInput>
+            </Form.Item>
 
-          <Wrapper>
-            <CommonButton
-              kindOf={`grey`}
-              color={Theme.darkGrey_C}
-              radius={`5px`}>
-              돌아가기
-            </CommonButton>
-          </Wrapper>
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              내용
+            </Text>
+
+            <Form.Item
+              name="noticeContent"
+              rules={[{ required: true, message: "내용을 입력해주세요." }]}>
+              <ToastEditorComponent
+                action={getEditContentUpdate}
+                placeholder="placeholder"
+                value={
+                  noticeDetail && noticeDetail[0] && noticeDetail[0].content
+                }
+              />
+            </Form.Item>
+
+            {/* <Wrapper padding={`10px`}>
+              <WordbreakText>오늘 공지사항입니다.</WordbreakText>
+            </Wrapper> */}
+
+            <Wrapper dr={`row`}>
+              <CommonButton
+                kindOf={`grey`}
+                margin={`0 10px 0 0`}
+                color={Theme.darkGrey_C}
+                radius={`5px`}
+                onClick={() => onReset()}>
+                돌아가기
+              </CommonButton>
+
+              <CommonButton
+                color={Theme.white_C}
+                radius={`5px`}
+                htmlType="submit">
+                수정하기
+              </CommonButton>
+            </Wrapper>
+          </CustomForm>
         </CustomModal>
 
         <CustomModal
@@ -1846,7 +2403,10 @@ const Index = () => {
               내용
             </Text>
             <Form.Item name="content2" rules={[{ required: true }]}>
-              <Input.TextArea style={{ height: `360px` }} />
+              <ToastEditorComponent2
+                action={getEditContent}
+                placeholder="placeholder"
+              />
             </Form.Item>
             <Wrapper dr={`row`}>
               <CommonButton
@@ -1884,7 +2444,7 @@ const Index = () => {
               제목
             </Text>
             <Form.Item name="title3" rules={[{ required: true }]}>
-              <CusotmInput placeholder="" />
+              <CusotmInput width={`50%`} placeholder="" />
             </Form.Item>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
@@ -1896,10 +2456,10 @@ const Index = () => {
               <Wrapper dr={`row`} ju={`flex-start`}>
                 <CusotmInput
                   placeholder="날짜를 선택해주세요."
+                  width={`50%`}
                   value={inputDate.value}
                   style={{
                     height: `40px`,
-                    width: `130px`,
                     margin: `0 10px 0 0`,
                   }}
                   disabled
@@ -1933,15 +2493,80 @@ const Index = () => {
             <Text fontSize={width < 700 ? `14px` : `18px`} fontWeight={`bold`}>
               파일 업로드
             </Text>
-            <Form.Item name="file" rules={[{ required: true }]}>
-              <Upload>
-                <Button
-                  icon={<UploadOutlined />}
-                  style={{ height: `40px`, width: `150px`, margin: `10px 0 0` }}
-                  onChange={(e) => console.log(e)}>
-                  파일 업로드
-                </Button>
-              </Upload>
+
+            <Wrapper al={`flex-start`}>
+              <input
+                type="file"
+                name="file"
+                accept=".pdf"
+                // multiple
+                hidden
+                ref={imageInput}
+                onChange={onChangeImages}
+              />
+              <Button
+                icon={<UploadOutlined />}
+                onClick={clickImageUpload}
+                loading={st_lectureFileLoading}
+                style={{
+                  height: `40px`,
+                  width: `150px`,
+                  margin: `10px 0 0`,
+                }}>
+                파일 올리기
+              </Button>
+              <Text>{`${fileName}`}</Text>
+            </Wrapper>
+
+            <Wrapper dr={`row`}>
+              <CommonButton
+                margin={`0 5px 0 0`}
+                kindOf={`grey`}
+                color={Theme.darkGrey_C}
+                radius={`5px`}
+                onClick={() => onReset()}>
+                돌아가기
+              </CommonButton>
+              <CommonButton
+                margin={`0 0 0 5px`}
+                radius={`5px`}
+                htmlType="submit">
+                작성하기
+              </CommonButton>
+            </Wrapper>
+          </CustomForm>
+        </CustomModal>
+
+        <CustomModal
+          visible={diaryModalToggle}
+          width={`1350px`}
+          title="강사일지 작성하기"
+          footer={null}
+          closable={false}>
+          <CustomForm ref={formRef} form={form} onFinish={diaryFinishHandler}>
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+              fontWeight={`bold`}
+              margin={`0 0 10px`}>
+              진도
+            </Text>
+            <Form.Item
+              name="process"
+              rules={[{ required: true, message: "진도를 입력해주세요." }]}>
+              <CusotmInput width={`100%`} />
+            </Form.Item>
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+              fontWeight={`bold`}
+              margin={`0 0 10px`}>
+              수업 메모
+            </Text>
+            <Form.Item
+              name="lectureMemo"
+              rules={[
+                { required: true, message: "수업 메모를 입력해주세요." },
+              ]}>
+              <Input.TextArea style={{ height: `360px` }} />
             </Form.Item>
             <Wrapper dr={`row`}>
               <CommonButton
@@ -1956,8 +2581,84 @@ const Index = () => {
                 margin={`0 0 0 5px`}
                 radius={`5px`}
                 htmlType="submit">
-                답변하기
+                작성하기
               </CommonButton>
+            </Wrapper>
+          </CustomForm>
+        </CustomModal>
+
+        <CustomModal
+          visible={studentToggle}
+          width={`1350px`}
+          title="학생 숙제 제출 목록"
+          footer={null}
+          closable={false}>
+          <CustomForm ref={formRef} form={form} onFinish={diaryFinishHandler}>
+            {}
+            <Wrapper
+              dr={`row`}
+              ju={`flex-start`}
+              shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
+              margin={`0 0 10px 0`}
+              padding={`20px`}
+              radius={`10px`}>
+              <Text width={`50%`} fontSize={width < 700 ? `14px` : `16px`}>
+                {/* 한국어로 편지 쓰기 */}
+                {/* {data.title} */}
+              </Text>
+
+              <Wrapper width={`40%`} dr={width < 1100 ? `column` : `row`}>
+                <CustomWrapper width={width < 1100 ? `100%` : `50%`}>
+                  <DownloadOutlined
+                    onClick={() => fileDownloadHandler(data.file)}
+                    style={{
+                      fontSize: width < 700 ? 15 : 25,
+                      color: Theme.basicTheme_C,
+                      marginRight: 10,
+                      cursor: `pointer`,
+                    }}
+                  />
+
+                  <Text
+                    fontSize={width < 700 ? `14px` : `16px`}
+                    display={width < 700 ? `none` : `block`}>
+                    파일 업로드
+                  </Text>
+                </CustomWrapper>
+
+                <CustomWrapper
+                  width={width < 1100 ? `100%` : `50%`}
+                  beforeBool={width < 1300 ? false : true}>
+                  <CalendarOutlined
+                    style={{
+                      fontSize: width < 700 ? 15 : 25,
+                      color: Theme.basicTheme_C,
+                      marginRight: 10,
+                      cursor: `pointer`,
+                    }}
+                  />
+                  <Text fontSize={width < 700 ? `14px` : `16px`}>
+                    {/* {`${data.date}까지`} */}
+                    2022/01/22
+                  </Text>
+                </CustomWrapper>
+              </Wrapper>
+
+              <Wrapper width={`10%`} ju={`center`}>
+                <Text
+                  fontSize={width < 700 ? `14px` : `16px`}
+                  margin={width < 700 ? `0 0 0 5px` : "0"}
+                  fontWeight={`bold`}>
+                  제출기한
+                </Text>
+              </Wrapper>
+            </Wrapper>
+
+            <Wrapper margin={`30px 0`}>
+              <CustomPage
+                current={1}
+                total={1 * 10}
+                onChange={(page) => onChangeDiaryPage(page)}></CustomPage>
             </Wrapper>
           </CustomForm>
         </CustomModal>
@@ -1985,9 +2686,9 @@ export const getServerSideProps = wrapper.getServerSideProps(
       type: SEO_LIST_REQUEST,
     });
 
-    context.store.dispatch({
-      type: MESSAGE_USER_LIST_REQUEST,
-    });
+    // context.store.dispatch({
+    //   type: MESSAGE_USER_LIST_REQUEST,
+    // });
 
     // 구현부 종료
     context.store.dispatch(END);

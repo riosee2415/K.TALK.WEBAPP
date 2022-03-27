@@ -13,6 +13,8 @@ import appSaga from "./application";
 import messagerSaga from "./message";
 import lectureSaga from "./lecture";
 import participantSaga from "./participant";
+import commuteSaga from "./commute";
+import processApplySaga from "./processApply";
 //
 import axios from "axios";
 import backURL from "../config/config";
@@ -36,5 +38,7 @@ export default function* rootSaga() {
     fork(messagerSaga),
     fork(lectureSaga),
     fork(participantSaga),
+    fork(commuteSaga),
+    fork(processApplySaga),
   ]);
 }

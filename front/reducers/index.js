@@ -14,6 +14,8 @@ import app from "./application";
 import message from "./message";
 import lecture from "./lecture";
 import participant from "./participant";
+import commute from "./commute";
+import processApply from "./processApply";
 
 const rootReducer = (state, action) => {
   switch (action.type) {
@@ -36,6 +38,8 @@ const rootReducer = (state, action) => {
         message,
         lecture,
         participant,
+        commute,
+        processApply,
       });
       return combinedReducer(state, action);
     }

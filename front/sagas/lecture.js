@@ -25,9 +25,41 @@ import {
   LECTURE_STUDENT_LIST_SUCCESS,
   LECTURE_STUDENT_LIST_FAILURE,
   //
-  LECTURE_DETAIL_LECTURE_REQUEST,
-  LECTURE_DETAIL_LECTURE_SUCCESS,
-  LECTURE_DETAIL_LECTURE_FAILURE,
+  LECTURE_DETAIL_REQUEST,
+  LECTURE_DETAIL_SUCCESS,
+  LECTURE_DETAIL_FAILURE,
+  //
+  LECTURE_DIARY_LIST_REQUEST,
+  LECTURE_DIARY_LIST_SUCCESS,
+  LECTURE_DIARY_LIST_FAILURE,
+  //
+  LECTURE_DIARY_ADMIN_LIST_REQUEST,
+  LECTURE_DIARY_ADMIN_LIST_SUCCESS,
+  LECTURE_DIARY_ADMIN_LIST_FAILURE,
+  //
+  LECTURE_DIARY_CREATE_REQUEST,
+  LECTURE_DIARY_CREATE_SUCCESS,
+  LECTURE_DIARY_CREATE_FAILURE,
+  //
+  LECTURE_HOMEWORK_LIST_REQUEST,
+  LECTURE_HOMEWORK_LIST_SUCCESS,
+  LECTURE_HOMEWORK_LIST_FAILURE,
+  //
+  LECTURE_HOMEWORK_CREATE_REQUEST,
+  LECTURE_HOMEWORK_CREATE_SUCCESS,
+  LECTURE_HOMEWORK_CREATE_FAILURE,
+  //
+  LECTURE_FILE_REQUEST,
+  LECTURE_FILE_SUCCESS,
+  LECTURE_FILE_FAILURE,
+  //
+  LECTURE_SUBMIT_LIST_REQUEST,
+  LECTURE_SUBMIT_LIST_SUCCESS,
+  LECTURE_SUBMIT_LIST_FAILURE,
+  //
+  LECTURE_SUBMIT_CREATE_REQUEST,
+  LECTURE_SUBMIT_CREATE_SUCCESS,
+  LECTURE_SUBMIT_CREATE_FAILURE,
 } from "../reducers/lecture";
 
 // SAGA AREA ********************************************************************************************************
@@ -194,22 +226,210 @@ function* lectureStudentList(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function lectureDetailLectureAPI(data) {
+function lectureDetailAPI(data) {
   return axios.get(`/api/lecture/detail/${data.LectureId}`);
 }
 
-function* lectureDetailLecture(action) {
+function* lectureDetail(action) {
   try {
-    const result = yield call(lectureDetailLectureAPI, action.data);
+    const result = yield call(lectureDetailAPI, action.data);
 
     yield put({
-      type: LECTURE_DETAIL_LECTURE_SUCCESS,
+      type: LECTURE_DETAIL_SUCCESS,
       data: result.data,
     });
   } catch (err) {
     console.error(err);
     yield put({
-      type: LECTURE_DETAIL_LECTURE_FAILURE,
+      type: LECTURE_DETAIL_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureDiaryListAPI(data) {
+  return axios.post(`/api/lecture/diary/list`, data);
+}
+
+function* lectureDiaryList(action) {
+  try {
+    const result = yield call(lectureDiaryListAPI, action.data);
+
+    yield put({
+      type: LECTURE_DIARY_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_DIARY_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureDiaryAdminListAPI(data) {
+  return axios.post(`/api/lecture/diary/admin/list`, data);
+}
+
+function* lectureDiaryAdminList(action) {
+  try {
+    const result = yield call(lectureDiaryAdminListAPI, action.data);
+
+    yield put({
+      type: LECTURE_DIARY_ADMIN_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_DIARY_ADMIN_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureDiaryCreateAPI(data) {
+  return axios.post(`/api/lecture/diary/create`, data);
+}
+
+function* lectureDiaryCreate(action) {
+  try {
+    const result = yield call(lectureDiaryCreateAPI, action.data);
+
+    yield put({
+      type: LECTURE_DIARY_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_DIARY_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureHomeWorkListAPI(data) {
+  return axios.post(`/api/lecture/homework/list`, data);
+}
+
+function* lectureHomeWorkList(action) {
+  try {
+    const result = yield call(lectureHomeWorkListAPI, action.data);
+
+    yield put({
+      type: LECTURE_HOMEWORK_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_HOMEWORK_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureHomeWorkCreateAPI(data) {
+  return axios.post(`/api/lecture/homework/create`, data);
+}
+
+function* lectureHomeWorkCreate(action) {
+  try {
+    const result = yield call(lectureHomeWorkCreateAPI, action.data);
+
+    yield put({
+      type: LECTURE_HOMEWORK_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_HOMEWORK_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureHomeWorkFileAPI(data) {
+  return axios.post(`/api/lecture/file`, data);
+}
+
+function* lectureHomeWorkFile(action) {
+  try {
+    const result = yield call(lectureHomeWorkFileAPI, action.data);
+
+    yield put({
+      type: LECTURE_FILE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_FILE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureSubmitListAPI(data) {
+  return axios.post(`/api/lecture/submit/list`, data);
+}
+
+function* lectureSubmitList(action) {
+  try {
+    const result = yield call(lectureSubmitListAPI, action.data);
+
+    yield put({
+      type: LECTURE_SUBMIT_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_SUBMIT_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureSubmitCreateAPI(data) {
+  return axios.post(`/api/lecture/submit/create`, data);
+}
+
+function* lectureSubmitCreate(action) {
+  try {
+    const result = yield call(lectureSubmitCreateAPI, action.data);
+
+    yield put({
+      type: LECTURE_SUBMIT_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_SUBMIT_CREATE_FAILURE,
       error: err.response.data,
     });
   }
@@ -244,8 +464,40 @@ function* watchLectureStudentList() {
   yield takeLatest(LECTURE_STUDENT_LIST_REQUEST, lectureStudentList);
 }
 
-function* watchLectureDetailLecture() {
-  yield takeLatest(LECTURE_DETAIL_LECTURE_REQUEST, lectureDetailLecture);
+function* watchLectureDetail() {
+  yield takeLatest(LECTURE_DETAIL_REQUEST, lectureDetail);
+}
+
+function* watchLectureDiaryList() {
+  yield takeLatest(LECTURE_DIARY_LIST_REQUEST, lectureDiaryList);
+}
+
+function* watchLectureDiaryAdminList() {
+  yield takeLatest(LECTURE_DIARY_ADMIN_LIST_REQUEST, lectureDiaryAdminList);
+}
+
+function* watchLectureDiaryCreate() {
+  yield takeLatest(LECTURE_DIARY_CREATE_REQUEST, lectureDiaryCreate);
+}
+
+function* watchLectureHomeWorkList() {
+  yield takeLatest(LECTURE_HOMEWORK_LIST_REQUEST, lectureHomeWorkList);
+}
+
+function* watchLectureHomeWorkCreate() {
+  yield takeLatest(LECTURE_HOMEWORK_CREATE_REQUEST, lectureHomeWorkCreate);
+}
+
+function* watchLectureHomeWorkFile() {
+  yield takeLatest(LECTURE_FILE_REQUEST, lectureHomeWorkFile);
+}
+
+function* watchLectureSubmitList() {
+  yield takeLatest(LECTURE_SUBMIT_LIST_REQUEST, lectureSubmitList);
+}
+
+function* watchLectureSubmitCreate() {
+  yield takeLatest(LECTURE_SUBMIT_CREATE_REQUEST, lectureSubmitCreate);
 }
 
 //////////////////////////////////////////////////////////////
@@ -257,7 +509,15 @@ export default function* lectureSaga() {
     fork(watchLectureDelete),
     fork(watchLectureTeacherList),
     fork(watchLectureStudentList),
-    fork(watchLectureDetailLecture),
+    fork(watchLectureDetail),
+    fork(watchLectureDiaryList),
+    fork(watchLectureDiaryAdminList),
+    fork(watchLectureDiaryCreate),
+    fork(watchLectureHomeWorkList),
+    fork(watchLectureHomeWorkCreate),
+    fork(watchLectureHomeWorkFile),
+    fork(watchLectureSubmitList),
+    fork(watchLectureSubmitCreate),
     //
   ]);
 }

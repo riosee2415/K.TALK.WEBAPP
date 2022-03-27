@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useRef } from "react";
+import React, { useEffect, useCallback, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import DaumPostCode from "react-daum-postcode";
@@ -307,6 +307,9 @@ const Index = () => {
 
   const [updateForm] = Form.useForm();
 
+  const [currentPage1, setCurrentPage1] = useState(1);
+  const [currentPage2, setCurrentPage2] = useState(1);
+
   const imageInput = useRef();
 
   ////// REDUX //////
@@ -324,6 +327,9 @@ const Index = () => {
   useEffect(() => {
     dispatch({
       type: NOTICE_LIST_REQUEST,
+      data: {
+        page: 1,
+      },
     });
   }, []);
 
@@ -461,6 +467,17 @@ const Index = () => {
 
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
+  }, []);
+
+  const onChangeNoticePage = useCallback((page) => {
+    setCurrentPage1(page);
+
+    dispatch({
+      type: NOTICE_LIST_REQUEST,
+      data: {
+        page,
+      },
+    });
   }, []);
 
   ////// DATAVIEW //////
@@ -647,7 +664,10 @@ const Index = () => {
               </Wrapper>
 
               <Wrapper margin={`65px 0 85px`}>
-                <CustomPage defaultCurrent={6} total={40}></CustomPage>
+                <CustomPage
+                  current={currentPage1}
+                  total={noticeLastPage * 10}
+                  onChange={(page) => onChangeNoticePage(page)}></CustomPage>
               </Wrapper>
             </Wrapper>
 

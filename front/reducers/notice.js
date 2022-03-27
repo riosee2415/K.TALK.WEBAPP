@@ -4,10 +4,14 @@ export const initailState = {
   noticeLectureList: null,
   noticeLectureLastPage: 1,
 
+  noticeDetail: null,
+
   noticeList: null,
   noticeLastPage: 1,
 
   noticeAdminList: null,
+
+  noticeFilePath: null,
 
   createModal: false,
   detailModal: false,
@@ -93,6 +97,10 @@ export const NOTICE_PREV_REQUEST = "NOTICE_PREV_REQUEST";
 export const NOTICE_PREV_SUCCESS = "NOTICE_PREV_SUCCESS";
 export const NOTICE_PREV_FAILURE = "NOTICE_PREV_FAILURE";
 //
+export const NOTICE_FILE_REQUEST = "NOTICE_FILE_REQUEST";
+export const NOTICE_FILE_SUCCESS = "NOTICE_FILE_SUCCESS";
+export const NOTICE_FILE_FAILURE = "NOTICE_FILE_FAILURE";
+//
 export const CREATE_MODAL_OPEN_REQUEST = "CREATE_MODAL_OPEN_REQUEST";
 export const CREATE_MODAL_CLOSE_REQUEST = "CREATE_MODAL_CLOSE_REQUEST";
 
@@ -111,8 +119,8 @@ const reducer = (state = initailState, action) =>
       case NOTICE_LECTURE_LIST_SUCCESS: {
         draft.st_noticeListLoading = false;
         draft.st_noticeListDone = true;
-        draft.notices = action.data.notices;
-        draft.maxPage = action.data.lastPage;
+        draft.noticeLectureList = action.data.notice;
+        draft.noticeLectureLastPage = action.data.lastPage;
         break;
       }
       case NOTICE_LECTURE_LIST_FAILURE: {
@@ -133,8 +141,8 @@ const reducer = (state = initailState, action) =>
       case NOTICE_LIST_SUCCESS: {
         draft.st_noticeListLoading = false;
         draft.st_noticeListDone = true;
-        draft.notices = action.data.notices;
-        draft.maxPage = action.data.lastPage;
+        draft.noticeList = action.data.notice;
+        draft.noticeLastPage = action.data.lastPage;
         break;
       }
       case NOTICE_LIST_FAILURE: {
@@ -147,22 +155,21 @@ const reducer = (state = initailState, action) =>
       ///////////////////////////////////////////////////////
 
       case NOTICE_DETAIL_REQUEST: {
-        draft.st_noticeListLoading = true;
-        draft.st_noticeListDone = null;
-        draft.st_noticeListError = false;
+        draft.st_noticeDetailLoading = true;
+        draft.st_noticeDetailDone = null;
+        draft.st_noticeDetailError = false;
         break;
       }
       case NOTICE_DETAIL_SUCCESS: {
-        draft.st_noticeListLoading = false;
-        draft.st_noticeListDone = true;
-        draft.notices = action.data.notices;
-        draft.maxPage = action.data.lastPage;
+        draft.st_noticeDetailLoading = false;
+        draft.st_noticeDetailDone = true;
+        draft.noticeDetail = action.data.notice;
         break;
       }
       case NOTICE_DETAIL_FAILURE: {
-        draft.st_noticeListLoading = false;
-        draft.st_noticeListDone = false;
-        draft.st_noticeListError = action.error;
+        draft.st_noticeDetailLoading = false;
+        draft.st_noticeDetailDone = false;
+        draft.st_noticeDetailError = action.error;
         break;
       }
 
@@ -199,8 +206,6 @@ const reducer = (state = initailState, action) =>
       case NOTICE_UPDATE_SUCCESS: {
         draft.st_noticeUpdateLoading = false;
         draft.st_noticeUpdateDone = true;
-        draft.notices = action.data.notices;
-        draft.maxPage = action.data.lastPage;
         break;
       }
       case NOTICE_UPDATE_FAILURE: {
@@ -286,6 +291,7 @@ const reducer = (state = initailState, action) =>
         draft.st_noticePrevError = action.error;
         break;
       }
+
       ///////////////////////////////////////////////////////
       ///////////////////////////////////////////////////////
       ///////////////////////////////////////////////////////

@@ -53,7 +53,7 @@ import {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function messageUserListAPI(data) {
-  return axios.get(`/api/message/user/list`);
+  return axios.get(`/api/message/user/list?page=${data.page}`);
 }
 
 function* messageUserList(action) {
