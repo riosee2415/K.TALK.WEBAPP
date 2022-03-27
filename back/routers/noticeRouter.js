@@ -371,7 +371,7 @@ router.post("/admin/lecture/create", isAdminCheck, async (req, res, next) => {
       author,
       LectureId: parseInt(LectureId),
       file: file ? file : null,
-      level: parseInt(3),
+      level: null,
     });
 
     if (!createResult) {
