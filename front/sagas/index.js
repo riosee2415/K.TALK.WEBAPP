@@ -15,6 +15,7 @@ import lectureSaga from "./lecture";
 import participantSaga from "./participant";
 import commuteSaga from "./commute";
 import processApplySaga from "./processApply";
+import bookSaga from "./book";
 //
 import axios from "axios";
 import backURL from "../config/config";
@@ -40,5 +41,6 @@ export default function* rootSaga() {
     fork(participantSaga),
     fork(commuteSaga),
     fork(processApplySaga),
+    fork(bookSaga),
   ]);
 }

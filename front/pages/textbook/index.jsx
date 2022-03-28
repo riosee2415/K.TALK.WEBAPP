@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import wrapper from "../../store/configureStore";
 import { END } from "redux-saga";
 import useWidth from "../../hooks/useWidth";
-import useInput from "../../hooks/useInput";
 import Theme from "../../components/Theme";
 import styled from "styled-components";
 import axios from "axios";
@@ -24,11 +23,15 @@ import {
   Image,
   ProductWrapper,
 } from "../../components/commonComponents";
-import { Input, Popconfirm } from "antd";
 import { CloseOutlined, SearchOutlined } from "@ant-design/icons";
+import {
+  BOOK_FOLDER_LIST_REQUEST,
+  BOOK_LIST_REQUEST,
+} from "../../reducers/book";
+import { Empty } from "antd";
 
 const TabWrapper = styled(Wrapper)`
-  width: 260px;
+  width: calc(100% / 5 - 13px);
   margin: 0 13px 10px 0;
   height: 50px;
   border: 1px solid ${Theme.grey_C};
@@ -97,7 +100,21 @@ const Index = () => {
   const [currentTab, setCurrentTab] = useState(0);
   const [currentMenu, setCurrentMenu] = useState(null);
   ////// REDUX //////
+  const dispatch = useDispatch();
+  const { bookFolderList, bookList } = useSelector((state) => state.book);
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    dispatch({
+      type: BOOK_FOLDER_LIST_REQUEST,
+    });
+  }, []);
+
+  useEffect(() => {
+    dispatch({
+      type: BOOK_LIST_REQUEST,
+    });
+  }, []);
   ////// TOGGLE //////
   ////// HANDLER //////
   ////// DATAVIEW //////
@@ -193,131 +210,35 @@ const Index = () => {
               </CommonButton>
             </Wrapper>
             <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px 0`}>
-              <TabWrapper
-                onClick={() => setCurrentTab(0)}
-                className={currentTab === 0 && `current`}
-              >
-                <Wrapper
-                  width={`17px`}
-                  margin={width < 800 ? `0 5px 0 0` : `0 20px 0 0`}
-                >
-                  <Image
-                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_folder.png`}
-                    // alt={`file_icon`}
-                  />
-                </Wrapper>
-                <Text
-                  maxWidth={
-                    width < 800
-                      ? `calc(100% - 17px - 5px)`
-                      : `calc(100% - 17px - 20px)`
-                  }
-                  isEllipsis
-                  fontSize={width < 800 ? `10px` : `16px`}
-                >
-                  ILK(아이러브코리아 SB)
-                </Text>
-              </TabWrapper>
-              <TabWrapper
-                onClick={() => setCurrentTab(1)}
-                className={currentTab === 1 && `current`}
-              >
-                <Wrapper
-                  width={`17px`}
-                  margin={width < 800 ? `0 5px 0 0` : `0 20px 0 0`}
-                >
-                  <Image
-                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_folder.png`}
-                    // alt={`file_icon`}
-                  />
-                </Wrapper>
-                <Text
-                  maxWidth={
-                    width < 800
-                      ? `calc(100% - 17px - 5px)`
-                      : `calc(100% - 17px - 20px)`
-                  }
-                  isEllipsis
-                  fontSize={width < 800 ? `10px` : `16px`}
-                >
-                  ILK(아이러브코리아 SB)
-                </Text>
-              </TabWrapper>
-              <TabWrapper
-                onClick={() => setCurrentTab(2)}
-                className={currentTab === 2 && `current`}
-              >
-                <Wrapper
-                  width={`17px`}
-                  margin={width < 800 ? `0 5px 0 0` : `0 20px 0 0`}
-                >
-                  <Image
-                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_folder.png`}
-                    // alt={`file_icon`}
-                  />
-                </Wrapper>
-                <Text
-                  maxWidth={
-                    width < 800
-                      ? `calc(100% - 17px - 5px)`
-                      : `calc(100% - 17px - 20px)`
-                  }
-                  isEllipsis
-                  fontSize={width < 800 ? `10px` : `16px`}
-                >
-                  교재명
-                </Text>
-              </TabWrapper>
-              <TabWrapper
-                onClick={() => setCurrentTab(3)}
-                className={currentTab === 3 && `current`}
-              >
-                <Wrapper
-                  width={`17px`}
-                  margin={width < 800 ? `0 5px 0 0` : `0 20px 0 0`}
-                >
-                  <Image
-                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_folder.png`}
-                    // alt={`file_icon`}
-                  />
-                </Wrapper>
-                <Text
-                  maxWidth={
-                    width < 800
-                      ? `calc(100% - 17px - 5px)`
-                      : `calc(100% - 17px - 20px)`
-                  }
-                  isEllipsis
-                  fontSize={width < 800 ? `10px` : `16px`}
-                >
-                  교재명
-                </Text>
-              </TabWrapper>
-              <TabWrapper
-                onClick={() => setCurrentTab(4)}
-                className={currentTab === 4 && `current`}
-              >
-                <Wrapper
-                  width={`17px`}
-                  margin={width < 800 ? `0 5px 0 0` : `0 20px 0 0`}
-                >
-                  <Image
-                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_folder.png`}
-                    // alt={`file_icon`}
-                  />
-                </Wrapper>
-                <Text
-                  maxWidth={
-                    width < 800
-                      ? `calc(100% - 17px - 5px)`
-                      : `calc(100% - 17px - 20px)`
-                  }
-                  isEllipsis
-                  fontSize={width < 800 ? `10px` : `16px`}
-                >
-                  교재명
-                </Text>
-              </TabWrapper>
+              {bookFolderList &&
+                bookFolderList.map((data) => {
+                  return (
+                    <TabWrapper
+                      onClick={() => setCurrentTab(data.id)}
+                      className={currentTab === data.id && `current`}
+                    >
+                      <Wrapper
+                        width={`17px`}
+                        margin={width < 800 ? `0 5px 0 0` : `0 20px 0 0`}
+                      >
+                        <Image
+                          src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_folder.png`}
+                          // alt={`file_icon`}
+                        />
+                      </Wrapper>
+                      <Text
+                        maxWidth={
+                          width < 800
+                            ? `calc(100% - 17px - 5px)`
+                            : `calc(100% - 17px - 20px)`
+                        }
+                        fontSize={width < 800 ? `10px` : `16px`}
+                      >
+                        {data.value}
+                      </Text>
+                    </TabWrapper>
+                  );
+                })}
             </Wrapper>
 
             <Wrapper
@@ -326,8 +247,13 @@ const Index = () => {
               ju={`flex-start`}
               minHeight={`680px`}
             >
-              {testData &&
-                testData.map((data, idx) => {
+              {bookList && bookList.length === 0 ? (
+                <Wrapper>
+                  <Empty description={`조회된 데이터가 없습니다.`} />
+                </Wrapper>
+              ) : (
+                bookList &&
+                bookList.map((data, idx) => {
                   return (
                     <ProductWrapper>
                       <ProductMenu
@@ -451,7 +377,8 @@ const Index = () => {
                       </Wrapper>
                     </ProductWrapper>
                   );
-                })}
+                })
+              )}
             </Wrapper>
           </RsWrapper>
         </WholeWrapper>
