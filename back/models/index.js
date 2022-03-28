@@ -21,6 +21,8 @@ const book = require("./book");
 const homework = require("./homework");
 const submit = require("./submit");
 const processapply = require("./processapply");
+const lectureMessage = require("./lectureMessage");
+const lecturestumemo = require("./lecturestumemo");
 
 const env = process.env.NODE_ENV || "development";
 const config = require("../config/config")[env];
@@ -54,6 +56,8 @@ db.Book = book;
 db.Homework = homework;
 db.Submit = submit;
 db.ProcessApply = processapply;
+db.LectureMessage = lectureMessage;
+db.LectureStuMemo = lecturestumemo;
 
 Object.keys(db).forEach((modelName) => {
   db[modelName].init(sequelize);

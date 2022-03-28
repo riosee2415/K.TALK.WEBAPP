@@ -28,6 +28,7 @@ const commuteRouter = require("./routers/commuteRouter");
 const participantRouter = require("./routers/participantRouter");
 const lectureRouter = require("./routers/lectureRouter");
 const processApplyRouter = require("./routers/processApplyRouter");
+const bookRouter = require("./routers/bookRouter");
 
 // Config Settings
 db.sequelize
@@ -110,6 +111,7 @@ app.use("/api/message", messageRouter);
 app.use("/api/part", participantRouter);
 app.use("/api/commute", commuteRouter);
 app.use("/api/apply", processApplyRouter);
+app.use("/api/book", bookRouter);
 
 // second minute hour day-of-month month day-of-week
 const task = cron.schedule(
