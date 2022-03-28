@@ -174,7 +174,7 @@ router.post("/list", async (req, res, next) => {
      AND	A.isDelete = FALSE
      AND	B.isDelete = FALSE
      ${_BookFolderId ? `AND A.BookFolderId = ${_BookFolderId}` : ``}
-     ${_LectureId ? `AND A.LectureId = ${_BookFolderId}` : ``}
+     ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
     `;
 
     const list = await models.sequelize.query(selectQuery);
