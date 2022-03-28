@@ -68,6 +68,26 @@ import {
   LECTURE_LINK_UPDATE_REQUEST,
   LECTURE_LINK_UPDATE_SUCCESS,
   LECTURE_LINK_UPDATE_FAILURE,
+  //
+  LECTURE_MEMO_STU_CREATE_REQUEST,
+  LECTURE_MEMO_STU_CREATE_SUCCESS,
+  LECTURE_MEMO_STU_CREATE_FAILURE,
+  //
+  LECTURE_STU_LECTURE_LIST_REQUEST,
+  LECTURE_STU_LECTURE_LIST_SUCCESS,
+  LECTURE_STU_LECTURE_LIST_FAILURE,
+  //
+  LECTURE_MEMO_STU_LIST_REQUEST,
+  LECTURE_MEMO_STU_LIST_SUCCESS,
+  LECTURE_MEMO_STU_LIST_FAILURE,
+  //
+  LECTURE_MEMO_STU_DETAIL_REQUEST,
+  LECTURE_MEMO_STU_DETAIL_SUCCESS,
+  LECTURE_MEMO_STU_DETAIL_FAILURE,
+  //
+  LECTURE_MEMO_STU_UPDATE_REQUEST,
+  LECTURE_MEMO_STU_UPDATE_SUCCESS,
+  LECTURE_MEMO_STU_UPDATE_FAILURE,
 } from "../reducers/lecture";
 
 // SAGA AREA ********************************************************************************************************
@@ -493,6 +513,123 @@ function* lectureLinkUpdate(action) {
   }
 }
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureMemoStuCreateAPI(data) {
+  return axios.get(`/api/lecture/memo/student/create`, data);
+}
+
+function* lectureMemoStuCreate(action) {
+  try {
+    const result = yield call(lectureMemoStuCreateAPI, action.data);
+
+    yield put({
+      type: LECTURE_MEMO_STU_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_MEMO_STU_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureMemoStuDetailAPI(data) {
+  return axios.post(`/api/lecture/memo/detail/${data.memoId}`, data);
+}
+
+function* lectureMemoStuDetail(action) {
+  try {
+    const result = yield call(lectureMemoStuDetailAPI, action.data);
+
+    yield put({
+      type: LECTURE_MEMO_STU_DETAIL_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_MEMO_STU_DETAIL_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureStuLectureListAPI(data) {
+  return axios.get(`/api/lecture/student/lecture/list`);
+}
+
+function* lectureStuLectureList(action) {
+  try {
+    const result = yield call(lectureStuLectureListAPI, action.data);
+
+    yield put({
+      type: LECTURE_STU_LECTURE_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_STU_LECTURE_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureMemoStuListAPI(data) {
+  return axios.get(
+    `/api/lecture/memo/student/list?page=${data.page}&search=${data.search}&LectureId=${data.LectureId}`
+  );
+}
+
+function* lectureMemoStuList(action) {
+  try {
+    const result = yield call(lectureMemoStuListAPI, action.data);
+
+    yield put({
+      type: LECTURE_MEMO_STU_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_MEMO_STU_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureMemoStuUpdateAPI(data) {
+  return axios.patch(`/api/lecture/memo/student/update`, data);
+}
+
+function* lectureMemoStuUpdate(action) {
+  try {
+    const result = yield call(lectureMemoStuUpdateAPI, action.data);
+
+    yield put({
+      type: LECTURE_MEMO_STU_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_MEMO_STU_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 // ******************************************************************************************************************
@@ -566,6 +703,26 @@ function* watchLectureLinkUpdate() {
   yield takeLatest(LECTURE_LINK_UPDATE_REQUEST, lectureLinkUpdate);
 }
 
+function* watchLectureMemoStuCreate() {
+  yield takeLatest(LECTURE_MEMO_STU_CREATE_REQUEST, lectureMemoStuCreate);
+}
+
+function* watchLectureMemoStuDetail() {
+  yield takeLatest(LECTURE_MEMO_STU_LIST_REQUEST, lectureMemoStuDetail);
+}
+
+function* watchLectureStuLectureList() {
+  yield takeLatest(LECTURE_STU_LECTURE_LIST_REQUEST, lectureStuLectureList);
+}
+
+function* watchLectureMemoStuList() {
+  yield takeLatest(LECTURE_MEMO_STU_LIST_REQUEST, lectureMemoStuList);
+}
+
+function* watchLectureMemoStuUpdate() {
+  yield takeLatest(LECTURE_MEMO_STU_UPDATE_REQUEST, lectureMemoStuUpdate);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* lectureSaga() {
   yield all([
@@ -586,6 +743,12 @@ export default function* lectureSaga() {
     fork(watchLectureSubmitList),
     fork(watchLectureSubmitCreate),
     fork(watchLectureLinkUpdate),
+    fork(watchLectureMemoStuCreate),
+    fork(watchLectureMemoStuDetail),
+    fork(watchLectureStuLectureList),
+    fork(watchLectureMemoStuList),
+    fork(watchLectureMemoStuUpdate),
+
     //
   ]);
 }

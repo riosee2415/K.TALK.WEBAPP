@@ -20,7 +20,6 @@ import {
   USER_UPDATE_REQUEST,
 } from "../../reducers/user";
 
-import { PARTICIPANT_LIST_REQUEST } from "../../reducers/participant";
 import {
   LECTURE_TEACHER_LIST_REQUEST,
   LECTURE_LINK_UPDATE_REQUEST,
@@ -294,6 +293,14 @@ const Index = () => {
   useEffect(() => {
     if (st_lectureLinkUpdateDone) {
       zoomLinkModalToggle();
+
+      dispatch({
+        type: LECTURE_TEACHER_LIST_REQUEST,
+        data: {
+          TeacherId: me && me.id,
+        },
+      });
+
       return message.success("줌 링크를 등록하였습니다.");
     }
   }, [st_lectureLinkUpdateDone]);
@@ -355,7 +362,7 @@ const Index = () => {
     dispatch({
       type: NOTICE_LIST_REQUEST,
       data: {
-        qs: 1,
+        data: 1,
       },
     });
   }, []);
@@ -453,7 +460,7 @@ const Index = () => {
     (data) => {
       setZoomLinkToggle((prev) => !prev);
 
-      onFillZoomLink(data.zoomLink);
+      onFillZoomLink(data);
       setLectureId(data);
     },
     [zoomLinkToggle]
@@ -530,11 +537,13 @@ const Index = () => {
 
   const zoomLinkFinish = useCallback(
     (data) => {
+      console.log(data, data, lectureId.id);
       dispatch({
         type: LECTURE_LINK_UPDATE_REQUEST,
         data: {
           id: lectureId.id,
           zoomLink: data.link,
+          zoomPass: data.zoomPass,
         },
       });
     },
@@ -542,9 +551,12 @@ const Index = () => {
   );
 
   const onFillZoomLink = (data) => {
-    zoomLinkForm.setFieldsValue({
-      zoomLink: data,
-    });
+    if (data) {
+      zoomLinkForm.setFieldsValue({
+        zoomLink: data.zoomLink,
+        zoomPass: data.zoomPass,
+      });
+    }
   };
 
   ////// DATAVIEW //////
@@ -757,7 +769,6 @@ const Index = () => {
                 ? ""
                 : lectureTeacherList &&
                   lectureTeacherList.map((data, idx) => {
-                    console.log(data, idx, "asdlkajsd");
                     return (
                       <Wrapper
                         dr={`row`}
@@ -853,18 +864,34 @@ const Index = () => {
                             <Text
                               color={Theme.black_2C}
                               fontSize={width < 700 ? `12px` : `18px`}
-                              width={width < 700 ? `auto` : `140px`}>
+                              width={width < 700 ? `auto` : `140px`}
+                              margin={`0 10px 0 0`}>
                               {`NO.${data.id}`}
                             </Text>
 
-                            <Text
-                              cursor={`pointer`}
-                              color={Theme.black_2C}
-                              fontSize={width < 700 ? `12px` : `18px`}
-                              width={width < 700 ? `auto` : `140px`}
-                              onClick={() => zoomLinkModalToggle(data)}>
-                              줌 링크 등록
-                            </Text>
+                            <Wrapper width={`auto`} dr={`row`}>
+                              <Text
+                                cursor={`pointer`}
+                                color={Theme.black_2C}
+                                fontSize={width < 700 ? `12px` : `18px`}
+                                width={width < 700 ? `auto` : `140px`}
+                                onClick={() => zoomLinkModalToggle(data)}>
+                                줌 링크 등록
+                              </Text>
+
+                              <Text
+                                cursor={`pointer`}
+                                color={Theme.black_2C}
+                                fontSize={width < 700 ? `12px` : `18px`}
+                                width={width < 700 ? `auto` : `140px`}
+                                onClick={() =>
+                                  moveLinkHandler(
+                                    `/textbook?lectureId=${data.id}`
+                                  )
+                                }>
+                                교재 올리기
+                              </Text>
+                            </Wrapper>
                           </Wrapper>
 
                           <Wrapper width={`auto`}>
@@ -1109,6 +1136,15 @@ const Index = () => {
                 label="줌 링크"
                 name={"zoomLink"}
                 rules={[{ required: true, message: "줌링크를 입력해주세요." }]}>
+                <CusotmInput width={`100%`} />
+              </Form.Item>
+
+              <Form.Item
+                label="줌 비밀번호"
+                name={"zoomPass"}
+                rules={[
+                  { required: true, message: "줌 비밀번호를 입력해주세요." },
+                ]}>
                 <CusotmInput width={`100%`} />
               </Form.Item>
 

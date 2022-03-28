@@ -66,6 +66,9 @@ import {
   LECTURE_FILE_REQUEST,
   LECTURE_HOMEWORK_CREATE_REQUEST,
   LECTURE_HOMEWORK_LIST_REQUEST,
+  LECTURE_MEMO_STU_CREATE_REQUEST,
+  LECTURE_MEMO_STU_LIST_REQUEST,
+  LECTURE_MEMO_STU_UPDATE_REQUEST,
   LECTURE_STUDENT_LIST_REQUEST,
   LECTURE_SUBMIT_LIST_REQUEST,
   LECTURE_TEACHER_LIST_REQUEST,
@@ -364,8 +367,20 @@ const Index = () => {
     st_lectureSubmitListError,
 
     lectureDetail,
+    lectureStuMemo,
     st_lectureDetailDone,
     st_lectureDetailError,
+
+    st_lectureMemoStuCreateDone,
+    st_lectureMemoStuCreateError,
+
+    lectureMemoStuList,
+    lectureMemoStuLastPage,
+    st_lectureMemoStuListDone,
+    st_lectureMemoStuListError,
+
+    st_lectureMemoStuUpdateDone,
+    st_lectureMemoStuUpdateError,
   } = useSelector((state) => state.lecture);
 
   const {
@@ -416,6 +431,7 @@ const Index = () => {
   const [form] = Form.useForm();
   const [answerform] = Form.useForm();
   const [noticeform] = Form.useForm();
+  const [memoform] = Form.useForm();
 
   const imageInput = useRef();
 
@@ -426,8 +442,14 @@ const Index = () => {
   const [noticeViewModalToggle, setNoticeViewModalToggle] = useState(false);
   const [homeWorkModalToggle, setHomeWorkModalToggle] = useState(false);
   const [diaryModalToggle, setDiaryModalToggle] = useState(false);
+  const [memoStuDetailToggle, setMemoStuDetailToggle] = useState(false);
 
   const [memoToggle, setMemoToggle] = useState(false);
+
+  const [memoStuBackToggle, setMemoStuBackToggle] = useState(false);
+
+  const [memoId, setMemoId] = useState("");
+
   const [memoDatum, setMemoDatum] = useState("");
 
   const [adminSendMessageToggle, setAdminSendMessageToggle] = useState(false);
@@ -439,7 +461,6 @@ const Index = () => {
   const [checkAll, setCheckAll] = useState(false);
 
   const [messageViewToggle, setMessageViewToggle] = useState(false);
- 
 
   const [selectValue, setSelectValue] = useState("");
 
@@ -448,6 +469,7 @@ const Index = () => {
 
   const inputDate = useInput("");
   const inputCommuteSearch = useInput("");
+  const inputMemoSearch = useInput("");
 
   const [messageDatum, setMessageDatum] = useState();
 
@@ -456,6 +478,8 @@ const Index = () => {
   const [currentPage3, setCurrentPage3] = useState(1);
   const [currentPage4, setCurrentPage4] = useState(1);
   const [currentPage5, setCurrentPage5] = useState(1);
+  const [currentPage6, setCurrentPage6] = useState(1);
+  const [currentPage7, setCurrentPage7] = useState(1);
 
   const [noticeContent, setNoticeContent] = useState("");
 
@@ -532,6 +556,15 @@ const Index = () => {
       type: LECTURE_DETAIL_REQUEST,
       data: {
         LectureId: parseInt(router.query.id),
+      },
+    });
+
+    dispatch({
+      type: LECTURE_MEMO_STU_LIST_REQUEST,
+      data: {
+        LectureId: parseInt(router.query.id),
+        page: 1,
+        search: "",
       },
     });
   }, [me, router.query]);
@@ -676,6 +709,53 @@ const Index = () => {
     }
   }, [st_commuteCreateError]);
 
+  useEffect(() => {
+    if (st_lectureMemoStuCreateDone) {
+      onReset();
+      return message.success("해당 학생에게 메모를 작성했습니다.");
+    }
+  }, [st_lectureMemoStuCreateDone]);
+
+  useEffect(() => {
+    if (st_lectureMemoStuCreateError) {
+      return message.error(st_lectureMemoStuCreateError);
+    }
+  }, [st_lectureMemoStuCreateError]);
+
+  useEffect(() => {
+    if (st_lectureMemoStuListError) {
+      return message.error(st_lectureMemoStuListError);
+    }
+  }, [st_lectureMemoStuListError]);
+
+  useEffect(() => {
+    if (st_lectureMemoStuListDone) {
+    }
+  }, [st_lectureMemoStuListDone]);
+
+  useEffect(() => {
+    if (st_lectureMemoStuUpdateDone) {
+      onReset();
+
+      dispatch({
+        type: LECTURE_MEMO_STU_LIST_REQUEST,
+        data: {
+          LectureId: parseInt(router.query.id),
+          page: 1,
+          search: "",
+        },
+      });
+
+      return message.success("해당 학생에 메모를 수정했습니다.");
+    }
+  }, [st_lectureMemoStuUpdateDone]);
+
+  useEffect(() => {
+    if (st_lectureMemoStuUpdateError) {
+      return message.error(st_lectureMemoStuUpdateError);
+    }
+  }, [st_lectureMemoStuUpdateError]);
+
   ////// TOGGLE //////
 
   const studentToggleHanlder = useCallback(() => {
@@ -701,6 +781,10 @@ const Index = () => {
     setMemoDatum(data);
   }, []);
 
+  const detailStuViewToggleHandler = useCallback((data) => {
+    setMemoStuDetailToggle((prev) => !prev);
+  }, []);
+
   const messageSendModalHandler = useCallback(() => {
     let result = checkedList.filter((data, idx) => {
       return data.isCheck ? true : false;
@@ -716,7 +800,6 @@ const Index = () => {
   ////// HANDLER //////
 
   const dateChagneHandler = useCallback((data) => {
-    console.log(data, "data");
     const birth = data.format("YYYY-MM-DD");
     formRef.current.setFieldsValue({
       date: birth,
@@ -802,17 +885,37 @@ const Index = () => {
     [lecturePath, filePath]
   );
 
-  const memoFinishHandler = useCallback((data) => {
-    dispatch({
-      type: LECTURE_HOMEWORK_CREATE_REQUEST,
-      data: {
-        title: value.title3,
-        date: value.date,
-        file: filePath,
-        LectureId: router.query.id,
-      },
-    });
-  }, []);
+  const memoFinishHandler = useCallback(
+    (data) => {
+      console.log(
+        memoDatum,
+        "memoDatummemoDatummemoDatummemoDatummemoDatummemoDatum"
+      );
+
+      dispatch({
+        type: LECTURE_MEMO_STU_CREATE_REQUEST,
+        data: {
+          memo: data.memo,
+          UserId: memoDatum.UserId,
+          LectureId: memoDatum.LectureId,
+        },
+      });
+    },
+    [memoDatum]
+  );
+
+  const memoUpdateFinishHandler = useCallback(
+    (data) => {
+      dispatch({
+        type: LECTURE_MEMO_STU_UPDATE_REQUEST,
+        data: {
+          id: memoId,
+          memo: data.memo,
+        },
+      });
+    },
+    [memoId]
+  );
 
   const onChangeHomeWorkPage = useCallback((page) => {
     setCurrentPage4(page);
@@ -860,8 +963,10 @@ const Index = () => {
     form.resetFields();
     answerform.resetFields();
     noticeform.resetFields();
+    memoform.resetFields();
 
     inputDate.setValue("");
+    inputMemoSearch.setValue("");
     setMessageViewToggle(false);
     setIsCalendar(false);
     setHomeWorkModalToggle(false);
@@ -871,9 +976,12 @@ const Index = () => {
     setDiaryModalToggle(false);
     setStudentToggle(false);
     setMemoToggle(false);
+    setMemoStuDetailToggle(false);
     setNoticeContent("");
     setFileName("");
     setFilePath("");
+    setMemoDatum("");
+    setMemoStuBackToggle(false);
 
     setCommuteToggle(false);
 
@@ -891,7 +999,6 @@ const Index = () => {
   }, []);
 
   const onChangeBoxAllHanlder = useCallback((e, arr) => {
-    console.log(arr);
     let resultAll = arr.map((data) => {
       return { ...data, isCheck: e.target.checked };
     });
@@ -922,13 +1029,20 @@ const Index = () => {
 
   const onFillNotice = (data) => {
     if (data.length !== 0) {
-      console.log(data, "data");
-      console.log(data[0].content, "content");
+      // console.log(data, "data");
+      // console.log(data[0].content, "content");
       noticeform.setFieldsValue({
         noticeTitle: data[0].title,
         noticeContent: data[0].content,
       });
     }
+  };
+
+  const onFillMemoform = (data) => {
+    memoform.setFieldsValue({
+      memo: data.memo,
+      username: data.username,
+    });
   };
 
   const answerFinishHandler = useCallback((data, messageData) => {
@@ -975,6 +1089,19 @@ const Index = () => {
     });
   }, []);
 
+  const onChangeCommutePage = useCallback((page) => {
+    setCurrentPage6(page);
+
+    dispatch({
+      type: COMMUTE_LIST_REQUEST,
+      data: {
+        LectureId: parseInt(router.query.id),
+        page,
+        search: "",
+      },
+    });
+  }, []);
+
   const onChangeMessagePage = useCallback((page) => {
     setCurrentPage2(page);
 
@@ -1010,6 +1137,22 @@ const Index = () => {
     });
   }, []);
 
+  const onChangeMemoStuPage = useCallback(
+    (page) => {
+      setCurrentPage7(page);
+
+      dispatch({
+        type: LECTURE_MEMO_STU_LIST_REQUEST,
+        data: {
+          LectureId: parseInt(router.query.id),
+          page,
+          search: inputMemoSearch.value,
+        },
+      });
+    },
+    [inputMemoSearch.value]
+  );
+
   const noticeDetailHandler = useCallback((id) => {
     dispatch({
       type: NOTICE_DETAIL_REQUEST,
@@ -1023,6 +1166,12 @@ const Index = () => {
     });
 
     setNoticeViewModalToggle(true);
+  }, []);
+
+  const lectureDetailStuMemoHandler = useCallback((data) => {
+    onFillMemoform(data);
+    setMemoId(data.id);
+    setMemoStuBackToggle(true);
   }, []);
 
   const clickImageUpload = useCallback(() => {
@@ -1063,6 +1212,17 @@ const Index = () => {
       },
     });
   }, [inputCommuteSearch.value]);
+
+  const memoSearchHandler = useCallback(() => {
+    dispatch({
+      type: LECTURE_MEMO_STU_LIST_REQUEST,
+      data: {
+        LectureId: parseInt(router.query.id),
+        page: 1,
+        search: inputMemoSearch.value,
+      },
+    });
+  }, [inputMemoSearch.value]);
 
   const onCommuteListHandler = useCallback(() => {
     setCommuteToggle((prev) => !prev);
@@ -1214,8 +1374,7 @@ const Index = () => {
             <Wrapper
               dr={`row`}
               margin={width < 700 ? `30px 0` : `60px 0`}
-              ju={`flex-start`}
-            >
+              ju={`flex-start`}>
               <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
                 <Image
                   width={width < 700 ? `65px` : `75px`}
@@ -1235,8 +1394,7 @@ const Index = () => {
                 width={`auto`}
                 fontSize={width < 700 ? `20px` : `28px`}
                 padding={`0 0 0 15px`}
-                color={Theme.black_2C}
-              >
+                color={Theme.black_2C}>
                 <Text fontWeight={`bold`}>
                   안녕하세요,&nbsp;
                   <SpanText color={Theme.basicTheme_C}>
@@ -1252,7 +1410,6 @@ const Index = () => {
                 ? ""
                 : lectureDetail &&
                   lectureDetail.map((data, idx) => {
-                    console.log(data, "dasdasda");
                     return (
                       <Wrapper
                         dr={`row`}
@@ -1358,8 +1515,6 @@ const Index = () => {
                               {`NO.${data.id}`}
                             </CustomText2>
 
-                            {console.log(data.endDate, data.startDate, "ok")}
-
                             {width > 700 && (
                               <>
                                 <Text
@@ -1423,30 +1578,26 @@ const Index = () => {
                       dr={`row`}
                       textAlign={`center`}
                       ju={`center`}
-                      padding={`20px 0`}
-                    >
+                      padding={`20px 0`}>
                       <CustomCheckBox
                         onChange={(e) => onChangeBoxAllHanlder(e, checkedList)}
                       />
                       <Text
                         fontSize={width < 700 ? `14px` : `18px`}
                         fontWeight={`Bold`}
-                        width={`25%`}
-                      >
+                        width={`25%`}>
                         학생명
                       </Text>
                       <Text
                         fontSize={width < 700 ? `14px` : `18px`}
                         fontWeight={`Bold`}
-                        width={`25%`}
-                      >
+                        width={`25%`}>
                         출생년도
                       </Text>
                       <Text
                         fontSize={width < 700 ? `14px` : `18px`}
                         fontWeight={`Bold`}
-                        width={`25%`}
-                      >
+                        width={`25%`}>
                         국가
                       </Text>
                     </Wrapper>
@@ -1464,8 +1615,7 @@ const Index = () => {
                             dr={`row`}
                             textAlign={`center`}
                             padding={`25px 0 20px`}
-                            bgColor={idx % 2 === 0 && Theme.lightGrey_C}
-                          >
+                            bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
                             <CustomCheckBox
                               checked={
                                 checkedList[idx] && checkedList[idx].isCheck
@@ -1478,20 +1628,17 @@ const Index = () => {
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`25%`}
-                              wordBreak={`break-word`}
-                            >
+                              wordBreak={`break-word`}>
                               {data.username}
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
-                              width={`25%`}
-                            >
+                              width={`25%`}>
                               {data.birth.slice(0, 10)}
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
-                              width={`25%`}
-                            >
+                              width={`25%`}>
                               {data.stuCountry}
                             </Text>
                           </Wrapper>
@@ -1504,36 +1651,31 @@ const Index = () => {
                       textAlign={`center`}
                       ju={`center`}
                       padding={`20px 0`}
-                      margin={width < 700 ? `20px 0 0` : `0`}
-                    >
+                      margin={width < 700 ? `20px 0 0` : `0`}>
                       <Text
                         fontSize={width < 700 ? `14px` : `18px`}
                         fontWeight={`Bold`}
                         width={`25%`}
-                        wordBreak={`break-word`}
-                      >
+                        wordBreak={`break-word`}>
                         수업료
                       </Text>
 
                       <Text
                         fontSize={width < 700 ? `14px` : `18px`}
                         fontWeight={`Bold`}
-                        width={`25%`}
-                      >
+                        width={`25%`}>
                         만기일
                       </Text>
                       <Text
                         fontSize={width < 700 ? `14px` : `18px`}
                         fontWeight={`Bold`}
-                        width={`25%`}
-                      >
+                        width={`25%`}>
                         메모
                       </Text>
                       <Text
                         fontSize={width < 700 ? `14px` : `18px`}
                         fontWeight={`Bold`}
-                        width={`25%`}
-                      >
+                        width={`25%`}>
                         출석
                       </Text>
                     </Wrapper>
@@ -1545,25 +1687,21 @@ const Index = () => {
                     ) : (
                       partLectureList &&
                       partLectureList.map((data, idx) => {
-                        console.log(data, "datadata");
                         return (
                           <Wrapper
                             dr={`row`}
                             textAlign={`center`}
                             padding={`25px 0 20px`}
-                            bgColor={Theme.lightGrey_C}
-                          >
+                            bgColor={Theme.lightGrey_C}>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
-                              width={`25%`}
-                            >
+                              width={`25%`}>
                               {`U$ ${data.price}`}
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`25%`}
-                              wordBreak={`break-word`}
-                            >
+                              wordBreak={`break-word`}>
                               {/* 2022/01/22 */}
                               {data.endDate}
 
@@ -1577,23 +1715,21 @@ const Index = () => {
                                   .asDays()})`}
                               </SpanText>
                             </Text>
+
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
-                              width={`25%`}
-                            >
+                              width={`25%`}>
                               작성하기
                             </Text>
 
                             <Text
-                              cursor={`pointer`}
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`25%`}
                               color={
                                 "출석"
                                   ? `${Theme.basicTheme_C}`
                                   : `${Theme.red_C}`
-                              }
-                            >
+                              }>
                               {data.status ? "출석" : "결석"}
                             </Text>
                           </Wrapper>
@@ -1606,8 +1742,7 @@ const Index = () => {
                     dr={`row`}
                     textAlign={`center`}
                     ju={`center`}
-                    padding={`20px 0px`}
-                  >
+                    padding={`20px 0px`}>
                     <CustomCheckBox
                       onChange={(e) => onChangeBoxAllHanlder(e, checkedList)}
                     />
@@ -1615,51 +1750,44 @@ const Index = () => {
                     <Text
                       fontSize={width < 700 ? `14px` : `18px`}
                       fontWeight={`Bold`}
-                      width={`15%`}
-                    >
+                      width={`15%`}>
                       학생명
                     </Text>
                     <Text
                       fontSize={width < 700 ? `14px` : `18px`}
                       fontWeight={`Bold`}
-                      width={`10%`}
-                    >
+                      width={`10%`}>
                       출생년도
                     </Text>
                     <Text
                       fontSize={width < 700 ? `14px` : `18px`}
                       fontWeight={`Bold`}
-                      width={`10%`}
-                    >
+                      width={`10%`}>
                       국가
                     </Text>
                     <Text
                       fontSize={width < 700 ? `14px` : `18px`}
                       fontWeight={`Bold`}
-                      width={`15%`}
-                    >
+                      width={`15%`}>
                       수업료
                     </Text>
                     <Text
                       fontSize={width < 700 ? `14px` : `18px`}
                       fontWeight={`Bold`}
-                      width={`20%`}
-                    >
+                      width={`20%`}>
                       만기일
                     </Text>
                     <Text
                       fontSize={width < 700 ? `14px` : `18px`}
                       fontWeight={`Bold`}
-                      width={`10%`}
-                    >
+                      width={`10%`}>
                       메모
                     </Text>
 
                     <Text
                       fontSize={width < 700 ? `14px` : `18px`}
                       fontWeight={`Bold`}
-                      width={`10%`}
-                    >
+                      width={`10%`}>
                       출석
                     </Text>
                   </Wrapper>
@@ -1681,8 +1809,7 @@ const Index = () => {
                             textAlign={`center`}
                             padding={`25px 0 20px`}
                             ju={`center`}
-                            bgColor={idx % 2 === 0 && Theme.lightGrey_C}
-                          >
+                            bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
                             <CustomCheckBox
                               checked={
                                 checkedList &&
@@ -1695,8 +1822,7 @@ const Index = () => {
                             />
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
-                              width={`15%`}
-                            >
+                              width={`15%`}>
                               {data.username}
                             </Text>
                             <Text
@@ -1706,8 +1832,7 @@ const Index = () => {
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
-                              width={`10%`}
-                            >
+                              width={`10%`}>
                               {data.stuCountry}
                             </Text>
                             <Text
@@ -1718,13 +1843,11 @@ const Index = () => {
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`20%`}
-                              wordBreak={`break-word`}
-                            >
+                              wordBreak={`break-word`}>
                               {data.endDate.slice(0, 10)}
                               <SpanText
                                 color={Theme.red_C}
-                                margin={`0 0 0 5px`}
-                              >
+                                margin={`0 0 0 5px`}>
                                 {`(D-${moment
                                   .duration(
                                     moment(data.endDate, "YYYY-MM-DD").diff(
@@ -1734,44 +1857,35 @@ const Index = () => {
                                   .asDays()})`}
                               </SpanText>
                             </Text>
+
                             <Text
                               onClick={() => detailStuToggleHandler(data)}
                               cursor={`pointer`}
-                              fontSize={width < 700 ? `14px` : `16px`}
                               width={`10%`}
-                            >
+                              fontSize={width < 700 ? `14px` : `16px`}>
                               작성하기
                             </Text>
 
-                            <CustomPopconfirm
+                            {/* <CustomPopconfirm
                               okText="출석"
                               cancelText="결석"
                               onConfirm={() => onCommuteHandler(data, true)}
                               onCancel={() =>
                                 onCommuteHandler(data, false)
-                              }></CustomPopconfirm>
+                              }></CustomPopconfirm> */}
 
-                            <Wrapper width={`10%`}>
-                              <Text
-                                onClick={() => onCommuteHandler(data)}
-                                cursor={`pointer`}
-                                fontSize={width < 700 ? `14px` : `16px`}
-                                color={
-                                  "출석"
-                                    ? `${Theme.basicTheme_C}`
-                                    : `${Theme.red_C}`
-                                }
-                              >
-                                {"출석"}
-                              </Text>
-
-                              <Text
-                                onClick={() => onCommuteListHandler()}
-                                cursor={`pointer`}
-                                fontSize={width < 700 ? `14px` : `16px`}>
-                                상세보기
-                              </Text>
-                            </Wrapper>
+                            <Text
+                              onClick={() => onCommuteHandler(data)}
+                              cursor={`pointer`}
+                              width={`10%`}
+                              fontSize={width < 700 ? `14px` : `16px`}
+                              color={
+                                "출석"
+                                  ? `${Theme.basicTheme_C}`
+                                  : `${Theme.red_C}`
+                              }>
+                              {"출석"}
+                            </Text>
                           </Wrapper>
                         );
                       })
@@ -1779,15 +1893,32 @@ const Index = () => {
                   </>
                 )}
               </Wrapper>
-              <Wrapper al={`flex-end`} margin={`20px 0 0 0`}>
+              <Wrapper dr={`row`} ju={`flex-end`} margin={`20px 0 0 0`}>
                 <CommonButton
                   radius={`5px`}
                   width={width < 700 ? `100px` : `110px`}
                   height={width < 700 ? `32px` : `38px`}
                   fontSize={`14px`}
-                  onClick={() => messageSendModalHandler()}
-                >
+                  onClick={() => messageSendModalHandler()}>
                   쪽지 보내기
+                </CommonButton>
+
+                <CommonButton
+                  radius={`5px`}
+                  width={width < 700 ? `100px` : `110px`}
+                  height={width < 700 ? `32px` : `38px`}
+                  fontSize={`14px`}
+                  onClick={() => detailStuViewToggleHandler()}>
+                  메모 목록
+                </CommonButton>
+
+                <CommonButton
+                  radius={`5px`}
+                  width={width < 700 ? `100px` : `110px`}
+                  height={width < 700 ? `32px` : `38px`}
+                  fontSize={`14px`}
+                  onClick={() => onCommuteListHandler()}>
+                  출석 목록
                 </CommonButton>
               </Wrapper>
             </Wrapper>
@@ -1797,8 +1928,7 @@ const Index = () => {
                 color={Theme.black_2C}
                 fontSize={width < 700 ? `18px` : `22px`}
                 fontWeight={`Bold`}
-                margin={`0 0 20px`}
-              >
+                margin={`0 0 20px`}>
                 강사일지
               </Text>
 
@@ -1807,36 +1937,31 @@ const Index = () => {
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`15%`}
-                  >
+                    width={`15%`}>
                     글번호
                   </Text>
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`15%`}
-                  >
+                    width={`15%`}>
                     강사명
                   </Text>
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`20%`}
-                  >
+                    width={`20%`}>
                     진도
                   </Text>
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`25%`}
-                  >
+                    width={`25%`}>
                     수업메모
                   </Text>
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`25%`}
-                  >
+                    width={`25%`}>
                     날짜
                   </Text>
                 </Wrapper>
@@ -1855,37 +1980,31 @@ const Index = () => {
                         textAlign={`center`}
                         padding={`25px 0 20px`}
                         cursor={`pointer`}
-                        bgColor={idx % 2 === 0 && Theme.lightGrey_C}
-                      >
+                        bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
                           width={`15%`}
-                          wordBreak={`break-word`}
-                        >
+                          wordBreak={`break-word`}>
                           {data.id}
                         </Text>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
-                          width={`15%`}
-                        >
+                          width={`15%`}>
                           {data.author}
                         </Text>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
-                          width={`20%`}
-                        >
+                          width={`20%`}>
                           {data.process}
                         </Text>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
-                          width={`25%`}
-                        >
+                          width={`25%`}>
                           {data.lectureMemo}
                         </Text>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
-                          width={`25%`}
-                        >
+                          width={`25%`}>
                           {data.createdAt.slice(0, 10)}
                         </Text>
                       </Wrapper>
@@ -1899,8 +2018,7 @@ const Index = () => {
                   width={width < 700 ? `100px` : `110px`}
                   height={width < 700 ? `32px` : `38px`}
                   fontSize={`14px`}
-                  onClick={() => diaryCreateToggleHandler()}
-                >
+                  onClick={() => diaryCreateToggleHandler()}>
                   작성하기
                 </CommonButton>
               </Wrapper>
@@ -1909,125 +2027,16 @@ const Index = () => {
                 <CustomPage
                   current={currentPage1}
                   total={lectureDiaryLastPage * 10}
-                  onChange={(page) => onChangeDiaryPage(page)}
-                ></CustomPage>
+                  onChange={(page) => onChangeDiaryPage(page)}></CustomPage>
               </Wrapper>
             </Wrapper>
-
-            {/* <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
-              <Text
-                color={Theme.black_2C}
-                fontSize={width < 700 ? `18px` : `22px`}
-                fontWeight={`Bold`}
-              >
-                출석부 목록
-              </Text>
-            </Wrapper>
-
-            <Wrapper al={`flex-start`}>
-              <Wrapper
-                position={`relative`}
-                width={width < 800 ? `calc(100% - 100px - 20px)` : `500px`}
-                height={`39px`}
-                margin={`0 0 20px`}
-              >
-                <SearchOutlined
-                  style={{
-                    color: Theme.grey2_C,
-                    fontSize: `20px`,
-                    position: "absolute",
-                    left: `15px`,
-                  }}
-                />
-                <TextInput
-                  padding={`0 0 0 55px`}
-                  placeholder="학생명으로 검색"
-                  radius={`25px`}
-                  width={`100%`}
-                  height={`50px`}
-                  bgColor={Theme.lightGrey_C}
-                  {...inputCommuteSearch}
-                  onKeyDown={(e) => e.keyCode === 13 && commuteSearchHandler()}
-                />
-              </Wrapper>
-            </Wrapper>
-
-            <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
-              <Wrapper
-                dr={`row`}
-                textAlign={width < 700 ? `center` : `left`}
-                padding={`20px 30px`}
-              >
-                <Text
-                  fontSize={width < 700 ? `14px` : `18px`}
-                  fontWeight={`Bold`}
-                  width={`35%`}
-                >
-                  날짜
-                </Text>
-                <Text
-                  fontSize={width < 700 ? `14px` : `18px`}
-                  fontWeight={`Bold`}
-                  width={`35%`}
-                >
-                  학생명
-                </Text>
-                <Text
-                  fontSize={width < 700 ? `14px` : `18px`}
-                  fontWeight={`Bold`}
-                  width={`30%`}
-                >
-                  출석여부
-                </Text>
-              </Wrapper>
-
-              {commuteList && commuteList.length === 0 ? (
-                <Wrapper margin={`50px 0`}>
-                  <Empty description="조회된 데이터가 없습니다." />
-                </Wrapper>
-              ) : (
-                commuteList &&
-                commuteList.map((data, idx) => {
-                  return (
-                    <Wrapper
-                      dr={`row`}
-                      ju={`flex-start`}
-                      padding={`25px 30px 20px`}
-                      cursor={`pointer`}
-                      textAlign={width < 700 ? `center` : `left`}
-                      bgColor={idx % 2 === 0 && Theme.lightGrey_C}
-                    >
-                      <Text
-                        fontSize={width < 700 ? `14px` : `16px`}
-                        width={`35%`}
-                      >
-                        {data.time}
-                      </Text>
-                      <Text
-                        fontSize={width < 700 ? `14px` : `16px`}
-                        width={`35%`}
-                      >
-                        {data.username}
-                      </Text>
-                      <Text
-                        fontSize={width < 700 ? `14px` : `16px`}
-                        width={`30%`}
-                      >
-                        {data.isAtt ? "Y" : "N"}
-                      </Text>
-                    </Wrapper>
-                  );
-                })
-              )}
-            </Wrapper> */}
 
             <Wrapper al={`flex-start`}>
               <Text
                 cTolor={Theme.black_2C}
                 fontSize={width < 700 ? `18px` : `22px`}
                 fontWeight={`Bold`}
-                margin={`86px 0 20px`}
-              >
+                margin={`86px 0 20px`}>
                 숙제관리
               </Text>
 
@@ -2042,20 +2051,17 @@ const Index = () => {
                         shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
                         margin={`0 0 10px 0`}
                         padding={`20px`}
-                        radius={`10px`}
-                      >
+                        radius={`10px`}>
                         <Text
                           width={`50%`}
-                          fontSize={width < 700 ? `14px` : `16px`}
-                        >
+                          fontSize={width < 700 ? `14px` : `16px`}>
                           {/* 한국어로 편지 쓰기 */}
                           {data.title}
                         </Text>
 
                         <Wrapper
                           width={`40%`}
-                          dr={width < 1100 ? `column` : `row`}
-                        >
+                          dr={width < 1100 ? `column` : `row`}>
                           <CustomWrapper width={width < 1100 ? `100%` : `50%`}>
                             <DownloadOutlined
                               onClick={() => fileDownloadHandler(data.file)}
@@ -2069,16 +2075,14 @@ const Index = () => {
 
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
-                              display={width < 700 ? `none` : `block`}
-                            >
+                              display={width < 700 ? `none` : `block`}>
                               파일 업로드
                             </Text>
                           </CustomWrapper>
 
                           <CustomWrapper
                             width={width < 1100 ? `100%` : `50%`}
-                            beforeBool={width < 1300 ? false : true}
-                          >
+                            beforeBool={width < 1300 ? false : true}>
                             <CalendarOutlined
                               style={{
                                 fontSize: width < 700 ? 15 : 25,
@@ -2108,8 +2112,7 @@ const Index = () => {
                                 .asDays() < 1
                                 ? `${Theme.red_C}`
                                 : ""
-                            }
-                          >
+                            }>
                             {moment
                               .duration(
                                 moment(data.date, "YYYY-MM-DD").diff(
@@ -2132,8 +2135,7 @@ const Index = () => {
                 width={width < 700 ? `100px` : `110px`}
                 height={width < 700 ? `32px` : `38px`}
                 fontSize={`14px`}
-                onClick={() => studentToggleHanlder()}
-              >
+                onClick={() => studentToggleHanlder()}>
                 학생 숙제
               </CommonButton>
 
@@ -2142,8 +2144,7 @@ const Index = () => {
                 width={width < 700 ? `100px` : `110px`}
                 height={width < 700 ? `32px` : `38px`}
                 fontSize={`14px`}
-                onClick={() => setHomeWorkModalToggle(true)}
-              >
+                onClick={() => setHomeWorkModalToggle(true)}>
                 숙제 업로드
               </CommonButton>
             </Wrapper>
@@ -2152,8 +2153,7 @@ const Index = () => {
               <CustomPage
                 current={currentPage4}
                 total={lectureHomeworkLastPage * 10}
-                onChange={(page) => onChangeHomeWorkPage(page)}
-              ></CustomPage>
+                onChange={(page) => onChangeHomeWorkPage(page)}></CustomPage>
             </Wrapper>
 
             <Wrapper al={`flex-start`}>
@@ -2161,8 +2161,7 @@ const Index = () => {
                 color={Theme.black_2C}
                 fontSize={width < 700 ? `18px` : `22px`}
                 fontWeight={`Bold`}
-                margin={`86px 0 20px`}
-              >
+                margin={`86px 0 20px`}>
                 공지사항
               </Text>
             </Wrapper>
@@ -2172,22 +2171,19 @@ const Index = () => {
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
-                  width={`15%`}
-                >
+                  width={`15%`}>
                   글번호
                 </Text>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
-                  width={`60%`}
-                >
+                  width={`60%`}>
                   제목
                 </Text>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
-                  width={`25%`}
-                >
+                  width={`25%`}>
                   날짜
                 </Text>
               </Wrapper>
@@ -2213,21 +2209,18 @@ const Index = () => {
                       <Text
                         fontSize={width < 700 ? `14px` : `16px`}
                         width={`15%`}
-                        wordBreak={`break-word`}
-                      >
+                        wordBreak={`break-word`}>
                         {data.id}
                       </Text>
                       <Text
                         fontSize={width < 700 ? `14px` : `16px`}
                         width={`60%`}
-                        textAlign={`left`}
-                      >
+                        textAlign={`left`}>
                         {data.title}
                       </Text>
                       <Text
                         fontSize={width < 700 ? `14px` : `16px`}
-                        width={`25%`}
-                      >
+                        width={`25%`}>
                         {data.createdAt.slice(0, 10)}
                       </Text>
                     </Wrapper>
@@ -2242,8 +2235,7 @@ const Index = () => {
                 width={width < 700 ? `90px` : `110px`}
                 height={width < 700 ? `32px` : `38px`}
                 fontSize={width < 700 ? `14px` : `14px`}
-                onClick={() => setNoticeModalToggle(true)}
-              >
+                onClick={() => setNoticeModalToggle(true)}>
                 작성하기
               </CommonButton>
             </Wrapper>
@@ -2252,16 +2244,14 @@ const Index = () => {
               <CustomPage
                 total={noticeLectureLastPage * 10}
                 current={currentPage3}
-                onChange={(page) => onChangeNoticePage(page)}
-              ></CustomPage>
+                onChange={(page) => onChangeNoticePage(page)}></CustomPage>
             </Wrapper>
 
             <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
               <Text
                 color={Theme.black_2C}
                 fontSize={width < 700 ? `18px` : `22px`}
-                fontWeight={`Bold`}
-              >
+                fontWeight={`Bold`}>
                 쪽지함
               </Text>
             </Wrapper>
@@ -2272,31 +2262,27 @@ const Index = () => {
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`15%`}
-                  >
+                    width={`15%`}>
                     글 번호
                   </Text>
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`calc(100% - 15% - 15% - 25%)`}
-                  >
+                    width={`calc(100% - 15% - 15% - 25%)`}>
                     제목
                   </Text>
 
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`15%`}
-                  >
+                    width={`15%`}>
                     작성자
                   </Text>
 
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`25%`}
-                  >
+                    width={`25%`}>
                     날짜
                   </Text>
                 </Wrapper>
@@ -2316,32 +2302,27 @@ const Index = () => {
                         padding={`25px 0 20px`}
                         cursor={`pointer`}
                         bgColor={idx % 2 === 0 && Theme.lightGrey_C}
-                        onClick={() => messageViewModalHanlder(data2)}
-                      >
+                        onClick={() => messageViewModalHanlder(data2)}>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
-                          width={`15%`}
-                        >
+                          width={`15%`}>
                           {data2.id}
                         </Text>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
                           width={`calc(100% - 15% - 15% - 25%)`}
-                          textAlign={`left`}
-                        >
+                          textAlign={`left`}>
                           {data2.title}
                         </Text>
 
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
-                          width={`15%`}
-                        >
+                          width={`15%`}>
                           {data2.author}
                         </Text>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
-                          width={`25%`}
-                        >
+                          width={`25%`}>
                           {/* 2022/01/22 */}
                           {data2.createdAt.slice(0, 13)}
                         </Text>
@@ -2355,8 +2336,7 @@ const Index = () => {
                 <CustomPage
                   current={currentPage2}
                   total={messageUserLastPage * 10}
-                  onChange={(page) => onChangeMessagePage(page)}
-                ></CustomPage>
+                  onChange={(page) => onChangeMessagePage(page)}></CustomPage>
               </Wrapper>
             </Wrapper>
           </RsWrapper>
@@ -2367,8 +2347,7 @@ const Index = () => {
           width={`1350px`}
           title="공지사항"
           footer={null}
-          closable={false}
-        >
+          closable={false}>
           <CustomForm form={noticeform} onFinish={noticeViewFinishHandler}>
             <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
               <Text margin={`0 54px 0 0`}>
@@ -2391,8 +2370,7 @@ const Index = () => {
 
             <Form.Item
               name="noticeTitle"
-              rules={[{ required: true, message: "제목을 입력해주세요." }]}
-            >
+              rules={[{ required: true, message: "제목을 입력해주세요." }]}>
               <CusotmInput width={`100%`}></CusotmInput>
             </Form.Item>
 
@@ -2402,8 +2380,7 @@ const Index = () => {
 
             <Form.Item
               name="noticeContent"
-              rules={[{ required: true, message: "내용을 입력해주세요." }]}
-            >
+              rules={[{ required: true, message: "내용을 입력해주세요." }]}>
               <ToastEditorComponent
                 action={getEditContentUpdate}
                 placeholder="placeholder"
@@ -2423,16 +2400,14 @@ const Index = () => {
                 margin={`0 10px 0 0`}
                 color={Theme.darkGrey_C}
                 radius={`5px`}
-                onClick={() => onReset()}
-              >
+                onClick={() => onReset()}>
                 돌아가기
               </CommonButton>
 
               <CommonButton
                 color={Theme.white_C}
                 radius={`5px`}
-                htmlType="submit"
-              >
+                htmlType="submit">
                 수정하기
               </CommonButton>
             </Wrapper>
@@ -2444,12 +2419,10 @@ const Index = () => {
           width={`1350px`}
           title="쪽지"
           footer={null}
-          closable={false}
-        >
+          closable={false}>
           <CustomForm
             form={answerform}
-            onFinish={(data) => answerFinishHandler(data, messageDatum)}
-          >
+            onFinish={(data) => answerFinishHandler(data, messageDatum)}>
             <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
               <Text margin={`0 54px 0 0`}>
                 {messageDatum && messageDatum.author}
@@ -2463,8 +2436,7 @@ const Index = () => {
             <Wrapper padding={`10px`}>
               <Form.Item
                 name="messageTitle"
-                rules={[{ required: true, message: "제목을 입력해주세요." }]}
-              >
+                rules={[{ required: true, message: "제목을 입력해주세요." }]}>
                 <CusotmInput width={`100%`} />
               </Form.Item>
             </Wrapper>
@@ -2475,8 +2447,7 @@ const Index = () => {
             <Wrapper padding={`10px`}>
               <Form.Item
                 name="messageContent"
-                rules={[{ required: true, message: "내용을 입력해주세요." }]}
-              >
+                rules={[{ required: true, message: "내용을 입력해주세요." }]}>
                 <Input.TextArea style={{ height: `360px` }} />
               </Form.Item>
             </Wrapper>
@@ -2487,15 +2458,13 @@ const Index = () => {
                 kindOf={`grey`}
                 color={Theme.darkGrey_C}
                 radius={`5px`}
-                onClick={() => onReset()}
-              >
+                onClick={() => onReset()}>
                 돌아가기
               </CommonButton>
               <CommonButton
                 margin={`0 0 0 5px`}
                 radius={`5px`}
-                htmlType="submit"
-              >
+                htmlType="submit">
                 답변하기
               </CommonButton>
             </Wrapper>
@@ -2509,8 +2478,7 @@ const Index = () => {
             adminSendMessageToggle ? "관리자에게 쪽지 보내기" : "강사에게 쪽지"
           }
           footer={null}
-          closable={false}
-        >
+          closable={false}>
           <CustomForm
             ref={formRef}
             form={form}
@@ -2518,8 +2486,7 @@ const Index = () => {
               adminSendMessageToggle
                 ? sendMessageAdminFinishHandler
                 : noteSendFinishHandler
-            }
-          >
+            }>
             <Wrapper al={`flex-end`}>
               <CommonButton
                 margin={`0 0 0 5px`}
@@ -2527,8 +2494,7 @@ const Index = () => {
                 width={`100px`}
                 height={`32px`}
                 size="small"
-                onClick={() => adminSendMessageToggleHandler()}
-              >
+                onClick={() => adminSendMessageToggleHandler()}>
                 {!adminSendMessageToggle ? " 관라자에게" : "학생에게"}
               </CommonButton>
             </Wrapper>
@@ -2537,8 +2503,7 @@ const Index = () => {
               <Text
                 fontSize={width < 700 ? `14px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}
-              >
+                margin={`0 0 10px`}>
                 받는 사람
               </Text>
             )}
@@ -2567,8 +2532,7 @@ const Index = () => {
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}
-            >
+              margin={`0 0 10px`}>
               제목
             </Text>
             <Form.Item name="title1" rules={[{ required: true }]}>
@@ -2577,8 +2541,7 @@ const Index = () => {
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}
-            >
+              margin={`0 0 10px`}>
               내용
             </Text>
             <Form.Item name="content1" rules={[{ required: true }]}>
@@ -2590,16 +2553,14 @@ const Index = () => {
                 kindOf={`grey`}
                 color={Theme.darkGrey_C}
                 radius={`5px`}
-                onClick={() => onReset()}
-              >
+                onClick={() => onReset()}>
                 돌아가기
                 {/* cancelNoteSendHanlder() */}
               </CommonButton>
               <CommonButton
                 margin={`0 0 0 5px`}
                 radius={`5px`}
-                htmlType="submit"
-              >
+                htmlType="submit">
                 쪽지 보내기
               </CommonButton>
             </Wrapper>
@@ -2611,14 +2572,12 @@ const Index = () => {
           width={`1350px`}
           title="공지사항 글 작성하기"
           footer={null}
-          closable={false}
-        >
+          closable={false}>
           <CustomForm ref={formRef} form={form} onFinish={noticeFinishHandler}>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}
-            >
+              margin={`0 0 10px`}>
               제목
             </Text>
             <Form.Item name="title2" rules={[{ required: true }]}>
@@ -2627,8 +2586,7 @@ const Index = () => {
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}
-            >
+              margin={`0 0 10px`}>
               내용
             </Text>
             <Form.Item name="content2" rules={[{ required: true }]}>
@@ -2643,15 +2601,13 @@ const Index = () => {
                 kindOf={`grey`}
                 color={Theme.darkGrey_C}
                 radius={`5px`}
-                onClick={() => onReset()}
-              >
+                onClick={() => onReset()}>
                 돌아가기
               </CommonButton>
               <CommonButton
                 margin={`0 0 0 5px`}
                 radius={`5px`}
-                htmlType="submit"
-              >
+                htmlType="submit">
                 답변하기
               </CommonButton>
             </Wrapper>
@@ -2663,18 +2619,15 @@ const Index = () => {
           width={`1350px`}
           title="숙제 업로드"
           footer={null}
-          closable={false}
-        >
+          closable={false}>
           <CustomForm
             ref={formRef}
             form={form}
-            onFinish={homeWorkFinishHandler}
-          >
+            onFinish={homeWorkFinishHandler}>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}
-            >
+              margin={`0 0 10px`}>
               제목
             </Text>
             <Form.Item name="title3" rules={[{ required: true }]}>
@@ -2683,8 +2636,7 @@ const Index = () => {
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}
-            >
+              margin={`0 0 10px`}>
               날짜
             </Text>
             <Form.Item name="date" rules={[{ required: true }]}>
@@ -2715,8 +2667,7 @@ const Index = () => {
                   position={width < 1350 ? `static` : `absolute`}
                   right={`0`}
                   border={`1px solid ${Theme.grey_C}`}
-                  margin={`0 0 20px`}
-                >
+                  margin={`0 0 20px`}>
                   <Calendar
                     style={{ width: width < 1350 ? `100%` : `300px` }}
                     fullscreen={false}
@@ -2748,8 +2699,7 @@ const Index = () => {
                   height: `40px`,
                   width: `150px`,
                   margin: `10px 0 0`,
-                }}
-              >
+                }}>
                 파일 올리기
               </Button>
               <Text>{`${fileName}`}</Text>
@@ -2761,15 +2711,13 @@ const Index = () => {
                 kindOf={`grey`}
                 color={Theme.darkGrey_C}
                 radius={`5px`}
-                onClick={() => onReset()}
-              >
+                onClick={() => onReset()}>
                 돌아가기
               </CommonButton>
               <CommonButton
                 margin={`0 0 0 5px`}
                 radius={`5px`}
-                htmlType="submit"
-              >
+                htmlType="submit">
                 작성하기
               </CommonButton>
             </Wrapper>
@@ -2781,33 +2729,30 @@ const Index = () => {
           width={`1350px`}
           title="강사일지 작성하기"
           footer={null}
-          closable={false}
-        >
+          closable={false}>
           <CustomForm ref={formRef} form={form} onFinish={diaryFinishHandler}>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}
-            >
+              margin={`0 0 10px`}>
               진도
             </Text>
             <Form.Item
               name="process"
-              rules={[{ required: true, message: "진도를 입력해주세요." }]}
-            >
+              rules={[{ required: true, message: "진도를 입력해주세요." }]}>
               <CusotmInput width={`100%`} />
             </Form.Item>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}
-            >
+              margin={`0 0 10px`}>
               수업 메모
             </Text>
             <Form.Item
               name="lectureMemo"
-              rules={[{ required: true, message: "수업 메모를 입력해주세요." }]}
-            >
+              rules={[
+                { required: true, message: "수업 메모를 입력해주세요." },
+              ]}>
               <Input.TextArea style={{ height: `360px` }} />
             </Form.Item>
             <Wrapper dr={`row`}>
@@ -2816,15 +2761,13 @@ const Index = () => {
                 kindOf={`grey`}
                 color={Theme.darkGrey_C}
                 radius={`5px`}
-                onClick={() => onReset()}
-              >
+                onClick={() => onReset()}>
                 돌아가기
               </CommonButton>
               <CommonButton
                 margin={`0 0 0 5px`}
                 radius={`5px`}
-                htmlType="submit"
-              >
+                htmlType="submit">
                 작성하기
               </CommonButton>
             </Wrapper>
@@ -2836,14 +2779,12 @@ const Index = () => {
           width={`1350px`}
           title="학생 숙제 제출 목록"
           footer={null}
-          closable={false}
-        >
+          closable={false}>
           <CustomForm ref={formRef} form={form} onFinish={diaryFinishHandler}>
             {lectureSubmitList && lectureSubmitList.length === 0
               ? ""
               : lectureSubmitList &&
                 lectureSubmitList.map((data, idx) => {
-                  console.log(data, "data");
                   return (
                     <Wrapper
                       dr={`row`}
@@ -2961,7 +2902,7 @@ const Index = () => {
               학생 메모
             </Text>
             <Form.Item
-              name="process"
+              name="memo"
               rules={[
                 { required: true, message: "학생 메모를 입력해주세요." },
               ]}>
@@ -2993,126 +2934,289 @@ const Index = () => {
         </CustomModal>
 
         <CustomModal
+          visible={memoStuDetailToggle}
+          width={`1350px`}
+          title="학생메모 목록"
+          footer={null}
+          closable={false}>
+          <Wrapper al={`flex-start`}>
+            {memoStuBackToggle ? (
+              <Wrapper>
+                <Wrapper al={`flex-start`} margin={`0 0 15px`}>
+                  <CommonButton
+                    margin={`0 5px 0 0`}
+                    kindOf={`grey`}
+                    color={Theme.darkGrey_C}
+                    radius={`5px`}
+                    onClick={() => setMemoStuBackToggle(false)}>
+                    뒤로가기
+                  </CommonButton>
+                </Wrapper>
+
+                <CustomForm
+                  form={memoform}
+                  onFinish={(data) => memoUpdateFinishHandler(data)}>
+                  <Text
+                    fontSize={width < 700 ? `14px` : `18px`}
+                    fontWeight={`bold`}
+                    margin={`0 0 10px`}>
+                    학생 이름
+                  </Text>
+                  <Form.Item
+                    name="username"
+                    rules={[
+                      { required: true, message: "학생메모를 입력해주세요." },
+                    ]}>
+                    <CusotmInput width={`100%`} disabled></CusotmInput>
+                  </Form.Item>
+
+                  <Text
+                    fontSize={width < 700 ? `14px` : `18px`}
+                    fontWeight={`bold`}
+                    margin={`0 0 10px`}>
+                    학생 메모
+                  </Text>
+                  <Form.Item
+                    name="memo"
+                    rules={[
+                      { required: true, message: "학생메모를 입력해주세요." },
+                    ]}>
+                    <TextArea
+                      width={`100%`}
+                      placeholder={`ex) 학생별 특이사항, 수업분위기 ,특별한 내용 등 입력해주세요.`}
+                    />
+                  </Form.Item>
+
+                  <Wrapper al={`flex-end`}>
+                    <CommonButton
+                      margin={`0 0 0 5px`}
+                      radius={`5px`}
+                      htmlType="submit">
+                      수정하기
+                    </CommonButton>
+                  </Wrapper>
+                </CustomForm>
+              </Wrapper>
+            ) : (
+              <>
+                <Wrapper
+                  position={`relative`}
+                  width={width < 800 ? `calc(100% - 100px - 20px)` : `500px`}
+                  height={`39px`}
+                  margin={`0 0 20px`}>
+                  <SearchOutlined
+                    style={{
+                      color: Theme.grey2_C,
+                      fontSize: `20px`,
+                      position: "absolute",
+                      left: `15px`,
+                    }}
+                  />
+                  <TextInput
+                    padding={`0 0 0 55px`}
+                    placeholder="학생명으로 검색"
+                    radius={`25px`}
+                    width={`100%`}
+                    height={`50px`}
+                    bgColor={Theme.lightGrey_C}
+                    {...inputMemoSearch}
+                    onKeyDown={(e) => e.keyCode === 13 && memoSearchHandler()}
+                  />
+                </Wrapper>
+
+                <Wrapper
+                  shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
+                  radius={`10px`}>
+                  <Wrapper
+                    dr={`row`}
+                    textAlign={width < 700 ? `center` : `left`}
+                    padding={`20px 30px`}>
+                    <Text
+                      fontSize={width < 700 ? `14px` : `18px`}
+                      fontWeight={`Bold`}
+                      width={`10%`}>
+                      번호
+                    </Text>
+
+                    <Text
+                      fontSize={width < 700 ? `14px` : `18px`}
+                      fontWeight={`Bold`}
+                      width={`45%`}
+                      isEllipsis={true}>
+                      학생 이름
+                    </Text>
+
+                    <Text
+                      fontSize={width < 700 ? `14px` : `18px`}
+                      fontWeight={`Bold`}
+                      width={`45%`}
+                      isEllipsis={true}>
+                      메모내용
+                    </Text>
+                  </Wrapper>
+
+                  {lectureMemoStuList && lectureMemoStuList.length === 0 ? (
+                    <Wrapper margin={`50px 0`}>
+                      <Empty description="조회된 데이터가 없습니다." />
+                    </Wrapper>
+                  ) : (
+                    lectureMemoStuList &&
+                    lectureMemoStuList.map((data, idx) => {
+                      return (
+                        <Wrapper
+                          onClick={() => lectureDetailStuMemoHandler(data)}
+                          dr={`row`}
+                          ju={`flex-start`}
+                          padding={`25px 30px 20px`}
+                          cursor={`pointer`}
+                          textAlign={width < 700 ? `center` : `left`}
+                          bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
+                          <Text
+                            fontSize={width < 700 ? `14px` : `16px`}
+                            width={`10%`}>
+                            {data.id}
+                          </Text>
+
+                          <Text
+                            fontSize={width < 700 ? `14px` : `16px`}
+                            width={`45%`}>
+                            {data.username}
+                          </Text>
+
+                          <Text
+                            fontSize={width < 700 ? `14px` : `16px`}
+                            width={`45%`}
+                            isEllipsis={true}>
+                            {data.memo}
+                          </Text>
+                        </Wrapper>
+                      );
+                    })
+                  )}
+                </Wrapper>
+
+                <Wrapper margin={`50px 0`}>
+                  <CustomPage
+                    current={currentPage7}
+                    total={lectureMemoStuLastPage * 10}
+                    onChange={(page) => onChangeMemoStuPage(page)}></CustomPage>
+                </Wrapper>
+              </>
+            )}
+          </Wrapper>
+
+          <Wrapper dr={`row`}>
+            <CommonButton
+              margin={`0 5px 0 0`}
+              kindOf={`grey`}
+              color={Theme.darkGrey_C}
+              radius={`5px`}
+              onClick={() => onReset()}>
+              돌아가기
+            </CommonButton>
+          </Wrapper>
+        </CustomModal>
+
+        <CustomModal
           visible={commuteToggle}
           width={`1350px`}
           title="학생 출석 목록"
           footer={null}
           closable={false}>
-          <CustomForm ref={formRef} form={form}>
-            <Form.Item
-              name="process"
-              rules={[
-                { required: true, message: "진도를 입력해주세요." },
-              ]}></Form.Item>
+          <Wrapper al={`flex-start`}>
+            <Wrapper
+              position={`relative`}
+              width={width < 800 ? `calc(100% - 100px - 20px)` : `500px`}
+              height={`39px`}
+              margin={`0 0 20px`}>
+              <SearchOutlined
+                style={{
+                  color: Theme.grey2_C,
+                  fontSize: `20px`,
+                  position: "absolute",
+                  left: `15px`,
+                }}
+              />
+              <TextInput
+                padding={`0 0 0 55px`}
+                placeholder="학생명으로 검색"
+                radius={`25px`}
+                width={`100%`}
+                height={`50px`}
+                bgColor={Theme.lightGrey_C}
+                {...inputCommuteSearch}
+                onKeyDown={(e) => e.keyCode === 13 && commuteSearchHandler()}
+              />
+            </Wrapper>
+          </Wrapper>
 
-            <Wrapper al={`flex-start`} margin={`0px 0 20px`}>
+          <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
+            <Wrapper
+              dr={`row`}
+              textAlign={width < 700 ? `center` : `left`}
+              padding={`20px 30px`}>
               <Text
-                color={Theme.black_2C}
-                fontSize={width < 700 ? `18px` : `22px`}
-                fontWeight={`Bold`}>
-                출석부 목록
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`Bold`}
+                width={`50%`}>
+                출석일
+              </Text>
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`Bold`}
+                width={`50%`}>
+                학생명
               </Text>
             </Wrapper>
 
-            <Wrapper al={`flex-start`}>
-              <Wrapper
-                position={`relative`}
-                width={width < 800 ? `calc(100% - 100px - 20px)` : `500px`}
-                height={`39px`}
-                margin={`0 0 20px`}>
-                <SearchOutlined
-                  style={{
-                    color: Theme.grey2_C,
-                    fontSize: `20px`,
-                    position: "absolute",
-                    left: `15px`,
-                  }}
-                />
-                <TextInput
-                  padding={`0 0 0 55px`}
-                  placeholder="학생명으로 검색"
-                  radius={`25px`}
-                  width={`100%`}
-                  height={`50px`}
-                  bgColor={Theme.lightGrey_C}
-                  {...inputCommuteSearch}
-                  onKeyDown={(e) => e.keyCode === 13 && commuteSearchHandler()}
-                />
+            {commuteList && commuteList.length === 0 ? (
+              <Wrapper margin={`50px 0`}>
+                <Empty description="조회된 데이터가 없습니다." />
               </Wrapper>
-            </Wrapper>
+            ) : (
+              commuteList &&
+              commuteList.map((data, idx) => {
+                return (
+                  <Wrapper
+                    dr={`row`}
+                    ju={`flex-start`}
+                    padding={`25px 30px 20px`}
+                    cursor={`pointer`}
+                    textAlign={width < 700 ? `center` : `left`}
+                    bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
+                    <Text
+                      fontSize={width < 700 ? `14px` : `16px`}
+                      width={`50%`}>
+                      {data.time}
+                    </Text>
+                    <Text
+                      fontSize={width < 700 ? `14px` : `16px`}
+                      width={`50%`}>
+                      {data.username}
+                    </Text>
+                  </Wrapper>
+                );
+              })
+            )}
+          </Wrapper>
 
-            <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
-              <Wrapper
-                dr={`row`}
-                textAlign={width < 700 ? `center` : `left`}
-                padding={`20px 30px`}>
-                <Text
-                  fontSize={width < 700 ? `14px` : `18px`}
-                  fontWeight={`Bold`}
-                  width={`35%`}>
-                  날짜
-                </Text>
-                <Text
-                  fontSize={width < 700 ? `14px` : `18px`}
-                  fontWeight={`Bold`}
-                  width={`35%`}>
-                  학생명
-                </Text>
-                <Text
-                  fontSize={width < 700 ? `14px` : `18px`}
-                  fontWeight={`Bold`}
-                  width={`30%`}>
-                  출석여부
-                </Text>
-              </Wrapper>
+          <Wrapper margin={`50px 0`}>
+            <CustomPage
+              current={currentPage6}
+              total={commuteLastPage * 10}
+              onChange={(page) => onChangeCommutePage(page)}></CustomPage>
+          </Wrapper>
 
-              {commuteList && commuteList.length === 0 ? (
-                <Wrapper margin={`50px 0`}>
-                  <Empty description="조회된 데이터가 없습니다." />
-                </Wrapper>
-              ) : (
-                commuteList &&
-                commuteList.map((data, idx) => {
-                  return (
-                    <Wrapper
-                      dr={`row`}
-                      ju={`flex-start`}
-                      padding={`25px 30px 20px`}
-                      cursor={`pointer`}
-                      textAlign={width < 700 ? `center` : `left`}
-                      bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
-                      <Text
-                        fontSize={width < 700 ? `14px` : `16px`}
-                        width={`35%`}>
-                        {data.time}
-                      </Text>
-                      <Text
-                        fontSize={width < 700 ? `14px` : `16px`}
-                        width={`35%`}>
-                        {data.username}
-                      </Text>
-                      <Text
-                        fontSize={width < 700 ? `14px` : `16px`}
-                        width={`30%`}>
-                        {data.isAtt ? "Y" : "N"}
-                      </Text>
-                    </Wrapper>
-                  );
-                })
-              )}
-            </Wrapper>
-
-            <Wrapper dr={`row`} margin={`30px 0`}>
-              <CommonButton
-                margin={`0 5px 0 0`}
-                kindOf={`grey`}
-                color={Theme.darkGrey_C}
-                radius={`5px`}
-                onClick={() => onReset()}>
-                돌아가기
-              </CommonButton>
-            </Wrapper>
-          </CustomForm>
+          <Wrapper dr={`row`} margin={`0 0 30px`}>
+            <CommonButton
+              margin={`0 5px 0 0`}
+              kindOf={`grey`}
+              color={Theme.darkGrey_C}
+              radius={`5px`}
+              onClick={() => onReset()}>
+              돌아가기
+            </CommonButton>
+          </Wrapper>
         </CustomModal>
       </ClientLayout>
     </>
