@@ -263,24 +263,10 @@ router.get("/detail/:LectureId", async (req, res, next) => {
      WHERE  LectureId = ${LectureId}
     `;
 
-    const studentMemoQuery = `
-    SELECT	id,
-            memo,
-            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
-            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
-            LectureId,
-            UserId
-      FROM	lectureStuMemos
-     WHERE  LectureId = ${LectureId}
-    `;
-
     const list = await models.sequelize.query(selectQuery);
     const memo = await models.sequelize.query(memoQuery);
-    const studentMemo = await models.sequelize.query(studentMemoQuery);
 
-    return res
-      .status(200)
-      .json({ list: list[0], memo: memo[0], studentMemo: studentMemo[0] });
+    return res.status(200).json({ list: list[0], memo: memo[0] });
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의 정보를 불러올 수 없습니다.");
@@ -624,6 +610,70 @@ router.delete("/delete/:lectureId", isAdminCheck, async (req, res, next) => {
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////// - 강의 별 학생 메모 작성 -///////////////////////////////////
+
+router.get("/memo/student/list", async (req, res, next) => {
+  const { page, search, LectureId } = req.query;
+
+  const LIMIT = 5;
+
+  const _page = page ? page : 1;
+  const _search = search ? search : ``;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 5;
+
+  try {
+    const lengthQuery = `
+    SELECT	A.id,
+            A.memo,
+            DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            A.LectureId,
+            A.UserId,
+            B.username
+      FROM	lectureStuMemos       A
+     INNER
+      JOIN  users                 B
+        ON  A.UserId = B.id
+     WHERE  LectureId = ${LectureId}
+     ${_search ? `AND B.username LIKE '%${_search}%'` : ``}
+     `;
+
+    const studentMemoQuery = `
+    SELECT	A.id,
+            A.memo,
+            DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            A.LectureId,
+            A.UserId,
+            B.username
+      FROM	lectureStuMemos       A
+     INNER
+      JOIN  users                 B
+        ON  A.UserId = B.id
+     WHERE  LectureId = ${LectureId}
+     ${_search ? `AND B.username LIKE '%${_search}%'` : ``}
+     ORDER  BY A.createdAt DESC
+     LIMIT  ${LIMIT}
+    OFFSET  ${OFFSET}
+    `;
+
+    const length = await models.sequelize.query(lengthQuery);
+    const stuMemo = await models.sequelize.query(studentMemoQuery);
+
+    const stuMemolen = length[0].length;
+
+    const lastPage =
+      stuMemolen % LIMIT > 0 ? stuMemolen / LIMIT + 1 : stuMemolen / LIMIT;
+
+    return res
+      .status(200)
+      .json({ stuMemo: stuMemo[0], lastPage: parseInt(lastPage) });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("메모 정보를 불러올 수 없습니다.");
+  }
+});
 
 router.get("/memo/student/detail/:memoId", async (req, res, next) => {
   const { memoId } = req.params;
