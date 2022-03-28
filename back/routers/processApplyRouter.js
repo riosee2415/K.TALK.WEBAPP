@@ -1,7 +1,7 @@
 const express = require("express");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isNanCheck = require("../middlewares/isNanCheck");
-const { Application, ProcessApply } = require("../models");
+const { ProcessApply } = require("../models");
 const models = require("../models");
 
 const router = express.Router();
@@ -131,7 +131,7 @@ router.post("/create", async (req, res, next) => {
     cOccupation,
   } = req.body;
   try {
-    const createResult = await Application.create({
+    const createResult = await ProcessApply.create({
       firstName,
       lastName,
       dateOfBirth,
@@ -168,7 +168,7 @@ router.post("/create", async (req, res, next) => {
 router.patch("/update", isAdminCheck, async (req, res, next) => {
   const { id } = req.body;
   try {
-    const exApp = await Application.findOne({
+    const exApp = await ProcessApply.findOne({
       where: { id: parseInt(id) },
     });
 
@@ -176,7 +176,7 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 신청서입니다.");
     }
 
-    const updateResult = await Application.update(
+    const updateResult = await ProcessApply.update(
       {
         isComplete: true,
         completedAt: new Date(),

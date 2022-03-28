@@ -248,6 +248,10 @@ router.get("/detail/:LectureId", async (req, res, next) => {
          AND  A.id = ${LectureId}
     `;
 
+    // const memoQuery = `
+
+    // `;
+
     const list = await models.sequelize.query(selectQuery);
 
     return res.status(200).json({ list: list[0] });
