@@ -31,7 +31,6 @@ router.post("/list", async (req, res, next) => {
             A.time,
             DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
             DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
-            A.isAtt,
             A.LectureId,
             A.UserId,
             B.course,
@@ -55,7 +54,6 @@ router.post("/list", async (req, res, next) => {
     const selectQuery = `
     SELECT	A.id,
             A.time,
-            A.isAtt,
             DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
             DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
             A.LectureId,
@@ -100,7 +98,7 @@ router.post("/list", async (req, res, next) => {
 
 // 출석 create
 router.post("/create", async (req, res, next) => {
-  const { time, LectureId, UserId, isAtt } = req.body;
+  const { time, LectureId, UserId } = req.body;
   try {
     const exLecture = await Lecture.findOne({
       where: { id: parseInt(LectureId) },
@@ -131,7 +129,6 @@ router.post("/create", async (req, res, next) => {
     const exCommQuery = `
       SELECT  id,
               time,
-              isAtt,
               LectureId,
               UserId
         FROM  commutes
@@ -143,8 +140,6 @@ router.post("/create", async (req, res, next) => {
 
     const queryResult = await models.sequelize.query(exCommQuery);
 
-    console.log(queryResult[0].length);
-
     if (queryResult[0].length > 0) {
       return res
         .status(401)
@@ -155,7 +150,6 @@ router.post("/create", async (req, res, next) => {
       time,
       LectureId: parseInt(LectureId),
       UserId: parseInt(UserId),
-      isAtt,
     });
 
     if (!createResult) {
