@@ -24,7 +24,7 @@ import Theme from "../../../components/Theme";
 import wrapper from "../../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import {
-  LECTURE_DETAIL_LECTURE_REQUEST,
+  LECTURE_DETAIL_REQUEST,
   LECTURE_STUDENT_LIST_REQUEST,
 } from "../../../reducers/lecture";
 
@@ -86,7 +86,7 @@ const DetailClass = () => {
   useEffect(() => {
     if (router.query) {
       dispatch({
-        type: LECTURE_DETAIL_LECTURE_REQUEST,
+        type: LECTURE_DETAIL_REQUEST,
         data: {
           LectureId: router.query.id,
         },

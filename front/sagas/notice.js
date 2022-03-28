@@ -53,7 +53,7 @@ import {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function noticeLectureListAPI(data) {
-  return axios.post(`/api/notice/lecture/list?page${data.page}`, data);
+  return axios.post(`/api/notice/lecture/list?page=${data.page}`, data);
 }
 
 function* noticeLectureList(action) {

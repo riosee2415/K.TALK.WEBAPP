@@ -33,6 +33,7 @@ import {
   NOTICE_ADMIN_CREATE_REQUEST,
   NOTICE_LECTURE_LIST_REQUEST,
   NOTICE_ADMIN_LIST_REQUEST,
+  NOTICE_FILE_INIT,
 } from "../../../../reducers/notice";
 import { withRouter } from "next/router";
 import useInput from "../../../../hooks/useInput";
@@ -51,7 +52,7 @@ import {
 } from "../../../../components/commonComponents";
 import { LECTURE_LIST_REQUEST } from "../../../../reducers/lecture";
 import ToastEditorComponent from "../../../../components/editor/ToastEditorComponent";
-import ToastEditorComponent2 from "../../../../components/editor/ToastEditorComponent2";
+import ToastEditorComponent3 from "../../../../components/editor/ToastEditorComponent3";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -118,6 +119,7 @@ const NoticeList = ({ router }) => {
   const [state, setState] = useState(null);
   const [isLectureBoard, setIsLectureBoard] = useState(false);
 
+  const [currentLectureId, setCurrentLectureId] = useState(null);
   const [currentListType, setCurrentListType] = useState(null);
   const [contentData, setContentData] = useState("");
 
@@ -135,6 +137,7 @@ const NoticeList = ({ router }) => {
     createModal,
     detailModal,
     st_noticeCreateDone,
+    st_noticeLectureCreateDone,
     st_noticeUpdateDone,
     st_noticeDeleteDone,
 
@@ -142,6 +145,7 @@ const NoticeList = ({ router }) => {
     st_noticeCreateError,
     st_noticeUpdateError,
     st_noticeDeleteError,
+    st_noticeLectureCreateError,
   } = useSelector((state) => state.notice);
 
   const { lectures } = useSelector((state) => state.lecture);
@@ -181,6 +185,12 @@ const NoticeList = ({ router }) => {
   }, [st_noticeCreateError]);
 
   useEffect(() => {
+    if (st_noticeLectureCreateError) {
+      return message.error(st_noticeLectureCreateError);
+    }
+  }, [st_noticeLectureCreateError]);
+
+  useEffect(() => {
     if (st_noticeUpdateError) {
       return message.error(st_noticeUpdateError);
     }
@@ -197,14 +207,51 @@ const NoticeList = ({ router }) => {
       setCurrentListType(1);
 
       dispatch({
+        type: NOTICE_ADMIN_LIST_REQUEST,
+        data: {
+          level: 1,
+        },
+      });
+
+      dispatch({
         type: CREATE_MODAL_CLOSE_REQUEST,
+      });
+      dispatch({
+        type: NOTICE_FILE_INIT,
       });
     }
   }, [st_noticeCreateDone]);
 
   useEffect(() => {
+    if (st_noticeLectureCreateDone) {
+      setCurrentListType(1);
+
+      dispatch({
+        type: NOTICE_ADMIN_LIST_REQUEST,
+        data: {
+          level: 1,
+        },
+      });
+
+      dispatch({
+        type: CREATE_MODAL_CLOSE_REQUEST,
+      });
+      dispatch({
+        type: NOTICE_FILE_INIT,
+      });
+    }
+  }, [st_noticeLectureCreateDone]);
+
+  useEffect(() => {
     if (st_noticeUpdateDone) {
       setCurrentListType(1);
+
+      dispatch({
+        type: NOTICE_ADMIN_LIST_REQUEST,
+        data: {
+          level: 1,
+        },
+      });
 
       dispatch({
         type: CREATE_MODAL_CLOSE_REQUEST,
@@ -214,9 +261,22 @@ const NoticeList = ({ router }) => {
 
   useEffect(() => {
     if (st_noticeDeleteDone) {
-      setCurrentListType(1);
+      currentListType === 4
+        ? dispatch({
+            type: NOTICE_LECTURE_LIST_REQUEST,
+            data: {
+              page: currentPage,
+              LectureId: currentLectureId,
+            },
+          })
+        : dispatch({
+            type: NOTICE_ADMIN_LIST_REQUEST,
+            data: {
+              level: currentListType,
+            },
+          });
     }
-  }, [st_noticeDeleteDone, currentListType]);
+  }, [st_noticeDeleteDone]);
 
   useEffect(() => {
     if (!createModal) {
@@ -234,7 +294,7 @@ const NoticeList = ({ router }) => {
         },
       });
     }
-  }, []);
+  }, [currentListType]);
 
   useEffect(() => {
     if (updateData) {
@@ -278,7 +338,9 @@ const NoticeList = ({ router }) => {
     dispatch({
       type: CREATE_MODAL_CLOSE_REQUEST,
     });
-  }, [createModal]);
+    setIsLectureBoard(false);
+    filename.setValue(``);
+  }, [createModal, filename]);
 
   const updateModalOpen = useCallback(
     (data) => {
@@ -296,6 +358,7 @@ const NoticeList = ({ router }) => {
       type: CREATE_MODAL_CLOSE_REQUEST,
     });
     setUpdateData(null);
+    filename.setValue(``);
   }, [createModal]);
 
   const deletePopToggle = useCallback(
@@ -307,6 +370,7 @@ const NoticeList = ({ router }) => {
   );
 
   const onFill = useCallback((data) => {
+    console.log(data);
     const type = data.LectureId
       ? "강의 게시판"
       : data.level === 2
@@ -315,11 +379,14 @@ const NoticeList = ({ router }) => {
       ? "학생 게시판"
       : "전체 이용자 게시판";
 
+    const lecture = data.LectureId && data.LectureId;
+
     formRef.current.setFieldsValue({
       title: data.title,
       content: data.content,
       type,
       author: data.author,
+      lecture,
     });
   }, []);
 
@@ -435,6 +502,7 @@ const NoticeList = ({ router }) => {
     if (e === "강의 게시판") {
       setIsLectureBoard(true);
     } else {
+      setCurrentLectureId(null);
       setIsLectureBoard(false);
     }
   }, []);
@@ -442,20 +510,21 @@ const NoticeList = ({ router }) => {
   const otherPageCall = useCallback(
     (changePage) => {
       setCurrentPage(changePage);
-      const queryString = `?page=${changePage}`;
 
       dispatch({
-        type: NOTICE_ADMIN_LIST_REQUEST,
+        type: NOTICE_LECTURE_LIST_REQUEST,
         data: {
-          qs: queryString || "",
+          page: changePage,
+          LectureId: currentLectureId,
         },
       });
     },
-    [searchValue]
+    [currentLectureId]
   );
 
   const listChangeHandler = useCallback(
     (LectureId) => {
+      setCurrentLectureId(LectureId);
       dispatch({
         type: NOTICE_LECTURE_LIST_REQUEST,
         data: {
@@ -470,6 +539,10 @@ const NoticeList = ({ router }) => {
   const getEditContent = (contentValue) => {
     setContentData(contentValue);
   };
+
+  const listBtnClickHandler = useCallback((type) => {
+    setCurrentListType(type);
+  }, []);
 
   ////// DATAVIEW //////
   const columns = [
@@ -522,7 +595,7 @@ const NoticeList = ({ router }) => {
           <Col>
             <Button
               type={currentListType === 1 && `primary`}
-              onClick={() => setCurrentListType(1)}
+              onClick={() => listBtnClickHandler(1)}
             >
               학생 게시판
             </Button>
@@ -530,7 +603,7 @@ const NoticeList = ({ router }) => {
           <Col>
             <Button
               type={currentListType === 2 && `primary`}
-              onClick={() => setCurrentListType(2)}
+              onClick={() => listBtnClickHandler(2)}
             >
               강사 게시판
             </Button>
@@ -538,7 +611,7 @@ const NoticeList = ({ router }) => {
           <Col>
             <Button
               type={currentListType === 4 && `primary`}
-              onClick={() => setCurrentListType(4)}
+              onClick={() => listBtnClickHandler(4)}
             >
               강의 게시판
             </Button>
@@ -546,12 +619,13 @@ const NoticeList = ({ router }) => {
           <Col>
             <Button
               type={currentListType === 3 && `primary`}
-              onClick={() => setCurrentListType(3)}
+              onClick={() => listBtnClickHandler(3)}
             >
               전체 이용자 게시판
             </Button>
           </Col>
         </RowWrapper>
+        {console.log(currentListType)}
         {currentListType === 4 && (
           <RowWrapper margin={`0 0 10px`}>
             <Text lineHeight={`2rem`}>강의 선택 :&nbsp;</Text>
@@ -673,7 +747,11 @@ const NoticeList = ({ router }) => {
               label="작성자"
               rules={[{ required: true }]}
             >
-              <Input allowClear placeholder="Title..." />
+              <Input
+                allowClear
+                placeholder="Title..."
+                disabled={updateData ? true : false}
+              />
             </Form.Item>
 
             <Form.Item
@@ -687,7 +765,7 @@ const NoticeList = ({ router }) => {
                 autoSize={{ minRows: 10, maxRows: 10 }}
               /> */}
               {updateData ? (
-                <ToastEditorComponent2
+                <ToastEditorComponent3
                   action={getEditContent}
                   updateData={updateData}
                 />
