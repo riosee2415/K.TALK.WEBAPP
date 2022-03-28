@@ -59,6 +59,7 @@ import {
 import { useRouter } from "next/router";
 import {
   LECTURE_CREATE_REQUEST,
+  LECTURE_DETAIL_REQUEST,
   LECTURE_DIARY_CREATE_REQUEST,
   LECTURE_DIARY_LIST_REQUEST,
   LECTURE_FILE_REQUEST,
@@ -354,6 +355,16 @@ const Index = () => {
 
     st_lectureHomeWorkCreateDone,
     st_lectureHomeWorkCreateError,
+
+    lectureSubmitList,
+    lectureSubmitLastPage,
+
+    st_lectureSubmitListDone,
+    st_lectureSubmitListError,
+
+    lectureDetail,
+    st_lectureDetailDone,
+    st_lectureDetailError,
   } = useSelector((state) => state.lecture);
 
   const {
@@ -437,6 +448,7 @@ const Index = () => {
   const [currentPage2, setCurrentPage2] = useState(1);
   const [currentPage3, setCurrentPage3] = useState(1);
   const [currentPage4, setCurrentPage4] = useState(1);
+  const [currentPage5, setCurrentPage5] = useState(1);
 
   const [noticeContent, setNoticeContent] = useState("");
 
@@ -506,6 +518,13 @@ const Index = () => {
         LectureId: parseInt(router.query.id),
         page: 1,
         search: "",
+      },
+    });
+
+    dispatch({
+      type: LECTURE_DETAIL_REQUEST,
+      data: {
+        LectureId: parseInt(router.query.id),
       },
     });
   }, [me, router.query]);
@@ -658,7 +677,7 @@ const Index = () => {
     dispatch({
       type: LECTURE_SUBMIT_LIST_REQUEST,
       data: {
-        LectureId: router.query.id,
+        LectureId: parseInt(router.query.id),
         search: "",
         page: 1,
       },
@@ -951,6 +970,18 @@ const Index = () => {
     });
   }, []);
 
+  const onChangeSubmitPage = useCallback((page) => {
+    setCurrentPage5(page);
+
+    dispatch({
+      type: NOTICE_LECTURE_LIST_REQUEST,
+      data: {
+        page,
+        LectureId: router.query.id,
+      },
+    });
+  }, []);
+
   const noticeDetailHandler = useCallback((id) => {
     dispatch({
       type: NOTICE_DETAIL_REQUEST,
@@ -1177,44 +1208,52 @@ const Index = () => {
             </Wrapper>
 
             <Wrapper>
-              <Wrapper
-                dr={`row`}
-                ju={`flex-start`}
-                al={`flex-start`}
-                shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
-                padding={width < 700 ? `15px 10px 10px` : `35px 30px`}
-                margin={`0 0 20px`}
-                radius={`10px`}>
-                <Wrapper
-                  width={width < 1280 ? (width < 800 ? `100%` : `60%`) : `37%`}
-                  dr={`row`}
-                  ju={`flex-start`}
-                  al={`flex-start`}>
-                  <Wrapper
-                    width={`auto`}
-                    padding={width < 700 ? `0` : `5px`}
-                    margin={`0 10px 0 0`}>
-                    <Image
-                      width={`22px`}
-                      height={`22px`}
-                      src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
-                      alt="clock_icon"
-                    />
-                  </Wrapper>
-                  <Wrapper
-                    width={`calc(100% - 42px)`}
-                    dr={`row`}
-                    ju={`flex-start`}>
-                    {clockArr &&
-                      clockArr.length > 0 &&
-                      clockArr.map((data, idx) => {
-                        return (
-                          <>
+              {lectureDetail && lectureDetail.length === 0
+                ? ""
+                : lectureDetail &&
+                  lectureDetail.map((data, idx) => {
+                    return (
+                      <Wrapper
+                        dr={`row`}
+                        ju={`flex-start`}
+                        al={`flex-start`}
+                        shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
+                        padding={width < 700 ? `15px 10px 10px` : `35px 30px`}
+                        margin={`0 0 20px`}
+                        radius={`10px`}>
+                        <Wrapper
+                          width={
+                            width < 1280
+                              ? width < 800
+                                ? `100%`
+                                : `60%`
+                              : `37%`
+                          }
+                          dr={`row`}
+                          ju={`flex-start`}
+                          al={`flex-start`}>
+                          <Wrapper
+                            width={`auto`}
+                            padding={width < 700 ? `0` : `5px`}
+                            margin={`0 10px 0 0`}>
+                            <Image
+                              width={`22px`}
+                              height={`22px`}
+                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
+                              alt="clock_icon"
+                            />
+                          </Wrapper>
+                          <Wrapper
+                            width={`calc(100% - 42px)`}
+                            dr={`row`}
+                            ju={`flex-start`}>
                             <Text
                               fontSize={width < 700 ? `14px` : `18px`}
                               fontWeight={`bold`}
                               lineHeight={`1.22`}>
-                              {data.name}&nbsp;&nbsp;|&nbsp;&nbsp;{data.time}
+                              {data.day}
+                              &nbsp;&nbsp;|&nbsp;&nbsp;
+                              {moment(data.time, "YYYY-MM-DD").format("LT")}
                             </Text>
                             <Wrapper
                               display={
@@ -1233,80 +1272,85 @@ const Index = () => {
                                   : `0 20px`
                               }
                             />
-                          </>
-                        );
-                      })}
-                  </Wrapper>
-                </Wrapper>
+                          </Wrapper>
+                        </Wrapper>
 
-                <Wrapper dr={`row`} width={width < 1400 ? `100%` : `60%`}>
-                  <Wrapper
-                    dr={`row`}
-                    ju={`flex-start`}
-                    margin={width < 800 ? `10px 0 0` : `0`}
-                    width={width < 800 ? `100%` : `100%`}>
-                    <Image
-                      width={`22px`}
-                      height={`22px`}
-                      src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
-                      alt="calender_icon"
-                      margin={`0 5px 0 0`}
-                    />
+                        <Wrapper
+                          dr={`row`}
+                          width={width < 1400 ? `100%` : `60%`}>
+                          <Wrapper
+                            dr={`row`}
+                            ju={`flex-start`}
+                            margin={width < 800 ? `10px 0 0` : `0`}
+                            width={width < 800 ? `100%` : `100%`}>
+                            <Image
+                              width={`22px`}
+                              height={`22px`}
+                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
+                              alt="calender_icon"
+                              margin={`0 5px 0 0`}
+                            />
 
-                    <CustomText2
-                      color={Theme.black_2C}
-                      fontWeight={`normal`}
-                      width={width < 700 ? `auto` : `140px`}>
-                      2022-01-28
-                    </CustomText2>
+                            <CustomText2
+                              color={Theme.black_2C}
+                              fontWeight={`normal`}
+                              width={width < 700 ? `auto` : `140px`}>
+                              {moment(data.startDate, "YYYY/MM/DD").format(
+                                "YYYY/MM/DD"
+                              )}
+                            </CustomText2>
 
-                    <Image
-                      width={`22px`}
-                      height={`22px`}
-                      src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_number.png"
-                      alt="calender_icon"
-                      margin={`0 5px 0 0`}
-                    />
+                            <Image
+                              width={`22px`}
+                              height={`22px`}
+                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_number.png"
+                              alt="calender_icon"
+                              margin={`0 5px 0 0`}
+                            />
 
-                    <CustomText2
-                      color={Theme.black_2C}
-                      fontWeight={`normal`}
-                      fontSize={width < 700 ? `14px` : `18px`}
-                      width={width < 700 ? `auto` : `140px`}
-                      borderRightBool={true}>
-                      NO.12384
-                    </CustomText2>
+                            <CustomText2
+                              color={Theme.black_2C}
+                              fontWeight={`normal`}
+                              fontSize={width < 700 ? `14px` : `18px`}
+                              width={width < 700 ? `auto` : `140px`}
+                              borderRightBool={true}>
+                              {`NO.${data.id}`}
+                            </CustomText2>
 
-                    {width > 700 && (
-                      <>
-                        <Text
-                          width={`50px`}
-                          color={Theme.black_2C}
-                          fontSize={width < 700 ? `14px` : `18px`}
-                          margin={width < 700 ? `0` : `0 13px 0 0`}>
-                          진도율
-                        </Text>
+                            {width > 700 && (
+                              <>
+                                <Text
+                                  width={`50px`}
+                                  color={Theme.black_2C}
+                                  fontSize={width < 700 ? `14px` : `18px`}
+                                  margin={width < 700 ? `0` : `0 13px 0 0`}>
+                                  진도율
+                                </Text>
 
-                        <CustomProgress percent={55} />
-                      </>
-                    )}
-                  </Wrapper>
+                                <CustomProgress percent={55} />
+                              </>
+                            )}
+                          </Wrapper>
 
-                  {width < 700 && (
-                    <Wrapper dr={`row`} margin={width < 800 ? `10px 0 0` : `0`}>
-                      <Text
-                        width={`50px`}
-                        color={Theme.black_2C}
-                        fontSize={width < 700 ? `14px` : `18px`}
-                        margin={width < 700 ? `0` : `0 13px 0 0`}>
-                        진도율
-                      </Text>
+                          {width < 700 && (
+                            <Wrapper
+                              dr={`row`}
+                              margin={width < 800 ? `10px 0 0` : `0`}>
+                              <Text
+                                width={`50px`}
+                                color={Theme.black_2C}
+                                fontSize={width < 700 ? `14px` : `18px`}
+                                margin={width < 700 ? `0` : `0 13px 0 0`}>
+                                진도율
+                              </Text>
 
-                      <CustomProgress percent={55} />
-                    </Wrapper>
-                  )}
-                </Wrapper>
-              </Wrapper>
+                              <CustomProgress percent={55} />
+                            </Wrapper>
+                          )}
+                        </Wrapper>
+                      </Wrapper>
+                    );
+                  })}
 
               <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
                 {width < 700 ? (
@@ -2594,71 +2638,110 @@ const Index = () => {
           footer={null}
           closable={false}>
           <CustomForm ref={formRef} form={form} onFinish={diaryFinishHandler}>
-            {}
-            <Wrapper
-              dr={`row`}
-              ju={`flex-start`}
-              shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
-              margin={`0 0 10px 0`}
-              padding={`20px`}
-              radius={`10px`}>
-              <Text width={`50%`} fontSize={width < 700 ? `14px` : `16px`}>
-                {/* 한국어로 편지 쓰기 */}
-                {/* {data.title} */}
-              </Text>
+            {lectureSubmitList && lectureSubmitList.length === 0
+              ? ""
+              : lectureSubmitList &&
+                lectureSubmitList.map((data, idx) => {
+                  console.log(data, "data");
+                  return (
+                    <Wrapper
+                      dr={`row`}
+                      ju={`flex-start`}
+                      shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
+                      margin={`0 0 10px 0`}
+                      padding={`20px`}
+                      radius={`10px`}>
+                      <Text
+                        width={`50%`}
+                        fontSize={width < 700 ? `14px` : `16px`}>
+                        {data.course}
+                      </Text>
 
-              <Wrapper width={`40%`} dr={width < 1100 ? `column` : `row`}>
-                <CustomWrapper width={width < 1100 ? `100%` : `50%`}>
-                  <DownloadOutlined
-                    onClick={() => fileDownloadHandler(data.file)}
-                    style={{
-                      fontSize: width < 700 ? 15 : 25,
-                      color: Theme.basicTheme_C,
-                      marginRight: 10,
-                      cursor: `pointer`,
-                    }}
-                  />
+                      <Wrapper
+                        width={`40%`}
+                        dr={width < 1100 ? `column` : `row`}>
+                        <CustomWrapper width={width < 1100 ? `100%` : `50%`}>
+                          <DownloadOutlined
+                            onClick={() => fileDownloadHandler(data.file)}
+                            style={{
+                              fontSize: width < 700 ? 15 : 25,
+                              color: Theme.basicTheme_C,
+                              marginRight: 10,
+                              cursor: `pointer`,
+                            }}
+                          />
 
-                  <Text
-                    fontSize={width < 700 ? `14px` : `16px`}
-                    display={width < 700 ? `none` : `block`}>
-                    파일 업로드
-                  </Text>
-                </CustomWrapper>
+                          <Text
+                            fontSize={width < 700 ? `14px` : `16px`}
+                            display={width < 700 ? `none` : `block`}>
+                            파일 업로드
+                          </Text>
+                        </CustomWrapper>
 
-                <CustomWrapper
-                  width={width < 1100 ? `100%` : `50%`}
-                  beforeBool={width < 1300 ? false : true}>
-                  <CalendarOutlined
-                    style={{
-                      fontSize: width < 700 ? 15 : 25,
-                      color: Theme.basicTheme_C,
-                      marginRight: 10,
-                      cursor: `pointer`,
-                    }}
-                  />
-                  <Text fontSize={width < 700 ? `14px` : `16px`}>
-                    {/* {`${data.date}까지`} */}
-                    2022/01/22
-                  </Text>
-                </CustomWrapper>
-              </Wrapper>
+                        <CustomWrapper
+                          width={width < 1100 ? `100%` : `50%`}
+                          beforeBool={width < 1300 ? false : true}>
+                          <CalendarOutlined
+                            style={{
+                              fontSize: width < 700 ? 15 : 25,
+                              color: Theme.basicTheme_C,
+                              marginRight: 10,
+                              cursor: `pointer`,
+                            }}
+                          />
+                          <Text fontSize={width < 700 ? `14px` : `16px`}>
+                            {`${data.date}까지`}
+                          </Text>
+                        </CustomWrapper>
+                      </Wrapper>
 
-              <Wrapper width={`10%`} ju={`center`}>
-                <Text
-                  fontSize={width < 700 ? `14px` : `16px`}
-                  margin={width < 700 ? `0 0 0 5px` : "0"}
-                  fontWeight={`bold`}>
-                  제출기한
-                </Text>
-              </Wrapper>
-            </Wrapper>
+                      <Wrapper width={`10%`} ju={`center`}>
+                        <Text
+                          fontSize={width < 700 ? `14px` : `16px`}
+                          margin={width < 700 ? `0 0 0 5px` : "0"}
+                          fontWeight={`bold`}
+                          color={
+                            moment
+                              .duration(
+                                moment(data.date, "YYYY-MM-DD").diff(
+                                  moment(new Date(), "YYYY-MM-DD")
+                                )
+                              )
+                              .asDays() < 1
+                              ? `${Theme.red_C}`
+                              : ""
+                          }>
+                          {moment
+                            .duration(
+                              moment(data.date, "YYYY-MM-DD").diff(
+                                moment(new Date(), "YYYY-MM-DD")
+                              )
+                            )
+                            .asDays() < 1
+                            ? "기간 만료"
+                            : "제출 기간"}
+                        </Text>
+                      </Wrapper>
+                    </Wrapper>
+                  );
+                })}
 
             <Wrapper margin={`30px 0`}>
               <CustomPage
-                current={1}
-                total={1 * 10}
-                onChange={(page) => onChangeDiaryPage(page)}></CustomPage>
+                current={currentPage5}
+                total={lectureSubmitLastPage * 10}
+                onChange={(page) => onChangeSubmitPage(page)}></CustomPage>
+            </Wrapper>
+
+            <Wrapper dr={`row`}>
+              <CommonButton
+                kindOf={`grey`}
+                margin={`0 10px 0 0`}
+                color={Theme.darkGrey_C}
+                radius={`5px`}
+                onClick={() => onReset()}>
+                돌아가기
+              </CommonButton>
             </Wrapper>
           </CustomForm>
         </CustomModal>

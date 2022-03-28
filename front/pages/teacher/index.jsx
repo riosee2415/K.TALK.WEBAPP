@@ -310,6 +310,8 @@ const Index = () => {
   const [currentPage1, setCurrentPage1] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
 
+  const [zoomLinkToggle, setZoomLinkToggle] = useState(false);
+
   const imageInput = useRef();
 
   ////// REDUX //////
@@ -319,7 +321,7 @@ const Index = () => {
     dispatch({
       type: LECTURE_TEACHER_LIST_REQUEST,
       data: {
-        TeacherId: me.id,
+        TeacherId: me && me.id,
       },
     });
   }, [me]);
@@ -328,7 +330,7 @@ const Index = () => {
     dispatch({
       type: NOTICE_LIST_REQUEST,
       data: {
-        page: 1,
+        qs: 1,
       },
     });
   }, []);
@@ -422,6 +424,10 @@ const Index = () => {
     });
   }, [postCodeModal]);
 
+  const zoomLinkModalToggle = useCallback(() => {
+    setZoomLinkToggle((prev) => !prev);
+  }, [zoomLinkToggle]);
+
   ////// HANDLER //////
 
   const clickImageUpload = useCallback(() => {
@@ -471,6 +477,17 @@ const Index = () => {
 
   const onChangeNoticePage = useCallback((page) => {
     setCurrentPage1(page);
+
+    dispatch({
+      type: NOTICE_LIST_REQUEST,
+      data: {
+        page,
+      },
+    });
+  }, []);
+
+  const onChangeLecturePage = useCallback((page) => {
+    setCurrentPage2(page);
 
     dispatch({
       type: NOTICE_LIST_REQUEST,
@@ -626,7 +643,7 @@ const Index = () => {
                   </Wrapper>
                 ) : (
                   noticeList &&
-                  noticeList.map((data) => {
+                  noticeList.map((data, idx) => {
                     return (
                       <Wrapper
                         dr={`row`}
@@ -684,6 +701,7 @@ const Index = () => {
                 ? ""
                 : lectureTeacherList &&
                   lectureTeacherList.map((data, idx) => {
+                    console.log(data, idx, "asdlkajsd");
                     return (
                       <Wrapper
                         dr={`row`}
@@ -723,8 +741,9 @@ const Index = () => {
                               fontSize={width < 700 ? `14px` : `18px`}
                               fontWeight={`bold`}
                               lineHeight={`1.22`}>
-                              {data.name}&nbsp;&nbsp;|&nbsp;&nbsp;
-                              {data.time}
+                              {data.day}
+                              &nbsp;&nbsp;|&nbsp;&nbsp;
+                              {moment(data.time, "YYYY-MM-DD").format("LT")}
                             </Text>
                             <Wrapper
                               display={
@@ -763,8 +782,9 @@ const Index = () => {
                               color={Theme.black_2C}
                               fontWeight={`normal`}
                               width={width < 700 ? `auto` : `140px`}>
-                              2022-01-28
-                              {/* {data.startDate} */}
+                              {moment(data.startDate, "YYYY/MM/DD").format(
+                                "YYYY/MM/DD"
+                              )}
                             </CustomText2>
 
                             <Image
@@ -779,6 +799,15 @@ const Index = () => {
                               fontSize={width < 700 ? `12px` : `18px`}
                               width={width < 700 ? `auto` : `140px`}>
                               {`NO.${data.id}`}
+                            </Text>
+
+                            <Text
+                              cursor={`pointer`}
+                              color={Theme.black_2C}
+                              fontSize={width < 700 ? `12px` : `18px`}
+                              width={width < 700 ? `auto` : `140px`}
+                              onClick={() => zoomLinkModalToggle()}>
+                              줌 링크 등록
                             </Text>
                           </Wrapper>
 
@@ -798,7 +827,10 @@ const Index = () => {
                   })}
 
               <Wrapper margin={`65px 0 0`}>
-                <CustomPage defaultCurrent={6} total={40}></CustomPage>
+                <CustomPage
+                  current={currentPage2}
+                  total={noticeLastPage * 10}
+                  onChange={(page) => onChangeLecturePage(page)}></CustomPage>
               </Wrapper>
             </Wrapper>
 
@@ -1000,6 +1032,24 @@ const Index = () => {
               autoClose={false}
               animation
             />
+          </CustomModal>
+
+          <CustomModal
+            width={`700px`}
+            height={`500px`}
+            visible={zoomLinkToggle}
+            onCancel={zoomLinkModalToggle}
+            footer={null}>
+            <Wrapper>
+              <Text fontSize={`22px`} fontWeight={`bold`} margin={`0 0 24px`}>
+                줌링크 등록하기
+              </Text>
+            </Wrapper>
+            <CustomForm>
+              <Form.Item label="줌 링크">
+                <CusotmInput width={`100%`} />
+              </Form.Item>
+            </CustomForm>
           </CustomModal>
         </WholeWrapper>
       </ClientLayout>
