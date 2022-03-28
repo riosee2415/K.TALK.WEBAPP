@@ -26,14 +26,26 @@ import {
 import { CloseOutlined, SearchOutlined } from "@ant-design/icons";
 import {
   BOOK_CREATE_REQUEST,
+  BOOK_DELETE_REQUEST,
+  BOOK_FILE_INIT,
   BOOK_FOLDER_LIST_REQUEST,
   BOOK_LIST_REQUEST,
+  BOOK_UPDATE_REQUEST,
   BOOK_UPLOAD_REQUEST,
   BOOK_UPLOAD_TH_REQUEST,
 } from "../../reducers/book";
 import { Button, Empty, Form, message, Modal, Select } from "antd";
 import { useRouter } from "next/router";
 import useInput from "../../hooks/useInput";
+import { saveAs } from "file-saver";
+
+const LoadNotification = (msg, content) => {
+  notification.open({
+    message: msg,
+    description: content,
+    onClick: () => {},
+  });
+};
 
 const TabWrapper = styled(Wrapper)`
   width: calc(100% / 5 - 13px);
@@ -78,9 +90,9 @@ const ProductMenu = styled(Wrapper)`
   transition: 0.5s;
 
   @media (max-width: 1100px) {
-    bottom: 0;
+    top: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 35px);
     border-radius: 0;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   }
@@ -109,6 +121,10 @@ const Index = () => {
   const [currentTab, setCurrentTab] = useState(0);
   const [currentMenu, setCurrentMenu] = useState(null);
   const [createModal, setCreateModal] = useState(false);
+  const [updateData, setUpdateData] = useState(null);
+
+  const [deletePopVisible, setDeletePopVisible] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
   ////// REDUX //////
   const dispatch = useDispatch();
   const {
@@ -118,8 +134,24 @@ const Index = () => {
     uploadPathTh,
     st_bookCreateDone,
     st_bookCreateError,
+    st_bookUpdateDone,
+    st_bookUpdateError,
+    st_bookDeleteDone,
+    st_bookDeleteError,
   } = useSelector((state) => state.book);
   ////// USEEFFECT //////
+  useEffect(() => {
+    if (updateData) {
+      setTimeout(() => {
+        form.setFieldsValue({
+          thumbnail: updateData.thumbnail,
+          file: updateData.file,
+          title: updateData.title,
+          folder: updateData.BookFolderId,
+        });
+      }, 500);
+    }
+  }, [updateData]);
 
   useEffect(() => {
     dispatch({
@@ -129,22 +161,24 @@ const Index = () => {
       type: BOOK_LIST_REQUEST,
       data: {
         LectureId: router.query.lectureId,
-        BookFolderId: 1,
+        BookFolderId: currentTab,
       },
     });
-  }, [router.query, currentMenu]);
+  }, [router.query, currentTab]);
+
   useEffect(() => {
-    if ("교재가 생성되었습니다.") {
-      message.error(st_bookCreateDone);
+    if (st_bookCreateDone) {
+      message.success("교재가 생성되었습니다.");
       dispatch({
         type: BOOK_LIST_REQUEST,
         data: {
-          BookFolderId: 1,
+          BookFolderId: currentTab,
           LectureId: router.query.lectureId,
         },
       });
     }
-  }, [st_bookCreateDone, router.query, currentMenu]);
+  }, [st_bookCreateDone]);
+
   useEffect(() => {
     if (st_bookCreateError) {
       message.error(st_bookCreateError);
@@ -152,13 +186,93 @@ const Index = () => {
         type: BOOK_LIST_REQUEST,
         data: {
           LectureId: router.query.lectureId,
-          BookFolderId: 1,
+          BookFolderId: currentTab,
         },
       });
     }
-  }, [st_bookCreateError, router.query, currentMenu]);
+  }, [st_bookCreateError]);
+
+  useEffect(() => {
+    if (st_bookUpdateDone) {
+      dispatch({
+        type: BOOK_LIST_REQUEST,
+        data: {
+          LectureId: router.query.lectureId,
+          BookFolderId: currentTab,
+        },
+      });
+      message.success("교재가 생성되었습니다.");
+      updateModalClose();
+    }
+  }, [st_bookUpdateDone]);
+
+  useEffect(() => {
+    if (st_bookUpdateError) {
+      message.error(st_bookUpdateError);
+    }
+  }, [st_bookUpdateError]);
+
+  useEffect(() => {
+    if (st_bookDeleteDone) {
+      dispatch({
+        type: BOOK_LIST_REQUEST,
+        data: {
+          LectureId: router.query.lectureId,
+          BookFolderId: currentTab,
+        },
+      });
+      message.success("교재가 삭제되었습니다.");
+      updateModalClose();
+    }
+  }, [st_bookDeleteDone]);
+
+  useEffect(() => {
+    if (st_bookDeleteError) {
+      message.error(st_bookDeleteError);
+    }
+  }, [st_bookDeleteError]);
   ////// TOGGLE //////
   ////// HANDLER //////
+
+  const fileDownloadHandler = useCallback(async (filePath) => {
+    let blob = await fetch(filePath).then((r) => r.blob());
+
+    const file = new Blob([blob]);
+
+    const ext = filePath.substring(
+      filePath.lastIndexOf(".") + 1,
+      filePath.length
+    );
+
+    const originName = `첨부파일.${ext}`;
+
+    saveAs(file, originName);
+  }, []);
+
+  const deletePopToggle = useCallback(
+    (id) => () => {
+      setDeleteId(id);
+      setDeletePopVisible((prev) => !prev);
+    },
+    [deletePopVisible, deleteId]
+  );
+
+  const deleteNoticeHandler = useCallback(() => {
+    if (!deleteId) {
+      return LoadNotification(
+        "ADMIN SYSTEM ERROR",
+        "일시적인 장애가 발생되었습니다. 잠시 후 다시 시도해주세요."
+      );
+    }
+    dispatch({
+      type: BOOK_DELETE_REQUEST,
+      data: { bookId: deleteId },
+    });
+
+    setDeleteId(null);
+    setDeletePopVisible((prev) => !prev);
+  }, [deleteId]);
+
   const modalOk = useCallback(() => {
     form.submit();
   }, [form]);
@@ -177,6 +291,23 @@ const Index = () => {
       });
     },
     [uploadPath, router.query]
+  );
+
+  const updateSubmit = useCallback(
+    (data) => {
+      dispatch({
+        type: BOOK_UPDATE_REQUEST,
+        data: {
+          id: updateData.id,
+          thumbnail: uploadPathTh ? uploadPathTh : updateData.thumbnail,
+          title: data.title,
+          file: uploadPath ? uploadPath : updateData.file,
+          LectureId: router.query.lectureId,
+          BookFolderId: data.folder,
+        },
+      });
+    },
+    [uploadPath, uploadPathTh, router.query, updateData]
   );
 
   const fileChangeHandler = useCallback((e) => {
@@ -213,6 +344,23 @@ const Index = () => {
   const fileUploadClick2 = useCallback(() => {
     fileRef2.current.click();
   }, [fileRef2.current]);
+
+  const updateModalOpen = useCallback((data) => {
+    setCreateModal(true);
+    setUpdateData(data);
+  }, []);
+  const updateModalClose = useCallback(
+    (data) => {
+      dispatch({
+        type: BOOK_FILE_INIT,
+      });
+
+      setCreateModal(false);
+      setUpdateData(null);
+      form.resetFields();
+    },
+    [form]
+  );
   ////// DATAVIEW //////
 
   return (
@@ -402,6 +550,7 @@ const Index = () => {
                           ju={`flex-start`}
                           height={`40px`}
                           padding={width < 1100 ? `0 0 0 10px` : `0 0 0 30px`}
+                          onClick={() => updateModalOpen(data)}
                         >
                           <Wrapper width={`22px`} margin={`0 20px 0 0`}>
                             <Image
@@ -409,8 +558,9 @@ const Index = () => {
                               alt={`menu_icon`}
                             />
                           </Wrapper>
-                          <Text>이름 바꾸기</Text>
+                          <Text>수정</Text>
                         </Wrapper>
+
                         <Wrapper
                           className={`menu`}
                           color={Theme.grey2_C}
@@ -419,23 +569,7 @@ const Index = () => {
                           ju={`flex-start`}
                           height={`40px`}
                           padding={width < 1100 ? `0 0 0 10px` : `0 0 0 30px`}
-                        >
-                          <Wrapper width={`22px`} margin={`0 20px 0 0`}>
-                            <Image
-                              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_move.png`}
-                              alt={`menu_icon`}
-                            />
-                          </Wrapper>
-                          <Text>이동</Text>
-                        </Wrapper>
-                        <Wrapper
-                          className={`menu`}
-                          color={Theme.grey2_C}
-                          fontSize={`16px`}
-                          dr={`row`}
-                          ju={`flex-start`}
-                          height={`40px`}
-                          padding={width < 1100 ? `0 0 0 10px` : `0 0 0 30px`}
+                          onClick={() => fileDownloadHandler(data.file)}
                         >
                           <Wrapper width={`22px`} margin={`0 20px 0 0`}>
                             <Image
@@ -454,6 +588,7 @@ const Index = () => {
                           height={`40px`}
                           padding={width < 1100 ? `0 0 0 10px` : `0 0 0 30px`}
                           margin={`0 0 20px 0`}
+                          onClick={deletePopToggle(data.id)}
                         >
                           <Wrapper width={`22px`} margin={`0 20px 0 0`}>
                             <Image
@@ -466,21 +601,27 @@ const Index = () => {
                       </ProductMenu>
 
                       <Wrapper onClick={() => setCurrentMenu(data.id)}>
-                        <Image src={data.imagePath} />
+                        <Image src={data.thumbnail} />
                       </Wrapper>
+                      <Text margin={`5px 0 0 `} height={`30px`}>
+                        {data.title}
+                      </Text>
                     </ProductWrapper>
                   );
                 })
               )}
             </Wrapper>
           </RsWrapper>
+          {console.log(updateData)}
           <Modal
             visible={createModal}
-            onCancel={() => setCreateModal(false)}
+            onCancel={
+              updateData ? updateModalClose : () => setCreateModal(false)
+            }
             onOk={modalOk}
           >
-            <Wrapper>
-              <Form form={form} onFinish={onSubmit}>
+            <Wrapper al={`flex-start`}>
+              <Form form={form} onFinish={updateData ? updateSubmit : onSubmit}>
                 <Form.Item
                   rules={[
                     { required: true, message: "교재 제목을 입력해주세요." },
@@ -516,37 +657,63 @@ const Index = () => {
                 </Form.Item>
               </Form>
             </Wrapper>
-            <Wrapper ju={`flex-end`}>
-              <input
-                type="file"
-                name="file"
-                hidden
-                ref={fileRef}
-                onChange={fileChangeHandler}
-              />
-              <Text>
-                {filename.value ? filename.value : `파일을 선택해주세요.`}
-              </Text>
-              <Button type="primary" onClick={fileUploadClick}>
-                FILE UPLOAD
-              </Button>
-            </Wrapper>
-
-            <Wrapper ju={`flex-end`}>
-              <input
-                type="file"
-                name="file"
-                hidden
-                ref={fileRef2}
-                onChange={fileChangeHandler2}
-              />
-              <Wrapper>
-                <Image src={uploadPathTh} alt={`thumbnail`} />
+            <Wrapper dr={`row`} ju={`space-between`} al={`flex-end`}>
+              <Wrapper width={`auto`} margin={`20px 0 0`}>
+                <input
+                  type="file"
+                  name="file"
+                  hidden
+                  ref={fileRef2}
+                  onChange={fileChangeHandler2}
+                />
+                <Wrapper width={`150px`} margin={`0 0 10px`}>
+                  <Image
+                    src={
+                      uploadPathTh
+                        ? `${uploadPathTh}`
+                        : updateData
+                        ? updateData.thumbnail
+                        : `https://via.placeholder.com/${`80`}x${`100`}`
+                    }
+                    alt={`thumbnail`}
+                  />
+                </Wrapper>
+                <Button type="primary" onClick={fileUploadClick2}>
+                  썸네일 이미지 업로드
+                </Button>
               </Wrapper>
-              <Button type="primary" onClick={fileUploadClick2}>
-                FILE UPLOAD
-              </Button>
+
+              <Wrapper
+                width={`auto`}
+                margin={`20px 0 0`}
+                dr={`row`}
+                ju={`flex-end`}
+              >
+                <input
+                  type="file"
+                  name="file"
+                  hidden
+                  ref={fileRef}
+                  onChange={fileChangeHandler}
+                />
+                <Text margin={`0 5px 0 0`}>
+                  {filename.value ? filename.value : `파일을 선택해주세요.`}
+                </Text>
+                <Button type="primary" onClick={fileUploadClick}>
+                  교재 파일 업로드
+                </Button>
+              </Wrapper>
             </Wrapper>
+          </Modal>
+
+          <Modal
+            visible={deletePopVisible}
+            onOk={deleteNoticeHandler}
+            onCancel={deletePopToggle(null)}
+            title="정말 삭제하시겠습니까?"
+          >
+            <Wrapper>삭제 된 데이터는 다시 복구할 수 없습니다.</Wrapper>
+            <Wrapper>정말 삭제하시겠습니까?</Wrapper>
           </Modal>
         </WholeWrapper>
       </ClientLayout>

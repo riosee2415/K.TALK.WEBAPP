@@ -251,7 +251,7 @@ function* bookCreate(action) {
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 function bookUpdateAPI(data) {
-  return axios.post(`/api/book/update`, data);
+  return axios.patch(`/api/book/update`, data);
 }
 
 function* bookUpdate(action) {
@@ -274,7 +274,7 @@ function* bookUpdate(action) {
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 function bookDeleteAPI(data) {
-  return axios.post(`/api/book/delete/${data.bookId}`, data);
+  return axios.delete(`/api/book/delete/${data.bookId}`, data);
 }
 
 function* bookDelete(action) {
