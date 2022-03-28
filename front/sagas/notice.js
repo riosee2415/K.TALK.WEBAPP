@@ -76,7 +76,7 @@ function* noticeLectureList(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function noticeListAPI(data) {
-  return axios.get(`/api/notice/list${data.qs}`, data);
+  return axios.get(`/api/notice/list?${data.page}`, data);
 }
 
 function* noticeList(action) {

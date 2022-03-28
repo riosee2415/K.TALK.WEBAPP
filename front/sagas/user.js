@@ -57,6 +57,10 @@ import {
   USER_PROFILE_UPLOAD_SUCCESS,
   USER_PROFILE_UPLOAD_FAILURE,
   /////////////////////////////
+  USER_TEA_UPDATE_REQUEST,
+  USER_TEA_UPDATE_SUCCESS,
+  USER_TEA_UPDATE_FAILURE,
+  /////////////////////////////
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -434,6 +438,33 @@ function* profileUpload(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function teaUpdateAPI(data) {
+  return axios.patch(`/api/user/teaMemo/update`, data);
+}
+
+function* teaUpdate(action) {
+  try {
+    const result = yield call(teaUpdateAPI, action.data);
+
+    yield put({
+      type: USER_TEA_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_TEA_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchLoadMyInfo() {
@@ -492,6 +523,10 @@ function* watchProfileUpload() {
   yield takeLatest(USER_PROFILE_UPLOAD_REQUEST, profileUpload);
 }
 
+function* watchTeaUpdate() {
+  yield takeLatest(USER_TEA_UPDATE_REQUEST, teaUpdate);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -509,6 +544,7 @@ export default function* userSaga() {
     fork(watchTeaCreate),
     fork(watchMeUpdate),
     fork(watchProfileUpload),
+    fork(watchTeaUpdate),
     //
   ]);
 }

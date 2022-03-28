@@ -9,6 +9,8 @@ const {
   LectureDiary,
   Homework,
   Submit,
+  LectureMessage,
+  LectureStuMemo,
 } = require("../models");
 const models = require("../models");
 const fs = require("fs");
@@ -91,6 +93,7 @@ router.get(["/list", "/list/:sort"], async (req, res, next) => {
               X.viewDate,
               X.memo,
               X.zoomLink,
+              X.zoomPass,
               X.price,
               X.viewPrice,
               X.createdAt,
@@ -115,6 +118,7 @@ router.get(["/list", "/list/:sort"], async (req, res, next) => {
                               CONCAT(A.startDate, " ~ ", A.endDate)			                 AS viewDate,
                               A.memo,
                               A.zoomLink,
+                              A.zoomPass,
                               A.price,
                               CONCAT(FORMAT(A.price, "000"), "원")				AS viewPrice,
                               DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일")		AS createdAt,
@@ -226,6 +230,7 @@ router.get("/detail/:LectureId", async (req, res, next) => {
               CONCAT(A.startDate, " ~ ", A.endDate)			               AS viewDate,
               A.memo,
               A.zoomLink,
+              A.zoomPass,
               A.price,
               CONCAT(FORMAT(A.price, "000"), "원")				             AS viewPrice,
               DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일")		            AS createdAt,
@@ -248,9 +253,34 @@ router.get("/detail/:LectureId", async (req, res, next) => {
          AND  A.id = ${LectureId}
     `;
 
-    const list = await models.sequelize.query(selectQuery);
+    const memoQuery = `
+    SELECT	id,
+            content,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            LectureId 
+      FROM	lectureMessages
+     WHERE  LectureId = ${LectureId}
+    `;
 
-    return res.status(200).json({ list: list[0] });
+    const studentMemoQuery = `
+    SELECT	id,
+            memo,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            LectureId,
+            UserId
+      FROM	lectureStuMemos
+     WHERE  LectureId = ${LectureId}
+    `;
+
+    const list = await models.sequelize.query(selectQuery);
+    const memo = await models.sequelize.query(memoQuery);
+    const studentMemo = await models.sequelize.query(studentMemoQuery);
+
+    return res
+      .status(200)
+      .json({ list: list[0], memo: memo[0], studentMemo: studentMemo[0] });
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의 정보를 불러올 수 없습니다.");
@@ -291,6 +321,7 @@ router.get("/teacher/list/:TeacherId", async (req, res, next) => {
              CONCAT(A.startDate, " ~ ", A.endDate)			               AS viewDate,
              A.memo,
              A.zoomLink,
+             A.zoomPass,
              A.price,
              CONCAT(FORMAT(A.price, "000"), "원")				               AS viewPrice,
              DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일")		              AS createdAt,
@@ -359,6 +390,38 @@ router.post("/student/list", isLoggedIn, async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의를 듣는 학생 목록을 불러올 수 없습니다.");
+  }
+});
+
+//로그인 한 학생이 듣고있는 강의 목록
+
+router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+  try {
+    const exParts = await Participant.findAll({
+      where: { UserId: parseInt(req.user.id) },
+    });
+
+    if (exParts.length === 0) {
+      return res.status(401).send("강의에 참여하고 있지 않습니다.");
+    }
+
+    let lectures = [];
+
+    await Promise.all(
+      exParts.map(async (data) => {
+        lectures = await Lecture.findAll({
+          where: { id: parseInt(data.LectureId) },
+        });
+      })
+    );
+
+    return res.status(200).json({ lectures });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("강의 목록을 불러올 수 없습니다.");
   }
 });
 
@@ -483,7 +546,7 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
 });
 
 router.patch("/link/update", isLoggedIn, async (req, res, next) => {
-  const { id, zoomLink } = req.body;
+  const { id, zoomLink, zoomPass } = req.body;
   try {
     const exLecture = await Lecture.findOne({
       where: { id: parseInt(id) },
@@ -502,6 +565,7 @@ router.patch("/link/update", isLoggedIn, async (req, res, next) => {
     const updateResult = await Lecture.update(
       {
         zoomLink,
+        zoomPass,
       },
       {
         where: { id: parseInt(id) },
@@ -552,6 +616,207 @@ router.delete("/delete/:lectureId", isAdminCheck, async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의를 삭제할 수 없습니다.");
+  }
+});
+
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////// - 강의 별 학생 메모 작성 -///////////////////////////////////
+
+router.get("/memo/student/detail/:memoId", async (req, res, next) => {
+  const { memoId } = req.params;
+
+  if (isNanCheck(memoId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+
+  try {
+    const studentMemoQuery = `
+    SELECT	id,
+            memo,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            LectureId,
+            UserId
+      FROM	lectureStuMemos
+     WHERE  id = ${memoId}
+    `;
+
+    const studentMemo = await models.sequelize.query(studentMemoQuery);
+
+    return res.status(200).json({ studentMemo: studentMemo[0] });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("메모 정보를 불러올 수 없습니다.");
+  }
+});
+
+router.post("/memo/student/create", isLoggedIn, async (req, res, next) => {
+  const { memo, LectureId, UserId } = req.body;
+  try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의 입니다.");
+    }
+
+    if (exLecture.TeacherId !== req.user.id) {
+      return res.status(401).send("자신의 강의가 아닙니다.");
+    }
+
+    const exPart = await Participant.findOne({
+      where: { UserId: parseInt(UserId), LectureId: parseInt(LectureId) },
+    });
+
+    if (!exPart) {
+      return res.status(401).send("해당 강의에 참여하고 있는 학생이 아닙니다.");
+    }
+
+    const createResult = await LectureStuMemo.create({
+      memo,
+      UserId: parseInt(UserId),
+      LectureId: parseInt(LectureId),
+    });
+
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    }
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("학생 메모를 등록할 수 없습니다.");
+  }
+});
+
+router.patch("/memo/student/update", isLoggedIn, async (req, res, next) => {
+  const { id, content } = req.body;
+  try {
+    const exMemo = await LectureStuMemo.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exMemo) {
+      return res.status(401).send("존재하지 않는 학생 메모입니다.");
+    }
+
+    const updateResult = await LectureStuMemo.update(
+      {
+        content,
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("학생 메모를 수정할 수 없습니다.");
+  }
+});
+
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////// - 강의 메모 작성 -///////////////////////////////////////
+
+router.get("/memo/detail/:memoId", async (req, res, next) => {
+  const { memoId } = req.params;
+
+  if (isNanCheck(memoId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+
+  try {
+    const memoQuery = `
+    SELECT	id,
+            content,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            LectureId 
+      FROM	lectureMessages
+     WHERE  id = ${memoId}
+    `;
+
+    const memo = await models.sequelize.query(memoQuery);
+
+    return res.status(200).json({ memo: memo[0] });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("메모 정보를 불러올 수 없습니다.");
+  }
+});
+
+router.post("/memo/create", isLoggedIn, async (req, res, next) => {
+  const { content, LectureId } = req.body;
+
+  try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의입니다.");
+    }
+
+    if (exLecture.TeacherId !== req.user.id) {
+      return res.status(401).send("자신의 강의가 아닙니다.");
+    }
+
+    const createResult = await LectureMessage.create({
+      content,
+      LectureId: parseInt(LectureId),
+    });
+
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    }
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("강의 메모를 작성할 수 없습니다.");
+  }
+});
+
+router.patch("/memo/update", isLoggedIn, async (req, res, next) => {
+  const { id, content } = req.body;
+  try {
+    const exMemo = await LectureMessage.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exMemo) {
+      return res.status(401).send("존재하지 않는 강의 메모입니다.");
+    }
+
+    const updateResult = await LectureMessage.update(
+      {
+        content,
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("강의 메모를 수정할 수 없습니다.");
   }
 });
 
@@ -773,6 +1038,40 @@ router.post("/homework/list", async (req, res, next) => {
     return res
       .status(200)
       .json({ homeworks: homeworks[0], lastPage: parseInt(lastPage) });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("숙제 목록을 불러올 수 없습니다.");
+  }
+});
+
+// 학생이 듣고있는 수업의 숙제 리스트
+
+router.get("/homework/student/list", isLoggedIn, async (req, res, next) => {
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
+  try {
+    const lectures = await Participant.findAll({
+      where: { UserId: parseInt(req.user.id) },
+    });
+
+    if (!lectures) {
+      return res.status(401).send("참여하고 있는 강의가 없습니다.");
+    }
+
+    let homeworks = [];
+
+    await Promise.all(
+      lectures.map(async (data) => {
+        homeworks = await Homework.findAll({
+          where: { LectureId: parseInt(data.LectureId) },
+          order: [["createdAt", "DESC"]],
+        });
+      })
+    );
+
+    return res.status(200).json({ homeworks });
   } catch (error) {
     console.error(error);
     return res.status(401).send("숙제 목록을 불러올 수 없습니다.");

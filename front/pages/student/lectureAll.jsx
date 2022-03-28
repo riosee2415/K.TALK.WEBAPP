@@ -683,36 +683,42 @@ const LectureAll = () => {
   return (
     <>
       <Head>
-        <title>{seo_title.length < 1 ? "ALAL" : seo_title[0].content}</title>
+        <title>
+          {seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+        </title>
 
         <meta
           name="subject"
-          content={seo_title.length < 1 ? "ALAL" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
         />
         <meta
           name="title"
-          content={seo_title.length < 1 ? "ALAL" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
         />
         <meta name="keywords" content={seo_keywords} />
         <meta
           name="description"
           content={
-            seo_desc.length < 1 ? "undefined description" : seo_desc[0].content
+            seo_desc.length < 1
+              ? "REAL-TIME ONLINE KOREAN LESSONS"
+              : seo_desc[0].content
           }
         />
         {/* <!-- OG tag  --> */}
         <meta
           property="og:title"
-          content={seo_title.length < 1 ? "ALAL" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
         />
         <meta
           property="og:site_name"
-          content={seo_title.length < 1 ? "ALAL" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
         />
         <meta
           property="og:description"
           content={
-            seo_desc.length < 1 ? "undefined description" : seo_desc[0].content
+            seo_desc.length < 1
+              ? "REAL-TIME ONLINE KOREAN LESSONS"
+              : seo_desc[0].content
           }
         />
         <meta property="og:keywords" content={seo_keywords} />
@@ -727,7 +733,8 @@ const LectureAll = () => {
             <Wrapper
               margin={width < 700 ? `30px 0` : `60px 0`}
               dr={`row`}
-              ju={`space-between`}>
+              ju={`space-between`}
+            >
               <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
                 <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
                   <Image
@@ -745,7 +752,8 @@ const LectureAll = () => {
                 <Text
                   fontSize={width < 700 ? `20px` : `28px`}
                   fontWeight={`bold`}
-                  padding={`0 0 0 15px`}>
+                  padding={`0 0 0 15px`}
+                >
                   안녕하세요,&nbsp;
                   <SpanText color={Theme.basicTheme_C}>
                     {me && me.username}
@@ -763,7 +771,8 @@ const LectureAll = () => {
             <Wrapper al={`flex-start`} margin={`0 0 20px`}>
               <Text
                 fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}>
+                fontWeight={`bold`}
+              >
                 내 강의정보
               </Text>
             </Wrapper>
@@ -776,16 +785,19 @@ const LectureAll = () => {
               ju={`space-between`}
               shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
               margin={`0 0 86px`}
-              al={width < 1100 && `flex-start`}>
+              al={width < 1100 && `flex-start`}
+            >
               <Wrapper
                 width={width < 800 ? `calc(100%)` : `calc(100%)`}
-                position={`relative`}>
+                position={`relative`}
+              >
                 <Wrapper dr={`row`}>
                   <Wrapper width={width < 1100 ? `100%` : `calc(70% - 1px)`}>
                     <Wrapper
                       width={`100%`}
                       dr={`row`}
-                      al={width < 800 && `flex-start`}>
+                      al={width < 800 && `flex-start`}
+                    >
                       <Image
                         position={`absolute`}
                         top={`0`}
@@ -797,12 +809,14 @@ const LectureAll = () => {
                         alt="student_thumbnail"
                       />
                       <Wrapper
-                        margin={width < 800 ? `0 0 0 100px` : `0 0 0 204px`}>
+                        margin={width < 800 ? `0 0 0 100px` : `0 0 0 204px`}
+                      >
                         <Wrapper dr={`row`} ju={`flex-start`}>
                           <Text
                             margin={`0 10px 0 0`}
                             fontSize={width < 800 ? `16px` : `18px`}
-                            fontWeight={`bold`}>
+                            fontWeight={`bold`}
+                          >
                             강의명
                           </Text>
                           <Text>한국어 초급/중급반</Text>
@@ -811,24 +825,28 @@ const LectureAll = () => {
                           dr={`row`}
                           ju={`flex-start`}
                           color={Theme.grey2_C}
-                          fontSize={width < 800 ? `12px` : `16px`}>
+                          fontSize={width < 800 ? `12px` : `16px`}
+                        >
                           <Text lineHeight={`1.19`}>강사 이름</Text>
                           <Text
                             lineHeight={`1.19`}
-                            margin={width < 800 ? `5px` : `0 10px`}>
+                            margin={width < 800 ? `5px` : `0 10px`}
+                          >
                             |
                           </Text>
                           <Text lineHeight={`1.19`}>강의 수 : 5/30</Text>
                           <Text
                             lineHeight={`1.19`}
-                            margin={width < 800 ? `5px` : `0 10px`}>
+                            margin={width < 800 ? `5px` : `0 10px`}
+                          >
                             |
                           </Text>
                           <Text lineHeight={`1.19`}>등록상황 : 수료중</Text>
                         </Wrapper>
                       </Wrapper>
                       <Wrapper
-                        margin={width < 800 ? `40px 0 0` : `35px 0 0  204px`}>
+                        margin={width < 800 ? `40px 0 0` : `35px 0 0  204px`}
+                      >
                         <Wrapper dr={`row`} ju={`flex-start`}>
                           <Text width={width < 800 ? `100%` : `15%`}>
                             <SpanText color={Theme.subTheme2_C}>●</SpanText>
@@ -845,7 +863,8 @@ const LectureAll = () => {
                           <Text
                             width={`10%`}
                             color={Theme.grey2_C}
-                            padding={`0 0 0 10px`}>
+                            padding={`0 0 0 10px`}
+                          >
                             (100%)
                           </Text>
                         </Wrapper>
@@ -865,7 +884,8 @@ const LectureAll = () => {
                           <Text
                             width={`10%`}
                             color={Theme.grey2_C}
-                            padding={`0 0 0 10px`}>
+                            padding={`0 0 0 10px`}
+                          >
                             (55%)
                           </Text>
                         </Wrapper>
@@ -885,7 +905,8 @@ const LectureAll = () => {
                           <Text
                             width={`10%`}
                             color={Theme.grey2_C}
-                            padding={`0 0 0 10px`}>
+                            padding={`0 0 0 10px`}
+                          >
                             (100%)
                           </Text>
                         </Wrapper>
@@ -906,14 +927,17 @@ const LectureAll = () => {
                     width={width < 1100 ? `100%` : `calc(30% - 80px)`}
                     margin={
                       width < 1100 && width < 800 ? `10px 0 0` : `20px 0 0`
-                    }>
+                    }
+                  >
                     <Wrapper
                       borderBottom={`1px dashed ${Theme.grey_C}`}
                       al={`flex-start`}
-                      ju={`flex-start`}>
+                      ju={`flex-start`}
+                    >
                       <Text
                         padding={width < 800 ? `8px 0` : `16px 0`}
-                        color={Theme.basicTheme_C}>
+                        color={Theme.basicTheme_C}
+                      >
                         ZOOM 이동
                       </Text>
                     </Wrapper>
@@ -922,7 +946,8 @@ const LectureAll = () => {
                       dr={`row`}
                       al={`flex-start`}
                       ju={`flex-start`}
-                      padding={width < 800 ? `8px 0` : `16px 0`}>
+                      padding={width < 800 ? `8px 0` : `16px 0`}
+                    >
                       <Text>수료증 신청</Text>
                       <Text> | </Text>
                       <Text>강의수 늘리기 요청</Text>
@@ -932,7 +957,8 @@ const LectureAll = () => {
                       al={`flex-start`}
                       ju={`flex-start`}
                       dr={`row`}
-                      padding={width < 800 ? `8px 0` : `16px 0`}>
+                      padding={width < 800 ? `8px 0` : `16px 0`}
+                    >
                       <Text>결석 예고</Text>
                       <Text> | </Text>
                       <Text>반이동 요청</Text>

@@ -69,6 +69,14 @@ export const initailState = {
   st_userProfileUploadLoading: false,
   st_userProfileUploadDone: false,
   st_userProfileUploadError: null,
+  //
+  st_userTeaUpdateLoading: false,
+  st_userTeaUpdateDone: false,
+  st_userTeaUpdateError: null,
+  //
+  st_userStuUpdateLoading: false,
+  st_userStuUpdateDone: false,
+  st_userStuUpdateError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -126,6 +134,14 @@ export const USER_UPDATE_FAILURE = "USER_UPDATE_FAILURE";
 export const USER_PROFILE_UPLOAD_REQUEST = "USER_PROFILE_UPLOAD_REQUEST";
 export const USER_PROFILE_UPLOAD_SUCCESS = "USER_PROFILE_UPLOAD_SUCCESS";
 export const USER_PROFILE_UPLOAD_FAILURE = "USER_PROFILE_UPLOAD_FAILURE";
+
+export const USER_TEA_UPDATE_REQUEST = "USER_TEA_UPDATE_REQUEST";
+export const USER_TEA_UPDATE_SUCCESS = "USER_TEA_UPDATE_SUCCESS";
+export const USER_TEA_UPDATE_FAILURE = "USER_TEA_UPDATE_FAILURE";
+
+export const USER_STU_UPDATE_REQUEST = "USER_STU_UPDATE_REQUEST";
+export const USER_STU_UPDATE_SUCCESS = "USER_STU_UPDATE_SUCCESS";
+export const USER_STU_UPDATE_FAILURE = "USER_STU_UPDATE_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -418,6 +434,49 @@ const reducer = (state = initailState, action) =>
         draft.st_userProfileUploadError = action.error;
         break;
       }
+
+      //////////////////////////////////////////////
+
+      case USER_TEA_UPDATE_REQUEST: {
+        draft.st_userTeaUpdateLoading = true;
+        draft.st_userTeaUpdateDone = null;
+        draft.st_userTeaUpdateError = false;
+        break;
+      }
+      case USER_TEA_UPDATE_SUCCESS: {
+        draft.st_userTeaUpdateLoading = false;
+        draft.st_userTeaUpdateDone = true;
+        draft.st_userTeaUpdateError = null;
+        break;
+      }
+      case USER_TEA_UPDATE_FAILURE: {
+        draft.st_userTeaUpdateLoading = false;
+        draft.st_userTeaUpdateDone = false;
+        draft.st_userTeaUpdateError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case USER_STU_UPDATE_REQUEST: {
+        draft.st_userStuUpdateLoading = true;
+        draft.st_userStuUpdateDone = null;
+        draft.st_userStuUpdateError = false;
+        break;
+      }
+      case USER_STU_UPDATE_SUCCESS: {
+        draft.st_userStuUpdateLoading = false;
+        draft.st_userStuUpdateDone = true;
+        draft.st_userStuUpdateError = null;
+        break;
+      }
+      case USER_STU_UPDATE_FAILURE: {
+        draft.st_userStuUpdateLoading = false;
+        draft.st_userStuUpdateDone = false;
+        draft.st_userStuUpdateError = action.error;
+        break;
+      }
+
       //////////////////////////////////////////////
 
       case CURRENT_ADMINMENU_STATUS: {
