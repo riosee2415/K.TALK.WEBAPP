@@ -21,7 +21,10 @@ import {
 } from "../../reducers/user";
 
 import { PARTICIPANT_LIST_REQUEST } from "../../reducers/participant";
-import { LECTURE_TEACHER_LIST_REQUEST } from "../../reducers/lecture";
+import {
+  LECTURE_TEACHER_LIST_REQUEST,
+  LECTURE_LINK_UPDATE_REQUEST,
+} from "../../reducers/lecture";
 
 import { Calendar, message, Pagination, Modal, Form, Empty } from "antd";
 import styled from "styled-components";
@@ -276,17 +279,30 @@ const Index = () => {
     st_userUserUpdateError,
   } = useSelector((state) => state.user);
 
-  // const { partList, st_participantListDone, st_participantListError } =
-  //   useSelector((state) => state.participant);
-
   const {
     lectureTeacherList,
     st_lectureTeacherListDone,
     st_lectureTeacherListError,
+
+    st_lectureLinkUpdateDone,
+    st_lectureLinkUpdateError,
   } = useSelector((state) => state.lecture);
 
   const { noticeList, noticeLastPage, st_noticeListDone, st_noticeListError } =
     useSelector((state) => state.notice);
+
+  useEffect(() => {
+    if (st_lectureLinkUpdateDone) {
+      zoomLinkModalToggle();
+      return message.success("줌 링크를 등록하였습니다.");
+    }
+  }, [st_lectureLinkUpdateDone]);
+
+  useEffect(() => {
+    if (st_lectureLinkUpdateError) {
+      return message.error(st_lectureLinkUpdateError);
+    }
+  }, [st_lectureLinkUpdateError]);
 
   useEffect(() => {
     if (st_noticeListDone) {
@@ -299,6 +315,12 @@ const Index = () => {
     }
   }, [st_noticeListError]);
 
+  useEffect(() => {
+    if (st_lectureTeacherListError) {
+      return message.error(st_lectureTeacherListError);
+    }
+  }, [st_lectureTeacherListError]);
+
   ////// HOOKS //////
 
   const width = useWidth();
@@ -306,11 +328,14 @@ const Index = () => {
   const dispatch = useDispatch();
 
   const [updateForm] = Form.useForm();
+  const [zoomLinkForm] = Form.useForm();
 
   const [currentPage1, setCurrentPage1] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
 
   const [zoomLinkToggle, setZoomLinkToggle] = useState(false);
+
+  const [lectureId, setLectureId] = useState("");
 
   const imageInput = useRef();
 
@@ -424,9 +449,15 @@ const Index = () => {
     });
   }, [postCodeModal]);
 
-  const zoomLinkModalToggle = useCallback(() => {
-    setZoomLinkToggle((prev) => !prev);
-  }, [zoomLinkToggle]);
+  const zoomLinkModalToggle = useCallback(
+    (data) => {
+      setZoomLinkToggle((prev) => !prev);
+
+      onFillZoomLink(data.zoomLink);
+      setLectureId(data);
+    },
+    [zoomLinkToggle]
+  );
 
   ////// HANDLER //////
 
@@ -496,6 +527,25 @@ const Index = () => {
       },
     });
   }, []);
+
+  const zoomLinkFinish = useCallback(
+    (data) => {
+      dispatch({
+        type: LECTURE_LINK_UPDATE_REQUEST,
+        data: {
+          id: lectureId.id,
+          zoomLink: data.link,
+        },
+      });
+    },
+    [lectureId]
+  );
+
+  const onFillZoomLink = (data) => {
+    zoomLinkForm.setFieldsValue({
+      zoomLink: data,
+    });
+  };
 
   ////// DATAVIEW //////
 
@@ -806,7 +856,7 @@ const Index = () => {
                               color={Theme.black_2C}
                               fontSize={width < 700 ? `12px` : `18px`}
                               width={width < 700 ? `auto` : `140px`}
-                              onClick={() => zoomLinkModalToggle()}>
+                              onClick={() => zoomLinkModalToggle(data)}>
                               줌 링크 등록
                             </Text>
                           </Wrapper>
@@ -838,11 +888,13 @@ const Index = () => {
               dr={`row`}
               margin={`100px 0`}
               ju={width < 700 ? `flex-start` : "center"}>
-              <Button>교재 찾기</Button>
-              <Button>교재 올리기</Button>
-              <Button>복무 규정</Button>
-              <Button>강사 계약서</Button>
-              <Button>강의 산정료</Button>
+              <Button onClick={() => moveLinkHandler(`/textbook`)}>
+                교재 찾기
+              </Button>
+              <Button onClick={() => console.log("클릭!")}>교재 올리기</Button>
+              <Button onClick={() => console.log("클릭!")}>복무 규정</Button>
+              <Button onClick={() => console.log("클릭!")}>강사 계약서</Button>
+              <Button onClick={() => console.log("클릭!")}>강의 산정료</Button>
             </Wrapper>
           </RsWrapper>
 
@@ -1045,10 +1097,20 @@ const Index = () => {
                 줌링크 등록하기
               </Text>
             </Wrapper>
-            <CustomForm>
-              <Form.Item label="줌 링크">
+
+            <CustomForm onFinish={zoomLinkFinish} form={zoomLinkForm}>
+              <Form.Item
+                label="줌 링크"
+                name={"zoomLink"}
+                rules={[{ required: true, message: "줌링크를 입력해주세요." }]}>
                 <CusotmInput width={`100%`} />
               </Form.Item>
+
+              <Wrapper>
+                <CommonButton height={`40px`} radius={`5px`} htmlType="submit">
+                  등록
+                </CommonButton>
+              </Wrapper>
             </CustomForm>
           </CustomModal>
         </WholeWrapper>

@@ -26,6 +26,7 @@ import {
   SpanText,
   CommonButton,
   TextInput,
+  TextArea,
 } from "../../../components/commonComponents";
 import {
   CalendarOutlined,
@@ -422,17 +423,23 @@ const Index = () => {
 
   const [messageSendModalToggle, setMessageSendModalToggle] = useState(false);
   const [noticeModalToggle, setNoticeModalToggle] = useState(false);
+  const [noticeViewModalToggle, setNoticeViewModalToggle] = useState(false);
   const [homeWorkModalToggle, setHomeWorkModalToggle] = useState(false);
   const [diaryModalToggle, setDiaryModalToggle] = useState(false);
+
+  const [memoToggle, setMemoToggle] = useState(false);
+  const [memoDatum, setMemoDatum] = useState("");
 
   const [adminSendMessageToggle, setAdminSendMessageToggle] = useState(false);
 
   const [studentToggle, setStudentToggle] = useState(false);
+  const [commuteToggle, setCommuteToggle] = useState(false);
 
   const [checkedList, setCheckedList] = useState([]);
   const [checkAll, setCheckAll] = useState(false);
 
   const [messageViewToggle, setMessageViewToggle] = useState(false);
+ 
 
   const [selectValue, setSelectValue] = useState("");
 
@@ -688,6 +695,12 @@ const Index = () => {
     setAdminSendMessageToggle((prev) => !prev);
   }, []);
 
+  const detailStuToggleHandler = useCallback((data) => {
+    setMemoToggle((prev) => !prev);
+
+    setMemoDatum(data);
+  }, []);
+
   const messageSendModalHandler = useCallback(() => {
     let result = checkedList.filter((data, idx) => {
       return data.isCheck ? true : false;
@@ -789,6 +802,18 @@ const Index = () => {
     [lecturePath, filePath]
   );
 
+  const memoFinishHandler = useCallback((data) => {
+    dispatch({
+      type: LECTURE_HOMEWORK_CREATE_REQUEST,
+      data: {
+        title: value.title3,
+        date: value.date,
+        file: filePath,
+        LectureId: router.query.id,
+      },
+    });
+  }, []);
+
   const onChangeHomeWorkPage = useCallback((page) => {
     setCurrentPage4(page);
     dispatch({
@@ -845,9 +870,12 @@ const Index = () => {
     setAdminSendMessageToggle(false);
     setDiaryModalToggle(false);
     setStudentToggle(false);
+    setMemoToggle(false);
     setNoticeContent("");
     setFileName("");
     setFilePath("");
+
+    setCommuteToggle(false);
 
     dispatch({
       type: DETAIL_MODAL_CLOSE_REQUEST,
@@ -1036,6 +1064,10 @@ const Index = () => {
     });
   }, [inputCommuteSearch.value]);
 
+  const onCommuteListHandler = useCallback(() => {
+    setCommuteToggle((prev) => !prev);
+  }, []);
+
   const fileDownloadHandler = useCallback(async (filePath) => {
     let blob = await fetch(filePath).then((r) => r.blob());
 
@@ -1212,6 +1244,7 @@ const Index = () => {
                 ? ""
                 : lectureDetail &&
                   lectureDetail.map((data, idx) => {
+                    console.log(data, "dasdasda");
                     return (
                       <Wrapper
                         dr={`row`}
@@ -1253,7 +1286,7 @@ const Index = () => {
                               lineHeight={`1.22`}>
                               {data.day}
                               &nbsp;&nbsp;|&nbsp;&nbsp;
-                              {moment(data.time, "YYYY-MM-DD").format("LT")}
+                              {data.time}
                             </Text>
                             <Wrapper
                               display={
@@ -1317,6 +1350,8 @@ const Index = () => {
                               {`NO.${data.id}`}
                             </CustomText2>
 
+                            {console.log(data.endDate, data.startDate, "ok")}
+
                             {width > 700 && (
                               <>
                                 <Text
@@ -1327,7 +1362,28 @@ const Index = () => {
                                   진도율
                                 </Text>
 
-                                <CustomProgress percent={55} />
+                                <CustomProgress
+                                  percent={Math.floor(
+                                    ((30 -
+                                      Math.floor(
+                                        moment
+                                          .duration(
+                                            moment(
+                                              data.endDate,
+                                              "YYYY-MM-DD"
+                                            ).diff(
+                                              moment(
+                                                data.startDate,
+                                                "YYYY-MM-DD"
+                                              )
+                                            )
+                                          )
+                                          .asDays()
+                                      )) /
+                                      30) *
+                                      100
+                                  )}
+                                />
                               </>
                             )}
                           </Wrapper>
@@ -1468,6 +1524,7 @@ const Index = () => {
                     ) : (
                       partLectureList &&
                       partLectureList.map((data, idx) => {
+                        console.log(data, "datadata");
                         return (
                           <Wrapper
                             dr={`row`}
@@ -1485,6 +1542,7 @@ const Index = () => {
                               wordBreak={`break-word`}>
                               {/* 2022/01/22 */}
                               {data.endDate}
+
                               <SpanText color={Theme.red_C}>
                                 {`(${moment
                                   .duration(
@@ -1608,7 +1666,6 @@ const Index = () => {
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`10%`}>
-                              {/* 1997 */}
                               {data.birth.slice(0, 10)}
                             </Text>
                             <Text
@@ -1619,7 +1676,6 @@ const Index = () => {
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`15%`}>
-                              {/* 16 */}
                               {`U$ ${data.price}`}
                             </Text>
                             <Text
@@ -1640,6 +1696,7 @@ const Index = () => {
                               </SpanText>
                             </Text>
                             <Text
+                              onClick={() => detailStuToggleHandler(data)}
                               cursor={`pointer`}
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`10%`}>
@@ -1650,11 +1707,15 @@ const Index = () => {
                               okText="출석"
                               cancelText="결석"
                               onConfirm={() => onCommuteHandler(data, true)}
-                              onCancel={() => onCommuteHandler(data, false)}>
+                              onCancel={() =>
+                                onCommuteHandler(data, false)
+                              }></CustomPopconfirm>
+
+                            <Wrapper width={`10%`}>
                               <Text
+                                onClick={() => onCommuteHandler(data)}
                                 cursor={`pointer`}
                                 fontSize={width < 700 ? `14px` : `16px`}
-                                width={`10%`}
                                 color={
                                   "출석"
                                     ? `${Theme.basicTheme_C}`
@@ -1662,7 +1723,14 @@ const Index = () => {
                                 }>
                                 {"출석"}
                               </Text>
-                            </CustomPopconfirm>
+
+                              <Text
+                                onClick={() => onCommuteListHandler()}
+                                cursor={`pointer`}
+                                fontSize={width < 700 ? `14px` : `16px`}>
+                                상세보기
+                              </Text>
+                            </Wrapper>
                           </Wrapper>
                         );
                       })
@@ -1790,7 +1858,7 @@ const Index = () => {
               </Wrapper>
             </Wrapper>
 
-            <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
+            {/* <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
               <Text
                 color={Theme.black_2C}
                 fontSize={width < 700 ? `18px` : `22px`}
@@ -1885,7 +1953,7 @@ const Index = () => {
                   );
                 })
               )}
-            </Wrapper>
+            </Wrapper> */}
 
             <Wrapper al={`flex-start`}>
               <Text
@@ -1900,7 +1968,6 @@ const Index = () => {
                 ? ""
                 : lectureHomeworkList &&
                   lectureHomeworkList.map((data, idx) => {
-                    console.log(data, "data");
                     return (
                       <Wrapper
                         dr={`row`}
@@ -2680,7 +2747,7 @@ const Index = () => {
 
                         <CustomWrapper
                           width={width < 1100 ? `100%` : `50%`}
-                          beforeBool={width < 1300 ? false : true}>
+                          beforeBool={false}>
                           <CalendarOutlined
                             style={{
                               fontSize: width < 700 ? 15 : 25,
@@ -2733,10 +2800,178 @@ const Index = () => {
                 onChange={(page) => onChangeSubmitPage(page)}></CustomPage>
             </Wrapper>
 
-            <Wrapper dr={`row`}>
+            <Wrapper dr={`row`} ju={`flex-end`}>
               <CommonButton
                 kindOf={`grey`}
                 margin={`0 10px 0 0`}
+                color={Theme.darkGrey_C}
+                radius={`5px`}
+                onClick={() => onReset()}>
+                돌아가기
+              </CommonButton>
+            </Wrapper>
+          </CustomForm>
+        </CustomModal>
+
+        <CustomModal
+          visible={memoToggle}
+          width={`1350px`}
+          title="메모"
+          footer={null}
+          closable={false}>
+          <CustomForm ref={formRef} form={form} onFinish={memoFinishHandler}>
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+              fontWeight={`bold`}
+              margin={`0 0 10px`}>
+              학생 메모
+            </Text>
+            <Form.Item
+              name="process"
+              rules={[
+                { required: true, message: "학생 메모를 입력해주세요." },
+              ]}>
+              <TextArea
+                width={`100%`}
+                placeholder={`
+                ex) 학생별 특이사항, 수업분위기 ,특별한 내용 등 입력해주세요.        
+`}
+              />
+            </Form.Item>
+
+            <Wrapper dr={`row`}>
+              <CommonButton
+                margin={`0 5px 0 0`}
+                kindOf={`grey`}
+                color={Theme.darkGrey_C}
+                radius={`5px`}
+                onClick={() => onReset()}>
+                돌아가기
+              </CommonButton>
+              <CommonButton
+                margin={`0 0 0 5px`}
+                radius={`5px`}
+                htmlType="submit">
+                작성하기
+              </CommonButton>
+            </Wrapper>
+          </CustomForm>
+        </CustomModal>
+
+        <CustomModal
+          visible={commuteToggle}
+          width={`1350px`}
+          title="학생 출석 목록"
+          footer={null}
+          closable={false}>
+          <CustomForm ref={formRef} form={form}>
+            <Form.Item
+              name="process"
+              rules={[
+                { required: true, message: "진도를 입력해주세요." },
+              ]}></Form.Item>
+
+            <Wrapper al={`flex-start`} margin={`0px 0 20px`}>
+              <Text
+                color={Theme.black_2C}
+                fontSize={width < 700 ? `18px` : `22px`}
+                fontWeight={`Bold`}>
+                출석부 목록
+              </Text>
+            </Wrapper>
+
+            <Wrapper al={`flex-start`}>
+              <Wrapper
+                position={`relative`}
+                width={width < 800 ? `calc(100% - 100px - 20px)` : `500px`}
+                height={`39px`}
+                margin={`0 0 20px`}>
+                <SearchOutlined
+                  style={{
+                    color: Theme.grey2_C,
+                    fontSize: `20px`,
+                    position: "absolute",
+                    left: `15px`,
+                  }}
+                />
+                <TextInput
+                  padding={`0 0 0 55px`}
+                  placeholder="학생명으로 검색"
+                  radius={`25px`}
+                  width={`100%`}
+                  height={`50px`}
+                  bgColor={Theme.lightGrey_C}
+                  {...inputCommuteSearch}
+                  onKeyDown={(e) => e.keyCode === 13 && commuteSearchHandler()}
+                />
+              </Wrapper>
+            </Wrapper>
+
+            <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
+              <Wrapper
+                dr={`row`}
+                textAlign={width < 700 ? `center` : `left`}
+                padding={`20px 30px`}>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={`35%`}>
+                  날짜
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={`35%`}>
+                  학생명
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={`30%`}>
+                  출석여부
+                </Text>
+              </Wrapper>
+
+              {commuteList && commuteList.length === 0 ? (
+                <Wrapper margin={`50px 0`}>
+                  <Empty description="조회된 데이터가 없습니다." />
+                </Wrapper>
+              ) : (
+                commuteList &&
+                commuteList.map((data, idx) => {
+                  return (
+                    <Wrapper
+                      dr={`row`}
+                      ju={`flex-start`}
+                      padding={`25px 30px 20px`}
+                      cursor={`pointer`}
+                      textAlign={width < 700 ? `center` : `left`}
+                      bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={`35%`}>
+                        {data.time}
+                      </Text>
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={`35%`}>
+                        {data.username}
+                      </Text>
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={`30%`}>
+                        {data.isAtt ? "Y" : "N"}
+                      </Text>
+                    </Wrapper>
+                  );
+                })
+              )}
+            </Wrapper>
+
+            <Wrapper dr={`row`} margin={`30px 0`}>
+              <CommonButton
+                margin={`0 5px 0 0`}
+                kindOf={`grey`}
                 color={Theme.darkGrey_C}
                 radius={`5px`}
                 onClick={() => onReset()}>

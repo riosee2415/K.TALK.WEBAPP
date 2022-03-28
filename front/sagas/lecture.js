@@ -64,6 +64,10 @@ import {
   LECTURE_SUBMIT_CREATE_REQUEST,
   LECTURE_SUBMIT_CREATE_SUCCESS,
   LECTURE_SUBMIT_CREATE_FAILURE,
+  //
+  LECTURE_LINK_UPDATE_REQUEST,
+  LECTURE_LINK_UPDATE_SUCCESS,
+  LECTURE_LINK_UPDATE_FAILURE,
 } from "../reducers/lecture";
 
 // SAGA AREA ********************************************************************************************************
@@ -466,6 +470,29 @@ function* lectureSubmitCreate(action) {
   }
 }
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureLinkUpdateAPI(data) {
+  return axios.patch(`/api/lecture/link/update`, data);
+}
+
+function* lectureLinkUpdate(action) {
+  try {
+    const result = yield call(lectureLinkUpdateAPI, action.data);
+
+    yield put({
+      type: LECTURE_LINK_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_LINK_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 // ******************************************************************************************************************
@@ -535,6 +562,10 @@ function* watchLectureSubmitCreate() {
   yield takeLatest(LECTURE_SUBMIT_CREATE_REQUEST, lectureSubmitCreate);
 }
 
+function* watchLectureLinkUpdate() {
+  yield takeLatest(LECTURE_LINK_UPDATE_REQUEST, lectureLinkUpdate);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* lectureSaga() {
   yield all([
@@ -554,6 +585,7 @@ export default function* lectureSaga() {
     fork(watchLectureHomeWorkFile),
     fork(watchLectureSubmitList),
     fork(watchLectureSubmitCreate),
+    fork(watchLectureLinkUpdate),
     //
   ]);
 }

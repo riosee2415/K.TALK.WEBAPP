@@ -83,6 +83,10 @@ export const initailState = {
   st_lectureSubmitCreateLoading: false,
   st_lectureSubmitCreateDone: false,
   st_lectureSubmitCreateError: null,
+  //
+  st_lectureLinkUpdateLoading: false,
+  st_lectureLinkUpdateDone: false,
+  st_lectureLinkUpdateError: null,
 };
 
 export const LECTURE_LIST_REQUEST = "LECTURE_LIST_REQUEST";
@@ -154,6 +158,10 @@ export const LECTURE_SUBMIT_LIST_FAILURE = "LECTURE_SUBMIT_LIST_FAILURE";
 export const LECTURE_SUBMIT_CREATE_REQUEST = "LECTURE_SUBMIT_CREATE_REQUEST";
 export const LECTURE_SUBMIT_CREATE_SUCCESS = "LECTURE_SUBMIT_CREATE_SUCCESS";
 export const LECTURE_SUBMIT_CREATE_FAILURE = "LECTURE_SUBMIT_CREATE_FAILURE";
+//
+export const LECTURE_LINK_UPDATE_REQUEST = "LECTURE_LINK_UPDATE_REQUEST";
+export const LECTURE_LINK_UPDATE_SUCCESS = "LECTURE_LINK_UPDATE_SUCCESS";
+export const LECTURE_LINK_UPDATE_FAILURE = "LECTURE_LINK_UPDATE_FAILURE";
 //
 export const CREATE_MODAL_OPEN_REQUEST = "CREATE_MODAL_OPEN_REQUEST";
 export const CREATE_MODAL_CLOSE_REQUEST = "CREATE_MODAL_CLOSE_REQUEST";
@@ -487,6 +495,26 @@ const reducer = (state = initailState, action) =>
         draft.st_lectureSubmitCreateLoading = false;
         draft.st_lectureSubmitCreateDone = false;
         draft.st_lectureSubmitCreateError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case LECTURE_LINK_UPDATE_REQUEST: {
+        draft.st_lectureLinkUpdateLoading = true;
+        draft.st_lectureLinkUpdateDone = null;
+        draft.st_lectureLinkUpdateError = false;
+        break;
+      }
+      case LECTURE_LINK_UPDATE_SUCCESS: {
+        draft.st_lectureLinkUpdateLoading = false;
+        draft.st_lectureLinkUpdateDone = true;
+        break;
+      }
+      case LECTURE_LINK_UPDATE_FAILURE: {
+        draft.st_lectureLinkUpdateLoading = false;
+        draft.st_lectureLinkUpdateDone = false;
+        draft.st_lectureLinkUpdateError = action.error;
         break;
       }
 
