@@ -90,6 +90,7 @@ router.get(["/list", "/list/:sort"], async (req, res, next) => {
               X.endDate,
               X.viewDate,
               X.memo,
+              X.zoomLink,
               X.price,
               X.viewPrice,
               X.createdAt,
@@ -113,6 +114,7 @@ router.get(["/list", "/list/:sort"], async (req, res, next) => {
                               A.endDate,
                               CONCAT(A.startDate, " ~ ", A.endDate)			                 AS viewDate,
                               A.memo,
+                              A.zoomLink,
                               A.price,
                               CONCAT(FORMAT(A.price, "000"), "원")				AS viewPrice,
                               DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일")		AS createdAt,
@@ -223,6 +225,7 @@ router.get("/detail/:LectureId", async (req, res, next) => {
               A.endDate,
               CONCAT(A.startDate, " ~ ", A.endDate)			               AS viewDate,
               A.memo,
+              A.zoomLink,
               A.price,
               CONCAT(FORMAT(A.price, "000"), "원")				             AS viewPrice,
               DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일")		            AS createdAt,
@@ -287,6 +290,7 @@ router.get("/teacher/list/:TeacherId", async (req, res, next) => {
              A.endDate,
              CONCAT(A.startDate, " ~ ", A.endDate)			               AS viewDate,
              A.memo,
+             A.zoomLink,
              A.price,
              CONCAT(FORMAT(A.price, "000"), "원")				               AS viewPrice,
              DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일")		              AS createdAt,
@@ -475,6 +479,43 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의를 수정할 수 없습니다.");
+  }
+});
+
+router.patch("/link/update", isLoggedIn, async (req, res, next) => {
+  const { id, zoomLink } = req.body;
+  try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의입니다.");
+    }
+
+    if (exLecture.TeacherId !== req.user.id) {
+      return res
+        .status(401)
+        .send("자신의 강의에만 줌 링크를 등록할 수 있습니다.");
+    }
+
+    const updateResult = await Lecture.update(
+      {
+        zoomLink,
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("강의에 줌 링크를 등록할 수 없습니다.");
   }
 });
 

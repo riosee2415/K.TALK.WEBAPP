@@ -45,9 +45,9 @@ export const initailState = {
   st_noticeAdminCreateDone: false,
   st_noticeAdminCreateError: null,
   //
-  st_noticeLectureCreate: false,
-  st_noticeLectureCreate: false,
-  st_noticeLectureCreate: null,
+  st_noticeLectureCreateLoading: false,
+  st_noticeLectureCreateDone: false,
+  st_noticeLectureCreateError: null,
   //
   st_noticeUpdateLoading: false,
   st_noticeUpdateDone: false,
@@ -348,6 +348,30 @@ const reducer = (state = initailState, action) =>
         draft.st_noticePrevLoading = false;
         draft.st_noticePrevDone = false;
         draft.st_noticePrevError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+
+      ///////////////////////////////////////////////////////
+
+      case NOTICE_DELETE_REQUEST: {
+        draft.st_noticeDeleteLoading = true;
+        draft.st_noticeDeleteDone = null;
+        draft.st_noticeDeleteError = false;
+        break;
+      }
+      case NOTICE_DELETE_SUCCESS: {
+        draft.st_noticeDeleteLoading = false;
+        draft.st_noticeDeleteDone = true;
+        break;
+      }
+      case NOTICE_DELETE_FAILURE: {
+        draft.st_noticeDeleteLoading = false;
+        draft.st_noticeDeleteDone = false;
+        draft.st_noticeDeleteError = action.error;
         break;
       }
 

@@ -62,6 +62,10 @@ module.exports = class Lecture extends Model {
           type: DataTypes.STRING(50),
           allowNull: false,
         },
+        zoomLink: {
+          type: DataTypes.STRING(300),
+          allowNull: true,
+        },
         isDelete: {
           type: DataTypes.BOOLEAN,
           allowNull: false,
