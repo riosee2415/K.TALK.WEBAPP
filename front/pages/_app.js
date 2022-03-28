@@ -13,12 +13,13 @@ const Fourleaf = ({ Component }) => {
     <ThemeProvider theme={Theme}>
       <GlobalStyles />
       <Head>
-        <title>[[**4LEAF GEAR SAMPLE**]]</title>
+        <title>K-Talk Live | admin</title>
 
         <meta name="author" content="4LEAF SOFTWARE <4leaf.ysh@gmail.com>" />
         {/* <!-- OG tag  --> */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.sample.com/" />
+        <meta property="og:image" content="./og_img.png" />
         <meta property="og:image:width" content="800" />
         <meta property="og:image:height" content="400" />
         <link rel="shortcut icon" href="/favicon.ico" />
