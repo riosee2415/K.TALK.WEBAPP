@@ -315,10 +315,10 @@ export const CommonButton = styled(Button)`
   ${(props) =>
     props.kindOf === `subTheme` && `background : ${props.theme.white_C};`}
   ${(props) =>
-    props.kindOf === `subTheme` && `color : ${props.theme.subTheme_C};`}
+    props.kindOf === `subTheme` && `color : ${props.theme.subTheme2_C};`}
   ${(props) =>
     props.kindOf === `subTheme` &&
-    `border : 1px solid ${props.theme.subTheme_C};`}
+    `border : 1px solid ${props.theme.subTheme2_C};`}
 
   ${(props) =>
     props.kindOf === `delete` && `background : ${props.theme.red_C};`}
@@ -357,8 +357,10 @@ export const CommonButton = styled(Button)`
       props.kindOf === `black` && `border : 1px solid ${props.theme.black_C};`}
     ${(props) => props.kindOf === `subTheme` && `color ${props.theme.white_C};`}
     ${(props) =>
-      props.kindOf === `subTheme` && `background ${props.theme.subTheme_C};`}
-
+      props.kindOf === `subTheme` && `background ${props.theme.subTheme2_C};`}
+    ${(props) =>
+      props.kindOf === `subTheme` &&
+      `border : 1px solid ${props.theme.subTheme2_C};`}
     ${(props) =>
       props.kindOf === `delete` && `background : ${props.theme.white_C};`}
     ${(props) => props.kindOf === `delete` && `color : ${props.theme.red_C};`}

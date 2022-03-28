@@ -49,36 +49,42 @@ const Home = ({}) => {
   return (
     <>
       <Head>
-        <title>{seo_title.length < 1 ? "ALAL" : seo_title[0].content}</title>
+        <title>
+          {seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+        </title>
 
         <meta
           name="subject"
-          content={seo_title.length < 1 ? "ALAL" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
         />
         <meta
           name="title"
-          content={seo_title.length < 1 ? "ALAL" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
         />
         <meta name="keywords" content={seo_keywords} />
         <meta
           name="description"
           content={
-            seo_desc.length < 1 ? "undefined description" : seo_desc[0].content
+            seo_desc.length < 1
+              ? "REAL-TIME ONLINE KOREAN LESSONS"
+              : seo_desc[0].content
           }
         />
         {/* <!-- OG tag  --> */}
         <meta
           property="og:title"
-          content={seo_title.length < 1 ? "ALAL" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
         />
         <meta
           property="og:site_name"
-          content={seo_title.length < 1 ? "ALAL" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
         />
         <meta
           property="og:description"
           content={
-            seo_desc.length < 1 ? "undefined description" : seo_desc[0].content
+            seo_desc.length < 1
+              ? "REAL-TIME ONLINE KOREAN LESSONS"
+              : seo_desc[0].content
           }
         />
         <meta property="og:keywords" content={seo_keywords} />
@@ -132,19 +138,24 @@ const Home = ({}) => {
                     </Text>
                   </Wrapper>
                   <Wrapper width={`auto`}>
-                    <CommonButton
-                      height={`40px`}
-                      kindOf={`white`}
-                      padding={`5px 5px 5px 8px`}
+                    <ATag
+                      href={`https://forms.gle/M4hQxCN8itnWkM3x7 `}
+                      target={`_blank`}
                     >
-                      apply here
-                      <Image
-                        alt="icon"
-                        margin={`0 0 0 15px`}
-                        width={width < 900 ? `25px` : `30px`}
-                        src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/blue-btn.png`}
-                      />
-                    </CommonButton>
+                      <CommonButton
+                        height={`40px`}
+                        kindOf={`white`}
+                        padding={`5px 5px 5px 8px`}
+                      >
+                        apply here
+                        <Image
+                          alt="icon"
+                          margin={`0 0 0 15px`}
+                          width={width < 900 ? `25px` : `30px`}
+                          src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/blue-btn.png`}
+                        />
+                      </CommonButton>
+                    </ATag>
                   </Wrapper>
                 </Wrapper>
                 <Wrapper
@@ -167,19 +178,24 @@ const Home = ({}) => {
                     <Text fontWeight={`300`}>2 sessions a week</Text>
                   </Wrapper>
                   <Wrapper width={`auto`}>
-                    <CommonButton
-                      height={`40px`}
-                      kindOf={`white`}
-                      padding={`5px 5px 5px 8px`}
+                    <ATag
+                      href={`https://forms.gle/M4hQxCN8itnWkM3x7`}
+                      target={`_blank`}
                     >
-                      apply here
-                      <Image
-                        alt="icon"
-                        margin={`0 0 0 15px`}
-                        width={width < 900 ? `25px` : `30px`}
-                        src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/blue-btn.png`}
-                      />
-                    </CommonButton>
+                      <CommonButton
+                        height={`40px`}
+                        kindOf={`white`}
+                        padding={`5px 5px 5px 8px`}
+                      >
+                        apply here
+                        <Image
+                          alt="icon"
+                          margin={`0 0 0 15px`}
+                          width={width < 900 ? `25px` : `30px`}
+                          src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/blue-btn.png`}
+                        />
+                      </CommonButton>
+                    </ATag>
                   </Wrapper>
                 </Wrapper>
               </Wrapper>
@@ -269,19 +285,24 @@ const Home = ({}) => {
                   </Text>
                 </Wrapper>
                 <Wrapper width={`auto`} margin={width < 900 && `15px 0 0`}>
-                  <CommonButton
-                    height={`40px`}
-                    kindOf={`subTheme`}
-                    padding={`5px 5px 5px 8px`}
+                  <ATag
+                    href={`https://forms.gle/M8cD1TVUBT5r6DiA7`}
+                    target={`_blank`}
                   >
-                    apply here
-                    <Image
-                      alt="icon"
-                      margin={`0 0 0 15px`}
-                      width={width < 900 ? `25px` : `30px`}
-                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/red-btn.png`}
-                    />
-                  </CommonButton>
+                    <CommonButton
+                      height={`40px`}
+                      kindOf={`subTheme`}
+                      padding={`5px 5px 5px 8px`}
+                    >
+                      apply here
+                      <Image
+                        alt="icon"
+                        margin={`0 0 0 15px`}
+                        width={width < 900 ? `25px` : `30px`}
+                        src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/red-btn.png`}
+                      />
+                    </CommonButton>
+                  </ATag>
                 </Wrapper>
               </Wrapper>
               <Wrapper dr={`row`} margin={`60px 0 0`} ju={`space-between`}>
