@@ -404,9 +404,21 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
       where: { UserId: parseInt(req.user.id) },
     });
 
-    if (!exParts) {
-      return res.status(401).send("");
+    if (exParts.length === 0) {
+      return res.status(401).send("강의에 참여하고 있지 않습니다.");
     }
+
+    let lectures = [];
+
+    await Promise.all(
+      exParts.map(async (data) => {
+        lectures = await Lecture.findAll({
+          where: { id: parseInt(data.LectureId) },
+        });
+      })
+    );
+
+    return res.status(200).json({ lectures });
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의 목록을 불러올 수 없습니다.");
@@ -652,6 +664,10 @@ router.post("/memo/student/create", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의 입니다.");
     }
 
+    if (exLecture.TeacherId !== req.user.id) {
+      return res.status(401).send("자신의 강의가 아닙니다.");
+    }
+
     const exPart = await Participant.findOne({
       where: { UserId: parseInt(UserId), LectureId: parseInt(LectureId) },
     });
@@ -669,6 +685,8 @@ router.post("/memo/student/create", isLoggedIn, async (req, res, next) => {
     if (!createResult) {
       return res.status(401).send("처리중 문제가 발생하였습니다.");
     }
+
+    return res.status(201).json({ result: true });
   } catch (error) {
     console.error(error);
     return res.status(401).send("학생 메모를 등록할 수 없습니다.");
