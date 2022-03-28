@@ -744,7 +744,7 @@ router.post("/memo/student/create", isLoggedIn, async (req, res, next) => {
 });
 
 router.patch("/memo/student/update", isLoggedIn, async (req, res, next) => {
-  const { id, content } = req.body;
+  const { id, memo } = req.body;
   try {
     const exMemo = await LectureStuMemo.findOne({
       where: { id: parseInt(id) },
@@ -754,9 +754,11 @@ router.patch("/memo/student/update", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 학생 메모입니다.");
     }
 
+    console.log(exMemo);
+
     const updateResult = await LectureStuMemo.update(
       {
-        content,
+        memo,
       },
       {
         where: { id: parseInt(id) },
