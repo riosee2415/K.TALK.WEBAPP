@@ -5,6 +5,7 @@ export const initailState = {
   noticeLectureLastPage: 1,
 
   uploadPath: null,
+
   noticeDetail: null,
 
   noticeList: null,
@@ -89,6 +90,7 @@ export const NOTICE_CREATE_FAILURE = "NOTICE_CREATE_FAILURE";
 export const NOTICE_UPLOAD_REQUEST = "NOTICE_UPLOAD_REQUEST";
 export const NOTICE_UPLOAD_SUCCESS = "NOTICE_UPLOAD_SUCCESS";
 export const NOTICE_UPLOAD_FAILURE = "NOTICE_UPLOAD_FAILURE";
+
 //
 export const NOTICE_FILE_INIT = "NOTICE_FILE_INIT";
 //
@@ -398,6 +400,7 @@ const reducer = (state = initailState, action) =>
       ///////////////////////////////////////////////////////
       case NOTICE_FILE_INIT:
         draft.uploadPath = null;
+
         break;
 
       default:

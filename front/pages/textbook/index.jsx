@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import ClientLayout from "../../components/ClientLayout";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -25,10 +25,15 @@ import {
 } from "../../components/commonComponents";
 import { CloseOutlined, SearchOutlined } from "@ant-design/icons";
 import {
+  BOOK_CREATE_REQUEST,
   BOOK_FOLDER_LIST_REQUEST,
   BOOK_LIST_REQUEST,
+  BOOK_UPLOAD_REQUEST,
+  BOOK_UPLOAD_TH_REQUEST,
 } from "../../reducers/book";
-import { Empty } from "antd";
+import { Button, Empty, Form, message, Modal, Select } from "antd";
+import { useRouter } from "next/router";
+import useInput from "../../hooks/useInput";
 
 const TabWrapper = styled(Wrapper)`
   width: calc(100% / 5 - 13px);
@@ -95,39 +100,120 @@ const Index = () => {
   );
 
   ////// HOOKS //////
-
+  const router = useRouter();
   const width = useWidth();
+  const [form] = Form.useForm();
+  const fileRef = useRef();
+  const fileRef2 = useRef();
+  const filename = useInput();
   const [currentTab, setCurrentTab] = useState(0);
   const [currentMenu, setCurrentMenu] = useState(null);
+  const [createModal, setCreateModal] = useState(false);
   ////// REDUX //////
   const dispatch = useDispatch();
-  const { bookFolderList, bookList } = useSelector((state) => state.book);
+  const {
+    bookFolderList,
+    bookList,
+    uploadPath,
+    uploadPathTh,
+    st_bookCreateDone,
+    st_bookCreateError,
+  } = useSelector((state) => state.book);
   ////// USEEFFECT //////
 
   useEffect(() => {
     dispatch({
       type: BOOK_FOLDER_LIST_REQUEST,
     });
-  }, []);
-
-  useEffect(() => {
     dispatch({
       type: BOOK_LIST_REQUEST,
+      data: {
+        LectureId: router.query.lectureId,
+        BookFolderId: 1,
+      },
     });
-  }, []);
+  }, [router.query, currentMenu]);
+  useEffect(() => {
+    if ("교재가 생성되었습니다.") {
+      message.error(st_bookCreateDone);
+      dispatch({
+        type: BOOK_LIST_REQUEST,
+        data: {
+          BookFolderId: 1,
+          LectureId: router.query.lectureId,
+        },
+      });
+    }
+  }, [st_bookCreateDone, router.query, currentMenu]);
+  useEffect(() => {
+    if (st_bookCreateError) {
+      message.error(st_bookCreateError);
+      dispatch({
+        type: BOOK_LIST_REQUEST,
+        data: {
+          LectureId: router.query.lectureId,
+          BookFolderId: 1,
+        },
+      });
+    }
+  }, [st_bookCreateError, router.query, currentMenu]);
   ////// TOGGLE //////
   ////// HANDLER //////
-  ////// DATAVIEW //////
+  const modalOk = useCallback(() => {
+    form.submit();
+  }, [form]);
 
-  const testData = [
-    { id: "1", imagePath: "https://via.placeholder.com/203x258" },
-    { id: "2", imagePath: "https://via.placeholder.com/203x258" },
-    { id: "3", imagePath: "https://via.placeholder.com/203x258" },
-    { id: "4", imagePath: "https://via.placeholder.com/203x258" },
-    { id: "5", imagePath: "https://via.placeholder.com/203x258" },
-    { id: "6", imagePath: "https://via.placeholder.com/203x258" },
-    { id: "7", imagePath: "https://via.placeholder.com/203x258" },
-  ];
+  const onSubmit = useCallback(
+    (data) => {
+      dispatch({
+        type: BOOK_CREATE_REQUEST,
+        data: {
+          thumbnail: uploadPath,
+          title: data.title,
+          file: uploadPath,
+          LectureId: router.query.lectureId,
+          BookFolderId: data.folder,
+        },
+      });
+    },
+    [uploadPath, router.query]
+  );
+
+  const fileChangeHandler = useCallback((e) => {
+    const formData = new FormData();
+    filename.setValue(e.target.files[0].name);
+
+    [].forEach.call(e.target.files, (file) => {
+      formData.append("image", file);
+    });
+
+    dispatch({
+      type: BOOK_UPLOAD_REQUEST,
+      data: formData,
+    });
+  }, []);
+
+  const fileUploadClick = useCallback(() => {
+    fileRef.current.click();
+  }, [fileRef.current]);
+
+  const fileChangeHandler2 = useCallback((e) => {
+    const formData = new FormData();
+
+    [].forEach.call(e.target.files, (file) => {
+      formData.append("image", file);
+    });
+
+    dispatch({
+      type: BOOK_UPLOAD_TH_REQUEST,
+      data: formData,
+    });
+  }, []);
+
+  const fileUploadClick2 = useCallback(() => {
+    fileRef2.current.click();
+  }, [fileRef2.current]);
+  ////// DATAVIEW //////
 
   return (
     <>
@@ -211,6 +297,7 @@ const Index = () => {
                 width={width < 800 ? `100px` : `160px`}
                 height={`50px`}
                 shadow={`0 2px 10px rgba(0,0,0,0.16)`}
+                onClick={() => setCreateModal(true)}
               >
                 자료 올리기
               </CommonButton>
@@ -229,7 +316,7 @@ const Index = () => {
                       >
                         <Image
                           src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_folder.png`}
-                          // alt={`file_icon`}
+                          alt={`file_icon`}
                         />
                       </Wrapper>
                       <Text
@@ -387,6 +474,80 @@ const Index = () => {
               )}
             </Wrapper>
           </RsWrapper>
+          <Modal
+            visible={createModal}
+            onCancel={() => setCreateModal(false)}
+            onOk={modalOk}
+          >
+            <Wrapper>
+              <Form form={form} onFinish={onSubmit}>
+                <Form.Item
+                  rules={[
+                    { required: true, message: "교재 제목을 입력해주세요." },
+                  ]}
+                  label={`교재 제목`}
+                  name={`title`}
+                >
+                  <TextInput />
+                </Form.Item>
+                <Form.Item
+                  rules={[{ required: true, message: "폴더를 선택해주세요." }]}
+                  label={`폴더 선택`}
+                  name={`folder`}
+                >
+                  <Select
+                    placeholder="Select a Folder"
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
+                    {bookFolderList &&
+                      bookFolderList.map((data) => {
+                        return (
+                          <Select.Option value={data.id}>
+                            {data.value}
+                          </Select.Option>
+                        );
+                      })}
+                  </Select>
+                </Form.Item>
+              </Form>
+            </Wrapper>
+            <Wrapper ju={`flex-end`}>
+              <input
+                type="file"
+                name="file"
+                hidden
+                ref={fileRef}
+                onChange={fileChangeHandler}
+              />
+              <Text>
+                {filename.value ? filename.value : `파일을 선택해주세요.`}
+              </Text>
+              <Button type="primary" onClick={fileUploadClick}>
+                FILE UPLOAD
+              </Button>
+            </Wrapper>
+
+            <Wrapper ju={`flex-end`}>
+              <input
+                type="file"
+                name="file"
+                hidden
+                ref={fileRef2}
+                onChange={fileChangeHandler2}
+              />
+              <Wrapper>
+                <Image src={uploadPathTh} alt={`thumbnail`} />
+              </Wrapper>
+              <Button type="primary" onClick={fileUploadClick2}>
+                FILE UPLOAD
+              </Button>
+            </Wrapper>
+          </Modal>
         </WholeWrapper>
       </ClientLayout>
     </>

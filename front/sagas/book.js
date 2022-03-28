@@ -29,6 +29,10 @@ import {
   BOOK_UPLOAD_SUCCESS,
   BOOK_UPLOAD_FAILURE,
   /////////////////////////////////
+  BOOK_UPLOAD_TH_REQUEST,
+  BOOK_UPLOAD_TH_SUCCESS,
+  BOOK_UPLOAD_TH_FAILURE,
+  /////////////////////////////////
   BOOK_CREATE_REQUEST,
   BOOK_CREATE_SUCCESS,
   BOOK_CREATE_FAILURE,
@@ -179,7 +183,7 @@ function* bookDetail(action) {
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 function bookUploadAPI(data) {
-  return axios.post(`/api/book/list`, data);
+  return axios.post(`/api/book/image`, data);
 }
 
 function* bookUpload(action) {
@@ -194,6 +198,28 @@ function* bookUpload(action) {
     console.error(err);
     yield put({
       type: BOOK_UPLOAD_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+function bookUploadThAPI(data) {
+  return axios.post(`/api/book/image`, data);
+}
+
+function* bookUploadTh(action) {
+  try {
+    const result = yield call(bookUploadThAPI, action.data);
+
+    yield put({
+      type: BOOK_UPLOAD_TH_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: BOOK_UPLOAD_TH_FAILURE,
       error: err.response.data,
     });
   }
@@ -285,12 +311,14 @@ function* watchBookFolderDelete() {
 function* watchBookList() {
   yield takeLatest(BOOK_LIST_REQUEST, bookList);
 }
-
 function* watchBookDetail() {
   yield takeLatest(BOOK_DETAIL_REQUEST, bookDetail);
 }
 function* watchBookUpload() {
   yield takeLatest(BOOK_UPLOAD_REQUEST, bookUpload);
+}
+function* watchBookUploadTh() {
+  yield takeLatest(BOOK_UPLOAD_TH_REQUEST, bookUploadTh);
 }
 function* watchBookCreate() {
   yield takeLatest(BOOK_CREATE_REQUEST, bookCreate);
@@ -312,10 +340,10 @@ export default function* bookSaga() {
     fork(watchBookList),
     fork(watchBookDetail),
     fork(watchBookUpload),
+    fork(watchBookUploadTh),
     fork(watchBookCreate),
     fork(watchBookUpdate),
     fork(watchBookDelete),
-
     //
   ]);
 }

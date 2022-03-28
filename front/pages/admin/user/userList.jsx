@@ -34,6 +34,7 @@ import { END } from "redux-saga";
 import axios from "axios";
 import { Wrapper } from "../../../components/commonComponents";
 import DaumPostCode from "react-daum-postcode";
+import { LECTURE_LIST_REQUEST } from "../../../reducers/lecture";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -56,6 +57,7 @@ const LoadNotification = (msg, content) => {
 const UserList = ({}) => {
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
   const { me, st_loadMyInfoDone } = useSelector((state) => state.user);
+  const { lectures } = useSelector((state) => state.lecture);
 
   const router = useRouter();
 
@@ -235,6 +237,15 @@ const UserList = ({}) => {
     );
   }, [inputSort.value]);
 
+  useEffect(() => {
+    dispatch({
+      type: LECTURE_LIST_REQUEST,
+      data: {
+        sort: 1,
+      },
+    });
+  }, [router.query]);
+
   ////// TOGGLE //////
   const updateModalOpen = useCallback(
     (data) => {
@@ -305,8 +316,8 @@ const UserList = ({}) => {
             username: data.username,
             mobile: data.mobile,
             email: data.email,
-            postNum: data.postNum,
             address: data.address,
+            postNum: data.detailAddress,
             startDate: data.dates[0].format("YYYY-MM-DD"),
             endDate: data.dates[1].format("YYYY-MM-DD"),
             stuLanguage: data.stuLanguage,
@@ -317,6 +328,7 @@ const UserList = ({}) => {
             snsId: data.snsId,
             stuJob: data.stuJob,
             gender: data.gender,
+            LectureId: data.lecture,
           },
         });
       } else if (selectUserLevel === "2") {
@@ -328,10 +340,10 @@ const UserList = ({}) => {
             username: data.username,
             mobile: data.mobile,
             email: data.email,
-            postNum: data.postNum,
             address: data.address,
+            postNum: data.detailAddress,
             identifyNum: `${data.identifyNum.firstIdentifyNum}-${data.identifyNum.endIdentifyNum}`,
-            teaCountry: data.teaCountry,
+            teaCountry: "-",
             teaLanguage: data.teaLanguage,
             bankNo: data.bankNo,
             bankName: data.bankName,
@@ -560,10 +572,13 @@ const UserList = ({}) => {
 
           <Form.Item
             label="성별"
-            rules={[{ required: true, message: "생별을 입력해주세요." }]}
+            rules={[{ required: true, message: "생별을 선택해주세요." }]}
             name="gender"
           >
-            <Input />
+            <Select>
+              <Select.Option value={`남`}>남자</Select.Option>
+              <Select.Option value={`여`}>여자</Select.Option>
+            </Select>
           </Form.Item>
 
           <Form.Item
@@ -589,7 +604,7 @@ const UserList = ({}) => {
           >
             <Input type="password" />
           </Form.Item>
-          <Wrapper al={`flex-end`}>
+          {/* <Wrapper al={`flex-end`}>
             <Button type="primary" size="small" onClick={postCodeModalToggle}>
               우편번호 검색
             </Button>
@@ -600,14 +615,22 @@ const UserList = ({}) => {
             name="postNum"
           >
             <Input readOnly />
-          </Form.Item>
+          </Form.Item> */}
 
           <Form.Item
             label="주소"
             rules={[{ required: true, message: "주소를 입력해주세요." }]}
             name="address"
           >
-            <Input readOnly />
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="상세주소"
+            rules={[{ required: true, message: "상세주소를 입력해주세요." }]}
+            name="detailAddress"
+          >
+            <Input />
           </Form.Item>
 
           <Form.Item
@@ -634,6 +657,36 @@ const UserList = ({}) => {
                 name="dates"
               >
                 <DatePicker.RangePicker />
+              </Form.Item>
+              <Form.Item
+                label="강의"
+                rules={[
+                  {
+                    required: true,
+                    message: "강의를 선택해주세요.",
+                  },
+                ]}
+                name="lecture"
+              >
+                <Select
+                  showSearch
+                  placeholder="Select a Lecture"
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {lectures &&
+                    lectures.map((data) => {
+                      return (
+                        <Select.Option value={data.id}>
+                          {data.course}
+                        </Select.Option>
+                      );
+                    })}
+                </Select>
               </Form.Item>
               <Form.Item
                 label="학생 언어"
@@ -758,16 +811,19 @@ const UserList = ({}) => {
                   }}
                 </Form.List>
                 <Form.Item
-                  label="강사 언어"
+                  label="강사 가능 언어"
                   rules={[
-                    { required: true, message: "강사언어를 입력해주세요." },
+                    {
+                      required: true,
+                      message: "강사가 가능한 언어를 입력해주세요.",
+                    },
                   ]}
                   name="teaLanguage"
                 >
                   <Input />
                 </Form.Item>
 
-                <Form.Item
+                {/* <Form.Item
                   label="강사 나라"
                   rules={[
                     { required: true, message: "강사 나라를 입력해주세요." },
@@ -775,7 +831,7 @@ const UserList = ({}) => {
                   name="teaCountry"
                 >
                   <Input />
-                </Form.Item>
+                </Form.Item> */}
 
                 <Form.Item
                   label="은행이름"

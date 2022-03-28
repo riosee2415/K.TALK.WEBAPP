@@ -33,6 +33,10 @@ export const initailState = {
   st_bookUploadDone: false,
   st_bookUploadError: null,
   //
+  st_bookUploadThLoading: false,
+  st_bookUploadThDone: false,
+  st_bookUploadThError: null,
+  //
   st_bookCreateLoading: false,
   st_bookCreateDone: false,
   st_bookCreateError: null,
@@ -48,6 +52,7 @@ export const initailState = {
   createModal: null,
   //
   uploadPath: null,
+  uploadPathTh: null,
   //
 };
 
@@ -78,6 +83,10 @@ export const BOOK_DETAIL_FAILURE = "BOOK_DETAIL_FAILURE";
 export const BOOK_UPLOAD_REQUEST = "BOOK_UPLOAD_REQUEST";
 export const BOOK_UPLOAD_SUCCESS = "BOOK_UPLOAD_SUCCESS";
 export const BOOK_UPLOAD_FAILURE = "BOOK_UPLOAD_FAILURE";
+//
+export const BOOK_UPLOAD_TH_REQUEST = "BOOK_UPLOAD_TH_REQUEST";
+export const BOOK_UPLOAD_TH_SUCCESS = "BOOK_UPLOAD_TH_SUCCESS";
+export const BOOK_UPLOAD_TH_FAILURE = "BOOK_UPLOAD_TH_FAILURE";
 //
 export const BOOK_CREATE_REQUEST = "BOOK_CREATE_REQUEST";
 export const BOOK_CREATE_SUCCESS = "BOOK_CREATE_SUCCESS";
@@ -222,13 +231,32 @@ const reducer = (state = initailState, action) =>
       case BOOK_UPLOAD_SUCCESS: {
         draft.st_bookUploadLoading = false;
         draft.st_bookUploadDone = true;
-        draft.uploadPath = action.data;
+        draft.uploadPath = action.data.path;
         break;
       }
       case BOOK_UPLOAD_FAILURE: {
         draft.st_bookUploadLoading = false;
         draft.st_bookUploadDone = false;
         draft.st_bookUploadError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      case BOOK_UPLOAD_TH_REQUEST: {
+        draft.st_bookUploadThLoading = true;
+        draft.st_bookUploadThDone = null;
+        draft.st_bookUploadThError = false;
+        break;
+      }
+      case BOOK_UPLOAD_TH_SUCCESS: {
+        draft.st_bookUploadThLoading = false;
+        draft.st_bookUploadThDone = true;
+        draft.uploadPathTh = action.data.path;
+        break;
+      }
+      case BOOK_UPLOAD_TH_FAILURE: {
+        draft.st_bookUploadThLoading = false;
+        draft.st_bookUploadThDone = false;
+        draft.st_bookUploadThError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////
@@ -303,6 +331,7 @@ const reducer = (state = initailState, action) =>
 
       case BOOK_FILE_INIT:
         draft.uploadPath = null;
+        draft.uploadPathTh = null;
         break;
 
       default:
