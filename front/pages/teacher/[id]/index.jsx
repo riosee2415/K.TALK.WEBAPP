@@ -1747,16 +1747,11 @@ const Index = () => {
                               okText="출석"
                               cancelText="결석"
                               onConfirm={() => onCommuteHandler(data, true)}
-<<<<<<< HEAD
                               onCancel={() =>
                                 onCommuteHandler(data, false)
                               }></CustomPopconfirm>
 
                             <Wrapper width={`10%`}>
-=======
-                              onCancel={() => onCommuteHandler(data, false)}
-                            >
->>>>>>> refs/remotes/origin/master
                               <Text
                                 onClick={() => onCommuteHandler(data)}
                                 cursor={`pointer`}
