@@ -136,7 +136,7 @@ router.get(["/list", "/list/:sort"], async (req, res, next) => {
                           ON	A.id = B.LectureId
                        INNER
                         JOIN  users         C
-                          ON  A.TeacherId = C.id
+                          ON  A.UserId = C.id
                        WHERE	A.isDelete = false
                 )	X
          ORDER	BY	${__sort} DESC
@@ -178,6 +178,9 @@ router.get(
       const lecture = await Lecture.findAll({
         where: { isDelete: false },
         include: [
+          {
+            model: User,
+          },
           {
             model: Participant,
             include: [
@@ -248,7 +251,7 @@ router.get("/detail/:LectureId", async (req, res, next) => {
           ON	A.id = B.LectureId
        INNER
         JOIN  users         C
-          ON  A.TeacherId = C.id
+          ON  A.UserId = C.id
        WHERE	A.isDelete = false
          AND  A.id = ${LectureId}
     `;
@@ -325,7 +328,7 @@ router.get("/teacher/list/:TeacherId", async (req, res, next) => {
          ON	A.id = B.LectureId
       INNER
        JOIN  users         C
-         ON  A.TeacherId = C.id
+         ON  A.UserId = C.id
       WHERE	A.isDelete = false
         AND  C.id = ${TeacherId}
    `;
@@ -349,7 +352,7 @@ router.post("/student/list", isLoggedIn, async (req, res, next) => {
   }
   try {
     const exLecture = await Lecture.findOne({
-      where: { id: parseInt(LectureId), TeacherId: parseInt(req.user.id) },
+      where: { id: parseInt(LectureId), UserId: parseInt(req.user.id) },
     });
 
     if (!exLecture) {
@@ -400,6 +403,9 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
       exParts.map(async (data) => {
         lectures = await Lecture.findAll({
           where: { id: parseInt(data.LectureId) },
+          include: {
+            model: User,
+          },
         });
       })
     );
@@ -449,8 +455,7 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
       endDate,
       memo,
       price,
-      TeacherId: parseInt(UserId),
-      teacherName: exTeacher.username,
+      UserId: parseInt(UserId),
     });
 
     if (!createResult) {
@@ -512,8 +517,7 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
         endDate,
         memo,
         price,
-        TeacherId: parseInt(UserId),
-        teacherName: exTeacher.username,
+        UserId: parseInt(UserId),
       },
       {
         where: { id: parseInt(id) },
@@ -542,7 +546,7 @@ router.patch("/link/update", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의입니다.");
     }
 
-    if (exLecture.TeacherId !== req.user.id) {
+    if (exLecture.UserId !== req.user.id) {
       return res
         .status(401)
         .send("자신의 강의에만 줌 링크를 등록할 수 있습니다.");
@@ -714,7 +718,7 @@ router.post("/memo/student/create", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의 입니다.");
     }
 
-    if (exLecture.TeacherId !== req.user.id) {
+    if (exLecture.UserId !== req.user.id) {
       return res.status(401).send("자신의 강의가 아닙니다.");
     }
 
@@ -821,7 +825,7 @@ router.post("/memo/create", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의입니다.");
     }
 
-    if (exLecture.TeacherId !== req.user.id) {
+    if (exLecture.UserId !== req.user.id) {
       return res.status(401).send("자신의 강의가 아닙니다.");
     }
 
@@ -897,7 +901,7 @@ router.post("/diary/list", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의입니다.");
     }
 
-    if (exLecture.TeacherId !== req.user.id) {
+    if (exLecture.UserId !== req.user.id) {
       return res.status(401).send("자신의 강의가 아닙니다.");
     }
 
@@ -980,7 +984,7 @@ router.post("/diary/admin/list", async (req, res, next) => {
       JOIN	users 					C
         ON	B.TeacherId = C.id 
      WHERE  1 = 1
-       ${_TeacherId ? `AND B.TeacherId = ${_TeacherId}` : ``}
+       ${_TeacherId ? `AND B.UserId = ${_TeacherId}` : ``}
      ORDER  BY createdAt DESC
     `;
 
@@ -1015,7 +1019,7 @@ router.post("/diary/create", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의입니다.");
     }
 
-    if (exLecture.TeacherId !== req.user.id) {
+    if (exLecture.UserId !== req.user.id) {
       return res.status(401).send("자신의 강의가 아닙니다.");
     }
 
@@ -1119,6 +1123,11 @@ router.get("/homework/student/list", isLoggedIn, async (req, res, next) => {
         homeworks = await Homework.findAll({
           where: { LectureId: parseInt(data.LectureId) },
           order: [["createdAt", "DESC"]],
+          include: [
+            {
+              model: Lecture,
+            },
+          ],
         });
       })
     );
@@ -1177,7 +1186,7 @@ router.post("/submit/list", isLoggedIn, async (req, res, next) => {
 
   try {
     const exLecture = await Lecture.findOne({
-      where: { id: parseInt(LectureId), TeacherId: parseInt(req.user.id) },
+      where: { id: parseInt(LectureId), UserId: parseInt(req.user.id) },
     });
 
     if (!exLecture) {

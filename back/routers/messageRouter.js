@@ -208,7 +208,7 @@ router.get("/teacherList", isLoggedIn, async (req, res, next) => {
     await Promise.all(
       users.map(async (data) => {
         teachers = await User.findAll({
-          where: { id: parseInt(data.TeacherId) },
+          where: { id: parseInt(data.UserId) },
         });
       })
     );

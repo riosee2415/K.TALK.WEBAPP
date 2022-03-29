@@ -133,12 +133,15 @@ router.post("/create", async (req, res, next) => {
               UserId
         FROM  commutes
        WHERE   1 = 1
+         AND  DATE_FORMAT(time, '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d')
          AND  LectureId = ${LectureId}
          AND  UserId = ${UserId}
-         AND  DATE_FORMAT('${time}', '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d')
     `;
 
     const queryResult = await models.sequelize.query(exCommQuery);
+
+    console.log(queryResult[0]);
+    console.log(queryResult[0].length);
 
     if (queryResult[0].length > 0) {
       return res

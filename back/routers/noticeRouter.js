@@ -326,7 +326,7 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("해당 강의가 존재하지 않습니다.");
     }
 
-    if (exLecture.TeacherId !== req.user.id) {
+    if (exLecture.UserId !== req.user.id) {
       return res.status(401).send("자신의 강의에만 등록할 수 있습니다.");
     }
 

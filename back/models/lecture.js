@@ -54,14 +54,6 @@ module.exports = class Lecture extends Model {
           type: DataTypes.INTEGER,
           allowNull: false,
         },
-        TeacherId: {
-          type: DataTypes.INTEGER,
-          allowNull: false,
-        },
-        teacherName: {
-          type: DataTypes.STRING(50),
-          allowNull: false,
-        },
         zoomLink: {
           type: DataTypes.STRING(300),
           allowNull: true,
@@ -87,5 +79,6 @@ module.exports = class Lecture extends Model {
   }
   static associate(db) {
     db.Lecture.hasMany(db.Participant);
+    db.Lecture.belongsTo(db.User);
   }
 };
