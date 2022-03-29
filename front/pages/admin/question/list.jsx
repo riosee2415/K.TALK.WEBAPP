@@ -18,12 +18,9 @@ import {
 import {
   UPDATE_MODAL_CLOSE_REQUEST,
   UPDATE_MODAL_OPEN_REQUEST,
-  QUESTION_CREATE_REQUEST,
-  QUESTION_UPDATE_REQUEST,
-  QUESTION_DELETE_REQUEST,
-  QUESTION_GET_REQUEST,
-  QUESTION_TYPE_GET_REQUEST,
-} from "../../../reducers/question";
+  PROCESS_UPDATE_REQUEST,
+  PROCESS_LIST_REQUEST,
+} from "../../../reducers/processApply";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import { useRouter } from "next/router";
 import { render } from "react-dom";
@@ -86,34 +83,21 @@ const List = ({ location }) => {
 
   const [updateData, setUpdateData] = useState(null);
 
-  const [deletePopVisible, setDeletePopVisible] = useState(false);
-  const [deleteId, setDeleteId] = useState(null);
-
-  const answer = useInput("");
-
   const {
-    questions,
-    types,
+    processList,
     updateModal,
 
     st_questionUpdateDone,
-    st_questionDeleteDone,
-
     st_questionUpdateError,
-    st_questionDeleteError,
-  } = useSelector((state) => state.question);
+  } = useSelector((state) => state.processApply);
 
   ////// USEEFFECT //////
   useEffect(() => {
     const qs = router.query;
 
     dispatch({
-      type: QUESTION_TYPE_GET_REQUEST,
-    });
-
-    dispatch({
-      type: QUESTION_GET_REQUEST,
-      data: { listType: qs.type ? qs.type : 3 },
+      type: PROCESS_LIST_REQUEST,
+      data: { isComplete: qs.type ? qs.type : null },
     });
   }, [router.query]);
 
@@ -122,8 +106,8 @@ const List = ({ location }) => {
       const qs = router.query;
 
       dispatch({
-        type: QUESTION_GET_REQUEST,
-        data: { listType: qs.type ? qs.type : 3 },
+        type: PROCESS_LIST_REQUEST,
+        data: { isComplete: qs.type ? qs.type : null },
       });
 
       dispatch({
@@ -138,23 +122,6 @@ const List = ({ location }) => {
     }
   }, [st_questionUpdateError]);
 
-  useEffect(() => {
-    if (st_questionDeleteDone) {
-      const qs = router.query;
-
-      dispatch({
-        type: QUESTION_GET_REQUEST,
-        data: { listType: qs.type ? qs.type : 3 },
-      });
-    }
-  }, [st_questionDeleteDone]);
-
-  useEffect(() => {
-    if (st_questionDeleteError) {
-      return message.error(st_questionDeleteError);
-    }
-  }, [st_questionDeleteError]);
-
   ////// TOGGLE //////
 
   const updateModalOpen = useCallback(
@@ -163,20 +130,9 @@ const List = ({ location }) => {
         type: UPDATE_MODAL_OPEN_REQUEST,
       });
 
-      let type = "";
-
-      for (let i = 0; i < types.length; i++) {
-        if (data.QuestionTypeId === types[i].id) {
-          type = types[i].value;
-        }
-      }
-
-      console.log(data);
-
-      answer.setValue(data.answer);
-      setUpdateData({ ...data, type });
+      setUpdateData(data);
     },
-    [updateModal, types]
+    [updateModal]
   );
 
   const updateModalClose = useCallback(() => {
@@ -186,47 +142,15 @@ const List = ({ location }) => {
     setUpdateData(null);
   }, [updateModal]);
 
-  const deletePopToggle = useCallback(
-    (id) => () => {
-      setDeleteId(id);
-      setDeletePopVisible((prev) => !prev);
-    },
-    [deletePopVisible, deleteId]
-  );
-
   ////// HANDLER //////
   const onSubmitUpdate = useCallback(() => {
-    if (!answer.value || answer.value.trim() === "") {
-      return LoadNotification("ADMIN SYSTEM ERRLR", "문의 답변을 입력해주세요");
-    }
-
     dispatch({
-      type: QUESTION_UPDATE_REQUEST,
+      type: PROCESS_UPDATE_REQUEST,
       data: {
         id: updateData.id,
-        answer: answer.value,
-        title: updateData.title,
-        content: updateData.content,
       },
     });
-  }, [updateData, answer]);
-
-  const deleteQuestionHandler = useCallback(() => {
-    if (!deleteId) {
-      return LoadNotification(
-        "ADMIN SYSTEM ERRLR",
-        "일시적인 장애가 발생되었습니다. 잠시 후 다시 시도해주세요."
-      );
-    }
-
-    dispatch({
-      type: QUESTION_DELETE_REQUEST,
-      data: { questionId: deleteId },
-    });
-
-    setDeleteId(null);
-    setDeletePopVisible((prev) => !prev);
-  }, [deleteId]);
+  }, [updateData]);
 
   const fileDownloadHandler = useCallback(async (filePath) => {
     let blob = await fetch(filePath).then((r) => r.blob());
@@ -278,14 +202,6 @@ const List = ({ location }) => {
         </Button>
       ),
     },
-    {
-      title: "DELETE",
-      render: (data) => (
-        <Button type="danger" onClick={deletePopToggle(data.id)}>
-          DEL
-        </Button>
-      ),
-    },
   ];
 
   return (
@@ -300,22 +216,20 @@ const List = ({ location }) => {
       <AdminContent>
         <RowWrapper margin={`0 0 10px 0`} gutter={5}>
           <Col>
-            <Button
-              onClick={() => moveLinkHandler(`/admin/question/list?type=3`)}
-            >
+            <Button onClick={() => moveLinkHandler(`/admin/question/list`)}>
               전체
             </Button>
           </Col>
           <Col>
             <Button
-              onClick={() => moveLinkHandler(`/admin/question/list?type=2`)}
+              onClick={() => moveLinkHandler(`/admin/question/list?type=true`)}
             >
               처리완료
             </Button>
           </Col>
           <Col>
             <Button
-              onClick={() => moveLinkHandler(`/admin/question/list?type=1`)}
+              onClick={() => moveLinkHandler(`/admin/question/list?type=false`)}
             >
               미처리
             </Button>
@@ -324,7 +238,7 @@ const List = ({ location }) => {
         <Table
           rowKey="id"
           columns={columns}
-          dataSource={questions ? questions : []}
+          dataSource={processList ? processList : []}
           size="middle"
         />
       </AdminContent>
@@ -345,28 +259,19 @@ const List = ({ location }) => {
             ju={`flex-start`}
             padding={`0 30px 0 0`}
           >
-            <RowWrapper gutter={5}>
+            <RowWrapper gutter={5} margin={`0 0 10px`}>
               <ColWrapper
                 width={`120px`}
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
               >
                 이름
               </ColWrapper>
-              <ColWrapper>{`${updateData && updateData.name}(${
-                updateData && updateData.email
-              })`}</ColWrapper>
-            </RowWrapper>
-            {/*  */}
-            <RowWrapper gutter={5} margin={`10px 0`}>
-              <ColWrapper
-                width={`120px`}
-                height={`30px`}
-                bgColor={Theme.basicTheme_C}
-              >
-                문의 유형
+              <ColWrapper>
+                {updateData && updateData.firstName}&nbsp;
+                {updateData && updateData.lastName}
               </ColWrapper>
-              <ColWrapper>{updateData && updateData.type.value}</ColWrapper>
             </RowWrapper>
             {/*  */}
             <RowWrapper gutter={5}>
@@ -374,7 +279,7 @@ const List = ({ location }) => {
                 width={`120px`}
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
-                height={`30px`}
+                color={Theme.white_C}
               >
                 문의 제목
               </ColWrapper>
@@ -382,22 +287,44 @@ const List = ({ location }) => {
             </RowWrapper>
             {/*  */}
             <RowWrapper gutter={5} margin={`10px 0`}>
-              <ColWrapper span={24} width={`100%`} bgColor={Theme.basicTheme_C}>
+              <ColWrapper
+                span={24}
+                width={`100%`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+              >
                 문의 내용
               </ColWrapper>
-              <ColWrapper>{updateData && updateData.content}</ColWrapper>
+              <ColWrapper></ColWrapper>
             </RowWrapper>
           </ColWrapper>
-          <ColWrapper span={12}>
-            <ColWrapper bgColor={Theme.basicTheme_C} width={`100%`}>
-              답변
-            </ColWrapper>
-            <Input.TextArea
-              allowClear
-              placeholder="Content..."
-              autoSize={{ minRows: 10, maxRows: 10 }}
-              {...answer}
-            />
+          <ColWrapper span={12} ju={`flex-start`}>
+            <RowWrapper gutter={5} margin={`0 0 10px`}>
+              <ColWrapper
+                width={`120px`}
+                height={`30px`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+              >
+                생년월일
+              </ColWrapper>
+              <ColWrapper>{updateData && updateData.dateOfBirth}</ColWrapper>
+            </RowWrapper>
+
+            <RowWrapper gutter={5} margin={`0 0 10px`}>
+              <ColWrapper
+                width={`120px`}
+                height={`30px`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+              >
+                이름
+              </ColWrapper>
+              <ColWrapper>
+                {updateData && updateData.firstName}&nbsp;
+                {updateData && updateData.lastName}
+              </ColWrapper>
+            </RowWrapper>
           </ColWrapper>
         </RowWrapper>
         <RowWrapper padding={`20px 50px`}>
@@ -431,13 +358,6 @@ const List = ({ location }) => {
           )}
         </RowWrapper>
       </Modal>
-
-      <Modal
-        visible={deletePopVisible}
-        onOk={() => deleteQuestionHandler()}
-        onCancel={() => {}}
-        title="Ask"
-      ></Modal>
     </AdminLayout>
   );
 };

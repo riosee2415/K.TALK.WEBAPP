@@ -3,6 +3,7 @@ import produce from "../util/produce";
 export const initialState = {
   processList: null,
   processDetail: null,
+  updateModal: false,
   //
   st_processListLoading: false,
   st_processListDone: false,
@@ -37,6 +38,9 @@ export const PROCESS_UPDATE_REQUEST = "PROCESS_UPDATE_REQUEST";
 export const PROCESS_UPDATE_SUCCESS = "PROCESS_UPDATE_SUCCESS";
 export const PROCESS_UPDATE_FAILURE = "PROCESS_UPDATE_FAILURE";
 
+export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
+export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
+
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
@@ -49,7 +53,7 @@ const reducer = (state = initialState, action) =>
       case PROCESS_LIST_SUCCESS: {
         draft.st_processListLoading = false;
         draft.st_processListDone = true;
-        draft.acceptList = action.data.lists;
+        draft.processList = action.data.lists;
         break;
       }
       case PROCESS_LIST_FAILURE: {
@@ -121,6 +125,14 @@ const reducer = (state = initialState, action) =>
       }
 
       //////////////////////////////////////////////
+      case UPDATE_MODAL_OPEN_REQUEST: {
+        draft.updateModal = true;
+        break;
+      }
+      case UPDATE_MODAL_CLOSE_REQUEST: {
+        draft.updateModal = false;
+        break;
+      }
 
       default:
         break;

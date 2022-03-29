@@ -176,6 +176,7 @@ const Index = () => {
           LectureId: router.query.lectureId,
         },
       });
+      updateModalClose();
     }
   }, [st_bookCreateDone]);
 
@@ -253,6 +254,7 @@ const Index = () => {
     (id) => () => {
       setDeleteId(id);
       setDeletePopVisible((prev) => !prev);
+      setCurrentMenu(null);
     },
     [deletePopVisible, deleteId]
   );
@@ -282,7 +284,7 @@ const Index = () => {
       dispatch({
         type: BOOK_CREATE_REQUEST,
         data: {
-          thumbnail: uploadPath,
+          thumbnail: uploadPathTh,
           title: data.title,
           file: uploadPath,
           LectureId: router.query.lectureId,
@@ -290,7 +292,7 @@ const Index = () => {
         },
       });
     },
-    [uploadPath, router.query]
+    [uploadPathTh, uploadPath, router.query]
   );
 
   const updateSubmit = useCallback(
@@ -437,7 +439,7 @@ const Index = () => {
                     left: `15px`,
                   }}
                 />
-                <CusotmInput placeholder="학생명으로 검색" />
+                <CusotmInput placeholder="교재 검색" />
               </Wrapper>
 
               <CommonButton
@@ -550,7 +552,10 @@ const Index = () => {
                           ju={`flex-start`}
                           height={`40px`}
                           padding={width < 1100 ? `0 0 0 10px` : `0 0 0 30px`}
-                          onClick={() => updateModalOpen(data)}
+                          onClick={() => {
+                            updateModalOpen(data);
+                            setCurrentMenu(null);
+                          }}
                         >
                           <Wrapper width={`22px`} margin={`0 20px 0 0`}>
                             <Image
@@ -569,7 +574,10 @@ const Index = () => {
                           ju={`flex-start`}
                           height={`40px`}
                           padding={width < 1100 ? `0 0 0 10px` : `0 0 0 30px`}
-                          onClick={() => fileDownloadHandler(data.file)}
+                          onClick={() => {
+                            fileDownloadHandler(data.file);
+                            setCurrentMenu(null);
+                          }}
                         >
                           <Wrapper width={`22px`} margin={`0 20px 0 0`}>
                             <Image
@@ -600,8 +608,19 @@ const Index = () => {
                         </Wrapper>
                       </ProductMenu>
 
-                      <Wrapper onClick={() => setCurrentMenu(data.id)}>
-                        <Image src={data.thumbnail} />
+                      <Wrapper
+                        position={`relative`}
+                        height={`0`}
+                        padding={`0 0 125%`}
+                        onClick={() => setCurrentMenu(data.id)}
+                      >
+                        <Image
+                          position={`absolute`}
+                          top={`0`}
+                          left={`0`}
+                          height={`100%`}
+                          src={data.thumbnail}
+                        />
                       </Wrapper>
                       <Text margin={`5px 0 0 `} height={`30px`}>
                         {data.title}
@@ -612,7 +631,7 @@ const Index = () => {
               )}
             </Wrapper>
           </RsWrapper>
-          {console.log(updateData)}
+
           <Modal
             visible={createModal}
             onCancel={
@@ -662,6 +681,7 @@ const Index = () => {
                 <input
                   type="file"
                   name="file"
+                  accept=".png, .jpg"
                   hidden
                   ref={fileRef2}
                   onChange={fileChangeHandler2}
