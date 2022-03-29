@@ -254,6 +254,7 @@ const Index = () => {
     (id) => () => {
       setDeleteId(id);
       setDeletePopVisible((prev) => !prev);
+      setCurrentMenu(null);
     },
     [deletePopVisible, deleteId]
   );
@@ -438,7 +439,7 @@ const Index = () => {
                     left: `15px`,
                   }}
                 />
-                <CusotmInput placeholder="학생명으로 검색" />
+                <CusotmInput placeholder="교재 검색" />
               </Wrapper>
 
               <CommonButton
@@ -551,7 +552,10 @@ const Index = () => {
                           ju={`flex-start`}
                           height={`40px`}
                           padding={width < 1100 ? `0 0 0 10px` : `0 0 0 30px`}
-                          onClick={() => updateModalOpen(data)}
+                          onClick={() => {
+                            updateModalOpen(data);
+                            setCurrentMenu(null);
+                          }}
                         >
                           <Wrapper width={`22px`} margin={`0 20px 0 0`}>
                             <Image
@@ -570,7 +574,10 @@ const Index = () => {
                           ju={`flex-start`}
                           height={`40px`}
                           padding={width < 1100 ? `0 0 0 10px` : `0 0 0 30px`}
-                          onClick={() => fileDownloadHandler(data.file)}
+                          onClick={() => {
+                            fileDownloadHandler(data.file);
+                            setCurrentMenu(null);
+                          }}
                         >
                           <Wrapper width={`22px`} margin={`0 20px 0 0`}>
                             <Image
