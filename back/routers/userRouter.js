@@ -239,6 +239,16 @@ router.get(
         case 1:
           users = await User.findAll({
             where: { level: 1 },
+            include: [
+              {
+                model: Participant,
+                include: [
+                  {
+                    model: Lecture,
+                  },
+                ],
+              },
+            ],
             order: [["createdAt", "DESC"]],
           });
           break;
