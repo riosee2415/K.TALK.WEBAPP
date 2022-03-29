@@ -15,6 +15,7 @@ import {
   Input,
   message,
 } from "antd";
+import { Wrapper, Text } from "../../../components/commonComponents";
 import {
   UPDATE_MODAL_CLOSE_REQUEST,
   UPDATE_MODAL_OPEN_REQUEST,
@@ -87,8 +88,8 @@ const List = ({ location }) => {
     processList,
     updateModal,
 
-    st_questionUpdateDone,
-    st_questionUpdateError,
+    st_processUpdateDone,
+    st_processUpdateError,
   } = useSelector((state) => state.processApply);
 
   ////// USEEFFECT //////
@@ -102,7 +103,7 @@ const List = ({ location }) => {
   }, [router.query]);
 
   useEffect(() => {
-    if (st_questionUpdateDone) {
+    if (st_processUpdateDone) {
       const qs = router.query;
 
       dispatch({
@@ -114,13 +115,13 @@ const List = ({ location }) => {
         type: UPDATE_MODAL_CLOSE_REQUEST,
       });
     }
-  }, [st_questionUpdateDone]);
+  }, [st_processUpdateDone]);
 
   useEffect(() => {
-    if (st_questionUpdateError) {
-      return message.error(st_questionUpdateError);
+    if (st_processUpdateError) {
+      return message.error(st_processUpdateError);
     }
-  }, [st_questionUpdateError]);
+  }, [st_processUpdateError]);
 
   ////// TOGGLE //////
 
@@ -176,28 +177,36 @@ const List = ({ location }) => {
     },
 
     {
-      title: "Title",
-      render: (data) => <div>{data.title}</div>,
+      title: "이름",
+      render: (data) => (
+        <div>
+          {data.firstName}&nbsp;{data.lastName}
+        </div>
+      ),
     },
     {
-      title: "isCompleted",
-      render: (data) => <div>{data.isCompleted ? `완료` : `미완료`}</div>,
+      title: "처리 여부",
+      render: (data) => <div>{data.completedAt ? `완료` : `미완료`}</div>,
     },
     ,
     {
-      title: "CreatedAt",
+      title: "등록일",
       render: (data) => {
         return <div>{data.createdAt.substring(0, 10)}</div>;
       },
     },
     {
-      title: "UpdatedAt",
+      title: "처리일",
       render: (data) => <div>{data.updatedAt.substring(0, 10)}</div>,
     },
     {
-      title: "UPDATE",
+      title: "수정",
       render: (data) => (
-        <Button type="primary" onClick={() => updateModalOpen(data)}>
+        <Button
+          type="primary"
+          size={`small`}
+          onClick={() => updateModalOpen(data)}
+        >
           UPDATE
         </Button>
       ),
@@ -207,9 +216,9 @@ const List = ({ location }) => {
   return (
     <AdminLayout>
       <PageHeader
-        breadcrumbs={["문의 관리", "문의 리스트"]}
-        title={`문의 리스트`}
-        subTitle={`홈페이지의 문의를 관리할 수 있습니다.`}
+        breadcrumbs={["신청서 관리", "신청서 리스트"]}
+        title={`신청서 리스트`}
+        subTitle={`홈페이지의 신청서를 관리할 수 있습니다.`}
       />
       {/* <AdminTop createButton={true} createButtonAction={() => {})} /> */}
 
@@ -239,32 +248,42 @@ const List = ({ location }) => {
           rowKey="id"
           columns={columns}
           dataSource={processList ? processList : []}
-          size="middle"
+          size="small"
         />
       </AdminContent>
 
       <Modal
         visible={updateModal}
         width={`1000px`}
-        title={`문의`}
+        title={`신청서`}
         onCancel={updateModalClose}
         onOk={onSubmitUpdate}
         okText="Complete"
         cancelText="Cancel"
       >
-        <RowWrapper padding={`50px`}>
-          <ColWrapper
-            span={12}
-            al={`flex-start`}
-            ju={`flex-start`}
-            padding={`0 30px 0 0`}
-          >
-            <RowWrapper gutter={5} margin={`0 0 10px`}>
+        <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
+          <Text fontSize={`16px`} fontWeight={`700`} margin={`0 20px 0 0`}>
+            신청일 |&nbsp;{updateData && updateData.createdAt.slice(0, 10)}
+          </Text>
+          <Text fontSize={`16px`} fontWeight={`700`}>
+            처리 완료일 |&nbsp;
+            {updateData && updateData.completedAt
+              ? updateData.completedAt.slice(0, 10)
+              : `-`}
+          </Text>
+        </Wrapper>
+        <Wrapper al={`flex-start`}>
+          <Text fontSize={`16px`} fontWeight={`700`} margin={` 0 0 10px`}>
+            설명회 참가 신청서
+          </Text>
+          <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
+            <RowWrapper width={`50%`} margin={`0 0 10px`}>
               <ColWrapper
                 width={`120px`}
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
                 color={Theme.white_C}
+                margin={`0 5px 0 0`}
               >
                 이름
               </ColWrapper>
@@ -273,90 +292,242 @@ const List = ({ location }) => {
                 {updateData && updateData.lastName}
               </ColWrapper>
             </RowWrapper>
-            {/*  */}
-            <RowWrapper gutter={5}>
+
+            <RowWrapper width={`50%`} margin={`0 0 10px`}>
               <ColWrapper
                 width={`120px`}
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
                 color={Theme.white_C}
-              >
-                문의 제목
-              </ColWrapper>
-              <ColWrapper>{updateData && updateData.title}</ColWrapper>
-            </RowWrapper>
-            {/*  */}
-            <RowWrapper gutter={5} margin={`10px 0`}>
-              <ColWrapper
-                span={24}
-                width={`100%`}
-                bgColor={Theme.basicTheme_C}
-                color={Theme.white_C}
-              >
-                문의 내용
-              </ColWrapper>
-              <ColWrapper></ColWrapper>
-            </RowWrapper>
-          </ColWrapper>
-          <ColWrapper span={12} ju={`flex-start`}>
-            <RowWrapper gutter={5} margin={`0 0 10px`}>
-              <ColWrapper
-                width={`120px`}
-                height={`30px`}
-                bgColor={Theme.basicTheme_C}
-                color={Theme.white_C}
+                margin={`0 5px 0 0`}
               >
                 생년월일
               </ColWrapper>
               <ColWrapper>{updateData && updateData.dateOfBirth}</ColWrapper>
             </RowWrapper>
 
-            <RowWrapper gutter={5} margin={`0 0 10px`}>
+            <RowWrapper width={`50%`} margin={`0 0 10px`}>
               <ColWrapper
                 width={`120px`}
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
                 color={Theme.white_C}
+                margin={`0 5px 0 0`}
+              >
+                이메일
+              </ColWrapper>
+              <ColWrapper>{updateData && updateData.gmailAddress}</ColWrapper>
+            </RowWrapper>
+
+            <RowWrapper width={`50%`} margin={`0 0 10px`}>
+              <ColWrapper
+                width={`120px`}
+                height={`30px`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+                margin={`0 5px 0 0`}
+              >
+                로그인 비밀번호
+              </ColWrapper>
+              <ColWrapper>{updateData && updateData.loginPw}</ColWrapper>
+            </RowWrapper>
+
+            <RowWrapper width={`50%`} margin={`0 0 10px`}>
+              <ColWrapper
+                width={`120px`}
+                height={`30px`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+                margin={`0 5px 0 0`}
+              >
+                거주 국가
+              </ColWrapper>
+              <ColWrapper>
+                {updateData && updateData.countryofResidence}
+              </ColWrapper>
+            </RowWrapper>
+
+            <RowWrapper width={`50%`} margin={`0 0 10px`}>
+              <ColWrapper
+                width={`120px`}
+                height={`30px`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+                margin={`0 5px 0 0`}
+              >
+                휴대폰 번호
+              </ColWrapper>
+              <ColWrapper>{updateData && updateData.phoneNumber}</ColWrapper>
+            </RowWrapper>
+          </Wrapper>
+
+          <Text fontSize={`16px`} fontWeight={`700`} margin={` 0 0 10px`}>
+            정규과정 등록신청서
+          </Text>
+          <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
+            <RowWrapper width={`50%`} margin={`0 0 10px`}>
+              <ColWrapper
+                width={`120px`}
+                height={`30px`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+                margin={`0 5px 0 0`}
               >
                 이름
               </ColWrapper>
               <ColWrapper>
-                {updateData && updateData.firstName}&nbsp;
-                {updateData && updateData.lastName}
+                {updateData && updateData.cFirstName}&nbsp;
+                {updateData && updateData.cLastName}
               </ColWrapper>
             </RowWrapper>
-          </ColWrapper>
-        </RowWrapper>
-        <RowWrapper padding={`20px 50px`}>
-          {updateData && updateData.file1 && (
-            <ColWrapper
-              width={`120px`}
-              height={`30px`}
-              bgColor={Theme.grey_C}
-              radius={`5px`}
-              margin={`0 10px 0 0`}
-              cursor={`pointer`}
-              color={Theme.white_C}
-              onClick={() => fileDownloadHandler(updateData.file1)}
-            >
-              첨부파일 1
-            </ColWrapper>
-          )}
-          {updateData && updateData.file2 && (
-            <ColWrapper
-              width={`120px`}
-              height={`30px`}
-              bgColor={Theme.grey_C}
-              radius={`5px`}
-              margin={`0 10px 0 0`}
-              cursor={`pointer`}
-              color={Theme.white_C}
-              onClick={() => fileDownloadHandler(updateData.file2)}
-            >
-              첨부파일 2
-            </ColWrapper>
-          )}
-        </RowWrapper>
+
+            <RowWrapper width={`50%`} margin={`0 0 10px`}>
+              <ColWrapper
+                width={`120px`}
+                height={`30px`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+                margin={`0 5px 0 0`}
+              >
+                생년월일
+              </ColWrapper>
+              <ColWrapper>{updateData && updateData.cDateOfBirth}</ColWrapper>
+            </RowWrapper>
+
+            <RowWrapper width={`50%`} margin={`0 0 10px`}>
+              <ColWrapper
+                width={`120px`}
+                height={`30px`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+                margin={`0 5px 0 0`}
+              >
+                이메일
+              </ColWrapper>
+              <ColWrapper>{updateData && updateData.cGmailAddress}</ColWrapper>
+            </RowWrapper>
+
+            <RowWrapper width={`50%`} margin={`0 0 10px`}>
+              <ColWrapper
+                width={`120px`}
+                height={`30px`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+                margin={`0 5px 0 0`}
+              >
+                로그인 비밀번호
+              </ColWrapper>
+              <ColWrapper>{updateData && updateData.cLoginPw}</ColWrapper>
+            </RowWrapper>
+
+            <RowWrapper width={`50%`} margin={`0 0 10px`}>
+              <ColWrapper
+                width={`120px`}
+                height={`30px`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+                margin={`0 5px 0 0`}
+              >
+                성별
+              </ColWrapper>
+              <ColWrapper>{updateData && updateData.cGender}</ColWrapper>
+            </RowWrapper>
+
+            <RowWrapper width={`50%`} margin={`0 0 10px`}>
+              <ColWrapper
+                width={`120px`}
+                height={`30px`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+                margin={`0 5px 0 0`}
+              >
+                국가
+              </ColWrapper>
+              <ColWrapper>{updateData && updateData.cNationality}</ColWrapper>
+            </RowWrapper>
+
+            <RowWrapper width={`50%`} margin={`0 0 10px`}>
+              <ColWrapper
+                width={`120px`}
+                height={`30px`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+                margin={`0 5px 0 0`}
+              >
+                거주 국가
+              </ColWrapper>
+              <ColWrapper>
+                {updateData && updateData.cCountryofResidence}
+              </ColWrapper>
+            </RowWrapper>
+
+            <RowWrapper width={`50%`} margin={`0 0 10px`}>
+              <ColWrapper
+                width={`120px`}
+                height={`30px`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+                margin={`0 5px 0 0`}
+              >
+                사용 언어
+              </ColWrapper>
+              <ColWrapper>
+                {updateData && updateData.cLanguageYouUse}
+              </ColWrapper>
+            </RowWrapper>
+
+            <RowWrapper width={`50%`} margin={`0 0 10px`}>
+              <ColWrapper
+                width={`120px`}
+                height={`30px`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+                margin={`0 5px 0 0`}
+              >
+                휴대폰 번호
+              </ColWrapper>
+              <ColWrapper>{updateData && updateData.cPhonenumber}</ColWrapper>
+            </RowWrapper>
+
+            <RowWrapper width={`50%`} margin={`0 0 10px`}>
+              <ColWrapper
+                width={`120px`}
+                height={`30px`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+                margin={`0 5px 0 0`}
+              >
+                sns
+              </ColWrapper>
+              <ColWrapper>{updateData && updateData.cSns}</ColWrapper>
+            </RowWrapper>
+
+            <RowWrapper width={`50%`} margin={`0 0 10px`}>
+              <ColWrapper
+                width={`120px`}
+                height={`30px`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+                margin={`0 5px 0 0`}
+              >
+                sns id
+              </ColWrapper>
+              <ColWrapper>{updateData && updateData.cSnsId}</ColWrapper>
+            </RowWrapper>
+            <RowWrapper width={`50%`} margin={`0 0 10px`}>
+              <ColWrapper
+                width={`120px`}
+                height={`30px`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+                margin={`0 5px 0 0`}
+              >
+                직업
+              </ColWrapper>
+              <ColWrapper>{updateData && updateData.cOccupation}</ColWrapper>
+            </RowWrapper>
+          </Wrapper>
+        </Wrapper>
       </Modal>
     </AdminLayout>
   );

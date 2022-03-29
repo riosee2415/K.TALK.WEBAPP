@@ -23,7 +23,11 @@ import {
   Image,
   ProductWrapper,
 } from "../../components/commonComponents";
-import { CloseOutlined, SearchOutlined } from "@ant-design/icons";
+import {
+  CloseOutlined,
+  FolderOpenFilled,
+  SearchOutlined,
+} from "@ant-design/icons";
 import {
   BOOK_CREATE_REQUEST,
   BOOK_DELETE_REQUEST,
@@ -34,7 +38,7 @@ import {
   BOOK_UPLOAD_REQUEST,
   BOOK_UPLOAD_TH_REQUEST,
 } from "../../reducers/book";
-import { Button, Empty, Form, message, Modal, Select } from "antd";
+import { Button, Empty, Form, Input, message, Modal, Select } from "antd";
 import { useRouter } from "next/router";
 import useInput from "../../hooks/useInput";
 import { saveAs } from "file-saver";
@@ -118,7 +122,7 @@ const Index = () => {
   const fileRef = useRef();
   const fileRef2 = useRef();
   const filename = useInput();
-  const [currentTab, setCurrentTab] = useState(0);
+  const [currentTab, setCurrentTab] = useState(null);
   const [currentMenu, setCurrentMenu] = useState(null);
   const [createModal, setCreateModal] = useState(false);
   const [updateData, setUpdateData] = useState(null);
@@ -453,6 +457,29 @@ const Index = () => {
               </CommonButton>
             </Wrapper>
             <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px 0`}>
+              <TabWrapper
+                onClick={() => setCurrentTab(null)}
+                className={currentTab === null && `current`}
+              >
+                <Wrapper
+                  width={`17px`}
+                  margin={width < 800 ? `0 5px 0 0` : `0 20px 0 0`}
+                >
+                  <FolderOpenFilled
+                    style={{ color: Theme.grey2_C, fontSize: `17px` }}
+                  />
+                </Wrapper>
+                <Text
+                  maxWidth={
+                    width < 800
+                      ? `calc(100% - 17px - 5px)`
+                      : `calc(100% - 17px - 20px)`
+                  }
+                  fontSize={width < 800 ? `10px` : `16px`}
+                >
+                  전체
+                </Text>
+              </TabWrapper>
               {bookFolderList &&
                 bookFolderList.map((data) => {
                   return (
@@ -701,6 +728,7 @@ const Index = () => {
                 <Button type="primary" onClick={fileUploadClick2}>
                   썸네일 이미지 업로드
                 </Button>
+                <Input type={`range`} />
               </Wrapper>
 
               <Wrapper

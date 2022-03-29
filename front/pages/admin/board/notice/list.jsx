@@ -116,15 +116,12 @@ const NoticeList = ({ router }) => {
 
   const fileRef = useRef();
   const formRef = useRef();
-  const [state, setState] = useState(null);
+
   const [isLectureBoard, setIsLectureBoard] = useState(false);
 
   const [currentLectureId, setCurrentLectureId] = useState(null);
   const [currentListType, setCurrentListType] = useState(null);
   const [contentData, setContentData] = useState("");
-
-  const searchValue = useInput("");
-  const inputSearch = useInput("");
 
   const [form] = Form.useForm();
 
@@ -204,6 +201,7 @@ const NoticeList = ({ router }) => {
 
   useEffect(() => {
     if (st_noticeCreateDone) {
+      message.success("공지사항이 생성되었습니다.");
       setCurrentListType(1);
 
       dispatch({
@@ -219,11 +217,13 @@ const NoticeList = ({ router }) => {
       dispatch({
         type: NOTICE_FILE_INIT,
       });
+      filename.setValue(``);
     }
   }, [st_noticeCreateDone]);
 
   useEffect(() => {
     if (st_noticeLectureCreateDone) {
+      message.success("공지사항이 생성되었습니다.");
       setCurrentListType(1);
 
       dispatch({
@@ -239,11 +239,13 @@ const NoticeList = ({ router }) => {
       dispatch({
         type: NOTICE_FILE_INIT,
       });
+      filename.setValue(``);
     }
   }, [st_noticeLectureCreateDone]);
 
   useEffect(() => {
     if (st_noticeUpdateDone) {
+      message.success("공지사항이 수정되었습니다.");
       setCurrentListType(1);
 
       dispatch({
@@ -261,6 +263,7 @@ const NoticeList = ({ router }) => {
 
   useEffect(() => {
     if (st_noticeDeleteDone) {
+      message.success("공지사항이 삭제되었습니다.");
       currentListType === 4
         ? dispatch({
             type: NOTICE_LECTURE_LIST_REQUEST,
