@@ -681,6 +681,7 @@ const Index = () => {
                 <input
                   type="file"
                   name="file"
+                  accept=".png, .jpg"
                   hidden
                   ref={fileRef2}
                   onChange={fileChangeHandler2}
