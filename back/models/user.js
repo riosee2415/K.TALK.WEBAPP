@@ -35,12 +35,12 @@ module.exports = class User extends Model {
           allowNull: false,
           defaultValue: 1,
         },
-        postNum: {
-          type: DataTypes.STRING(30), // 우편번호
-          allowNull: true,
-        },
         address: {
           type: DataTypes.STRING(300), // 주소
+          allowNull: true,
+        },
+        detailAddress: {
+          type: DataTypes.STRING(300), // 상세주소
           allowNull: true,
         },
         identifyNum: {

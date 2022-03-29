@@ -316,8 +316,8 @@ router.post("/me/update", isLoggedIn, async (req, res, next) => {
   const {
     profileImage,
     mobile,
-    postNum,
     address,
+    detailAddress,
     teaCountry,
     teaLanguage,
     bankNo,
@@ -336,8 +336,8 @@ router.post("/me/update", isLoggedIn, async (req, res, next) => {
       {
         profileImage,
         mobile,
-        postNum,
         address,
+        detailAddress,
         birth,
         teaCountry: req.user.level === 2 ? teaCountry : null,
         teaLanguage: req.user.level === 2 ? teaLanguage : null,
@@ -681,8 +681,8 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
     username,
     mobile,
     email,
-    postNum,
     address,
+    detailAddress,
     startDate,
     endDate,
     stuLanguage,
@@ -695,6 +695,10 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
     gender,
     LectureId,
   } = req.body;
+
+  if (!Array.isArray(LectureId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
 
   try {
     const exUser = await User.findOne({
@@ -725,8 +729,8 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
       username,
       mobile,
       email,
-      postNum,
       address,
+      detailAddress,
       startDate,
       endDate,
       stuNo: parseInt(allStudents.length) + 1,
@@ -753,15 +757,59 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의 입니다.");
     }
 
-    await Participant.create({
-      LectureId: parseInt(LectureId),
-      UserId: parseInt(result.id),
-    });
+    await Promise.all(
+      LectureId.map(async (data) => {
+        await Participant.create({
+          LectureId: parseInt(data),
+          UserId: parseInt(result.id),
+        });
+      })
+    );
 
     return res.status(201).json({ result: true });
   } catch (error) {
     console.error(error);
     return res.status(400).send("회원 생성에 실패했습니다.");
+  }
+});
+
+// 학생 반 옮기기
+router.patch("/class/update", isAdminCheck, async (req, res, next) => {
+  const { UserId, LectureId } = req.body;
+  try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    const exUser = await User.findOne({
+      where: { id: parseInt(UserId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의입니다.");
+    }
+
+    if (!exUser) {
+      return res.status(401).send("존재하지 않는 사용자입니다.");
+    }
+
+    const updateResult = await Participant.update(
+      {
+        LectureId: parseInt(LectureId),
+      },
+      {
+        where: { UserId: parseInt(UserId) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("학생의 반을 옮길 수 없습니다.");
   }
 });
 
@@ -772,8 +820,8 @@ router.post("/teacher/create", isAdminCheck, async (req, res, next) => {
     username,
     mobile,
     email,
-    postNum,
     address,
+    detailAddress,
     identifyNum,
     teaCountry,
     teaLanguage,
@@ -807,8 +855,8 @@ router.post("/teacher/create", isAdminCheck, async (req, res, next) => {
       username,
       mobile,
       email,
-      postNum,
       address,
+      detailAddress,
       identifyNum,
       teaCountry,
       teaLanguage,
