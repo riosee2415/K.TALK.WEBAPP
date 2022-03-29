@@ -53,6 +53,7 @@ import {
 } from "../../reducers/message";
 
 import { NOTICE_LIST_REQUEST } from "../../reducers/notice";
+import { LECTURE_STU_LECTURE_LIST_REQUEST } from "../../reducers/lecture";
 
 const PROFILE_WIDTH = `184`;
 const PROFILE_HEIGHT = `190`;
@@ -257,8 +258,24 @@ const LectureAll = () => {
     st_messageUserListError,
   } = useSelector((state) => state.message);
 
-  const { noticeList, noticeLastPage, st_noticeListDone, st_noticeListError } =
-    useSelector((state) => state.notice);
+  const {
+    lecturePath,
+
+    st_lectureFileLoading,
+    st_lectureFileDone,
+    st_lectureFileError,
+
+    st_lectureSubmitCreateDone,
+    st_lectureSubmitCreateError,
+
+    lectureStuLectureList,
+    st_lectureStuLectureListDone,
+    st_lectureStuLectureListError,
+
+    lectureHomeworkStuList,
+    st_lectureHomeworkStuListDone,
+    st_lectureHomeworkStuListError,
+  } = useSelector((state) => state.lecture);
 
   ////// HOOKS //////
   const width = useWidth();
@@ -272,13 +289,8 @@ const LectureAll = () => {
   const [form] = Form.useForm();
   const [answerform] = Form.useForm();
 
-  const imageInput = useRef();
-
   const [messageSendModal, setMessageSendModal] = useState(false);
   const [messageViewModal, setMessageViewModal] = useState(false);
-
-  const [noticeViewModal, setNoticeViewModal] = useState(false);
-  const [noticeViewDatum, setNoticeViewDatum] = useState(null);
 
   const [messageDatum, setMessageDatum] = useState();
 
@@ -287,8 +299,6 @@ const LectureAll = () => {
   const [selectValue, setSelectValue] = useState("");
 
   const [currentPage1, setCurrentPage1] = useState(1);
-  const [currentPage2, setCurrentPage2] = useState(1);
-  const [currentPage3, setCurrentPage3] = useState(1);
 
   ////// USEEFFECT //////
 
@@ -315,10 +325,7 @@ const LectureAll = () => {
     });
 
     dispatch({
-      type: NOTICE_LIST_REQUEST,
-      data: {
-        page: 1,
-      },
+      type: LECTURE_STU_LECTURE_LIST_REQUEST,
     });
   }, []);
 
@@ -347,47 +354,6 @@ const LectureAll = () => {
       return message.success("회원 정보가 수정되었습니다.");
     }
   }, [st_userUserUpdateDone]);
-
-  useEffect(() => {
-    if (st_userProfileUploadError) {
-      return message.error(st_userProfileUploadError);
-    }
-  }, [st_userProfileUploadError]);
-
-  useEffect(() => {
-    if (st_userUserUpdateError) {
-      return message.error(st_userUserUpdateError);
-    }
-  }, [st_userUserUpdateError]);
-
-  useEffect(() => {
-    if (meUpdateModal) {
-      updateForm.setFieldsValue({
-        mobile: me.mobile,
-        postNum: me.postNum,
-        address: me.address,
-        stuLanguage: me.stuLanguage,
-        stuCountry: me.stuCountry,
-        stuLiveCon: me.stuLiveCon,
-        sns: me.sns,
-        snsId: me.snsId,
-        stuJob: me.stuJob,
-        birth: moment(me.birth),
-      });
-
-      if (me.profileImage)
-        dispatch({
-          type: USER_PROFILE_IMAGE_PATH,
-          data: me.profileImage,
-        });
-    } else {
-      updateForm.resetFields();
-      dispatch({
-        type: USER_PROFILE_IMAGE_PATH,
-        data: null,
-      });
-    }
-  }, [meUpdateModal]);
 
   useEffect(() => {
     if (st_messageCreateDone) {
@@ -426,18 +392,6 @@ const LectureAll = () => {
 
   ////// TOGGLE //////
 
-  const meUpdateModalToggle = useCallback(() => {
-    dispatch({
-      type: ME_UPDATE_MODAL_TOGGLE,
-    });
-  }, [meUpdateModal]);
-
-  const postCodeModalToggle = useCallback(() => {
-    dispatch({
-      type: POSTCODE_MODAL_TOGGLE,
-    });
-  }, [postCodeModal]);
-
   const messageSendModalHandler = useCallback(() => {
     setMessageSendModal((prev) => !prev);
   }, []);
@@ -455,64 +409,6 @@ const LectureAll = () => {
   }, []);
 
   ////// HANDLER //////
-
-  const clickImageUpload = useCallback(() => {
-    imageInput.current.click();
-  }, []);
-
-  const onChangeImages = useCallback((e) => {
-    const formData = new FormData();
-
-    [].forEach.call(e.target.files, (file) => {
-      formData.append("image", file);
-    });
-
-    dispatch({
-      type: USER_PROFILE_UPLOAD_REQUEST,
-      data: formData,
-    });
-  }, []);
-
-  const meUpdateHandler = useCallback(
-    (data) => {
-      if (!userProfilePath || userProfilePath.trim().length === 0) {
-        return message.error("프로필 사진을 업로드해주세요");
-      }
-
-      dispatch({
-        type: USER_UPDATE_REQUEST,
-        data: {
-          profileImage: userProfilePath,
-          mobile: data.mobile,
-          postNum: data.postNum,
-          address: data.address,
-          stuLanguage: data.stuLanguage,
-          stuCountry: data.stuCountry,
-          stuLiveCon: data.stuLiveCon,
-          sns: data.sns,
-          snsId: data.snsId,
-          stuJob: data.stuJob,
-          birth: data.birth.format("YYYY-MM-DD"),
-        },
-      });
-    },
-    [userProfilePath]
-  );
-
-  const postCodeSubmit = useCallback(
-    (data) => {
-      updateForm.setFieldsValue({
-        address: data.address,
-        postNum: data.zonecode,
-      });
-
-      dispatch({
-        type: POSTCODE_MODAL_TOGGLE,
-      });
-    },
-
-    [postCodeModal]
-  );
 
   const sendMessageFinishHandler = useCallback(
     (data) => {
@@ -574,112 +470,12 @@ const LectureAll = () => {
     }
   }, []);
 
-  const noticeChangePage = useCallback((page) => {
-    setCurrentPage2(page);
-
-    dispatch({
-      type: NOTICE_LIST_REQUEST,
-      data: {
-        page,
-      },
-    });
-  }, []);
-
-  const onClickNoticeHandler = useCallback((data) => {
-    setNoticeViewDatum(data);
-    setNoticeViewModal(true);
-  }, []);
-
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
 
   ////// DATAVIEW //////
 
-  const testArr = [
-    {
-      id: 1,
-      name: "강의명",
-      teacher: "강사명",
-      content: "한국어로 편지 쓰기",
-      createdAt: "2022/01/03",
-    },
-    {
-      id: 2,
-      name: "강의명",
-      teacher: "강사명",
-      content: "한국어로 편지 쓰기",
-      createdAt: "2022/01/03",
-    },
-    {
-      id: 3,
-      name: "강의명",
-      teacher: "강사명",
-      content: "한국어로 편지 쓰기",
-      createdAt: "2022/01/03",
-    },
-    {
-      id: 4,
-      name: "강의명",
-      teacher: "강사명",
-      content: "한국어로 편지 쓰기",
-      createdAt: "2022/01/03",
-    },
-    {
-      id: 5,
-      name: "강의명",
-      teacher: "강사명",
-      content: "한국어로 편지 쓰기",
-      createdAt: "2022/01/03",
-    },
-  ];
-
-  const preparationArr = [
-    {
-      id: 1,
-      title: "자료명",
-      createdAt: "2022/01/22",
-    },
-    {
-      id: 2,
-      title: "자료명",
-      createdAt: "2022/01/22",
-    },
-    {
-      id: 3,
-      title: "자료명",
-      createdAt: "2022/01/22",
-    },
-    {
-      id: 4,
-      title: "자료명",
-      createdAt: "2022/01/22",
-    },
-    {
-      id: 5,
-      title: "자료명",
-      createdAt: "2022/01/22",
-    },
-  ];
-
-  const clockArr = [
-    {
-      name: "월요일",
-      time: "7PM",
-    },
-    {
-      name: "화요일",
-      time: "7PM",
-    },
-    {
-      name: "수요일",
-      time: "7PM",
-    },
-    {
-      name: "금요일",
-      time: "7PM",
-    },
-  ];
   return (
     <>
       <Head>
@@ -733,8 +529,7 @@ const LectureAll = () => {
             <Wrapper
               margin={width < 700 ? `30px 0` : `60px 0`}
               dr={`row`}
-              ju={`space-between`}
-            >
+              ju={`space-between`}>
               <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
                 <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
                   <Image
@@ -752,8 +547,7 @@ const LectureAll = () => {
                 <Text
                   fontSize={width < 700 ? `20px` : `28px`}
                   fontWeight={`bold`}
-                  padding={`0 0 0 15px`}
-                >
+                  padding={`0 0 0 15px`}>
                   안녕하세요,&nbsp;
                   <SpanText color={Theme.basicTheme_C}>
                     {me && me.username}
@@ -761,18 +555,171 @@ const LectureAll = () => {
                   님!
                 </Text>
               </Wrapper>
-              <Wrapper width={`auto`}>
-                <CommonButton radius={`5px`} onClick={meUpdateModalToggle}>
-                  회원정보 수정
-                </CommonButton>
-              </Wrapper>
             </Wrapper>
 
             <Wrapper al={`flex-start`} margin={`0 0 20px`}>
               <Text
                 fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-              >
+                fontWeight={`bold`}>
+                내 시간표
+              </Text>
+            </Wrapper>
+
+            {lectureStuLectureList && lectureStuLectureList.length === 0
+              ? ""
+              : lectureStuLectureList &&
+                lectureStuLectureList.map((data, idx) => {
+                  return (
+                    <Wrapper
+                      padding={
+                        width < 700 ? `15px 10px 10px` : `40px 30px 35px`
+                      }
+                      dr={`row`}
+                      ju={`flex-start`}
+                      bgColor={Theme.white_C}
+                      radius={`10px`}
+                      shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
+                      margin={`0 0 86px`}
+                      al={`flex-start`}>
+                      <Wrapper
+                        width={
+                          width < 1280 ? (width < 800 ? `100%` : `60%`) : `37%`
+                        }
+                        dr={`row`}
+                        ju={`flex-start`}
+                        al={`flex-start`}>
+                        <Wrapper
+                          width={`auto`}
+                          padding={width < 700 ? `0` : `5px`}
+                          margin={`0 10px 0 0`}>
+                          <Image
+                            width={`22px`}
+                            height={`22px`}
+                            src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
+                            alt="clock_icon"
+                          />
+                        </Wrapper>
+                        <Wrapper
+                          width={`calc(100% - 42px)`}
+                          dr={`row`}
+                          ju={`flex-start`}>
+                          <Text
+                            fontSize={width < 800 ? `14px` : `18px`}
+                            fontWeight={`bold`}
+                            lineHeight={`1.22`}>
+                            {data.day}&nbsp;&nbsp;|&nbsp;&nbsp;
+                            {data.time}
+                          </Text>
+                          <Wrapper
+                            display={
+                              width < 1280
+                                ? `flex`
+                                : (idx + 1) % 3 === 0 && `none`
+                            }
+                            width={`1px`}
+                            height={width < 800 ? `20px` : `34px`}
+                            borderLeft={`1px dashed ${Theme.grey_C}`}
+                            margin={
+                              width < 1350
+                                ? width < 800
+                                  ? `0 4px`
+                                  : `0 10px`
+                                : `0 20px`
+                            }
+                          />
+                        </Wrapper>
+                      </Wrapper>
+
+                      <Wrapper
+                        width={
+                          width < 1280 ? (width < 800 ? `100%` : `40%`) : `25%`
+                        }
+                        dr={`row`}
+                        ju={`flex-start`}
+                        margin={width < 800 && `5px 0`}>
+                        <Wrapper width={`auto`} margin={`0 10px 0 0`}>
+                          <Image
+                            width={`22px`}
+                            height={`22px`}
+                            src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
+                            alt="clender_icon"
+                          />
+                        </Wrapper>
+                        <Text fontSize={width < 700 ? `14px` : `18px`}>
+                          {`${moment(data.startDate, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )} ~ ${moment(data.endDate, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )}`}
+                          <SpanText
+                            fontWeight={`bold`}
+                            color={Theme.red_C}
+                            margin={`0 0 0 15px`}>
+                            {`D-${moment
+                              .duration(
+                                moment(data.endDate, "YYYY-MM-DD").diff(
+                                  moment(data.startDate, "YYYY-MM-DD")
+                                )
+                              )
+                              .asDays()}`}
+                          </SpanText>
+                        </Text>
+                      </Wrapper>
+                      <Wrapper
+                        width={width < 1280 ? `100%` : `38%`}
+                        dr={`row`}
+                        ju={`flex-start`}
+                        al={`flex-start`}>
+                        <Wrapper
+                          width={`25%`}
+                          dr={`row`}
+                          ju={`flex-start`}
+                          margin={`0 20px 0 0`}>
+                          <Image
+                            margin={`0 10px 0 0`}
+                            width={`22px`}
+                            height={`22px`}
+                            src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name.png"
+                            alt="clender_icon"
+                          />
+                          <Text fontSize={width < 700 ? `14px` : `18px`}>
+                            {data.teacherName}
+                          </Text>
+                        </Wrapper>
+
+                        <Wrapper
+                          width={`calc(75% - 20px)`}
+                          al={`flex-start`}
+                          fontSize={width < 700 ? `12px` : `16px`}>
+                          <Text color={Theme.grey2_C}>
+                            <SpanText
+                              fontWeight={`bold`}
+                              margin={`0 16px 0 0`}
+                              color={Theme.black_C}>
+                              ZOOM ID
+                            </SpanText>
+
+                            {data.zoomLink}
+                          </Text>
+                          <Text color={Theme.grey2_C}>
+                            <SpanText
+                              fontWeight={`bold`}
+                              margin={`0 14px 0 0`}
+                              color={Theme.black_C}>
+                              Password
+                            </SpanText>
+                            {data.zoomPass}
+                          </Text>
+                        </Wrapper>
+                      </Wrapper>
+                    </Wrapper>
+                  );
+                })}
+
+            <Wrapper al={`flex-start`} margin={`0 0 20px`}>
+              <Text
+                fontSize={width < 800 ? `18px` : `22px`}
+                fontWeight={`bold`}>
                 내 강의정보
               </Text>
             </Wrapper>
@@ -785,19 +732,16 @@ const LectureAll = () => {
               ju={`space-between`}
               shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
               margin={`0 0 86px`}
-              al={width < 1100 && `flex-start`}
-            >
+              al={width < 1100 && `flex-start`}>
               <Wrapper
                 width={width < 800 ? `calc(100%)` : `calc(100%)`}
-                position={`relative`}
-              >
+                position={`relative`}>
                 <Wrapper dr={`row`}>
                   <Wrapper width={width < 1100 ? `100%` : `calc(70% - 1px)`}>
                     <Wrapper
                       width={`100%`}
                       dr={`row`}
-                      al={width < 800 && `flex-start`}
-                    >
+                      al={width < 800 && `flex-start`}>
                       <Image
                         position={`absolute`}
                         top={`0`}
@@ -809,14 +753,12 @@ const LectureAll = () => {
                         alt="student_thumbnail"
                       />
                       <Wrapper
-                        margin={width < 800 ? `0 0 0 100px` : `0 0 0 204px`}
-                      >
+                        margin={width < 800 ? `0 0 0 100px` : `0 0 0 204px`}>
                         <Wrapper dr={`row`} ju={`flex-start`}>
                           <Text
                             margin={`0 10px 0 0`}
                             fontSize={width < 800 ? `16px` : `18px`}
-                            fontWeight={`bold`}
-                          >
+                            fontWeight={`bold`}>
                             강의명
                           </Text>
                           <Text>한국어 초급/중급반</Text>
@@ -825,28 +767,24 @@ const LectureAll = () => {
                           dr={`row`}
                           ju={`flex-start`}
                           color={Theme.grey2_C}
-                          fontSize={width < 800 ? `12px` : `16px`}
-                        >
+                          fontSize={width < 800 ? `12px` : `16px`}>
                           <Text lineHeight={`1.19`}>강사 이름</Text>
                           <Text
                             lineHeight={`1.19`}
-                            margin={width < 800 ? `5px` : `0 10px`}
-                          >
+                            margin={width < 800 ? `5px` : `0 10px`}>
                             |
                           </Text>
                           <Text lineHeight={`1.19`}>강의 수 : 5/30</Text>
                           <Text
                             lineHeight={`1.19`}
-                            margin={width < 800 ? `5px` : `0 10px`}
-                          >
+                            margin={width < 800 ? `5px` : `0 10px`}>
                             |
                           </Text>
                           <Text lineHeight={`1.19`}>등록상황 : 수료중</Text>
                         </Wrapper>
                       </Wrapper>
                       <Wrapper
-                        margin={width < 800 ? `40px 0 0` : `35px 0 0  204px`}
-                      >
+                        margin={width < 800 ? `40px 0 0` : `35px 0 0  204px`}>
                         <Wrapper dr={`row`} ju={`flex-start`}>
                           <Text width={width < 800 ? `100%` : `15%`}>
                             <SpanText color={Theme.subTheme2_C}>●</SpanText>
@@ -863,8 +801,7 @@ const LectureAll = () => {
                           <Text
                             width={`10%`}
                             color={Theme.grey2_C}
-                            padding={`0 0 0 10px`}
-                          >
+                            padding={`0 0 0 10px`}>
                             (100%)
                           </Text>
                         </Wrapper>
@@ -884,8 +821,7 @@ const LectureAll = () => {
                           <Text
                             width={`10%`}
                             color={Theme.grey2_C}
-                            padding={`0 0 0 10px`}
-                          >
+                            padding={`0 0 0 10px`}>
                             (55%)
                           </Text>
                         </Wrapper>
@@ -905,8 +841,7 @@ const LectureAll = () => {
                           <Text
                             width={`10%`}
                             color={Theme.grey2_C}
-                            padding={`0 0 0 10px`}
-                          >
+                            padding={`0 0 0 10px`}>
                             (100%)
                           </Text>
                         </Wrapper>
@@ -927,17 +862,14 @@ const LectureAll = () => {
                     width={width < 1100 ? `100%` : `calc(30% - 80px)`}
                     margin={
                       width < 1100 && width < 800 ? `10px 0 0` : `20px 0 0`
-                    }
-                  >
+                    }>
                     <Wrapper
                       borderBottom={`1px dashed ${Theme.grey_C}`}
                       al={`flex-start`}
-                      ju={`flex-start`}
-                    >
+                      ju={`flex-start`}>
                       <Text
                         padding={width < 800 ? `8px 0` : `16px 0`}
-                        color={Theme.basicTheme_C}
-                      >
+                        color={Theme.basicTheme_C}>
                         ZOOM 이동
                       </Text>
                     </Wrapper>
@@ -946,8 +878,7 @@ const LectureAll = () => {
                       dr={`row`}
                       al={`flex-start`}
                       ju={`flex-start`}
-                      padding={width < 800 ? `8px 0` : `16px 0`}
-                    >
+                      padding={width < 800 ? `8px 0` : `16px 0`}>
                       <Text>수료증 신청</Text>
                       <Text> | </Text>
                       <Text>강의수 늘리기 요청</Text>
@@ -957,8 +888,7 @@ const LectureAll = () => {
                       al={`flex-start`}
                       ju={`flex-start`}
                       dr={`row`}
-                      padding={width < 800 ? `8px 0` : `16px 0`}
-                    >
+                      padding={width < 800 ? `8px 0` : `16px 0`}>
                       <Text>결석 예고</Text>
                       <Text> | </Text>
                       <Text>반이동 요청</Text>

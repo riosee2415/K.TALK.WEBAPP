@@ -56,6 +56,7 @@ import {
 import { NOTICE_LIST_REQUEST } from "../../reducers/notice";
 import {
   LECTURE_FILE_REQUEST,
+  LECTURE_HOMEWORK_STU_LIST_REQUEST,
   LECTURE_STU_LECTURE_LIST_REQUEST,
   LECTURE_SUBMIT_CREATE_REQUEST,
 } from "../../reducers/lecture";
@@ -64,6 +65,7 @@ import {
   UploadOutlined,
   FilePdfOutlined,
 } from "@ant-design/icons";
+import { saveAs } from "file-saver";
 
 const PROFILE_WIDTH = `184`;
 const PROFILE_HEIGHT = `190`;
@@ -284,6 +286,10 @@ const Student = () => {
     lectureStuLectureList,
     st_lectureStuLectureListDone,
     st_lectureStuLectureListError,
+
+    lectureHomeworkStuList,
+    st_lectureHomeworkStuListDone,
+    st_lectureHomeworkStuListError,
   } = useSelector((state) => state.lecture);
 
   ////// HOOKS //////
@@ -316,6 +322,7 @@ const Student = () => {
 
   const [adminSendMessageToggle, setAdminSendMessageToggle] = useState(false);
   const [homeWorkModalToggle, setHomeWorkModalToggle] = useState(false);
+  const [homeWorkData, setHomeWorkData] = useState("");
 
   const [selectValue, setSelectValue] = useState("");
 
@@ -356,6 +363,10 @@ const Student = () => {
 
     dispatch({
       type: LECTURE_STU_LECTURE_LIST_REQUEST,
+    });
+
+    dispatch({
+      type: LECTURE_HOMEWORK_STU_LIST_REQUEST,
     });
   }, []);
 
@@ -459,6 +470,31 @@ const Student = () => {
     }
   }, [st_lectureFileDone]);
 
+  useEffect(() => {
+    if (st_lectureHomeworkStuListError) {
+      return message.error(st_lectureHomeworkStuListError);
+    }
+  }, [st_lectureHomeworkStuListError]);
+
+  useEffect(() => {
+    if (st_lectureSubmitCreateError) {
+      return message.error(st_lectureSubmitCreateError);
+    }
+  }, [st_lectureSubmitCreateError]);
+
+  useEffect(() => {
+    if (st_lectureSubmitCreateDone) {
+      onReset();
+      return message.success("해당 강의 숙제를 제출했습니다.");
+    }
+  }, [st_lectureSubmitCreateDone]);
+
+  useEffect(() => {
+    if (st_lectureStuLectureListError) {
+      return message.error(st_lectureStuLectureListError);
+    }
+  }, [st_lectureStuLectureListError]);
+
   const onReset = useCallback(() => {
     form.resetFields();
 
@@ -466,7 +502,8 @@ const Student = () => {
     setMessageSendModal(false);
     setMessageViewModal(false);
     setHomeWorkModalToggle(false);
-  }, []);
+    setFileName("");
+  }, [fileInput]);
 
   ////// TOGGLE //////
 
@@ -496,6 +533,11 @@ const Student = () => {
 
   const adminSendMessageToggleHandler = useCallback(() => {
     setAdminSendMessageToggle((prev) => !prev);
+  }, []);
+
+  const homeworkSubmitHanlder = useCallback((data) => {
+    setHomeWorkData(data);
+    setHomeWorkModalToggle(true);
   }, []);
 
   ////// HANDLER //////
@@ -633,28 +675,39 @@ const Student = () => {
     });
   }, []);
 
-  const homeWorkFinishHandler = useCallback(
-    (value) => {
-      if (filePath) {
-        dispatch({
-          type: LECTURE_SUBMIT_CREATE_REQUEST,
-          data: {
-            // HomeworkId:
-            // LectureId:
-            // file:
-            // date: value.date,
-            // file: filePath,
-            // LectureId: router.query.id,
-          },
-        });
+  const homeWorkFinishHandler = useCallback(() => {
+    console.log(fileInput);
+    if (fileName) {
+      dispatch({
+        type: LECTURE_SUBMIT_CREATE_REQUEST,
+        data: {
+          HomeworkId: homeWorkData.id,
+          LectureId: homeWorkData.LectureId,
+          file: filePath,
+        },
+      });
 
-        imageInput.current.value = "";
-      } else {
-        return message.error("파일을 업로드 해주세요.");
-      }
-    },
-    [lecturePath, filePath]
-  );
+      fileInput.current.value = "";
+      setFileName("");
+    } else {
+      return message.error("파일을 업로드 해주세요.");
+    }
+  }, [fileName, filePath, homeWorkData, fileInput]);
+
+  const fileDownloadHandler = useCallback(async (filePath) => {
+    let blob = await fetch(filePath).then((r) => r.blob());
+
+    const file = new Blob([blob]);
+
+    const ext = filePath.substring(
+      filePath.lastIndexOf(".") + 1,
+      filePath.length
+    );
+
+    const originName = `첨부파일.${ext}`;
+
+    saveAs(file, originName);
+  }, []);
 
   const receiveSelectHandler = useCallback((value) => {
     setSelectValue(value);
@@ -872,7 +925,7 @@ const Student = () => {
             {lectureStuLectureList && lectureStuLectureList.length === 0
               ? ""
               : lectureStuLectureList &&
-                lectureStuLectureList.map((data, idx) => {
+                lectureStuLectureList.slice(0, 1).map((data, idx) => {
                   return (
                     <Wrapper
                       padding={
@@ -1031,7 +1084,8 @@ const Student = () => {
             {lectureStuLectureList && lectureStuLectureList.length === 0
               ? ""
               : lectureStuLectureList &&
-                lectureStuLectureList.map((data, idx) => {
+                lectureStuLectureList.slice(0, 1).map((data, idx) => {
+                  console.log(data, "data");
                   return (
                     <Wrapper
                       dr={`row`}
@@ -1089,7 +1143,26 @@ const Student = () => {
                                     |
                                   </Text>
                                   <Text lineHeight={`1.19`}>
-                                    {`강의 수 : 5/30`}
+                                    {`강의 수 : ${Math.abs(
+                                      Math.floor(
+                                        moment
+                                          .duration(
+                                            moment(
+                                              data.endDate,
+                                              "YYYY-MM-DD"
+                                            ).diff(
+                                              moment(
+                                                data.startDate,
+                                                "YYYY-MM-DD"
+                                              )
+                                            )
+                                          )
+                                          .asDays() -
+                                          parseInt(data.lecDate) * data.count
+                                      )
+                                    )} / ${
+                                      parseInt(data.lecDate) * data.count
+                                    }`}
                                   </Text>
                                   <Text
                                     lineHeight={`1.19`}
@@ -1254,14 +1327,16 @@ const Student = () => {
               </Text>
             </Wrapper>
 
+            {console.log(lectureHomeworkStuList, "lectureHomeworkStuList")}
             <Wrapper margin={`0 0 60px`}>
-              {testArr &&
-                (testArr.length === 0 ? (
+              {lectureHomeworkStuList &&
+                (lectureHomeworkStuList.length === 0 ? (
                   <Wrapper>
                     <Empty description="숙제가 없습니다." />
                   </Wrapper>
                 ) : (
-                  testArr.map((data) => {
+                  lectureHomeworkStuList &&
+                  lectureHomeworkStuList.map((data) => {
                     return (
                       <Wrapper
                         key={data.id}
@@ -1282,7 +1357,7 @@ const Student = () => {
                               src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png"
                               alt="lecture_icon"
                             />
-                            <Text fontWeight={`bold`}>{data.name}</Text>
+                            <Text fontWeight={`bold`}>{data.teacherName}</Text>
                           </Wrapper>
 
                           <Wrapper
@@ -1296,7 +1371,7 @@ const Student = () => {
                             dr={`row`}
                             width={width < 900 ? `45%` : `50%`}
                             ju={`flex-start`}>
-                            <Text fontSize={`14px`}>{data.content}</Text>
+                            <Text fontSize={`14px`}>{data.title}</Text>
                           </Wrapper>
                         </Wrapper>
                         <Wrapper
@@ -1306,14 +1381,18 @@ const Student = () => {
                           <Wrapper
                             dr={`row`}
                             width={width < 900 ? `10%` : `35%`}
-                            ju={`flex-start`}>
+                            ju={`flex-start`}
+                            onClick={() => fileDownloadHandler(data.file)}>
                             <Image
+                              cursor={`pointer`}
                               width={`22px`}
                               margin={width < 900 ? `0 5px 0 0` : `0 16px 0 0`}
                               src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_download.png"
                               alt="lecture_icon"
                             />
-                            {width > 900 && <Text>파일다운로드</Text>}
+                            {width > 900 && (
+                              <Text cursor={`pointer`}>파일 다운로드</Text>
+                            )}
                           </Wrapper>
 
                           <Wrapper
@@ -1328,7 +1407,12 @@ const Student = () => {
                               src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_b.png"
                               alt="lecture_icon"
                             />
-                            <Text>{data.createdAt}까지</Text>
+                            <Text>
+                              {moment(data.date, "YYYY/MM/DD").format(
+                                "YYYY/MM/DD"
+                              )}
+                              까지
+                            </Text>
                           </Wrapper>
 
                           <Wrapper
@@ -1339,7 +1423,7 @@ const Student = () => {
                             cursor={`pointer`}>
                             <Text
                               fontWeight={`bold`}
-                              onClick={() => setHomeWorkModalToggle(true)}>
+                              onClick={() => homeworkSubmitHanlder(data)}>
                               제출하기
                             </Text>
                           </Wrapper>

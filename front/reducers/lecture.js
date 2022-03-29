@@ -26,6 +26,8 @@ export const initailState = {
   lectureMemoStuList: null,
   lectureMemoStuLastPage: 1,
 
+  lectureHomeworkStuList: null,
+
   createModal: false,
   detailModal: false,
   updateModal: false,
@@ -116,6 +118,10 @@ export const initailState = {
   st_lectureMemoStuUpdateLoading: false,
   st_lectureMemoStuUpdateDone: false,
   st_lectureMemoStuUpdateError: null,
+  //
+  st_lectureHomeWorkStuListLoading: false,
+  st_lectureHomeWorkStuListDone: false,
+  st_lectureHomeWorkStuListError: null,
 };
 
 export const LECTURE_LIST_REQUEST = "LECTURE_LIST_REQUEST";
@@ -175,6 +181,7 @@ export const LECTURE_HOMEWORK_CREATE_SUCCESS =
   "LECTURE_HOMEWORK_CREATE_SUCCESS";
 export const LECTURE_HOMEWORK_CREATE_FAILURE =
   "LECTURE_HOMEWORK_CREATE_FAILURE";
+//
 
 export const LECTURE_FILE_REQUEST = "LECTURE_FILE_REQUEST";
 export const LECTURE_FILE_SUCCESS = "LECTURE_FILE_SUCCESS";
@@ -226,6 +233,13 @@ export const LECTURE_MEMO_STU_UPDATE_SUCCESS =
   "LECTURE_MEMO_STU_UPDATE_SUCCESS";
 export const LECTURE_MEMO_STU_UPDATE_FAILURE =
   "LECTURE_MEMO_STU_UPDATE_FAILURE";
+//
+export const LECTURE_HOMEWORK_STU_LIST_REQUEST =
+  "LECTURE_HOMEWORK_STU_LIST_REQUEST";
+export const LECTURE_HOMEWORK_STU_LIST_SUCCESS =
+  "LECTURE_HOMEWORK_STU_LIST_SUCCESS";
+export const LECTURE_HOMEWORK_STU_LIST_FAILURE =
+  "LECTURE_HOMEWORK_STU_LIST_FAILURE";
 //
 
 export const CREATE_MODAL_OPEN_REQUEST = "CREATE_MODAL_OPEN_REQUEST";
@@ -686,6 +700,27 @@ const reducer = (state = initailState, action) =>
         draft.st_lectureMemoStuUpdateLoading = false;
         draft.st_lectureMemoStuUpdateDone = false;
         draft.st_lectureMemoStuUpdateError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case LECTURE_HOMEWORK_STU_LIST_REQUEST: {
+        draft.st_lectureHomeworkStuListLoading = true;
+        draft.st_lectureHomeworkStuListDone = null;
+        draft.st_lectureHomeworkStuListError = false;
+        break;
+      }
+      case LECTURE_HOMEWORK_STU_LIST_SUCCESS: {
+        draft.st_lectureHomeworkStuListLoading = false;
+        draft.st_lectureHomeworkStuListDone = true;
+        draft.lectureHomeworkStuList = action.data.homeworks;
+        break;
+      }
+      case LECTURE_HOMEWORK_STU_LIST_FAILURE: {
+        draft.st_lectureHomeworkStuListLoading = false;
+        draft.st_lectureHomeworkStuListDone = false;
+        draft.st_lectureHomeworkStuListError = action.error;
         break;
       }
 

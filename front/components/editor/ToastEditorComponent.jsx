@@ -1,4 +1,10 @@
-import React, { useState, forwardRef, useRef, useCallback } from "react";
+import React, {
+  useState,
+  forwardRef,
+  useRef,
+  useCallback,
+  useEffect,
+} from "react";
 import dynamic from "next/dynamic";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { Button } from "antd";
@@ -24,9 +30,23 @@ const EditorWithForwardedRef = React.forwardRef((props, ref) => (
   <Editor {...props} forwardedRef={ref} />
 ));
 
-const ToastEditorComponent4 = (props) => {
+const ToastEditorComponent = (props) => {
   const dispatch = useDispatch();
-  const { heightMin, onChange } = props;
+  const { heightMin, onChange, noticeDetail } = props;
+  const { detailModal } = useSelector((state) => state.notice);
+
+  const [value, setValue] = useState(null);
+
+  useEffect(() => {
+    if (detailModal) {
+      setTimeout(() => {
+        setValue(noticeDetail);
+      }, 500);
+    }
+    if (!noticeDetail) {
+      setValue(null);
+    }
+  }, [noticeDetail, value, detailModal]);
 
   const editorRef = useRef(null);
 
@@ -58,35 +78,38 @@ const ToastEditorComponent4 = (props) => {
   return (
     <>
       <EditorWrapper margin="20px 0px">
-        <EditorWithForwardedRef
-          {...props}
-          placeholder={props.placeholder || "내용을 입력해주세요."}
-          previewStyle="vertical"
-          setHeight="600px"
-          initialEditType="wysiwyg"
-          //   initialEditType="markdown"
-          useCommandShortcut={true}
-          ref={editorRef}
-          hideModeSwitch={true}
-          hooks={{
-            addImageBlobHook: async (blob, callback) => {
-              const uploadedImageURL = await uploadImage(blob);
-              callback(uploadedImageURL, "alt text");
-              return false;
-            },
-          }}
-          events={{
-            load: function (param) {
-              setEditor(param);
-            },
-            change: handleChange,
-            keydown: function (editorType, event) {
-              if (event.which === 13 && tributeRef.current.isActive) {
+        {value ? (
+          <EditorWithForwardedRef
+            {...props}
+            placeholder={props.placeholder || "내용을 입력해주세요."}
+            previewStyle="vertical"
+            setHeight="600px"
+            initialEditType="wysiwyg"
+            //   initialEditType="markdown"
+            useCommandShortcut={true}
+            ref={editorRef}
+            hideModeSwitch={true}
+            initialValue={value}
+            hooks={{
+              addImageBlobHook: async (blob, callback) => {
+                const uploadedImageURL = await uploadImage(blob);
+                callback(uploadedImageURL, "alt text");
                 return false;
-              }
-            },
-          }}
-        />
+              },
+            }}
+            events={{
+              load: function (param) {
+                setEditor(param);
+              },
+              change: handleChange,
+              keydown: function (editorType, event) {
+                if (event.which === 13 && tributeRef.current.isActive) {
+                  return false;
+                }
+              },
+            }}
+          />
+        ) : null}
       </EditorWrapper>
 
       <Wrapper margin="10px 0px" dr="row" ju="flex-end" width="90%">
@@ -98,4 +121,4 @@ const ToastEditorComponent4 = (props) => {
   );
 };
 
-export default ToastEditorComponent4;
+export default ToastEditorComponent;
