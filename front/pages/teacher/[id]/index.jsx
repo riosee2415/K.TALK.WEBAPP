@@ -319,6 +319,9 @@ const Index = () => {
     st_messageDetailDone,
     st_messageDetailError,
 
+    st_messageManyCreateDone,
+    st_messageManyCreateError,
+
     st_messageForAdminCreateDone,
     st_messageForAdminCreateError,
 
@@ -436,15 +439,14 @@ const Index = () => {
 
   const [messageSendModalToggle, setMessageSendModalToggle] = useState(false);
   const [noticeModalToggle, setNoticeModalToggle] = useState(false);
-  const [noticeViewModalToggle, setNoticeViewModalToggle] = useState(false);
   const [homeWorkModalToggle, setHomeWorkModalToggle] = useState(false);
   const [diaryModalToggle, setDiaryModalToggle] = useState(false);
   const [memoStuDetailToggle, setMemoStuDetailToggle] = useState(false);
 
+  const [noticeId, setNoticeId] = useState("");
+
   const [memoToggle, setMemoToggle] = useState(false);
-
   const [memoStuBackToggle, setMemoStuBackToggle] = useState(false);
-
   const [memoId, setMemoId] = useState("");
 
   const [memoDatum, setMemoDatum] = useState("");
@@ -507,7 +509,7 @@ const Index = () => {
 
       setCheckedList(arr);
     }
-  }, [partLectureList, st_messageForAdminCreateDone]);
+  }, [partLectureList, st_messageForAdminCreateDone, st_messageManyCreateDone]);
 
   useEffect(() => {
     dispatch({
@@ -586,6 +588,20 @@ const Index = () => {
   }, [st_messageCreateDone]);
 
   ////////////////////////
+  useEffect(() => {
+    if (st_messageManyCreateError) {
+      return message.error(st_messageManyCreateError);
+    }
+  }, [st_messageManyCreateError]);
+
+  useEffect(() => {
+    if (st_messageManyCreateDone) {
+      onReset();
+
+      return message.success("해당 강사님에게 쪽지를 보냈습니다.");
+    }
+  }, [st_messageManyCreateDone]);
+
   useEffect(() => {
     if (st_messageForAdminCreateDone) {
       onReset();
@@ -684,9 +700,17 @@ const Index = () => {
   useEffect(() => {
     if (st_noticeUpdateDone) {
       onReset();
+
+      dispatch({
+        type: NOTICE_DETAIL_REQUEST,
+        data: {
+          noticeId: noticeId,
+        },
+      });
+
       return message.success("해당 게시글을 수정했습니다.");
     }
-  }, [st_noticeUpdateDone]);
+  }, [st_noticeUpdateDone, noticeId]);
 
   useEffect(() => {
     if (st_noticeUpdateError) {
@@ -978,8 +1002,8 @@ const Index = () => {
     setFileName("");
     setFilePath("");
     setMemoDatum("");
-    setMemoStuBackToggle(false);
 
+    setMemoStuBackToggle(false);
     setCommuteToggle(false);
 
     dispatch({
@@ -991,7 +1015,6 @@ const Index = () => {
     let result = arr.map((data, idx) => {
       return idx2 === idx ? { ...data, isCheck: e.target.checked } : data;
     });
-
     setCheckedList(result);
   }, []);
 
@@ -1042,19 +1065,23 @@ const Index = () => {
     });
   };
 
-  const answerFinishHandler = useCallback((data, messageData) => {
-    dispatch({
-      type: MESSAGE_CREATE_REQUEST,
-      data: {
-        title: data.messageTitle,
-        author: messageData.author,
-        senderId: messageData.receiverId,
-        receiverId: messageData.senderId,
-        content: data.messageContent,
-        level: messageData.level,
-      },
-    });
-  }, []);
+  const answerFinishHandler = useCallback(
+    (data, messageData) => {
+      console.log(data, messageData);
+      dispatch({
+        type: MESSAGE_CREATE_REQUEST,
+        data: {
+          title: data.messageTitle,
+          author: me.username,
+          senderId: messageData.receiverId,
+          receiverId: messageData.senderId,
+          content: data.messageContent,
+          level: messageData.level,
+        },
+      });
+    },
+    [me]
+  );
 
   const sendMessageAdminFinishHandler = useCallback(
     (data) => {
@@ -1126,7 +1153,7 @@ const Index = () => {
     setCurrentPage5(page);
 
     dispatch({
-      type: NOTICE_LECTURE_LIST_REQUEST,
+      type: LECTURE_SUBMIT_LIST_REQUEST,
       data: {
         page,
         LectureId: router.query.id,
@@ -1162,7 +1189,7 @@ const Index = () => {
       type: DETAIL_MODAL_OPEN_REQUEST,
     });
 
-    setNoticeViewModalToggle(true);
+    setNoticeId(id);
   }, []);
 
   const lectureDetailStuMemoHandler = useCallback((data) => {
@@ -1240,82 +1267,6 @@ const Index = () => {
     saveAs(file, originName);
   }, []);
   ////// DATAVIEW //////
-
-  const testdata = [
-    {
-      id: 1,
-      student: "Eric1",
-      birth: "1997",
-      country: "인도네시아",
-      money: "U$ 11",
-      date: `2022/01/22 (D-1)`,
-      memo: "작성하기",
-      attendance: "출석",
-    },
-    {
-      id: 2,
-      student: "Eric2",
-      birth: "1997",
-      country: "베트남",
-      money: "U$ 25",
-      date: `2022/01/30 (D-4)`,
-      memo: "작성하기",
-      attendance: "출석",
-    },
-    {
-      id: 3,
-      student: "Eric3",
-      birth: "1997",
-      country: "일본",
-      money: "U$ 20",
-      date: `2022/01/01 (D-5)`,
-      memo: "작성하기",
-      attendance: "출석",
-    },
-  ];
-
-  const teacherDiaryArr = [
-    {
-      id: 1,
-      teacherName: "Eric1",
-      next: "1997",
-      memo: "작성하기",
-      createdAt: "2022/01/03",
-    },
-    {
-      id: 2,
-      teacherName: "Eric1",
-      next: "1997",
-      memo: "작성하기",
-      createdAt: "2022/01/03",
-    },
-    {
-      id: 3,
-      teacherName: "Eric1",
-      next: "1997",
-      memo: "작성하기",
-      createdAt: "2022/01/03",
-    },
-  ];
-
-  const clockArr = [
-    {
-      name: "월요일",
-      time: "7PM",
-    },
-    {
-      name: "화요일",
-      time: "7PM",
-    },
-    {
-      name: "수요일",
-      time: "7PM",
-    },
-    {
-      name: "금요일",
-      time: "7PM",
-    },
-  ];
 
   return (
     <>
@@ -1407,6 +1358,8 @@ const Index = () => {
                 ? ""
                 : lectureDetail &&
                   lectureDetail.map((data, idx) => {
+                    console.log();
+
                     return (
                       <Wrapper
                         dr={`row`}
@@ -1523,25 +1476,21 @@ const Index = () => {
                                 </Text>
 
                                 <CustomProgress
-                                  percent={Math.floor(
-                                    ((30 -
-                                      Math.floor(
-                                        moment
-                                          .duration(
-                                            moment(
-                                              data.endDate,
-                                              "YYYY-MM-DD"
-                                            ).diff(
-                                              moment(
-                                                data.startDate,
-                                                "YYYY-MM-DD"
-                                              )
-                                            )
+                                  percent={Math.abs(
+                                    Math.floor(
+                                      (moment
+                                        .duration(
+                                          moment(
+                                            data.endDate,
+                                            "YYYY-MM-DD"
+                                          ).diff(
+                                            moment(data.startDate, "YYYY-MM-DD")
                                           )
-                                          .asDays()
-                                      )) /
-                                      30) *
-                                      100
+                                        )
+                                        .asDays() /
+                                        (data.lecDate * 7)) *
+                                        100
+                                    ) - 100
                                   )}
                                 />
                               </>
@@ -2106,7 +2055,7 @@ const Index = () => {
                                     moment(new Date(), "YYYY-MM-DD")
                                   )
                                 )
-                                .asDays() < 1
+                                .asDays() < -1
                                 ? `${Theme.red_C}`
                                 : ""
                             }>
@@ -2116,7 +2065,7 @@ const Index = () => {
                                   moment(new Date(), "YYYY-MM-DD")
                                 )
                               )
-                              .asDays() < 1
+                              .asDays() < -1
                               ? "기간 만료"
                               : "제출 기간"}
                           </Text>
@@ -2381,15 +2330,11 @@ const Index = () => {
               <ToastEditorComponent
                 action={getEditContentUpdate}
                 placeholder="placeholder"
-                value={
+                noticeDetail={
                   noticeDetail && noticeDetail[0] && noticeDetail[0].content
                 }
               />
             </Form.Item>
-
-            {/* <Wrapper padding={`10px`}>
-              <WordbreakText>오늘 공지사항입니다.</WordbreakText>
-            </Wrapper> */}
 
             <Wrapper dr={`row`}>
               <CommonButton
@@ -2605,7 +2550,7 @@ const Index = () => {
                 margin={`0 0 0 5px`}
                 radius={`5px`}
                 htmlType="submit">
-                답변하기
+                작성하기
               </CommonButton>
             </Wrapper>
           </CustomForm>
@@ -2846,7 +2791,7 @@ const Index = () => {
                                   moment(new Date(), "YYYY-MM-DD")
                                 )
                               )
-                              .asDays() < 1
+                              .asDays() < -1
                               ? `${Theme.red_C}`
                               : ""
                           }>
@@ -2856,7 +2801,7 @@ const Index = () => {
                                 moment(new Date(), "YYYY-MM-DD")
                               )
                             )
-                            .asDays() < 1
+                            .asDays() < -1
                             ? "기간 만료"
                             : "제출 기간"}
                         </Text>

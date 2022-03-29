@@ -153,10 +153,12 @@ router.delete(
 );
 
 router.post("/list", async (req, res, next) => {
-  const { BookFolderId, LectureId } = req.body;
+  const { BookFolderId, LectureId, search } = req.body;
 
   let _BookFolderId = BookFolderId || null;
   let _LectureId = LectureId || null;
+
+  const _search = search ? search : ``;
 
   try {
     const selectQuery = `
@@ -175,6 +177,7 @@ router.post("/list", async (req, res, next) => {
      AND	A.isDelete = FALSE
      AND	B.isDelete = FALSE
      ${_BookFolderId ? `AND A.BookFolderId = ${_BookFolderId}` : ``}
+     ${_search ? `AND A.title LIKE '%${_search}%'` : ``}
      ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
     `;
 

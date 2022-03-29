@@ -88,6 +88,10 @@ import {
   LECTURE_MEMO_STU_UPDATE_REQUEST,
   LECTURE_MEMO_STU_UPDATE_SUCCESS,
   LECTURE_MEMO_STU_UPDATE_FAILURE,
+  //
+  LECTURE_HOMEWORK_STU_LIST_REQUEST,
+  LECTURE_HOMEWORK_STU_LIST_SUCCESS,
+  LECTURE_HOMEWORK_STU_LIST_FAILURE,
 } from "../reducers/lecture";
 
 // SAGA AREA ********************************************************************************************************
@@ -630,6 +634,29 @@ function* lectureMemoStuUpdate(action) {
   }
 }
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureHomeworkStuListAPI(data) {
+  return axios.get(`/api/lecture/homework/student/list`);
+}
+
+function* lectureHomeworkStuList(action) {
+  try {
+    const result = yield call(lectureHomeworkStuListAPI, action.data);
+
+    yield put({
+      type: LECTURE_HOMEWORK_STU_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_HOMEWORK_STU_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 // ******************************************************************************************************************
@@ -708,7 +735,7 @@ function* watchLectureMemoStuCreate() {
 }
 
 function* watchLectureMemoStuDetail() {
-  yield takeLatest(LECTURE_MEMO_STU_LIST_REQUEST, lectureMemoStuDetail);
+  yield takeLatest(LECTURE_MEMO_STU_DETAIL_REQUEST, lectureMemoStuDetail);
 }
 
 function* watchLectureStuLectureList() {
@@ -721,6 +748,10 @@ function* watchLectureMemoStuList() {
 
 function* watchLectureMemoStuUpdate() {
   yield takeLatest(LECTURE_MEMO_STU_UPDATE_REQUEST, lectureMemoStuUpdate);
+}
+
+function* watchLectureHomeworkStuList() {
+  yield takeLatest(LECTURE_HOMEWORK_STU_LIST_REQUEST, lectureHomeworkStuList);
 }
 
 //////////////////////////////////////////////////////////////
@@ -748,6 +779,7 @@ export default function* lectureSaga() {
     fork(watchLectureStuLectureList),
     fork(watchLectureMemoStuList),
     fork(watchLectureMemoStuUpdate),
+    fork(watchLectureHomeworkStuList),
 
     //
   ]);
