@@ -122,6 +122,7 @@ const Index = () => {
   const fileRef = useRef();
   const fileRef2 = useRef();
   const filename = useInput();
+  const searchInput = useInput(``);
   const [currentTab, setCurrentTab] = useState(null);
   const [currentMenu, setCurrentMenu] = useState(null);
   const [createModal, setCreateModal] = useState(false);
@@ -168,6 +169,7 @@ const Index = () => {
         BookFolderId: currentTab,
       },
     });
+    searchInput.setValue(``);
   }, [router.query, currentTab]);
 
   useEffect(() => {
@@ -367,6 +369,20 @@ const Index = () => {
     },
     [form]
   );
+
+  const searchHandler = useCallback(
+    (link) => {
+      dispatch({
+        type: BOOK_LIST_REQUEST,
+        data: {
+          LectureId: router.query.lectureId,
+          BookFolderId: currentTab,
+          search: searchInput.value,
+        },
+      });
+    },
+    [router.query, currentTab, searchInput]
+  );
   ////// DATAVIEW //////
 
   return (
@@ -443,7 +459,11 @@ const Index = () => {
                     left: `15px`,
                   }}
                 />
-                <CusotmInput placeholder="교재 검색" />
+                <CusotmInput
+                  placeholder="교재 검색"
+                  {...searchInput}
+                  onKeyDown={(e) => e.keyCode === 13 && searchHandler()}
+                />
               </Wrapper>
 
               <CommonButton
@@ -675,7 +695,7 @@ const Index = () => {
                   label={`교재 제목`}
                   name={`title`}
                 >
-                  <TextInput />
+                  <TextInput height={`30px`} />
                 </Form.Item>
                 <Form.Item
                   rules={[{ required: true, message: "폴더를 선택해주세요." }]}
@@ -728,7 +748,6 @@ const Index = () => {
                 <Button type="primary" onClick={fileUploadClick2}>
                   썸네일 이미지 업로드
                 </Button>
-                <Input type={`range`} />
               </Wrapper>
 
               <Wrapper
