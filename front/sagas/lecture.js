@@ -520,7 +520,7 @@ function* lectureLinkUpdate(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function lectureMemoStuCreateAPI(data) {
-  return axios.get(`/api/lecture/memo/student/create`, data);
+  return axios.post(`/api/lecture/memo/student/create`, data);
 }
 
 function* lectureMemoStuCreate(action) {

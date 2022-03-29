@@ -48,6 +48,10 @@ import {
   MESSAGE_FOR_ADMIN_CREATE_REQUEST,
   MESSAGE_FOR_ADMIN_CREATE_SUCCESS,
   MESSAGE_FOR_ADMIN_CREATE_FAILURE,
+  /////////////////////////////////
+  MESSAGE_LECTURE_LIST_REQUEST,
+  MESSAGE_LECTURE_LIST_SUCCESS,
+  MESSAGE_LECTURE_LIST_FAILURE,
 } from "../reducers/message";
 
 // SAGA AREA ********************************************************************************************************
@@ -280,6 +284,29 @@ function* messageForAdminCreate(action) {
   }
 }
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function messageLectureListAPI(data) {
+  return axios.post(`/api/message/lecture/list`, data);
+}
+
+function* messageLectureList(action) {
+  try {
+    const result = yield call(messageLectureListAPI, action.data);
+
+    yield put({
+      type: MESSAGE_LECTURE_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: MESSAGE_LECTURE_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 // ******************************************************************************************************************
@@ -325,6 +352,10 @@ function* watchMessageForAdminCreate() {
   yield takeLatest(MESSAGE_FOR_ADMIN_CREATE_REQUEST, messageForAdminCreate);
 }
 
+function* watchMessageLectureList() {
+  yield takeLatest(MESSAGE_LECTURE_LIST_REQUEST, messageLectureList);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* messagerSaga() {
   yield all([
@@ -338,6 +369,7 @@ export default function* messagerSaga() {
     fork(watchMessageAllCreate),
     fork(watchMessageLectureCreate),
     fork(watchMessageForAdminCreate),
+    fork(watchMessageLectureList),
     //
   ]);
 }

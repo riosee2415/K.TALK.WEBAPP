@@ -54,12 +54,11 @@ import {
   MESSAGE_CREATE_REQUEST,
   MESSAGE_DETAIL_REQUEST,
   MESSAGE_MANY_CREATE_REQUEST,
-  MESSAGE_USER_LIST_REQUEST,
+  MESSAGE_LECTURE_LIST_REQUEST,
   MESSAGE_FOR_ADMIN_CREATE_REQUEST,
 } from "../../../reducers/message";
 import { useRouter } from "next/router";
 import {
-  LECTURE_CREATE_REQUEST,
   LECTURE_DETAIL_REQUEST,
   LECTURE_DIARY_CREATE_REQUEST,
   LECTURE_DIARY_LIST_REQUEST,
@@ -329,10 +328,10 @@ const Index = () => {
     st_messageTeacherListDone,
     st_messageTeacherListError,
 
-    messageUserList,
+    messageLectureList,
     messageUserLastPage,
-    st_messageUserListDone,
-    st_messageUserListError,
+    st_messageLectureListDone,
+    st_messageLectureListError,
 
     st_messageCreateDone,
     st_messageCreateError,
@@ -431,9 +430,15 @@ const Index = () => {
   const [form] = Form.useForm();
   const [answerform] = Form.useForm();
   const [noticeform] = Form.useForm();
+  const [noticeWriteform] = Form.useForm();
+  const [homeworkUploadform] = Form.useForm();
+  const [diaryform] = Form.useForm();
+  const [homeworkSubmitform] = Form.useForm();
   const [memoform] = Form.useForm();
+  const [memoWriteform] = Form.useForm();
 
   const imageInput = useRef();
+  const homeworkUpload = useRef();
 
   const [isCalendar, setIsCalendar] = useState(false);
 
@@ -598,7 +603,7 @@ const Index = () => {
     if (st_messageManyCreateDone) {
       onReset();
 
-      return message.success("해당 강사님에게 쪽지를 보냈습니다.");
+      return message.success("해당 학생에게 쪽지를 보냈습니다.");
     }
   }, [st_messageManyCreateDone]);
 
@@ -618,6 +623,14 @@ const Index = () => {
   useEffect(() => {
     if (st_lectureHomeWorkCreateDone) {
       onReset();
+
+      dispatch({
+        type: LECTURE_HOMEWORK_LIST_REQUEST,
+        data: {
+          LectureId: parseInt(router.query.id),
+          page: 1,
+        },
+      });
 
       return message.success("숙제를 업로드 했습니다.");
     }
@@ -644,9 +657,7 @@ const Index = () => {
 
   useEffect(() => {
     if (st_noticeCreateDone) {
-      dispatch({
-        type: DETAIL_MODAL_CLOSE_REQUEST,
-      });
+      onReset();
 
       return message.success("공지사항이 작성 되었습니다.");
     }
@@ -660,8 +671,9 @@ const Index = () => {
 
   useEffect(() => {
     dispatch({
-      type: MESSAGE_USER_LIST_REQUEST,
+      type: MESSAGE_LECTURE_LIST_REQUEST,
       data: {
+        LectureId: router.query.id,
         page: 1,
       },
     });
@@ -720,6 +732,15 @@ const Index = () => {
 
   useEffect(() => {
     if (st_commuteCreateDone) {
+      dispatch({
+        type: COMMUTE_LIST_REQUEST,
+        data: {
+          LectureId: parseInt(router.query.id),
+          page: 1,
+          search: "",
+        },
+      });
+
       return message.success("해당 학생을 출석을 완료 했습니다.");
     }
   }, [st_commuteCreateDone]);
@@ -822,9 +843,12 @@ const Index = () => {
 
   const dateChagneHandler = useCallback((data) => {
     const birth = data.format("YYYY-MM-DD");
-    formRef.current.setFieldsValue({
-      date: birth,
-    });
+
+    if (data) {
+      homeworkUpload.current.setFieldsValue({
+        date: birth,
+      });
+    }
 
     inputDate.setValue(birth);
   }, []);
@@ -887,6 +911,7 @@ const Index = () => {
 
   const homeWorkFinishHandler = useCallback(
     (value) => {
+      console.log(value, "value");
       if (filePath) {
         dispatch({
           type: LECTURE_HOMEWORK_CREATE_REQUEST,
@@ -910,7 +935,8 @@ const Index = () => {
     (data) => {
       console.log(
         memoDatum,
-        "memoDatummemoDatummemoDatummemoDatummemoDatummemoDatum"
+        "memoDatummemoDatummemoDatummemoDatummemoDatummemoDatum",
+        data
       );
 
       dispatch({
@@ -984,6 +1010,10 @@ const Index = () => {
     form.resetFields();
     answerform.resetFields();
     noticeform.resetFields();
+    noticeWriteform.resetFields();
+    homeworkUploadform.resetFields();
+    diaryform.resetFields();
+    homeworkSubmitform.resetFields();
     memoform.resetFields();
 
     inputDate.setValue("");
@@ -1067,7 +1097,6 @@ const Index = () => {
 
   const answerFinishHandler = useCallback(
     (data, messageData) => {
-      console.log(data, messageData);
       dispatch({
         type: MESSAGE_CREATE_REQUEST,
         data: {
@@ -1076,10 +1105,11 @@ const Index = () => {
           senderId: messageData.receiverId,
           receiverId: messageData.senderId,
           content: data.messageContent,
-          level: messageData.level,
+          level: me.level,
         },
       });
     },
+
     [me]
   );
 
@@ -1130,8 +1160,9 @@ const Index = () => {
     setCurrentPage2(page);
 
     dispatch({
-      type: MESSAGE_USER_LIST_REQUEST,
+      type: MESSAGE_LECTURE_LIST_REQUEST,
       data: {
+        LectureId: router.query.id,
         page,
       },
     });
@@ -1218,7 +1249,6 @@ const Index = () => {
           time: moment().format("YYYY-MM-DD HH:MM"),
           LectureId: data.LectureId,
           UserId: data.UserId,
-          isAtt: isAtt,
         },
       });
     },
@@ -1358,8 +1388,6 @@ const Index = () => {
                 ? ""
                 : lectureDetail &&
                   lectureDetail.map((data, idx) => {
-                    console.log();
-
                     return (
                       <Wrapper
                         dr={`row`}
@@ -1635,6 +1663,7 @@ const Index = () => {
                       partLectureList.map((data, idx) => {
                         return (
                           <Wrapper
+                            key={data.id}
                             dr={`row`}
                             textAlign={`center`}
                             padding={`25px 0 20px`}
@@ -1655,7 +1684,7 @@ const Index = () => {
                                 {`(${moment
                                   .duration(
                                     moment(data.endDate, "YYYY-MM-DD").diff(
-                                      moment(data.startDate, "YYYY-MM-DD")
+                                      moment().format("YYYY-MM-DD")
                                     )
                                   )
                                   .asDays()})`}
@@ -1986,93 +2015,99 @@ const Index = () => {
                 숙제관리
               </Text>
 
-              {lectureHomeworkList && lectureHomeworkList.length === 0
-                ? ""
-                : lectureHomeworkList &&
-                  lectureHomeworkList.map((data, idx) => {
-                    return (
+              {(lectureHomeworkList && lectureHomeworkList.length === 0) ||
+              null ? (
+                <Wrapper margin={`50px 0`}>
+                  <Empty description="조회된 데이터가 없습니다." />
+                </Wrapper>
+              ) : (
+                lectureHomeworkList &&
+                lectureHomeworkList.map((data, idx) => {
+                  return (
+                    <Wrapper
+                      key={data.id}
+                      dr={`row`}
+                      ju={`flex-start`}
+                      shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
+                      margin={`0 0 10px 0`}
+                      padding={`20px`}
+                      radius={`10px`}>
+                      <Text
+                        width={`50%`}
+                        fontSize={width < 700 ? `14px` : `16px`}>
+                        {/* 한국어로 편지 쓰기 */}
+                        {data.title}
+                      </Text>
+
                       <Wrapper
-                        dr={`row`}
-                        ju={`flex-start`}
-                        shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
-                        margin={`0 0 10px 0`}
-                        padding={`20px`}
-                        radius={`10px`}>
-                        <Text
-                          width={`50%`}
-                          fontSize={width < 700 ? `14px` : `16px`}>
-                          {/* 한국어로 편지 쓰기 */}
-                          {data.title}
-                        </Text>
+                        width={`40%`}
+                        dr={width < 1100 ? `column` : `row`}>
+                        <CustomWrapper width={width < 1100 ? `100%` : `50%`}>
+                          <DownloadOutlined
+                            onClick={() => fileDownloadHandler(data.file)}
+                            style={{
+                              fontSize: width < 700 ? 15 : 25,
+                              color: Theme.basicTheme_C,
+                              marginRight: 10,
+                              cursor: `pointer`,
+                            }}
+                          />
 
-                        <Wrapper
-                          width={`40%`}
-                          dr={width < 1100 ? `column` : `row`}>
-                          <CustomWrapper width={width < 1100 ? `100%` : `50%`}>
-                            <DownloadOutlined
-                              onClick={() => fileDownloadHandler(data.file)}
-                              style={{
-                                fontSize: width < 700 ? 15 : 25,
-                                color: Theme.basicTheme_C,
-                                marginRight: 10,
-                                cursor: `pointer`,
-                              }}
-                            />
-
-                            <Text
-                              fontSize={width < 700 ? `14px` : `16px`}
-                              display={width < 700 ? `none` : `block`}>
-                              파일 업로드
-                            </Text>
-                          </CustomWrapper>
-
-                          <CustomWrapper
-                            width={width < 1100 ? `100%` : `50%`}
-                            beforeBool={width < 1300 ? false : true}>
-                            <CalendarOutlined
-                              style={{
-                                fontSize: width < 700 ? 15 : 25,
-                                color: Theme.basicTheme_C,
-                                marginRight: 10,
-                                cursor: `pointer`,
-                              }}
-                            />
-                            <Text fontSize={width < 700 ? `14px` : `16px`}>
-                              {`${data.date}까지`}
-                            </Text>
-                          </CustomWrapper>
-                        </Wrapper>
-
-                        <Wrapper width={`10%`} ju={`center`}>
                           <Text
                             fontSize={width < 700 ? `14px` : `16px`}
-                            margin={width < 700 ? `0 0 0 5px` : "0"}
-                            fontWeight={`bold`}
-                            color={
-                              moment
-                                .duration(
-                                  moment(data.date, "YYYY-MM-DD").diff(
-                                    moment(new Date(), "YYYY-MM-DD")
-                                  )
-                                )
-                                .asDays() < -1
-                                ? `${Theme.red_C}`
-                                : ""
-                            }>
-                            {moment
+                            display={width < 700 ? `none` : `block`}>
+                            파일 업로드
+                          </Text>
+                        </CustomWrapper>
+
+                        <CustomWrapper
+                          width={width < 1100 ? `100%` : `50%`}
+                          beforeBool={width < 1300 ? false : true}>
+                          <CalendarOutlined
+                            style={{
+                              fontSize: width < 700 ? 15 : 25,
+                              color: Theme.basicTheme_C,
+                              marginRight: 10,
+                              cursor: `pointer`,
+                            }}
+                          />
+                          <Text fontSize={width < 700 ? `14px` : `16px`}>
+                            {`${data.date}까지`}
+                          </Text>
+                        </CustomWrapper>
+                      </Wrapper>
+
+                      <Wrapper width={`10%`} ju={`center`}>
+                        <Text
+                          fontSize={width < 700 ? `14px` : `16px`}
+                          margin={width < 700 ? `0 0 0 5px` : "0"}
+                          fontWeight={`bold`}
+                          color={
+                            moment
                               .duration(
                                 moment(data.date, "YYYY-MM-DD").diff(
                                   moment(new Date(), "YYYY-MM-DD")
                                 )
                               )
                               .asDays() < -1
-                              ? "기간 만료"
-                              : "제출 기간"}
-                          </Text>
-                        </Wrapper>
+                              ? `${Theme.red_C}`
+                              : ""
+                          }>
+                          {moment
+                            .duration(
+                              moment(data.date, "YYYY-MM-DD").diff(
+                                moment(new Date(), "YYYY-MM-DD")
+                              )
+                            )
+                            .asDays() < -1
+                            ? "기간 만료"
+                            : "제출 기간"}
+                        </Text>
                       </Wrapper>
-                    );
-                  })}
+                    </Wrapper>
+                  );
+                })
+              )}
             </Wrapper>
 
             <Wrapper dr={`row`} ju={`space-between`} margin={`20px 0 40px`}>
@@ -2143,6 +2178,7 @@ const Index = () => {
                 noticeLectureList.map((data) => {
                   return (
                     <Wrapper
+                      key={data.id}
                       onClick={() => noticeDetailHandler(data.id)}
                       dr={`row`}
                       textAlign={`center`}
@@ -2233,13 +2269,13 @@ const Index = () => {
                   </Text>
                 </Wrapper>
 
-                {messageUserList && messageUserList.length === 0 ? (
+                {messageLectureList && messageLectureList.length === 0 ? (
                   <Wrapper margin={`50px 0`}>
                     <Empty description="조회된 데이터가 없습니다." />
                   </Wrapper>
                 ) : (
-                  messageUserList &&
-                  messageUserList.map((data2, idx) => {
+                  messageLectureList &&
+                  messageLectureList.map((data2, idx) => {
                     return (
                       <Wrapper
                         key={data2.id}
@@ -2269,8 +2305,9 @@ const Index = () => {
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
                           width={`25%`}>
-                          {/* 2022/01/22 */}
-                          {data2.createdAt.slice(0, 13)}
+                          {moment(data2.createdAt, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )}
                         </Text>
                       </Wrapper>
                     );
@@ -2359,7 +2396,7 @@ const Index = () => {
         <CustomModal
           visible={messageViewToggle}
           width={`1350px`}
-          title="쪽지"
+          title="쪽지 답변"
           footer={null}
           closable={false}>
           <CustomForm
@@ -2461,7 +2498,10 @@ const Index = () => {
                     {checkedList &&
                       checkedList.map((data, idx) => {
                         return (
-                          <Text margin={`0 5px 0`} color={Theme.basicTheme_C}>
+                          <Text
+                            key={idx}
+                            margin={`0 5px 0`}
+                            color={Theme.basicTheme_C}>
                             {data.username}
                           </Text>
                         );
@@ -2515,11 +2555,11 @@ const Index = () => {
           title="공지사항 글 작성하기"
           footer={null}
           closable={false}>
-          <CustomForm ref={formRef} form={form} onFinish={noticeFinishHandler}>
+          <CustomForm form={noticeWriteform} onFinish={noticeFinishHandler}>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}>
+              margin={`20px 0`}>
               제목
             </Text>
             <Form.Item name="title2" rules={[{ required: true }]}>
@@ -2528,7 +2568,7 @@ const Index = () => {
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}>
+              margin={`20px 0`}>
               내용
             </Text>
             <Form.Item name="content2" rules={[{ required: true }]}>
@@ -2563,8 +2603,8 @@ const Index = () => {
           footer={null}
           closable={false}>
           <CustomForm
-            ref={formRef}
-            form={form}
+            form={homeworkUploadform}
+            ref={homeworkUpload}
             onFinish={homeWorkFinishHandler}>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
@@ -2672,7 +2712,7 @@ const Index = () => {
           title="강사일지 작성하기"
           footer={null}
           closable={false}>
-          <CustomForm ref={formRef} form={form} onFinish={diaryFinishHandler}>
+          <CustomForm form={diaryform} onFinish={diaryFinishHandler}>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
@@ -2722,93 +2762,96 @@ const Index = () => {
           title="학생 숙제 제출 목록"
           footer={null}
           closable={false}>
-          <CustomForm ref={formRef} form={form} onFinish={diaryFinishHandler}>
-            {lectureSubmitList && lectureSubmitList.length === 0
-              ? ""
-              : lectureSubmitList &&
-                lectureSubmitList.map((data, idx) => {
-                  return (
-                    <Wrapper
-                      dr={`row`}
-                      ju={`flex-start`}
-                      shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
-                      margin={`0 0 10px 0`}
-                      padding={`20px`}
-                      radius={`10px`}>
-                      <Text
-                        width={`50%`}
-                        fontSize={width < 700 ? `14px` : `16px`}>
-                        {data.course}
-                      </Text>
+          <CustomForm form={homeworkSubmitform} onFinish={diaryFinishHandler}>
+            {lectureSubmitList && lectureSubmitList.length === 0 ? (
+              <Wrapper margin={`50px 0`}>
+                <Empty description="조회된 학생 숙제 리스트가 없습니다." />
+              </Wrapper>
+            ) : (
+              lectureSubmitList &&
+              lectureSubmitList.map((data, idx) => {
+                return (
+                  <Wrapper
+                    key={data.id}
+                    dr={`row`}
+                    ju={`flex-start`}
+                    shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
+                    margin={`0 0 10px 0`}
+                    padding={`20px`}
+                    radius={`10px`}>
+                    <Text
+                      width={`50%`}
+                      fontSize={width < 700 ? `14px` : `16px`}>
+                      {data.course}
+                    </Text>
 
-                      <Wrapper
-                        width={`40%`}
-                        dr={width < 1100 ? `column` : `row`}>
-                        <CustomWrapper width={width < 1100 ? `100%` : `50%`}>
-                          <DownloadOutlined
-                            onClick={() => fileDownloadHandler(data.file)}
-                            style={{
-                              fontSize: width < 700 ? 15 : 25,
-                              color: Theme.basicTheme_C,
-                              marginRight: 10,
-                              cursor: `pointer`,
-                            }}
-                          />
+                    <Wrapper width={`40%`} dr={width < 1100 ? `column` : `row`}>
+                      <CustomWrapper width={width < 1100 ? `100%` : `50%`}>
+                        <DownloadOutlined
+                          onClick={() => fileDownloadHandler(data.file)}
+                          style={{
+                            fontSize: width < 700 ? 15 : 25,
+                            color: Theme.basicTheme_C,
+                            marginRight: 10,
+                            cursor: `pointer`,
+                          }}
+                        />
 
-                          <Text
-                            fontSize={width < 700 ? `14px` : `16px`}
-                            display={width < 700 ? `none` : `block`}>
-                            파일 업로드
-                          </Text>
-                        </CustomWrapper>
-
-                        <CustomWrapper
-                          width={width < 1100 ? `100%` : `50%`}
-                          beforeBool={false}>
-                          <CalendarOutlined
-                            style={{
-                              fontSize: width < 700 ? 15 : 25,
-                              color: Theme.basicTheme_C,
-                              marginRight: 10,
-                              cursor: `pointer`,
-                            }}
-                          />
-                          <Text fontSize={width < 700 ? `14px` : `16px`}>
-                            {`${data.date}까지`}
-                          </Text>
-                        </CustomWrapper>
-                      </Wrapper>
-
-                      <Wrapper width={`10%`} ju={`center`}>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
-                          margin={width < 700 ? `0 0 0 5px` : "0"}
-                          fontWeight={`bold`}
-                          color={
-                            moment
-                              .duration(
-                                moment(data.date, "YYYY-MM-DD").diff(
-                                  moment(new Date(), "YYYY-MM-DD")
-                                )
-                              )
-                              .asDays() < -1
-                              ? `${Theme.red_C}`
-                              : ""
-                          }>
-                          {moment
+                          display={width < 700 ? `none` : `block`}>
+                          파일 업로드
+                        </Text>
+                      </CustomWrapper>
+
+                      <CustomWrapper
+                        width={width < 1100 ? `100%` : `50%`}
+                        beforeBool={false}>
+                        <CalendarOutlined
+                          style={{
+                            fontSize: width < 700 ? 15 : 25,
+                            color: Theme.basicTheme_C,
+                            marginRight: 10,
+                            cursor: `pointer`,
+                          }}
+                        />
+                        <Text fontSize={width < 700 ? `14px` : `16px`}>
+                          {`${data.date}까지`}
+                        </Text>
+                      </CustomWrapper>
+                    </Wrapper>
+
+                    <Wrapper width={`10%`} ju={`center`}>
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        margin={width < 700 ? `0 0 0 5px` : "0"}
+                        fontWeight={`bold`}
+                        color={
+                          moment
                             .duration(
                               moment(data.date, "YYYY-MM-DD").diff(
                                 moment(new Date(), "YYYY-MM-DD")
                               )
                             )
                             .asDays() < -1
-                            ? "기간 만료"
-                            : "제출 기간"}
-                        </Text>
-                      </Wrapper>
+                            ? `${Theme.red_C}`
+                            : ""
+                        }>
+                        {moment
+                          .duration(
+                            moment(data.date, "YYYY-MM-DD").diff(
+                              moment(new Date(), "YYYY-MM-DD")
+                            )
+                          )
+                          .asDays() < -1
+                          ? "기간 만료"
+                          : "제출 기간"}
+                      </Text>
                     </Wrapper>
-                  );
-                })}
+                  </Wrapper>
+                );
+              })
+            )}
 
             <Wrapper margin={`30px 0`}>
               <CustomPage
@@ -2833,10 +2876,13 @@ const Index = () => {
         <CustomModal
           visible={memoToggle}
           width={`1350px`}
-          title="메모"
+          title="학생 메모 생성하기"
           footer={null}
           closable={false}>
-          <CustomForm ref={formRef} form={form} onFinish={memoFinishHandler}>
+          <CustomForm
+            ref={formRef}
+            form={memoWriteform}
+            onFinish={memoFinishHandler}>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
@@ -2983,7 +3029,7 @@ const Index = () => {
                     <Text
                       fontSize={width < 700 ? `14px` : `18px`}
                       fontWeight={`Bold`}
-                      width={`45%`}
+                      width={`30%`}
                       isEllipsis={true}>
                       학생 이름
                     </Text>
@@ -2995,6 +3041,14 @@ const Index = () => {
                       isEllipsis={true}>
                       메모내용
                     </Text>
+
+                    <Text
+                      fontSize={width < 700 ? `14px` : `18px`}
+                      fontWeight={`Bold`}
+                      width={`15%`}
+                      isEllipsis={true}>
+                      생성일
+                    </Text>
                   </Wrapper>
 
                   {lectureMemoStuList && lectureMemoStuList.length === 0 ? (
@@ -3004,6 +3058,7 @@ const Index = () => {
                   ) : (
                     lectureMemoStuList &&
                     lectureMemoStuList.map((data, idx) => {
+                      console.log(data, "dta");
                       return (
                         <Wrapper
                           onClick={() => lectureDetailStuMemoHandler(data)}
@@ -3018,18 +3073,24 @@ const Index = () => {
                             width={`10%`}>
                             {data.id}
                           </Text>
-
                           <Text
                             fontSize={width < 700 ? `14px` : `16px`}
-                            width={`45%`}>
+                            width={`30%`}>
                             {data.username}
                           </Text>
-
                           <Text
                             fontSize={width < 700 ? `14px` : `16px`}
                             width={`45%`}
                             isEllipsis={true}>
                             {data.memo}
+                          </Text>
+                          <Text
+                            fontSize={width < 700 ? `14px` : `16px`}
+                            width={`15%`}
+                            isEllipsis={true}>
+                            {moment(data.createdAt, "YYYY/MM/DD").format(
+                              "YYYY/MM/DD"
+                            )}
                           </Text>
                         </Wrapper>
                       );
@@ -3120,6 +3181,7 @@ const Index = () => {
               commuteList.map((data, idx) => {
                 return (
                   <Wrapper
+                    key={data.id}
                     dr={`row`}
                     ju={`flex-start`}
                     padding={`25px 30px 20px`}
@@ -3185,7 +3247,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
     });
 
     // context.store.dispatch({
-    //   type: MESSAGE_USER_LIST_REQUEST,
+    //   type: MESSAGE_LECTURE_LIST_REQUEST,
     // });
 
     // 구현부 종료

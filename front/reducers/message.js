@@ -5,6 +5,8 @@ export const initialState = {
   messageUserLastPage: 1,
   messageAdminList: [],
   messageTeacherList: [],
+  messageLectureList: [],
+  messageLectureLastPage: 1,
   //
   st_messageUserListLoading: false,
   st_messageUserListDone: false,
@@ -46,6 +48,10 @@ export const initialState = {
   st_messageForAdminCreateLoading: false,
   st_messageForAdminCreateDone: false,
   st_messageForAdminCreateError: null,
+  //
+  st_messageLectureListLoading: false,
+  st_messageLectureListDone: false,
+  st_messageLectureListError: null,
 };
 
 export const MESSAGE_USER_LIST_REQUEST = "MESSAGE_USER_LIST_REQUEST";
@@ -90,6 +96,10 @@ export const MESSAGE_FOR_ADMIN_CREATE_SUCCESS =
   "MESSAGE_FOR_ADMIN_CREATE_SUCCESS";
 export const MESSAGE_FOR_ADMIN_CREATE_FAILURE =
   "MESSAGE_FOR_ADMIN_CREATE_FAILURE";
+
+export const MESSAGE_LECTURE_LIST_REQUEST = "MESSAGE_LECTURE_LIST_REQUEST";
+export const MESSAGE_LECTURE_LIST_SUCCESS = "MESSAGE_LECTURE_LIST_SUCCESS";
+export const MESSAGE_LECTURE_LIST_FAILURE = "MESSAGE_LECTURE_LIST_FAILURE";
 
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
@@ -257,6 +267,8 @@ const reducer = (state = initialState, action) =>
         break;
       }
 
+      //////////////////////////////////////////////
+
       case MESSAGE_LECTURE_CREATE_REQUEST: {
         draft.st_messageLectureCreateLoading = true;
         draft.st_messageLectureCreateDone = null;
@@ -275,6 +287,8 @@ const reducer = (state = initialState, action) =>
         break;
       }
 
+      //////////////////////////////////////////////
+
       case MESSAGE_FOR_ADMIN_CREATE_REQUEST: {
         draft.st_messageForAdminCreateLoading = true;
         draft.st_messageForAdminCreateDone = null;
@@ -290,6 +304,28 @@ const reducer = (state = initialState, action) =>
         draft.st_messageForAdminCreateLoading = false;
         draft.st_messageForAdminCreateDone = false;
         draft.st_messageForAdminCreateError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case MESSAGE_LECTURE_LIST_REQUEST: {
+        draft.st_messageLectureListLoading = true;
+        draft.st_messageLectureListDone = null;
+        draft.st_messageLectureListError = false;
+        break;
+      }
+      case MESSAGE_LECTURE_LIST_SUCCESS: {
+        draft.st_messageLectureListLoading = false;
+        draft.st_messageLectureListDone = true;
+        draft.messageLectureList = action.data.messages;
+        draft.messageLectureLastPage = action.data.lastPage;
+        break;
+      }
+      case MESSAGE_LECTURE_LIST_FAILURE: {
+        draft.st_messageLectureListLoading = false;
+        draft.st_messageLectureListDone = false;
+        draft.st_messageLectureListError = action.error;
         break;
       }
 

@@ -267,7 +267,7 @@ const Index = () => {
   const {
     me,
     meUpdateModal,
-    postCodeModal,
+
     userProfilePath,
     //
     st_userProfileUploadLoading,
@@ -421,6 +421,7 @@ const Index = () => {
         mobile: me.mobile,
         postNum: me.postNum,
         address: me.address,
+        detailAddress: me.detailAddress,
         teaLanguage: me.teaLanguage,
         teaCountry: me.teaCountry,
         bankNo: me.bankNo,
@@ -449,12 +450,6 @@ const Index = () => {
       type: ME_UPDATE_MODAL_TOGGLE,
     });
   }, [meUpdateModal]);
-
-  const postCodeModalToggle = useCallback(() => {
-    dispatch({
-      type: POSTCODE_MODAL_TOGGLE,
-    });
-  }, [postCodeModal]);
 
   const zoomLinkModalToggle = useCallback(
     (data) => {
@@ -491,12 +486,14 @@ const Index = () => {
         return message.error("프로필 사진을 업로드해주세요");
       }
 
+      console.log(data, "data");
+
       dispatch({
         type: USER_UPDATE_REQUEST,
         data: {
           profileImage: userProfilePath,
           mobile: data.mobile,
-          postNum: data.postNum,
+          detailAddress: data.detailAddress,
           address: data.address,
           teaLanguage: data.teaLanguage,
           teaCountry: data.teaCountry,
@@ -537,12 +534,11 @@ const Index = () => {
 
   const zoomLinkFinish = useCallback(
     (data) => {
-      console.log(data, data, lectureId.id);
       dispatch({
         type: LECTURE_LINK_UPDATE_REQUEST,
         data: {
           id: lectureId.id,
-          zoomLink: data.link,
+          zoomLink: data.zoomLink,
           zoomPass: data.zoomPass,
         },
       });
@@ -706,7 +702,7 @@ const Index = () => {
                 </Wrapper>
 
                 {noticeList && noticeList.length === 0 ? (
-                  <Wrapper>
+                  <Wrapper margin={`30px 0`}>
                     <Empty description="조회된 공지사항 리스트가 없습니다." />
                   </Wrapper>
                 ) : (
@@ -765,149 +761,150 @@ const Index = () => {
                 내 수업
               </Text>
 
-              {lectureTeacherList && lectureTeacherList.length === 0
-                ? ""
-                : lectureTeacherList &&
-                  lectureTeacherList.map((data, idx) => {
-                    return (
+              {lectureTeacherList && lectureTeacherList.length === 0 ? (
+                <Wrapper margin={`30px 0`}>
+                  <Empty description="조회된 수업 리스트가 없습니다." />
+                </Wrapper>
+              ) : (
+                lectureTeacherList &&
+                lectureTeacherList.map((data, idx) => {
+                  console.log(data, "응 데이터!");
+                  return (
+                    <Wrapper
+                      dr={`row`}
+                      ju={`flex-start`}
+                      al={`flex-start`}
+                      shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
+                      padding={width < 700 ? `15px 10px 10px` : `35px 30px`}
+                      radius={`10px`}>
                       <Wrapper
+                        width={
+                          width < 1280 ? (width < 800 ? `100%` : `60%`) : `37%`
+                        }
                         dr={`row`}
                         ju={`flex-start`}
-                        al={`flex-start`}
-                        shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
-                        padding={width < 700 ? `15px 10px 10px` : `35px 30px`}
-                        radius={`10px`}>
+                        al={`flex-start`}>
                         <Wrapper
-                          width={
-                            width < 1280
-                              ? width < 800
-                                ? `100%`
-                                : `60%`
-                              : `37%`
-                          }
-                          dr={`row`}
-                          ju={`flex-start`}
-                          al={`flex-start`}>
-                          <Wrapper
-                            width={`auto`}
-                            padding={width < 700 ? `0` : `5px`}
-                            margin={`0 10px 0 0`}>
-                            <Image
-                              width={`22px`}
-                              height={`22px`}
-                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
-                              alt="clock_icon"
-                            />
-                          </Wrapper>
-
-                          <Wrapper
-                            width={`calc(100% - 42px)`}
-                            dr={`row`}
-                            ju={`flex-start`}>
-                            <Text
-                              fontSize={width < 700 ? `14px` : `18px`}
-                              fontWeight={`bold`}
-                              lineHeight={`1.22`}>
-                              {data.day}
-                              &nbsp;&nbsp;|&nbsp;&nbsp;
-                              {moment(data.time, "YYYY-MM-DD").format("LT")}
-                            </Text>
-                            <Wrapper
-                              display={
-                                width < 1280
-                                  ? `flex`
-                                  : (idx + 1) % 3 === 0 && `none`
-                              }
-                              width={`1px`}
-                              height={width < 800 ? `20px` : `34px`}
-                              borderLeft={`1px dashed ${Theme.grey_C}`}
-                              margin={
-                                width < 1350
-                                  ? width < 700
-                                    ? `0 4px`
-                                    : `0 10px`
-                                  : `0 20px`
-                              }
-                            />
-                          </Wrapper>
+                          width={`auto`}
+                          padding={width < 700 ? `0` : `5px`}
+                          margin={`0 10px 0 0`}>
+                          <Image
+                            width={`22px`}
+                            height={`22px`}
+                            src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
+                            alt="clock_icon"
+                          />
                         </Wrapper>
 
                         <Wrapper
+                          width={`calc(100% - 42px)`}
                           dr={`row`}
-                          ju={`space-between`}
-                          width={width < 1400 ? `100%` : `62%`}
-                          margin={width < 700 ? `10px 0 0 0` : `0`}>
-                          <Wrapper dr={`row`} width={`auto`}>
-                            <Image
-                              width={`22px`}
-                              height={`22px`}
-                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
-                              alt="calender_icon"
-                              margin={`0 5px 0 0`}
-                            />
-                            <CustomText2
-                              color={Theme.black_2C}
-                              fontWeight={`normal`}
-                              width={width < 700 ? `auto` : `140px`}>
-                              {moment(data.startDate, "YYYY/MM/DD").format(
-                                "YYYY/MM/DD"
-                              )}
-                            </CustomText2>
+                          ju={`flex-start`}>
+                          <Text
+                            fontSize={width < 700 ? `14px` : `18px`}
+                            fontWeight={`bold`}
+                            lineHeight={`1.22`}>
+                            {data.day}
+                            &nbsp;&nbsp;|&nbsp;&nbsp;
+                            {data.time}
+                          </Text>
+                          <Wrapper
+                            display={
+                              width < 1280
+                                ? `flex`
+                                : (idx + 1) % 3 === 0 && `none`
+                            }
+                            width={`1px`}
+                            height={width < 800 ? `20px` : `34px`}
+                            borderLeft={`1px dashed ${Theme.grey_C}`}
+                            margin={
+                              width < 1350
+                                ? width < 700
+                                  ? `0 4px`
+                                  : `0 10px`
+                                : `0 20px`
+                            }
+                          />
+                        </Wrapper>
+                      </Wrapper>
 
-                            <Image
-                              width={`22px`}
-                              height={`22px`}
-                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_number.png"
-                              alt="calender_icon"
-                              margin={`0 5px 0 0`}
-                            />
+                      <Wrapper
+                        dr={`row`}
+                        ju={`space-between`}
+                        width={width < 1400 ? `100%` : `62%`}
+                        margin={width < 700 ? `10px 0 0 0` : `0`}>
+                        <Wrapper dr={`row`} width={`auto`}>
+                          <Image
+                            width={`22px`}
+                            height={`22px`}
+                            src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
+                            alt="calender_icon"
+                            margin={`0 5px 0 0`}
+                          />
+                          <CustomText2
+                            color={Theme.black_2C}
+                            fontWeight={`normal`}
+                            width={width < 700 ? `auto` : `140px`}>
+                            {moment(data.startDate, "YYYY/MM/DD").format(
+                              "YYYY/MM/DD"
+                            )}
+                          </CustomText2>
+
+                          <Image
+                            width={`22px`}
+                            height={`22px`}
+                            src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_number.png"
+                            alt="calender_icon"
+                            margin={`0 5px 0 0`}
+                          />
+                          <Text
+                            color={Theme.black_2C}
+                            fontSize={width < 700 ? `12px` : `18px`}
+                            width={width < 700 ? `auto` : `140px`}
+                            margin={`0 10px 0 0`}>
+                            {`NO.${data.id}`}
+                          </Text>
+
+                          <Wrapper width={`auto`} dr={`row`}>
                             <Text
+                              cursor={`pointer`}
                               color={Theme.black_2C}
                               fontSize={width < 700 ? `12px` : `18px`}
                               width={width < 700 ? `auto` : `140px`}
-                              margin={`0 10px 0 0`}>
-                              {`NO.${data.id}`}
+                              onClick={() => zoomLinkModalToggle(data)}>
+                              줌 링크 등록
                             </Text>
 
-                            <Wrapper width={`auto`} dr={`row`}>
-                              <Text
-                                cursor={`pointer`}
-                                color={Theme.black_2C}
-                                fontSize={width < 700 ? `12px` : `18px`}
-                                width={width < 700 ? `auto` : `140px`}
-                                onClick={() => zoomLinkModalToggle(data)}>
-                                줌 링크 등록
-                              </Text>
-
-                              <Text
-                                cursor={`pointer`}
-                                color={Theme.black_2C}
-                                fontSize={width < 700 ? `12px` : `18px`}
-                                width={width < 700 ? `auto` : `140px`}
-                                onClick={() =>
-                                  moveLinkHandler(
-                                    `/textbook?lectureId=${data.id}`
-                                  )
-                                }>
-                                교재 올리기
-                              </Text>
-                            </Wrapper>
-                          </Wrapper>
-
-                          <Wrapper width={`auto`}>
-                            <CustomText3
-                              onClick={() =>
-                                moveLinkHandler(`/teacher/${data.id}`)
-                              }
+                            <Text
+                              cursor={`pointer`}
                               color={Theme.black_2C}
-                              cursor={`pointer`}>
-                              수업 일지 보러가기
-                            </CustomText3>
+                              fontSize={width < 700 ? `12px` : `18px`}
+                              width={width < 700 ? `auto` : `140px`}
+                              onClick={() =>
+                                moveLinkHandler(
+                                  `/textbook?lectureId=${data.id}`
+                                )
+                              }>
+                              교재 올리기
+                            </Text>
                           </Wrapper>
                         </Wrapper>
+
+                        <Wrapper width={`auto`}>
+                          <CustomText3
+                            onClick={() =>
+                              moveLinkHandler(`/teacher/${data.id}`)
+                            }
+                            color={Theme.black_2C}
+                            cursor={`pointer`}>
+                            수업 일지 보러가기
+                          </CustomText3>
+                        </Wrapper>
                       </Wrapper>
-                    );
-                  })}
+                    </Wrapper>
+                  );
+                })
+              )}
 
               <Wrapper margin={`65px 0 0`}>
                 <CustomPage
@@ -998,28 +995,7 @@ const Index = () => {
                   placeholder="전화번호를 입력해주세요."
                 />
               </Form.Item>
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                우편번호
-              </Text>
-              <Wrapper dr={`row`}>
-                <Wrapper width={width < 700 ? `65%` : `80%`}>
-                  <Form.Item
-                    name="postNum"
-                    rules={[
-                      { required: true, message: "우편번호를 입력해주세요." },
-                    ]}>
-                    <CusotmInput width={`100%`} readOnly />
-                  </Form.Item>
-                </Wrapper>
-                <CommonButton
-                  width={width < 700 ? `35%` : `20%`}
-                  height={`40px`}
-                  radius={`5px`}
-                  margin={`0 0 24px`}
-                  onClick={postCodeModalToggle}>
-                  우편번호 찾기
-                </CommonButton>
-              </Wrapper>
+
               <Text fontSize={`18px`} fontWeight={`bold`}>
                 주소
               </Text>
@@ -1027,6 +1003,17 @@ const Index = () => {
                 name="address"
                 rules={[{ required: true, message: "주소를 입력해주세요." }]}>
                 <CusotmInput width={`100%`} readOnly />
+              </Form.Item>
+
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                상세 주소
+              </Text>
+              <Form.Item
+                name="detailAddress"
+                rules={[
+                  { required: true, message: "상세주소를 입력해주세요." },
+                ]}>
+                <CusotmInput width={`100%`} />
               </Form.Item>
 
               <Text fontSize={`18px`} fontWeight={`bold`}>
@@ -1102,21 +1089,6 @@ const Index = () => {
                 </CommonButton>
               </Wrapper>
             </CustomForm>
-          </CustomModal>
-
-          <CustomModal
-            visible={postCodeModal}
-            onCancel={postCodeModalToggle}
-            footer={null}>
-            <Text fontSize={`22px`} fontWeight={`bold`} margin={`0 0 24px`}>
-              우편번호 찾기
-            </Text>
-            <DaumPostCode
-              onComplete={(data) => postCodeSubmit(data)}
-              width={width < 700 ? `100%` : `600px`}
-              autoClose={false}
-              animation
-            />
           </CustomModal>
 
           <CustomModal
