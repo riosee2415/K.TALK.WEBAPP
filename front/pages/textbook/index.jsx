@@ -176,6 +176,7 @@ const Index = () => {
           LectureId: router.query.lectureId,
         },
       });
+      updateModalClose();
     }
   }, [st_bookCreateDone]);
 
@@ -282,7 +283,7 @@ const Index = () => {
       dispatch({
         type: BOOK_CREATE_REQUEST,
         data: {
-          thumbnail: uploadPath,
+          thumbnail: uploadPathTh,
           title: data.title,
           file: uploadPath,
           LectureId: router.query.lectureId,
@@ -290,7 +291,7 @@ const Index = () => {
         },
       });
     },
-    [uploadPath, router.query]
+    [uploadPaTh, uploadPath, router.query]
   );
 
   const updateSubmit = useCallback(
