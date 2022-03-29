@@ -126,7 +126,7 @@ router.post("/leture/list", isLoggedIn, async (req, res, next) => {
           ON	A.LectureId = C.id
        WHERE  1 = 1
          ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
-         AND  C.TeacherId = ${req.user.id}
+         AND  C.UserId = ${req.user.id}
        ORDER  BY A.createdAt DESC
 `;
 
