@@ -8,6 +8,7 @@ const isAdminCheck = require("../middlewares/isAdminCheck");
 const { BookFolder, Lecture, Book } = require("../models");
 const models = require("../models");
 const isNanCheck = require("../middlewares/isNanCheck");
+const isLoggedIn = require("../middlewares/isLoggedIn");
 
 const router = express.Router();
 
@@ -229,17 +230,17 @@ router.get("/detail/:bookId", async (req, res, next) => {
   }
 });
 
-router.post(
-  "/image",
-  isAdminCheck,
-  upload.single("image"),
-  async (req, res, next) => {
-    return res.json({ path: req.file.location });
-  }
-);
+router.post("/image", upload.single("image"), async (req, res, next) => {
+  return res.json({ path: req.file.location });
+});
 
-router.post("/create", isAdminCheck, async (req, res, next) => {
+router.post("/create", isLoggedIn, async (req, res, next) => {
   const { thumbnail, title, file, LectureId, BookFolderId } = req.body;
+
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
   try {
     const exLecture = await Lecture.findOne({
       where: { id: parseInt(LectureId) },
@@ -251,6 +252,10 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
 
     if (!exLecture) {
       return res.status(401).send("존재하지 않는 강의입니다.");
+    }
+
+    if (exLecture.TeacherId !== req.user.id) {
+      return res.status(401).send("자신의 강의에만 교재를 등록할 수 있습니다.");
     }
 
     if (!exBookFolder) {
@@ -276,8 +281,13 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
   }
 });
 
-router.patch("/update", isAdminCheck, async (req, res, next) => {
+router.patch("/update", isLoggedIn, async (req, res, next) => {
   const { id, thumbnail, title, file, LectureId, BookFolderId } = req.body;
+
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
   try {
     const exBook = await Book.findOne({
       where: { id: parseInt(id) },
@@ -297,6 +307,10 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
 
     if (!exLecture) {
       return res.status(401).send("존재하지 않는 강의입니다.");
+    }
+
+    if (exLecture.TeacherId !== req.user.id) {
+      return res.status(401).send("자신의 강의에만 교재를 등록할 수 있습니다.");
     }
 
     if (!exBookFolder) {
