@@ -75,11 +75,18 @@ router.get("/user/list", isLoggedIn, async (req, res, next) => {
 
 // 강의별 쪽지 리스트
 router.post("/lecture/list", async (req, res, next) => {
-  const { LectureId } = req.body;
+  const { LectureId, page } = req.body;
 
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
   }
+
+  const LIMIT = 5;
+
+  const _page = page ? page : 1;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 5;
 
   try {
     const exLecture = await Lecture.findOne({
@@ -90,11 +97,23 @@ router.post("/lecture/list", async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의입니다.");
     }
 
-    const messages = await Message.findAll({
+    const totalMessage = await Message.findAll({
       where: { receiveLectureId: parseInt(LectureId) },
     });
 
-    return res.status(200).json(messages);
+    const messageLen = totalMessage.length;
+
+    const lastPage =
+      messageLen % LIMIT > 0 ? messageLen / LIMIT + 1 : messageLen / LIMIT;
+
+    const messages = await Message.findAll({
+      offset: OFFSET,
+      limit: LIMIT,
+      where: { receiveLectureId: parseInt(LectureId) },
+      order: [["createdAt", "DESC"]],
+    });
+
+    return res.status(200).json({ messages, lastPage: parseInt(lastPage) });
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의별 쪽지 목록을 불러올 수 없습니다.");
