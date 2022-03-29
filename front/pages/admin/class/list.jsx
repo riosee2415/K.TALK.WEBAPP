@@ -521,7 +521,10 @@ const List = () => {
                         dr={`row`}
                         ju={`space-between`}
                       >
-                        {data.Participants.username}
+                        {data.Participants &&
+                          data.Participants.map((data) => {
+                            return <Text>{data.User.username}</Text>;
+                          })}
                       </Wrapper>
                     </Wrapper>
                     <Wrapper dr={`row`}>
