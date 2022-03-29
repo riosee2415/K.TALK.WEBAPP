@@ -1294,6 +1294,27 @@ router.post("/submit/create", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 숙제입니다.");
     }
 
+    const exSubmit = `
+    SELECT	A.id,
+            A.file,
+            A.createdAt,
+            B.date
+      FROM	submits			A
+     INNER
+      JOIN	homeworks 		B
+        ON	A.HomeworkId = B.id
+     WHERE  1 = 1
+       AND  B.date BETWEEN DATE_FORMAT(B.createdAt, '%Y-%m-%d') AND DATE_FORMAT(B.date, '%Y-%m-%d')
+       AND  A.HomeworkId = ${HomeworkId}
+       AND  A.UserId = ${req.user.id}
+  `;
+
+    const validate = await models.sequelize.query(exSubmit);
+
+    if (validate[0].length > 0) {
+      return res.status(401).send("이미 기한 안에 숙제를 제출하였습니다.");
+    }
+
     const today = moment().format("YYYY-MM-DD");
 
     if (new Date(exHomework.date) < new Date(today)) {
