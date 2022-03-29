@@ -291,7 +291,7 @@ const Index = () => {
         },
       });
     },
-    [uploadPaTh, uploadPath, router.query]
+    [uploadPathTh, uploadPath, router.query]
   );
 
   const updateSubmit = useCallback(
