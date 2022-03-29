@@ -320,7 +320,7 @@ const List = () => {
         startDate: moment(data.startDate, "YYYY-MM-DD"),
         memo: data.memo,
         price: data.price,
-        UserId: data.TeacherId,
+        UserId: data.User.id,
       });
 
       // inputStartDate, setValue(data.startDate);
@@ -459,7 +459,7 @@ const List = () => {
                             </Wrapper>
 
                             <Text fontSize={`16px`} fontWeight={`700`}>
-                              {data.time.slice(11, 16)}&nbsp;/&nbsp;
+                              {data.time}&nbsp;/&nbsp;
                               {data.day}
                             </Text>
                           </Wrapper>
@@ -480,7 +480,7 @@ const List = () => {
                               />
                             </Wrapper>
                             <Text fontSize={`16px`} fontWeight={`700`}>
-                              {data.teacherName}
+                              {data.User.username}
                             </Text>
                           </Wrapper>
 
@@ -596,7 +596,6 @@ const List = () => {
               </FormItem>
             </Wrapper>
 
-            {/* defaultValue={updateData && updateData.teacherName} */}
             <Wrapper dr={`row`} margin={`0 0 20px`}>
               <Text width={`100px`}>강사</Text>
               <FormItem

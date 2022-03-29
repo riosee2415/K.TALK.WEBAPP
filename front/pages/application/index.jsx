@@ -154,7 +154,7 @@ const Application = () => {
       form.resetFields();
 
       setTitleSelect(null);
-      timeSelect(null);
+      setTimeSelect(null);
       setAgreeCheck(false);
       setIsCalendar(false);
 

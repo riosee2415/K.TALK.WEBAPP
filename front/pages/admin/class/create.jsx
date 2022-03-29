@@ -231,7 +231,7 @@ const List = () => {
     dispatch({
       type: LECTURE_CREATE_REQUEST,
       data: {
-        time: data.time,
+        time: moment(data.time, "HH:mm").format("HH:mm"),
         day: data.day,
         count: data.cnt,
         course: data.course,

@@ -12,7 +12,6 @@ import {
   CREATE_MODAL_TOGGLE,
   USER_STU_CREATE_REQUEST,
   USER_TEA_CREATE_REQUEST,
-  POSTCODE_MODAL_TOGGLE,
 } from "../../../reducers/user";
 import {
   Table,
@@ -33,7 +32,7 @@ import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
 import { Wrapper } from "../../../components/commonComponents";
-import DaumPostCode from "react-daum-postcode";
+
 import { LECTURE_LIST_REQUEST } from "../../../reducers/lecture";
 
 const AdminContent = styled.div`
@@ -81,7 +80,7 @@ const UserList = ({}) => {
     users,
     createModal,
     updateModal,
-    postCodeModal,
+
     //
     st_userListError,
     //
@@ -274,12 +273,6 @@ const UserList = ({}) => {
     });
   }, [createModal, selectUserLevel]);
 
-  const postCodeModalToggle = useCallback(() => {
-    dispatch({
-      type: POSTCODE_MODAL_TOGGLE,
-    });
-  }, [postCodeModal]);
-
   ////// HANDLER //////
 
   const onSubmitUpdate = useCallback(() => {
@@ -315,7 +308,7 @@ const UserList = ({}) => {
             mobile: data.mobile,
             email: data.email,
             address: data.address,
-            postNum: data.detailAddress,
+            detailAddress: data.detailAddress,
             startDate: data.dates[0].format("YYYY-MM-DD"),
             endDate: data.dates[1].format("YYYY-MM-DD"),
             stuLanguage: data.stuLanguage,
@@ -339,7 +332,7 @@ const UserList = ({}) => {
             mobile: data.mobile,
             email: data.email,
             address: data.address,
-            postNum: data.detailAddress,
+            detailAddress: data.detailAddress,
             identifyNum: `${data.identifyNum.firstIdentifyNum}-${data.identifyNum.endIdentifyNum}`,
             teaCountry: "-",
             teaLanguage: data.teaLanguage,
@@ -361,20 +354,6 @@ const UserList = ({}) => {
       setSelectUserLevel(level);
     },
     [selectUserLevel]
-  );
-
-  const postCodeSubmit = useCallback(
-    (data) => {
-      form.setFieldsValue({
-        address: data.address,
-        postNum: data.zonecode,
-      });
-
-      dispatch({
-        type: POSTCODE_MODAL_TOGGLE,
-      });
-    },
-    [postCodeModal]
   );
 
   ////// DATAVIEW //////
@@ -602,18 +581,6 @@ const UserList = ({}) => {
           >
             <Input type="password" />
           </Form.Item>
-          {/* <Wrapper al={`flex-end`}>
-            <Button type="primary" size="small" onClick={postCodeModalToggle}>
-              우편번호 검색
-            </Button>
-          </Wrapper>
-          <Form.Item
-            label="우편번호"
-            rules={[{ required: true, message: "우편번호를 입력해주세요." }]}
-            name="postNum"
-          >
-            <Input readOnly />
-          </Form.Item> */}
 
           <Form.Item
             label="주소"
@@ -866,20 +833,6 @@ const UserList = ({}) => {
             </Button>
           </Wrapper>
         </Form>
-      </Modal>
-      <Modal
-        title="우편번호 찾기"
-        visible={postCodeModal}
-        onCancel={postCodeModalToggle}
-        width={`700px`}
-        footer={null}
-      >
-        <DaumPostCode
-          onComplete={(data) => postCodeSubmit(data)}
-          width={`600px`}
-          autoClose={false}
-          animation
-        />
       </Modal>
     </AdminLayout>
   );

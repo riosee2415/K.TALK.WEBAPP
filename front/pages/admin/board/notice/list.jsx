@@ -51,8 +51,8 @@ import {
   Wrapper,
 } from "../../../../components/commonComponents";
 import { LECTURE_LIST_REQUEST } from "../../../../reducers/lecture";
-import ToastEditorComponent from "../../../../components/editor/ToastEditorComponent";
 import ToastEditorComponent3 from "../../../../components/editor/ToastEditorComponent3";
+import ToastEditorComponent4 from "../../../../components/editor/ToastEditorComponent4";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -770,7 +770,7 @@ const NoticeList = ({ router }) => {
                   updateData={updateData}
                 />
               ) : (
-                <ToastEditorComponent
+                <ToastEditorComponent4
                   action={getEditContent}
                   placeholder="내용을 입력해주세요."
                 />

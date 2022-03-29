@@ -1,15 +1,37 @@
 import produce from "../util/produce";
 
 export const initialState = {
+  applicationList: null,
   //
   st_appCreateLoading: false, // 신청서 생성
   st_appCreateDone: false,
   st_appCreateError: null,
+  //
+  st_appUpdateLoading: false, // 신청서 생성
+  st_appUpdateDone: false,
+  st_appUpdateError: null,
+  //
+  st_appListLoading: false, // 신청서 생성
+  st_appListDone: false,
+  st_appListError: null,
+  //
+  updateModal: false,
 };
 
 export const APP_CREATE_REQUEST = "APP_CREATE_REQUEST";
 export const APP_CREATE_SUCCESS = "APP_CREATE_SUCCESS";
 export const APP_CREATE_FAILURE = "APP_CREATE_FAILURE";
+
+export const APP_LIST_REQUEST = "APP_LIST_REQUEST";
+export const APP_LIST_SUCCESS = "APP_LIST_SUCCESS";
+export const APP_LIST_FAILURE = "APP_LIST_FAILURE";
+
+export const APP_UPDATE_REQUEST = "APP_UPDATE_REQUEST";
+export const APP_UPDATE_SUCCESS = "APP_UPDATE_SUCCESS";
+export const APP_UPDATE_FAILURE = "APP_UPDATE_FAILURE";
+
+export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
+export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
@@ -35,6 +57,55 @@ const reducer = (state = initialState, action) =>
       }
 
       //////////////////////////////////////////////
+
+      case APP_LIST_REQUEST: {
+        draft.st_appListLoading = true;
+        draft.st_appListDone = false;
+        draft.st_appListError = null;
+        break;
+      }
+      case APP_LIST_SUCCESS: {
+        draft.st_appListLoading = false;
+        draft.st_appListDone = true;
+        draft.applicationList = action.data.lists;
+        break;
+      }
+      case APP_LIST_FAILURE: {
+        draft.st_appListLoading = false;
+        draft.st_appListDone = false;
+        draft.st_appListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case APP_UPDATE_REQUEST: {
+        draft.st_appUpdateLoading = true;
+        draft.st_appUpdateDone = false;
+        draft.st_appUpdateError = null;
+        break;
+      }
+      case APP_UPDATE_SUCCESS: {
+        draft.st_appUpdateLoading = false;
+        draft.st_appUpdateDone = true;
+        break;
+      }
+      case APP_UPDATE_FAILURE: {
+        draft.st_appUpdateLoading = false;
+        draft.st_appUpdateDone = false;
+        draft.st_appUpdateError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+      case UPDATE_MODAL_CLOSE_REQUEST: {
+        draft.updateModal = false;
+        break;
+      }
+      case UPDATE_MODAL_OPEN_REQUEST: {
+        draft.updateModal = true;
+        break;
+      }
 
       default:
         break;
