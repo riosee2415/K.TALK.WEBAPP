@@ -1032,7 +1032,6 @@ const Student = () => {
               ? ""
               : lectureStuLectureList &&
                 lectureStuLectureList.map((data, idx) => {
-                  console.log(data, "data");
                   return (
                     <Wrapper
                       dr={`row`}
@@ -1090,7 +1089,7 @@ const Student = () => {
                                     |
                                   </Text>
                                   <Text lineHeight={`1.19`}>
-                                    {`강의 수 : ${data.lecDate} /           5/30`}
+                                    {`강의 수 : 5/30`}
                                   </Text>
                                   <Text
                                     lineHeight={`1.19`}

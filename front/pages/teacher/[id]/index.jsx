@@ -367,9 +367,6 @@ const Index = () => {
     st_lectureSubmitListError,
 
     lectureDetail,
-    lectureStuMemo,
-    st_lectureDetailDone,
-    st_lectureDetailError,
 
     st_lectureMemoStuCreateDone,
     st_lectureMemoStuCreateError,
@@ -487,15 +484,15 @@ const Index = () => {
 
   ////// USEEFFECT //////
 
-  // useEffect(() => {
-  //   if (!me) {
-  //     message.error("로그인 후 이용해주세요.");
-  //     return router.push(`/`);
-  //   } else if (me.level !== 2) {
-  //     message.error("강사가 아닙니다.");
-  //     return router.push(`/`);
-  //   }
-  // }, [me]);
+  useEffect(() => {
+    if (!me) {
+      message.error("로그인 후 이용해주세요.");
+      return router.push(`/`);
+    } else if (me.level !== 2) {
+      message.error("강사가 아닙니다.");
+      return router.push(`/`);
+    }
+  }, [me]);
 
   useEffect(() => {
     if (partLectureList && partLectureList.length !== 0) {
