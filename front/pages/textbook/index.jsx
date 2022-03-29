@@ -608,8 +608,19 @@ const Index = () => {
                         </Wrapper>
                       </ProductMenu>
 
-                      <Wrapper onClick={() => setCurrentMenu(data.id)}>
-                        <Image src={data.thumbnail} />
+                      <Wrapper
+                        position={`relative`}
+                        height={`0`}
+                        padding={`0 0 125%`}
+                        onClick={() => setCurrentMenu(data.id)}
+                      >
+                        <Image
+                          position={`absolute`}
+                          top={`0`}
+                          left={`0`}
+                          height={`100%`}
+                          src={data.thumbnail}
+                        />
                       </Wrapper>
                       <Text margin={`5px 0 0 `} height={`30px`}>
                         {data.title}
@@ -620,7 +631,7 @@ const Index = () => {
               )}
             </Wrapper>
           </RsWrapper>
-          {console.log(updateData)}
+
           <Modal
             visible={createModal}
             onCancel={

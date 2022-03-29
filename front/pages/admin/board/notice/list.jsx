@@ -370,7 +370,6 @@ const NoticeList = ({ router }) => {
   );
 
   const onFill = useCallback((data) => {
-    console.log(data);
     const type = data.LectureId
       ? "강의 게시판"
       : data.level === 2
@@ -441,7 +440,7 @@ const NoticeList = ({ router }) => {
           "작성하기 버튼을 눌러주세요."
         );
       }
-      console.log(contentData);
+
       dispatch({
         type: NOTICE_UPDATE_REQUEST,
         data: {
@@ -454,8 +453,6 @@ const NoticeList = ({ router }) => {
     },
     [uploadPath, updateData, contentData]
   );
-
-  console.log(updateData && updateData);
 
   const createModalOk = useCallback(() => {
     formRef.current.submit();
@@ -625,7 +622,7 @@ const NoticeList = ({ router }) => {
             </Button>
           </Col>
         </RowWrapper>
-        {console.log(currentListType)}
+
         {currentListType === 4 && (
           <RowWrapper margin={`0 0 10px`}>
             <Text lineHeight={`2rem`}>강의 선택 :&nbsp;</Text>

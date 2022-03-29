@@ -384,7 +384,6 @@ const List = () => {
     },
   ];
 
-  console.log(updateData && updateData);
   return (
     <AdminLayout>
       <PageHeader

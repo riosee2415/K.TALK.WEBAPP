@@ -305,8 +305,6 @@ const UserList = ({}) => {
         return message.error("비밀번호를 동일하게 입력해주세요.");
       }
 
-      console.log(data);
-
       if (selectUserLevel === "1") {
         dispatch({
           type: USER_STU_CREATE_REQUEST,
@@ -754,7 +752,6 @@ const UserList = ({}) => {
                   rules={[
                     {
                       validator: async (_, values) => {
-                        console.log(values);
                         if (
                           !values ||
                           !values.firstIdentifyNum ||

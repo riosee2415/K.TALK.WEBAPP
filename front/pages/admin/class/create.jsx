@@ -228,7 +228,6 @@ const List = () => {
   }, []);
 
   const onSubmit = useCallback((data) => {
-    console.log(data);
     dispatch({
       type: LECTURE_CREATE_REQUEST,
       data: {
@@ -399,13 +398,7 @@ const List = () => {
           </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text
-              width={`100px`}
-              onClick={() => {
-                setEndDate(null);
-                console.log("");
-              }}
-            >
+            <Text width={`100px`} onClick={() => setEndDate(null)}>
               종료 날짜
             </Text>
             <FormItem
