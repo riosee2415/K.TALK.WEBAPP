@@ -80,6 +80,7 @@ module.exports = class Lecture extends Model {
   static associate(db) {
     db.Lecture.hasMany(db.Participant);
     db.Lecture.hasMany(db.Commute);
+    db.Lecture.hasMany(db.Homework);
     db.Lecture.belongsTo(db.User);
   }
 };

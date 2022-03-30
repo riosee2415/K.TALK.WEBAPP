@@ -398,6 +398,12 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("강의에 참여하고 있지 않습니다.");
     }
 
+    //    let lectureIds = [];
+
+    // for (let i = 0; i < lectures.length; i++) {
+    //   lectureIds.push(lectures[i].LectureId);
+    // }
+
     let lectures = [];
 
     await Promise.all(
@@ -411,6 +417,9 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
               },
               {
                 model: Commute,
+              },
+              {
+                model: Homework,
               },
             ],
           })
