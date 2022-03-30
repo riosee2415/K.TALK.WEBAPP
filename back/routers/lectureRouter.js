@@ -401,12 +401,14 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
 
     await Promise.all(
       exParts.map(async (data) => {
-        lectures = await Lecture.findAll({
-          where: { id: parseInt(data.LectureId) },
-          include: {
-            model: User,
-          },
-        });
+        lectures.push(
+          await Lecture.findOne({
+            where: { id: parseInt(data.LectureId) },
+            include: {
+              model: User,
+            },
+          })
+        );
       })
     );
 
@@ -1120,15 +1122,16 @@ router.get("/homework/student/list", isLoggedIn, async (req, res, next) => {
 
     await Promise.all(
       lectures.map(async (data) => {
-        homeworks = await Homework.findAll({
-          where: { LectureId: parseInt(data.LectureId) },
-          order: [["createdAt", "DESC"]],
-          include: [
-            {
-              model: Lecture,
-            },
-          ],
-        });
+        homeworks.push(
+          await Homework.findOne({
+            where: { LectureId: parseInt(data.LectureId) },
+            include: [
+              {
+                model: Lecture,
+              },
+            ],
+          })
+        );
       })
     );
 

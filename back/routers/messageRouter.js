@@ -244,23 +244,20 @@ router.get("/teacherList", isLoggedIn, async (req, res, next) => {
 
     await Promise.all(
       parts.map(async (data) => {
-        users = await Lecture.findAll({
-          where: { id: parseInt(data.LectureId) },
-        });
+        users.push(
+          await Lecture.findOne({
+            where: { id: parseInt(data.LectureId) },
+            include: [
+              {
+                model: User,
+              },
+            ],
+          })
+        );
       })
     );
 
-    let teachers = [];
-
-    await Promise.all(
-      users.map(async (data) => {
-        teachers = await User.findAll({
-          where: { id: parseInt(data.UserId) },
-        });
-      })
-    );
-
-    return res.status(200).json(teachers);
+    return res.status(200).json(users);
   } catch (error) {
     console.error(error);
     return res.status(401).send("강사 목록을 불러올 수 없습니다.");
