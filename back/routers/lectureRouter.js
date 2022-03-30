@@ -1118,13 +1118,19 @@ router.get("/homework/student/list", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("참여하고 있는 강의가 없습니다.");
     }
 
+    let lectureIds = [];
+
     let homeworks = [];
 
+    for (let i = 0; i < lectures.length; i++) {
+      lectureIds.push(lectures[i].LectureId);
+    }
+
     await Promise.all(
-      lectures.map(async (data) => {
+      lectureIds.map(async (data) => {
         homeworks.push(
-          await Homework.findOne({
-            where: { LectureId: parseInt(data.LectureId) },
+          await Homework.findAll({
+            where: { LectureId: parseInt(data) },
             include: [
               {
                 model: Lecture,
@@ -1135,7 +1141,7 @@ router.get("/homework/student/list", isLoggedIn, async (req, res, next) => {
       })
     );
 
-    return res.status(200).json({ homeworks });
+    return res.status(200).json(homeworks);
   } catch (error) {
     console.error(error);
     return res.status(401).send("숙제 목록을 불러올 수 없습니다.");
