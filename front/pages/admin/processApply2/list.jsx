@@ -4,61 +4,27 @@ import PageHeader from "../../../components/admin/PageHeader";
 import AdminTop from "../../../components/admin/AdminTop";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Button,
-  Col,
-  Modal,
-  Row,
-  Table,
-  notification,
-  Layout,
-  Input,
-  message,
-} from "antd";
+import { Button, Col, Modal, Table, message } from "antd";
 import { Wrapper, Text } from "../../../components/commonComponents";
+
 import {
   UPDATE_MODAL_CLOSE_REQUEST,
   UPDATE_MODAL_OPEN_REQUEST,
-  PROCESS_UPDATE_REQUEST,
-  PROCESS_LIST_REQUEST,
+  PROCESS_APPLY_UPDATE_REQUEST,
+  PROCESS_APPLY_LIST_REQUEST,
 } from "../../../reducers/processApply";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import { useRouter } from "next/router";
-import { render } from "react-dom";
-import useInput from "../../../hooks/useInput";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
 import { ColWrapper, RowWrapper } from "../../../components/commonComponents";
-import { saveAs } from "file-saver";
-import Theme from "../../../components/Theme";
 
-const { Sider, Content } = Layout;
+import Theme from "../../../components/Theme";
 
 const AdminContent = styled.div`
   padding: 20px;
 `;
-
-const FileBox = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-`;
-
-const Filename = styled.span`
-  margin-right: 15px;
-  color: #555;
-  font-size: 13px;
-`;
-
-const LoadNotification = (msg, content) => {
-  notification.open({
-    message: msg,
-    description: content,
-    onClick: () => {},
-  });
-};
 
 const List = ({ location }) => {
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
@@ -85,11 +51,11 @@ const List = ({ location }) => {
   const [updateData, setUpdateData] = useState(null);
 
   const {
-    processList,
+    processList2,
     updateModal,
 
-    st_processUpdateDone,
-    st_processUpdateError,
+    st_processApplyUpdateDone,
+    st_processApplyUpdateError,
   } = useSelector((state) => state.processApply);
 
   ////// USEEFFECT //////
@@ -97,17 +63,17 @@ const List = ({ location }) => {
     const qs = router.query;
 
     dispatch({
-      type: PROCESS_LIST_REQUEST,
+      type: PROCESS_APPLY_LIST_REQUEST,
       data: { isComplete: qs.type ? qs.type : null },
     });
   }, [router.query]);
 
   useEffect(() => {
-    if (st_processUpdateDone) {
+    if (st_processApplyUpdateDone) {
       const qs = router.query;
 
       dispatch({
-        type: PROCESS_LIST_REQUEST,
+        type: PROCESS_APPLY_LIST_REQUEST,
         data: { isComplete: qs.type ? qs.type : null },
       });
 
@@ -115,13 +81,13 @@ const List = ({ location }) => {
         type: UPDATE_MODAL_CLOSE_REQUEST,
       });
     }
-  }, [st_processUpdateDone]);
+  }, [st_processApplyUpdateDone]);
 
   useEffect(() => {
-    if (st_processUpdateError) {
-      return message.error(st_processUpdateError);
+    if (st_processApplyUpdateError) {
+      return message.error(st_processApplyUpdateError);
     }
-  }, [st_processUpdateError]);
+  }, [st_processApplyUpdateError]);
 
   ////// TOGGLE //////
 
@@ -146,41 +112,27 @@ const List = ({ location }) => {
   ////// HANDLER //////
   const onSubmitUpdate = useCallback(() => {
     dispatch({
-      type: PROCESS_UPDATE_REQUEST,
+      type: PROCESS_APPLY_UPDATE_REQUEST,
       data: {
         id: updateData.id,
       },
     });
   }, [updateData]);
 
-  const fileDownloadHandler = useCallback(async (filePath) => {
-    let blob = await fetch(filePath).then((r) => r.blob());
-
-    const file = new Blob([blob]);
-
-    const ext = filePath.substring(
-      filePath.lastIndexOf(".") + 1,
-      filePath.length
-    );
-
-    const originName = `첨부파일.${ext}`;
-
-    saveAs(file, originName);
-  }, []);
   ////// DATAVIEW //////
 
   // Table
   const columns = [
     {
       title: "No",
-      dataIndex: "id",
+      render: (data) => <div>{data.id}</div>,
     },
 
     {
       title: "이름",
       render: (data) => (
         <div>
-          {data.firstName}&nbsp;{data.lastName}
+          {data.cFirstName}&nbsp;{data.cLastName}
         </div>
       ),
     },
@@ -225,20 +177,26 @@ const List = ({ location }) => {
       <AdminContent>
         <RowWrapper margin={`0 0 10px 0`} gutter={5}>
           <Col>
-            <Button onClick={() => moveLinkHandler(`/admin/question/list`)}>
+            <Button
+              onClick={() => moveLinkHandler(`/admin/processApply2/list`)}
+            >
               전체
             </Button>
           </Col>
           <Col>
             <Button
-              onClick={() => moveLinkHandler(`/admin/question/list?type=true`)}
+              onClick={() =>
+                moveLinkHandler(`/admin/processApply2/list?type=true`)
+              }
             >
               처리완료
             </Button>
           </Col>
           <Col>
             <Button
-              onClick={() => moveLinkHandler(`/admin/question/list?type=false`)}
+              onClick={() =>
+                moveLinkHandler(`/admin/processApply2/list?type=false`)
+              }
             >
               미처리
             </Button>
@@ -247,7 +205,7 @@ const List = ({ location }) => {
         <Table
           rowKey="id"
           columns={columns}
-          dataSource={processList ? processList : []}
+          dataSource={processList2 ? processList2 : []}
           size="small"
         />
       </AdminContent>
@@ -273,94 +231,6 @@ const List = ({ location }) => {
           </Text>
         </Wrapper>
         <Wrapper al={`flex-start`}>
-          <Text fontSize={`16px`} fontWeight={`700`} margin={` 0 0 10px`}>
-            설명회 참가 신청서
-          </Text>
-          <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
-            <RowWrapper width={`50%`} margin={`0 0 10px`}>
-              <ColWrapper
-                width={`120px`}
-                height={`30px`}
-                bgColor={Theme.basicTheme_C}
-                color={Theme.white_C}
-                margin={`0 5px 0 0`}
-              >
-                이름
-              </ColWrapper>
-              <ColWrapper>
-                {updateData && updateData.firstName}&nbsp;
-                {updateData && updateData.lastName}
-              </ColWrapper>
-            </RowWrapper>
-
-            <RowWrapper width={`50%`} margin={`0 0 10px`}>
-              <ColWrapper
-                width={`120px`}
-                height={`30px`}
-                bgColor={Theme.basicTheme_C}
-                color={Theme.white_C}
-                margin={`0 5px 0 0`}
-              >
-                생년월일
-              </ColWrapper>
-              <ColWrapper>{updateData && updateData.dateOfBirth}</ColWrapper>
-            </RowWrapper>
-
-            <RowWrapper width={`50%`} margin={`0 0 10px`}>
-              <ColWrapper
-                width={`120px`}
-                height={`30px`}
-                bgColor={Theme.basicTheme_C}
-                color={Theme.white_C}
-                margin={`0 5px 0 0`}
-              >
-                이메일
-              </ColWrapper>
-              <ColWrapper>{updateData && updateData.gmailAddress}</ColWrapper>
-            </RowWrapper>
-
-            <RowWrapper width={`50%`} margin={`0 0 10px`}>
-              <ColWrapper
-                width={`120px`}
-                height={`30px`}
-                bgColor={Theme.basicTheme_C}
-                color={Theme.white_C}
-                margin={`0 5px 0 0`}
-              >
-                로그인 비밀번호
-              </ColWrapper>
-              <ColWrapper>{updateData && updateData.loginPw}</ColWrapper>
-            </RowWrapper>
-
-            <RowWrapper width={`50%`} margin={`0 0 10px`}>
-              <ColWrapper
-                width={`120px`}
-                height={`30px`}
-                bgColor={Theme.basicTheme_C}
-                color={Theme.white_C}
-                margin={`0 5px 0 0`}
-              >
-                거주 국가
-              </ColWrapper>
-              <ColWrapper>
-                {updateData && updateData.countryofResidence}
-              </ColWrapper>
-            </RowWrapper>
-
-            <RowWrapper width={`50%`} margin={`0 0 10px`}>
-              <ColWrapper
-                width={`120px`}
-                height={`30px`}
-                bgColor={Theme.basicTheme_C}
-                color={Theme.white_C}
-                margin={`0 5px 0 0`}
-              >
-                휴대폰 번호
-              </ColWrapper>
-              <ColWrapper>{updateData && updateData.phoneNumber}</ColWrapper>
-            </RowWrapper>
-          </Wrapper>
-
           <Text fontSize={`16px`} fontWeight={`700`} margin={` 0 0 10px`}>
             정규과정 등록신청서
           </Text>

@@ -2,6 +2,7 @@ import produce from "../util/produce";
 
 export const initialState = {
   processList: null,
+  processList2: null,
   processDetail: null,
   updateModal: false,
   //
@@ -207,6 +208,7 @@ const reducer = (state = initialState, action) =>
       case PROCESS_APPLY_LIST_SUCCESS: {
         draft.st_processApplyListLoading = false;
         draft.st_processApplyListDone = true;
+        draft.processList2 = action.data.lists;
         break;
       }
       case PROCESS_APPLY_LIST_FAILURE: {

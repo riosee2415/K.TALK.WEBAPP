@@ -372,8 +372,10 @@ const UserList = ({}) => {
             email: data.email,
             address: data.address,
             detailAddress: data.detailAddress,
-            startDate: data.dates[0].format("YYYY-MM-DD"),
-            endDate: data.dates[1].format("YYYY-MM-DD"),
+            startDate: "-",
+            endDate: "-",
+            // startDate: data.dates[0].format("YYYY-MM-DD"),
+            // endDate: data.dates[1].format("YYYY-MM-DD"),
             stuLanguage: data.stuLanguage,
             birth: data.birth.format("YYYY-MM-DD"),
             stuCountry: data.stuCountry,
@@ -674,7 +676,7 @@ const UserList = ({}) => {
 
           {selectUserLevel === "1" ? (
             <>
-              <Form.Item
+              {/* <Form.Item
                 label="강의 시작/종료일"
                 rules={[
                   {
@@ -685,7 +687,7 @@ const UserList = ({}) => {
                 name="dates"
               >
                 <DatePicker.RangePicker />
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item
                 label="강의"
                 rules={[
