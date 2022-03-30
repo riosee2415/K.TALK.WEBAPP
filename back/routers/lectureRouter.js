@@ -1109,6 +1109,16 @@ router.get("/homework/student/list", isLoggedIn, async (req, res, next) => {
     return res.status(403).send("로그인 후 이용 가능합니다.");
   }
 
+  const { page, search } = req.query;
+
+  const LIMIT = 5;
+
+  const _page = page ? page : 1;
+  const _search = search ? search : ``;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 5;
+
   try {
     const lectures = await Participant.findAll({
       where: { UserId: parseInt(req.user.id) },
@@ -1120,28 +1130,68 @@ router.get("/homework/student/list", isLoggedIn, async (req, res, next) => {
 
     let lectureIds = [];
 
-    let homeworks = [];
-
     for (let i = 0; i < lectures.length; i++) {
       lectureIds.push(lectures[i].LectureId);
     }
 
-    await Promise.all(
-      lectureIds.map(async (data) => {
-        homeworks.push(
-          await Homework.findAll({
-            where: { LectureId: parseInt(data) },
-            include: [
-              {
-                model: Lecture,
-              },
-            ],
-          })
-        );
-      })
-    );
+    const lengthQuery = `
+    SELECT	A.id,
+            A.title,
+            A.date,
+            A.file,
+            A.isDelete,
+            A.createdAt,
+            A.updatedAt, 
+            A.LectureId,
+            B.course,
+            C.username 
+      FROM	homeworks			A
+     INNER
+      JOIN	lectures			B
+        ON	A.LectureId = B.id
+     INNER
+      JOIN	users				C
+        ON	B.UserId = C.id
+    WHERE	A.LectureId IN (${lectureIds})
+      ${_search ? `AND B.course LIKE %'${_search}'%` : ``}
+    `;
 
-    return res.status(200).json(homeworks);
+    const selectQuery = `
+    SELECT	A.id,
+            A.title,
+            A.date,
+            A.file,
+            A.isDelete,
+            A.createdAt,
+            A.updatedAt, 
+            A.LectureId,
+            B.course,
+            C.username 
+      FROM	homeworks			A
+     INNER
+      JOIN	lectures			B
+        ON	A.LectureId = B.id
+     INNER
+      JOIN	users				C
+        ON	B.UserId = C.id
+     WHERE	A.LectureId IN (${lectureIds})
+     ${_search ? `AND B.course LIKE %'${_search}'%` : ``}
+     ORDER  BY A.createdAt DESC
+     LIMIT  ${LIMIT}
+    OFFSET  ${OFFSET}
+    `;
+
+    const length = await models.sequelize.query(lengthQuery);
+    const homeworks = await models.sequelize.query(selectQuery);
+
+    const homeworkLen = length[0].length;
+
+    const lastPage =
+      homeworkLen % LIMIT > 0 ? homeworkLen / LIMIT + 1 : homeworkLen / LIMIT;
+
+    return res
+      .status(200)
+      .json({ homeworks: homeworks[0], lastPage: parseInt(lastPage) });
   } catch (error) {
     console.error(error);
     return res.status(401).send("숙제 목록을 불러올 수 없습니다.");
