@@ -21,6 +21,7 @@ const book = require("./book");
 const homework = require("./homework");
 const submit = require("./submit");
 const processapply = require("./processapply");
+const processapply2 = require("./processapply2");
 const lectureMessage = require("./lectureMessage");
 const lecturestumemo = require("./lecturestumemo");
 
@@ -56,6 +57,7 @@ db.Book = book;
 db.Homework = homework;
 db.Submit = submit;
 db.ProcessApply = processapply;
+db.ProcessApply2 = processapply2;
 db.LectureMessage = lectureMessage;
 db.LectureStuMemo = lecturestumemo;
 

@@ -1,61 +1,37 @@
 const DataTypes = require("sequelize");
 const { Model } = DataTypes;
 
-module.exports = class ProcessApply extends Model {
+module.exports = class ProcessApply2 extends Model {
   static init(sequelize) {
     return super.init(
       {
-        cFirstName: {
+        firstName: {
           type: DataTypes.STRING(30),
           allowNull: false,
         },
-        cLastName: {
+        lastName: {
           type: DataTypes.STRING(30),
           allowNull: false,
         },
-        cDateOfBirth: {
+        dateOfBirth: {
           type: DataTypes.STRING(100),
           allowNull: false,
         },
-        cGmailAddress: {
+        gmailAddress: {
           type: DataTypes.STRING(50),
           allowNull: false,
         },
-        cLoginPw: {
+        loginPw: {
           type: DataTypes.STRING(50),
           allowNull: false,
         },
-        cGender: {
-          type: DataTypes.STRING(30),
-          allowNull: false,
-        },
-        cNationality: {
-          type: DataTypes.STRING(100),
-          allowNull: false,
-        },
-        cCountryofResidence: {
+        countryofResidence: {
           type: DataTypes.STRING(200),
           allowNull: false,
         },
-        cLanguageYouUse: {
+        phoneNumber: {
           type: DataTypes.STRING(50),
           allowNull: false,
-        },
-        cPhonenumber: {
-          type: DataTypes.STRING(50),
-          allowNull: false,
-        },
-        cSns: {
-          type: DataTypes.STRING(50),
-          allowNull: false,
-        },
-        cSnsId: {
-          type: DataTypes.STRING(50),
-          allowNull: false,
-        },
-        cOccupation: {
-          type: DataTypes.STRING(100),
-          allowNulll: false,
         },
         isComplete: {
           type: DataTypes.BOOLEAN,
@@ -68,8 +44,8 @@ module.exports = class ProcessApply extends Model {
         },
       },
       {
-        modelName: "ProcessApply",
-        tableName: "processApplys",
+        modelName: "ProcessApply2",
+        tableName: "processApply2s",
         charset: "utf8mb4",
         collate: "utf8mb4_general_ci", // 한글 저장
         sequelize,
