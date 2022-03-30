@@ -226,13 +226,15 @@ const List = ({ location }) => {
       <AdminContent>
         <RowWrapper margin={`0 0 10px 0`} gutter={5}>
           <Col>
-            <Button onClick={() => moveLinkHandler(`/admin/question2/list`)}>
+            <Button onClick={() => moveLinkHandler(`/admin/application/list`)}>
               전체
             </Button>
           </Col>
           <Col>
             <Button
-              onClick={() => moveLinkHandler(`/admin/question2/list?type=true`)}
+              onClick={() =>
+                moveLinkHandler(`/admin/application/list?type=true`)
+              }
             >
               처리완료
             </Button>
@@ -240,7 +242,7 @@ const List = ({ location }) => {
           <Col>
             <Button
               onClick={() =>
-                moveLinkHandler(`/admin/question2/list?type=false`)
+                moveLinkHandler(`/admin/application/list?type=false`)
               }
             >
               미처리

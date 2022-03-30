@@ -188,8 +188,14 @@ const AdminMenu = () => {
           title="문의 관리"
           onTitleClick={titleClickHandler("sub6")}
         >
-          <Menu.Item key="/admin/question/list">
-            <MenuName>문의 리스트</MenuName>
+          <Menu.Item key="/admin/application/list">
+            <MenuName>Application Form</MenuName>
+          </Menu.Item>
+          <Menu.Item key="/admin/processApply/list">
+            <MenuName>설명회 참가신청서</MenuName>
+          </Menu.Item>
+          <Menu.Item key="/admin/processApply2/list">
+            <MenuName>정규과정 등록신청서</MenuName>
           </Menu.Item>
         </SubMenu>
         <SubMenu
