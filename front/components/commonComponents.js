@@ -609,3 +609,21 @@ export const TextArea = styled.textarea`
     line-height: 1.6;
   }
 `;
+
+export const ComboOption = styled.option``;
+
+export const Combo = styled.select`
+  width: ${(props) => props.width};
+  height: ${(props) => props.height};
+  border: ${(props) => props.border || "none"};
+  color: ${(props) => props.color};
+  margin: ${(props) => props.margin};
+  background-color: ${(props) => props.bgColor || props.theme.lightGrey_C};
+  border: ${(props) => props.border};
+  font-size: ${(props) => props.fontSize};
+  outline: none;
+  transition: 0.3s;
+  box-shadow: ${(props) => props.boxShadow};
+  border-radius: ${(props) => props.radius};
+  background-color: ${(props) => props.bgColor};
+`;

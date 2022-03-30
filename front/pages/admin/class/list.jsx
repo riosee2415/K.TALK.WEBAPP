@@ -28,7 +28,6 @@ import { useDispatch, useSelector } from "react-redux";
 
 import {
   LECTURE_DELETE_REQUEST,
-  LECTURE_LIST_REQUEST,
   UPDATE_MODAL_OPEN_REQUEST,
   UPDATE_MODAL_CLOSE_REQUEST,
   LECTURE_UPDATE_REQUEST,

@@ -12,7 +12,7 @@ export const initailState = {
   updateModal: false,
   meUpdateModal: false,
   postCodeModal: false,
-
+  classChangeModal: false,
   //
   st_loginLoading: false,
   st_loginDone: false,
@@ -77,6 +77,10 @@ export const initailState = {
   st_userStuUpdateLoading: false,
   st_userStuUpdateDone: false,
   st_userStuUpdateError: null,
+  //
+  st_userChangeLoading: false,
+  st_userChangeDone: false,
+  st_userChangeError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -143,8 +147,15 @@ export const USER_STU_UPDATE_REQUEST = "USER_STU_UPDATE_REQUEST";
 export const USER_STU_UPDATE_SUCCESS = "USER_STU_UPDATE_SUCCESS";
 export const USER_STU_UPDATE_FAILURE = "USER_STU_UPDATE_FAILURE";
 
+export const USER_CLASS_CHANGE_REQUEST = "USER_CLASS_CHANGE_REQUEST";
+export const USER_CLASS_CHANGE_SUCCESS = "USER_CLASS_CHANGE_SUCCESS";
+export const USER_CLASS_CHANGE_FAILURE = "USER_CLASS_CHANGE_FAILURE";
+
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
+
+export const CHANGE_CLASS_OPEN_REQUEST = "CHANGE_CLASS_OPEN_REQUEST";
+export const CHANGE_CLASS_CLOSE_REQUEST = "CHANGE_CLASS_CLOSE_REQUEST";
 
 export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
 
@@ -479,6 +490,26 @@ const reducer = (state = initailState, action) =>
 
       //////////////////////////////////////////////
 
+      case USER_CLASS_CHANGE_REQUEST: {
+        draft.st_userChangeLoading = true;
+        draft.st_userChangeDone = null;
+        draft.st_userChangeError = false;
+        break;
+      }
+      case USER_CLASS_CHANGE_SUCCESS: {
+        draft.st_userChangeLoading = false;
+        draft.st_userChangeDone = true;
+        break;
+      }
+      case USER_CLASS_CHANGE_FAILURE: {
+        draft.st_userChangeLoading = false;
+        draft.st_userChangeDone = false;
+        draft.st_userChangeError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
       case CURRENT_ADMINMENU_STATUS: {
         const exist = draft.currentAdminMenu.filter(
           (data) => data === action.data.key
@@ -496,6 +527,14 @@ const reducer = (state = initailState, action) =>
       }
 
       //////////////////////////////////////////////
+
+      case CHANGE_CLASS_OPEN_REQUEST:
+        draft.classChangeModal = true;
+        break;
+
+      case CHANGE_CLASS_CLOSE_REQUEST:
+        draft.classChangeModal = false;
+        break;
 
       case UPDATE_MODAL_OPEN_REQUEST:
         draft.updateModal = true;

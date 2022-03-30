@@ -1,0 +1,354 @@
+import React, { useCallback, useEffect, useState } from "react";
+import AdminLayout from "../../../../components/AdminLayout";
+import PageHeader from "../../../../components/admin/PageHeader";
+import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  LOAD_MY_INFO_REQUEST,
+  CHANGE_CLASS_CLOSE_REQUEST,
+  CHANGE_CLASS_OPEN_REQUEST,
+  USER_ALL_LIST_REQUEST,
+  USER_CLASS_CHANGE_REQUEST,
+} from "../../../../reducers/user";
+import { Table, Button, message, Modal, Select, Input, Form } from "antd";
+import { useRouter, withRouter } from "next/router";
+import wrapper from "../../../../store/configureStore";
+import { END } from "redux-saga";
+import axios from "axios";
+import {
+  Combo,
+  ComboOption,
+  Text,
+  Wrapper,
+} from "../../../../components/commonComponents";
+import { LECTURE_ALL_LIST_REQUEST } from "../../../../reducers/lecture";
+import { CloseCircleOutlined } from "@ant-design/icons";
+
+const AdminContent = styled.div`
+  padding: 20px;
+`;
+
+const UserList = ({}) => {
+  // LOAD CURRENT INFO AREA /////////////////////////////////////////////
+  const { me, st_loadMyInfoDone } = useSelector((state) => state.user);
+  const { allLectures } = useSelector((state) => state.lecture);
+
+  const router = useRouter();
+
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
+  }, []);
+
+  useEffect(() => {
+    if (st_loadMyInfoDone) {
+      if (!me || parseInt(me.level) < 3) {
+        moveLinkHandler(`/admin`);
+      }
+    }
+  }, [st_loadMyInfoDone]);
+  /////////////////////////////////////////////////////////////////////////
+
+  ////// HOOKS //////
+  const dispatch = useDispatch();
+
+  const {
+    allUsers,
+    classChangeModal,
+    //
+    st_userListError,
+    //
+    st_userChangeDone,
+    st_userChangeError,
+  } = useSelector((state) => state.user);
+
+  const [updateData, setUpdateData] = useState(null);
+  const [lectureList, setLectureList] = useState(null);
+  const [selectedList, setSelectedList] = useState([]);
+
+  const [form] = Form.useForm();
+
+  ////// USEEFFECT //////
+
+  useEffect(() => {
+    dispatch({
+      type: USER_ALL_LIST_REQUEST,
+      data: {
+        type: 1,
+      },
+    });
+
+    dispatch({
+      type: LECTURE_ALL_LIST_REQUEST,
+      data: {
+        listType: 2,
+      },
+    });
+  }, [router.query]);
+
+  useEffect(() => {
+    if (st_userChangeDone) {
+      dispatch({
+        type: USER_ALL_LIST_REQUEST,
+        data: {
+          type: 1,
+        },
+      });
+
+      dispatch({
+        type: LECTURE_ALL_LIST_REQUEST,
+        data: {
+          listType: 2,
+        },
+      });
+      classChangeModalClose();
+      return message.success("학생의 반이 옮겨졌습니다.");
+    }
+  }, [st_userChangeDone]);
+
+  useEffect(() => {
+    if (st_userListError) {
+      return message.error(st_userListError);
+    }
+  }, [st_userListError]);
+
+  useEffect(() => {
+    if (st_userChangeError) {
+      return message.error(st_userChangeError);
+    }
+  }, [st_userChangeError]);
+
+  ////// TOGGLE //////
+  const classChangeModalOpen = useCallback(
+    (data) => {
+      dispatch({
+        type: CHANGE_CLASS_OPEN_REQUEST,
+      });
+
+      setUpdateData(data);
+    },
+    [classChangeModal]
+  );
+
+  const classChangeModalClose = useCallback(() => {
+    dispatch({
+      type: CHANGE_CLASS_CLOSE_REQUEST,
+    });
+    setUpdateData(null);
+    form.resetFields();
+  }, [classChangeModal, form]);
+
+  ////// HANDLER //////
+
+  const onModalOk = useCallback(() => {
+    form.submit();
+  }, [form]);
+
+  const onSubmit = useCallback(
+    (data) => {
+      console.log(data);
+      if (!data.lecture || data.lecture === "--- 선택 ---") {
+        return message.error(`현재 강의를 선택해주세요.`);
+      }
+      if (!data.changelecture || data.changelecture === "--- 선택 ---") {
+        return message.error(`바꿀 강의를 선택해주세요.`);
+      }
+
+      dispatch({
+        type: USER_CLASS_CHANGE_REQUEST,
+        data: {
+          UserId: updateData.id,
+          LectureId: data.lecture,
+          ChangeLectureId: data.changelecture,
+        },
+      });
+    },
+    [selectedList, updateData]
+  );
+
+  const selectChangeHandler = useCallback(
+    (e) => {
+      const id = parseInt(e.split(`.`)[0]);
+      setLectureList(lectureList.filter((data) => data.id !== id));
+
+      const state = selectedList;
+      state.push(lectureList.filter((data) => data.id === id)[0]);
+      setSelectedList(state);
+    },
+    [lectureList, selectedList]
+  );
+
+  const selectCancelHandler = useCallback(
+    (cancelData) => {
+      setSelectedList(selectedList.filter((data) => data.id !== cancelData.id));
+
+      const state = lectureList;
+      state.push(cancelData);
+      setLectureList(state);
+    },
+    [lectureList, selectedList]
+  );
+
+  ////// DATAVIEW //////
+
+  const columns = [
+    {
+      title: "번호",
+      dataIndex: "id",
+    },
+
+    {
+      title: "회원이름",
+      render: (data) => <div>{data.username}</div>,
+    },
+    {
+      title: "회원아이디",
+      render: (data) => <div>{data.userId}</div>,
+    },
+    {
+      title: "이메일",
+      render: (data) => <div>{data.email}</div>,
+    },
+    {
+      title: "전화번호",
+      render: (data) => <div>{data.mobile}</div>,
+    },
+    {
+      title: "권한",
+      render: (data) => (
+        <div>
+          {data.level === 1
+            ? "일반학생"
+            : data.level === 2
+            ? "강사"
+            : data.level === 3
+            ? "운영자"
+            : data.level === 4
+            ? "최고관리자"
+            : "개발사"}
+        </div>
+      ),
+    },
+    {
+      title: "반 옮기기",
+      render: (data) => (
+        <Button
+          size="small"
+          type="primary"
+          onClick={() =>
+            data.level === 5
+              ? message.error("개발사는 권한을 수정할 수 없습니다.")
+              : classChangeModalOpen(data)
+          }
+        >
+          반 옮기기
+        </Button>
+      ),
+    },
+
+    // {
+    //   title: "DELETE",
+    //   render: (data) => (
+    //     <Button type="danger" onClick={deletePopToggle(data.id)}>
+    //       DEL
+    //     </Button>
+    //   ),
+    // },
+  ];
+
+  return (
+    <AdminLayout>
+      <PageHeader
+        breadcrumbs={["회원 관리", "관리"]}
+        title={`회원 리스트`}
+        subTitle={`홈페이지에 가입한 회원를 확인할 수 있습니다.`}
+      />
+      {/* <AdminTop createButton={true} createButtonAction={() => {})} /> */}
+
+      <AdminContent>
+        <Table
+          rowKey="id"
+          columns={columns}
+          dataSource={allUsers ? allUsers : []}
+          size="small"
+        />
+      </AdminContent>
+
+      <Modal
+        visible={classChangeModal}
+        width={`400px`}
+        title={`사용자 레벨 수정`}
+        onCancel={classChangeModalClose}
+        onOk={onModalOk}
+      >
+        <Wrapper padding={`10px`} al={`flex-start`}>
+          <Form form={form} style={{ width: `100%` }} onFinish={onSubmit}>
+            <Form.Item label={`학생`}>
+              <Input disabled value={updateData && updateData.username} />
+            </Form.Item>
+
+            <Form.Item label={`현재 강의`} name={`lecture`}>
+              <Combo
+                width={`100%`}
+                height={`32px`}
+                showSearch
+                placeholder="Select a Lecture"
+              >
+                <ComboOption selected>--- 선택 ---</ComboOption>
+                {updateData &&
+                  updateData.Participants.map((data) => {
+                    return (
+                      <ComboOption value={data.LectureId}>
+                        {data.Lecture.course}
+                      </ComboOption>
+                    );
+                  })}
+              </Combo>
+            </Form.Item>
+
+            <Form.Item label={`바뀔 강의`} name={`changelecture`}>
+              <Combo
+                width={`100%`}
+                height={`32px`}
+                showSearch
+                placeholder="Select a Lecture"
+                // name={`changelecture`}
+              >
+                <ComboOption selected>--- 선택 ---</ComboOption>
+                {allLectures &&
+                  allLectures.map((data) => {
+                    return (
+                      <ComboOption value={data.id}>{data.course}</ComboOption>
+                    );
+                  })}
+              </Combo>
+            </Form.Item>
+          </Form>
+        </Wrapper>
+      </Modal>
+    </AdminLayout>
+  );
+};
+
+export const getServerSideProps = wrapper.getServerSideProps(
+  async (context) => {
+    // SSR Cookie Settings For Data Load/////////////////////////////////////
+    const cookie = context.req ? context.req.headers.cookie : "";
+    axios.defaults.headers.Cookie = "";
+    if (context.req && cookie) {
+      axios.defaults.headers.Cookie = cookie;
+    }
+    ////////////////////////////////////////////////////////////////////////
+    // 구현부
+
+    context.store.dispatch({
+      type: LOAD_MY_INFO_REQUEST,
+    });
+
+    // 구현부 종료
+    context.store.dispatch(END);
+    console.log("🍀 SERVER SIDE PROPS END");
+    await context.store.sagaTask.toPromise();
+  }
+);
+
+export default withRouter(UserList);

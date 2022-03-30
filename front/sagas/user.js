@@ -60,6 +60,8 @@ import {
   USER_TEA_UPDATE_REQUEST,
   USER_TEA_UPDATE_SUCCESS,
   USER_TEA_UPDATE_FAILURE,
+  USER_CLASS_CHANGE_SUCCESS,
+  USER_CLASS_CHANGE_REQUEST,
   /////////////////////////////
 } from "../reducers/user";
 
@@ -465,6 +467,33 @@ function* teaUpdate(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function changeClassAPI(data) {
+  return axios.patch(`/api/user/class/update`, data);
+}
+
+function* changeClass(action) {
+  try {
+    const result = yield call(changeClassAPI, action.data);
+
+    yield put({
+      type: USER_CLASS_CHANGE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_CLASS_CHANGE_SUCCESS,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchLoadMyInfo() {
@@ -527,6 +556,10 @@ function* watchTeaUpdate() {
   yield takeLatest(USER_TEA_UPDATE_REQUEST, teaUpdate);
 }
 
+function* watchClassChange() {
+  yield takeLatest(USER_CLASS_CHANGE_REQUEST, changeClass);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -545,6 +578,7 @@ export default function* userSaga() {
     fork(watchMeUpdate),
     fork(watchProfileUpload),
     fork(watchTeaUpdate),
+    fork(watchClassChange),
     //
   ]);
 }
