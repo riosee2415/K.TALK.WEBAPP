@@ -160,7 +160,8 @@ router.post("/apply/list", isAdminCheck, async (req, res, next) => {
 
   try {
     const selectQuery = `
-    SELECT	    cFirstName,
+    SELECT	    id,
+                cFirstName,
                 cLastName,
                 cDateOfBirth,
                 cGmailAddress,
@@ -207,7 +208,8 @@ router.get("/apply/detail/:apply", isAdminCheck, async (req, res, next) => {
     }
 
     const selectQuery = `
-     SELECT	    cFirstName,
+     SELECT	    id,
+                cFirstName,
                 cLastName,
                 cDateOfBirth,
                 cGmailAddress,
