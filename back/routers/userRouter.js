@@ -785,7 +785,7 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
 
 // 학생 반 옮기기
 router.patch("/class/update", isAdminCheck, async (req, res, next) => {
-  const { UserId, LectureId } = req.body;
+  const { UserId, LectureId, ChangeLectureId } = req.body;
   try {
     const exLecture = await Lecture.findOne({
       where: { id: parseInt(LectureId) },
@@ -795,8 +795,20 @@ router.patch("/class/update", isAdminCheck, async (req, res, next) => {
       where: { id: parseInt(UserId) },
     });
 
+    const exLecture2 = await Lecture.findOne({
+      where: { id: parseInt(ChangeLectureId) },
+    });
+
+    if (parseInt(LectureId) === parseInt(ChangeLectureId)) {
+      return res.status(401).send("동일한 강의를 선택하였습니다");
+    }
+
     if (!exLecture) {
       return res.status(401).send("존재하지 않는 강의입니다.");
+    }
+
+    if (!exLecture2) {
+      return res.status(401).send("존재하지 않는 사용자입니다.");
     }
 
     if (!exUser) {
@@ -805,10 +817,10 @@ router.patch("/class/update", isAdminCheck, async (req, res, next) => {
 
     const updateResult = await Participant.update(
       {
-        LectureId: parseInt(LectureId),
+        LectureId: parseInt(ChangeLectureId),
       },
       {
-        where: { UserId: parseInt(UserId) },
+        where: { UserId: parseInt(UserId), LectureId: parseInt(LectureId) },
       }
     );
 
