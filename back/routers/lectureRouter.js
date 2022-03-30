@@ -11,6 +11,7 @@ const {
   Submit,
   LectureMessage,
   LectureStuMemo,
+  Commute,
 } = require("../models");
 const models = require("../models");
 const fs = require("fs");
@@ -404,9 +405,14 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
         lectures.push(
           await Lecture.findOne({
             where: { id: parseInt(data.LectureId) },
-            include: {
-              model: User,
-            },
+            include: [
+              {
+                model: User,
+              },
+              {
+                model: Commute,
+              },
+            ],
           })
         );
       })
