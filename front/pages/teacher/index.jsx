@@ -486,8 +486,6 @@ const Index = () => {
         return message.error("프로필 사진을 업로드해주세요");
       }
 
-      console.log(data, "data");
-
       dispatch({
         type: USER_UPDATE_REQUEST,
         data: {
@@ -1002,7 +1000,7 @@ const Index = () => {
               <Form.Item
                 name="address"
                 rules={[{ required: true, message: "주소를 입력해주세요." }]}>
-                <CusotmInput width={`100%`} readOnly />
+                <CusotmInput width={`100%`} />
               </Form.Item>
 
               <Text fontSize={`18px`} fontWeight={`bold`}>

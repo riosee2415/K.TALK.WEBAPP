@@ -20,6 +20,22 @@ export const initialState = {
   st_processUpdateLoading: false,
   st_processUpdateDone: false,
   st_processUpdateError: null,
+  //
+  st_processApplyListLoading: false,
+  st_processApplyListDone: false,
+  st_processApplyListError: null,
+  //
+  st_processApplyDetailLoading: false,
+  st_processApplyDetailDone: false,
+  st_processApplyDetailError: null,
+  //
+  st_processApplyCreateLoading: false,
+  st_processApplyCreateDone: false,
+  st_processApplyCreateError: null,
+  //
+  st_processApplyUpdateLoading: false,
+  st_processApplyUpdateDone: false,
+  st_processApplyUpdateError: null,
 };
 
 export const PROCESS_LIST_REQUEST = "PROCESS_LIST_REQUEST";
@@ -37,6 +53,22 @@ export const PROCESS_CREATE_FAILURE = "PROCESS_CREATE_FAILURE";
 export const PROCESS_UPDATE_REQUEST = "PROCESS_UPDATE_REQUEST";
 export const PROCESS_UPDATE_SUCCESS = "PROCESS_UPDATE_SUCCESS";
 export const PROCESS_UPDATE_FAILURE = "PROCESS_UPDATE_FAILURE";
+
+export const PROCESS_APPLY_LIST_REQUEST = "PROCESS_APPLY_LIST_REQUEST";
+export const PROCESS_APPLY_LIST_SUCCESS = "PROCESS_APPLY_LIST_SUCCESS";
+export const PROCESS_APPLY_LIST_FAILURE = "PROCESS_APPLY_LIST_FAILURE";
+
+export const PROCESS_APPLY_DETAIL_REQUEST = "PROCESS_APPLY_DETAIL_REQUEST";
+export const PROCESS_APPLY_DETAIL_SUCCESS = "PROCESS_APPLY_DETAIL_SUCCESS";
+export const PROCESS_APPLY_DETAIL_FAILURE = "PROCESS_APPLY_DETAIL_FAILURE";
+
+export const PROCESS_APPLY_CREATE_REQUEST = "PROCESS_APPLY_CREATE_REQUEST";
+export const PROCESS_APPLY_CREATE_SUCCESS = "PROCESS_APPLY_CREATE_SUCCESS";
+export const PROCESS_APPLY_CREATE_FAILURE = "PROCESS_APPLY_CREATE_FAILURE";
+
+export const PROCESS_APPLY_UPDATE_REQUEST = "PROCESS_APPLY_UPDATE_REQUEST";
+export const PROCESS_APPLY_UPDATE_SUCCESS = "PROCESS_APPLY_UPDATE_SUCCESS";
+export const PROCESS_APPLY_UPDATE_FAILURE = "PROCESS_APPLY_UPDATE_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -121,6 +153,86 @@ const reducer = (state = initialState, action) =>
         draft.st_processUpdateLoading = false;
         draft.st_processUpdateDone = false;
         draft.st_processUpdateError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case PROCESS_APPLY_UPDATE_REQUEST: {
+        draft.st_processApplyUpdateLoading = true;
+        draft.st_processApplyUpdateDone = null;
+        draft.st_processApplyUpdateError = false;
+        break;
+      }
+      case PROCESS_APPLY_UPDATE_SUCCESS: {
+        draft.st_processApplyUpdateLoading = false;
+        draft.st_processApplyUpdateDone = true;
+        break;
+      }
+      case PROCESS_APPLY_UPDATE_FAILURE: {
+        draft.st_processApplyUpdateLoading = false;
+        draft.st_processApplyUpdateDone = false;
+        draft.st_processApplyUpdateError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case PROCESS_APPLY_CREATE_REQUEST: {
+        draft.st_processApplyCreateLoading = true;
+        draft.st_processApplyCreateDone = null;
+        draft.st_processApplyCreateError = false;
+        break;
+      }
+      case PROCESS_APPLY_CREATE_SUCCESS: {
+        draft.st_processApplyCreateLoading = false;
+        draft.st_processApplyCreateDone = true;
+        break;
+      }
+      case PROCESS_APPLY_CREATE_FAILURE: {
+        draft.st_processApplyCreateLoading = false;
+        draft.st_processApplyCreateDone = false;
+        draft.st_processApplyCreateError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case PROCESS_APPLY_LIST_REQUEST: {
+        draft.st_processApplyListLoading = true;
+        draft.st_processApplyListDone = null;
+        draft.st_processApplyListError = false;
+        break;
+      }
+      case PROCESS_APPLY_LIST_SUCCESS: {
+        draft.st_processApplyListLoading = false;
+        draft.st_processApplyListDone = true;
+        break;
+      }
+      case PROCESS_APPLY_LIST_FAILURE: {
+        draft.st_processApplyListLoading = false;
+        draft.st_processApplyListDone = false;
+        draft.st_processApplyListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case PROCESS_APPLY_DETAIL_REQUEST: {
+        draft.st_processApplyDetailLoading = true;
+        draft.st_processApplyDetailDone = null;
+        draft.st_processApplyDetailError = false;
+        break;
+      }
+      case PROCESS_APPLY_DETAIL_SUCCESS: {
+        draft.st_processApplyDetailLoading = false;
+        draft.st_processApplyDetailDone = true;
+        break;
+      }
+      case PROCESS_APPLY_DETAIL_FAILURE: {
+        draft.st_processApplyDetailLoading = false;
+        draft.st_processApplyDetailDone = false;
+        draft.st_processApplyDetailError = action.error;
         break;
       }
 

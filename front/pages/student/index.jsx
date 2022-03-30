@@ -67,9 +67,17 @@ import {
   FilePdfOutlined,
 } from "@ant-design/icons";
 import { saveAs } from "file-saver";
+import { COMMUTE_LIST_REQUEST } from "../../reducers/commute";
 
 const PROFILE_WIDTH = `184`;
 const PROFILE_HEIGHT = `190`;
+
+const CustomButton = styled(Button)`
+  border: none;
+  font-weight: "boled";
+
+  color: ${(props) => props.color};
+`;
 
 const ProfileWrapper = styled.div`
   width: 100%;
@@ -289,22 +297,10 @@ const Student = () => {
     st_lectureStuLectureListError,
 
     lectureHomeworkStuList,
+    lectureHomeworkStuLastPage,
     st_lectureHomeworkStuListDone,
     st_lectureHomeworkStuListError,
   } = useSelector((state) => state.lecture);
-
-  // useEffect(() => {
-  //   if (st_lectureStuLectureListDone) {
-  //     let saveId = lectureStuLectureList.map((data) => {
-  //       return {
-  //         id: data.id,
-  //         course: data.course,
-  //       };
-  //     });
-
-  //     setSaveLectureId(saveId);
-  //   }
-  // }, [st_lectureStuLectureListDone]);
 
   ////// HOOKS //////
   const width = useWidth();
@@ -334,13 +330,13 @@ const Student = () => {
 
   const [messageDatum, setMessageDatum] = useState();
 
-  const [adminSendMessageToggle, setAdminSendMessageToggle] = useState(false);
+  const [sendMessageType, setSendMessageType] = useState(1);
   const [homeWorkModalToggle, setHomeWorkModalToggle] = useState(false);
   const [homeWorkData, setHomeWorkData] = useState("");
 
   const [selectValue, setSelectValue] = useState("");
 
-  const [saveLectureId, setSaveLectureId] = useState([]);
+  const [lectureId, setLectureId] = useState("");
 
   const [currentPage1, setCurrentPage1] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
@@ -383,6 +379,21 @@ const Student = () => {
 
     dispatch({
       type: LECTURE_HOMEWORK_STU_LIST_REQUEST,
+      data: {
+        page: 1,
+        search: "",
+      },
+    });
+  }, []);
+
+  useEffect(() => {
+    dispatch({
+      type: COMMUTE_LIST_REQUEST,
+      data: {
+        LectureId: parseInt(router.query.id),
+        page: 1,
+        search: "",
+      },
     });
   }, []);
 
@@ -428,7 +439,7 @@ const Student = () => {
     if (meUpdateModal) {
       updateForm.setFieldsValue({
         mobile: me.mobile,
-        postNum: me.postNum,
+        detailAddress: me.detailAddress,
         address: me.address,
         stuLanguage: me.stuLanguage,
         stuCountry: me.stuCountry,
@@ -519,6 +530,7 @@ const Student = () => {
     setMessageViewModal(false);
     setHomeWorkModalToggle(false);
     setFileName("");
+    setLectureId("");
   }, [fileInput]);
 
   ////// TOGGLE //////
@@ -542,13 +554,13 @@ const Student = () => {
   const messageViewModalHandler = useCallback((data) => {
     setMessageViewModal((prev) => !prev);
 
-    // console.log(data, "dta");
+    console.log(data, "데이터");
     onFiil(data);
     setMessageDatum(data);
   }, []);
 
-  const adminSendMessageToggleHandler = useCallback(() => {
-    setAdminSendMessageToggle((prev) => !prev);
+  const sendMessageTypeHandler = useCallback((num) => {
+    setSendMessageType(num);
   }, []);
 
   const homeworkSubmitHanlder = useCallback((data) => {
@@ -614,7 +626,7 @@ const Student = () => {
         data: {
           profileImage: userProfilePath,
           mobile: data.mobile,
-          postNum: data.postNum,
+          detailAddress: data.detailAddress,
           address: data.address,
           stuLanguage: data.stuLanguage,
           stuCountry: data.stuCountry,
@@ -629,38 +641,46 @@ const Student = () => {
     [userProfilePath]
   );
 
-  const postCodeSubmit = useCallback(
+  const sendMessageFinishHandler = useCallback(
     (data) => {
-      updateForm.setFieldsValue({
-        address: data.address,
-        postNum: data.zonecode,
+      dispatch({
+        type: MESSAGE_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          author: me.userId,
+          senderId: me.id,
+          receiverId: data.receivePerson,
+          content: data.content,
+          level: me.level,
+        },
+      });
+    },
+    [me, lectureId]
+  );
+
+  const sendMessageLectureFinishHanlder = useCallback(
+    (data, messageLecture) => {
+      let save = messageLecture.find((data2, idx) => {
+        if (data2.id === data.receiveLectureId) {
+          return true;
+        }
       });
 
       dispatch({
-        type: POSTCODE_MODAL_TOGGLE,
+        type: MESSAGE_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          author: me.userId,
+          senderId: me.id,
+          receiverId: save.UserId,
+          receiveLectureId: data.receiveLectureId,
+          content: data.content,
+          level: me.level,
+        },
       });
     },
-
-    [postCodeModal]
+    []
   );
-
-  // const sendMessageFinishHandler = useCallback(
-  //   (data) => {
-  //     dispatch({
-  //       type: MESSAGE_CREATE_REQUEST,
-  //       data: {
-  //         title: data.title,
-  //         author: me.userId,
-  //         senderId: me.id,
-  //         receiverId: data.receivePerson,
-  //         receiveLectureId:,
-  //         content: data.content,
-  //         level: me.level,
-  //       },
-  //     });
-  //   },
-  //   [me]
-  // );
 
   const sendMessageAdminFinishHandler = useCallback(
     (data) => {
@@ -678,19 +698,32 @@ const Student = () => {
 
   const answerFinishHandler = useCallback(
     (data, messageData) => {
-      console.log(data, messageData);
-      // dispatch({
-      //   type: MESSAGE_CREATE_REQUEST,
-      //   data: {
-      //     title: data.messageTitle,
-      //     author: me.username,
-      //     senderId: messageData.receiverId,
-      //     receiverId: messageData.senderId,
-      //     receiveLectureId: "!",
-      //     content: data.messageContent,
-      //     level: me.level,
-      //   },
-      // });
+      if (messageData.receiveLectureId) {
+        dispatch({
+          type: MESSAGE_CREATE_REQUEST,
+          data: {
+            title: data.messageTitle,
+            author: me.username,
+            senderId: messageData.receiverId,
+            receiverId: messageData.senderId,
+            receiveLectureId: messageData.receiveLectureId,
+            content: data.messageContent,
+            level: me.level,
+          },
+        });
+      } else {
+        dispatch({
+          type: MESSAGE_CREATE_REQUEST,
+          data: {
+            title: data.messageTitle,
+            author: me.username,
+            senderId: messageData.receiverId,
+            receiverId: messageData.senderId,
+            content: data.messageContent,
+            level: me.level,
+          },
+        });
+      }
     },
     [me]
   );
@@ -729,7 +762,14 @@ const Student = () => {
   }, []);
 
   const receiveSelectHandler = useCallback((value) => {
+    console.log(value);
     setSelectValue(value);
+  }, []);
+
+  const receiveLectureIdtHandler = useCallback((value) => {
+    setLectureId(value);
+
+    console.log(value);
   }, []);
 
   const onFiil = useCallback((data) => {
@@ -742,12 +782,24 @@ const Student = () => {
   }, []);
 
   const noticeChangePage = useCallback((page) => {
-    setCurrentPage2(page);
+    setCurrentPage1(page);
 
     dispatch({
       type: NOTICE_LIST_REQUEST,
       data: {
         page,
+      },
+    });
+  }, []);
+
+  const onChangeHomeworkPage = useCallback((page) => {
+    setCurrentPage2(page);
+
+    dispatch({
+      type: LECTURE_HOMEWORK_STU_LIST_REQUEST,
+      data: {
+        page,
+        search: "",
       },
     });
   }, []);
@@ -1023,6 +1075,7 @@ const Student = () => {
             ) : (
               lectureStuLectureList &&
               lectureStuLectureList.slice(0, 1).map((data, idx) => {
+                console.log(data, "data");
                 return (
                   <Wrapper
                     dr={`row`}
@@ -1084,16 +1137,7 @@ const Student = () => {
                                   |
                                 </Text>
                                 <Text lineHeight={`1.19`}>
-                                  {`강의 수 : ${moment
-                                    .duration(
-                                      moment("2022-04-03", "YYYY-MM-DD").diff(
-                                        moment("2022-04-01").format(
-                                          "YYYY-MM-DD"
-                                        )
-                                      )
-                                    )
-                                    .asDays()}  / ${data.lecDate * data.count}`}
-                                  {console.log(data, "data")}
+                                  {`강의 수 : ${data.lecDate * data.count}`}
 
                                   {/* {`강의 수 : ${Math.abs(
                                     Math.floor(
@@ -1144,7 +1188,11 @@ const Student = () => {
                                   width={`10%`}
                                   color={Theme.grey2_C}
                                   padding={`0 0 0 10px`}>
-                                  (100%)
+                                  {`(${
+                                    data.Commutes &&
+                                    (data.Commutes.length * 100) /
+                                      (data.lecDate * data.count)
+                                  }%)`}
                                 </Text>
                               </Wrapper>
                               <Wrapper
@@ -1159,7 +1207,25 @@ const Student = () => {
                                 </Text>
                                 <Wrapper width={width < 800 ? `80%` : `75%`}>
                                   <CustomSlide
-                                    defaultValue={55}
+                                    value={Math.abs(
+                                      Math.floor(
+                                        (moment
+                                          .duration(
+                                            moment(
+                                              data.endDate,
+                                              "YYYY-MM-DD"
+                                            ).diff(
+                                              moment(
+                                                data.startDate,
+                                                "YYYY-MM-DD"
+                                              )
+                                            )
+                                          )
+                                          .asDays() /
+                                          (data.lecDate * 7)) *
+                                          100
+                                      ) - 100
+                                    )}
                                     disabled={true}
                                     draggableTrack={true}
                                     bgColor={Theme.basicTheme_C}
@@ -1169,7 +1235,22 @@ const Student = () => {
                                   width={`10%`}
                                   color={Theme.grey2_C}
                                   padding={`0 0 0 10px`}>
-                                  (55%)
+                                  {`(${Math.abs(
+                                    Math.floor(
+                                      (moment
+                                        .duration(
+                                          moment(
+                                            data.endDate,
+                                            "YYYY-MM-DD"
+                                          ).diff(
+                                            moment(data.startDate, "YYYY-MM-DD")
+                                          )
+                                        )
+                                        .asDays() /
+                                        (data.lecDate * 7)) *
+                                        100
+                                    ) - 100
+                                  )}%)`}
                                 </Text>
                               </Wrapper>
                               <Wrapper dr={`row`} ju={`flex-start`}>
@@ -1234,9 +1315,17 @@ const Student = () => {
                             al={`flex-start`}
                             ju={`flex-start`}
                             padding={width < 800 ? `8px 0` : `16px 0`}>
-                            <Text cursor={`pointer`}>수료증 신청</Text>
+                            <Text
+                              cursor={`pointer`}
+                              onClick={() => messageSendModalHandler()}>
+                              수료증 신청
+                            </Text>
                             <Text> | </Text>
-                            <Text cursor={`pointer`}>강의수 늘리기 요청</Text>
+                            <Text
+                              cursor={`pointer`}
+                              onClick={() => messageSendModalHandler()}>
+                              강의수 늘리기 요청
+                            </Text>
                           </Wrapper>
                           <Wrapper
                             borderBottom={`1px dashed ${Theme.grey_C}`}
@@ -1244,11 +1333,23 @@ const Student = () => {
                             ju={`flex-start`}
                             dr={`row`}
                             padding={width < 800 ? `8px 0` : `16px 0`}>
-                            <Text cursor={`pointer`}>결석 예고</Text>
+                            <Text
+                              cursor={`pointer`}
+                              onClick={() => messageSendModalHandler()}>
+                              결석 예고
+                            </Text>
                             <Text> | </Text>
-                            <Text cursor={`pointer`}>반이동 요청</Text>
+                            <Text
+                              cursor={`pointer`}
+                              onClick={() => messageSendModalHandler()}>
+                              반이동 요청
+                            </Text>
                             <Text> | </Text>
-                            <Text cursor={`pointer`}>줌 상담신청</Text>
+                            <Text
+                              cursor={`pointer`}
+                              onClick={() => messageSendModalHandler()}>
+                              줌 상담신청
+                            </Text>
                           </Wrapper>
                         </Wrapper>
                       </Wrapper>
@@ -1304,14 +1405,16 @@ const Student = () => {
                               src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png"
                               alt="lecture_icon"
                             />
-                            <Text fontWeight={`bold`}>{data.teacherName}</Text>
+                            <Text fontWeight={`bold`}>{data.course}</Text>
                           </Wrapper>
 
                           <Wrapper
                             dr={`row`}
                             width={width < 900 ? `30%` : `25%`}
                             ju={`flex-start`}>
-                            <Text fontSize={`14px`}>{data.teacher}강사님</Text>
+                            <Text fontSize={`14px`}>
+                              {`${data.username} 강사님`}
+                            </Text>
                           </Wrapper>
 
                           <Wrapper
@@ -1368,12 +1471,29 @@ const Student = () => {
                               width < 1100 ? `25%` : width < 900 ? `28%` : `30%`
                             }
                             cursor={`pointer`}>
-                            <Text
-                              bgColor={Theme.white_C}
-                              fontWeight={`bold`}
+                            <CustomButton
+                              color={
+                                moment
+                                  .duration(
+                                    moment(data.date, "YYYY-MM-DD").diff(
+                                      moment(new Date(), "YYYY-MM-DD")
+                                    )
+                                  )
+                                  .asDays() < -1
+                                  ? `${Theme.red_C}`
+                                  : ""
+                              }
                               onClick={() => homeworkSubmitHanlder(data)}>
-                              제출하기
-                            </Text>
+                              {moment
+                                .duration(
+                                  moment(data.date, "YYYY-MM-DD").diff(
+                                    moment(new Date(), "YYYY-MM-DD")
+                                  )
+                                )
+                                .asDays() < -1
+                                ? "제출 완료"
+                                : "제출 하기"}
+                            </CustomButton>
                           </Wrapper>
                         </Wrapper>
                       </Wrapper>
@@ -1381,7 +1501,12 @@ const Student = () => {
                   })
                 ))}
             </Wrapper>
-            <CustomPage size="small" />
+            <CustomPage
+              size="small"
+              current={currentPage2}
+              total={lectureHomeworkStuLastPage * 10}
+              onChange={(page) => onChangeHomeworkPage(page)}
+            />
 
             <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
               <Text
@@ -1606,9 +1731,10 @@ const Student = () => {
               내용
             </Text>
             <Wrapper padding={`10px`}>
-              <WordbreakText>
-                {noticeViewDatum && noticeViewDatum.content}
-              </WordbreakText>
+              <WordbreakText
+                dangerouslySetInnerHTML={{
+                  __html: noticeViewDatum && noticeViewDatum.content,
+                }}></WordbreakText>
             </Wrapper>
 
             <Wrapper>
@@ -1683,9 +1809,11 @@ const Student = () => {
             visible={messageSendModal}
             width={`1350px`}
             title={
-              adminSendMessageToggle
-                ? "관리자에게 쪽지 보내기"
-                : "강사에게 쪽지 보내기"
+              sendMessageType === 1
+                ? "강사에게 쪽지 보내기"
+                : sendMessageType === 2
+                ? "수업에 대해 쪽지 보내기"
+                : sendMessageType === 3 && "관리자에게 쪽지 보내기"
             }
             footer={null}
             closable={false}>
@@ -1693,26 +1821,50 @@ const Student = () => {
               ref={formRef}
               form={form}
               onFinish={(data) =>
-                adminSendMessageToggle
-                  ? sendMessageAdminFinishHandler(data)
-                  : sendMessageFinishHandler(data)
+                sendMessageType === 1
+                  ? sendMessageFinishHandler(data)
+                  : sendMessageType === 2
+                  ? sendMessageLectureFinishHanlder(data, messageTeacherList)
+                  : sendMessageType === 3 && sendMessageAdminFinishHandler(data)
               }>
-              <Wrapper al={`flex-end`}>
+              <Wrapper dr={`row`} ju={`flex-end`}>
                 <CommonButton
                   margin={`0 0 0 5px`}
                   radius={`5px`}
                   width={`100px`}
                   height={`32px`}
                   size="small"
-                  onClick={() => adminSendMessageToggleHandler()}>
-                  {!adminSendMessageToggle ? " 관라자에게" : "학생에게"}
+                  onClick={() => sendMessageTypeHandler(1)}>
+                  {"강사"}
                 </CommonButton>
+
+                <CommonButton
+                  margin={`0 0 0 5px`}
+                  radius={`5px`}
+                  width={`100px`}
+                  height={`32px`}
+                  size="small"
+                  onClick={() => sendMessageTypeHandler(2)}>
+                  {"수업"}
+                </CommonButton>
+
+                <CommonButton
+                  margin={`0 0 0 5px`}
+                  radius={`5px`}
+                  width={`100px`}
+                  height={`32px`}
+                  size="small"
+                  onClick={() => sendMessageTypeHandler(3)}>
+                  {"관리자"}
+                </CommonButton>
+
+                {/* setSendMessageType */}
               </Wrapper>
 
-              {!adminSendMessageToggle && (
+              {sendMessageType === 1 && (
                 <>
                   <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
-                    받는 사람
+                    듣고 있는 강의 목록
                   </Text>
 
                   <Form.Item
@@ -1720,7 +1872,51 @@ const Student = () => {
                     rules={[
                       {
                         required: true,
-                        message: "강사님 이름을 선택해주세요.",
+                        message: "듣고있는 강의 목록을 선택해주세요.",
+                      },
+                    ]}>
+                    <Select
+                      value={lectureId}
+                      style={{ width: `100%` }}
+                      onChange={receiveLectureIdtHandler}>
+                      {lectureStuLectureList &&
+                      lectureStuLectureList.length === 0 ? (
+                        <Option value="참여 중인 강의가 없습니다.">
+                          참여 중인 강의가 없습니다.
+                        </Option>
+                      ) : (
+                        lectureStuLectureList &&
+                        lectureStuLectureList.map((data, idx) => {
+                          return (
+                            <Option key={data.id} value={data.UserId}>
+                              {data.course}
+                            </Option>
+                          );
+                        })
+                      )}
+                    </Select>
+                  </Form.Item>
+                  <Text
+                    fontSize={`14px`}
+                    color={Theme.grey2_C}
+                    margin={`0 0 20px`}>
+                    강사님 개인쪽지함에 쪽지가 전달됩니다.
+                  </Text>
+                </>
+              )}
+
+              {sendMessageType === 2 && (
+                <>
+                  <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
+                    듣고 있는 강의 목록
+                  </Text>
+
+                  <Form.Item
+                    name="receiveLectureId"
+                    rules={[
+                      {
+                        required: true,
+                        message: "듣고있는 강의 목록을 선택해주세요.",
                       },
                     ]}>
                     <Select
@@ -1735,51 +1931,22 @@ const Student = () => {
                         messageTeacherList &&
                         messageTeacherList.map((data, idx) => {
                           return (
-                            <Option value={data.id}>{data.username}</Option>
+                            <Option
+                              key={data.id}
+                              value={data.id}
+                              onClick={() => console.log("aaaaaaaaaa")}>
+                              {data.course}
+                            </Option>
                           );
                         })
                       )}
                     </Select>
                   </Form.Item>
-
-                  <Text
-                    fontSize={`18px`}
-                    fontWeight={`bold`}
-                    margin={`0 0 20px`}>
-                    수업에 대한 쪽지
-                  </Text>
-
-                  <Select style={{ width: `100%` }}>
-                    {lectureStuLectureList &&
-                    lectureStuLectureList.length === 0 ? (
-                      <Option value="참여 중인 강의가 없습니다.">
-                        참여 중인 강의가 없습니다.
-                      </Option>
-                    ) : (
-                      lectureStuLectureList &&
-                      lectureStuLectureList.map((data, idx) => {
-                        if (data.User.id !== selectValue) return;
-
-                        return (
-                          <Option key={data.id} value={data.id}>
-                            {data.course}
-                          </Option>
-                        );
-                      })
-                    )}
-                  </Select>
-
                   <Text
                     fontSize={`14px`}
                     color={Theme.grey2_C}
-                    margin={`10px 0 0`}>
-                    수업에 대한 쪽지를 보내고 싶으시분들은 선택해주세요.
-                  </Text>
-                  <Text
-                    fontSize={`14px`}
-                    margin={`0 0 20px`}
-                    color={Theme.grey2_C}>
-                    선택하지 않으면 강사님께 쪽지를 보냅니다.
+                    margin={`0 0 20px`}>
+                    강사님에 수업 상세페이지 쪽지함에 전달 됩니다.
                   </Text>
                 </>
               )}
@@ -1885,35 +2052,25 @@ const Student = () => {
                   placeholder="전화번호를 입력해주세요."
                 />
               </Form.Item>
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                우편번호
-              </Text>
-              <Wrapper dr={`row`}>
-                <Wrapper width={width < 700 ? `65%` : `80%`}>
-                  <Form.Item
-                    name="postNum"
-                    rules={[
-                      { required: true, message: "우편번호를 입력해주세요." },
-                    ]}>
-                    <CusotmInput width={`100%`} readOnly />
-                  </Form.Item>
-                </Wrapper>
-                <CommonButton
-                  width={width < 700 ? `35%` : `20%`}
-                  height={`40px`}
-                  radius={`5px`}
-                  margin={`0 0 24px`}
-                  onClick={postCodeModalToggle}>
-                  우편번호 찾기
-                </CommonButton>
-              </Wrapper>
+
               <Text fontSize={`18px`} fontWeight={`bold`}>
                 주소
               </Text>
               <Form.Item
                 name="address"
                 rules={[{ required: true, message: "주소를 입력해주세요." }]}>
-                <CusotmInput width={`100%`} readOnly />
+                <CusotmInput width={`100%`} />
+              </Form.Item>
+
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                상세 주소
+              </Text>
+              <Form.Item
+                name="detailAddress"
+                rules={[
+                  { required: true, message: "상세주소를 입력해주세요." },
+                ]}>
+                <CusotmInput width={`100%`} />
               </Form.Item>
 
               <Text fontSize={`18px`} fontWeight={`bold`}>
@@ -2010,21 +2167,6 @@ const Student = () => {
                 </CommonButton>
               </Wrapper>
             </CustomForm>
-          </CustomModal>
-
-          <CustomModal
-            visible={postCodeModal}
-            onCancel={postCodeModalToggle}
-            footer={null}>
-            <Text fontSize={`22px`} fontWeight={`bold`} margin={`0 0 24px`}>
-              우편번호 찾기
-            </Text>
-            <DaumPostCode
-              onComplete={(data) => postCodeSubmit(data)}
-              width={width < 700 ? `100%` : `600px`}
-              autoClose={false}
-              animation
-            />
           </CustomModal>
 
           <CustomModal

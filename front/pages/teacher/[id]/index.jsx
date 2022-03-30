@@ -1097,17 +1097,32 @@ const Index = () => {
 
   const answerFinishHandler = useCallback(
     (data, messageData) => {
-      dispatch({
-        type: MESSAGE_CREATE_REQUEST,
-        data: {
-          title: data.messageTitle,
-          author: me.username,
-          senderId: messageData.receiverId,
-          receiverId: messageData.senderId,
-          content: data.messageContent,
-          level: me.level,
-        },
-      });
+      if (messageData.receiveLectureId) {
+        dispatch({
+          type: MESSAGE_CREATE_REQUEST,
+          data: {
+            title: data.messageTitle,
+            author: me.username,
+            senderId: messageData.receiverId,
+            receiverId: messageData.senderId,
+            receiveLectureId: messageData.receiveLectureId,
+            content: data.messageContent,
+            level: me.level,
+          },
+        });
+      } else {
+        dispatch({
+          type: MESSAGE_CREATE_REQUEST,
+          data: {
+            title: data.messageTitle,
+            author: me.username,
+            senderId: messageData.receiverId,
+            receiverId: messageData.senderId,
+            content: data.messageContent,
+            level: me.level,
+          },
+        });
+      }
     },
 
     [me]
@@ -1537,7 +1552,21 @@ const Index = () => {
                                 진도율
                               </Text>
 
-                              <CustomProgress percent={55} />
+                              <CustomProgress
+                                percent={Math.abs(
+                                  Math.floor(
+                                    (moment
+                                      .duration(
+                                        moment(data.endDate, "YYYY-MM-DD").diff(
+                                          moment(data.startDate, "YYYY-MM-DD")
+                                        )
+                                      )
+                                      .asDays() /
+                                      (data.lecDate * 7)) *
+                                      100
+                                  ) - 100
+                                )}
+                              />
                             </Wrapper>
                           )}
                         </Wrapper>

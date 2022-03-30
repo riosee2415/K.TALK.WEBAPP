@@ -23,7 +23,7 @@ import Theme from "../../components/Theme";
 import useWidth from "../../hooks/useWidth";
 import { SEO_LIST_REQUEST } from "../../reducers/seo";
 import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
-import { PROCESS_CREATE_REQUEST } from "../../reducers/processApply";
+import { PROCESS_APPLY_CREATE_REQUEST } from "../../reducers/processApply";
 
 const CustomForm = styled(Form)`
   width: 718px;
@@ -75,7 +75,7 @@ const CustomSelect = styled(Select)`
   }
 `;
 
-const Presentation = () => {
+const Course = () => {
   const dispatch = useDispatch();
 
   ////// GLOBAL STATE //////
@@ -83,7 +83,7 @@ const Presentation = () => {
     (state) => state.seo
   );
 
-  const { st_processCreateDone, st_processCreateError } = useSelector(
+  const { st_processApplyCreateDone, st_processApplyCreateError } = useSelector(
     (state) => state.processApply
   );
 
@@ -91,31 +91,17 @@ const Presentation = () => {
 
   const width = useWidth();
 
-  const [isCalendar, setIsCalendar] = useState(false);
   const [isCalendar2, setIsCalendar2] = useState(false);
 
   const [form] = Form.useForm();
 
   ////// TOGGLE //////
 
-  const calenderToggle = useCallback(() => {
-    setIsCalendar(!isCalendar);
-  }, [isCalendar]);
-
   const calender2Toggle = useCallback(() => {
     setIsCalendar2(!isCalendar2);
   }, [isCalendar2]);
 
   ////// HANDLER //////
-
-  const dateChagneHandler = useCallback((data) => {
-    const birth = data.format("YYYY-MM-DD");
-    form.setFieldsValue({
-      date: birth.split("-")[2],
-      month: birth.split("-")[1],
-      year: birth.split("-")[0],
-    });
-  }, []);
 
   const dateChagneHandler2 = useCallback((data) => {
     const birth = data.format("YYYY-MM-DD");
@@ -128,15 +114,8 @@ const Presentation = () => {
 
   const submitHandler = useCallback((data) => {
     dispatch({
-      type: PROCESS_CREATE_REQUEST,
+      type: PROCESS_APPLY_CREATE_REQUEST,
       data: {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        dateOfBirth: `${data.year}-${data.month}-${data.date}`,
-        gmailAddress: `${data.firstEmail}${data.lastEmail}`,
-        loginPw: data.loginPW,
-        countryofResidence: data.countryOfResidence,
-        phoneNumber: `${data.firstPhoneNumber}${data.lastPhoneNumber}`,
         cFirstName: data.firstname2,
         cLastName: data.lastname2,
         cDateOfBirth: `${data.year2}-${data.month2}-${data.date2}`,
@@ -155,17 +134,17 @@ const Presentation = () => {
   }, []);
 
   useEffect(() => {
-    if (st_processCreateDone) {
+    if (st_processApplyCreateDone) {
       form.resetFields();
       return message.success("입력하신 신청서를 접수하였습니다.");
     }
-  }, [st_processCreateDone]);
+  }, [st_processApplyCreateDone]);
 
   useEffect(() => {
-    if (st_processCreateError) {
-      return message.error(st_processCreateError);
+    if (st_processApplyCreateError) {
+      return message.error(st_processApplyCreateError);
     }
-  }, [st_processCreateError]);
+  }, [st_processApplyCreateError]);
 
   ////// DATAVIEW //////
 
@@ -244,211 +223,21 @@ const Presentation = () => {
       <ClientLayout>
         <WholeWrapper margin={`100px 0`}>
           <RsWrapper>
-            <Wrapper margin={width < 700 ? `20px 0 30px` : `90px 0 68px`}>
-              {width < 700 ? (
-                <>
-                  <Text color={Theme.grey2_C}>For absolute beginners</Text>
-                  <Text color={Theme.grey2_C}>
-                    For pre-intermediate leamers
-                  </Text>
-                </>
-              ) : (
-                <Text color={Theme.grey2_C}>
-                  For absolute beginners / For pre-intermediate leamers
-                </Text>
-              )}
-              <Text
-                fontSize={width < 700 ? `20px` : `28px`}
-                fontWeight={`bold`}
-              >
-                설명회 참가신청서 (초급/중급)
-              </Text>
-            </Wrapper>
             <CustomForm onFinish={submitHandler} form={form}>
-              <Text
-                fontSize={width < 700 ? `16px` : `18px`}
-                fontWeight={`bold`}
-                margin={`0 0 10px`}
-              >
-                Name in full (First / Last)
-              </Text>
-              <Wrapper dr={`row`} ju={`space-between`}>
-                <Wrapper width={`calc(50% - 4px)`}>
-                  <Form.Item name="firstName" rules={[{ required: true }]}>
-                    <CusotmInput placeholder="First" width={`100%`} />
-                  </Form.Item>
-                </Wrapper>
-                <Wrapper width={`calc(50% - 4px)`}>
-                  <Form.Item name="lastName" rules={[{ required: true }]}>
-                    <CusotmInput placeholder="Last" width={`100%`} />
-                  </Form.Item>
-                </Wrapper>
-              </Wrapper>
-              <Wrapper al={`flex-start`} position={"relative"}>
-                <Text
-                  fontSize={width < 700 ? `16px` : `18px`}
-                  fontWeight={`bold`}
-                  margin={`0 0 10px`}
-                >
-                  Date of Birth
-                </Text>
-                <Wrapper dr={`row`} ju={`flex-start`}>
-                  <Wrapper width={`calc(100% / 3 - 16px)`}>
-                    <Form.Item name="date" rules={[{ required: true }]}>
-                      <CusotmInput
-                        readOnly
-                        width={`100%`}
-                        placeholder={"Date"}
-                      />
-                    </Form.Item>
-                  </Wrapper>
-
-                  <Wrapper width={`calc(100% / 3 - 16px)`} margin={`0 9px`}>
-                    <Form.Item name="month" rules={[{ required: true }]}>
-                      <CusotmInput
-                        readOnly
-                        width={`100%`}
-                        placeholder={"Month"}
-                      />
-                    </Form.Item>
-                  </Wrapper>
-
-                  <Wrapper width={`calc(100% / 3 - 16px)`}>
-                    <Form.Item name="year" rules={[{ required: true }]}>
-                      <CusotmInput
-                        readOnly
-                        width={`100%`}
-                        placeholder={"Year"}
-                      />
-                    </Form.Item>
-                  </Wrapper>
-                  <Wrapper
-                    width={`30px`}
-                    margin={width < 700 ? `0 0 28px` : `0 0 48px`}
-                    fontSize={width < 700 ? `20px` : `30px`}
-                  >
-                    <CalendarOutlined onClick={calenderToggle} />
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  display={isCalendar ? "flex" : "none"}
-                  width={`auto`}
-                  position={width < 1350 ? `static` : `absolute`}
-                  top={`30px`}
-                  right={`-310px`}
-                  border={`1px solid ${Theme.grey_C}`}
-                  margin={`0 0 20px`}
-                >
-                  <Calendar
-                    style={{ width: width < 1350 ? `100%` : `300px` }}
-                    fullscreen={false}
-                    onChange={dateChagneHandler}
-                  />
-                </Wrapper>
-              </Wrapper>
-
-              <Text
-                fontSize={width < 700 ? `16px` : `18px`}
-                fontWeight={`bold`}
-                margin={`0 0 10px`}
-              >
-                Gmail Address
-              </Text>
-              <Wrapper dr={`row`} ju={`flex-start`}>
-                <Wrapper width={`calc(100% / 2 - 4px)`} margin={`0 8px 0 0`}>
-                  <Form.Item name="firstEmail" rules={[{ required: true }]}>
-                    <CusotmInput width={`100%`} placeholder={"Address"} />
-                  </Form.Item>
-                </Wrapper>
-
-                <Wrapper width={`calc(100% / 2 - 4px)`}>
-                  <Form.Item name="lastEmail" rules={[{ required: true }]}>
-                    <CusotmInput width={`100%`} placeholder={"@gmail.com"} />
-                  </Form.Item>
-                </Wrapper>
-              </Wrapper>
-
-              <Text
-                fontSize={width < 700 ? `16px` : `18px`}
-                fontWeight={`bold`}
-                margin={`0 0 10px`}
-              >
-                Login PW
-              </Text>
-              <Form.Item name="loginPW" rules={[{ required: true }]}>
-                <CusotmInput
-                  type="password"
-                  width={`100%`}
-                  placeholder={"PW"}
-                />
-              </Form.Item>
-              <Text
-                fontSize={width < 700 ? `16px` : `18px`}
-                fontWeight={`bold`}
-                margin={`0 0 10px`}
-              >
-                Country of Residence
-              </Text>
-              <Form.Item name="countryOfResidence" rules={[{ required: true }]}>
-                <CusotmInput width={`100%`} placeholder={"Nationality"} />
-              </Form.Item>
-              <Text
-                fontSize={width < 700 ? `16px` : `18px`}
-                fontWeight={`bold`}
-                margin={`0 0 10px`}
-              >
-                Phone number
-              </Text>
-              <Wrapper dr={`row`} ju={`flex-start`}>
-                <Wrapper width={`calc(20% - 4px)`} margin={`0 8px 0 0`}>
-                  <Form.Item
-                    name="firstPhoneNumber"
-                    rules={[{ required: true }]}
-                  >
-                    <CustomSelect
-                      suffixIcon={() => {
-                        return <CaretDownOutlined />;
-                      }}
-                    >
-                      {firstPhoneArr &&
-                        firstPhoneArr.map((data) => {
-                          return (
-                            <Select.Option key={data} value={data}>
-                              {data}
-                            </Select.Option>
-                          );
-                        })}
-                    </CustomSelect>
-                  </Form.Item>
-                </Wrapper>
-
-                <Wrapper width={`calc(80% - 4px)`}>
-                  <Form.Item
-                    name="lastPhoneNumber"
-                    rules={[{ required: true }]}
-                  >
-                    <CusotmInput type="number" width={`100%`} />
-                  </Form.Item>
-                </Wrapper>
-              </Wrapper>
-
               <Wrapper margin={width < 700 ? `20px 0 30px` : `90px 0 68px`}>
                 <Text color={Theme.grey2_C}>
                   K-talk Live regular paid lessons
                 </Text>
                 <Text
                   fontSize={width < 700 ? `20px` : `28px`}
-                  fontWeight={`bold`}
-                >
+                  fontWeight={`bold`}>
                   정규과정 등록신청서
                 </Text>
               </Wrapper>
               <Text
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}
-              >
+                margin={`0 0 10px`}>
                 Name in full (First / Last)
               </Text>
               <Wrapper dr={`row`} ju={`space-between`}>
@@ -457,8 +246,7 @@ const Presentation = () => {
                     name="firstname2"
                     rules={[
                       { required: true, message: "'firstname' is required" },
-                    ]}
-                  >
+                    ]}>
                     <CusotmInput placeholder="First" width={`100%`} />
                   </Form.Item>
                 </Wrapper>
@@ -467,8 +255,7 @@ const Presentation = () => {
                     name="lastname2"
                     rules={[
                       { required: true, message: "'lastname2' is required" },
-                    ]}
-                  >
+                    ]}>
                     <CusotmInput placeholder="Last" width={`100%`} />
                   </Form.Item>
                 </Wrapper>
@@ -477,8 +264,7 @@ const Presentation = () => {
                 <Text
                   fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
-                  margin={`0 0 10px`}
-                >
+                  margin={`0 0 10px`}>
                   Date of Birth
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
@@ -514,8 +300,7 @@ const Presentation = () => {
                   <Wrapper
                     width={`30px`}
                     margin={width < 700 ? `0 0 28px` : `0 0 48px`}
-                    fontSize={width < 700 ? `20px` : `30px`}
-                  >
+                    fontSize={width < 700 ? `20px` : `30px`}>
                     <CalendarOutlined onClick={calender2Toggle} />
                   </Wrapper>
                 </Wrapper>
@@ -527,8 +312,7 @@ const Presentation = () => {
                   top={`30px`}
                   right={`-310px`}
                   border={`1px solid ${Theme.grey_C}`}
-                  margin={`0 0 20px`}
-                >
+                  margin={`0 0 20px`}>
                   <Calendar
                     style={{ width: width < 1350 ? `100%` : `300px` }}
                     fullscreen={false}
@@ -540,8 +324,7 @@ const Presentation = () => {
               <Text
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}
-              >
+                margin={`0 0 10px`}>
                 Gmail Address
               </Text>
               <Wrapper dr={`row`} ju={`flex-start`}>
@@ -550,8 +333,7 @@ const Presentation = () => {
                     name="firstEmail2"
                     rules={[
                       { required: true, message: "'firstEmail' is required" },
-                    ]}
-                  >
+                    ]}>
                     <CusotmInput width={`100%`} placeholder={"Address"} />
                   </Form.Item>
                 </Wrapper>
@@ -561,8 +343,7 @@ const Presentation = () => {
                     name="lastEmail2"
                     rules={[
                       { required: true, message: "'lastEmail' is required" },
-                    ]}
-                  >
+                    ]}>
                     <CusotmInput width={`100%`} placeholder={"@gmail.com"} />
                   </Form.Item>
                 </Wrapper>
@@ -571,14 +352,12 @@ const Presentation = () => {
               <Text
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}
-              >
+                margin={`0 0 10px`}>
                 Login PW
               </Text>
               <Form.Item
                 name="loginPW2"
-                rules={[{ required: true, message: "'loginPW' is required" }]}
-              >
+                rules={[{ required: true, message: "'loginPW' is required" }]}>
                 <CusotmInput
                   type="password"
                   width={`100%`}
@@ -590,16 +369,14 @@ const Presentation = () => {
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
                 margin={`0 0 10px`}
-                lineHeight={`1.22`}
-              >
+                lineHeight={`1.22`}>
                 성별
               </Text>
               <Form.Item name="gender" rules={[{ required: true }]}>
                 <CustomSelect
                   suffixIcon={() => {
                     return <CaretDownOutlined />;
-                  }}
-                >
+                  }}>
                   {genderArr &&
                     genderArr.map((data) => {
                       return (
@@ -615,8 +392,7 @@ const Presentation = () => {
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
                 margin={`0 0 10px`}
-                lineHeight={`1.22`}
-              >
+                lineHeight={`1.22`}>
                 Nationality
               </Text>
               <Form.Item name="nationality2" rules={[{ required: true }]}>
@@ -629,8 +405,7 @@ const Presentation = () => {
               <Text
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}
-              >
+                margin={`0 0 10px`}>
                 Country of Residence
               </Text>
               <Form.Item
@@ -640,8 +415,7 @@ const Presentation = () => {
                     required: true,
                     message: "'country of Residence' is required",
                   },
-                ]}
-              >
+                ]}>
                 <CusotmInput
                   width={`100%`}
                   placeholder={"Select Country of Residence"}
@@ -651,8 +425,7 @@ const Presentation = () => {
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
                 margin={`0 0 10px`}
-                lineHeight={`1.22`}
-              >
+                lineHeight={`1.22`}>
                 Language you use
               </Text>
               <Wrapper dr={`row`} ju={`flex-start`}>
@@ -663,8 +436,7 @@ const Presentation = () => {
                       required: true,
                       message: "'language you user' is required",
                     },
-                  ]}
-                >
+                  ]}>
                   <CusotmInput
                     width={`100%`}
                     radius={`5px`}
@@ -675,8 +447,7 @@ const Presentation = () => {
               <Text
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}
-              >
+                margin={`0 0 10px`}>
                 Phone number
               </Text>
               <Wrapper dr={`row`} ju={`flex-start`}>
@@ -688,13 +459,11 @@ const Presentation = () => {
                         required: true,
                         message: "'firstPhoneNumber' is required",
                       },
-                    ]}
-                  >
+                    ]}>
                     <CustomSelect
                       suffixIcon={() => {
                         return <CaretDownOutlined />;
-                      }}
-                    >
+                      }}>
                       {firstPhoneArr &&
                         firstPhoneArr.map((data) => {
                           return (
@@ -715,8 +484,7 @@ const Presentation = () => {
                         required: true,
                         message: "'lasyPhonNumber' is required",
                       },
-                    ]}
-                  >
+                    ]}>
                     <CusotmInput type="number" width={`100%`} />
                   </Form.Item>
                 </Wrapper>
@@ -725,8 +493,7 @@ const Presentation = () => {
               <Text
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}
-              >
+                margin={`0 0 10px`}>
                 SNS
               </Text>
               <Wrapper dr={`row`} ju={`flex-start`}>
@@ -735,14 +502,12 @@ const Presentation = () => {
                     name="firstsns2"
                     rules={[
                       { required: true, message: "'firstsns' is required" },
-                    ]}
-                  >
+                    ]}>
                     <CustomSelect
                       placeholder="SNS"
                       suffixIcon={() => {
                         return <CaretDownOutlined />;
-                      }}
-                    >
+                      }}>
                       {snsArr &&
                         snsArr.map((data) => {
                           return (
@@ -760,8 +525,7 @@ const Presentation = () => {
                     name="lastsns2"
                     rules={[
                       { required: true, message: "'lastsns' is required" },
-                    ]}
-                  >
+                    ]}>
                     <CusotmInput placeholder={`ID`} width={`100%`} />
                   </Form.Item>
                 </Wrapper>
@@ -770,23 +534,20 @@ const Presentation = () => {
               <Text
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}
-              >
+                margin={`0 0 10px`}>
                 Occupation
               </Text>
               <Form.Item
                 name="occupation2"
                 rules={[
                   { required: true, message: "'occupation' is required" },
-                ]}
-              >
+                ]}>
                 <CusotmInput
                   suffixIcon={() => {
                     return <CaretDownOutlined />;
                   }}
                   width={`100%`}
-                  placeholder={"Select Your Occupation"}
-                ></CusotmInput>
+                  placeholder={"Select Your Occupation"}></CusotmInput>
               </Form.Item>
 
               <Wrapper>
@@ -828,4 +589,4 @@ export const getServerSideProps = wrapper.getServerSideProps(
   }
 );
 
-export default Presentation;
+export default Course;

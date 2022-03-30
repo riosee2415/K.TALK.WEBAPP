@@ -637,7 +637,9 @@ function* lectureMemoStuUpdate(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function lectureHomeworkStuListAPI(data) {
-  return axios.get(`/api/lecture/homework/student/list`);
+  return axios.get(
+    `/api/lecture/homework/student/list?page=${data.page}&=search=${data.search}`
+  );
 }
 
 function* lectureHomeworkStuList(action) {

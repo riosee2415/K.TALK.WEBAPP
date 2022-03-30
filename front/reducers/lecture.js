@@ -27,6 +27,7 @@ export const initailState = {
   lectureMemoStuLastPage: 1,
 
   lectureHomeworkStuList: null,
+  lectureHomeworkStuLastPage: 1,
 
   createModal: false,
   detailModal: false,
@@ -715,6 +716,7 @@ const reducer = (state = initailState, action) =>
         draft.st_lectureHomeworkStuListLoading = false;
         draft.st_lectureHomeworkStuListDone = true;
         draft.lectureHomeworkStuList = action.data.homeworks;
+        draft.lectureHomeworkStuLastPage = action.data.lastPage;
         break;
       }
       case LECTURE_HOMEWORK_STU_LIST_FAILURE: {
