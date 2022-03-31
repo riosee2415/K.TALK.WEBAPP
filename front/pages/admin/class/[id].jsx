@@ -26,6 +26,7 @@ import wrapper from "../../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import {
   LECTURE_DETAIL_REQUEST,
+  LECTURE_DIARY_ADMIN_LIST_REQUEST,
   LECTURE_DIARY_LIST_REQUEST,
   LECTURE_MEMO_STU_LIST_REQUEST,
   LECTURE_STUDENT_LIST_REQUEST,
@@ -77,10 +78,10 @@ const DetailClass = () => {
 
   const {
     lectureDetail,
-    lectureDiaryList,
     lectureDiaryLastPage,
     lectureMemoStuLastPage,
     lectureMemoStuList,
+    lectureDiaryAdminList,
   } = useSelector((state) => state.lecture);
   const dispatch = useDispatch();
 
@@ -118,7 +119,7 @@ const DetailClass = () => {
 
   useEffect(() => {
     dispatch({
-      type: LECTURE_DIARY_LIST_REQUEST,
+      type: LECTURE_DIARY_ADMIN_LIST_REQUEST,
       data: {
         LectureId: router.query.id,
         page: 1,
@@ -142,8 +143,12 @@ const DetailClass = () => {
 
   const stuColumns = [
     {
+      title: "No",
+      dataIndex: "id",
+    },
+    {
       title: "수강생 이름(출생년도)",
-      render: (data) => `${data.username}(${data.birth})`,
+      render: (data) => `${data.username}(${data.birth.slice(0, 10)})`,
     },
     {
       title: "국가",
@@ -177,12 +182,16 @@ const DetailClass = () => {
 
   const lectureColumns = [
     {
+      title: "No",
+      dataIndex: "id",
+    },
+    {
       title: "날짜",
-      dataIndex: "lecDate",
+      render: (data) => data.createdAt.slice(0, 10),
     },
     {
       title: "강사명",
-      dataIndex: "teaName",
+      dataIndex: "author",
     },
     {
       title: "진도",
@@ -194,51 +203,7 @@ const DetailClass = () => {
     },
   ];
 
-  const lectureDatum = [
-    {
-      id: 1,
-      lecDate: "2022-03-22",
-      teaName: "강사명",
-      course: "진도",
-      memo: "메모",
-    },
-    {
-      id: 2,
-      lecDate: "2022-03-22",
-      teaName: "강사명",
-      course: "진도",
-      memo: "메모",
-    },
-    {
-      id: 3,
-      lecDate: "2022-03-22",
-      teaName: "강사명",
-      course: "진도",
-      memo: "메모",
-    },
-    {
-      id: 4,
-      lecDate: "2022-03-22",
-      teaName: "강사명",
-      course: "진도",
-      memo: "메모",
-    },
-    {
-      id: 5,
-      lecDate: "2022-03-22",
-      teaName: "강사명",
-      course: "진도",
-      memo: "메모",
-    },
-    {
-      id: 6,
-      lecDate: "2022-03-22",
-      teaName: "강사명",
-      course: "진도",
-      memo: "메모",
-    },
-  ];
-
+  console.log(lectureDiaryAdminList);
   return (
     <AdminLayout>
       <PageHeader
@@ -420,6 +385,7 @@ const DetailClass = () => {
         </Text>
 
         <Table
+          size={`small`}
           columns={stuColumns}
           dataSource={lectureMemoStuList}
           pagination={{
@@ -441,14 +407,9 @@ const DetailClass = () => {
         </Text>
 
         <Table
+          size={`small`}
           columns={lectureColumns}
-          dataSource={lectureDiaryList}
-          pagination={{
-            defaultCurrent: 1,
-            current: parseInt(currentPage2),
-            total: lectureDiaryLastPage * 10,
-            onChange: (page) => setCurrentPage2(page),
-          }}
+          dataSource={lectureDiaryAdminList}
         />
       </AdminContent>
 

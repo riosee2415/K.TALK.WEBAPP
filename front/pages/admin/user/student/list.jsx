@@ -74,6 +74,9 @@ const UserList = ({}) => {
   const [lectureList, setLectureList] = useState(null);
   const [selectedList, setSelectedList] = useState([]);
 
+  const [opt1, setOpt1] = useState(null);
+  const [opt2, setOpt2] = useState(null);
+
   const [parData, setParData] = useState(null);
 
   const [form] = Form.useForm();
@@ -141,6 +144,28 @@ const UserList = ({}) => {
       return message.error(st_participantCreateError);
     }
   }, [st_participantCreateError]);
+
+  useEffect(() => {
+    setOpt1(
+      updateData &&
+        updateData.Participants.map((data) => {
+          return <Option value={data.LectureId}>{data.Lecture.course}</Option>;
+        })
+    );
+  }, [updateData]);
+
+  useEffect(() => {
+    setOpt2(
+      allLectures &&
+        allLectures.map((data) => {
+          return (
+            <Option key={data.id} value={data.id}>
+              {data.course}
+            </Option>
+          );
+        })
+    );
+  }, [allLectures]);
 
   ////// TOGGLE //////
   const classChangeModalOpen = useCallback(
@@ -306,7 +331,8 @@ const UserList = ({}) => {
             data.level === 5
               ? message.error("개발사는 권한을 수정할 수 없습니다.")
               : classChangeModalOpen(data)
-          }>
+          }
+        >
           반 옮기기
         </Button>
       ),
@@ -322,7 +348,8 @@ const UserList = ({}) => {
             data.level === 5
               ? message.error("개발사는 권한을 수정할 수 없습니다.")
               : classPartModalOpen(data)
-          }>
+          }
+        >
           수업참여
         </Button>
       ),
@@ -359,9 +386,10 @@ const UserList = ({}) => {
       <Modal
         visible={classChangeModal}
         width={`400px`}
-        title={`사용자 레벨 수정`}
+        title={`학생 수업 변경`}
         onCancel={classChangeModalClose}
-        onOk={onModalOk}>
+        onOk={onModalOk}
+      >
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form form={form} style={{ width: `100%` }} onFinish={onSubmit}>
             <Form.Item label={`학생`}>
@@ -369,39 +397,26 @@ const UserList = ({}) => {
             </Form.Item>
 
             <Form.Item label={`현재 강의`} name={`lecture`}>
-              <Combo
+              <Select
                 width={`100%`}
                 height={`32px`}
                 showSearch
-                placeholder="Select a Lecture">
-                <ComboOption selected>--- 선택 ---</ComboOption>
-                {updateData &&
-                  updateData.Participants.map((data) => {
-                    return (
-                      <ComboOption value={data.LectureId}>
-                        {data.Lecture.course}
-                      </ComboOption>
-                    );
-                  })}
-              </Combo>
+                placeholder="Select a Lecture"
+              >
+                {opt1}
+              </Select>
             </Form.Item>
 
             <Form.Item label={`바뀔 강의`} name={`changelecture`}>
-              <Combo
+              <Select
                 width={`100%`}
                 height={`32px`}
                 showSearch
                 placeholder="Select a Lecture"
                 // name={`changelecture`}
               >
-                <ComboOption selected>--- 선택 ---</ComboOption>
-                {allLectures &&
-                  allLectures.map((data) => {
-                    return (
-                      <ComboOption value={data.id}>{data.course}</ComboOption>
-                    );
-                  })}
-              </Combo>
+                {opt2}
+              </Select>
             </Form.Item>
           </Form>
         </Wrapper>
@@ -412,12 +427,14 @@ const UserList = ({}) => {
         width={`400px`}
         title={`학생 수업 참여`}
         onCancel={classPartModalClose}
-        onOk={onModalChangeOk}>
+        onOk={onModalChangeOk}
+      >
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
             form={updateClassform}
             style={{ width: `100%` }}
-            onFinish={onUpdateClassSubmit}>
+            onFinish={onUpdateClassSubmit}
+          >
             <Form.Item label={`학생`}>
               <Input disabled value={parData && parData.username} />
             </Form.Item>
@@ -432,16 +449,8 @@ const UserList = ({}) => {
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
                 }
-                placeholder="Select a Lecture">
-                {allLectures &&
-                  allLectures.map((data) => {
-                    return (
-                      <Option key={data.id} value={data.id}>
-                        {data.course}
-                      </Option>
-                    );
-                  })}
-              </Select>
+                placeholder="Select a Lecture"
+              ></Select>
             </Form.Item>
           </Form>
         </Wrapper>

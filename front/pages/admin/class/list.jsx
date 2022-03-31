@@ -479,7 +479,7 @@ const List = () => {
                               />
                             </Wrapper>
                             <Text fontSize={`16px`} fontWeight={`700`}>
-                              {data.User.username}
+                              {data.course}&nbsp;/&nbsp;{data.User.username}
                             </Text>
                           </Wrapper>
 

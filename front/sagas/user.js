@@ -62,6 +62,7 @@ import {
   USER_TEA_UPDATE_FAILURE,
   USER_CLASS_CHANGE_SUCCESS,
   USER_CLASS_CHANGE_REQUEST,
+  USER_CLASS_CHANGE_FAILURE,
   /////////////////////////////
 } from "../reducers/user";
 
@@ -484,7 +485,7 @@ function* changeClass(action) {
   } catch (err) {
     console.error(err);
     yield put({
-      type: USER_CLASS_CHANGE_SUCCESS,
+      type: USER_CLASS_CHANGE_FAILURE,
       error: err.response.data,
     });
   }
