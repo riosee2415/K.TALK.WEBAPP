@@ -334,7 +334,6 @@ const Index = () => {
   const [messageAnswerModal, setMessageAnswerModal] = useState(false);
   const [messageSendModal, setMessageSendModal] = useState(false);
 
-  const [adminSendMessageToggle, setAdminSendMessageToggle] = useState(false);
   const [sendMessageType, setSendMessageType] = useState(1);
 
   const [lectureId, setLectureId] = useState("");
@@ -526,12 +525,6 @@ const Index = () => {
 
   const messageAnswerToggleHanlder = useCallback((e) => {
     setMessageAnswerModal(true);
-  }, []);
-
-  const messageSendModalHandler = useCallback((data, num) => {
-    setMessageSendModal((prev) => !prev);
-
-    setLectureId(data);
   }, []);
 
   ////// HANDLER //////
@@ -1447,7 +1440,7 @@ const Index = () => {
                   돌아가기
                 </CommonButton>
                 <CommonButton
-                  onClick={(e) => messageAnswerToggleHanlder(messageDatum)}
+                  onClick={() => messageAnswerToggleHanlder(messageDatum)}
                   margin={`0 0 0 5px`}
                   radius={`5px`}>
                   답변하기

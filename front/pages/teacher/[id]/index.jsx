@@ -448,6 +448,7 @@ const Index = () => {
   const [homeWorkModalToggle, setHomeWorkModalToggle] = useState(false);
   const [diaryModalToggle, setDiaryModalToggle] = useState(false);
   const [memoStuDetailToggle, setMemoStuDetailToggle] = useState(false);
+  const [messageAnswerModal, setMessageAnswerModal] = useState(false);
 
   const [noticeId, setNoticeId] = useState("");
 
@@ -1032,6 +1033,7 @@ const Index = () => {
     setFileName("");
     setFilePath("");
     setMemoDatum("");
+    setMessageAnswerModal(false);
 
     setMemoStuBackToggle(false);
     setCommuteToggle(false);
@@ -1060,7 +1062,7 @@ const Index = () => {
     setMessageViewToggle(true);
 
     setMessageDatum(data);
-    onFillAnswer(data);
+    // onFillAnswer(data);
   }, []);
 
   const onFill = (data) => {
@@ -1070,12 +1072,12 @@ const Index = () => {
     });
   };
 
-  const onFillAnswer = (data) => {
-    answerform.setFieldsValue({
-      messageTitle: data.title,
-      messageContent: data.content,
-    });
-  };
+  // const onFillAnswer = (data) => {
+  //   answerform.setFieldsValue({
+  //     messageTitle: data.title,
+  //     messageContent: data.content,
+  //   });
+  // };
 
   const onFillNotice = (data) => {
     if (data.length !== 0) {
@@ -1097,20 +1099,7 @@ const Index = () => {
 
   const answerFinishHandler = useCallback(
     (data, messageData) => {
-      if (messageData.receiveLectureId) {
-        dispatch({
-          type: MESSAGE_CREATE_REQUEST,
-          data: {
-            title: data.messageTitle,
-            author: me.userId,
-            senderId: messageData.receiverId,
-            receiverId: messageData.senderId,
-            receiveLectureId: messageData.receiveLectureId,
-            content: data.messageContent,
-            level: me.level,
-          },
-        });
-      } else {
+      if (messageData) {
         dispatch({
           type: MESSAGE_CREATE_REQUEST,
           data: {
@@ -1236,6 +1225,10 @@ const Index = () => {
     });
 
     setNoticeId(id);
+  }, []);
+
+  const messageAnswerToggleHanlder = useCallback(() => {
+    setMessageAnswerModal(true);
   }, []);
 
   const lectureDetailStuMemoHandler = useCallback((data) => {
@@ -2433,57 +2426,115 @@ const Index = () => {
         <CustomModal
           visible={messageViewToggle}
           width={`1350px`}
-          title="쪽지 답변"
+          title={messageAnswerModal ? "쪽지 답변" : "쪽지함"}
           footer={null}
           closable={false}>
           <CustomForm
             form={answerform}
             onFinish={(data) => answerFinishHandler(data, messageDatum)}>
-            <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
-              <Text margin={`0 54px 0 0`}>
-                {messageDatum && messageDatum.author}
-              </Text>
-              <Text>{`날짜 ${
-                messageDatum &&
-                moment(messageDatum.createdAt, "YYYY/MM/DD").format(
-                  "YYYY/MM/DD"
-                )
-              }`}</Text>
-            </Wrapper>
+            {!messageAnswerModal && (
+              <>
+                <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
+                  <Text margin={`0 54px 0 0`}>
+                    {messageDatum && messageDatum.author}
+                  </Text>
+                  <Text>{`날짜 ${
+                    messageDatum &&
+                    moment(messageDatum.createdAt, "YYYY/MM/DD").format(
+                      "YYYY/MM/DD"
+                    )
+                  }`}</Text>
+                </Wrapper>
+                <Text fontSize={`18px`} fontWeight={`bold`}>
+                  제목
+                </Text>
+                <Wrapper padding={`10px`} al={`flex-start`}>
+                  <Text>{messageDatum && messageDatum.title}</Text>
+                </Wrapper>
+                <Text fontSize={`18px`} fontWeight={`bold`}>
+                  내용
+                </Text>
+                <Wrapper padding={`10px`} al={`flex-start`}>
+                  <Text minHeight={`360px`}>
+                    {messageDatum && messageDatum.content}
+                  </Text>
+                </Wrapper>
+                <Wrapper dr={`row`}>
+                  <CommonButton
+                    margin={`0 5px 0 0`}
+                    kindOf={`grey`}
+                    color={Theme.darkGrey_C}
+                    radius={`5px`}
+                    onClick={() => onReset()}>
+                    돌아가기
+                  </CommonButton>
+                  <CommonButton
+                    margin={`0 0 0 5px`}
+                    radius={`5px`}
+                    onClick={() => messageAnswerToggleHanlder()}>
+                    답변하기
+                  </CommonButton>
+                </Wrapper>
+              </>
+            )}
 
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              제목
-            </Text>
+            {messageAnswerModal && (
+              <>
+                <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 40px`}>
+                  <Text
+                    fontSize={`18px`}
+                    fontWeight={`bold`}
+                    margin={`0 35px 0 0`}>
+                    작성자
+                  </Text>
 
-            <Wrapper padding={`10px`} al={`flex-start`}>
-              <Text>{messageDatum && messageDatum.title}</Text>
-            </Wrapper>
+                  <Text>{messageDatum && messageDatum.author}</Text>
+                </Wrapper>
 
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              내용
-            </Text>
-            <Wrapper padding={`10px`} al={`flex-start`}>
-              <Text minHeight={`360px`}>
-                {messageDatum && messageDatum.content}
-              </Text>
-            </Wrapper>
+                <Text fontSize={`18px`} fontWeight={`bold`}>
+                  제목
+                </Text>
+                <Wrapper padding={`10px`}>
+                  <Form.Item
+                    name="messageTitle"
+                    rules={[
+                      { required: true, message: "제목을 입력해주세요." },
+                    ]}>
+                    <CusotmInput width={`100%`} />
+                  </Form.Item>
+                </Wrapper>
 
-            <Wrapper dr={`row`}>
-              <CommonButton
-                margin={`0 5px 0 0`}
-                kindOf={`grey`}
-                color={Theme.darkGrey_C}
-                radius={`5px`}
-                onClick={() => onReset()}>
-                돌아가기
-              </CommonButton>
-              <CommonButton
-                margin={`0 0 0 5px`}
-                radius={`5px`}
-                htmlType="submit">
-                답변하기
-              </CommonButton>
-            </Wrapper>
+                <Text fontSize={`18px`} fontWeight={`bold`}>
+                  내용
+                </Text>
+                <Wrapper padding={`10px`}>
+                  <Form.Item
+                    name="messageContent"
+                    rules={[
+                      { required: true, message: "내용을 입력해주세요." },
+                    ]}>
+                    <Input.TextArea style={{ height: `360px` }} />
+                  </Form.Item>
+                </Wrapper>
+
+                <Wrapper dr={`row`}>
+                  <CommonButton
+                    margin={`0 5px 0 0`}
+                    kindOf={`grey`}
+                    color={Theme.darkGrey_C}
+                    radius={`5px`}
+                    onClick={() => onReset()}>
+                    돌아가기
+                  </CommonButton>
+                  <CommonButton
+                    margin={`0 0 0 5px`}
+                    radius={`5px`}
+                    htmlType="submit">
+                    작성하기
+                  </CommonButton>
+                </Wrapper>
+              </>
+            )}
           </CustomForm>
         </CustomModal>
 
@@ -3094,7 +3145,6 @@ const Index = () => {
                   ) : (
                     lectureMemoStuList &&
                     lectureMemoStuList.map((data, idx) => {
-                      console.log(data, "dta");
                       return (
                         <Wrapper
                           onClick={() => lectureDetailStuMemoHandler(data)}

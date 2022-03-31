@@ -315,6 +315,7 @@ const Student = () => {
 
   const [form] = Form.useForm();
   const [answerform] = Form.useForm();
+  const [sendform] = Form.useForm();
 
   const [isCalendar, setIsCalendar] = useState(false);
 
@@ -326,6 +327,7 @@ const Student = () => {
 
   const [messageSendModal, setMessageSendModal] = useState(false);
   const [messageViewModal, setMessageViewModal] = useState(false);
+  const [messageAnswerModal, setMessageAnswerModal] = useState(false);
 
   const [noticeViewModal, setNoticeViewModal] = useState(false);
   const [noticeViewDatum, setNoticeViewDatum] = useState(null);
@@ -521,6 +523,7 @@ const Student = () => {
 
   const onReset = useCallback(() => {
     form.resetFields();
+    sendform.resetFields();
 
     setNoticeViewModal(false);
     setMessageSendModal(false);
@@ -539,6 +542,10 @@ const Student = () => {
     });
   }, [meUpdateModal]);
 
+  const messageAnswerToggleHanlder = useCallback((e) => {
+    setMessageAnswerModal(true);
+  }, []);
+
   const messageSendModalHandler = useCallback((data, num) => {
     setMessageSendModal((prev) => !prev);
 
@@ -552,7 +559,6 @@ const Student = () => {
   const messageViewModalHandler = useCallback((data) => {
     setMessageViewModal((prev) => !prev);
 
-    onFiil(data);
     setMessageDatum(data);
   }, []);
 
@@ -772,15 +778,6 @@ const Student = () => {
     setLectureId(value);
 
     console.log(value);
-  }, []);
-
-  const onFiil = useCallback((data) => {
-    if (data) {
-      answerform.setFieldsValue({
-        messageTitle: data.title,
-        messageContent: data.content,
-      });
-    }
   }, []);
 
   const noticeChangePage = useCallback((page) => {
@@ -1790,58 +1787,120 @@ const Student = () => {
           <CustomModal
             visible={messageViewModal}
             width={`1350px`}
-            title="쪽지 답장"
+            title={messageAnswerModal ? "쪽지 답변" : "쪽지함"}
             footer={null}
             closable={false}>
             <CustomForm
               form={answerform}
               onFinish={(data) => answerFinishHandler(data, messageDatum)}>
-              <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
-                <Text margin={`0 54px 0 0`}>
-                  {messageDatum && messageDatum.author}
-                </Text>
-                <Text>{`날짜 ${messageDatum && messageDatum.createdAt}`}</Text>
-              </Wrapper>
+              {messageAnswerModal && (
+                <>
+                  <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 40px`}>
+                    <Text
+                      fontSize={`18px`}
+                      fontWeight={`bold`}
+                      margin={`0 35px 0 0`}>
+                      작성자
+                    </Text>
 
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                제목
-              </Text>
-              <Wrapper padding={`10px`}>
-                <Form.Item
-                  name="messageTitle"
-                  rules={[{ required: true, message: "제목을 입력해주세요." }]}>
-                  <CusotmInput width={`100%`} />
-                </Form.Item>
-              </Wrapper>
+                    <Text>{messageDatum && messageDatum.author}</Text>
+                  </Wrapper>
 
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                내용
-              </Text>
-              <Wrapper padding={`10px`}>
-                <Form.Item
-                  name="messageContent"
-                  rules={[{ required: true, message: "내용을 입력해주세요." }]}>
-                  <Input.TextArea style={{ height: `360px` }} />
-                </Form.Item>
-              </Wrapper>
+                  <Text fontSize={`18px`} fontWeight={`bold`}>
+                    제목
+                  </Text>
+                  <Wrapper padding={`10px`}>
+                    <Form.Item
+                      name="messageTitle"
+                      rules={[
+                        { required: true, message: "제목을 입력해주세요." },
+                      ]}>
+                      <CusotmInput width={`100%`} />
+                    </Form.Item>
+                  </Wrapper>
 
-              <Wrapper dr={`row`}>
-                <CommonButton
-                  margin={`0 5px 0 0`}
-                  kindOf={`grey`}
-                  color={Theme.darkGrey_C}
-                  radius={`5px`}
-                  onClick={() => messageViewModalHandler()}>
-                  돌아가기
-                </CommonButton>
-                <CommonButton
-                  margin={`0 0 0 5px`}
-                  radius={`5px`}
-                  htmlType="submit">
-                  답변하기
-                </CommonButton>
-              </Wrapper>
+                  <Text fontSize={`18px`} fontWeight={`bold`}>
+                    내용
+                  </Text>
+                  <Wrapper padding={`10px`}>
+                    <Form.Item
+                      name="messageContent"
+                      rules={[
+                        { required: true, message: "내용을 입력해주세요." },
+                      ]}>
+                      <Input.TextArea style={{ height: `360px` }} />
+                    </Form.Item>
+                  </Wrapper>
+
+                  <Wrapper dr={`row`}>
+                    <CommonButton
+                      margin={`0 5px 0 0`}
+                      kindOf={`grey`}
+                      color={Theme.darkGrey_C}
+                      radius={`5px`}
+                      onClick={() => onReset()}>
+                      돌아가기
+                    </CommonButton>
+                    <CommonButton
+                      margin={`0 0 0 5px`}
+                      radius={`5px`}
+                      htmlType="submit">
+                      작성하기
+                    </CommonButton>
+                  </Wrapper>
+                </>
+              )}
             </CustomForm>
+
+            {!messageAnswerModal && (
+              <>
+                <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
+                  <Text margin={`0 54px 0 0`}>
+                    {messageDatum && messageDatum.author}
+                  </Text>
+                  <Text>{`날짜 ${
+                    messageDatum &&
+                    moment(messageDatum.createdAt, "YYYY/MM/DD").format(
+                      "YYYY/MM/DD"
+                    )
+                  }`}</Text>
+                </Wrapper>
+
+                <Text fontSize={`18px`} fontWeight={`bold`}>
+                  제목
+                </Text>
+
+                <Wrapper padding={`10px`} al={`flex-start`}>
+                  <Text>{messageDatum && messageDatum.title}</Text>
+                </Wrapper>
+
+                <Text fontSize={`18px`} fontWeight={`bold`}>
+                  내용
+                </Text>
+                <Wrapper padding={`10px`} al={`flex-start`}>
+                  <Text minHeight={`360px`}>
+                    {messageDatum && messageDatum.content}
+                  </Text>
+                </Wrapper>
+
+                <Wrapper dr={`row`}>
+                  <CommonButton
+                    margin={`0 5px 0 0`}
+                    kindOf={`grey`}
+                    color={Theme.darkGrey_C}
+                    radius={`5px`}
+                    onClick={() => onReset()}>
+                    돌아가기
+                  </CommonButton>
+                  <CommonButton
+                    onClick={() => messageAnswerToggleHanlder(messageDatum)}
+                    margin={`0 0 0 5px`}
+                    radius={`5px`}>
+                    답변하기
+                  </CommonButton>
+                </Wrapper>
+              </>
+            )}
           </CustomModal>
 
           <CustomModal
@@ -2082,6 +2141,180 @@ const Student = () => {
                   radius={`5px`}
                   htmlType="submit">
                   작성하기
+                </CommonButton>
+              </Wrapper>
+            </CustomForm>
+          </CustomModal>
+
+          <CustomModal
+            visible={messageSendModal}
+            width={`1350px`}
+            title={
+              sendMessageType === 1
+                ? "학생에게 쪽지 보내기"
+                : sendMessageType === 2
+                ? "수업에 대한 쪽지 보내기"
+                : sendMessageType === 3 && "관리자에게 쪽지 보내기"
+            }
+            footer={null}
+            closable={false}>
+            <CustomForm
+              form={sendform}
+              onFinish={(data) =>
+                sendMessageType === 1
+                  ? sendMessageFinishHandler(data)
+                  : sendMessageType === 2
+                  ? sendMessageLectureFinishHanlder(data, messageTeacherList)
+                  : sendMessageType === 3 && sendMessageAdminFinishHandler(data)
+              }>
+              <Wrapper dr={`row`} ju={`flex-end`}>
+                <CommonButton
+                  margin={`0 0 0 5px`}
+                  radius={`5px`}
+                  width={`100px`}
+                  height={`32px`}
+                  size="small"
+                  onClick={() => sendMessageTypeHandler(1)}>
+                  {"강사"}
+                </CommonButton>
+
+                <CommonButton
+                  margin={`0 0 0 5px`}
+                  radius={`5px`}
+                  width={`100px`}
+                  height={`32px`}
+                  size="small"
+                  onClick={() => sendMessageTypeHandler(2)}>
+                  {"수업"}
+                </CommonButton>
+
+                <CommonButton
+                  margin={`0 0 0 5px`}
+                  radius={`5px`}
+                  width={`100px`}
+                  height={`32px`}
+                  size="small"
+                  onClick={() => sendMessageTypeHandler(3)}>
+                  {"관리자"}
+                </CommonButton>
+              </Wrapper>
+              {sendMessageType === 1 && (
+                <>
+                  <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
+                    듣고 있는 강의 목록
+                  </Text>
+
+                  <Form.Item
+                    name="receivePerson"
+                    rules={[
+                      {
+                        required: true,
+                        message: "듣고있는 강의 목록을 선택해주세요.",
+                      },
+                    ]}>
+                    <Select
+                      value={lectureId}
+                      style={{ width: `100%` }}
+                      onChange={receiveLectureIdtHandler}>
+                      {lectureStuLectureList &&
+                      lectureStuLectureList.length === 0 ? (
+                        <Option value="참여 중인 강의가 없습니다.">
+                          참여 중인 강의가 없습니다.
+                        </Option>
+                      ) : (
+                        lectureStuLectureList &&
+                        lectureStuLectureList.map((data, idx) => {
+                          return (
+                            <Option key={`${data.id}${idx}`} value={data.id}>
+                              {data.course}
+                            </Option>
+                          );
+                        })
+                      )}
+                    </Select>
+                  </Form.Item>
+                  <Text
+                    fontSize={`14px`}
+                    color={Theme.grey2_C}
+                    margin={`0 0 20px`}>
+                    강사님 개인쪽지함에 쪽지가 전달됩니다.
+                  </Text>
+                </>
+              )}
+
+              {sendMessageType === 2 && (
+                <>
+                  <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
+                    듣고 있는 강의 목록
+                  </Text>
+
+                  <Form.Item
+                    name="receiveLectureId"
+                    rules={[
+                      {
+                        required: true,
+                        message: "듣고있는 강의 목록을 선택해주세요.",
+                      },
+                    ]}>
+                    <Select
+                      value={selectValue}
+                      style={{ width: `100%` }}
+                      onChange={receiveSelectHandler}>
+                      {messageTeacherList && messageTeacherList.length === 0 ? (
+                        <Option value="참여 중인 강의가 없습니다.">
+                          참여 중인 강의가 없습니다.
+                        </Option>
+                      ) : (
+                        messageTeacherList &&
+                        messageTeacherList.map((data, idx) => {
+                          return (
+                            <Option key={`${data.id}${idx}`} value={data.id}>
+                              {data.course}
+                            </Option>
+                          );
+                        })
+                      )}
+                    </Select>
+                  </Form.Item>
+                  <Text
+                    fontSize={`14px`}
+                    color={Theme.grey2_C}
+                    margin={`0 0 20px`}>
+                    강사님에 수업 상세페이지 쪽지함에 전달 됩니다.
+                  </Text>
+                </>
+              )}
+
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                제목
+              </Text>
+              <Form.Item
+                name="title"
+                rules={[{ required: true, message: "제목을 입력해주세요." }]}>
+                <Input />
+              </Form.Item>
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                내용
+              </Text>
+              <Form.Item
+                name="content"
+                rules={[{ required: true, message: "내용을 입력해주세요." }]}>
+                <Input.TextArea style={{ height: `360px` }} />
+              </Form.Item>
+              <Wrapper dr={`row`}>
+                <CommonButton
+                  margin={`0 5px 0 0`}
+                  kindOf={`grey`}
+                  color={Theme.darkGrey_C}
+                  radius={`5px`}
+                  onClick={() => onReset()}>
+                  돌아가기
+                </CommonButton>
+                <CommonButton
+                  margin={`0 0 0 5px`}
+                  radius={`5px`}
+                  htmlType="submit">
+                  쪽지 보내기
                 </CommonButton>
               </Wrapper>
             </CustomForm>
