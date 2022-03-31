@@ -32,7 +32,8 @@ import {
   LECTURE_STUDENT_LIST_REQUEST,
 } from "../../../reducers/lecture";
 import moment from "moment";
-
+import { BOOK_LIST_REQUEST } from "../../../reducers/book";
+import { saveAs } from "file-saver";
 const AdminContent = styled.div`
   padding: 20px;
 `;
@@ -83,12 +84,16 @@ const DetailClass = () => {
     lectureMemoStuList,
     lectureDiaryAdminList,
   } = useSelector((state) => state.lecture);
+  const { bookList } = useSelector((state) => state.book);
   const dispatch = useDispatch();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
   const [detailMemo, setDetailMemo] = useState(null);
   const [memoModal, setMemoModal] = useState(false);
+
+  const [detailBook, setDetailBook] = useState(null);
+  const [bookModal, setBookModal] = useState(false);
 
   // console.log(lectureStudentList);
 
@@ -100,6 +105,19 @@ const DetailClass = () => {
       dispatch({
         type: LECTURE_DETAIL_REQUEST,
         data: {
+          LectureId: router.query.id,
+        },
+      });
+      dispatch({
+        type: LECTURE_DIARY_ADMIN_LIST_REQUEST,
+        data: {
+          LectureId: router.query.id,
+        },
+      });
+      dispatch({
+        type: BOOK_LIST_REQUEST,
+        data: {
+          BookFolderId: null,
           LectureId: router.query.id,
         },
       });
@@ -117,17 +135,23 @@ const DetailClass = () => {
     });
   }, [router.query, currentPage]);
 
-  useEffect(() => {
-    dispatch({
-      type: LECTURE_DIARY_ADMIN_LIST_REQUEST,
-      data: {
-        LectureId: router.query.id,
-        page: 1,
-      },
-    });
-  }, [router.query, currentPage]);
-
   ////// HANDLER //////
+
+  const fileDownloadHandler = useCallback(async (filePath) => {
+    let blob = await fetch(filePath).then((r) => r.blob());
+
+    const file = new Blob([blob]);
+
+    const ext = filePath.substring(
+      filePath.lastIndexOf(".") + 1,
+      filePath.length
+    );
+
+    const originName = `첨부파일.${ext}`;
+
+    saveAs(file, originName);
+  }, []);
+
   const detailMemoOpen = useCallback((data) => {
     setDetailMemo(data);
     setMemoModal(true);
@@ -135,6 +159,45 @@ const DetailClass = () => {
   const detailMemoClose = useCallback(() => {
     setDetailMemo(null);
     setMemoModal(false);
+  }, []);
+
+  const detailBookOpen = useCallback(() => {
+    if (bookList) {
+      setDetailBook(bookList);
+      setBookModal(true);
+    }
+  }, [bookList]);
+  const detailBookClose = useCallback(() => {
+    setDetailBook(null);
+    setBookModal(false);
+  }, []);
+
+  const stepHanlder = useCallback((startDate, endDate, count, lecDate, day) => {
+    const dif = parseInt(
+      moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays()
+    );
+
+    const value1 = parseInt(dif / 7);
+    const value2 = parseInt(dif % 7);
+
+    let add = 0;
+
+    for (let i = 0; i < value2; i++) {
+      const date = moment(startDate)
+        .add(value1 * 7 + i + 1, "days")
+        .day();
+
+      const arr = ["일", "월", "화", "수", "목", "금", "토"];
+
+      const save = day.includes(arr[date]);
+
+      if (save) {
+        add += 1;
+      }
+    }
+
+    const result = value1 * count + add;
+    return parseInt((result / (count * lecDate)) * 100);
   }, []);
 
   ////// TOGGLE //////
@@ -195,11 +258,57 @@ const DetailClass = () => {
     },
     {
       title: "진도",
-      dataIndex: "course",
+      dataIndex: "process",
     },
     {
       title: "수업메모",
-      dataIndex: "memo",
+      render: (data) => (
+        <Button
+          size={`small`}
+          type={`primary`}
+          onClick={() => detailMemoOpen(data.memo)}
+        >
+          메모 보기
+        </Button>
+      ),
+    },
+  ];
+  const bookColumns = [
+    {
+      title: "No",
+      dataIndex: "id",
+    },
+    {
+      title: "썸네일 이미지",
+      render: (data) => {
+        return (
+          <Wrapper width={`100px`}>
+            <Image src={data.thumbnail} alt={`thumbnail`} />
+          </Wrapper>
+        );
+      },
+    },
+    {
+      title: "제목",
+      dataIndex: "title",
+    },
+    {
+      title: "분류",
+      dataIndex: "value",
+    },
+    {
+      title: "첨부파일 다운로드",
+      render: (data) => {
+        return (
+          <Button
+            type={`primary`}
+            size={`small`}
+            onClick={() => fileDownloadHandler(data.file)}
+          >
+            다운로드
+          </Button>
+        );
+      },
     },
   ];
 
@@ -232,18 +341,32 @@ const DetailClass = () => {
         </Wrapper>
         <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 14px`}>
           <Wrapper width={`50%`} dr={`row`} ju={`flex-start`}>
-            <CustomSlide
-              // 진도율 계산
-              // 수업하는 요일을 이용해서 수업을 하는 날짜들을 전부 나열시킨다
-              // 현재 날짜를 불러와 나열된 수업 날짜들과 비교하여 수업이 몇개 진행됐는지 구한다.
-              // (수업 기간 * 주에 몇번 수업하는지)로 총 수업 수를 구한다.
-              // 진행된 수업 수와 전체 수업 수로 백분율로 만들어 현재 진도율을 구한다.
-              defaultValue={55}
-              disabled={true}
-              draggableTrack={true}
-            />
+            {lectureDetail && (
+              <CustomSlide
+                defaultValue={stepHanlder(
+                  lectureDetail[0].startDate,
+                  lectureDetail[0].endDate,
+                  lectureDetail[0].count,
+                  lectureDetail[0].lecDate,
+                  lectureDetail[0].day
+                )}
+                disabled={true}
+                draggableTrack={true}
+              />
+            )}
 
-            <Text>&nbsp;(55%)</Text>
+            <Text>
+              &nbsp;(
+              {lectureDetail &&
+                stepHanlder(
+                  lectureDetail[0].startDate,
+                  lectureDetail[0].endDate,
+                  lectureDetail[0].count,
+                  lectureDetail[0].lecDate,
+                  lectureDetail[0].day
+                )}
+              %)
+            </Text>
           </Wrapper>
           <Wrapper width={`50%`} dr={`row`} ju={`flex-end`}>
             <CommonButton
@@ -340,7 +463,11 @@ const DetailClass = () => {
                 alt="book_icon"
               />
             </Wrapper>
-            <Text fontSize={`18px`}>Seoul National University book 1 / 6</Text>
+            <Text fontSize={`18px`}>
+              <Button type={`primary`} size={`small`} onClick={detailBookOpen}>
+                교재 리스트
+              </Button>
+            </Text>
           </Wrapper>
 
           <Wrapper
@@ -428,6 +555,22 @@ const DetailClass = () => {
                   </SpanText>
                 );
               })}
+          </Wrapper>
+        </Wrapper>
+      </Modal>
+
+      <Modal visible={bookModal} footer={null} onCancel={detailBookClose}>
+        <Wrapper al={`flex-start`}>
+          <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
+            메모
+          </Text>
+          <Wrapper al={`flex-start`} ju={`flex-start`}>
+            <Table
+              style={{ width: `100%` }}
+              size={`small`}
+              columns={bookColumns}
+              dataSource={bookList}
+            />
           </Wrapper>
         </Wrapper>
       </Modal>
