@@ -12,6 +12,7 @@ const {
   LectureMessage,
   LectureStuMemo,
   Commute,
+  Book,
 } = require("../models");
 const models = require("../models");
 const fs = require("fs");
@@ -419,7 +420,7 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
                 model: Commute,
               },
               {
-                model: Homework,
+                model: Book,
               },
             ],
           })
