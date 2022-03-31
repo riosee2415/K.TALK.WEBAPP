@@ -117,8 +117,8 @@ const reducer = (state = initialState, action) =>
         break;
       }
       case PARTICIPANT_CREATE_SUCCESS: {
-        draft.st_participantCreateDone = false;
-        draft.st_participantCreateError = true;
+        draft.st_participantCreateDone = true;
+        draft.st_participantCreateLoading = false;
         break;
       }
       case PARTICIPANT_CREATE_FAILURE: {

@@ -25,12 +25,14 @@ import {
 } from "../../../../components/commonComponents";
 import { LECTURE_ALL_LIST_REQUEST } from "../../../../reducers/lecture";
 import { CloseCircleOutlined } from "@ant-design/icons";
+import { PARTICIPANT_CREATE_REQUEST } from "../../../../reducers/participant";
 
 const AdminContent = styled.div`
   padding: 20px;
 `;
 
 const UserList = ({}) => {
+  const { Option } = Select;
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
   const { me, st_loadMyInfoDone } = useSelector((state) => state.user);
   const { allLectures } = useSelector((state) => state.lecture);
@@ -64,6 +66,10 @@ const UserList = ({}) => {
     st_userChangeError,
   } = useSelector((state) => state.user);
 
+  const { st_participantCreateDone, st_participantCreateError } = useSelector(
+    (state) => state.participant
+  );
+
   const [updateData, setUpdateData] = useState(null);
   const [lectureList, setLectureList] = useState(null);
   const [selectedList, setSelectedList] = useState([]);
@@ -71,6 +77,7 @@ const UserList = ({}) => {
   const [parData, setParData] = useState(null);
 
   const [form] = Form.useForm();
+  const [updateClassform] = Form.useForm();
 
   ////// USEEFFECT //////
 
@@ -122,6 +129,19 @@ const UserList = ({}) => {
     }
   }, [st_userChangeError]);
 
+  useEffect(() => {
+    if (st_participantCreateDone) {
+      classPartModalClose();
+      return message.success("해당 학생을 수업에 참여시켰습니다.");
+    }
+  }, [st_participantCreateDone]);
+
+  useEffect(() => {
+    if (st_participantCreateError) {
+      return message.error(st_participantCreateError);
+    }
+  }, [st_participantCreateError]);
+
   ////// TOGGLE //////
   const classChangeModalOpen = useCallback(
     (data) => {
@@ -142,24 +162,36 @@ const UserList = ({}) => {
     form.resetFields();
   }, [classChangeModal, form]);
 
-  const classPartModalOpen = useCallback((data) => {
-    dispatch({
-      type: CLASS_PART_OPEN_REQUEST,
-    });
+  const classPartModalOpen = useCallback(
+    (data) => {
+      dispatch({
+        type: CLASS_PART_OPEN_REQUEST,
+      });
 
-    setParData(data);
-  }, []);
+      setParData(data);
+    },
+    [classPartModal]
+  );
 
-  const classPartModalClose = useCallback((data) => {
-    dispatch({
-      type: CLASS_PART_CLOSE_REQUEST,
-    });
-  }, []);
+  const classPartModalClose = useCallback(
+    (data) => {
+      dispatch({
+        type: CLASS_PART_CLOSE_REQUEST,
+      });
+
+      setParData(null);
+    },
+    [classPartModal]
+  );
 
   ////// HANDLER //////
 
   const onModalOk = useCallback(() => {
     form.submit();
+  }, [form]);
+
+  const onModalChangeOk = useCallback(() => {
+    updateClassform.submit();
   }, [form]);
 
   const onSubmit = useCallback(
@@ -184,28 +216,45 @@ const UserList = ({}) => {
     [selectedList, updateData]
   );
 
-  const selectChangeHandler = useCallback(
-    (e) => {
-      const id = parseInt(e.split(`.`)[0]);
-      setLectureList(lectureList.filter((data) => data.id !== id));
-
-      const state = selectedList;
-      state.push(lectureList.filter((data) => data.id === id)[0]);
-      setSelectedList(state);
+  const onUpdateClassSubmit = useCallback(
+    (data) => {
+      dispatch({
+        type: PARTICIPANT_CREATE_REQUEST,
+        data: {
+          UserId: parData.id,
+          LectureId: data.partLecture,
+        },
+      });
     },
-    [lectureList, selectedList]
+    [parData]
   );
 
-  const selectCancelHandler = useCallback(
-    (cancelData) => {
-      setSelectedList(selectedList.filter((data) => data.id !== cancelData.id));
+  // const selectChangeHandler = useCallback(
+  //   (e) => {
+  //     const id = parseInt(e.split(`.`)[0]);
+  //     setLectureList(lectureList.filter((data) => data.id !== id));
 
-      const state = lectureList;
-      state.push(cancelData);
-      setLectureList(state);
-    },
-    [lectureList, selectedList]
-  );
+  //     const state = selectedList;
+  //     state.push(lectureList.filter((data) => data.id === id)[0]);
+  //     setSelectedList(state);
+  //   },
+  //   [lectureList, selectedList]
+  // );
+
+  // const selectCancelHandler = useCallback(
+  //   (cancelData) => {
+  //     setSelectedList(selectedList.filter((data) => data.id !== cancelData.id));
+
+  //     const state = lectureList;
+  //     state.push(cancelData);
+  //     setLectureList(state);
+  //   },
+  //   [lectureList, selectedList]
+  // );
+
+  const onSeachHandler = useCallback((value) => {
+    console.log(value);
+  }, []);
 
   ////// DATAVIEW //////
 
@@ -361,49 +410,38 @@ const UserList = ({}) => {
       <Modal
         visible={classPartModal}
         width={`400px`}
-        title={`사용자 레벨 수정`}
-        onCancel={classChangeModalClose}
-        onOk={onModalOk}>
+        title={`학생 수업 참여`}
+        onCancel={classPartModalClose}
+        onOk={onModalChangeOk}>
         <Wrapper padding={`10px`} al={`flex-start`}>
-          <Form form={form} style={{ width: `100%` }} onFinish={onSubmit}>
+          <Form
+            form={updateClassform}
+            style={{ width: `100%` }}
+            onFinish={onUpdateClassSubmit}>
             <Form.Item label={`학생`}>
-              <Input disabled value={updateData && updateData.username} />
+              <Input disabled value={parData && parData.username} />
             </Form.Item>
 
-            <Form.Item label={`현재 강의`} name={`lecture`}>
-              <Combo
+            <Form.Item label={`참여할 강의`} name={`partLecture`}>
+              <Select
                 width={`100%`}
                 height={`32px`}
                 showSearch
+                onChange={onSeachHandler}
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
                 placeholder="Select a Lecture">
-                <ComboOption selected>--- 선택 ---</ComboOption>
-                {updateData &&
-                  updateData.Participants.map((data) => {
-                    return (
-                      <ComboOption value={data.LectureId}>
-                        {data.Lecture.course}
-                      </ComboOption>
-                    );
-                  })}
-              </Combo>
-            </Form.Item>
-
-            <Form.Item label={`바뀔 강의`} name={`changelecture`}>
-              <Combo
-                width={`100%`}
-                height={`32px`}
-                showSearch
-                placeholder="Select a Lecture"
-                // name={`changelecture`}
-              >
-                <ComboOption selected>--- 선택 ---</ComboOption>
                 {allLectures &&
                   allLectures.map((data) => {
                     return (
-                      <ComboOption value={data.id}>{data.course}</ComboOption>
+                      <Option key={data.id} value={data.id}>
+                        {data.course}
+                      </Option>
                     );
                   })}
-              </Combo>
+              </Select>
             </Form.Item>
           </Form>
         </Wrapper>
