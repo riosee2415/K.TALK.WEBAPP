@@ -815,6 +815,14 @@ router.patch("/class/update", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 사용자입니다.");
     }
 
+    const exPart = await Participant.findOne({
+      where: { UserId: parseInt(UserId), LectureId: parseInt(ChangeLectureId) },
+    });
+
+    if (exPart) {
+      return res.status(401).send("이미 해당 강의에 참여하고 있습니다.");
+    }
+
     const updateResult = await Participant.update(
       {
         LectureId: parseInt(ChangeLectureId),
