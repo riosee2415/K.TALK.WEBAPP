@@ -861,7 +861,7 @@ const Index = () => {
           title: value.title1,
           author: me.username,
           content: value.content1,
-          receiverId: checkedList.map((data) => data.id),
+          receiverId: checkedList.map((data) => data.UserId),
         },
       });
     },
@@ -1311,6 +1311,35 @@ const Index = () => {
 
     saveAs(file, originName);
   }, []);
+
+  const stepHanlder = useCallback((startDate, endDate, count, lecDate, day) => {
+    const dif = parseInt(
+      moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays()
+    );
+
+    const value1 = parseInt(dif / 7);
+    const value2 = parseInt(dif % 7);
+
+    let add = 0;
+
+    for (let i = 0; i < value2; i++) {
+      const date = moment(startDate)
+        .add(value1 * 7 + i + 1, "days")
+        .day();
+
+      const arr = ["일", "월", "화", "수", "목", "금", "토"];
+
+      const save = day.includes(arr[date]);
+
+      if (save) {
+        add += 1;
+      }
+    }
+
+    const result = value1 * count + add;
+    return parseInt((result / (count * lecDate)) * 100);
+  }, []);
+
   ////// DATAVIEW //////
 
   return (
@@ -1519,21 +1548,12 @@ const Index = () => {
                                 </Text>
 
                                 <CustomProgress
-                                  percent={Math.abs(
-                                    Math.floor(
-                                      (moment
-                                        .duration(
-                                          moment(
-                                            data.endDate,
-                                            "YYYY-MM-DD"
-                                          ).diff(
-                                            moment(data.startDate, "YYYY-MM-DD")
-                                          )
-                                        )
-                                        .asDays() /
-                                        (data.lecDate * 7)) *
-                                        100
-                                    ) - 100
+                                  percent={stepHanlder(
+                                    data.startDate,
+                                    data.endDate,
+                                    data.count,
+                                    data.lecDate,
+                                    data.day
                                   )}
                                 />
                               </>
@@ -1553,18 +1573,12 @@ const Index = () => {
                               </Text>
 
                               <CustomProgress
-                                percent={Math.abs(
-                                  Math.floor(
-                                    (moment
-                                      .duration(
-                                        moment(data.endDate, "YYYY-MM-DD").diff(
-                                          moment(data.startDate, "YYYY-MM-DD")
-                                        )
-                                      )
-                                      .asDays() /
-                                      (data.lecDate * 7)) *
-                                      100
-                                  ) - 100
+                                percent={stepHanlder(
+                                  data.startDate,
+                                  data.endDate,
+                                  data.count,
+                                  data.lecDate,
+                                  data.day
                                 )}
                               />
                             </Wrapper>
@@ -1710,7 +1724,7 @@ const Index = () => {
                               {data.endDate}
 
                               <SpanText color={Theme.red_C}>
-                                {`(${moment
+                                {`D-(${moment
                                   .duration(
                                     moment(data.endDate, "YYYY-MM-DD").diff(
                                       moment().format("YYYY-MM-DD")
@@ -1721,12 +1735,14 @@ const Index = () => {
                             </Text>
 
                             <Text
+                              onClick={() => detailStuToggleHandler(data)}
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`25%`}>
                               작성하기
                             </Text>
 
                             <Text
+                              onClick={() => onCommuteHandler(data)}
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`25%`}
                               color={
@@ -1734,7 +1750,7 @@ const Index = () => {
                                   ? `${Theme.basicTheme_C}`
                                   : `${Theme.red_C}`
                               }>
-                              {data.status ? "출석" : "결석"}
+                              {"출석"}
                             </Text>
                           </Wrapper>
                         );
@@ -1852,10 +1868,10 @@ const Index = () => {
                               <SpanText
                                 color={Theme.red_C}
                                 margin={`0 0 0 5px`}>
-                                {`(D-${moment
+                                {`D-(${moment
                                   .duration(
                                     moment(data.endDate, "YYYY-MM-DD").diff(
-                                      moment(data.startDate, "YYYY-MM-DD")
+                                      moment().format("YYYY-MM-DD")
                                     )
                                   )
                                   .asDays()})`}
@@ -1869,14 +1885,6 @@ const Index = () => {
                               fontSize={width < 700 ? `14px` : `16px`}>
                               작성하기
                             </Text>
-
-                            {/* <CustomPopconfirm
-                              okText="출석"
-                              cancelText="결석"
-                              onConfirm={() => onCommuteHandler(data, true)}
-                              onCancel={() =>
-                                onCommuteHandler(data, false)
-                              }></CustomPopconfirm> */}
 
                             <Text
                               onClick={() => onCommuteHandler(data)}
@@ -2435,7 +2443,12 @@ const Index = () => {
               <Text margin={`0 54px 0 0`}>
                 {messageDatum && messageDatum.author}
               </Text>
-              <Text>{`날짜 ${messageDatum && messageDatum.createdAt}`}</Text>
+              <Text>{`날짜 ${
+                messageDatum &&
+                moment(messageDatum.createdAt, "YYYY/MM/DD").format(
+                  "YYYY/MM/DD"
+                )
+              }`}</Text>
             </Wrapper>
 
             <Text fontSize={`18px`} fontWeight={`bold`}>
@@ -2874,7 +2887,7 @@ const Index = () => {
                           )
                           .asDays() < -1
                           ? "기간 만료"
-                          : "제출 기간"}
+                          : "제출"}
                       </Text>
                     </Wrapper>
                   </Wrapper>

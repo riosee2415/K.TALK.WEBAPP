@@ -68,6 +68,7 @@ import {
 } from "@ant-design/icons";
 import { saveAs } from "file-saver";
 import { COMMUTE_LIST_REQUEST } from "../../reducers/commute";
+import { FileDoneOutlined } from "@ant-design/icons";
 
 const PROFILE_WIDTH = `184`;
 const PROFILE_HEIGHT = `190`;
@@ -275,6 +276,7 @@ const Student = () => {
     st_messageForAdminCreateError,
 
     messageUserList,
+    messageUserLastPage,
     st_messageUserListDone,
     st_messageUserListError,
   } = useSelector((state) => state.message);
@@ -380,17 +382,6 @@ const Student = () => {
     dispatch({
       type: LECTURE_HOMEWORK_STU_LIST_REQUEST,
       data: {
-        page: 1,
-        search: "",
-      },
-    });
-  }, []);
-
-  useEffect(() => {
-    dispatch({
-      type: COMMUTE_LIST_REQUEST,
-      data: {
-        LectureId: parseInt(router.query.id),
         page: 1,
         search: "",
       },
@@ -522,6 +513,12 @@ const Student = () => {
     }
   }, [st_lectureStuLectureListError]);
 
+  useEffect(() => {
+    if (st_messageUserListError) {
+      return message.error(st_messageUserListError);
+    }
+  }, [st_messageUserListError]);
+
   const onReset = useCallback(() => {
     form.resetFields();
 
@@ -531,6 +528,7 @@ const Student = () => {
     setHomeWorkModalToggle(false);
     setFileName("");
     setLectureId("");
+    setSendMessageType(1);
   }, [fileInput]);
 
   ////// TOGGLE //////
@@ -541,20 +539,19 @@ const Student = () => {
     });
   }, [meUpdateModal]);
 
-  const postCodeModalToggle = useCallback(() => {
-    dispatch({
-      type: POSTCODE_MODAL_TOGGLE,
-    });
-  }, [postCodeModal]);
-
-  const messageSendModalHandler = useCallback(() => {
+  const messageSendModalHandler = useCallback((data, num) => {
     setMessageSendModal((prev) => !prev);
+
+    if (num === 1) {
+      setSendMessageType(3);
+    }
+
+    setLectureId(data);
   }, []);
 
   const messageViewModalHandler = useCallback((data) => {
     setMessageViewModal((prev) => !prev);
 
-    console.log(data, "데이터");
     onFiil(data);
     setMessageDatum(data);
   }, []);
@@ -649,7 +646,7 @@ const Student = () => {
           title: data.title,
           author: me.userId,
           senderId: me.id,
-          receiverId: data.receivePerson,
+          receiverId: lectureId.UserId,
           content: data.content,
           level: me.level,
         },
@@ -659,12 +656,8 @@ const Student = () => {
   );
 
   const sendMessageLectureFinishHanlder = useCallback(
-    (data, messageLecture) => {
-      let save = messageLecture.find((data2, idx) => {
-        if (data2.id === data.receiveLectureId) {
-          return true;
-        }
-      });
+    (data) => {
+      console.log(lectureId, "lectureId");
 
       dispatch({
         type: MESSAGE_CREATE_REQUEST,
@@ -672,14 +665,14 @@ const Student = () => {
           title: data.title,
           author: me.userId,
           senderId: me.id,
-          receiverId: save.UserId,
-          receiveLectureId: data.receiveLectureId,
+          receiverId: lectureId.UserId,
+          receiveLectureId: lectureId.id,
           content: data.content,
           level: me.level,
         },
       });
     },
-    []
+    [me, lectureId]
   );
 
   const sendMessageAdminFinishHandler = useCallback(
@@ -804,6 +797,17 @@ const Student = () => {
     });
   }, []);
 
+  const onChangeMessagePage = useCallback((page) => {
+    setCurrentPage3(page);
+
+    dispatch({
+      type: MESSAGE_USER_LIST_REQUEST,
+      data: {
+        page,
+      },
+    });
+  }, []);
+
   const onClickNoticeHandler = useCallback((data) => {
     setNoticeViewDatum(data);
     setNoticeViewModal(true);
@@ -811,6 +815,43 @@ const Student = () => {
 
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
+  }, []);
+
+  const DDay = useCallback((startDate, endDate) => {
+    let save = moment
+      .duration(
+        moment(startDate, "YYYY-MM-DD").diff(moment().format("YYYY-MM-DD"))
+      )
+      .asDays();
+
+    if (save < 0) {
+      let saveDday =
+        Math.abs(
+          moment
+            .duration(
+              moment(endDate, "YYYY-MM-DD").diff(moment().format("YYYY-MM-DD"))
+            )
+            .asDays()
+        ) < 1
+          ? "종료"
+          : Math.abs(
+              moment
+                .duration(
+                  moment(endDate, "YYYY-MM-DD").diff(
+                    moment().format("YYYY-MM-DD")
+                  )
+                )
+                .asDays()
+            );
+
+      return saveDday;
+    } else {
+      return moment
+        .duration(
+          moment(endDate, "YYYY-MM-DD").diff(moment(startDate, "YYYY-MM-DD"))
+        )
+        .asDays();
+    }
   }, []);
 
   ////// DATAVIEW //////
@@ -909,156 +950,127 @@ const Student = () => {
               </Text>
             </Wrapper>
 
-            {lectureStuLectureList && lectureStuLectureList.length === 0
-              ? ""
-              : lectureStuLectureList &&
-                lectureStuLectureList.slice(0, 1).map((data, idx) => {
-                  return (
+            {lectureStuLectureList && lectureStuLectureList.length === 0 ? (
+              <Wrapper marign={`50px 0`}>
+                <Empty description="조회된 시간표 목록이 없습니다." />
+              </Wrapper>
+            ) : (
+              lectureStuLectureList &&
+              lectureStuLectureList.slice(0, 1).map((data, idx) => {
+                return (
+                  <Wrapper
+                    padding={width < 700 ? `15px 10px 10px` : `40px 30px 35px`}
+                    dr={`row`}
+                    ju={`flex-start`}
+                    bgColor={Theme.white_C}
+                    radius={`10px`}
+                    shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
+                    margin={`0 0 86px`}
+                    al={`flex-start`}>
                     <Wrapper
-                      padding={
-                        width < 700 ? `15px 10px 10px` : `40px 30px 35px`
+                      width={
+                        width < 1280 ? (width < 800 ? `100%` : `60%`) : `37%`
                       }
                       dr={`row`}
                       ju={`flex-start`}
-                      bgColor={Theme.white_C}
-                      radius={`10px`}
-                      shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
-                      margin={`0 0 86px`}
                       al={`flex-start`}>
                       <Wrapper
-                        width={
-                          width < 1280 ? (width < 800 ? `100%` : `60%`) : `37%`
-                        }
-                        dr={`row`}
-                        ju={`flex-start`}
-                        al={`flex-start`}>
-                        <Wrapper
-                          width={`auto`}
-                          padding={width < 700 ? `0` : `5px`}
-                          margin={`0 10px 0 0`}>
-                          <Image
-                            width={`22px`}
-                            height={`22px`}
-                            src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
-                            alt="clock_icon"
-                          />
-                        </Wrapper>
-                        <Wrapper
-                          width={`calc(100% - 42px)`}
-                          dr={`row`}
-                          ju={`flex-start`}>
-                          <Text
-                            fontSize={width < 800 ? `14px` : `18px`}
-                            fontWeight={`bold`}
-                            lineHeight={`1.22`}>
-                            {data.day}&nbsp;&nbsp;|&nbsp;&nbsp;
-                            {data.time}
-                          </Text>
-                          <Wrapper
-                            display={
-                              width < 1280
-                                ? `flex`
-                                : (idx + 1) % 3 === 0 && `none`
-                            }
-                            width={`1px`}
-                            height={width < 800 ? `20px` : `34px`}
-                            borderLeft={`1px dashed ${Theme.grey_C}`}
-                            margin={
-                              width < 1350
-                                ? width < 800
-                                  ? `0 4px`
-                                  : `0 10px`
-                                : `0 20px`
-                            }
-                          />
-                        </Wrapper>
+                        width={`auto`}
+                        padding={width < 700 ? `0` : `5px`}
+                        margin={`0 10px 0 0`}>
+                        <Image
+                          width={`22px`}
+                          height={`22px`}
+                          src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
+                          alt="clock_icon"
+                        />
                       </Wrapper>
-
                       <Wrapper
-                        width={
-                          width < 1280 ? (width < 800 ? `100%` : `40%`) : `25%`
-                        }
+                        width={`calc(100% - 42px)`}
                         dr={`row`}
-                        ju={`flex-start`}
-                        margin={width < 800 && `5px 0`}>
-                        <Wrapper width={`auto`} margin={`0 10px 0 0`}>
-                          <Image
-                            width={`22px`}
-                            height={`22px`}
-                            src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
-                            alt="clender_icon"
-                          />
-                        </Wrapper>
-                        <Text fontSize={width < 700 ? `14px` : `18px`}>
-                          {`${moment(data.startDate, "YYYY/MM/DD").format(
-                            "YYYY/MM/DD"
-                          )} ~ ${moment(data.endDate, "YYYY/MM/DD").format(
-                            "YYYY/MM/DD"
-                          )}`}
-                          <SpanText
-                            fontWeight={`bold`}
-                            color={Theme.red_C}
-                            margin={`0 0 0 15px`}>
-                            {`D-${moment
-                              .duration(
-                                moment(data.endDate, "YYYY-MM-DD").diff(
-                                  moment().format("YYYY-MM-DD")
-                                )
-                              )
-                              .asDays()}`}
-                          </SpanText>
+                        ju={`flex-start`}>
+                        <Text
+                          fontSize={width < 800 ? `14px` : `18px`}
+                          fontWeight={`bold`}
+                          lineHeight={`1.22`}>
+                          {data.day}&nbsp;&nbsp;|&nbsp;&nbsp;
+                          {data.time}
                         </Text>
-                      </Wrapper>
-                      <Wrapper
-                        width={width < 1280 ? `100%` : `38%`}
-                        dr={`row`}
-                        ju={`flex-start`}
-                        al={`flex-start`}>
                         <Wrapper
-                          width={`25%`}
-                          dr={`row`}
-                          ju={`flex-start`}
-                          margin={`0 20px 0 0`}>
-                          <Image
-                            margin={`0 10px 0 0`}
-                            width={`22px`}
-                            height={`22px`}
-                            src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name.png"
-                            alt="clender_icon"
-                          />
-                          <Text fontSize={width < 700 ? `14px` : `18px`}>
-                            {data.teacherName}
-                          </Text>
-                        </Wrapper>
-
-                        <Wrapper
-                          width={`calc(75% - 20px)`}
-                          al={`flex-start`}
-                          fontSize={width < 700 ? `12px` : `16px`}>
-                          <Text color={Theme.grey2_C}>
-                            <SpanText
-                              fontWeight={`bold`}
-                              margin={`0 16px 0 0`}
-                              color={Theme.black_C}>
-                              ZOOM ID
-                            </SpanText>
-
-                            {data.zoomLink}
-                          </Text>
-                          <Text color={Theme.grey2_C}>
-                            <SpanText
-                              fontWeight={`bold`}
-                              margin={`0 14px 0 0`}
-                              color={Theme.black_C}>
-                              Password
-                            </SpanText>
-                            {data.zoomPass}
-                          </Text>
-                        </Wrapper>
+                          display={
+                            width < 1280
+                              ? `flex`
+                              : (idx + 1) % 3 === 0 && `none`
+                          }
+                          width={`1px`}
+                          height={width < 800 ? `20px` : `34px`}
+                          borderLeft={`1px dashed ${Theme.grey_C}`}
+                          margin={
+                            width < 1350
+                              ? width < 800
+                                ? `0 4px`
+                                : `0 10px`
+                              : `0 20px`
+                          }
+                        />
                       </Wrapper>
                     </Wrapper>
-                  );
-                })}
+
+                    <Wrapper
+                      width={
+                        width < 1280 ? (width < 800 ? `100%` : `40%`) : `25%`
+                      }
+                      dr={`row`}
+                      ju={`flex-start`}
+                      margin={width < 800 && `5px 0`}>
+                      <Wrapper width={`auto`} margin={`0 10px 0 0`}>
+                        <Image
+                          width={`22px`}
+                          height={`22px`}
+                          src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
+                          alt="clender_icon"
+                        />
+                      </Wrapper>
+                      <Text fontSize={width < 700 ? `14px` : `18px`}>
+                        {`${moment(data.startDate, "YYYY/MM/DD").format(
+                          "YYYY/MM/DD"
+                        )} ~ ${moment(data.endDate, "YYYY/MM/DD").format(
+                          "YYYY/MM/DD"
+                        )}`}
+                        <SpanText
+                          fontWeight={`bold`}
+                          color={Theme.red_C}
+                          margin={`0 0 0 15px`}>
+                          D-{DDay(data.startDate, data.endDate)}
+                        </SpanText>
+                      </Text>
+                    </Wrapper>
+                    <Wrapper
+                      width={width < 1280 ? `100%` : `38%`}
+                      dr={`row`}
+                      ju={`flex-start`}
+                      al={`flex-start`}>
+                      <Wrapper
+                        width={`25%`}
+                        dr={`row`}
+                        ju={`flex-start`}
+                        margin={`0 20px 0 0`}>
+                        <Image
+                          margin={`0 10px 0 0`}
+                          width={`22px`}
+                          height={`22px`}
+                          src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name.png"
+                          alt="clender_icon"
+                        />
+                        <Text fontSize={width < 700 ? `14px` : `18px`}>
+                          {data.User.username}
+                        </Text>
+                      </Wrapper>
+                    </Wrapper>
+                  </Wrapper>
+                );
+              })
+            )}
 
             <Wrapper al={`flex-start`} margin={`0 0 20px`}>
               <Text
@@ -1075,9 +1087,9 @@ const Student = () => {
             ) : (
               lectureStuLectureList &&
               lectureStuLectureList.slice(0, 1).map((data, idx) => {
-                console.log(data, "data");
                 return (
                   <Wrapper
+                    key={data.id}
                     dr={`row`}
                     padding={width < 800 ? `10px` : `30px`}
                     bgColor={Theme.white_C}
@@ -1121,7 +1133,7 @@ const Student = () => {
                                   fontWeight={`bold`}>
                                   강의명
                                 </Text>
-                                <Text> {data.course}</Text>
+                                <Text margin={`0 10px 0 0`}>{data.course}</Text>
                               </Wrapper>
                               <Wrapper
                                 dr={`row`}
@@ -1155,14 +1167,14 @@ const Student = () => {
                                     )
                                   )} / ${parseInt(data.lecDate) * data.count}`} */}
                                 </Text>
-                                <Text
+                                {/* <Text
                                   lineHeight={`1.19`}
                                   margin={width < 800 ? `5px` : `0 10px`}>
                                   |
                                 </Text>
                                 <Text lineHeight={`1.19`}>
                                   등록상황 : 수료중
-                                </Text>
+                                </Text> */}
                               </Wrapper>
                             </Wrapper>
                             <Wrapper
@@ -1178,12 +1190,17 @@ const Student = () => {
                                 </Text>
                                 <Wrapper width={width < 800 ? `80%` : `75%`}>
                                   <CustomSlide
-                                    defaultValue={100}
+                                    value={
+                                      data.Commutes &&
+                                      (data.Commutes.length * 100) /
+                                        (data.lecDate * data.count)
+                                    }
                                     disabled={true}
                                     draggableTrack={true}
                                     bgColor={Theme.subTheme2_C}
                                   />
                                 </Wrapper>
+
                                 <Text
                                   width={`10%`}
                                   color={Theme.grey2_C}
@@ -1207,24 +1224,9 @@ const Student = () => {
                                 </Text>
                                 <Wrapper width={width < 800 ? `80%` : `75%`}>
                                   <CustomSlide
-                                    value={Math.abs(
-                                      Math.floor(
-                                        (moment
-                                          .duration(
-                                            moment(
-                                              data.endDate,
-                                              "YYYY-MM-DD"
-                                            ).diff(
-                                              moment(
-                                                data.startDate,
-                                                "YYYY-MM-DD"
-                                              )
-                                            )
-                                          )
-                                          .asDays() /
-                                          (data.lecDate * 7)) *
-                                          100
-                                      ) - 100
+                                    value={Math.floor(
+                                      (100 / (data.lecDate * data.count)) *
+                                        data.Commutes && data.Commutes.length
                                     )}
                                     disabled={true}
                                     draggableTrack={true}
@@ -1235,25 +1237,13 @@ const Student = () => {
                                   width={`10%`}
                                   color={Theme.grey2_C}
                                   padding={`0 0 0 10px`}>
-                                  {`(${Math.abs(
-                                    Math.floor(
-                                      (moment
-                                        .duration(
-                                          moment(
-                                            data.endDate,
-                                            "YYYY-MM-DD"
-                                          ).diff(
-                                            moment(data.startDate, "YYYY-MM-DD")
-                                          )
-                                        )
-                                        .asDays() /
-                                        (data.lecDate * 7)) *
-                                        100
-                                    ) - 100
+                                  {`( ${Math.floor(
+                                    (100 / (data.lecDate * data.count)) *
+                                      data.Commutes && data.Commutes.length
                                   )}%)`}
                                 </Text>
                               </Wrapper>
-                              <Wrapper dr={`row`} ju={`flex-start`}>
+                              {/* <Wrapper dr={`row`} ju={`flex-start`}>
                                 <Text width={width < 800 ? `100%` : `15%`}>
                                   <SpanText color={Theme.subTheme6_C}>
                                     ●
@@ -1274,7 +1264,7 @@ const Student = () => {
                                   padding={`0 0 0 10px`}>
                                   (100%)
                                 </Text>
-                              </Wrapper>
+                              </Wrapper> */}
                             </Wrapper>
                           </Wrapper>
                         </Wrapper>
@@ -1288,6 +1278,7 @@ const Student = () => {
                             width < 1100 ? `0` : `1px dashed ${Theme.grey_C}`
                           }
                         />
+
                         <Wrapper
                           width={width < 1100 ? `100%` : `calc(30% - 80px)`}
                           margin={
@@ -1308,6 +1299,31 @@ const Student = () => {
                               }>
                               ZOOM 이동
                             </Text>
+
+                            <Wrapper
+                              width={`auto`}
+                              al={`flex-start`}
+                              fontSize={width < 700 ? `12px` : `14px`}>
+                              <Text color={Theme.grey2_C}>
+                                <SpanText
+                                  fontWeight={`bold`}
+                                  margin={`0 16px 0 0`}
+                                  color={Theme.black_C}>
+                                  ZOOM ID
+                                </SpanText>
+
+                                {data.zoomLink}
+                              </Text>
+                              <Text color={Theme.grey2_C}>
+                                <SpanText
+                                  fontWeight={`bold`}
+                                  margin={`0 14px 0 0`}
+                                  color={Theme.black_C}>
+                                  Password
+                                </SpanText>
+                                {data.zoomPass}
+                              </Text>
+                            </Wrapper>
                           </Wrapper>
                           <Wrapper
                             borderBottom={`1px dashed ${Theme.grey_C}`}
@@ -1317,13 +1333,13 @@ const Student = () => {
                             padding={width < 800 ? `8px 0` : `16px 0`}>
                             <Text
                               cursor={`pointer`}
-                              onClick={() => messageSendModalHandler()}>
+                              onClick={() => messageSendModalHandler(data)}>
                               수료증 신청
                             </Text>
                             <Text> | </Text>
                             <Text
                               cursor={`pointer`}
-                              onClick={() => messageSendModalHandler()}>
+                              onClick={() => messageSendModalHandler(data)}>
                               강의수 늘리기 요청
                             </Text>
                           </Wrapper>
@@ -1335,19 +1351,19 @@ const Student = () => {
                             padding={width < 800 ? `8px 0` : `16px 0`}>
                             <Text
                               cursor={`pointer`}
-                              onClick={() => messageSendModalHandler()}>
+                              onClick={() => messageSendModalHandler(data)}>
                               결석 예고
                             </Text>
                             <Text> | </Text>
                             <Text
                               cursor={`pointer`}
-                              onClick={() => messageSendModalHandler()}>
+                              onClick={() => messageSendModalHandler(data, 1)}>
                               반이동 요청
                             </Text>
                             <Text> | </Text>
                             <Text
                               cursor={`pointer`}
-                              onClick={() => messageSendModalHandler()}>
+                              onClick={() => messageSendModalHandler(data)}>
                               줌 상담신청
                             </Text>
                           </Wrapper>
@@ -1385,6 +1401,7 @@ const Student = () => {
                 ) : (
                   lectureHomeworkStuList &&
                   lectureHomeworkStuList.map((data) => {
+                    console.log(data, "drta");
                     return (
                       <Wrapper
                         key={data.id}
@@ -1483,7 +1500,16 @@ const Student = () => {
                                   ? `${Theme.red_C}`
                                   : ""
                               }
-                              onClick={() => homeworkSubmitHanlder(data)}>
+                              onClick={() => homeworkSubmitHanlder(data)}
+                              disabled={
+                                moment
+                                  .duration(
+                                    moment(data.date, "YYYY-MM-DD").diff(
+                                      moment(new Date(), "YYYY-MM-DD")
+                                    )
+                                  )
+                                  .asDays() < -1
+                              }>
                               {moment
                                 .duration(
                                   moment(data.date, "YYYY-MM-DD").diff(
@@ -1491,7 +1517,7 @@ const Student = () => {
                                   )
                                 )
                                 .asDays() < -1
-                                ? "제출 완료"
+                                ? "제출 기간 만료"
                                 : "제출 하기"}
                             </CustomButton>
                           </Wrapper>
@@ -1634,7 +1660,12 @@ const Student = () => {
             </Wrapper>
 
             <Wrapper margin={`0 0 110px`}>
-              <CustomPage size="small" />
+              <CustomPage
+                size="small"
+                current={currentPage3}
+                total={messageUserLastPage * 10}
+                onChange={(page) => onChangeMessagePage(page)}
+              />
             </Wrapper>
 
             {/* <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
@@ -1824,7 +1855,7 @@ const Student = () => {
                 sendMessageType === 1
                   ? sendMessageFinishHandler(data)
                   : sendMessageType === 2
-                  ? sendMessageLectureFinishHanlder(data, messageTeacherList)
+                  ? sendMessageLectureFinishHanlder(data)
                   : sendMessageType === 3 && sendMessageAdminFinishHandler(data)
               }>
               <Wrapper dr={`row`} ju={`flex-end`}>
@@ -1861,96 +1892,6 @@ const Student = () => {
                 {/* setSendMessageType */}
               </Wrapper>
 
-              {sendMessageType === 1 && (
-                <>
-                  <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
-                    듣고 있는 강의 목록
-                  </Text>
-
-                  <Form.Item
-                    name="receivePerson"
-                    rules={[
-                      {
-                        required: true,
-                        message: "듣고있는 강의 목록을 선택해주세요.",
-                      },
-                    ]}>
-                    <Select
-                      value={lectureId}
-                      style={{ width: `100%` }}
-                      onChange={receiveLectureIdtHandler}>
-                      {lectureStuLectureList &&
-                      lectureStuLectureList.length === 0 ? (
-                        <Option value="참여 중인 강의가 없습니다.">
-                          참여 중인 강의가 없습니다.
-                        </Option>
-                      ) : (
-                        lectureStuLectureList &&
-                        lectureStuLectureList.map((data, idx) => {
-                          return (
-                            <Option key={data.id} value={data.UserId}>
-                              {data.course}
-                            </Option>
-                          );
-                        })
-                      )}
-                    </Select>
-                  </Form.Item>
-                  <Text
-                    fontSize={`14px`}
-                    color={Theme.grey2_C}
-                    margin={`0 0 20px`}>
-                    강사님 개인쪽지함에 쪽지가 전달됩니다.
-                  </Text>
-                </>
-              )}
-
-              {sendMessageType === 2 && (
-                <>
-                  <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
-                    듣고 있는 강의 목록
-                  </Text>
-
-                  <Form.Item
-                    name="receiveLectureId"
-                    rules={[
-                      {
-                        required: true,
-                        message: "듣고있는 강의 목록을 선택해주세요.",
-                      },
-                    ]}>
-                    <Select
-                      value={selectValue}
-                      style={{ width: `100%` }}
-                      onChange={receiveSelectHandler}>
-                      {messageTeacherList && messageTeacherList.length === 0 ? (
-                        <Option value="참여 중인 강의가 없습니다.">
-                          참여 중인 강의가 없습니다.
-                        </Option>
-                      ) : (
-                        messageTeacherList &&
-                        messageTeacherList.map((data, idx) => {
-                          return (
-                            <Option
-                              key={data.id}
-                              value={data.id}
-                              onClick={() => console.log("aaaaaaaaaa")}>
-                              {data.course}
-                            </Option>
-                          );
-                        })
-                      )}
-                    </Select>
-                  </Form.Item>
-                  <Text
-                    fontSize={`14px`}
-                    color={Theme.grey2_C}
-                    margin={`0 0 20px`}>
-                    강사님에 수업 상세페이지 쪽지함에 전달 됩니다.
-                  </Text>
-                </>
-              )}
-
               <Text fontSize={`18px`} fontWeight={`bold`}>
                 제목
               </Text>
@@ -1985,6 +1926,7 @@ const Student = () => {
               </Wrapper>
             </CustomForm>
           </CustomModal>
+
           <CustomModal
             width={`700px`}
             visible={meUpdateModal}
