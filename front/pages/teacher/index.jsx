@@ -25,7 +25,16 @@ import {
   LECTURE_LINK_UPDATE_REQUEST,
 } from "../../reducers/lecture";
 
-import { Calendar, message, Pagination, Modal, Form, Empty } from "antd";
+import {
+  Calendar,
+  message,
+  Pagination,
+  Modal,
+  Form,
+  Empty,
+  Input,
+  Select,
+} from "antd";
 import styled from "styled-components";
 import useWidth from "../../hooks/useWidth";
 import ClientLayout from "../../components/ClientLayout";
@@ -41,6 +50,11 @@ import {
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
 import { NOTICE_LIST_REQUEST } from "../../reducers/notice";
+import {
+  MESSAGE_CREATE_REQUEST,
+  MESSAGE_USER_LIST_REQUEST,
+} from "../../reducers/message";
+import { PARTICIPANT_LIST_REQUEST } from "../../reducers/participant";
 
 const PROFILE_WIDTH = `184`;
 const PROFILE_HEIGHT = `190`;
@@ -94,7 +108,7 @@ const CustomPage = styled(Pagination)`
 `;
 
 const Button = styled.button`
-  width: calc(100% / 5 - 30px);
+  width: calc(100% / 3 - 30px);
   color: ${Theme.black_3C};
   font-size: 18px;
   margin: 0 30px 0 0;
@@ -290,43 +304,15 @@ const Index = () => {
   const { noticeList, noticeLastPage, st_noticeListDone, st_noticeListError } =
     useSelector((state) => state.notice);
 
-  useEffect(() => {
-    if (st_lectureLinkUpdateDone) {
-      zoomLinkModalToggle();
+  const {
+    messageUserList,
+    messageUserLastPage,
+    st_messageUserListDone,
+    st_messageUserListError,
 
-      dispatch({
-        type: LECTURE_TEACHER_LIST_REQUEST,
-        data: {
-          TeacherId: me && me.id,
-        },
-      });
-
-      return message.success("줌 링크를 등록하였습니다.");
-    }
-  }, [st_lectureLinkUpdateDone]);
-
-  useEffect(() => {
-    if (st_lectureLinkUpdateError) {
-      return message.error(st_lectureLinkUpdateError);
-    }
-  }, [st_lectureLinkUpdateError]);
-
-  useEffect(() => {
-    if (st_noticeListDone) {
-    }
-  }, [st_noticeListDone]);
-
-  useEffect(() => {
-    if (st_noticeListError) {
-      return message.error(st_noticeListError);
-    }
-  }, [st_noticeListError]);
-
-  useEffect(() => {
-    if (st_lectureTeacherListError) {
-      return message.error(st_lectureTeacherListError);
-    }
-  }, [st_lectureTeacherListError]);
+    st_messageCreateDone,
+    st_messageCreateError,
+  } = useSelector((state) => state.message);
 
   ////// HOOKS //////
 
@@ -336,15 +322,26 @@ const Index = () => {
 
   const [updateForm] = Form.useForm();
   const [zoomLinkForm] = Form.useForm();
+  const [answerform] = Form.useForm();
+  const [messageSendform] = Form.useForm();
 
   const [currentPage1, setCurrentPage1] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
+  const [currentPage3, setCurrentPage3] = useState(1);
 
   const [zoomLinkToggle, setZoomLinkToggle] = useState(false);
+  const [messageViewToggle, setMessageViewToggle] = useState(false);
+  const [messageAnswerModal, setMessageAnswerModal] = useState(false);
+  const [messageSendModal, setMessageSendModal] = useState(false);
+
+  const [adminSendMessageToggle, setAdminSendMessageToggle] = useState(false);
+  const [sendMessageType, setSendMessageType] = useState(1);
 
   const [lectureId, setLectureId] = useState("");
 
   const imageInput = useRef();
+
+  const [messageDatum, setMessageDatum] = useState();
 
   ////// REDUX //////
   ////// USEEFFECT //////
@@ -443,6 +440,72 @@ const Index = () => {
     }
   }, [meUpdateModal]);
 
+  useEffect(() => {
+    if (st_messageUserListError) {
+      return message.error(st_messageUserListError);
+    }
+  }, [st_messageUserListError]);
+
+  useEffect(() => {
+    dispatch({
+      type: MESSAGE_USER_LIST_REQUEST,
+      data: {
+        page: 1,
+      },
+    });
+  }, []);
+
+  useEffect(() => {
+    if (st_lectureLinkUpdateDone) {
+      zoomLinkModalToggle();
+
+      dispatch({
+        type: LECTURE_TEACHER_LIST_REQUEST,
+        data: {
+          TeacherId: me && me.id,
+        },
+      });
+
+      return message.success("줌 링크를 등록하였습니다.");
+    }
+  }, [st_lectureLinkUpdateDone]);
+
+  useEffect(() => {
+    if (st_lectureLinkUpdateError) {
+      return message.error(st_lectureLinkUpdateError);
+    }
+  }, [st_lectureLinkUpdateError]);
+
+  useEffect(() => {
+    if (st_noticeListDone) {
+    }
+  }, [st_noticeListDone]);
+
+  useEffect(() => {
+    if (st_noticeListError) {
+      return message.error(st_noticeListError);
+    }
+  }, [st_noticeListError]);
+
+  useEffect(() => {
+    if (st_lectureTeacherListError) {
+      return message.error(st_lectureTeacherListError);
+    }
+  }, [st_lectureTeacherListError]);
+
+  useEffect(() => {
+    if (st_messageCreateError) {
+      return message.error(st_messageCreateError);
+    }
+  }, [st_messageCreateError]);
+
+  useEffect(() => {
+    if (st_messageCreateDone) {
+      onReset();
+      return message.success("쪽지를 보냈습니다.");
+    }
+  }, [st_messageCreateDone]);
+
   ////// TOGGLE //////
 
   const meUpdateModalToggle = useCallback(() => {
@@ -461,7 +524,23 @@ const Index = () => {
     [zoomLinkToggle]
   );
 
+  const messageAnswerToggleHanlder = useCallback((e) => {
+    setMessageAnswerModal(true);
+  }, []);
+
+  const messageSendModalHandler = useCallback((data, num) => {
+    setMessageSendModal((prev) => !prev);
+
+    setLectureId(data);
+  }, []);
+
   ////// HANDLER //////
+
+  const onReset = useCallback(() => {
+    answerform.resetFields();
+    setMessageAnswerModal(false);
+    setMessageViewToggle(false);
+  }, []);
 
   const clickImageUpload = useCallback(() => {
     imageInput.current.click();
@@ -530,6 +609,17 @@ const Index = () => {
     });
   }, []);
 
+  const onChangeMessagePage = useCallback((page) => {
+    setCurrentPage3(page);
+
+    dispatch({
+      type: MESSAGE_USER_LIST_REQUEST,
+      data: {
+        page,
+      },
+    });
+  }, []);
+
   const zoomLinkFinish = useCallback(
     (data) => {
       dispatch({
@@ -553,26 +643,60 @@ const Index = () => {
     }
   };
 
-  ////// DATAVIEW //////
+  const messageViewModalHanlder = useCallback((data) => {
+    setMessageViewToggle(true);
 
-  const clockArr = [
-    {
-      name: "월요일",
-      time: "7PM",
+    setMessageDatum(data);
+  }, []);
+
+  // const onFillAnswer = (data) => {
+  //   answerform.setFieldsValue({
+  //     messageTitle: data.title,
+  //     messageContent: data.content,
+  //   });
+  // };
+
+  const answerFinishHandler = useCallback(
+    (data, messageData) => {
+      if (messageData) {
+        dispatch({
+          type: MESSAGE_CREATE_REQUEST,
+          data: {
+            title: data.messageTitle,
+            author: me.userId,
+            senderId: messageData.receiverId,
+            receiverId: messageData.senderId,
+            content: data.messageContent,
+            level: me.level,
+          },
+        });
+      }
     },
-    {
-      name: "화요일",
-      time: "7PM",
+
+    [me]
+  );
+  const sendMessageTypeHandler = useCallback((num) => {
+    setSendMessageType(num);
+  }, []);
+
+  const sendMessageFinishHandler = useCallback(
+    (data) => {
+      dispatch({
+        type: MESSAGE_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          author: me.userId,
+          senderId: me.id,
+          receiverId: lectureId,
+          content: data.content,
+          level: me.level,
+        },
+      });
     },
-    {
-      name: "수요일",
-      time: "7PM",
-    },
-    {
-      name: "금요일",
-      time: "7PM",
-    },
-  ];
+    [me, lectureId]
+  );
+
+  ////// DATAVIEW //////
 
   return (
     <>
@@ -911,14 +1035,102 @@ const Index = () => {
               </Wrapper>
             </Wrapper>
 
+            <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
+              <Text
+                color={Theme.black_2C}
+                fontSize={width < 700 ? `18px` : `22px`}
+                fontWeight={`Bold`}>
+                쪽지함
+              </Text>
+            </Wrapper>
+
+            <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
+              <Wrapper dr={`row`} textAlign={`center`} padding={`20px 0`}>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={`15%`}>
+                  글 번호
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={`calc(100% - 15% - 15% - 25%)`}>
+                  제목
+                </Text>
+
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={`15%`}>
+                  작성자
+                </Text>
+
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={`25%`}>
+                  날짜
+                </Text>
+              </Wrapper>
+
+              {messageUserList && messageUserList.length === 0 ? (
+                <Wrapper margin={`50px 0`}>
+                  <Empty description="조회된 데이터가 없습니다." />
+                </Wrapper>
+              ) : (
+                messageUserList &&
+                messageUserList.map((data2, idx) => {
+                  return (
+                    <Wrapper
+                      key={data2.id}
+                      dr={`row`}
+                      textAlign={`center`}
+                      padding={`25px 0 20px`}
+                      cursor={`pointer`}
+                      bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                      onClick={() => messageViewModalHanlder(data2)}>
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={`15%`}>
+                        {data2.id}
+                      </Text>
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={`calc(100% - 15% - 15% - 25%)`}
+                        textAlign={`left`}>
+                        {data2.title}
+                      </Text>
+
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={`15%`}>
+                        {data2.author}
+                      </Text>
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={`25%`}>
+                        {moment(data2.createdAt, "YYYY/MM/DD").format(
+                          "YYYY/MM/DD"
+                        )}
+                      </Text>
+                    </Wrapper>
+                  );
+                })
+              )}
+            </Wrapper>
+
+            <Wrapper margin={`110px 0`}>
+              <CustomPage
+                current={currentPage3}
+                total={messageUserLastPage * 10}
+                onChange={(page) => onChangeMessagePage(page)}></CustomPage>
+            </Wrapper>
+
             <Wrapper
               dr={`row`}
               margin={`100px 0`}
               ju={width < 700 ? `flex-start` : "center"}>
-              <Button onClick={() => moveLinkHandler(`/textbook`)}>
-                교재 찾기
-              </Button>
-              <Button onClick={() => console.log("클릭!")}>교재 올리기</Button>
               <Button onClick={() => console.log("클릭!")}>복무 규정</Button>
               <Button onClick={() => console.log("클릭!")}>강사 계약서</Button>
               <Button onClick={() => console.log("클릭!")}>강의 산정료</Button>
@@ -1125,6 +1337,287 @@ const Index = () => {
             </CustomForm>
           </CustomModal>
         </WholeWrapper>
+
+        <CustomModal
+          visible={messageViewToggle}
+          width={`1350px`}
+          title={messageAnswerModal ? "쪽지 답변" : "쪽지함"}
+          footer={null}
+          closable={false}>
+          <CustomForm
+            form={answerform}
+            onFinish={(data) => answerFinishHandler(data, messageDatum)}>
+            {messageAnswerModal && (
+              <>
+                <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 40px`}>
+                  <Text
+                    fontSize={`18px`}
+                    fontWeight={`bold`}
+                    margin={`0 35px 0 0`}>
+                    작성자
+                  </Text>
+
+                  <Text>{messageDatum && messageDatum.author}</Text>
+                </Wrapper>
+
+                <Text fontSize={`18px`} fontWeight={`bold`}>
+                  제목
+                </Text>
+                <Wrapper padding={`10px`}>
+                  <Form.Item
+                    name="messageTitle"
+                    rules={[
+                      { required: true, message: "제목을 입력해주세요." },
+                    ]}>
+                    <CusotmInput width={`100%`} />
+                  </Form.Item>
+                </Wrapper>
+
+                <Text fontSize={`18px`} fontWeight={`bold`}>
+                  내용
+                </Text>
+                <Wrapper padding={`10px`}>
+                  <Form.Item
+                    name="messageContent"
+                    rules={[
+                      { required: true, message: "내용을 입력해주세요." },
+                    ]}>
+                    <Input.TextArea style={{ height: `360px` }} />
+                  </Form.Item>
+                </Wrapper>
+
+                <Wrapper dr={`row`}>
+                  <CommonButton
+                    margin={`0 5px 0 0`}
+                    kindOf={`grey`}
+                    color={Theme.darkGrey_C}
+                    radius={`5px`}
+                    onClick={() => onReset()}>
+                    돌아가기
+                  </CommonButton>
+                  <CommonButton
+                    margin={`0 0 0 5px`}
+                    radius={`5px`}
+                    htmlType="submit">
+                    작성하기
+                  </CommonButton>
+                </Wrapper>
+              </>
+            )}
+          </CustomForm>
+
+          {!messageAnswerModal && (
+            <>
+              <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
+                <Text margin={`0 54px 0 0`}>
+                  {messageDatum && messageDatum.author}
+                </Text>
+                <Text>{`날짜 ${
+                  messageDatum &&
+                  moment(messageDatum.createdAt, "YYYY/MM/DD").format(
+                    "YYYY/MM/DD"
+                  )
+                }`}</Text>
+              </Wrapper>
+
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                제목
+              </Text>
+
+              <Wrapper padding={`10px`} al={`flex-start`}>
+                <Text>{messageDatum && messageDatum.title}</Text>
+              </Wrapper>
+
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                내용
+              </Text>
+              <Wrapper padding={`10px`} al={`flex-start`}>
+                <Text minHeight={`360px`}>
+                  {messageDatum && messageDatum.content}
+                </Text>
+              </Wrapper>
+
+              <Wrapper dr={`row`}>
+                <CommonButton
+                  margin={`0 5px 0 0`}
+                  kindOf={`grey`}
+                  color={Theme.darkGrey_C}
+                  radius={`5px`}
+                  onClick={() => onReset()}>
+                  돌아가기
+                </CommonButton>
+                <CommonButton
+                  onClick={(e) => messageAnswerToggleHanlder(messageDatum)}
+                  margin={`0 0 0 5px`}
+                  radius={`5px`}>
+                  답변하기
+                </CommonButton>
+              </Wrapper>
+            </>
+          )}
+        </CustomModal>
+
+        <CustomModal
+          visible={messageSendModal}
+          width={`1350px`}
+          title={
+            sendMessageType === 1
+              ? "학생에게 쪽지 보내기"
+              : sendMessageType === 3 && "관리자에게 쪽지 보내기"
+          }
+          footer={null}
+          closable={false}>
+          <CustomForm
+            form={messageSendform}
+            onFinish={(data) =>
+              sendMessageType === 1
+                ? sendMessageFinishHandler(data)
+                : sendMessageType === 3 && sendMessageAdminFinishHandler(data)
+            }>
+            <Wrapper dr={`row`} ju={`flex-end`}>
+              <CommonButton
+                margin={`0 0 0 5px`}
+                radius={`5px`}
+                width={`100px`}
+                height={`32px`}
+                size="small"
+                onClick={() => sendMessageTypeHandler(1)}>
+                {"학생"}
+              </CommonButton>
+
+              <CommonButton
+                margin={`0 0 0 5px`}
+                radius={`5px`}
+                width={`100px`}
+                height={`32px`}
+                size="small"
+                onClick={() => sendMessageTypeHandler(3)}>
+                {"관리자"}
+              </CommonButton>
+            </Wrapper>
+            {/* {sendMessageType === 1 && (
+              <>
+                <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
+                  듣고 있는 강의 목록
+                </Text>
+
+                <Form.Item
+                  name="receivePerson"
+                  rules={[
+                    {
+                      required: true,
+                      message: "듣고있는 강의 목록을 선택해주세요.",
+                    },
+                  ]}>
+                  <Select
+                    value={lectureId}
+                    style={{ width: `100%` }}
+                    onChange={receiveLectureIdtHandler}>
+                    {lectureStuLectureList &&
+                    lectureStuLectureList.length === 0 ? (
+                      <Option value="참여 중인 강의가 없습니다.">
+                        참여 중인 강의가 없습니다.
+                      </Option>
+                    ) : (
+                      lectureStuLectureList &&
+                      lectureStuLectureList.map((data, idx) => {
+                        return (
+                          <Option key={data.id} value={data.UserId}>
+                            {data.course}
+                          </Option>
+                        );
+                      })
+                    )}
+                  </Select>
+                </Form.Item>
+                <Text
+                  fontSize={`14px`}
+                  color={Theme.grey2_C}
+                  margin={`0 0 20px`}>
+                  강사님 개인쪽지함에 쪽지가 전달됩니다.
+                </Text>
+              </>
+            )}
+
+            {sendMessageType === 2 && (
+              <>
+                <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
+                  듣고 있는 강의 목록
+                </Text>
+
+                <Form.Item
+                  name="receiveLectureId"
+                  rules={[
+                    {
+                      required: true,
+                      message: "듣고있는 강의 목록을 선택해주세요.",
+                    },
+                  ]}>
+                  <Select
+                    value={selectValue}
+                    style={{ width: `100%` }}
+                    onChange={receiveSelectHandler}>
+                    {messageTeacherList && messageTeacherList.length === 0 ? (
+                      <Option value="참여 중인 강의가 없습니다.">
+                        참여 중인 강의가 없습니다.
+                      </Option>
+                    ) : (
+                      messageTeacherList &&
+                      messageTeacherList.map((data, idx) => {
+                        return (
+                          <Option
+                            key={data.id}
+                            value={data.id}
+                            onClick={() => console.log("aaaaaaaaaa")}>
+                            {data.course}
+                          </Option>
+                        );
+                      })
+                    )}
+                  </Select>
+                </Form.Item>
+                <Text
+                  fontSize={`14px`}
+                  color={Theme.grey2_C}
+                  margin={`0 0 20px`}>
+                  강사님에 수업 상세페이지 쪽지함에 전달 됩니다.
+                </Text>
+              </>
+            )} */}
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              제목
+            </Text>
+            <Form.Item
+              name="title"
+              rules={[{ required: true, message: "제목을 입력해주세요." }]}>
+              <Input />
+            </Form.Item>
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              내용
+            </Text>
+            <Form.Item
+              name="content"
+              rules={[{ required: true, message: "내용을 입력해주세요." }]}>
+              <Input.TextArea style={{ height: `360px` }} />
+            </Form.Item>
+            <Wrapper dr={`row`}>
+              <CommonButton
+                margin={`0 5px 0 0`}
+                kindOf={`grey`}
+                color={Theme.darkGrey_C}
+                radius={`5px`}
+                onClick={() => onReset()}>
+                돌아가기
+              </CommonButton>
+              <CommonButton
+                margin={`0 0 0 5px`}
+                radius={`5px`}
+                htmlType="submit">
+                쪽지 보내기
+              </CommonButton>
+            </Wrapper>
+          </CustomForm>
+        </CustomModal>
       </ClientLayout>
     </>
   );

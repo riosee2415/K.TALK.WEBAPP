@@ -519,14 +519,6 @@ const Student = () => {
     }
   }, [st_messageUserListError]);
 
-  useEffect(() => {
-    let startOfWeek = moment().startOf("day").format("YYYY-MM-DD");
-    let endOfWeek = moment().endOf("isoweek").format("YYYY-MM-DD");
-
-    console.log(startOfWeek);
-    console.log(endOfWeek);
-  }, []);
-
   const onReset = useCallback(() => {
     form.resetFields();
 
@@ -654,7 +646,7 @@ const Student = () => {
           title: data.title,
           author: me.userId,
           senderId: me.id,
-          receiverId: lectureId.UserId,
+          receiverId: lectureId,
           content: data.content,
           level: me.level,
         },
@@ -664,8 +656,16 @@ const Student = () => {
   );
 
   const sendMessageLectureFinishHanlder = useCallback(
-    (data) => {
-      console.log(lectureId, "lectureId");
+    (data, messageDatum) => {
+      let save = messageDatum.find((data2, idx) => {
+        if (data2.id === data.receiveLectureId) {
+          return true;
+        }
+      });
+
+      if (!save) {
+        return message.error("잠시후 다시 실행해주세요.");
+      }
 
       dispatch({
         type: MESSAGE_CREATE_REQUEST,
@@ -673,13 +673,14 @@ const Student = () => {
           title: data.title,
           author: me.userId,
           senderId: me.id,
-          receiverId: lectureId.UserId,
-          receiveLectureId: lectureId.id,
+          receiverId: save.UserId,
+          receiveLectureId: data.receiveLectureId,
           content: data.content,
           level: me.level,
         },
       });
     },
+
     [me, lectureId]
   );
 
@@ -704,7 +705,7 @@ const Student = () => {
           type: MESSAGE_CREATE_REQUEST,
           data: {
             title: data.messageTitle,
-            author: me.username,
+            author: me.userId,
             senderId: messageData.receiverId,
             receiverId: messageData.senderId,
             receiveLectureId: messageData.receiveLectureId,
@@ -717,7 +718,7 @@ const Student = () => {
           type: MESSAGE_CREATE_REQUEST,
           data: {
             title: data.messageTitle,
-            author: me.username,
+            author: me.userId,
             senderId: messageData.receiverId,
             receiverId: messageData.senderId,
             content: data.messageContent,
@@ -1409,7 +1410,6 @@ const Student = () => {
                 ) : (
                   lectureHomeworkStuList &&
                   lectureHomeworkStuList.map((data) => {
-                    console.log(data, "drta");
                     return (
                       <Wrapper
                         key={data.id}
@@ -1839,97 +1839,6 @@ const Student = () => {
                   radius={`5px`}
                   htmlType="submit">
                   답변하기
-                </CommonButton>
-              </Wrapper>
-            </CustomForm>
-          </CustomModal>
-
-          <CustomModal
-            visible={messageSendModal}
-            width={`1350px`}
-            title={
-              sendMessageType === 1
-                ? "강사에게 쪽지 보내기"
-                : sendMessageType === 2
-                ? "수업에 대해 쪽지 보내기"
-                : sendMessageType === 3 && "관리자에게 쪽지 보내기"
-            }
-            footer={null}
-            closable={false}>
-            <CustomForm
-              ref={formRef}
-              form={form}
-              onFinish={(data) =>
-                sendMessageType === 1
-                  ? sendMessageFinishHandler(data)
-                  : sendMessageType === 2
-                  ? sendMessageLectureFinishHanlder(data)
-                  : sendMessageType === 3 && sendMessageAdminFinishHandler(data)
-              }>
-              <Wrapper dr={`row`} ju={`flex-end`}>
-                <CommonButton
-                  margin={`0 0 0 5px`}
-                  radius={`5px`}
-                  width={`100px`}
-                  height={`32px`}
-                  size="small"
-                  onClick={() => sendMessageTypeHandler(1)}>
-                  {"강사"}
-                </CommonButton>
-
-                <CommonButton
-                  margin={`0 0 0 5px`}
-                  radius={`5px`}
-                  width={`100px`}
-                  height={`32px`}
-                  size="small"
-                  onClick={() => sendMessageTypeHandler(2)}>
-                  {"수업"}
-                </CommonButton>
-
-                <CommonButton
-                  margin={`0 0 0 5px`}
-                  radius={`5px`}
-                  width={`100px`}
-                  height={`32px`}
-                  size="small"
-                  onClick={() => sendMessageTypeHandler(3)}>
-                  {"관리자"}
-                </CommonButton>
-
-                {/* setSendMessageType */}
-              </Wrapper>
-
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                제목
-              </Text>
-              <Form.Item
-                name="title"
-                rules={[{ required: true, message: "제목을 입력해주세요." }]}>
-                <Input />
-              </Form.Item>
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                내용
-              </Text>
-              <Form.Item
-                name="content"
-                rules={[{ required: true, message: "내용을 입력해주세요." }]}>
-                <Input.TextArea style={{ height: `360px` }} />
-              </Form.Item>
-              <Wrapper dr={`row`}>
-                <CommonButton
-                  margin={`0 5px 0 0`}
-                  kindOf={`grey`}
-                  color={Theme.darkGrey_C}
-                  radius={`5px`}
-                  onClick={() => onReset()}>
-                  돌아가기
-                </CommonButton>
-                <CommonButton
-                  margin={`0 0 0 5px`}
-                  radius={`5px`}
-                  htmlType="submit">
-                  쪽지 보내기
                 </CommonButton>
               </Wrapper>
             </CustomForm>

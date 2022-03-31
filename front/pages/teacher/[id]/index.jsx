@@ -443,6 +443,7 @@ const Index = () => {
   const [isCalendar, setIsCalendar] = useState(false);
 
   const [messageSendModalToggle, setMessageSendModalToggle] = useState(false);
+  const [adminSendMessageToggle, setAdminSendMessageToggle] = useState(false);
   const [noticeModalToggle, setNoticeModalToggle] = useState(false);
   const [homeWorkModalToggle, setHomeWorkModalToggle] = useState(false);
   const [diaryModalToggle, setDiaryModalToggle] = useState(false);
@@ -455,8 +456,6 @@ const Index = () => {
   const [memoId, setMemoId] = useState("");
 
   const [memoDatum, setMemoDatum] = useState("");
-
-  const [adminSendMessageToggle, setAdminSendMessageToggle] = useState(false);
 
   const [studentToggle, setStudentToggle] = useState(false);
   const [commuteToggle, setCommuteToggle] = useState(false);
@@ -859,7 +858,7 @@ const Index = () => {
         type: MESSAGE_MANY_CREATE_REQUEST,
         data: {
           title: value.title1,
-          author: me.username,
+          author: me.userId,
           content: value.content1,
           receiverId: checkedList.map((data) => data.UserId),
         },
@@ -878,7 +877,7 @@ const Index = () => {
           data: {
             title: value.title2,
             content: noticeContent,
-            author: me.username,
+            author: me.userId,
             LectureId: router.query.id,
           },
         });
@@ -996,7 +995,7 @@ const Index = () => {
       dispatch({
         type: LECTURE_DIARY_CREATE_REQUEST,
         data: {
-          author: me.username,
+          author: me.userId,
           process: value.process,
           lectureMemo: value.lectureMemo,
           LectureId: router.query.id,
@@ -1015,6 +1014,7 @@ const Index = () => {
     diaryform.resetFields();
     homeworkSubmitform.resetFields();
     memoform.resetFields();
+    memoWriteform.resetFields();
 
     inputDate.setValue("");
     inputMemoSearch.setValue("");
@@ -1102,7 +1102,7 @@ const Index = () => {
           type: MESSAGE_CREATE_REQUEST,
           data: {
             title: data.messageTitle,
-            author: me.username,
+            author: me.userId,
             senderId: messageData.receiverId,
             receiverId: messageData.senderId,
             receiveLectureId: messageData.receiveLectureId,
@@ -1115,7 +1115,7 @@ const Index = () => {
           type: MESSAGE_CREATE_REQUEST,
           data: {
             title: data.messageTitle,
-            author: me.username,
+            author: me.userId,
             senderId: messageData.receiverId,
             receiverId: messageData.senderId,
             content: data.messageContent,
@@ -1134,7 +1134,7 @@ const Index = () => {
         type: MESSAGE_FOR_ADMIN_CREATE_REQUEST,
         data: {
           title: data.title1,
-          author: me.username,
+          author: me.userId,
           content: data.content1,
         },
       });
@@ -2454,23 +2454,18 @@ const Index = () => {
             <Text fontSize={`18px`} fontWeight={`bold`}>
               제목
             </Text>
-            <Wrapper padding={`10px`}>
-              <Form.Item
-                name="messageTitle"
-                rules={[{ required: true, message: "제목을 입력해주세요." }]}>
-                <CusotmInput width={`100%`} />
-              </Form.Item>
+
+            <Wrapper padding={`10px`} al={`flex-start`}>
+              <Text>{messageDatum && messageDatum.title}</Text>
             </Wrapper>
 
             <Text fontSize={`18px`} fontWeight={`bold`}>
               내용
             </Text>
-            <Wrapper padding={`10px`}>
-              <Form.Item
-                name="messageContent"
-                rules={[{ required: true, message: "내용을 입력해주세요." }]}>
-                <Input.TextArea style={{ height: `360px` }} />
-              </Form.Item>
+            <Wrapper padding={`10px`} al={`flex-start`}>
+              <Text minHeight={`360px`}>
+                {messageDatum && messageDatum.content}
+              </Text>
             </Wrapper>
 
             <Wrapper dr={`row`}>
@@ -2579,7 +2574,6 @@ const Index = () => {
                 radius={`5px`}
                 onClick={() => onReset()}>
                 돌아가기
-                {/* cancelNoteSendHanlder() */}
               </CommonButton>
               <CommonButton
                 margin={`0 0 0 5px`}

@@ -444,14 +444,14 @@ const LectureAll = () => {
 
   const sendMessageAdminFinishHandler = useCallback(
     (data) => {
-      // dispatch({
-      //   type: MESSAGE_FOR_ADMIN_CREATE_REQUEST,
-      //   data: {
-      //     title: data.title,
-      //     author: me.userId,
-      //     content: data.content,
-      //   },
-      // });
+      dispatch({
+        type: MESSAGE_FOR_ADMIN_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          author: me.userId,
+          content: data.content,
+        },
+      });
     },
     [me]
   );
