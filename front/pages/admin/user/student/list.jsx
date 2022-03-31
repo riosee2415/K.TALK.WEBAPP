@@ -221,7 +221,6 @@ const UserList = ({}) => {
 
   const onSubmit = useCallback(
     (data) => {
-      console.log(data);
       if (!data.lecture || data.lecture === "--- 선택 ---") {
         return message.error(`현재 강의를 선택해주세요.`);
       }
