@@ -651,7 +651,9 @@ router.get("/memo/student/list", async (req, res, next) => {
             DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
             A.LectureId,
             A.UserId,
-            B.username
+            B.username,
+            B.stuCountry,
+            B.birth
       FROM	lectureStuMemos       A
      INNER
       JOIN  users                 B
@@ -667,7 +669,9 @@ router.get("/memo/student/list", async (req, res, next) => {
             DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
             A.LectureId,
             A.UserId,
-            B.username
+            B.username,
+            B.stuCountry,
+            B.birth
       FROM	lectureStuMemos       A
      INNER
       JOIN  users                 B
@@ -966,10 +970,10 @@ router.post("/diary/list", isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.post("/diary/admin/list", async (req, res, next) => {
-  const { TeacherId } = req.body;
+router.post("/diary/admin/list", isAdminCheck, async (req, res, next) => {
+  const { LectureId } = req.body;
 
-  const _TeacherId = TeacherId || null;
+  const _LectureId = LectureId || null;
 
   try {
     const selectQuery = `
@@ -999,9 +1003,9 @@ router.post("/diary/admin/list", async (req, res, next) => {
         ON	A.LectureId = B.id 
      INNER
       JOIN	users 					C
-        ON	B.TeacherId = C.id 
+        ON	B.UserId = C.id 
      WHERE  1 = 1
-       ${_TeacherId ? `AND B.UserId = ${_TeacherId}` : ``}
+       ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
      ORDER  BY createdAt DESC
     `;
 
