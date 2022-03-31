@@ -13,6 +13,7 @@ export const initailState = {
   meUpdateModal: false,
   postCodeModal: false,
   classChangeModal: false,
+  classPartModal: false,
   //
   st_loginLoading: false,
   st_loginDone: false,
@@ -156,6 +157,9 @@ export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
 
 export const CHANGE_CLASS_OPEN_REQUEST = "CHANGE_CLASS_OPEN_REQUEST";
 export const CHANGE_CLASS_CLOSE_REQUEST = "CHANGE_CLASS_CLOSE_REQUEST";
+
+export const CLASS_PART_OPEN_REQUEST = "CLASS_PART_OPEN_REQUEST";
+export const CLASS_PART_CLOSE_REQUEST = "CLASS_PART_CLOSE_REQUEST";
 
 export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
 
@@ -534,6 +538,14 @@ const reducer = (state = initailState, action) =>
 
       case CHANGE_CLASS_CLOSE_REQUEST:
         draft.classChangeModal = false;
+        break;
+
+      case CHANGE_CLASS_OPEN_REQUEST:
+        draft.classPartModal = true;
+        break;
+
+      case CHANGE_CLASS_CLOSE_REQUEST:
+        draft.classPartModal = false;
         break;
 
       case UPDATE_MODAL_OPEN_REQUEST:

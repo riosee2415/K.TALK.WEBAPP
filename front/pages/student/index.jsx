@@ -519,6 +519,14 @@ const Student = () => {
     }
   }, [st_messageUserListError]);
 
+  useEffect(() => {
+    let startOfWeek = moment().startOf("day").format("YYYY-MM-DD");
+    let endOfWeek = moment().endOf("isoweek").format("YYYY-MM-DD");
+
+    console.log(startOfWeek);
+    console.log(endOfWeek);
+  }, []);
+
   const onReset = useCallback(() => {
     form.resetFields();
 

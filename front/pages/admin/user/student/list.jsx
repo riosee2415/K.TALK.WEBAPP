@@ -9,6 +9,8 @@ import {
   CHANGE_CLASS_OPEN_REQUEST,
   USER_ALL_LIST_REQUEST,
   USER_CLASS_CHANGE_REQUEST,
+  CLASS_PART_CLOSE_REQUEST,
+  CLASS_PART_OPEN_REQUEST,
 } from "../../../../reducers/user";
 import { Table, Button, message, Modal, Select, Input, Form } from "antd";
 import { useRouter, withRouter } from "next/router";
@@ -54,6 +56,7 @@ const UserList = ({}) => {
   const {
     allUsers,
     classChangeModal,
+    classPartModal,
     //
     st_userListError,
     //
@@ -64,6 +67,8 @@ const UserList = ({}) => {
   const [updateData, setUpdateData] = useState(null);
   const [lectureList, setLectureList] = useState(null);
   const [selectedList, setSelectedList] = useState([]);
+
+  const [parData, setParData] = useState(null);
 
   const [form] = Form.useForm();
 
@@ -136,6 +141,20 @@ const UserList = ({}) => {
     setUpdateData(null);
     form.resetFields();
   }, [classChangeModal, form]);
+
+  const classPartModalOpen = useCallback((data) => {
+    dispatch({
+      type: CLASS_PART_OPEN_REQUEST,
+    });
+
+    setParData(data);
+  }, []);
+
+  const classPartModalClose = useCallback((data) => {
+    dispatch({
+      type: CLASS_PART_CLOSE_REQUEST,
+    });
+  }, []);
 
   ////// HANDLER //////
 
@@ -238,9 +257,24 @@ const UserList = ({}) => {
             data.level === 5
               ? message.error("개발사는 권한을 수정할 수 없습니다.")
               : classChangeModalOpen(data)
-          }
-        >
+          }>
           반 옮기기
+        </Button>
+      ),
+    },
+
+    {
+      title: "수업참여",
+      render: (data) => (
+        <Button
+          size="small"
+          type="primary"
+          onClick={() =>
+            data.level === 5
+              ? message.error("개발사는 권한을 수정할 수 없습니다.")
+              : classPartModalOpen(data)
+          }>
+          수업참여
         </Button>
       ),
     },
@@ -278,8 +312,7 @@ const UserList = ({}) => {
         width={`400px`}
         title={`사용자 레벨 수정`}
         onCancel={classChangeModalClose}
-        onOk={onModalOk}
-      >
+        onOk={onModalOk}>
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form form={form} style={{ width: `100%` }} onFinish={onSubmit}>
             <Form.Item label={`학생`}>
@@ -291,8 +324,58 @@ const UserList = ({}) => {
                 width={`100%`}
                 height={`32px`}
                 showSearch
+                placeholder="Select a Lecture">
+                <ComboOption selected>--- 선택 ---</ComboOption>
+                {updateData &&
+                  updateData.Participants.map((data) => {
+                    return (
+                      <ComboOption value={data.LectureId}>
+                        {data.Lecture.course}
+                      </ComboOption>
+                    );
+                  })}
+              </Combo>
+            </Form.Item>
+
+            <Form.Item label={`바뀔 강의`} name={`changelecture`}>
+              <Combo
+                width={`100%`}
+                height={`32px`}
+                showSearch
                 placeholder="Select a Lecture"
+                // name={`changelecture`}
               >
+                <ComboOption selected>--- 선택 ---</ComboOption>
+                {allLectures &&
+                  allLectures.map((data) => {
+                    return (
+                      <ComboOption value={data.id}>{data.course}</ComboOption>
+                    );
+                  })}
+              </Combo>
+            </Form.Item>
+          </Form>
+        </Wrapper>
+      </Modal>
+
+      <Modal
+        visible={classPartModal}
+        width={`400px`}
+        title={`사용자 레벨 수정`}
+        onCancel={classChangeModalClose}
+        onOk={onModalOk}>
+        <Wrapper padding={`10px`} al={`flex-start`}>
+          <Form form={form} style={{ width: `100%` }} onFinish={onSubmit}>
+            <Form.Item label={`학생`}>
+              <Input disabled value={updateData && updateData.username} />
+            </Form.Item>
+
+            <Form.Item label={`현재 강의`} name={`lecture`}>
+              <Combo
+                width={`100%`}
+                height={`32px`}
+                showSearch
+                placeholder="Select a Lecture">
                 <ComboOption selected>--- 선택 ---</ComboOption>
                 {updateData &&
                   updateData.Participants.map((data) => {
