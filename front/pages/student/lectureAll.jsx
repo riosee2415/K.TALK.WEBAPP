@@ -849,10 +849,11 @@ const LectureAll = () => {
                                 </Text>
                                 <Wrapper width={width < 800 ? `80%` : `75%`}>
                                   <CustomSlide
-                                    value={Math.floor(
-                                      (100 / (data.lecDate * data.count)) *
-                                        data.Commutes && data.Commutes.length
-                                    )}
+                                    value={
+                                      data.Commutes &&
+                                      (data.Commutes.length * 100) /
+                                        (data.lecDate * data.count)
+                                    }
                                     disabled={true}
                                     draggableTrack={true}
                                     bgColor={Theme.basicTheme_C}
@@ -862,10 +863,11 @@ const LectureAll = () => {
                                   width={`10%`}
                                   color={Theme.grey2_C}
                                   padding={`0 0 0 10px`}>
-                                  {`( ${Math.floor(
-                                    (100 / (data.lecDate * data.count)) *
-                                      data.Commutes && data.Commutes.length
-                                  )}%)`}
+                                  {`( ${
+                                    data.Commutes &&
+                                    (data.Commutes.length * 100) /
+                                      (data.lecDate * data.count)
+                                  }%)`}
                                 </Text>
                               </Wrapper>
                               {/* <Wrapper dr={`row`} ju={`flex-start`}>

@@ -766,7 +766,6 @@ const Index = () => {
               ) : (
                 lectureTeacherList &&
                 lectureTeacherList.map((data, idx) => {
-                  console.log(data, "응 데이터!");
                   return (
                     <Wrapper
                       dr={`row`}

@@ -540,11 +540,11 @@ const reducer = (state = initailState, action) =>
         draft.classChangeModal = false;
         break;
 
-      case CHANGE_CLASS_OPEN_REQUEST:
+      case CLASS_PART_OPEN_REQUEST:
         draft.classPartModal = true;
         break;
 
-      case CHANGE_CLASS_CLOSE_REQUEST:
+      case CLASS_PART_CLOSE_REQUEST:
         draft.classPartModal = false;
         break;
 
