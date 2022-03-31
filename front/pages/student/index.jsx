@@ -776,8 +776,6 @@ const Student = () => {
 
   const receiveLectureIdtHandler = useCallback((value) => {
     setLectureId(value);
-
-    console.log(value);
   }, []);
 
   const noticeChangePage = useCallback((page) => {
@@ -859,6 +857,86 @@ const Student = () => {
         .asDays();
     }
   }, []);
+
+  const stepHanlder = useCallback((startDate, endDate, count, lecDate, day) => {
+    let dir = 0;
+
+    const save = Math.abs(
+      moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays() -
+        1
+    );
+
+    let check = parseInt(
+      moment
+        .duration(moment(endDate).diff(moment(startDate, "YYYY-MM-DD")))
+        .asDays() + 1
+    );
+
+    if (save >= check) {
+      dir = check;
+    } else {
+      dir = save;
+    }
+
+    const arr = ["일", "월", "화", "수", "목", "금", "토"];
+    let add = 0;
+
+    for (let i = 0; i < dir; i++) {
+      let saveDay = moment(startDate)
+        .add(i + 1, "days")
+        .day();
+
+      const saveResult = day.includes(arr[saveDay]);
+
+      if (saveResult) {
+        add += 1;
+      }
+    }
+
+    return parseInt((add / (count * lecDate)) * 100);
+  }, []);
+
+  const stepHanlder2 = useCallback(
+    (startDate, endDate, count, lecDate, day) => {
+      let dir = 0;
+
+      const save = Math.abs(
+        moment
+          .duration(moment().diff(moment(startDate, "YYYY-MM-DD")))
+          .asDays() - 1
+      );
+
+      let check = parseInt(
+        moment
+          .duration(moment(endDate).diff(moment(startDate, "YYYY-MM-DD")))
+          .asDays() + 1
+      );
+
+      if (save >= check) {
+        dir = check;
+      } else {
+        dir = save;
+      }
+
+      const arr = ["일", "월", "화", "수", "목", "금", "토"];
+      let add = 0;
+
+      for (let i = 0; i < dir; i++) {
+        let saveDay = moment(startDate)
+          .add(i + 1, "days")
+          .day();
+
+        const saveResult = day.includes(arr[saveDay]);
+
+        if (saveResult) {
+          add += 1;
+        }
+      }
+
+      return add;
+    },
+    []
+  );
 
   ////// DATAVIEW //////
 
@@ -1093,6 +1171,7 @@ const Student = () => {
             ) : (
               lectureStuLectureList &&
               lectureStuLectureList.slice(0, 1).map((data, idx) => {
+                console.log(data, "data");
                 return (
                   <Wrapper
                     key={data.id}
@@ -1149,29 +1228,24 @@ const Student = () => {
                                 <Text lineHeight={`1.19`}>
                                   {data.User.username}
                                 </Text>
+
+                                <Text lineHeight={`1.19`}>
+                                  {"교재 다운로드"}
+                                </Text>
+
                                 <Text
                                   lineHeight={`1.19`}
                                   margin={width < 800 ? `5px` : `0 10px`}>
                                   |
                                 </Text>
                                 <Text lineHeight={`1.19`}>
-                                  {`강의 수 : ${data.lecDate * data.count}`}
-
-                                  {/* {`강의 수 : ${Math.abs(
-                                    Math.floor(
-                                      moment
-                                        .duration(
-                                          moment(
-                                            data.endDate,
-                                            "YYYY-MM-DD"
-                                          ).diff(
-                                            moment(data.startDate, "YYYY-MM-DD")
-                                          )
-                                        )
-                                        .asDays() -
-                                        parseInt(data.lecDate) * data.count
-                                    )
-                                  )} / ${parseInt(data.lecDate) * data.count}`} */}
+                                  {`강의 수 : ${stepHanlder2(
+                                    data.startDate,
+                                    data.endDate,
+                                    data.count,
+                                    data.lecDate,
+                                    data.day
+                                  )} / ${data.lecDate * data.count}`}
                                 </Text>
                                 {/* <Text
                                   lineHeight={`1.19`}
@@ -1211,11 +1285,11 @@ const Student = () => {
                                   width={`10%`}
                                   color={Theme.grey2_C}
                                   padding={`0 0 0 10px`}>
-                                  {`(${
+                                  {`(${parseInt(
                                     data.Commutes &&
-                                    (data.Commutes.length * 100) /
-                                      (data.lecDate * data.count)
-                                  }%)`}
+                                      (data.Commutes.length * 100) /
+                                        (data.lecDate * data.count)
+                                  )}%)`}
                                 </Text>
                               </Wrapper>
                               <Wrapper
@@ -1230,9 +1304,12 @@ const Student = () => {
                                 </Text>
                                 <Wrapper width={width < 800 ? `80%` : `75%`}>
                                   <CustomSlide
-                                    value={Math.floor(
-                                      (100 / (data.lecDate * data.count)) *
-                                        data.Commutes && data.Commutes.length
+                                    value={stepHanlder(
+                                      data.startDate,
+                                      data.endDate,
+                                      data.count,
+                                      data.lecDate,
+                                      data.day
                                     )}
                                     disabled={true}
                                     draggableTrack={true}
@@ -1243,9 +1320,12 @@ const Student = () => {
                                   width={`10%`}
                                   color={Theme.grey2_C}
                                   padding={`0 0 0 10px`}>
-                                  {`( ${Math.floor(
-                                    (100 / (data.lecDate * data.count)) *
-                                      data.Commutes && data.Commutes.length
+                                  {`( ${stepHanlder(
+                                    data.startDate,
+                                    data.endDate,
+                                    data.count,
+                                    data.lecDate,
+                                    data.day
                                   )}%)`}
                                 </Text>
                               </Wrapper>
@@ -1401,7 +1481,7 @@ const Student = () => {
             <Wrapper margin={`0 0 60px`}>
               {lectureHomeworkStuList &&
                 (lectureHomeworkStuList.length === 0 ? (
-                  <Wrapper>
+                  <Wrapper margin={`50px 0`}>
                     <Empty description="숙제가 없습니다." />
                   </Wrapper>
                 ) : (

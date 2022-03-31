@@ -43,6 +43,7 @@ import {
   WholeWrapper,
   Wrapper,
   TextInput,
+  ATag,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
 import {
@@ -55,6 +56,7 @@ import {
 import { NOTICE_LIST_REQUEST } from "../../reducers/notice";
 import { LECTURE_STU_LECTURE_LIST_REQUEST } from "../../reducers/lecture";
 import { FileDoneOutlined } from "@ant-design/icons";
+import { saveAs } from "file-saver";
 
 const PROFILE_WIDTH = `184`;
 const PROFILE_HEIGHT = `190`;
@@ -501,6 +503,86 @@ const LectureAll = () => {
     }
   }, []);
 
+  const stepHanlder = useCallback((startDate, endDate, count, lecDate, day) => {
+    let dir = 0;
+
+    const save = Math.abs(
+      moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays() -
+        1
+    );
+
+    let check = parseInt(
+      moment
+        .duration(moment(endDate).diff(moment(startDate, "YYYY-MM-DD")))
+        .asDays() + 1
+    );
+
+    if (save >= check) {
+      dir = check;
+    } else {
+      dir = save;
+    }
+
+    const arr = ["일", "월", "화", "수", "목", "금", "토"];
+    let add = 0;
+
+    for (let i = 0; i < dir; i++) {
+      let saveDay = moment(startDate)
+        .add(i + 1, "days")
+        .day();
+
+      const saveResult = day.includes(arr[saveDay]);
+
+      if (saveResult) {
+        add += 1;
+      }
+    }
+
+    return parseInt((add / (count * lecDate)) * 100);
+  }, []);
+
+  const stepHanlder2 = useCallback(
+    (startDate, endDate, count, lecDate, day) => {
+      let dir = 0;
+
+      const save = Math.abs(
+        moment
+          .duration(moment().diff(moment(startDate, "YYYY-MM-DD")))
+          .asDays() - 1
+      );
+
+      let check = parseInt(
+        moment
+          .duration(moment(endDate).diff(moment(startDate, "YYYY-MM-DD")))
+          .asDays() + 1
+      );
+
+      if (save >= check) {
+        dir = check;
+      } else {
+        dir = save;
+      }
+
+      const arr = ["일", "월", "화", "수", "목", "금", "토"];
+      let add = 0;
+
+      for (let i = 0; i < dir; i++) {
+        let saveDay = moment(startDate)
+          .add(i + 1, "days")
+          .day();
+
+        const saveResult = day.includes(arr[saveDay]);
+
+        if (saveResult) {
+          add += 1;
+        }
+      }
+
+      return add;
+    },
+    []
+  );
+
   ////// DATAVIEW //////
 
   return (
@@ -777,6 +859,7 @@ const LectureAll = () => {
                                 </Text>
                                 <Text margin={`0 10px 0 0`}>{data.course}</Text>
                               </Wrapper>
+
                               <Wrapper
                                 dr={`row`}
                                 ju={`flex-start`}
@@ -791,7 +874,13 @@ const LectureAll = () => {
                                   |
                                 </Text>
                                 <Text lineHeight={`1.19`}>
-                                  {`강의 수 : ${data.lecDate * data.count}`}
+                                  {`강의 수 : ${stepHanlder2(
+                                    data.startDate,
+                                    data.endDate,
+                                    data.count,
+                                    data.lecDate,
+                                    data.day
+                                  )} / ${data.lecDate * data.count}`}
                                 </Text>
                                 {/* <Text
                                   lineHeight={`1.19`}
@@ -830,11 +919,11 @@ const LectureAll = () => {
                                   width={`10%`}
                                   color={Theme.grey2_C}
                                   padding={`0 0 0 10px`}>
-                                  {`(${
+                                  {`(${parseInt(
                                     data.Commutes &&
-                                    (data.Commutes.length * 100) /
-                                      (data.lecDate * data.count)
-                                  }%)`}
+                                      (data.Commutes.length * 100) /
+                                        (data.lecDate * data.count)
+                                  )}%)`}
                                 </Text>
                               </Wrapper>
                               <Wrapper
@@ -849,11 +938,13 @@ const LectureAll = () => {
                                 </Text>
                                 <Wrapper width={width < 800 ? `80%` : `75%`}>
                                   <CustomSlide
-                                    value={
-                                      data.Commutes &&
-                                      (data.Commutes.length * 100) /
-                                        (data.lecDate * data.count)
-                                    }
+                                    value={stepHanlder(
+                                      data.startDate,
+                                      data.endDate,
+                                      data.count,
+                                      data.lecDate,
+                                      data.day
+                                    )}
                                     disabled={true}
                                     draggableTrack={true}
                                     bgColor={Theme.basicTheme_C}
@@ -863,11 +954,13 @@ const LectureAll = () => {
                                   width={`10%`}
                                   color={Theme.grey2_C}
                                   padding={`0 0 0 10px`}>
-                                  {`( ${
-                                    data.Commutes &&
-                                    (data.Commutes.length * 100) /
-                                      (data.lecDate * data.count)
-                                  }%)`}
+                                  {`( ${stepHanlder(
+                                    data.startDate,
+                                    data.endDate,
+                                    data.count,
+                                    data.lecDate,
+                                    data.day
+                                  )}%)`}
                                 </Text>
                               </Wrapper>
                               {/* <Wrapper dr={`row`} ju={`flex-start`}>

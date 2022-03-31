@@ -1306,31 +1306,47 @@ const Index = () => {
   }, []);
 
   const stepHanlder = useCallback((startDate, endDate, count, lecDate, day) => {
-    const dif = parseInt(
-      moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays()
+    let dir = 0;
+
+    const save = Math.abs(
+      moment
+        .duration(
+          moment().diff(
+            moment(startDate, "YYYY-MM-DD")
+          )
+        )
+        .asDays() - 1
     );
 
-    const value1 = parseInt(dif / 7);
-    const value2 = parseInt(dif % 7);
+    let check = parseInt(
+      moment
+        .duration(moment(endDate).diff(moment(startDate, "YYYY-MM-DD")))
+        .asDays() + 1
+    );
 
+    if (save >= check) {
+      dir = check;
+    } else {
+      console.log("aaa", save);
+      dir = save;
+    }
+
+    console.log(dir, "dir");
+
+    const arr = ["일", "월", "화", "수", "목", "금", "토"];
     let add = 0;
 
-    for (let i = 0; i < value2; i++) {
-      const date = moment(startDate)
-        .add(value1 * 7 + i + 1, "days")
-        .day();
+    for (let i = 1; i < dir; i++) {
+      let saveDay = moment(startDate).add(i, "days").day();
 
-      const arr = ["일", "월", "화", "수", "목", "금", "토"];
+      const saveResult = day.includes(arr[saveDay]);
 
-      const save = day.includes(arr[date]);
-
-      if (save) {
+      if (saveResult) {
         add += 1;
       }
     }
 
-    const result = value1 * count + add;
-    return parseInt((result / (count * lecDate)) * 100);
+    return parseInt((add / (count * lecDate)) * 100);
   }, []);
 
   ////// DATAVIEW //////
