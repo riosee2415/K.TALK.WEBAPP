@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import router, { useRouter } from "next/router";
@@ -9,7 +9,7 @@ import { END } from "redux-saga";
 import AdminLayout from "../../../components/AdminLayout";
 import PageHeader from "../../../components/admin/PageHeader";
 
-import { Form, Slider, Table } from "antd";
+import { Button, Form, Modal, Slider, Table } from "antd";
 import styled from "styled-components";
 import {
   Text,
@@ -18,6 +18,7 @@ import {
   SpanText,
   CommonButton,
   TextInput,
+  TextArea,
 } from "../../../components/commonComponents";
 import Theme from "../../../components/Theme";
 
@@ -25,8 +26,11 @@ import wrapper from "../../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import {
   LECTURE_DETAIL_REQUEST,
+  LECTURE_DIARY_LIST_REQUEST,
+  LECTURE_MEMO_STU_LIST_REQUEST,
   LECTURE_STUDENT_LIST_REQUEST,
 } from "../../../reducers/lecture";
+import moment from "moment";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -71,13 +75,20 @@ const DetailClass = () => {
 
   ////// HOOKS //////
 
-  const { lectureStudentList, detailLectures } = useSelector(
-    (state) => state.lecture
-  );
-
+  const {
+    lectureDetail,
+    lectureDiaryList,
+    lectureDiaryLastPage,
+    lectureMemoStuLastPage,
+    lectureMemoStuList,
+  } = useSelector((state) => state.lecture);
   const dispatch = useDispatch();
 
-  // console.log(detailLectures);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage2, setCurrentPage2] = useState(1);
+  const [detailMemo, setDetailMemo] = useState(null);
+  const [memoModal, setMemoModal] = useState(false);
+
   // console.log(lectureStudentList);
 
   ////// REDUX //////
@@ -95,17 +106,35 @@ const DetailClass = () => {
   }, [router.query]);
 
   useEffect(() => {
-    if (detailLectures) {
-      dispatch({
-        type: LECTURE_STUDENT_LIST_REQUEST,
-        data: {
-          TeacherId: detailLectures[0].TeacherId,
-        },
-      });
-    }
-  }, [detailLectures]);
+    dispatch({
+      type: LECTURE_MEMO_STU_LIST_REQUEST,
+      data: {
+        LectureId: parseInt(router.query.id),
+        page: currentPage,
+        search: "",
+      },
+    });
+  }, [router.query, currentPage]);
+
+  useEffect(() => {
+    dispatch({
+      type: LECTURE_DIARY_LIST_REQUEST,
+      data: {
+        LectureId: router.query.id,
+        page: 1,
+      },
+    });
+  }, [router.query, currentPage]);
 
   ////// HANDLER //////
+  const detailMemoOpen = useCallback((data) => {
+    setDetailMemo(data);
+    setMemoModal(true);
+  }, []);
+  const detailMemoClose = useCallback(() => {
+    setDetailMemo(null);
+    setMemoModal(false);
+  }, []);
 
   ////// TOGGLE //////
 
@@ -122,92 +151,27 @@ const DetailClass = () => {
     },
     {
       title: "수업료",
-      dataIndex: "price",
+      render: () => lectureDetail && lectureDetail[0].price,
     },
     {
       title: "만기일",
-      dataIndex: "endDate",
+      render: () => lectureDetail && lectureDetail[0].endDate.slice(0, 10),
     },
     {
       title: "메모",
-      dataIndex: "adminMemo",
+      render: (data) => (
+        <Button
+          size={`small`}
+          type={`primary`}
+          onClick={() => detailMemoOpen(data.memo)}
+        >
+          메모 보기
+        </Button>
+      ),
     },
     {
       title: "출석률",
       dataIndex: "temp",
-    },
-  ];
-
-  const stuDatum = [
-    {
-      id: 1,
-      username: "수강학생",
-      birth: "2022/03/22",
-      stuCountry: "stuCountry",
-      price: "price",
-      endDate: "endDate",
-      adminMemo: "adminMemo",
-      temp: "temp",
-    },
-    {
-      id: 2,
-      username: "수강학생",
-      birth: "2022/03/22",
-      stuCountry: "stuCountry",
-      price: "price",
-      endDate: "endDate",
-      adminMemo: "adminMemo",
-      temp: "temp",
-    },
-    {
-      id: 3,
-      username: "수강학생",
-      birth: "2022/03/22",
-      stuCountry: "stuCountry",
-      price: "price",
-      endDate: "endDate",
-      adminMemo: "adminMemo",
-      temp: "temp",
-    },
-    {
-      id: 4,
-      username: "수강학생",
-      birth: "2022/03/22",
-      stuCountry: "stuCountry",
-      price: "price",
-      endDate: "endDate",
-      adminMemo: "adminMemo",
-      temp: "temp",
-    },
-    {
-      id: 5,
-      username: "수강학생",
-      birth: "2022/03/22",
-      stuCountry: "stuCountry",
-      price: "price",
-      endDate: "endDate",
-      adminMemo: "adminMemo",
-      temp: "temp",
-    },
-    {
-      id: 6,
-      username: "수강학생",
-      birth: "2022/03/22",
-      stuCountry: "stuCountry",
-      price: "price",
-      endDate: "endDate",
-      adminMemo: "adminMemo",
-      temp: "temp",
-    },
-    {
-      id: 7,
-      username: "수강학생",
-      birth: "2022/03/22",
-      stuCountry: "stuCountry",
-      price: "price",
-      endDate: "endDate",
-      adminMemo: "adminMemo",
-      temp: "temp",
     },
   ];
 
@@ -304,28 +268,48 @@ const DetailClass = () => {
         <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 14px`}>
           <Wrapper width={`50%`} dr={`row`} ju={`flex-start`}>
             <CustomSlide
+              // 진도율 계산
+              // 수업하는 요일을 이용해서 수업을 하는 날짜들을 전부 나열시킨다
+              // 현재 날짜를 불러와 나열된 수업 날짜들과 비교하여 수업이 몇개 진행됐는지 구한다.
+              // (수업 기간 * 주에 몇번 수업하는지)로 총 수업 수를 구한다.
+              // 진행된 수업 수와 전체 수업 수로 백분율로 만들어 현재 진도율을 구한다.
               defaultValue={55}
               disabled={true}
               draggableTrack={true}
             />
+
             <Text>&nbsp;(55%)</Text>
           </Wrapper>
           <Wrapper width={`50%`} dr={`row`} ju={`flex-end`}>
             <CommonButton
               radius={`5px`}
-              width={`200px`}
+              width={`130px`}
               margin={`0 6px`}
               kindOf={`white`}
+              padding={`0`}
+              onClick={() => moveLinkHandler(`/admin/class/list`)}
             >
-              지난 강의 동영상
+              강의 목록
             </CommonButton>
             <CommonButton
               radius={`5px`}
-              width={`200px`}
+              width={`130px`}
               margin={`0 6px`}
               kindOf={`white`}
+              padding={`0`}
+              onClick={() => moveLinkHandler(`/admin/board/notice/list`)}
             >
-              Class 별 게시판 / 쪽지
+              게시판
+            </CommonButton>
+            <CommonButton
+              radius={`5px`}
+              width={`130px`}
+              margin={`0 6px`}
+              kindOf={`white`}
+              padding={`0`}
+              onClick={() => moveLinkHandler(`/admin/board/message/list`)}
+            >
+              쪽지
             </CommonButton>
           </Wrapper>
         </Wrapper>
@@ -348,13 +332,20 @@ const DetailClass = () => {
               />
             </Wrapper>
             <Text fontSize={`18px`}>
-              {detailLectures && detailLectures[0].viewDate}
+              {lectureDetail && lectureDetail[0].viewDate}
               <SpanText
                 fontWeight={`bold`}
                 color={Theme.red_C}
                 margin={`0 0 0 15px`}
               >
-                D-5
+                {lectureDetail &&
+                  `D-${moment
+                    .duration(
+                      moment(lectureDetail[0].endDate, "YYYY-MM-DD").diff(
+                        moment().format("YYYY-MM-DD")
+                      )
+                    )
+                    .asDays()}`}
               </SpanText>
             </Text>
           </Wrapper>
@@ -373,7 +364,7 @@ const DetailClass = () => {
             </Wrapper>
 
             <Text fontSize={`18px`}>
-              {detailLectures && detailLectures[0].teacherName}
+              {lectureDetail && lectureDetail[0].teacherName}
             </Text>
           </Wrapper>
           <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
@@ -395,26 +386,32 @@ const DetailClass = () => {
           />
 
           <Wrapper width={`auto`} al={`flex-start`} fontSize={`16px`}>
-            <Text color={Theme.grey2_C}>
-              <SpanText
+            <Wrapper dr={`row`}>
+              <Text
                 fontWeight={`bold`}
-                margin={`0 33px 0 0`}
+                width={`80px`}
+                margin={`0 20px 0 0`}
                 color={Theme.black_C}
               >
                 ZOOM ID
-              </SpanText>
-              4leafsoftware@gmail.com
-            </Text>
-            <Text color={Theme.grey2_C}>
-              <SpanText
+              </Text>
+              {lectureDetail && lectureDetail[0].zoomLink
+                ? lectureDetail[0].zoomLink
+                : "-"}
+            </Wrapper>
+            <Wrapper dr={`row`}>
+              <Text
                 fontWeight={`bold`}
-                margin={`0 22px 0 0`}
+                width={`80px`}
+                margin={`0 20px 0 0`}
                 color={Theme.black_C}
               >
                 Password
-              </SpanText>
-              12345687
-            </Text>
+              </Text>
+              {lectureDetail && lectureDetail[0].zoomPass
+                ? lectureDetail[0].zoomPass
+                : "-"}
+            </Wrapper>
           </Wrapper>
         </Wrapper>
 
@@ -424,16 +421,20 @@ const DetailClass = () => {
 
         <Table
           columns={stuColumns}
-          dataSource={stuDatum}
-          rowSelection
-          pagination={false}
+          dataSource={lectureMemoStuList}
+          pagination={{
+            defaultCurrent: 1,
+            current: parseInt(currentPage),
+            total: lectureMemoStuLastPage * 10,
+            onChange: (page) => setCurrentPage(page),
+          }}
         />
 
-        <Wrapper al={`flex-end`} margin={`10px 0 32px`}>
+        {/* <Wrapper al={`flex-end`} margin={`10px 0 32px`}>
           <CommonButton kindOf={`white`} radius={`5px`}>
             추가하기
           </CommonButton>
-        </Wrapper>
+        </Wrapper> */}
 
         <Text fontSize={`18px`} fontWeight={`bold`}>
           강의 일지
@@ -441,11 +442,34 @@ const DetailClass = () => {
 
         <Table
           columns={lectureColumns}
-          dataSource={lectureDatum}
-          rowSelection
-          pagination={false}
+          dataSource={lectureDiaryList}
+          pagination={{
+            defaultCurrent: 1,
+            current: parseInt(currentPage2),
+            total: lectureDiaryLastPage * 10,
+            onChange: (page) => setCurrentPage2(page),
+          }}
         />
       </AdminContent>
+
+      <Modal visible={memoModal} footer={null} onCancel={detailMemoClose}>
+        <Wrapper al={`flex-start`}>
+          <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
+            메모
+          </Text>
+          <Wrapper al={`flex-start`} ju={`flex-start`}>
+            {detailMemo &&
+              detailMemo.split(`\n`).map((content, idx) => {
+                return (
+                  <SpanText key={`${content}${idx}`}>
+                    {content}
+                    <br />
+                  </SpanText>
+                );
+              })}
+          </Wrapper>
+        </Wrapper>
+      </Modal>
     </AdminLayout>
   );
 };

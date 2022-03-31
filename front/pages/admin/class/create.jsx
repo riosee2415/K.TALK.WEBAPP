@@ -227,12 +227,15 @@ const List = () => {
     setStartDate(startDate);
   }, []);
 
-  const onSubmit = useCallback((data) => {
+  const onSubmit = useCallback((data, idx) => {
+    if (parseInt(data.cnt) !== data.day.length) {
+      return message.error("횟수와 요일의 개수는 같아야합니다.");
+    }
     dispatch({
       type: LECTURE_CREATE_REQUEST,
       data: {
         time: moment(data.time, "HH:mm").format("HH:mm"),
-        day: data.day,
+        day: data.day.join(" "),
         count: data.cnt,
         course: data.course,
         lecDate: data.lecDate,
@@ -365,7 +368,15 @@ const List = () => {
               rules={[{ required: true, message: "요일을 입력해주세요." }]}
               name={`day`}
             >
-              <CusotmInput />
+              <Select mode="multiple" size={`large`}>
+                <Select.Option value={`월`}>월</Select.Option>
+                <Select.Option value={`화`}>화</Select.Option>
+                <Select.Option value={`수`}>수</Select.Option>
+                <Select.Option value={`목`}>목</Select.Option>
+                <Select.Option value={`금`}>금</Select.Option>
+                <Select.Option value={`토`}>토</Select.Option>
+                <Select.Option value={`일`}>일</Select.Option>
+              </Select>
             </FormItem>
           </Wrapper>
 
