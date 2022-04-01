@@ -24,6 +24,7 @@ export const initailState = {
   lectureStuLectureList: null,
 
   lectureMemoStuList: null,
+  lectureMemoStuCommute: null,
   lectureMemoStuLastPage: 1,
 
   lectureHomeworkStuList: null,
@@ -674,6 +675,7 @@ const reducer = (state = initailState, action) =>
         draft.st_lectureMemoStuListLoading = false;
         draft.st_lectureMemoStuListDone = true;
         draft.lectureMemoStuList = action.data.stuMemo;
+        draft.lectureMemoStuCommute = action.data.commute;
         draft.lectureMemoStuLastPage = action.data.lastPage;
         break;
       }

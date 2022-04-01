@@ -83,6 +83,7 @@ const DetailClass = () => {
     lectureMemoStuLastPage,
     lectureMemoStuList,
     lectureDiaryAdminList,
+    lectureMemoStuCommute,
   } = useSelector((state) => state.lecture);
   const { bookList } = useSelector((state) => state.book);
   const dispatch = useDispatch();
@@ -173,31 +174,41 @@ const DetailClass = () => {
   }, []);
 
   const stepHanlder = useCallback((startDate, endDate, count, lecDate, day) => {
-    const dif = parseInt(
-      moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays()
+    let dir = 0;
+
+    const save = Math.abs(
+      moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays() -
+        1
     );
 
-    const value1 = parseInt(dif / 7);
-    const value2 = parseInt(dif % 7);
+    let check = parseInt(
+      moment
+        .duration(moment(endDate).diff(moment(startDate, "YYYY-MM-DD")))
+        .asDays() + 1
+    );
 
+    if (save >= check) {
+      dir = check;
+    } else {
+      dir = save;
+    }
+
+    const arr = ["일", "월", "화", "수", "목", "금", "토"];
     let add = 0;
 
-    for (let i = 0; i < value2; i++) {
-      const date = moment(startDate)
-        .add(value1 * 7 + i + 1, "days")
+    for (let i = 0; i < dir; i++) {
+      let saveDay = moment(startDate)
+        .add(i + 1, "days")
         .day();
 
-      const arr = ["일", "월", "화", "수", "목", "금", "토"];
+      const saveResult = day.includes(arr[saveDay]);
 
-      const save = day.includes(arr[date]);
-
-      if (save) {
+      if (saveResult) {
         add += 1;
       }
     }
 
-    const result = value1 * count + add;
-    return parseInt((result / (count * lecDate)) * 100);
+    return parseInt((add / (count * lecDate)) * 100);
   }, []);
 
   ////// TOGGLE //////
@@ -239,10 +250,25 @@ const DetailClass = () => {
     },
     {
       title: "출석률",
-      dataIndex: "temp",
+      render: (data) => {
+        return (
+          <Text>
+            {Math.floor(
+              (lectureMemoStuCommute.find(
+                (value) => value.UserId === data.UserId
+              ).CommuteCnt /
+                (lectureDetail[0].count * lectureDetail[0].lecDate)) *
+                100
+            )}
+            %
+          </Text>
+        );
+      },
     },
   ];
-
+  // console.log(
+  //   lectureDetail && lectureDetail[0].count * lectureDetail[0].lecDate
+  // );
   const lectureColumns = [
     {
       title: "No",
@@ -273,6 +299,7 @@ const DetailClass = () => {
       ),
     },
   ];
+
   const bookColumns = [
     {
       title: "No",
@@ -312,7 +339,7 @@ const DetailClass = () => {
     },
   ];
 
-  console.log(lectureDiaryAdminList);
+  // console.log(lectureDiaryAdminList);
   return (
     <AdminLayout>
       <PageHeader

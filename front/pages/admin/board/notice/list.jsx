@@ -787,7 +787,11 @@ const NoticeList = ({ router }) => {
                   onChange={fileChangeHandler}
                 />
                 <Filename>
-                  {filename.value ? filename.value : `파일을 선택해주세요.`}
+                  {updateData
+                    ? `첨부파일`
+                    : filename.value
+                    ? filename.value
+                    : `파일을 선택해주세요.`}
                 </Filename>
                 <Button type="primary" onClick={fileUploadClick}>
                   FILE UPLOAD
