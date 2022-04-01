@@ -176,7 +176,7 @@ const AdminMenu = () => {
         <SubMenu
           key="sub6"
           icon={<PhoneOutlined />}
-          title="문의 관리"
+          title="신청서 관리"
           onTitleClick={titleClickHandler("sub6")}
         >
           <Menu.Item key="/admin/application/list">

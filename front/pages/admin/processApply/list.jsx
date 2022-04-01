@@ -182,9 +182,9 @@ const List = ({ location }) => {
   return (
     <AdminLayout>
       <PageHeader
-        breadcrumbs={["신청서 관리", "신청서 리스트"]}
-        title={`신청서 리스트`}
-        subTitle={`홈페이지의 신청서를 관리할 수 있습니다.`}
+        breadcrumbs={["신청서 관리", "설명회참가 신청서"]}
+        title={`설명회참가 신청서`}
+        subTitle={`홈페이지의 설명회참가 신청서를 관리할 수 있습니다.`}
       />
       {/* <AdminTop createButton={true} createButtonAction={() => {})} /> */}
 

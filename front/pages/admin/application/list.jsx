@@ -153,21 +153,6 @@ const List = ({ location }) => {
     });
   }, [updateData]);
 
-  const fileDownloadHandler = useCallback(async (filePath) => {
-    let blob = await fetch(filePath).then((r) => r.blob());
-
-    const file = new Blob([blob]);
-
-    const ext = filePath.substring(
-      filePath.lastIndexOf(".") + 1,
-      filePath.length
-    );
-
-    const originName = `첨부파일.${ext}`;
-
-    saveAs(file, originName);
-  }, []);
-  console.log(applicationList);
   ////// DATAVIEW //////
 
   // Table
