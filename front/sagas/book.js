@@ -17,6 +17,22 @@ import {
   BOOK_FOLDER_DELETE_SUCCESS,
   BOOK_FOLDER_DELETE_FAILURE,
   /////////////////////////////////
+  BOOK_LECTURE_LIST_REQUEST,
+  BOOK_LECTURE_LIST_SUCCESS,
+  BOOK_LECTURE_LIST_FAILURE,
+  /////////////////////////////////
+  BOOK_LECTURE_CREATE_REQUEST,
+  BOOK_LECTURE_CREATE_SUCCESS,
+  BOOK_LECTURE_CREATE_FAILURE,
+  /////////////////////////////////
+  BOOK_LECTURE_UPDATE_REQUEST,
+  BOOK_LECTURE_UPDATE_SUCCESS,
+  BOOK_LECTURE_UPDATE_FAILURE,
+  /////////////////////////////////
+  BOOK_LECTURE_DELETE_REQUEST,
+  BOOK_LECTURE_DELETE_SUCCESS,
+  BOOK_LECTURE_DELETE_FAILURE,
+  /////////////////////////////////
   BOOK_LIST_REQUEST,
   BOOK_LIST_SUCCESS,
   BOOK_LIST_FAILURE,
@@ -136,6 +152,97 @@ function* bookFolderDelete(action) {
   }
 }
 //////////////////////////////////////////////////////////////
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function bookLectureListAPI(data) {
+  return axios.post(`/api/book/lecture/list`, data);
+}
+
+function* bookLectureList(action) {
+  try {
+    const result = yield call(bookLectureListAPI, action.data);
+
+    yield put({
+      type: BOOK_LECTURE_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: BOOK_LECTURE_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+//////////////////////////////////////////////////////////////
+function bookLectureCreateAPI(data) {
+  return axios.post(`/api/book/lecture/create`, data);
+}
+
+function* bookLectureCreate(action) {
+  try {
+    const result = yield call(bookLectureCreateAPI, action.data);
+
+    yield put({
+      type: BOOK_LECTURE_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: BOOK_LECTURE_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+//////////////////////////////////////////////////////////////
+function bookLectureUpdateAPI(data) {
+  return axios.patch(`/api/book/lecture/update`, data);
+}
+
+function* bookLectureUpdate(action) {
+  try {
+    const result = yield call(bookLectureUpdateAPI, action.data);
+
+    yield put({
+      type: BOOK_LECTURE_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: BOOK_LECTURE_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+//////////////////////////////////////////////////////////////
+function bookLectureDeleteAPI(data) {
+  return axios.delete(`/api/book/lecture/delete/${data.BookListId}`, data);
+}
+
+function* bookLectureDelete(action) {
+  try {
+    const result = yield call(bookLectureDeleteAPI, action.data);
+
+    yield put({
+      type: BOOK_LECTURE_DELETE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: BOOK_LECTURE_DELETE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+//////////////////////////////////////////////////////////////
+
 function bookListAPI(data) {
   return axios.post(`/api/book/list`, data);
 }
@@ -308,6 +415,18 @@ function* watchBookFolderUpdate() {
 function* watchBookFolderDelete() {
   yield takeLatest(BOOK_FOLDER_DELETE_REQUEST, bookFolderDelete);
 }
+function* watchBookLectureList() {
+  yield takeLatest(BOOK_LECTURE_LIST_REQUEST, bookLectureList);
+}
+function* watchBookLectureCreate() {
+  yield takeLatest(BOOK_LECTURE_CREATE_REQUEST, bookLectureCreate);
+}
+function* watchBookLectureUpdate() {
+  yield takeLatest(BOOK_LECTURE_UPDATE_REQUEST, bookLectureUpdate);
+}
+function* watchBookLectureDelete() {
+  yield takeLatest(BOOK_LECTURE_DELETE_REQUEST, bookLectureDelete);
+}
 function* watchBookList() {
   yield takeLatest(BOOK_LIST_REQUEST, bookList);
 }
@@ -337,6 +456,10 @@ export default function* bookSaga() {
     fork(watchBookFolderCreate),
     fork(watchBookFolderUpdate),
     fork(watchBookFolderDelete),
+    fork(watchBookLectureList),
+    fork(watchBookLectureCreate),
+    fork(watchBookLectureUpdate),
+    fork(watchBookLectureDelete),
     fork(watchBookList),
     fork(watchBookDetail),
     fork(watchBookUpload),
