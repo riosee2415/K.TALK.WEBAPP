@@ -160,13 +160,9 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
        AND  isDelete = FALSE
       ${
         req.user.level === 1
-          ? ` AND level = 1
-              AND level = 3`
+          ? ` AND level = 1`
           : req.user.level === 2
-          ? `
-          AND level = 2
-          AND level = 3
-          `
+          ? ` AND level = 2`
           : ` AND level = 3`
       }
     `;
@@ -188,13 +184,9 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
        AND  isDelete = FALSE
      ${
        req.user.level === 1
-         ? ` AND level = 1
-            AND level = 3`
+         ? ` AND level = 1`
          : req.user.level === 2
-         ? `
-        AND level = 2
-        AND level = 3
-        `
+         ? ` AND level = 2`
          : ` AND level = 3`
      }
      ORDER  BY createdAt DESC
