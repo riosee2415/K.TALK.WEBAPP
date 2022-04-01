@@ -222,6 +222,20 @@ router.post("/list", async (req, res, next) => {
   }
 });
 
+router.get("/allBooks", async (req, res, next) => {
+  try {
+    const allBooks = await Book.findAll({
+      where: { isDelete: false },
+      order: [["createdAt", "DESC"]],
+    });
+
+    return res.status(200).json(allBooks);
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("교재 목록을 불러올 수 없습니다.");
+  }
+});
+
 router.get("/detail/:bookId", async (req, res, next) => {
   const { bookId } = req.params;
 
