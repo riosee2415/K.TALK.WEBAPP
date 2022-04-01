@@ -114,12 +114,6 @@ const UserList = ({}) => {
   ////// USEEFFECT //////
 
   useEffect(() => {
-    if (allLectures) {
-      setLectureList(allLectures);
-    }
-  }, [allLectures]);
-
-  useEffect(() => {
     const query = router.query;
 
     dispatch({
@@ -197,12 +191,6 @@ const UserList = ({}) => {
       return message.success("학생이 생성되었습니다.");
     }
   }, [st_userStuCreateDone]);
-  useEffect(() => {
-    if (st_userStuCreateDone && allLectures) {
-      setSelectedList([]);
-      setLectureList(allLectures);
-    }
-  }, [st_userStuCreateDone, allLectures]);
 
   useEffect(() => {
     if (st_userTeaCreateDone) {
@@ -269,14 +257,17 @@ const UserList = ({}) => {
   }, []);
 
   useEffect(() => {
-    if (!createModal) {
-      if (allLectures) {
-        console.log("good");
-        setSelectedList([]);
-        setLectureList(allLectures);
-      }
-    }
-  }, [createModal, allLectures]);
+    setLectureList(
+      allLectures &&
+        allLectures.map((data) => {
+          return (
+            <Select.Option key={data.id} value={data.id} title={`data`}>
+              {data.course}
+            </Select.Option>
+          );
+        })
+    );
+  }, [allLectures]);
   ////// TOGGLE //////
   const updateModalOpen = useCallback(
     (data) => {
@@ -314,29 +305,6 @@ const UserList = ({}) => {
 
   ////// HANDLER //////
 
-  const selectChangeHandler = useCallback(
-    (e) => {
-      const id = parseInt(e.split(`.`)[0]);
-      setLectureList(lectureList.filter((data) => data.id !== id));
-
-      const state = selectedList;
-      state.push(lectureList.filter((data) => data.id === id)[0]);
-      setSelectedList(state);
-    },
-    [lectureList, selectedList]
-  );
-
-  const selectCancelHandler = useCallback(
-    (cancelData) => {
-      setSelectedList(selectedList.filter((data) => data.id !== cancelData.id));
-
-      const state = lectureList;
-      state.push(cancelData);
-      setLectureList(state);
-    },
-    [lectureList, selectedList]
-  );
-
   const onSubmitUpdate = useCallback(() => {
     if (updateData.level === inputLevel.value) {
       return LoadNotification(
@@ -359,9 +327,8 @@ const UserList = ({}) => {
       if (data.password !== data.repassword) {
         return message.error("비밀번호를 동일하게 입력해주세요.");
       }
-      const LectureId = selectedList && selectedList.map((data) => data.id);
 
-      if (selectUserLevel === "1" && LectureId) {
+      if (selectUserLevel === "1") {
         dispatch({
           type: USER_STU_CREATE_REQUEST,
           data: {
@@ -384,7 +351,7 @@ const UserList = ({}) => {
             snsId: data.snsId,
             stuJob: data.stuJob,
             gender: data.gender,
-            LectureId,
+            LectureId: data.lecture,
           },
         });
       } else if (selectUserLevel === "2") {
@@ -701,39 +668,12 @@ const UserList = ({}) => {
                 <Select
                   showSearch
                   placeholder="Select a Lecture"
-                  onChange={(e) => selectChangeHandler(e)}
+                  mode="multiple"
                 >
-                  {lectureList &&
-                    lectureList.map((data) => {
-                      return (
-                        <Select.Option
-                          key={data.id}
-                          value={data.id + ". " + data.course}
-                          title={`data`}
-                        >
-                          {data.id + ". " + data.course}
-                        </Select.Option>
-                      );
-                    })}
+                  {lectureList}
                 </Select>
               </Form.Item>
-              <Wrapper dr={`row`} ju={`flex-start`} padding={`0 0 30px 125px`}>
-                {selectedList &&
-                  selectedList.map((data) => {
-                    return (
-                      <Wrapper
-                        dr={`row`}
-                        ju={`flex-start`}
-                        width={`auto`}
-                        margin={`0 15px 0 0`}
-                        onClick={() => selectCancelHandler(data)}
-                      >
-                        <CloseCircleOutlined style={{ cursor: `pointer` }} />
-                        <Text margin={`0 0 0 5px`}>{data.course}</Text>
-                      </Wrapper>
-                    );
-                  })}
-              </Wrapper>
+
               <Form.Item
                 label="학생 언어"
                 rules={[

@@ -165,7 +165,6 @@ const Index = () => {
     dispatch({
       type: BOOK_LIST_REQUEST,
       data: {
-        LectureId: router.query.lectureId,
         BookFolderId: currentTab,
       },
     });
@@ -179,7 +178,6 @@ const Index = () => {
         type: BOOK_LIST_REQUEST,
         data: {
           BookFolderId: currentTab,
-          LectureId: router.query.lectureId,
         },
       });
       updateModalClose();
@@ -192,7 +190,6 @@ const Index = () => {
       dispatch({
         type: BOOK_LIST_REQUEST,
         data: {
-          LectureId: router.query.lectureId,
           BookFolderId: currentTab,
         },
       });
@@ -204,7 +201,6 @@ const Index = () => {
       dispatch({
         type: BOOK_LIST_REQUEST,
         data: {
-          LectureId: router.query.lectureId,
           BookFolderId: currentTab,
         },
       });
@@ -224,7 +220,6 @@ const Index = () => {
       dispatch({
         type: BOOK_LIST_REQUEST,
         data: {
-          LectureId: router.query.lectureId,
           BookFolderId: currentTab,
         },
       });
@@ -293,7 +288,6 @@ const Index = () => {
           thumbnail: uploadPathTh,
           title: data.title,
           file: uploadPath,
-          LectureId: router.query.lectureId,
           BookFolderId: data.folder,
         },
       });
@@ -310,7 +304,7 @@ const Index = () => {
           thumbnail: uploadPathTh ? uploadPathTh : updateData.thumbnail,
           title: data.title,
           file: uploadPath ? uploadPath : updateData.file,
-          LectureId: router.query.lectureId,
+
           BookFolderId: data.folder,
         },
       });
@@ -375,7 +369,6 @@ const Index = () => {
       dispatch({
         type: BOOK_LIST_REQUEST,
         data: {
-          LectureId: router.query.lectureId,
           BookFolderId: currentTab,
           search: searchInput.value,
         },
