@@ -38,10 +38,67 @@ import {
   BOOK_UPLOAD_REQUEST,
   BOOK_UPLOAD_TH_REQUEST,
 } from "../../reducers/book";
-import { Button, Empty, Form, Input, message, Modal, Select } from "antd";
+import {
+  Button,
+  Empty,
+  Form,
+  Input,
+  message,
+  Modal,
+  Pagination,
+  Select,
+} from "antd";
 import { useRouter } from "next/router";
 import useInput from "../../hooks/useInput";
 import { saveAs } from "file-saver";
+
+const CustomPage = styled(Pagination)`
+  & .ant-pagination-next > button {
+    border: none;
+  }
+
+  & .ant-pagination-prev > button {
+    border: none;
+  }
+
+  & {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  & .ant-pagination-item,
+  & .ant-pagination-next,
+  & .ant-pagination-prev {
+    border: none;
+    width: 28px;
+    height: 28px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: ${Theme.white_C} !important;
+    margin: 0 5px !important;
+  }
+
+  & .ant-pagination-item-active a {
+    color: ${Theme.subTheme2_C};
+  }
+
+  & .ant-pagination-item:focus-visible a,
+  .ant-pagination-item:hover a {
+    color: ${Theme.subTheme2_C};
+  }
+
+  & .ant-pagination-item-link svg {
+    font-weight: bold;
+    color: ${Theme.black_2C};
+  }
+
+  @media (max-width: 800px) {
+    width: 18px;
+    height: 18px !important;
+  }
+`;
 
 const LoadNotification = (msg, content) => {
   notification.open({
@@ -124,6 +181,7 @@ const Index = () => {
   const filename = useInput();
   const searchInput = useInput(``);
   const [currentTab, setCurrentTab] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [currentMenu, setCurrentMenu] = useState(null);
   const [createModal, setCreateModal] = useState(false);
   const [updateData, setUpdateData] = useState(null);
@@ -135,6 +193,7 @@ const Index = () => {
   const {
     bookFolderList,
     bookList,
+    bookMaxLength,
     uploadPath,
     uploadPathTh,
     st_bookCreateDone,
@@ -233,6 +292,16 @@ const Index = () => {
       message.error(st_bookDeleteError);
     }
   }, [st_bookDeleteError]);
+
+  useEffect(() => {
+    dispatch({
+      type: BOOK_LIST_REQUEST,
+      data: {
+        BookFolderId: currentTab,
+        page: currentPage,
+      },
+    });
+  }, [currentPage]);
   ////// TOGGLE //////
   ////// HANDLER //////
 
@@ -428,7 +497,7 @@ const Index = () => {
 
       <ClientLayout>
         <WholeWrapper margin={`100px 0 0`}>
-          <RsWrapper>
+          <RsWrapper padding={`0 0 30px 0`}>
             <Wrapper al={`flex-start`} margin={`70px 0 30px`}>
               <Text
                 color={Theme.black_2C}
@@ -670,6 +739,12 @@ const Index = () => {
                 })
               )}
             </Wrapper>
+            <CustomPage
+              size="small"
+              current={currentPage}
+              total={bookMaxLength * 10}
+              onChange={(page) => setCurrentPage(page)}
+            />
           </RsWrapper>
 
           <Modal
