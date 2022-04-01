@@ -158,11 +158,12 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
       FROM	notices
      WHERE	1 = 1
        AND  isDelete = FALSE
+       AND  LectureId IS NULL
       ${
         req.user.level === 1
-          ? ` AND level = 1`
+          ? ` AND  level IN (1, 3)`
           : req.user.level === 2
-          ? ` AND level = 2`
+          ? ` AND  level IN (2, 3)`
           : ` AND level = 3`
       }
     `;
@@ -182,11 +183,12 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
       FROM	notices
      WHERE	1 = 1
        AND  isDelete = FALSE
+       AND  LectureId IS NULL
      ${
        req.user.level === 1
-         ? ` AND level = 1 OR level = 3`
+         ? ` AND  level IN (1, 3)`
          : req.user.level === 2
-         ? ` AND level = 2 OR level = 3`
+         ? ` AND  level IN (2, 3)`
          : ` AND level = 3`
      }
      ORDER  BY createdAt DESC
@@ -210,6 +212,91 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
     return res.status(401).send("공지사항 목록을 불러올 수 업습니다.");
   }
 });
+router.get("/myLecture/list", isLoggedIn, async (req, res, next) => {
+  const { page } = req.query;
+
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
+  const LIMIT = 10;
+
+  const _page = page ? page : 1;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 10;
+
+  try {
+    const exPart = await Participant.findAll({
+      where: { UserId: parseInt(req.user.id) },
+    });
+
+    if (exPart.length === 0) {
+      return res.status(401).send("현재 참여중인 강의가 없습니다.");
+    }
+
+    let lectureIds = [];
+
+    for (let i = 0; i < exPart.length; i++) {
+      lectureIds.push(exPart[i].LectureId);
+    }
+
+    const lengthQuery = `
+    SELECT	id,
+            title,
+            content,
+            author,
+            level,
+            LectureId,
+            file,
+            isDelete,
+            DATE_FORMAT(deletedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	deletedAt,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
+      FROM	notices
+     WHERE  isDelete = FALSE
+       AND  LectureId IN (${lectureIds})
+    `;
+
+    const selectQuery = `
+    SELECT	id,
+            title,
+            content,
+            author,
+            level,
+            LectureId,
+            file,
+            isDelete,
+            DATE_FORMAT(deletedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	deletedAt,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
+      FROM	notices
+     WHERE  isDelete = FALSE
+       AND  LectureId IN (${lectureIds})
+     ORDER  BY createdAt DESC
+     LIMIT  ${LIMIT}
+    OFFSET  ${OFFSET}
+    `;
+
+    const length = await models.sequelize.query(lengthQuery);
+    const notices = await models.sequelize.query(selectQuery);
+
+    const noticeLen = length[0].length;
+
+    const lastPage =
+      noticeLen % LIMIT > 0 ? noticeLen / LIMIT + 1 : noticeLen / LIMIT;
+
+    return res
+      .status(200)
+      .json({ notices: notices[0], lastPage: parseInt(lastPage) });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(401)
+      .send("내가 참여하고 있는 강의 게시판 목록을 불러올 수 없습니다.");
+  }
+});
+
 // 공지사항 디테일
 router.get("/detail/:noticeId", async (req, res, next) => {
   const { noticeId } = req.params;

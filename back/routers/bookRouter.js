@@ -153,14 +153,14 @@ router.delete(
 );
 
 router.post("/list", async (req, res, next) => {
-  const { BookFolderId, search } = req.body;
+  const { BookFolderId, search, page } = req.body;
 
-  const LIMIT = 5;
+  const LIMIT = 10;
 
   const _page = page ? page : 1;
 
   const __page = _page - 1;
-  const OFFSET = __page * 5;
+  const OFFSET = __page * 10;
 
   let _BookFolderId = BookFolderId || null;
 
@@ -172,7 +172,6 @@ router.post("/list", async (req, res, next) => {
             A.thumbnail,
             A.title,
             A.BookFolderId,
-            A.LectureId,
             A.file,
             B.value
       FROM	books					    A
@@ -191,7 +190,6 @@ router.post("/list", async (req, res, next) => {
             A.thumbnail,
             A.title,
             A.BookFolderId,
-            A.LectureId,
             A.file,
             B.value
       FROM	books					    A
