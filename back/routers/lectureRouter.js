@@ -12,7 +12,6 @@ const {
   LectureMessage,
   LectureStuMemo,
   Commute,
-  Book,
 } = require("../models");
 const models = require("../models");
 const fs = require("fs");
@@ -419,9 +418,6 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
               {
                 model: Commute,
               },
-              {
-                model: Book,
-              },
             ],
           })
         );
@@ -684,8 +680,17 @@ router.get("/memo/student/list", async (req, res, next) => {
     OFFSET  ${OFFSET}
     `;
 
+    const commuteQuery = `
+    SELECT count(UserId)			AS CommuteCnt,
+           UserId
+      FROM commutes
+     WHERE LectureId = ${LectureId}
+     GROUP BY UserId
+    `;
+
     const length = await models.sequelize.query(lengthQuery);
     const stuMemo = await models.sequelize.query(studentMemoQuery);
+    const commute = await models.sequelize.query(commuteQuery);
 
     const stuMemolen = length[0].length;
 
@@ -694,7 +699,7 @@ router.get("/memo/student/list", async (req, res, next) => {
 
     return res
       .status(200)
-      .json({ stuMemo: stuMemo[0], lastPage: parseInt(lastPage) });
+      .json({ stuMemo: stuMemo[0], lastPage: parseInt(lastPage), commute });
   } catch (error) {
     console.error(error);
     return res.status(401).send("메모 정보를 불러올 수 없습니다.");

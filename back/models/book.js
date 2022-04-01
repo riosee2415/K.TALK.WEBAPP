@@ -33,7 +33,6 @@ module.exports = class Book extends Model {
     );
   }
   static associate(db) {
-    db.Book.belongsTo(db.Lecture);
     db.Book.belongsTo(db.BookFolder);
   }
 };

@@ -159,10 +159,10 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
      WHERE	1 = 1
        AND  isDelete = FALSE
       ${
-        req.user.id === 1
+        req.user.level === 1
           ? ` AND level = 1
               AND level = 3`
-          : req.user.id === 2
+          : req.user.level === 2
           ? `
           AND level = 2
           AND level = 3
@@ -187,10 +187,10 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
      WHERE	1 = 1
        AND  isDelete = FALSE
      ${
-       req.user.id === 1
+       req.user.level === 1
          ? ` AND level = 1
             AND level = 3`
-         : req.user.id === 2
+         : req.user.level === 2
          ? `
         AND level = 2
         AND level = 3

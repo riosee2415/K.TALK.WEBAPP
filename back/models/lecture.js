@@ -81,7 +81,6 @@ module.exports = class Lecture extends Model {
     db.Lecture.hasMany(db.Participant);
     db.Lecture.hasMany(db.Commute);
     db.Lecture.hasMany(db.Homework);
-    db.Lecture.hasMany(db.Book);
     db.Lecture.belongsTo(db.User);
   }
 };

@@ -5,7 +5,7 @@ const path = require("path");
 const AWS = require("aws-sdk");
 const multerS3 = require("multer-s3");
 const isAdminCheck = require("../middlewares/isAdminCheck");
-const { BookFolder, Lecture, Book } = require("../models");
+const { BookFolder, Lecture, Book, BookList } = require("../models");
 const models = require("../models");
 const isNanCheck = require("../middlewares/isNanCheck");
 const isLoggedIn = require("../middlewares/isLoggedIn");
@@ -153,14 +153,39 @@ router.delete(
 );
 
 router.post("/list", async (req, res, next) => {
-  const { BookFolderId, LectureId, search } = req.body;
+  const { BookFolderId, search } = req.body;
+
+  const LIMIT = 5;
+
+  const _page = page ? page : 1;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 5;
 
   let _BookFolderId = BookFolderId || null;
-  let _LectureId = LectureId || null;
 
   const _search = search ? search : ``;
 
   try {
+    const lengthQuery = `
+    SELECT	A.id,
+            A.thumbnail,
+            A.title,
+            A.BookFolderId,
+            A.LectureId,
+            A.file,
+            B.value
+      FROM	books					    A
+     INNER
+      JOIN	bookFolders 			B
+        ON	A.BookFolderId = B.id
+     WHERE	1 = 1
+       AND	A.isDelete = FALSE
+       AND	B.isDelete = FALSE
+       ${_BookFolderId ? `AND A.BookFolderId = ${_BookFolderId}` : ``}
+       ${_search ? `AND A.title LIKE '%${_search}%'` : ``}
+    `;
+
     const selectQuery = `
     SELECT	A.id,
             A.thumbnail,
@@ -169,21 +194,30 @@ router.post("/list", async (req, res, next) => {
             A.LectureId,
             A.file,
             B.value
-    FROM	books					A
-   INNER
-    JOIN	bookFolders 			B
-      ON	A.BookFolderId = B.id
-   WHERE	1 = 1
-     AND	A.isDelete = FALSE
-     AND	B.isDelete = FALSE
-     ${_BookFolderId ? `AND A.BookFolderId = ${_BookFolderId}` : ``}
-     ${_search ? `AND A.title LIKE '%${_search}%'` : ``}
-     ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
+      FROM	books					    A
+     INNER
+      JOIN	bookFolders 			B
+        ON	A.BookFolderId = B.id
+     WHERE	1 = 1
+       AND	A.isDelete = FALSE
+       AND	B.isDelete = FALSE
+       ${_BookFolderId ? `AND A.BookFolderId = ${_BookFolderId}` : ``}
+       ${_search ? `AND A.title LIKE '%${_search}%'` : ``}
+     LIMIT  ${LIMIT}
+    OFFSET  ${OFFSET}
     `;
 
-    const list = await models.sequelize.query(selectQuery);
+    const length = await models.sequelize.query(lengthQuery);
+    const books = await models.sequelize.query(selectQuery);
 
-    return res.status(200).json({ list: list[0] });
+    const bookslen = length[0].length;
+
+    const lastPage =
+      bookslen % LIMIT > 0 ? bookslen / LIMIT + 1 : bookslen / LIMIT;
+
+    return res
+      .status(200)
+      .json({ books: books[0], lastPage: parseInt(lastPage) });
   } catch (error) {
     console.error(error);
     return res.status(401).send("교재 목록을 불러올 수 없습니다.");
@@ -214,15 +248,15 @@ router.get("/detail/:bookId", async (req, res, next) => {
             A.LectureId,
             A.file,
             B.value
-    FROM	books					A
-   INNER
-    JOIN	bookFolders 			B
-      ON	A.BookFolderId = B.id
-   WHERE	1 = 1
-     AND	A.isDelete = FALSE
-     AND	B.isDelete = FALSE
-     AND    A.id = ${bookId}
-    `;
+      FROM	books					    A
+     INNER
+      JOIN	bookFolders 			B
+        ON	A.BookFolderId = B.id
+     WHERE	1 = 1
+       AND	A.isDelete = FALSE
+       AND	B.isDelete = FALSE
+       AND  A.id = ${bookId}
+      `;
 
     const book = await models.sequelize.query(selectQuery);
 
@@ -238,28 +272,16 @@ router.post("/image", upload.single("image"), async (req, res, next) => {
 });
 
 router.post("/create", isLoggedIn, async (req, res, next) => {
-  const { thumbnail, title, file, LectureId, BookFolderId } = req.body;
+  const { thumbnail, title, file, BookFolderId } = req.body;
 
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
   }
 
   try {
-    const exLecture = await Lecture.findOne({
-      where: { id: parseInt(LectureId) },
-    });
-
     const exBookFolder = await BookFolder.findOne({
       where: { id: parseInt(BookFolderId) },
     });
-
-    if (!exLecture) {
-      return res.status(401).send("존재하지 않는 강의입니다.");
-    }
-
-    if (exLecture.UserId !== req.user.id) {
-      return res.status(401).send("자신의 강의에만 교재를 등록할 수 있습니다.");
-    }
 
     if (!exBookFolder) {
       return res.status(401).send("존재하지 않는 폴더입니다.");
@@ -269,7 +291,6 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
       thumbnail,
       title,
       file,
-      LectureId: parseInt(LectureId),
       BookFolderId: parseInt(BookFolderId),
     });
 
@@ -285,7 +306,7 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
 });
 
 router.patch("/update", isLoggedIn, async (req, res, next) => {
-  const { id, thumbnail, title, file, LectureId, BookFolderId } = req.body;
+  const { id, thumbnail, title, file, BookFolderId } = req.body;
 
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
@@ -296,24 +317,12 @@ router.patch("/update", isLoggedIn, async (req, res, next) => {
       where: { id: parseInt(id) },
     });
 
-    const exLecture = await Lecture.findOne({
-      where: { id: parseInt(LectureId) },
-    });
-
     const exBookFolder = await BookFolder.findOne({
       where: { id: parseInt(BookFolderId) },
     });
 
     if (!exBook) {
       return res.status(401).send("존재하지 않는 교재입니다.");
-    }
-
-    if (!exLecture) {
-      return res.status(401).send("존재하지 않는 강의입니다.");
-    }
-
-    if (exLecture.UserId !== req.user.id) {
-      return res.status(401).send("자신의 강의에만 교재를 등록할 수 있습니다.");
     }
 
     if (!exBookFolder) {
@@ -325,7 +334,6 @@ router.patch("/update", isLoggedIn, async (req, res, next) => {
         thumbnail,
         title,
         file,
-        LectureId: parseInt(LectureId),
         BookFolderId: parseInt(BookFolderId),
       },
       {
@@ -377,6 +385,176 @@ router.delete("/delete/:bookId", isAdminCheck, async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("교재를 삭제할 수 없습니다.");
+  }
+});
+
+router.post("/lecture/list", isLoggedIn, async (req, res, next) => {
+  const { LectureId } = req.body;
+  try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의 입니다.");
+    }
+
+    if (exLecture.UserId !== req.user.id) {
+      return res.status(401).send("자신의 강의가 아닙니다.");
+    }
+
+    const bookList = await BookList.findAll({
+      where: { LectureId: parseInt(LectureId) },
+      include: [
+        {
+          model: Book,
+        },
+      ],
+    });
+
+    return res.status(200).json(bookList);
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(401)
+      .send("강의에 등록된 교재 목록을 불러올 수 없습니다.");
+  }
+});
+
+router.post("/lecture/create", isLoggedIn, async (req, res, next) => {
+  const { BookId, LectureId } = req.body;
+
+  try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의 입니다.");
+    }
+
+    if (exLecture.UserId !== req.user.id) {
+      return res.status(401).send("자신의 강의가 아닙니다.");
+    }
+
+    const exBook = await Book.findOne({
+      where: { id: parseInt(BookId) },
+    });
+
+    if (!exBook) {
+      return res.status(401).send("존재하지 않는 교재입니다.");
+    }
+
+    const exBookList = await BookList.findOne({
+      LectureId: parseInt(LectureId),
+      BookId: parseInt(BookId),
+    });
+
+    if (exBookList) {
+      return res.status(401).send("이미 해당 강의에 교재가 등록되어 있습니다.");
+    }
+
+    const createResult = await BookList.create({
+      LectureId: parseInt(LectureId),
+      BookId: parseInt(BookId),
+    });
+
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    }
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("강의에 교재를 추가할 수 없습니다.");
+  }
+});
+
+router.patch("/leture/update", isLoggedIn, async (req, res, next) => {
+  const { id, BookId, LectureId } = req.body;
+  try {
+    const exBookList = await BookList.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exBookList) {
+      return res.status(401).send("등록되지 않은 정보입니다.");
+    }
+
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의 입니다.");
+    }
+
+    if (exLecture.UserId !== req.user.id) {
+      return res.status(401).send("자신의 강의가 아닙니다.");
+    }
+
+    const exBook = await Book.findOne({
+      where: { id: parseInt(BookId) },
+    });
+
+    if (!exBook) {
+      return res.status(401).send("존재하지 않는 교재입니다.");
+    }
+
+    const exBookList2 = await BookList.findOne({
+      LectureId: parseInt(LectureId),
+      BookId: parseInt(BookId),
+    });
+
+    if (exBookList2) {
+      return res.status(401).send("이미 해당 강의에 교재가 등록되어 있습니다.");
+    }
+
+    const updateResult = await BookList.update(
+      {
+        LectureId: parseInt(LectureId),
+        BookId: parseInt(BookId),
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(201).json({ result: true });
+    } else {
+      return res.status(201).json({ result: true });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("강의에 등록된 교제를 수정할 수 없습니다.");
+  }
+});
+
+router.delete("/delete/:BookListId", isLoggedIn, async (req, res, next) => {
+  const { BookListId } = req.params;
+
+  if (isNanCheck(BookListId)) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
+  try {
+    const exBookList = await BookList.findOne({
+      where: { id: parseInt(BookListId) },
+    });
+
+    if (!exBookList) {
+      return res.status(401).send("등록되지 않은 정보입니다.");
+    }
+
+    const deleteResult = await BookList.destroy({
+      where: { id: parseInt(BookListId) },
+    });
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("강의에 등록된 교제를 삭제할 수 없습니다.");
   }
 });
 
