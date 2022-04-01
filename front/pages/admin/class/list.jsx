@@ -662,6 +662,7 @@ const List = () => {
                   onChange={startDateChangeHandler}
                   type={`number`}
                   {...inputPeriod}
+                  disabled
                 />
               </FormItem>
               <Text margin={`0 0 0 10px`}>주</Text>
@@ -674,7 +675,7 @@ const List = () => {
                 name={`cnt`}
                 width={`calc(100% - 130px)`}
               >
-                <CusotmInput type={`number`} {...inputCnt} />
+                <CusotmInput disabled type={`number`} {...inputCnt} />
               </FormItem>
               <Text width={`30px`} padding={`0 0 0 10px`}>
                 회
@@ -687,7 +688,7 @@ const List = () => {
                 rules={[{ required: true, message: "요일을 입력해주세요." }]}
                 name={`day`}
               >
-                <CusotmInput />
+                <CusotmInput disabled />
               </FormItem>
             </Wrapper>
 
@@ -698,7 +699,7 @@ const List = () => {
                 name={`allCnt`}
                 width={`calc(100% - 130px)`}
               >
-                <CusotmInput type={`number`} readOnly={true} />
+                <CusotmInput type={`number`} disabled />
               </FormItem>
               <Text width={`30px`} padding={`0 0 0 10px`}>
                 회
@@ -718,6 +719,7 @@ const List = () => {
                   size={`large`}
                   onChange={startDateChangeHandler}
                   // {...inputStartDate}
+                  disabled
                   value={
                     updateData && moment(updateData.startDate, "YYYY-MM-DD")
                   }
@@ -736,7 +738,7 @@ const List = () => {
                 <CusotmInput
                   format={`YYYY-MM-DD`}
                   size={`large`}
-                  readOnly={true}
+                  disabled
                   value={endDate && endDate}
                 />
               </FormItem>

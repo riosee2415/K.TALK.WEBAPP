@@ -478,7 +478,7 @@ const DetailClass = () => {
           />
 
           <Wrapper width={`auto`} al={`flex-start`} fontSize={`16px`}>
-            <Wrapper dr={`row`}>
+            <Wrapper dr={`row`} ju={`flex-start`}>
               <Text
                 fontWeight={`bold`}
                 width={`80px`}
@@ -491,7 +491,7 @@ const DetailClass = () => {
                 ? lectureDetail[0].zoomLink
                 : "-"}
             </Wrapper>
-            <Wrapper dr={`row`}>
+            <Wrapper dr={`row`} ju={`flex-start`}>
               <Text
                 fontWeight={`bold`}
                 width={`80px`}
@@ -562,7 +562,7 @@ const DetailClass = () => {
       <Modal visible={bookModal} footer={null} onCancel={detailBookClose}>
         <Wrapper al={`flex-start`}>
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
-            메모
+            교재
           </Text>
           <Wrapper al={`flex-start`} ju={`flex-start`}>
             <Table
