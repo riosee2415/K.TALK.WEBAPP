@@ -74,8 +74,8 @@ const reducer = (state = initialState, action) =>
         break;
       }
       case PARTICIPANT_LECTURE_LIST_SUCCESS: {
-        draft.st_participantLectureListDone = false;
-        draft.st_participantLectureListError = true;
+        draft.st_participantLectureListLoading = false;
+        draft.st_participantLectureListDone = true;
         draft.partLectureList = action.data.partList;
         break;
       }

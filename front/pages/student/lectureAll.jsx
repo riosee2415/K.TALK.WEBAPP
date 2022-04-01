@@ -58,54 +58,6 @@ import { LECTURE_STU_LECTURE_LIST_REQUEST } from "../../reducers/lecture";
 import { FileDoneOutlined } from "@ant-design/icons";
 import { saveAs } from "file-saver";
 
-const PROFILE_WIDTH = `184`;
-const PROFILE_HEIGHT = `190`;
-
-const ProfileWrapper = styled.div`
-  width: 100%;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
-const ProfileImage = styled.img`
-  width: 184px;
-  height: 190px;
-  object-fit: cover;
-  border-radius: 5px;
-`;
-const UploadWrapper = styled.div`
-  width: 184px;
-  margin: 5px 0;
-
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-`;
-
-const GuideWrapper = styled.section`
-  width: 100%;
-  padding: 5px;
-  margin-bottom: 10px;
-
-  border-radius: 3px;
-  background-color: #eeeeee;
-`;
-
-const GuideText = styled.div`
-  font-size: 13.5px;
-  color: #5e5e5e;
-  font-weight: 700;
-`;
-
-const PreviewGuide = styled.p`
-  font-weight: 700;
-  color: #b1b1b1;
-`;
-
 const CustomSlide = styled(Slider)`
   width: 100%;
   margin: 0 0 8px;
@@ -189,15 +141,15 @@ const CustomTableHoverWrapper = styled(Wrapper)`
   }
 `;
 
-const WordbreakText = styled(Text)`
-  width: 100%;
-  word-wrap: break-all;
-`;
-
 const CustomModal = styled(Modal)`
   & .ant-modal-header,
   & .ant-modal-content {
     border-radius: 5px;
+  }
+
+  & .ant-modal-title {
+    font-size: 20px;
+    font-weight: bold;
   }
 `;
 
@@ -290,22 +242,18 @@ const LectureAll = () => {
   const formRef = useRef();
 
   const [form] = Form.useForm();
-  const [answerform] = Form.useForm();
 
   const [sendMessageType, setSendMessageType] = useState(1);
 
   const [messageSendModal, setMessageSendModal] = useState(false);
-  const [messageViewModal, setMessageViewModal] = useState(false);
 
   const [messageDatum, setMessageDatum] = useState();
-
-  const [adminSendMessageToggle, setAdminSendMessageToggle] = useState(false);
-
-  const [selectValue, setSelectValue] = useState("");
 
   const [currentPage1, setCurrentPage1] = useState(1);
 
   ////// USEEFFECT //////
+
+  const testData = [];
 
   useEffect(() => {
     if (!me) {
@@ -583,6 +531,17 @@ const LectureAll = () => {
     []
   );
 
+  const noticeChangePage = useCallback((page) => {
+    setCurrentPage1(page);
+
+    dispatch({
+      type: NOTICE_LIST_REQUEST,
+      data: {
+        page,
+      },
+    });
+  }, []);
+
   ////// DATAVIEW //////
 
   return (
@@ -665,6 +624,69 @@ const LectureAll = () => {
                 </Text>
               </Wrapper>
             </Wrapper>
+
+            <Wrapper al={`flex-start`} margin={`0 0 20px`}>
+              <Text
+                fontSize={width < 800 ? `18px` : `22px`}
+                fontWeight={`bold`}>
+                강의 공지사항
+              </Text>
+            </Wrapper>
+
+            <Wrapper
+              radius={`10px`}
+              shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}
+              margin={`0 0 60px`}>
+              <Wrapper
+                dr={`row`}
+                fontWeight={`bold`}
+                padding={`20px 0`}
+                fontSize={width < 800 ? `14px` : `18px`}>
+                <Wrapper width={width < 800 ? `15%` : `10%`}>번호</Wrapper>
+                <Wrapper width={width < 800 ? `45%` : `70%`}>제목</Wrapper>
+                <Wrapper width={width < 800 ? `15%` : `10%`}>작성자</Wrapper>
+                <Wrapper width={width < 800 ? `25%` : `10%`}>날짜</Wrapper>
+              </Wrapper>
+              {testData &&
+                (testData.length === 0 ? (
+                  <Wrapper margin={`50px 0`}>
+                    <Empty description="공지사항이 없습니다." />
+                  </Wrapper>
+                ) : (
+                  testData.map((data, idx) => {
+                    return (
+                      <CustomTableHoverWrapper
+                        onClick={() => onClickNoticeHandler(data)}
+                        key={data.id}
+                        bgColor={idx % 2 === 0}>
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.id}
+                        </Wrapper>
+                        <Wrapper
+                          width={width < 800 ? `45%` : `70%`}
+                          al={`flex-start`}
+                          padding={`0 0 0 10px`}>
+                          {data.title}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.author}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `25%` : `10%`}>
+                          {moment(data.createdAt, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )}
+                        </Wrapper>
+                      </CustomTableHoverWrapper>
+                    );
+                  })
+                ))}
+            </Wrapper>
+            <CustomPage
+              size="small"
+              current={currentPage1}
+              tota={10}
+              onChange={(page) => noticeChangePage(page)}
+            />
 
             <Wrapper al={`flex-start`} margin={`0 0 20px`}>
               <Text
@@ -820,7 +842,9 @@ const LectureAll = () => {
                     radius={`10px`}
                     ju={`space-between`}
                     shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
-                    margin={`0 0 86px`}
+                    margin={
+                      lectureStuLectureList.length - 1 ? `0 0 70px` : `0 0 60px`
+                    }
                     al={width < 1100 && `flex-start`}>
                     <Wrapper
                       width={width < 800 ? `calc(100%)` : `calc(100%)`}

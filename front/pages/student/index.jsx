@@ -218,6 +218,11 @@ const CustomModal = styled(Modal)`
   & .ant-modal-content {
     border-radius: 5px;
   }
+
+  & .ant-modal-title {
+    font-size: 20px;
+    font-weight: bold;
+  }
 `;
 
 const CustomForm = styled(Form)`
@@ -1824,14 +1829,25 @@ const Student = () => {
             title="공지사항"
             footer={null}
             closable={false}>
-            <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
+            <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 35px`}>
               <Text margin={`0 54px 0 0`}>
                 {`작성자 ${noticeViewDatum && noticeViewDatum.author}`}
               </Text>
-              <Text>{`날짜 ${moment(
-                noticeViewDatum && noticeViewDatum.createdAt,
-                "YYYY/MM/DD"
-              ).format("YYYY/MM/DD")}`}</Text>
+              <Wrapper width={`auto`}>
+                <Text>
+                  {`작성일: ${moment(
+                    noticeViewDatum && noticeViewDatum.createdAt,
+                    "YYYY/MM/DD"
+                  ).format("YYYY/MM/DD")}`}
+                </Text>
+
+                <Text>
+                  {`수정일: ${moment(
+                    noticeViewDatum && noticeViewDatum.updatedAt,
+                    "YYYY/MM/DD"
+                  ).format("YYYY/MM/DD")}`}
+                </Text>
+              </Wrapper>
             </Wrapper>
 
             <Text fontSize={`18px`} fontWeight={`bold`}>

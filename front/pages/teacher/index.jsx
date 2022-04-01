@@ -54,7 +54,7 @@ import {
   MESSAGE_CREATE_REQUEST,
   MESSAGE_USER_LIST_REQUEST,
 } from "../../reducers/message";
-import { PARTICIPANT_LIST_REQUEST } from "../../reducers/participant";
+import { saveAs } from "file-saver";
 
 const PROFILE_WIDTH = `184`;
 const PROFILE_HEIGHT = `190`;
@@ -108,7 +108,7 @@ const CustomPage = styled(Pagination)`
 `;
 
 const Button = styled.button`
-  width: calc(100% / 3 - 30px);
+  width: calc(100% / 4 - 30px);
   color: ${Theme.black_3C};
   font-size: 18px;
   margin: 0 30px 0 0;
@@ -203,6 +203,17 @@ const CustomModal = styled(Modal)`
   & .ant-modal-content {
     border-radius: 5px;
   }
+
+  & .ant-modal-title {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  @media (max-width: 700px) {
+    & .ant-modal-title {
+      font-size: 16px;
+    }
+  }
 `;
 
 const CustomForm = styled(Form)`
@@ -272,6 +283,11 @@ const PreviewGuide = styled.p`
   color: #b1b1b1;
 `;
 
+const WordbreakText = styled(Text)`
+  width: 100%;
+  word-wrap: break-all;
+`;
+
 const Index = () => {
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
@@ -333,6 +349,9 @@ const Index = () => {
   const [messageViewToggle, setMessageViewToggle] = useState(false);
   const [messageAnswerModal, setMessageAnswerModal] = useState(false);
   const [messageSendModal, setMessageSendModal] = useState(false);
+
+  const [noticeViewModal, setNoticeViewModal] = useState(false);
+  const [noticeViewDatum, setNoticeViewDatum] = useState(null);
 
   const [sendMessageType, setSendMessageType] = useState(1);
 
@@ -529,10 +548,17 @@ const Index = () => {
 
   ////// HANDLER //////
 
+  const onClickNoticeHandler = useCallback((data) => {
+    setNoticeViewDatum(data);
+    setNoticeViewModal(true);
+  }, []);
+
   const onReset = useCallback(() => {
     answerform.resetFields();
     setMessageAnswerModal(false);
     setMessageViewToggle(false);
+    setNoticeViewDatum("");
+    setNoticeViewModal(false);
   }, []);
 
   const clickImageUpload = useCallback(() => {
@@ -642,13 +668,6 @@ const Index = () => {
     setMessageDatum(data);
   }, []);
 
-  // const onFillAnswer = (data) => {
-  //   answerform.setFieldsValue({
-  //     messageTitle: data.title,
-  //     messageContent: data.content,
-  //   });
-  // };
-
   const answerFinishHandler = useCallback(
     (data, messageData) => {
       if (messageData) {
@@ -688,6 +707,21 @@ const Index = () => {
     },
     [me, lectureId]
   );
+
+  const fileDownloadHandler = useCallback(async (filePath) => {
+    let blob = await fetch(filePath).then((r) => r.blob());
+
+    const file = new Blob([blob]);
+
+    const ext = filePath.substring(
+      filePath.lastIndexOf(".") + 1,
+      filePath.length
+    );
+
+    const originName = `첨부파일.${ext}`;
+
+    saveAs(file, originName);
+  }, []);
 
   ////// DATAVIEW //////
 
@@ -825,12 +859,14 @@ const Index = () => {
                   noticeList.map((data, idx) => {
                     return (
                       <Wrapper
+                        key={data.id}
                         dr={`row`}
                         textAlign={`center`}
                         ju={`flex-start`}
                         padding={`25px 0 20px`}
                         cursor={`pointer`}
-                        bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
+                        bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                        onClick={() => onClickNoticeHandler(data)}>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
                           width={width < 800 ? `15%` : `10%`}
@@ -851,7 +887,9 @@ const Index = () => {
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
                           width={width < 800 ? `25%` : `10%`}>
-                          {data.createdAt.slice(0, 10)}
+                          {moment(data.createdAt, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )}
                         </Text>
                       </Wrapper>
                     );
@@ -885,11 +923,15 @@ const Index = () => {
                 lectureTeacherList.map((data, idx) => {
                   return (
                     <Wrapper
+                      key={data.id}
                       dr={`row`}
                       ju={`flex-start`}
                       al={`flex-start`}
                       shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
                       padding={width < 700 ? `15px 10px 10px` : `35px 30px`}
+                      margin={
+                        idx === lectureTeacherList.length - 1 ? `0` : "0 0 20px"
+                      }
                       radius={`10px`}>
                       <Wrapper
                         width={
@@ -923,11 +965,6 @@ const Index = () => {
                             {data.time}
                           </Text>
                           <Wrapper
-                            display={
-                              width < 1280
-                                ? `flex`
-                                : (idx + 1) % 3 === 0 && `none`
-                            }
                             width={`1px`}
                             height={width < 800 ? `20px` : `34px`}
                             borderLeft={`1px dashed ${Theme.grey_C}`}
@@ -979,16 +1016,7 @@ const Index = () => {
                             {`NO.${data.id}`}
                           </Text>
 
-                          <Wrapper width={`auto`} dr={`row`}>
-                            <Text
-                              cursor={`pointer`}
-                              color={Theme.black_2C}
-                              fontSize={width < 700 ? `12px` : `18px`}
-                              width={width < 700 ? `auto` : `140px`}
-                              onClick={() => zoomLinkModalToggle(data)}>
-                              줌 링크 등록
-                            </Text>
-
+                          <Wrapper width={`auto`} fontWeight={`bold`}>
                             <Text
                               cursor={`pointer`}
                               color={Theme.black_2C}
@@ -999,7 +1027,16 @@ const Index = () => {
                                   `/textbook?lectureId=${data.id}`
                                 )
                               }>
-                              교재 올리기
+                              교재 등록
+                            </Text>
+
+                            <Text
+                              cursor={`pointer`}
+                              color={Theme.black_2C}
+                              fontSize={width < 700 ? `12px` : `18px`}
+                              width={width < 700 ? `auto` : `140px`}
+                              onClick={() => zoomLinkModalToggle(data)}>
+                              줌 링크 등록
                             </Text>
                           </Wrapper>
                         </Wrapper>
@@ -1124,9 +1161,12 @@ const Index = () => {
               dr={`row`}
               margin={`100px 0`}
               ju={width < 700 ? `flex-start` : "center"}>
-              <Button onClick={() => console.log("클릭!")}>복무 규정</Button>
-              <Button onClick={() => console.log("클릭!")}>강사 계약서</Button>
-              <Button onClick={() => console.log("클릭!")}>강의 산정료</Button>
+              <Button onClick={() => moveLinkHandler(`/textbook`)}>
+                교재 찾기 / 올리기
+              </Button>
+              <Button>복무 규정</Button>
+              <Button>강사 계약서</Button>
+              <Button>강의 산정료</Button>
             </Wrapper>
           </RsWrapper>
 
@@ -1362,7 +1402,10 @@ const Index = () => {
                     rules={[
                       { required: true, message: "제목을 입력해주세요." },
                     ]}>
-                    <CusotmInput width={`100%`} />
+                    <CusotmInput
+                      width={`100%`}
+                      placeholder="제목을 입력해주세요."
+                    />
                   </Form.Item>
                 </Wrapper>
 
@@ -1375,7 +1418,10 @@ const Index = () => {
                     rules={[
                       { required: true, message: "내용을 입력해주세요." },
                     ]}>
-                    <Input.TextArea style={{ height: `360px` }} />
+                    <Input.TextArea
+                      style={{ height: `360px` }}
+                      placeholder="내용을 입력해주세요."
+                    />
                   </Form.Item>
                 </Wrapper>
 
@@ -1610,6 +1656,79 @@ const Index = () => {
               </CommonButton>
             </Wrapper>
           </CustomForm>
+        </CustomModal>
+
+        <CustomModal
+          visible={noticeViewModal}
+          width={`1350px`}
+          title="공지사항"
+          footer={null}
+          closable={false}>
+          <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 35px`}>
+            <Text margin={`0 54px 0 0`}>
+              {`작성자 ${noticeViewDatum && noticeViewDatum.author}`}
+            </Text>
+            <Wrapper width={`auto`}>
+              <Text>
+                {`작성일: ${moment(
+                  noticeViewDatum && noticeViewDatum.createdAt,
+                  "YYYY/MM/DD"
+                ).format("YYYY/MM/DD")}`}
+              </Text>
+
+              <Text>
+                {`수정일: ${moment(
+                  noticeViewDatum && noticeViewDatum.updatedAt,
+                  "YYYY/MM/DD"
+                ).format("YYYY/MM/DD")}`}
+              </Text>
+            </Wrapper>
+          </Wrapper>
+
+          {noticeViewDatum && noticeViewDatum.file && (
+            <Wrapper dr={`row`} ju={`flex-end`}>
+              <Text margin={`0 10px 0 0`} fontSize={`15px`}>
+                첨부파일
+              </Text>
+
+              <CommonButton
+                size={`small`}
+                radius={`5px`}
+                fontSize={`14px`}
+                onClick={() => fileDownloadHandler(noticeViewDatum.file)}>
+                다운로드
+              </CommonButton>
+            </Wrapper>
+          )}
+
+          <Text fontSize={`18px`} fontWeight={`bold`}>
+            제목
+          </Text>
+          <Wrapper padding={`10px`}>
+            <WordbreakText>
+              {noticeViewDatum && noticeViewDatum.title}
+            </WordbreakText>
+          </Wrapper>
+
+          <Text fontSize={`18px`} fontWeight={`bold`}>
+            내용
+          </Text>
+          <Wrapper padding={`10px`}>
+            <WordbreakText
+              dangerouslySetInnerHTML={{
+                __html: noticeViewDatum && noticeViewDatum.content,
+              }}></WordbreakText>
+          </Wrapper>
+
+          <Wrapper>
+            <CommonButton
+              onClick={() => onReset()}
+              kindOf={`grey`}
+              color={Theme.darkGrey_C}
+              radius={`5px`}>
+              돌아가기
+            </CommonButton>
+          </Wrapper>
         </CustomModal>
       </ClientLayout>
     </>
