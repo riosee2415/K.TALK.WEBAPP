@@ -652,7 +652,6 @@ const LectureAll = () => {
                         onClick={() => onClickNoticeHandler(data)}
                         key={data.id}
                         bgColor={idx % 2 === 0}>
-                        {/* <Badge.Ribbon text={"파일"} size="small" /> */}
                         <Wrapper width={width < 800 ? `15%` : `10%`}>
                           {data.id}
                         </Wrapper>
