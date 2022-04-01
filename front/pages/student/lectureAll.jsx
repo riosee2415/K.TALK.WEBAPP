@@ -30,6 +30,7 @@ import {
   Pagination,
   Select,
   Slider,
+  Badge,
 } from "antd";
 import styled from "styled-components";
 import useWidth from "../../hooks/useWidth";
@@ -53,7 +54,10 @@ import {
   MESSAGE_USER_LIST_REQUEST,
 } from "../../reducers/message";
 
-import { NOTICE_LIST_REQUEST } from "../../reducers/notice";
+import {
+  NOTICE_LIST_REQUEST,
+  NOTICE_MY_LECTURE_LIST_REQUEST,
+} from "../../reducers/notice";
 import { LECTURE_STU_LECTURE_LIST_REQUEST } from "../../reducers/lecture";
 import { FileDoneOutlined } from "@ant-design/icons";
 import { saveAs } from "file-saver";
@@ -175,26 +179,20 @@ const CusotmInput = styled(TextInput)`
   }
 `;
 
+const WordbreakText = styled(Text)`
+  width: 100%;
+  word-wrap: break-all;
+`;
+
 const LectureAll = () => {
   ////// GLOBAL STATE //////
-
-  const { Option } = Select;
 
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
   );
   const {
     me,
-    meUpdateModal,
-    postCodeModal,
-    userProfilePath,
     //
-    st_userProfileUploadLoading,
-    st_userProfileUploadDone,
-    st_userProfileUploadError,
-    //
-    st_userUserUpdateDone,
-    st_userUserUpdateError,
   } = useSelector((state) => state.user);
 
   const {
@@ -207,53 +205,46 @@ const LectureAll = () => {
 
     st_messageForAdminCreateDone,
     st_messageForAdminCreateError,
-
-    messageUserList,
-    st_messageUserListDone,
-    st_messageUserListError,
   } = useSelector((state) => state.message);
 
   const {
-    lecturePath,
-
-    st_lectureFileLoading,
-    st_lectureFileDone,
-    st_lectureFileError,
-
-    st_lectureSubmitCreateDone,
-    st_lectureSubmitCreateError,
-
     lectureStuLectureList,
     st_lectureStuLectureListDone,
     st_lectureStuLectureListError,
-
-    lectureHomeworkStuList,
-    st_lectureHomeworkStuListDone,
-    st_lectureHomeworkStuListError,
   } = useSelector((state) => state.lecture);
+
+  const {
+    noticeMyLectureList,
+    noticeMyLectureLastPage,
+
+    st_noticeMyLectureListDone,
+    st_noticeMyLectureListError,
+  } = useSelector((state) => state.notice);
+
+  console.log(noticeMyLectureList, "noticeMyLectureList");
 
   ////// HOOKS //////
   const width = useWidth();
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const [updateForm] = Form.useForm();
-
   const formRef = useRef();
 
   const [form] = Form.useForm();
 
   const [sendMessageType, setSendMessageType] = useState(1);
-
   const [messageSendModal, setMessageSendModal] = useState(false);
 
+  const [messageViewModal, setMessageViewModal] = useState(false);
   const [messageDatum, setMessageDatum] = useState();
 
+  const [noticeViewModal, setNoticeViewModal] = useState(false);
+  const [noticeViewDatum, setNoticeViewDatum] = useState(null);
+
   const [currentPage1, setCurrentPage1] = useState(1);
+  const [currentPage2, setCurrentPage2] = useState(1);
 
   ////// USEEFFECT //////
-
-  const testData = [];
 
   useEffect(() => {
     if (!me) {
@@ -280,33 +271,27 @@ const LectureAll = () => {
     dispatch({
       type: LECTURE_STU_LECTURE_LIST_REQUEST,
     });
+
+    dispatch({
+      type: NOTICE_MY_LECTURE_LIST_REQUEST,
+      data: {
+        page: 1,
+      },
+    });
   }, []);
 
   useEffect(() => {
-    if (st_userProfileUploadDone) {
-      return message.success("프로필 사진이 업로드되었습니다.");
+    if (st_messageCreateDone) {
     }
-  }, [st_userProfileUploadDone]);
+  }, [st_messageCreateDone]);
 
   useEffect(() => {
-    if (st_userUserUpdateDone) {
-      dispatch({
-        type: LOAD_MY_INFO_REQUEST,
-      });
+    if (st_noticeMyLectureListError) {
+      onReset();
 
-      updateForm.resetFields();
-      dispatch({
-        type: USER_PROFILE_IMAGE_PATH,
-        data: null,
-      });
-
-      dispatch({
-        type: ME_UPDATE_MODAL_TOGGLE,
-      });
-
-      return message.success("회원 정보가 수정되었습니다.");
+      return message.error(st_noticeMyLectureListError);
     }
-  }, [st_userUserUpdateDone]);
+  }, [st_noticeMyLectureListError]);
 
   useEffect(() => {
     if (st_messageCreateDone) {
@@ -340,6 +325,9 @@ const LectureAll = () => {
 
     setMessageSendModal(false);
     setMessageViewModal(false);
+
+    setNoticeViewModal(false);
+    setNoticeViewDatum(null);
   }, []);
 
   ////// TOGGLE //////
@@ -356,6 +344,11 @@ const LectureAll = () => {
   }, []);
 
   ////// HANDLER //////
+
+  const onClickNoticeHandler = useCallback((data) => {
+    setNoticeViewDatum(data);
+    setNoticeViewModal(true);
+  }, []);
 
   const sendMessageFinishHandler = useCallback(
     (data) => {
@@ -532,10 +525,10 @@ const LectureAll = () => {
   );
 
   const noticeChangePage = useCallback((page) => {
-    setCurrentPage1(page);
+    setCurrentPage2(page);
 
     dispatch({
-      type: NOTICE_LIST_REQUEST,
+      type: NOTICE_MY_LECTURE_LIST_REQUEST,
       data: {
         page,
       },
@@ -647,18 +640,19 @@ const LectureAll = () => {
                 <Wrapper width={width < 800 ? `15%` : `10%`}>작성자</Wrapper>
                 <Wrapper width={width < 800 ? `25%` : `10%`}>날짜</Wrapper>
               </Wrapper>
-              {testData &&
-                (testData.length === 0 ? (
+              {noticeMyLectureList &&
+                (noticeMyLectureList.length === 0 ? (
                   <Wrapper margin={`50px 0`}>
                     <Empty description="공지사항이 없습니다." />
                   </Wrapper>
                 ) : (
-                  testData.map((data, idx) => {
+                  noticeMyLectureList.map((data, idx) => {
                     return (
                       <CustomTableHoverWrapper
                         onClick={() => onClickNoticeHandler(data)}
                         key={data.id}
                         bgColor={idx % 2 === 0}>
+                        {/* <Badge.Ribbon text={"파일"} size="small" /> */}
                         <Wrapper width={width < 800 ? `15%` : `10%`}>
                           {data.id}
                         </Wrapper>
@@ -683,8 +677,8 @@ const LectureAll = () => {
             </Wrapper>
             <CustomPage
               size="small"
-              current={currentPage1}
-              tota={10}
+              current={currentPage2}
+              tota={noticeMyLectureLastPage * 10}
               onChange={(page) => noticeChangePage(page)}
             />
 
@@ -1208,6 +1202,79 @@ const LectureAll = () => {
               </CommonButton>
             </Wrapper>
           </CustomForm>
+        </CustomModal>
+
+        <CustomModal
+          visible={noticeViewModal}
+          width={`1350px`}
+          title="공지사항"
+          footer={null}
+          closable={false}>
+          <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 35px`}>
+            <Text margin={`0 54px 0 0`}>
+              {`작성자 ${noticeViewDatum && noticeViewDatum.author}`}
+            </Text>
+            <Wrapper width={`auto`}>
+              <Text>
+                {`작성일: ${moment(
+                  noticeViewDatum && noticeViewDatum.createdAt,
+                  "YYYY/MM/DD"
+                ).format("YYYY/MM/DD")}`}
+              </Text>
+
+              <Text>
+                {`수정일: ${moment(
+                  noticeViewDatum && noticeViewDatum.updatedAt,
+                  "YYYY/MM/DD"
+                ).format("YYYY/MM/DD")}`}
+              </Text>
+            </Wrapper>
+          </Wrapper>
+
+          {noticeViewDatum && noticeViewDatum.file && (
+            <Wrapper dr={`row`} ju={`flex-end`}>
+              <Text margin={`0 10px 0 0`} fontSize={`15px`}>
+                첨부파일
+              </Text>
+
+              <CommonButton
+                size={`small`}
+                radius={`5px`}
+                fontSize={`14px`}
+                onClick={() => fileDownloadHandler(noticeViewDatum.file)}>
+                다운로드
+              </CommonButton>
+            </Wrapper>
+          )}
+
+          <Text fontSize={`18px`} fontWeight={`bold`}>
+            제목
+          </Text>
+          <Wrapper padding={`10px`}>
+            <WordbreakText>
+              {noticeViewDatum && noticeViewDatum.title}
+            </WordbreakText>
+          </Wrapper>
+
+          <Text fontSize={`18px`} fontWeight={`bold`}>
+            내용
+          </Text>
+          <Wrapper padding={`10px`}>
+            <WordbreakText
+              dangerouslySetInnerHTML={{
+                __html: noticeViewDatum && noticeViewDatum.content,
+              }}></WordbreakText>
+          </Wrapper>
+
+          <Wrapper>
+            <CommonButton
+              onClick={() => onReset()}
+              kindOf={`grey`}
+              color={Theme.darkGrey_C}
+              radius={`5px`}>
+              돌아가기
+            </CommonButton>
+          </Wrapper>
         </CustomModal>
       </ClientLayout>
     </>

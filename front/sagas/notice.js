@@ -48,6 +48,10 @@ import {
   NOTICE_LECTURE_CREATE_REQUEST,
   NOTICE_LECTURE_CREATE_SUCCESS,
   NOTICE_LECTURE_CREATE_FAILURE,
+  //////////////////////////////////////
+  NOTICE_MY_LECTURE_LIST_REQUEST,
+  NOTICE_MY_LECTURE_LIST_SUCCESS,
+  NOTICE_MY_LECTURE_LIST_FAILURE,
 } from "../reducers/notice";
 
 // SAGA AREA ********************************************************************************************************
@@ -361,6 +365,32 @@ function* noticePrev(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function noticeMyLectureListAPI(data) {
+  return axios.get(`/api/notice/myLecture/list?page=${data.page}`);
+}
+
+function* noticeMyLectureList(action) {
+  try {
+    const result = yield call(noticeMyLectureListAPI, action.data);
+
+    yield put({
+      type: NOTICE_MY_LECTURE_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: NOTICE_MY_LECTURE_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchNoticeLectureList() {
@@ -411,6 +441,10 @@ function* watchNoticePrev() {
   yield takeLatest(NOTICE_PREV_REQUEST, noticePrev);
 }
 
+function* watchNoticeMyLectureList() {
+  yield takeLatest(NOTICE_MY_LECTURE_LIST_REQUEST, noticeMyLectureList);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* noticeSaga() {
   yield all([
@@ -426,6 +460,7 @@ export default function* noticeSaga() {
     fork(watchNoticeDelete),
     fork(watchNoticeNext),
     fork(watchNoticePrev),
+    fork(watchNoticeMyLectureList),
 
     //
   ]);

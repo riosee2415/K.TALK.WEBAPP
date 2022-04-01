@@ -15,6 +15,9 @@ export const initailState = {
 
   noticeFilePath: null,
 
+  noticeMyLectureList: null,
+  noticeMyLectureLastPage: 1,
+
   createModal: false,
   detailModal: false,
   //
@@ -65,6 +68,10 @@ export const initailState = {
   st_noticePrevLoading: false,
   st_noticePrevDone: false,
   st_noticePrevError: null,
+  //
+  st_noticeMyLectureListLoading: false,
+  st_noticeMyLectureListDone: false,
+  st_noticeMyLectureListError: null,
 };
 
 export const NOTICE_LECTURE_LIST_REQUEST = "NOTICE_LECTURE_LIST_REQUEST";
@@ -121,6 +128,10 @@ export const NOTICE_PREV_FAILURE = "NOTICE_PREV_FAILURE";
 export const NOTICE_FILE_REQUEST = "NOTICE_FILE_REQUEST";
 export const NOTICE_FILE_SUCCESS = "NOTICE_FILE_SUCCESS";
 export const NOTICE_FILE_FAILURE = "NOTICE_FILE_FAILURE";
+//
+export const NOTICE_MY_LECTURE_LIST_REQUEST = "NOTICE_MY_LECTURE_LIST_REQUEST";
+export const NOTICE_MY_LECTURE_LIST_SUCCESS = "NOTICE_MY_LECTURE_LIST_SUCCESS";
+export const NOTICE_MY_LECTURE_LIST_FAILURE = "NOTICE_MY_LECTURE_LIST_FAILURE";
 //
 export const CREATE_MODAL_OPEN_REQUEST = "CREATE_MODAL_OPEN_REQUEST";
 export const CREATE_MODAL_CLOSE_REQUEST = "CREATE_MODAL_CLOSE_REQUEST";
@@ -346,18 +357,17 @@ const reducer = (state = initailState, action) =>
         draft.st_noticePrevDone = true;
         break;
       }
-      case NOTICE_PREV_FAILURE: {
-        draft.st_noticePrevLoading = false;
-        draft.st_noticePrevDone = false;
-        draft.st_noticePrevError = action.error;
-        break;
-      }
+      case NOTICE_PREV_FAILURE:
+        {
+          draft.st_noticePrevLoading = false;
+          draft.st_noticePrevDone = false;
+          draft.st_noticePrevError = action.error;
+          break;
+        }
 
-      ///////////////////////////////////////////////////////
-      ///////////////////////////////////////////////////////
-      ///////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////
 
-      ///////////////////////////////////////////////////////
+        x;
 
       case NOTICE_DELETE_REQUEST: {
         draft.st_noticeDeleteLoading = true;
@@ -378,7 +388,27 @@ const reducer = (state = initailState, action) =>
       }
 
       ///////////////////////////////////////////////////////
-      ///////////////////////////////////////////////////////
+
+      case NOTICE_MY_LECTURE_LIST_REQUEST: {
+        draft.st_noticeMyLectureListLoading = true;
+        draft.st_noticeMyLectureListDone = null;
+        draft.st_noticeMyLectureListError = false;
+        break;
+      }
+      case NOTICE_MY_LECTURE_LIST_SUCCESS: {
+        draft.st_noticeMyLectureListLoading = false;
+        draft.st_noticeMyLectureListDone = true;
+        draft.noticeMyLectureList = action.data.notices;
+        draft.noticeMyLectureLastPage = action.data.lastPage;
+        break;
+      }
+      case NOTICE_MY_LECTURE_LIST_FAILURE: {
+        draft.st_noticeMyLectureListLoading = false;
+        draft.st_noticeMyLectureListDone = false;
+        draft.st_noticeMyLectureListError = action.error;
+        break;
+      }
+
       ///////////////////////////////////////////////////////
 
       case CREATE_MODAL_OPEN_REQUEST:

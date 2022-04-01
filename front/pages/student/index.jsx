@@ -1850,6 +1850,22 @@ const Student = () => {
               </Wrapper>
             </Wrapper>
 
+            {noticeViewDatum && noticeViewDatum.file && (
+              <Wrapper dr={`row`} ju={`flex-end`}>
+                <Text margin={`0 10px 0 0`} fontSize={`15px`}>
+                  첨부파일
+                </Text>
+
+                <CommonButton
+                  size={`small`}
+                  radius={`5px`}
+                  fontSize={`14px`}
+                  onClick={() => fileDownloadHandler(noticeViewDatum.file)}>
+                  다운로드
+                </CommonButton>
+              </Wrapper>
+            )}
+
             <Text fontSize={`18px`} fontWeight={`bold`}>
               제목
             </Text>
