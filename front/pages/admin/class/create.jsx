@@ -307,16 +307,14 @@ const List = () => {
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
             <Text width={`100px`}>가격</Text>
+            <Wrapper width={`20px`}>$</Wrapper>
             <FormItem
               rules={[{ required: true, message: "가격을 입력해주세요." }]}
               name={`price`}
-              width={`calc(100% - 130px)`}
+              width={`calc(100% - 120px)`}
             >
               <CusotmInput type={`number`} />
             </FormItem>
-            <Text width={`30px`} padding={`0 0 0 10px`}>
-              원
-            </Text>
           </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>

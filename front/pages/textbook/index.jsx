@@ -429,6 +429,7 @@ const Index = () => {
       setCreateModal(false);
       setUpdateData(null);
       form.resetFields();
+      filename.setValue(``);
     },
     [form]
   );

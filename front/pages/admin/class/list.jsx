@@ -515,14 +515,14 @@ const List = () => {
                           </Text>
                         </Wrapper>
                       </Wrapper>
-                      <Wrapper
-                        margin={`20px 0 0`}
-                        dr={`row`}
-                        ju={`space-between`}
-                      >
+                      <Wrapper margin={`20px 0 0`} dr={`row`} ju={`flex-start`}>
                         {data.Participants &&
                           data.Participants.map((data) => {
-                            return <Text>{data.User.username}</Text>;
+                            return (
+                              <Text margin={`0 15px 0 0`}>
+                                {data.User.username}
+                              </Text>
+                            );
                           })}
                       </Wrapper>
                     </Wrapper>
@@ -627,14 +627,14 @@ const List = () => {
 
             <Wrapper dr={`row`} margin={`0 0 20px`}>
               <Text width={`100px`}>가격</Text>
+              <Wrapper width={`20px`}>$</Wrapper>
               <FormItem
                 rules={[{ required: true, message: "가격을 입력해주세요." }]}
                 name={`price`}
-                width={`calc(100% - 130px)`}
+                width={`calc(100% - 120px)`}
               >
                 <CusotmInput type={`number`} />
               </FormItem>
-              <Text margin={`0 0 0 10px`}>원</Text>
             </Wrapper>
 
             <Wrapper dr={`row`} margin={`0 0 20px`}>

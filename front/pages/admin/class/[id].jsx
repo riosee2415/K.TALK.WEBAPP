@@ -32,8 +32,12 @@ import {
   LECTURE_STUDENT_LIST_REQUEST,
 } from "../../../reducers/lecture";
 import moment from "moment";
-import { BOOK_LIST_REQUEST } from "../../../reducers/book";
+import {
+  BOOK_LECTURE_LIST_REQUEST,
+  BOOK_LIST_REQUEST,
+} from "../../../reducers/book";
 import { saveAs } from "file-saver";
+import useWidth from "../../../hooks/useWidth";
 const AdminContent = styled.div`
   padding: 20px;
 `;
@@ -77,6 +81,8 @@ const DetailClass = () => {
 
   ////// HOOKS //////
 
+  const width = useWidth();
+
   const {
     lectureDetail,
     lectureDiaryLastPage,
@@ -85,7 +91,7 @@ const DetailClass = () => {
     lectureDiaryAdminList,
     lectureMemoStuCommute,
   } = useSelector((state) => state.lecture);
-  const { bookList } = useSelector((state) => state.book);
+  const { bookLecture } = useSelector((state) => state.book);
   const dispatch = useDispatch();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -100,6 +106,8 @@ const DetailClass = () => {
 
   ////// REDUX //////
   ////// USEEFFECT //////
+
+  useEffect(() => {}, [router.query]);
 
   useEffect(() => {
     if (router.query) {
@@ -116,9 +124,8 @@ const DetailClass = () => {
         },
       });
       dispatch({
-        type: BOOK_LIST_REQUEST,
+        type: BOOK_LECTURE_LIST_REQUEST,
         data: {
-          BookFolderId: null,
           LectureId: router.query.id,
         },
       });
@@ -163,11 +170,12 @@ const DetailClass = () => {
   }, []);
 
   const detailBookOpen = useCallback(() => {
-    if (bookList) {
-      setDetailBook(bookList);
-      setBookModal(true);
-    }
-  }, [bookList]);
+    setDetailBook(bookLecture);
+    setBookModal(true);
+  }, [bookLecture]);
+
+  console.log(bookLecture);
+
   const detailBookClose = useCallback(() => {
     setDetailBook(null);
     setBookModal(false);
@@ -447,7 +455,8 @@ const DetailClass = () => {
               />
             </Wrapper>
             <Text fontSize={`18px`}>
-              {lectureDetail && lectureDetail[0].viewDate}
+              {lectureDetail && lectureDetail[0].startDate.slice(0, 10)}~
+              {lectureDetail && lectureDetail[0].endDate.slice(0, 10)}
               <SpanText
                 fontWeight={`bold`}
                 color={Theme.red_C}
@@ -479,6 +488,7 @@ const DetailClass = () => {
             </Wrapper>
 
             <Text fontSize={`18px`}>
+              {lectureDetail && lectureDetail[0].course}&nbsp;/&nbsp;
               {lectureDetail && lectureDetail[0].teacherName}
             </Text>
           </Wrapper>
@@ -586,7 +596,12 @@ const DetailClass = () => {
         </Wrapper>
       </Modal>
 
-      <Modal visible={bookModal} footer={null} onCancel={detailBookClose}>
+      <Modal
+        visible={bookModal}
+        footer={null}
+        onCancel={detailBookClose}
+        width={width < 700 ? `80%` : 700}
+      >
         <Wrapper al={`flex-start`}>
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
             교재
@@ -596,7 +611,7 @@ const DetailClass = () => {
               style={{ width: `100%` }}
               size={`small`}
               columns={bookColumns}
-              dataSource={bookList}
+              dataSource={bookLecture}
             />
           </Wrapper>
         </Wrapper>
