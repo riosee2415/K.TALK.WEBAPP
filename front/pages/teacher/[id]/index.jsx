@@ -485,6 +485,7 @@ const Index = () => {
   const [commuteToggle, setCommuteToggle] = useState(false);
 
   const [checkedList, setCheckedList] = useState([]);
+  const [checkedAllValue, setCheckedAllValue] = useState(false);
 
   const [messageViewToggle, setMessageViewToggle] = useState(false);
 
@@ -536,7 +537,12 @@ const Index = () => {
 
       setCheckedList(arr);
     }
-  }, [partLectureList, st_messageForAdminCreateDone, st_messageManyCreateDone]);
+  }, [
+    partLectureList,
+    st_messageForAdminCreateDone,
+    st_messageManyCreateDone,
+    messageSendModalToggle,
+  ]);
 
   useEffect(() => {
     dispatch({
@@ -917,10 +923,12 @@ const Index = () => {
     setMemoStuDetailToggle((prev) => !prev);
   }, []);
 
-  const messageSendModalHandler = useCallback(() => {
-    let result = checkedList.filter((data, idx) => {
+  const messageSendModalHandler = useCallback(async () => {
+    let result = await checkedList.filter((data, idx) => {
       return data.isCheck ? true : false;
     });
+
+    console.log(result);
 
     if (result.length !== 0) {
       setMessageSendModalToggle((prev) => !prev);
@@ -929,6 +937,7 @@ const Index = () => {
       return message.error("체크 박스를 선택해주세요.");
     }
   }, [checkedList]);
+
   ////// HANDLER //////
 
   const fileUploadClick = useCallback(() => {
@@ -972,18 +981,24 @@ const Index = () => {
   }, []);
 
   const noteSendFinishHandler = useCallback(
-    (value) => {
-      dispatch({
-        type: MESSAGE_MANY_CREATE_REQUEST,
-        data: {
-          title: value.title1,
-          author: me.userId,
-          content: value.content1,
-          receiverId: checkedList.map((data) => data.UserId),
-        },
-      });
+    async (value, checkList) => {
+      let receiverId = await checkList.map((data) => data.UserId);
+
+      if (receiverId) {
+        dispatch({
+          type: MESSAGE_MANY_CREATE_REQUEST,
+          data: {
+            title: value.title1,
+            author: me.userId,
+            content: value.content1,
+            receiverId: receiverId,
+          },
+        });
+      } else {
+        return message.error("시스템 오류 입니다. 잠시후 시도해 주세요.");
+      }
     },
-    [me, checkedList]
+    [me]
   );
 
   const noticeFinishHandler = useCallback(
@@ -1133,6 +1148,7 @@ const Index = () => {
     inputMemoSearch.setValue("");
     noticeFileName.setValue("");
 
+    setCheckedAllValue(false);
     setMessageViewToggle(false);
     setIsCalendar(false);
     setHomeWorkModalToggle(false);
@@ -1169,7 +1185,7 @@ const Index = () => {
     let resultAll = arr.map((data) => {
       return { ...data, isCheck: e.target.checked };
     });
-
+    setCheckedAllValue(e.target.checked);
     setCheckedList(resultAll);
   }, []);
 
@@ -1196,8 +1212,6 @@ const Index = () => {
 
   const onFillNotice = (data) => {
     if (data.length !== 0) {
-      // console.log(data, "data");
-      // console.log(data[0].content, "content");
       noticeform.setFieldsValue({
         noticeTitle: data[0].title,
         noticeContent: data[0].content,
@@ -1546,6 +1560,7 @@ const Index = () => {
                   lectureDetail.map((data, idx) => {
                     return (
                       <Wrapper
+                        key={data.id}
                         dr={`row`}
                         ju={`flex-start`}
                         al={`flex-start`}
@@ -1709,6 +1724,7 @@ const Index = () => {
                       ju={`center`}
                       padding={`20px 0`}>
                       <CustomCheckBox
+                        checked={checkedAllValue}
                         onChange={(e) => onChangeBoxAllHanlder(e, checkedList)}
                       />
                       <Text
@@ -1875,6 +1891,7 @@ const Index = () => {
                     ju={`center`}
                     padding={`20px 0px`}>
                     <CustomCheckBox
+                      checked={checkedAllValue}
                       onChange={(e) => onChangeBoxAllHanlder(e, checkedList)}
                     />
 
@@ -2750,17 +2767,17 @@ const Index = () => {
           visible={messageSendModalToggle}
           width={`1350px`}
           title={
-            adminSendMessageToggle ? "관리자에게 쪽지 보내기" : "강사에게 쪽지"
+            adminSendMessageToggle ? "관리자에게 쪽지 보내기" : "학생에게 쪽지"
           }
           footer={null}
           closable={false}>
           <CustomForm
             ref={formRef}
             form={form}
-            onFinish={
+            onFinish={(data) =>
               adminSendMessageToggle
-                ? sendMessageAdminFinishHandler
-                : noteSendFinishHandler
+                ? sendMessageAdminFinishHandler(data)
+                : noteSendFinishHandler(data, checkedList)
             }>
             <Wrapper al={`flex-end`}>
               <CommonButton

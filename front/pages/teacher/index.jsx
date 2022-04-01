@@ -35,6 +35,9 @@ import {
   Input,
   Select,
 } from "antd";
+
+import { CalendarOutlined, UploadOutlined } from "@ant-design/icons";
+
 import styled from "styled-components";
 import useWidth from "../../hooks/useWidth";
 import ClientLayout from "../../components/ClientLayout";
@@ -340,6 +343,7 @@ const Index = () => {
   const [zoomLinkForm] = Form.useForm();
   const [answerform] = Form.useForm();
   const [messageSendform] = Form.useForm();
+  const [homeworkUploadform] = Form.useForm();
 
   const [currentPage1, setCurrentPage1] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
@@ -352,6 +356,9 @@ const Index = () => {
 
   const [noticeViewModal, setNoticeViewModal] = useState(false);
   const [noticeViewDatum, setNoticeViewDatum] = useState(null);
+
+  const [homeWorkModalToggle, setHomeWorkModalToggle] = useState(false);
+  const [fileName, setFileName] = useState("");
 
   const [sendMessageType, setSendMessageType] = useState(1);
 
@@ -721,6 +728,24 @@ const Index = () => {
     const originName = `첨부파일.${ext}`;
 
     saveAs(file, originName);
+  }, []);
+
+  const homeWorkFinishHandler = useCallback((value) => {
+    if (filePath) {
+      dispatch({
+        type: LECTURE_HOMEWORK_CREATE_REQUEST,
+        data: {
+          title: value.title3,
+          date: value.date,
+          file: filePath,
+          LectureId: router.query.id,
+        },
+      });
+
+      imageInput.current.value = "";
+    } else {
+      return message.error("파일을 업로드 해주세요.");
+    }
   }, []);
 
   ////// DATAVIEW //////
@@ -1534,95 +1559,7 @@ const Index = () => {
                 {"관리자"}
               </CommonButton>
             </Wrapper>
-            {/* {sendMessageType === 1 && (
-              <>
-                <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
-                  듣고 있는 강의 목록
-                </Text>
 
-                <Form.Item
-                  name="receivePerson"
-                  rules={[
-                    {
-                      required: true,
-                      message: "듣고있는 강의 목록을 선택해주세요.",
-                    },
-                  ]}>
-                  <Select
-                    value={lectureId}
-                    style={{ width: `100%` }}
-                    onChange={receiveLectureIdtHandler}>
-                    {lectureStuLectureList &&
-                    lectureStuLectureList.length === 0 ? (
-                      <Option value="참여 중인 강의가 없습니다.">
-                        참여 중인 강의가 없습니다.
-                      </Option>
-                    ) : (
-                      lectureStuLectureList &&
-                      lectureStuLectureList.map((data, idx) => {
-                        return (
-                          <Option key={data.id} value={data.UserId}>
-                            {data.course}
-                          </Option>
-                        );
-                      })
-                    )}
-                  </Select>
-                </Form.Item>
-                <Text
-                  fontSize={`14px`}
-                  color={Theme.grey2_C}
-                  margin={`0 0 20px`}>
-                  강사님 개인쪽지함에 쪽지가 전달됩니다.
-                </Text>
-              </>
-            )}
-
-            {sendMessageType === 2 && (
-              <>
-                <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
-                  듣고 있는 강의 목록
-                </Text>
-
-                <Form.Item
-                  name="receiveLectureId"
-                  rules={[
-                    {
-                      required: true,
-                      message: "듣고있는 강의 목록을 선택해주세요.",
-                    },
-                  ]}>
-                  <Select
-                    value={selectValue}
-                    style={{ width: `100%` }}
-                    onChange={receiveSelectHandler}>
-                    {messageTeacherList && messageTeacherList.length === 0 ? (
-                      <Option value="참여 중인 강의가 없습니다.">
-                        참여 중인 강의가 없습니다.
-                      </Option>
-                    ) : (
-                      messageTeacherList &&
-                      messageTeacherList.map((data, idx) => {
-                        return (
-                          <Option
-                            key={data.id}
-                            value={data.id}
-                            onClick={() => console.log("aaaaaaaaaa")}>
-                            {data.course}
-                          </Option>
-                        );
-                      })
-                    )}
-                  </Select>
-                </Form.Item>
-                <Text
-                  fontSize={`14px`}
-                  color={Theme.grey2_C}
-                  margin={`0 0 20px`}>
-                  강사님에 수업 상세페이지 쪽지함에 전달 됩니다.
-                </Text>
-              </>
-            )} */}
             <Text fontSize={`18px`} fontWeight={`bold`}>
               제목
             </Text>
@@ -1729,6 +1666,117 @@ const Index = () => {
               돌아가기
             </CommonButton>
           </Wrapper>
+        </CustomModal>
+
+        <CustomModal
+          visible={homeWorkModalToggle}
+          width={`1350px`}
+          title="숙제 업로드"
+          footer={null}
+          closable={false}>
+          <CustomForm
+            form={homeworkUploadform}
+            onFinish={homeWorkFinishHandler}>
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+              fontWeight={`bold`}
+              margin={`0 0 10px`}>
+              제목
+            </Text>
+            <Form.Item
+              name="title3"
+              rules={[{ required: true, message: "제목을 입력해주세요." }]}>
+              <CusotmInput width={`50%`} placeholder="제목을 입력해주세요." />
+            </Form.Item>
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+              fontWeight={`bold`}
+              margin={`0 0 10px`}>
+              날짜
+            </Text>
+            <Form.Item
+              name="date"
+              rules={[{ required: true, message: "날짜를 선택해주세요." }]}>
+              <Wrapper dr={`row`} ju={`flex-start`}>
+                <CusotmInput
+                  placeholder="날짜를 선택해주세요."
+                  width={`50%`}
+                  style={{
+                    height: `40px`,
+                    margin: `0 10px 0 0`,
+                  }}
+                  disabled
+                />
+
+                {/* <CalendarOutlined
+                  style={{
+                    cursor: `pointer`,
+                    fontSize: 25,
+                    position: `relative`,
+                  }}
+                  onClick={() => setIsCalendar(!isCalendar)}
+                />
+
+                <Wrapper
+                  display={isCalendar ? "flex" : "none"}
+                  width={`auto`}
+                  position={width < 1350 ? `static` : `absolute`}
+                  right={`0`}
+                  border={`1px solid ${Theme.grey_C}`}
+                  margin={`0 0 20px`}>
+                  <Calendar
+                    style={{ width: width < 1350 ? `100%` : `300px` }}
+                    fullscreen={false}
+                    onChange={dateChagneHandler}
+                  />
+                </Wrapper> */}
+              </Wrapper>
+            </Form.Item>
+
+            <Text fontSize={width < 700 ? `14px` : `18px`} fontWeight={`bold`}>
+              파일 업로드
+            </Text>
+
+            <Wrapper al={`flex-start`}>
+              <input
+                type="file"
+                name="file"
+                accept=".pdf"
+                // multiple
+                hidden
+                ref={imageInput}
+                onChange={onChangeImages}
+              />
+              <Button
+                icon={<UploadOutlined />}
+                onClick={clickImageUpload}
+                style={{
+                  height: `40px`,
+                  width: `150px`,
+                  margin: `10px 0 0`,
+                }}>
+                파일 올리기
+              </Button>
+              <Text>{`${fileName}`}</Text>
+            </Wrapper>
+
+            <Wrapper dr={`row`}>
+              <CommonButton
+                margin={`0 5px 0 0`}
+                kindOf={`grey`}
+                color={Theme.darkGrey_C}
+                radius={`5px`}
+                onClick={() => onReset()}>
+                돌아가기
+              </CommonButton>
+              <CommonButton
+                margin={`0 0 0 5px`}
+                radius={`5px`}
+                htmlType="submit">
+                작성하기
+              </CommonButton>
+            </Wrapper>
+          </CustomForm>
         </CustomModal>
       </ClientLayout>
     </>

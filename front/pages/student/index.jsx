@@ -346,6 +346,7 @@ const Student = () => {
   const [selectValue, setSelectValue] = useState("");
 
   const [lectureId, setLectureId] = useState("");
+  const [lectureUserId, setLectureUserId] = useState([]);
 
   const [currentPage1, setCurrentPage1] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
@@ -529,8 +530,10 @@ const Student = () => {
   const onReset = useCallback(() => {
     form.resetFields();
     sendform.resetFields();
+    answerform.resetFields();
 
     setNoticeViewModal(false);
+    setMessageAnswerModal(false);
     setMessageSendModal(false);
     setMessageViewModal(false);
     setHomeWorkModalToggle(false);
@@ -710,8 +713,8 @@ const Student = () => {
   );
 
   const answerFinishHandler = useCallback(
-    (data, messageData) => {
-      if (messageData.receiveLectureId) {
+    async (data, messageData) => {
+      if (messageData) {
         dispatch({
           type: MESSAGE_CREATE_REQUEST,
           data: {
@@ -719,19 +722,7 @@ const Student = () => {
             author: me.userId,
             senderId: messageData.receiverId,
             receiverId: messageData.senderId,
-            receiveLectureId: messageData.receiveLectureId,
-            content: data.messageContent,
-            level: me.level,
-          },
-        });
-      } else {
-        dispatch({
-          type: MESSAGE_CREATE_REQUEST,
-          data: {
-            title: data.messageTitle,
-            author: me.userId,
-            senderId: messageData.receiverId,
-            receiverId: messageData.senderId,
+            receiveLectureId: data.receiveLectureId,
             content: data.messageContent,
             level: me.level,
           },
@@ -775,11 +766,14 @@ const Student = () => {
   }, []);
 
   const receiveSelectHandler = useCallback((value) => {
-    console.log(value);
     setSelectValue(value);
   }, []);
 
   const receiveLectureIdtHandler = useCallback((value) => {
+    setLectureId(value);
+  }, []);
+
+  const onSearchHandler = useCallback((value) => {
     setLectureId(value);
   }, []);
 
@@ -1176,7 +1170,6 @@ const Student = () => {
             ) : (
               lectureStuLectureList &&
               lectureStuLectureList.slice(0, 1).map((data, idx) => {
-                console.log(data, "data");
                 return (
                   <Wrapper
                     key={data.id}
@@ -1907,7 +1900,7 @@ const Student = () => {
               onFinish={(data) => answerFinishHandler(data, messageDatum)}>
               {messageAnswerModal && (
                 <>
-                  <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 40px`}>
+                  <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
                     <Text
                       fontSize={`18px`}
                       fontWeight={`bold`}
@@ -1918,7 +1911,48 @@ const Student = () => {
                     <Text>{messageDatum && messageDatum.author}</Text>
                   </Wrapper>
 
-                  <Text fontSize={`18px`} fontWeight={`bold`}>
+                  <Wrapper dr={`row`} ju={`flex-start`}>
+                    <Form.Item
+                      name="receiveLectureId"
+                      rules={[
+                        { required: true, message: "강의를 선택해주세요." },
+                      ]}>
+                      <Select
+                        value={lectureId}
+                        style={{ width: `400px` }}
+                        showSearch
+                        onSearch={onSearchHandler}
+                        onChange={receiveLectureIdtHandler}
+                        filterOption={(input, option) =>
+                          option.children
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }>
+                        {lectureStuLectureList &&
+                        lectureStuLectureList.length === 0 ? (
+                          <Option value="참여 중인 강의가 없습니다." disabled>
+                            참여 중인 강의가 없습니다.
+                          </Option>
+                        ) : (
+                          lectureStuLectureList &&
+                          lectureStuLectureList.map((data, idx) => {
+                            if (messageDatum.senderId !== data.UserId) return;
+
+                            return (
+                              <Option key={`${data.id}${idx}1`} value={data.id}>
+                                {data.course}
+                              </Option>
+                            );
+                          })
+                        )}
+                      </Select>
+                    </Form.Item>
+                  </Wrapper>
+
+                  <Text
+                    fontSize={`18px`}
+                    fontWeight={`bold`}
+                    margin={`20px 0 0`}>
                     제목
                   </Text>
                   <Wrapper padding={`10px`}>
@@ -2005,7 +2039,7 @@ const Student = () => {
                     돌아가기
                   </CommonButton>
                   <CommonButton
-                    onClick={() => messageAnswerToggleHanlder(messageDatum)}
+                    onClick={() => messageAnswerToggleHanlder()}
                     margin={`0 0 0 5px`}
                     radius={`5px`}>
                     답변하기
@@ -2263,7 +2297,7 @@ const Student = () => {
             width={`1350px`}
             title={
               sendMessageType === 1
-                ? "학생에게 쪽지 보내기"
+                ? "강사에게 쪽지 보내기"
                 : sendMessageType === 2
                 ? "수업에 대한 쪽지 보내기"
                 : sendMessageType === 3 && "관리자에게 쪽지 보내기"
