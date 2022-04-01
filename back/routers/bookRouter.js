@@ -397,9 +397,9 @@ router.post("/lecture/list", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의 입니다.");
     }
 
-    if (exLecture.UserId !== req.user.id) {
-      return res.status(401).send("자신의 강의가 아닙니다.");
-    }
+    // if (exLecture.UserId !== req.user.id) {
+    //   return res.status(401).send("자신의 강의가 아닙니다.");
+    // }
 
     const bookList = await BookList.findAll({
       where: { LectureId: parseInt(LectureId) },
