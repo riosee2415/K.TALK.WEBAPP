@@ -699,7 +699,11 @@ router.get("/memo/student/list", async (req, res, next) => {
 
     return res
       .status(200)
-      .json({ stuMemo: stuMemo[0], lastPage: parseInt(lastPage), commute });
+      .json({
+        stuMemo: stuMemo[0],
+        lastPage: parseInt(lastPage),
+        commute: commute[0],
+      });
   } catch (error) {
     console.error(error);
     return res.status(401).send("메모 정보를 불러올 수 없습니다.");
