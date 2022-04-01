@@ -83,6 +83,7 @@ import {
   NOTICE_UPDATE_REQUEST,
   DETAIL_MODAL_OPEN_REQUEST,
   DETAIL_MODAL_CLOSE_REQUEST,
+  NOTICE_UPLOAD_REQUEST,
 } from "../../../reducers/notice";
 import {
   COMMUTE_CREATE_REQUEST,
@@ -299,6 +300,19 @@ const CustomText2 = styled(Text)`
   }
 `;
 
+const FileBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+`;
+
+const Filename = styled.span`
+  margin-right: 15px;
+  color: #555;
+  font-size: 13px;
+`;
+
 const Index = () => {
   ////// GLOBAL STATE //////
 
@@ -404,6 +418,11 @@ const Index = () => {
     st_noticeDetailDone,
     st_noticeDetailError,
     detailModal,
+
+    uploadPath,
+    st_noticeUploadLoading,
+    st_noticeUploadDone,
+    st_noticeUploadError,
   } = useSelector((state) => state.notice);
 
   const {
@@ -426,6 +445,7 @@ const Index = () => {
   const width = useWidth();
 
   const formRef = useRef();
+  const fileRef = useRef();
 
   const [form] = Form.useForm();
   const [answerform] = Form.useForm();
@@ -450,6 +470,9 @@ const Index = () => {
   const [memoStuDetailToggle, setMemoStuDetailToggle] = useState(false);
   const [messageAnswerModal, setMessageAnswerModal] = useState(false);
 
+  const [noticeViewModal, setNoticeViewModal] = useState(false);
+  const [noticeViewDatum, setNoticeViewDatum] = useState(null);
+
   const [noticeId, setNoticeId] = useState("");
 
   const [memoToggle, setMemoToggle] = useState(false);
@@ -462,14 +485,13 @@ const Index = () => {
   const [commuteToggle, setCommuteToggle] = useState(false);
 
   const [checkedList, setCheckedList] = useState([]);
-  const [checkAll, setCheckAll] = useState(false);
 
   const [messageViewToggle, setMessageViewToggle] = useState(false);
 
-  const [selectValue, setSelectValue] = useState("");
-
   const [fileName, setFileName] = useState("");
   const [filePath, setFilePath] = useState("");
+
+  const noticeFileName = useInput(null);
 
   const inputDate = useInput("");
   const inputCommuteSearch = useInput("");
@@ -571,6 +593,22 @@ const Index = () => {
         search: "",
       },
     });
+
+    dispatch({
+      type: MESSAGE_LECTURE_LIST_REQUEST,
+      data: {
+        LectureId: router.query.id,
+        page: 1,
+      },
+    });
+
+    dispatch({
+      type: NOTICE_LECTURE_LIST_REQUEST,
+      data: {
+        page: 1,
+        LectureId: router.query.id,
+      },
+    });
   }, [me, router.query]);
 
   useEffect(() => {
@@ -659,6 +697,14 @@ const Index = () => {
     if (st_noticeCreateDone) {
       onReset();
 
+      dispatch({
+        type: NOTICE_LECTURE_LIST_REQUEST,
+        data: {
+          page: 1,
+          LectureId: router.query.id,
+        },
+      });
+
       return message.success("공지사항이 작성 되었습니다.");
     }
   }, [st_noticeCreateDone]);
@@ -668,24 +714,6 @@ const Index = () => {
       return message.error(st_noticeCreateError);
     }
   }, [st_noticeCreateError]);
-
-  useEffect(() => {
-    dispatch({
-      type: MESSAGE_LECTURE_LIST_REQUEST,
-      data: {
-        LectureId: router.query.id,
-        page: 1,
-      },
-    });
-
-    dispatch({
-      type: NOTICE_LECTURE_LIST_REQUEST,
-      data: {
-        page: 1,
-        LectureId: router.query.id,
-      },
-    });
-  }, []);
 
   useEffect(() => {
     if (st_lectureDiaryCreateDone) {
@@ -717,6 +745,14 @@ const Index = () => {
         type: NOTICE_DETAIL_REQUEST,
         data: {
           noticeId: noticeId,
+        },
+      });
+
+      dispatch({
+        type: NOTICE_LECTURE_LIST_REQUEST,
+        data: {
+          page: 1,
+          LectureId: router.query.id,
         },
       });
 
@@ -793,10 +829,64 @@ const Index = () => {
   }, [st_lectureMemoStuUpdateDone]);
 
   useEffect(() => {
+    if (st_noticeUploadError) {
+      return message.error(st_noticeUploadError);
+    }
+  }, [st_noticeUploadError]);
+
+  useEffect(() => {
+    if (st_noticeUploadDone) {
+      return message.success("파일을 업로드 했습니다.");
+    }
+  }, [st_noticeUploadDone]);
+
+  useEffect(() => {
     if (st_lectureMemoStuUpdateError) {
       return message.error(st_lectureMemoStuUpdateError);
     }
   }, [st_lectureMemoStuUpdateError]);
+
+  useEffect(() => {
+    if (st_commuteListError) {
+      return message.error(st_commuteListError);
+    }
+  }, [st_commuteListError]);
+
+  useEffect(() => {
+    if (st_noticeDetailError) {
+      return message.error(st_noticeDetailError);
+    }
+  }, [st_noticeDetailError]);
+
+  useEffect(() => {
+    if (st_noticeLectureListError) {
+      return message.error(st_noticeLectureListError);
+    }
+  }, [st_noticeLectureListError]);
+
+  useEffect(() => {
+    if (st_participantLectureListError) {
+      return message.error(st_participantLectureListError);
+    }
+  }, [st_participantLectureListError]);
+
+  useEffect(() => {
+    if (st_lectureSubmitListError) {
+      return message.error(st_lectureSubmitListError);
+    }
+  }, [st_lectureSubmitListError]);
+
+  useEffect(() => {
+    if (st_lectureDiaryListError) {
+      return message.error(st_lectureDiaryListError);
+    }
+  }, [st_lectureDiaryListError]);
+
+  useEffect(() => {
+    if (st_lectureHomeWorkError) {
+      return message.error(st_lectureHomeWorkError);
+    }
+  }, [st_lectureHomeWorkError]);
 
   ////// TOGGLE //////
 
@@ -841,6 +931,34 @@ const Index = () => {
   }, [checkedList]);
   ////// HANDLER //////
 
+  const fileUploadClick = useCallback(() => {
+    fileRef.current.click();
+  }, [fileRef.current]);
+
+  const fileChangeHandler = useCallback(
+    (e) => {
+      const formData = new FormData();
+      noticeFileName.setValue(e.target.files[0].name);
+
+      [].forEach.call(e.target.files, (file) => {
+        formData.append("file", file);
+      });
+
+      dispatch({
+        type: NOTICE_UPLOAD_REQUEST,
+        data: formData,
+      });
+
+      fileRef.current.value = "";
+    },
+    [fileRef]
+  );
+
+  const onClickNoticeHandler = useCallback((data) => {
+    setNoticeViewDatum(data);
+    setNoticeViewModal(true);
+  }, []);
+
   const dateChagneHandler = useCallback((data) => {
     const birth = data.format("YYYY-MM-DD");
 
@@ -865,7 +983,7 @@ const Index = () => {
         },
       });
     },
-    [me, selectValue, checkedList]
+    [me, checkedList]
   );
 
   const noticeFinishHandler = useCallback(
@@ -880,11 +998,12 @@ const Index = () => {
             content: noticeContent,
             author: me.userId,
             LectureId: router.query.id,
+            file: uploadPath,
           },
         });
       }
     },
-    [me, noticeContent]
+    [me, noticeContent, noticeFileName, uploadPath]
   );
 
   const noticeViewFinishHandler = useCallback(
@@ -911,7 +1030,6 @@ const Index = () => {
 
   const homeWorkFinishHandler = useCallback(
     (value) => {
-      console.log(value, "value");
       if (filePath) {
         dispatch({
           type: LECTURE_HOMEWORK_CREATE_REQUEST,
@@ -933,12 +1051,6 @@ const Index = () => {
 
   const memoFinishHandler = useCallback(
     (data) => {
-      console.log(
-        memoDatum,
-        "memoDatummemoDatummemoDatummemoDatummemoDatummemoDatum",
-        data
-      );
-
       dispatch({
         type: LECTURE_MEMO_STU_CREATE_REQUEST,
         data: {
@@ -1019,6 +1131,8 @@ const Index = () => {
 
     inputDate.setValue("");
     inputMemoSearch.setValue("");
+    noticeFileName.setValue("");
+
     setMessageViewToggle(false);
     setIsCalendar(false);
     setHomeWorkModalToggle(false);
@@ -1034,7 +1148,8 @@ const Index = () => {
     setFilePath("");
     setMemoDatum("");
     setMessageAnswerModal(false);
-
+    setNoticeViewModal(false);
+    setNoticeViewDatum("");
     setMemoStuBackToggle(false);
     setCommuteToggle(false);
 
@@ -1249,20 +1364,16 @@ const Index = () => {
     setNoticeContent(contentValue);
   }, []);
 
-  const onCommuteHandler = useCallback(
-    (data, isAtt) => {
-      dispatch({
-        type: COMMUTE_CREATE_REQUEST,
-        data: {
-          time: moment().format("YYYY-MM-DD HH:MM"),
-          LectureId: data.LectureId,
-          UserId: data.UserId,
-        },
-      });
-    },
-
-    []
-  );
+  const onCommuteHandler = useCallback((data, isAtt) => {
+    dispatch({
+      type: COMMUTE_CREATE_REQUEST,
+      data: {
+        time: moment().format("YYYY-MM-DD HH:MM"),
+        LectureId: data.LectureId,
+        UserId: data.UserId,
+      },
+    });
+  }, []);
 
   const commuteSearchHandler = useCallback(() => {
     dispatch({
@@ -1309,13 +1420,8 @@ const Index = () => {
     let dir = 0;
 
     const save = Math.abs(
-      moment
-        .duration(
-          moment().diff(
-            moment(startDate, "YYYY-MM-DD")
-          )
-        )
-        .asDays() - 1
+      moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays() -
+        1
     );
 
     let check = parseInt(
@@ -1327,11 +1433,8 @@ const Index = () => {
     if (save >= check) {
       dir = check;
     } else {
-      console.log("aaa", save);
       dir = save;
     }
-
-    console.log(dir, "dir");
 
     const arr = ["일", "월", "화", "수", "목", "금", "토"];
     let add = 0;
@@ -1729,11 +1832,10 @@ const Index = () => {
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`25%`}
                               wordBreak={`break-word`}>
-                              {/* 2022/01/22 */}
                               {data.endDate}
 
                               <SpanText color={Theme.red_C}>
-                                {`D-(${moment
+                                {`(D-${moment
                                   .duration(
                                     moment(data.endDate, "YYYY-MM-DD").diff(
                                       moment().format("YYYY-MM-DD")
@@ -1877,7 +1979,7 @@ const Index = () => {
                               <SpanText
                                 color={Theme.red_C}
                                 margin={`0 0 0 5px`}>
-                                {`D-(${moment
+                                {`(D-${moment
                                   .duration(
                                     moment(data.endDate, "YYYY-MM-DD").diff(
                                       moment().format("YYYY-MM-DD")
@@ -2077,11 +2179,11 @@ const Index = () => {
                       shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
                       margin={`0 0 10px 0`}
                       padding={`20px`}
-                      radius={`10px`}>
+                      radius={`10px`}
+                      bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
                       <Text
                         width={`50%`}
                         fontSize={width < 700 ? `14px` : `16px`}>
-                        {/* 한국어로 편지 쓰기 */}
                         {data.title}
                       </Text>
 
@@ -2221,19 +2323,17 @@ const Index = () => {
                 </Wrapper>
               ) : (
                 noticeLectureList &&
-                noticeLectureList.map((data) => {
+                noticeLectureList.map((data, idx) => {
                   return (
                     <Wrapper
                       key={data.id}
-                      onClick={() => noticeDetailHandler(data.id)}
+                      onClick={() => onClickNoticeHandler(data)}
                       dr={`row`}
                       textAlign={`center`}
                       ju={`flex-start`}
                       padding={`25px 0 20px`}
                       cursor={`pointer`}
-                      bgColor={Theme.lightGrey_C}
-                      // bgColor={idx % 2 === 1 && Theme.lightGrey_C}
-                    >
+                      bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
                       <Text
                         fontSize={width < 700 ? `14px` : `16px`}
                         width={`15%`}
@@ -2249,7 +2349,9 @@ const Index = () => {
                       <Text
                         fontSize={width < 700 ? `14px` : `16px`}
                         width={`25%`}>
-                        {data.createdAt.slice(0, 10)}
+                        {moment(data.createdAt, "YYYY/MM/DD").format(
+                          "YYYY/MM/DD"
+                        )}
                       </Text>
                     </Wrapper>
                   );
@@ -2372,72 +2474,162 @@ const Index = () => {
         </WholeWrapper>
 
         <CustomModal
-          visible={detailModal}
+          visible={noticeViewModal}
           width={`1350px`}
           title="공지사항"
           footer={null}
           closable={false}>
-          <CustomForm form={noticeform} onFinish={noticeViewFinishHandler}>
-            <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
-              <Text margin={`0 54px 0 0`}>
-                {`작성자 ${
-                  noticeDetail && noticeDetail[0] && noticeDetail[0].author
-                }`}
+          {detailModal ? (
+            <CustomForm form={noticeform} onFinish={noticeViewFinishHandler}>
+              <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 35px`}>
+                <Text margin={`0 54px 0 0`}>
+                  {`작성자 ${
+                    noticeDetail && noticeDetail[0] && noticeDetail[0].author
+                  }`}
+                </Text>
+                <Wrapper width={`auto`}>
+                  <Text>
+                    {`작성일: ${moment(
+                      noticeDetail &&
+                        noticeDetail[0] &&
+                        noticeDetail[0].createdAt,
+                      "YYYY/MM/DD"
+                    ).format("YYYY/MM/DD")}`}
+                  </Text>
+
+                  <Text>
+                    {`수정일: ${moment(
+                      noticeDetail &&
+                        noticeDetail[0] &&
+                        noticeDetail[0].updatedAt,
+                      "YYYY/MM/DD"
+                    ).format("YYYY/MM/DD")}`}
+                  </Text>
+                </Wrapper>
+              </Wrapper>
+
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                제목
               </Text>
-              <Text>
-                {`날짜 ${
-                  noticeDetail &&
-                  noticeDetail[0] &&
-                  noticeDetail[0].createdAt.slice(0, 14)
-                }`}
+
+              <Form.Item
+                name="noticeTitle"
+                rules={[{ required: true, message: "제목을 입력해주세요." }]}>
+                <CusotmInput width={`100%`}></CusotmInput>
+              </Form.Item>
+
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                내용
               </Text>
-            </Wrapper>
 
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              제목
-            </Text>
+              <Form.Item
+                name="noticeContent"
+                rules={[{ required: true, message: "내용을 입력해주세요." }]}>
+                <ToastEditorComponent
+                  action={getEditContentUpdate}
+                  placeholder="placeholder"
+                  noticeDetail={
+                    noticeDetail && noticeDetail[0] && noticeDetail[0].content
+                  }
+                />
+              </Form.Item>
 
-            <Form.Item
-              name="noticeTitle"
-              rules={[{ required: true, message: "제목을 입력해주세요." }]}>
-              <CusotmInput width={`100%`}></CusotmInput>
-            </Form.Item>
+              <Wrapper dr={`row`}>
+                <CommonButton
+                  kindOf={`grey`}
+                  margin={`0 10px 0 0`}
+                  color={Theme.darkGrey_C}
+                  radius={`5px`}
+                  onClick={() => onReset()}>
+                  돌아가기
+                </CommonButton>
 
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              내용
-            </Text>
+                <CommonButton
+                  color={Theme.white_C}
+                  radius={`5px`}
+                  htmlType="submit">
+                  수정하기
+                </CommonButton>
+              </Wrapper>
+            </CustomForm>
+          ) : (
+            <>
+              <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 35px`}>
+                <Text margin={`0 54px 0 0`}>
+                  {`작성자 ${noticeViewDatum && noticeViewDatum.author}`}
+                </Text>
+                <Wrapper width={`auto`}>
+                  <Text>
+                    {`작성일: ${moment(
+                      noticeViewDatum && noticeViewDatum.createdAt,
+                      "YYYY/MM/DD"
+                    ).format("YYYY/MM/DD")}`}
+                  </Text>
 
-            <Form.Item
-              name="noticeContent"
-              rules={[{ required: true, message: "내용을 입력해주세요." }]}>
-              <ToastEditorComponent
-                action={getEditContentUpdate}
-                placeholder="placeholder"
-                noticeDetail={
-                  noticeDetail && noticeDetail[0] && noticeDetail[0].content
-                }
-              />
-            </Form.Item>
+                  <Text>
+                    {`수정일: ${moment(
+                      noticeViewDatum && noticeViewDatum.updatedAt,
+                      "YYYY/MM/DD"
+                    ).format("YYYY/MM/DD")}`}
+                  </Text>
+                </Wrapper>
+              </Wrapper>
 
-            <Wrapper dr={`row`}>
-              <CommonButton
-                kindOf={`grey`}
-                margin={`0 10px 0 0`}
-                color={Theme.darkGrey_C}
-                radius={`5px`}
-                onClick={() => onReset()}>
-                돌아가기
-              </CommonButton>
+              {noticeViewDatum && noticeViewDatum.file && (
+                <Wrapper dr={`row`} ju={`flex-end`}>
+                  <Text margin={`0 10px 0 0`} fontSize={`15px`}>
+                    첨부파일
+                  </Text>
 
-              <CommonButton
-                color={Theme.white_C}
-                radius={`5px`}
-                htmlType="submit">
-                수정하기
-              </CommonButton>
-            </Wrapper>
-          </CustomForm>
+                  <CommonButton
+                    size={`small`}
+                    radius={`5px`}
+                    fontSize={`14px`}
+                    onClick={() => fileDownloadHandler(noticeViewDatum.file)}>
+                    다운로드
+                  </CommonButton>
+                </Wrapper>
+              )}
+
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                제목
+              </Text>
+              <Wrapper padding={`10px`}>
+                <WordbreakText>
+                  {noticeViewDatum && noticeViewDatum.title}
+                </WordbreakText>
+              </Wrapper>
+
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                내용
+              </Text>
+              <Wrapper padding={`10px`}>
+                <WordbreakText
+                  dangerouslySetInnerHTML={{
+                    __html: noticeViewDatum && noticeViewDatum.content,
+                  }}></WordbreakText>
+              </Wrapper>
+
+              <Wrapper dr={`row`}>
+                <CommonButton
+                  margin={`0 10px 0 0`}
+                  onClick={() => onReset()}
+                  kindOf={`grey`}
+                  color={Theme.darkGrey_C}
+                  radius={`5px`}>
+                  돌아가기
+                </CommonButton>
+
+                <CommonButton
+                  radius={`5px`}
+                  onClick={() => noticeDetailHandler(noticeViewDatum.id)}>
+                  수정하기
+                </CommonButton>
+              </Wrapper>
+            </>
+          )}
         </CustomModal>
+        {/* 주석하기 */}
 
         <CustomModal
           visible={messageViewToggle}
@@ -2665,8 +2857,10 @@ const Index = () => {
               margin={`20px 0`}>
               제목
             </Text>
-            <Form.Item name="title2" rules={[{ required: true }]}>
-              <CusotmInput width={`100%`} />
+            <Form.Item
+              name="title2"
+              rules={[{ required: true, message: "제목을 입력해주세요." }]}>
+              <CusotmInput width={`100%`} placeholder="제목을 입력해주세요." />
             </Form.Item>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
@@ -2674,12 +2868,38 @@ const Index = () => {
               margin={`20px 0`}>
               내용
             </Text>
-            <Form.Item name="content2" rules={[{ required: true }]}>
+            <Form.Item
+              name="content2"
+              rules={[{ required: true, message: "내용을 입력해주세요." }]}>
               <ToastEditorComponent2
                 action={getEditContent}
-                placeholder="placeholder"
+                placeholder="내용을 입력해주세요."
               />
             </Form.Item>
+
+            <Form.Item name="file">
+              <FileBox>
+                <input
+                  type="file"
+                  name="file"
+                  hidden
+                  ref={fileRef}
+                  onChange={fileChangeHandler}
+                />
+                <Filename>
+                  {noticeFileName.value
+                    ? noticeFileName.value
+                    : `파일을 선택해주세요.`}
+                </Filename>
+                <Button
+                  type="primary"
+                  onClick={fileUploadClick}
+                  loading={st_noticeUploadLoading}>
+                  파일 업로드
+                </Button>
+              </FileBox>
+            </Form.Item>
+
             <Wrapper dr={`row`}>
               <CommonButton
                 margin={`0 5px 0 0`}
@@ -2715,8 +2935,10 @@ const Index = () => {
               margin={`0 0 10px`}>
               제목
             </Text>
-            <Form.Item name="title3" rules={[{ required: true }]}>
-              <CusotmInput width={`50%`} placeholder="" />
+            <Form.Item
+              name="title3"
+              rules={[{ required: true, message: "제목을 입력해주세요." }]}>
+              <CusotmInput width={`50%`} placeholder="제목을 입력해주세요." />
             </Form.Item>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
@@ -2724,7 +2946,9 @@ const Index = () => {
               margin={`0 0 10px`}>
               날짜
             </Text>
-            <Form.Item name="date" rules={[{ required: true }]}>
+            <Form.Item
+              name="date"
+              rules={[{ required: true, message: "날짜를 선택해주세요." }]}>
               <Wrapper dr={`row`} ju={`flex-start`}>
                 <CusotmInput
                   placeholder="날짜를 선택해주세요."
