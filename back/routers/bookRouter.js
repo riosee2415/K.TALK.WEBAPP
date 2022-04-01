@@ -155,12 +155,12 @@ router.delete(
 router.post("/list", async (req, res, next) => {
   const { BookFolderId, search, page } = req.body;
 
-  const LIMIT = 10;
+  const LIMIT = 12;
 
   const _page = page ? page : 1;
 
   const __page = _page - 1;
-  const OFFSET = __page * 10;
+  const OFFSET = __page * 12;
 
   let _BookFolderId = BookFolderId || null;
 
