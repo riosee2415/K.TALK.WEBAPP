@@ -8,6 +8,8 @@ export const initailState = {
 
   bookMaxLength: 1,
 
+  bookAllList: null,
+
   st_bookFolderListLoading: false,
   st_bookFolderListDone: false,
   st_bookFolderListError: null,
@@ -67,6 +69,10 @@ export const initailState = {
   st_bookDeleteLoading: false,
   st_bookDeleteDone: false,
   st_bookDeleteError: null,
+  //
+  st_bookAllListLoading: false,
+  st_bookAllListDone: false,
+  st_bookAllListError: null,
   //
   createModal: null,
   //
@@ -135,6 +141,10 @@ export const BOOK_LECTURE_UPDATE_FAILURE = "BOOK_LECTURE_UPDATE_FAILURE";
 export const BOOK_LECTURE_DELETE_REQUEST = "BOOK_LECTURE_DELETE_REQUEST";
 export const BOOK_LECTURE_DELETE_SUCCESS = "BOOK_LECTURE_DELETE_SUCCESS";
 export const BOOK_LECTURE_DELETE_FAILURE = "BOOK_LECTURE_DELETE_FAILURE";
+//
+export const BOOK_ALL_LIST_REQUEST = "BOOK_ALL_LIST_REQUEST";
+export const BOOK_ALL_LIST_SUCCESS = "BOOK_ALL_LIST_SUCCESS";
+export const BOOK_ALL_LIST_FAILURE = "BOOK_ALL_LIST_FAILURE";
 //
 
 export const CREATE_MODAL_OPEN_REQUEST = "CREATE_MODAL_OPEN_REQUEST";
@@ -387,7 +397,6 @@ const reducer = (state = initailState, action) =>
       case BOOK_LECTURE_CREATE_SUCCESS: {
         draft.st_bookLectureCreateLoading = false;
         draft.st_bookLectureCreateDone = true;
-
         break;
       }
       case BOOK_LECTURE_CREATE_FAILURE: {
@@ -433,6 +442,27 @@ const reducer = (state = initailState, action) =>
         draft.st_bookLectureDeleteLoading = false;
         draft.st_bookLectureDeleteDone = false;
         draft.st_bookLectureDeleteError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case BOOK_ALL_LIST_REQUEST: {
+        draft.st_bookAllListLoading = true;
+        draft.st_bookAllListDone = null;
+        draft.st_bookAllListError = false;
+        break;
+      }
+      case BOOK_ALL_LIST_SUCCESS: {
+        draft.st_bookAllListLoading = false;
+        draft.st_bookAllListDone = true;
+        draft.bookAllList = action.data;
+        break;
+      }
+      case BOOK_ALL_LIST_FAILURE: {
+        draft.st_bookAllListLoading = false;
+        draft.st_bookAllListDone = false;
+        draft.st_bookAllListError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////

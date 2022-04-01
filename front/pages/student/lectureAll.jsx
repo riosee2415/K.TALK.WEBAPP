@@ -130,6 +130,7 @@ const CustomPage = styled(Pagination)`
 
 const CustomTableHoverWrapper = styled(Wrapper)`
   flex-direction: row;
+  text-align: center;
   padding: 25px 0 20px;
   font-size: 16px;
   background-color: ${(props) =>
@@ -221,8 +222,6 @@ const LectureAll = () => {
     st_noticeMyLectureListError,
   } = useSelector((state) => state.notice);
 
-  console.log(noticeMyLectureList, "noticeMyLectureList");
-
   ////// HOOKS //////
   const width = useWidth();
   const router = useRouter();
@@ -235,7 +234,6 @@ const LectureAll = () => {
   const [sendMessageType, setSendMessageType] = useState(1);
   const [messageSendModal, setMessageSendModal] = useState(false);
 
-  const [messageViewModal, setMessageViewModal] = useState(false);
   const [messageDatum, setMessageDatum] = useState();
 
   const [noticeViewModal, setNoticeViewModal] = useState(false);
@@ -324,7 +322,6 @@ const LectureAll = () => {
     form.resetFields();
 
     setMessageSendModal(false);
-    setMessageViewModal(false);
 
     setNoticeViewModal(false);
     setNoticeViewDatum(null);
@@ -1209,9 +1206,13 @@ const LectureAll = () => {
           title="공지사항"
           footer={null}
           closable={false}>
-          <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 35px`}>
+          <Wrapper
+            dr={`row`}
+            ju={`space-between`}
+            margin={`0 0 35px`}
+            fontSize={width < 700 ? "14px" : "16px"}>
             <Text margin={`0 54px 0 0`}>
-              {`작성자 ${noticeViewDatum && noticeViewDatum.author}`}
+              {`작성자: ${noticeViewDatum && noticeViewDatum.author}`}
             </Text>
             <Wrapper width={`auto`}>
               <Text>
@@ -1250,7 +1251,7 @@ const LectureAll = () => {
             제목
           </Text>
           <Wrapper padding={`10px`}>
-            <WordbreakText>
+            <WordbreakText fontSize={width < 700 ? "14px" : "16px"}>
               {noticeViewDatum && noticeViewDatum.title}
             </WordbreakText>
           </Wrapper>
@@ -1260,6 +1261,7 @@ const LectureAll = () => {
           </Text>
           <Wrapper padding={`10px`}>
             <WordbreakText
+              fontSize={width < 700 ? "14px" : "16px"}
               dangerouslySetInnerHTML={{
                 __html: noticeViewDatum && noticeViewDatum.content,
               }}></WordbreakText>

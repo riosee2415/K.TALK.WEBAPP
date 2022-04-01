@@ -61,6 +61,9 @@ import {
   BOOK_DELETE_SUCCESS,
   BOOK_DELETE_FAILURE,
   /////////////////////////////////
+  BOOK_ALL_LIST_REQUEST,
+  BOOK_ALL_LIST_SUCCESS,
+  BOOK_ALL_LIST_FAILURE,
 } from "../reducers/book";
 
 // SAGA AREA ********************************************************************************************************
@@ -402,6 +405,28 @@ function* bookDelete(action) {
 }
 
 //////////////////////////////////////////////////////////////
+function bookAllListAPI(data) {
+  return axios.get(`/api/book/allBooks`);
+}
+
+function* bookAllList(action) {
+  try {
+    const result = yield call(bookAllListAPI, action.data);
+
+    yield put({
+      type: BOOK_ALL_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: BOOK_ALL_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+//////////////////////////////////////////////////////////////
 
 function* watchBookFolderList() {
   yield takeLatest(BOOK_FOLDER_LIST_REQUEST, bookFolderList);
@@ -448,6 +473,9 @@ function* watchBookUpdate() {
 function* watchBookDelete() {
   yield takeLatest(BOOK_DELETE_REQUEST, bookDelete);
 }
+function* watchBookAllList() {
+  yield takeLatest(BOOK_ALL_LIST_REQUEST, bookAllList);
+}
 
 //////////////////////////////////////////////////////////////
 export default function* bookSaga() {
@@ -467,6 +495,7 @@ export default function* bookSaga() {
     fork(watchBookCreate),
     fork(watchBookUpdate),
     fork(watchBookDelete),
+    fork(watchBookAllList),
     //
   ]);
 }

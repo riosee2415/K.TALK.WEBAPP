@@ -2498,13 +2498,19 @@ const Index = () => {
           closable={false}>
           {detailModal ? (
             <CustomForm form={noticeform} onFinish={noticeViewFinishHandler}>
-              <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 35px`}>
+              <Wrapper
+                dr={`row`}
+                ju={`space-between`}
+                margin={`0 0 35px`}
+                fontSize={width < 700 ? `14px` : `16px`}>
                 <Text margin={`0 54px 0 0`}>
-                  {`작성자 ${
+                  {`작성자: ${
                     noticeDetail && noticeDetail[0] && noticeDetail[0].author
                   }`}
                 </Text>
-                <Wrapper width={`auto`}>
+                <Wrapper
+                  width={`auto`}
+                  fontSize={width < 700 ? `14px` : `16px`}>
                   <Text>
                     {`작성일: ${moment(
                       noticeDetail &&
@@ -2571,9 +2577,13 @@ const Index = () => {
             </CustomForm>
           ) : (
             <>
-              <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 35px`}>
+              <Wrapper
+                dr={`row`}
+                ju={`space-between`}
+                margin={`0 0 35px`}
+                fontSize={width < 700 ? `14px` : `16px`}>
                 <Text margin={`0 54px 0 0`}>
-                  {`작성자 ${noticeViewDatum && noticeViewDatum.author}`}
+                  {`작성자: ${noticeViewDatum && noticeViewDatum.author}`}
                 </Text>
                 <Wrapper width={`auto`}>
                   <Text>
@@ -2611,7 +2621,9 @@ const Index = () => {
               <Text fontSize={`18px`} fontWeight={`bold`}>
                 제목
               </Text>
-              <Wrapper padding={`10px`}>
+              <Wrapper
+                padding={`10px`}
+                fontSize={width < 700 ? `14px` : `16px`}>
                 <WordbreakText>
                   {noticeViewDatum && noticeViewDatum.title}
                 </WordbreakText>
@@ -2620,7 +2632,9 @@ const Index = () => {
               <Text fontSize={`18px`} fontWeight={`bold`}>
                 내용
               </Text>
-              <Wrapper padding={`10px`}>
+              <Wrapper
+                padding={`10px`}
+                fontSize={width < 700 ? `14px` : `16px`}>
                 <WordbreakText
                   dangerouslySetInnerHTML={{
                     __html: noticeViewDatum && noticeViewDatum.content,
@@ -2659,11 +2673,15 @@ const Index = () => {
             onFinish={(data) => answerFinishHandler(data, messageDatum)}>
             {!messageAnswerModal && (
               <>
-                <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
+                <Wrapper
+                  dr={`row`}
+                  ju={`space-between`}
+                  margin={`0 0 35px`}
+                  fontSize={width < 700 ? `14px` : `16px`}>
                   <Text margin={`0 54px 0 0`}>
-                    {messageDatum && messageDatum.author}
+                    {`작성자 :${messageDatum && messageDatum.author}`}
                   </Text>
-                  <Text>{`날짜 ${
+                  <Text>{`날짜: ${
                     messageDatum &&
                     moment(messageDatum.createdAt, "YYYY/MM/DD").format(
                       "YYYY/MM/DD"
@@ -2673,15 +2691,29 @@ const Index = () => {
                 <Text fontSize={`18px`} fontWeight={`bold`}>
                   제목
                 </Text>
-                <Wrapper padding={`10px`} al={`flex-start`}>
+                <Wrapper
+                  padding={`10px`}
+                  al={`flex-start`}
+                  fontSize={width < 700 ? `14px` : `16px`}>
                   <Text>{messageDatum && messageDatum.title}</Text>
                 </Wrapper>
                 <Text fontSize={`18px`} fontWeight={`bold`}>
                   내용
                 </Text>
-                <Wrapper padding={`10px`} al={`flex-start`}>
+                <Wrapper
+                  padding={`10px`}
+                  al={`flex-start`}
+                  fontSize={width < 700 ? `14px` : `16px`}>
                   <Text minHeight={`360px`}>
-                    {messageDatum && messageDatum.content}
+                    {messageDatum &&
+                      messageDatum.content.split("\n").map((data, idx) => {
+                        return (
+                          <Text key={`${data}${idx}`}>
+                            {data}
+                            <br />
+                          </Text>
+                        );
+                      })}
                   </Text>
                 </Wrapper>
                 <Wrapper dr={`row`}>

@@ -193,6 +193,7 @@ const CustomPage = styled(Pagination)`
 
 const CustomTableHoverWrapper = styled(Wrapper)`
   flex-direction: row;
+  text-align: center;
   padding: 25px 0 20px;
   font-size: 16px;
   background-color: ${(props) =>
@@ -1822,9 +1823,13 @@ const Student = () => {
             title="공지사항"
             footer={null}
             closable={false}>
-            <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 35px`}>
+            <Wrapper
+              dr={`row`}
+              ju={`space-between`}
+              margin={`0 0 35px`}
+              fontSize={width < 700 ? "14px" : "16px"}>
               <Text margin={`0 54px 0 0`}>
-                {`작성자 ${noticeViewDatum && noticeViewDatum.author}`}
+                {`작성자: ${noticeViewDatum && noticeViewDatum.author}`}
               </Text>
               <Wrapper width={`auto`}>
                 <Text>
@@ -1863,7 +1868,7 @@ const Student = () => {
               제목
             </Text>
             <Wrapper padding={`10px`}>
-              <WordbreakText>
+              <WordbreakText fontSize={width < 700 ? "14px" : "16px"}>
                 {noticeViewDatum && noticeViewDatum.title}
               </WordbreakText>
             </Wrapper>
@@ -1873,6 +1878,7 @@ const Student = () => {
             </Text>
             <Wrapper padding={`10px`}>
               <WordbreakText
+                fontSize={width < 700 ? "14px" : "16px"}
                 dangerouslySetInnerHTML={{
                   __html: noticeViewDatum && noticeViewDatum.content,
                 }}></WordbreakText>
@@ -2000,7 +2006,11 @@ const Student = () => {
 
             {!messageAnswerModal && (
               <>
-                <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
+                <Wrapper
+                  dr={`row`}
+                  ju={`space-between`}
+                  margin={`0 0 35px`}
+                  fontSize={width < 700 ? "14px" : "16px"}>
                   <Text margin={`0 54px 0 0`}>
                     {messageDatum && messageDatum.author}
                   </Text>
@@ -2016,16 +2026,30 @@ const Student = () => {
                   제목
                 </Text>
 
-                <Wrapper padding={`10px`} al={`flex-start`}>
+                <Wrapper
+                  padding={`10px`}
+                  al={`flex-start`}
+                  fontSize={width < 700 ? "14px" : "16px"}>
                   <Text>{messageDatum && messageDatum.title}</Text>
                 </Wrapper>
 
                 <Text fontSize={`18px`} fontWeight={`bold`}>
                   내용
                 </Text>
-                <Wrapper padding={`10px`} al={`flex-start`}>
+                <Wrapper
+                  padding={`10px`}
+                  al={`flex-start`}
+                  fontSize={width < 700 ? "14px" : "16px"}>
                   <Text minHeight={`360px`}>
-                    {messageDatum && messageDatum.content}
+                    {messageDatum &&
+                      messageDatum.content.split("\n").map((data, idx) => {
+                        return (
+                          <Text key={`${data}${idx}`}>
+                            {data}
+                            <br />
+                          </Text>
+                        );
+                      })}
                   </Text>
                 </Wrapper>
 

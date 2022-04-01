@@ -58,6 +58,11 @@ import {
   MESSAGE_USER_LIST_REQUEST,
 } from "../../reducers/message";
 import { saveAs } from "file-saver";
+import {
+  BOOK_ALL_LIST_REQUEST,
+  BOOK_LECTURE_CREATE_REQUEST,
+  BOOK_LECTURE_LIST_REQUEST,
+} from "../../reducers/book";
 
 const PROFILE_WIDTH = `184`;
 const PROFILE_HEIGHT = `190`;
@@ -333,6 +338,14 @@ const Index = () => {
     st_messageCreateError,
   } = useSelector((state) => state.message);
 
+  const {
+    bookAllList,
+    st_bookAllListDone,
+    st_bookAllListError,
+    st_bookLectureCreateDone,
+    st_bookLectureCreateError,
+  } = useSelector((state) => state.book);
+
   ////// HOOKS //////
 
   const width = useWidth();
@@ -343,7 +356,7 @@ const Index = () => {
   const [zoomLinkForm] = Form.useForm();
   const [answerform] = Form.useForm();
   const [messageSendform] = Form.useForm();
-  const [homeworkUploadform] = Form.useForm();
+  const [textBookUploadform] = Form.useForm();
 
   const [currentPage1, setCurrentPage1] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
@@ -357,8 +370,12 @@ const Index = () => {
   const [noticeViewModal, setNoticeViewModal] = useState(false);
   const [noticeViewDatum, setNoticeViewDatum] = useState(null);
 
-  const [homeWorkModalToggle, setHomeWorkModalToggle] = useState(false);
-  const [fileName, setFileName] = useState("");
+  const [textbookToggle, settextbookToggle] = useState(false);
+  const [textbookData, setTextbookData] = useState("");
+
+  const [selectValue, setSelectValue] = useState("");
+
+  const [thumbnail, setThumbnail] = useState("");
 
   const [sendMessageType, setSendMessageType] = useState(1);
 
@@ -368,8 +385,36 @@ const Index = () => {
 
   const [messageDatum, setMessageDatum] = useState();
 
+  const textbookModalHandler = useCallback((data) => {
+    settextbookToggle(true);
+    setTextbookData(data);
+  }, []);
   ////// REDUX //////
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (st_bookAllListDone) {
+    }
+  }, [st_bookAllListDone]);
+
+  useEffect(() => {
+    if (st_bookAllListError) {
+      return message.error(st_bookAllListError);
+    }
+  }, [st_bookAllListError]);
+
+  useEffect(() => {
+    if (st_bookLectureCreateError) {
+      return message.error(st_bookLectureCreateError);
+    }
+  }, [st_bookLectureCreateError]);
+
+  useEffect(() => {
+    if (st_bookLectureCreateDone) {
+      onReset();
+      return message.success("교재 등록이 완료되었습니다.");
+    }
+  }, [st_bookLectureCreateDone]);
 
   useEffect(() => {
     dispatch({
@@ -386,6 +431,10 @@ const Index = () => {
       data: {
         data: 1,
       },
+    });
+
+    dispatch({
+      type: BOOK_ALL_LIST_REQUEST,
     });
   }, []);
 
@@ -555,6 +604,19 @@ const Index = () => {
 
   ////// HANDLER //////
 
+  const receiveSelectHandler = useCallback(async (value, bookData) => {
+    let thumbnail = await bookData.filter((data, idx) => {
+      if (value === data.id) {
+        return true;
+      }
+    });
+
+    let save = await thumbnail.map((data) => data.thumbnail);
+
+    setThumbnail(save);
+    setSelectValue(value);
+  }, []);
+
   const onClickNoticeHandler = useCallback((data) => {
     setNoticeViewDatum(data);
     setNoticeViewModal(true);
@@ -562,10 +624,17 @@ const Index = () => {
 
   const onReset = useCallback(() => {
     answerform.resetFields();
+    textBookUploadform.resetFields();
+    settextbookToggle(false);
+
     setMessageAnswerModal(false);
     setMessageViewToggle(false);
-    setNoticeViewDatum("");
+
     setNoticeViewModal(false);
+
+    setThumbnail("");
+    setNoticeViewDatum("");
+    setTextbookData("");
   }, []);
 
   const clickImageUpload = useCallback(() => {
@@ -730,23 +799,19 @@ const Index = () => {
     saveAs(file, originName);
   }, []);
 
-  const homeWorkFinishHandler = useCallback((value) => {
-    if (filePath) {
+  const textBookFinishHandler = useCallback(
+    (value) => {
       dispatch({
-        type: LECTURE_HOMEWORK_CREATE_REQUEST,
+        type: BOOK_LECTURE_CREATE_REQUEST,
         data: {
-          title: value.title3,
-          date: value.date,
-          file: filePath,
-          LectureId: router.query.id,
+          BookId: value.bookId,
+          LectureId: textbookData.id,
         },
       });
+    },
 
-      imageInput.current.value = "";
-    } else {
-      return message.error("파일을 업로드 해주세요.");
-    }
-  }, []);
+    [textbookData]
+  );
 
   ////// DATAVIEW //////
 
@@ -1047,11 +1112,7 @@ const Index = () => {
                               color={Theme.black_2C}
                               fontSize={width < 700 ? `12px` : `18px`}
                               width={width < 700 ? `auto` : `140px`}
-                              onClick={() =>
-                                moveLinkHandler(
-                                  `/textbook?lectureId=${data.id}`
-                                )
-                              }>
+                              onClick={() => textbookModalHandler(data)}>
                               교재 등록
                             </Text>
 
@@ -1472,11 +1533,15 @@ const Index = () => {
 
           {!messageAnswerModal && (
             <>
-              <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 35px`}>
+              <Wrapper
+                dr={`row`}
+                ju={`space-between`}
+                margin={`0 0 35px`}
+                fontSize={width < 700 ? `14px` : `16px`}>
                 <Text margin={`0 54px 0 0`}>
-                  {messageDatum && messageDatum.author}
+                  {`작성자: ${messageDatum && messageDatum.author}`}
                 </Text>
-                <Text>{`날짜 ${
+                <Text>{`날짜: ${
                   messageDatum &&
                   moment(messageDatum.createdAt, "YYYY/MM/DD").format(
                     "YYYY/MM/DD"
@@ -1489,15 +1554,27 @@ const Index = () => {
               </Text>
 
               <Wrapper padding={`10px`} al={`flex-start`}>
-                <Text>{messageDatum && messageDatum.title}</Text>
+                <Text fontSize={width < 700 ? `14px` : `16px`}>
+                  {messageDatum && messageDatum.title}
+                </Text>
               </Wrapper>
 
               <Text fontSize={`18px`} fontWeight={`bold`}>
                 내용
               </Text>
               <Wrapper padding={`10px`} al={`flex-start`}>
-                <Text minHeight={`360px`}>
-                  {messageDatum && messageDatum.content}
+                <Text
+                  minHeight={`360px`}
+                  fontSize={width < 700 ? `14px` : `16px`}>
+                  {messageDatum &&
+                    messageDatum.content.split(`\n`).map((data, idx) => {
+                      return (
+                        <Text key={`${data}${idx}`}>
+                          {data}
+                          <br />
+                        </Text>
+                      );
+                    })}
                 </Text>
               </Wrapper>
 
@@ -1601,9 +1678,13 @@ const Index = () => {
           title="공지사항"
           footer={null}
           closable={false}>
-          <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 35px`}>
+          <Wrapper
+            dr={`row`}
+            ju={`space-between`}
+            margin={`0 0 35px`}
+            fontSize={width < 700 ? `14px` : `16px`}>
             <Text margin={`0 54px 0 0`}>
-              {`작성자 ${noticeViewDatum && noticeViewDatum.author}`}
+              {`작성자: ${noticeViewDatum && noticeViewDatum.author}`}
             </Text>
             <Wrapper width={`auto`}>
               <Text>
@@ -1642,7 +1723,7 @@ const Index = () => {
             제목
           </Text>
           <Wrapper padding={`10px`}>
-            <WordbreakText>
+            <WordbreakText fontSize={width < 700 ? `14px` : `16px`}>
               {noticeViewDatum && noticeViewDatum.title}
             </WordbreakText>
           </Wrapper>
@@ -1652,6 +1733,7 @@ const Index = () => {
           </Text>
           <Wrapper padding={`10px`}>
             <WordbreakText
+              fontSize={width < 700 ? `14px` : `16px`}
               dangerouslySetInnerHTML={{
                 __html: noticeViewDatum && noticeViewDatum.content,
               }}></WordbreakText>
@@ -1669,70 +1751,71 @@ const Index = () => {
         </CustomModal>
 
         <CustomModal
-          visible={homeWorkModalToggle}
+          visible={textbookToggle}
           width={`1350px`}
-          title="숙제 업로드"
+          title="교재 등록"
           footer={null}
           closable={false}>
           <CustomForm
-            form={homeworkUploadform}
-            onFinish={homeWorkFinishHandler}>
+            form={textBookUploadform}
+            onFinish={textBookFinishHandler}>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
               margin={`0 0 10px`}>
-              제목
+              교재 이미지
             </Text>
-            <Form.Item
-              name="title3"
-              rules={[{ required: true, message: "제목을 입력해주세요." }]}>
-              <CusotmInput width={`50%`} placeholder="제목을 입력해주세요." />
-            </Form.Item>
+
+            <Wrapper margin={`0 20px 0 0`}>
+              <Image
+                width={`auto`}
+                height={`300px`}
+                src={
+                  thumbnail
+                    ? thumbnail
+                    : `https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_delet.png`
+                }
+                alt={`menu_icon`}
+              />
+            </Wrapper>
+
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
               margin={`0 0 10px`}>
-              날짜
+              교재 이름
             </Text>
+
             <Form.Item
-              name="date"
-              rules={[{ required: true, message: "날짜를 선택해주세요." }]}>
-              <Wrapper dr={`row`} ju={`flex-start`}>
-                <CusotmInput
-                  placeholder="날짜를 선택해주세요."
-                  width={`50%`}
-                  style={{
-                    height: `40px`,
-                    margin: `0 10px 0 0`,
-                  }}
-                  disabled
-                />
-
-                {/* <CalendarOutlined
-                  style={{
-                    cursor: `pointer`,
-                    fontSize: 25,
-                    position: `relative`,
-                  }}
-                  onClick={() => setIsCalendar(!isCalendar)}
-                />
-
-                <Wrapper
-                  display={isCalendar ? "flex" : "none"}
-                  width={`auto`}
-                  position={width < 1350 ? `static` : `absolute`}
-                  right={`0`}
-                  border={`1px solid ${Theme.grey_C}`}
-                  margin={`0 0 20px`}>
-                  <Calendar
-                    style={{ width: width < 1350 ? `100%` : `300px` }}
-                    fullscreen={false}
-                    onChange={dateChagneHandler}
-                  />
-                </Wrapper> */}
-              </Wrapper>
+              name="bookId"
+              rules={[
+                {
+                  required: true,
+                  message: "교재를 선택해주세요.",
+                },
+              ]}>
+              <Select
+                value={selectValue}
+                style={{ width: `100%` }}
+                onChange={(id) => receiveSelectHandler(id, bookAllList)}>
+                {bookAllList && bookAllList.length === 0 ? (
+                  <Option value="참여 중인 강의가 없습니다." disabled>
+                    교재가 없습니다.
+                  </Option>
+                ) : (
+                  bookAllList &&
+                  bookAllList.map((data, idx) => {
+                    return (
+                      <Option key={`${data.id}${idx}`} value={data.id}>
+                        {data.title}
+                      </Option>
+                    );
+                  })
+                )}
+              </Select>
             </Form.Item>
 
+            {/* 
             <Text fontSize={width < 700 ? `14px` : `18px`} fontWeight={`bold`}>
               파일 업로드
             </Text>
@@ -1758,7 +1841,7 @@ const Index = () => {
                 파일 올리기
               </Button>
               <Text>{`${fileName}`}</Text>
-            </Wrapper>
+            </Wrapper> */}
 
             <Wrapper dr={`row`}>
               <CommonButton
@@ -1773,7 +1856,7 @@ const Index = () => {
                 margin={`0 0 0 5px`}
                 radius={`5px`}
                 htmlType="submit">
-                작성하기
+                등록
               </CommonButton>
             </Wrapper>
           </CustomForm>
