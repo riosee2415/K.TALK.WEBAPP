@@ -592,6 +592,7 @@ const Student = () => {
     sendform.resetFields();
     answerform.resetFields();
 
+    setMessageAnswerAdminModal(false);
     setNoticeViewModal(false);
     setMessageAnswerModal(false);
     setMessageSendModal(false);
@@ -611,11 +612,17 @@ const Student = () => {
   }, [meUpdateModal]);
 
   const messageAnswerToggleHanlder = useCallback((data) => {
-    setMessageAnswerModal(true);
-
+    console.log(data, "data");
     if (data.level >= 3) {
       setMessageAnswerAdminModal(true);
+      setLectureId(data.id);
+    } else {
+      setMessageAnswerModal(true);
     }
+
+    console.log(data, "data");
+
+    console.log("답변하기!");
   }, []);
 
   const messageSendModalHandler = useCallback((data, num) => {
@@ -764,13 +771,27 @@ const Student = () => {
 
   const sendMessageAdminFinishHandler = useCallback(
     (data) => {
-      console.log("이건 답장에 d");
       dispatch({
         type: MESSAGE_FOR_ADMIN_CREATE_REQUEST,
         data: {
-          title: data.title,
+          title: data.messageTitle,
           author: me.userId,
-          content: data.content,
+          content: data.messageContent,
+        },
+      });
+    },
+    [me]
+  );
+
+  const sendMessageAnswerAdminFinish = useCallback(
+    (data) => {
+      console.log("한번만!");
+      dispatch({
+        type: MESSAGE_FOR_ADMIN_CREATE_REQUEST,
+        data: {
+          title: data.messageTitle,
+          author: me.userId,
+          content: data.messageContent,
         },
       });
     },
@@ -836,6 +857,8 @@ const Student = () => {
 
   const receiveLectureIdtHandler = useCallback((value) => {
     setLectureId(value);
+
+    console.log(value, "value");
   }, []);
 
   const onSearchHandler = useCallback((value) => {
@@ -1994,7 +2017,7 @@ const Student = () => {
               form={answerform}
               onFinish={
                 messageAnswerAdminModal
-                  ? (data) => sendMessageAdminFinishHandler(data)
+                  ? (data) => sendMessageAnswerAdminFinish(data)
                   : (data) => answerFinishHandler(data, messageDatum)
               }>
               {messageAnswerModal && (
@@ -2017,7 +2040,7 @@ const Student = () => {
                         { required: true, message: "강의를 선택해주세요." },
                       ]}>
                       <Select
-                        value={messageAnswerModal ? "" : lectureId}
+                        value={lectureId}
                         style={{ width: `400px` }}
                         showSearch
                         onSearch={onSearchHandler}
@@ -2026,7 +2049,8 @@ const Student = () => {
                           option.children
                             .toLowerCase()
                             .indexOf(input.toLowerCase()) >= 0
-                        }>
+                        }
+                        disabled={messageAnswerAdminModal ? true : false}>
                         {lectureStuLectureList &&
                         lectureStuLectureList.length === 0 ? (
                           <Option value="참여 중인 강의가 없습니다." disabled>
@@ -2035,10 +2059,14 @@ const Student = () => {
                         ) : (
                           lectureStuLectureList &&
                           lectureStuLectureList.map((data, idx) => {
-                            if (messageDatum.senderId !== data.UserId) return;
+                            if (
+                              messageDatum &&
+                              messageDatum.senderId !== data.UserId
+                            )
+                              return;
 
                             return (
-                              <Option key={`${data.id}${idx}1`} value={data.id}>
+                              <Option key={`${data.id}${idx}`} value={data.id}>
                                 {data.course}
                               </Option>
                             );
@@ -2095,9 +2123,114 @@ const Student = () => {
                   </Wrapper>
                 </>
               )}
+
+              {messageAnswerAdminModal && (
+                <>
+                  <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
+                    <Text
+                      fontSize={`18px`}
+                      fontWeight={`bold`}
+                      margin={`0 35px 0 0`}>
+                      관리자
+                    </Text>
+
+                    <Text>{messageDatum && messageDatum.author}</Text>
+                    <Text>{`외 모든 관리자`}</Text>
+                  </Wrapper>
+
+                  {/* <Wrapper dr={`row`} ju={`flex-start`}>
+                    <Form.Item
+                      name="receiveLectureId"
+                      rules={[
+                        { required: true, message: "강의를 선택해주세요." },
+                      ]}>
+                      <Select
+                        value={lectureId}
+                        style={{ width: `400px` }}
+                        showSearch
+                        onSearch={onSearchHandler}
+                        onChange={receiveLectureIdtHandler}
+                        filterOption={(input, option) =>
+                          option.children
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
+                        disabled={messageAnswerAdminModal ? true : false}>
+                        {lectureStuLectureList &&
+                        lectureStuLectureList.length === 0 ? (
+                          <Option value="참여 중인 강의가 없습니다." disabled>
+                            참여 중인 강의가 없습니다.
+                          </Option>
+                        ) : (
+                          lectureStuLectureList &&
+                          lectureStuLectureList.map((data, idx) => {
+                            if (
+                              messageDatum &&
+                              messageDatum.senderId !== data.UserId
+                            )
+                              return;
+
+                            return (
+                              <Option key={`${data.id}${idx}`} value={data.id}>
+                                {data.course}
+                              </Option>
+                            );
+                          })
+                        )}
+                      </Select>
+                    </Form.Item>
+                  </Wrapper> */}
+
+                  <Text
+                    fontSize={`18px`}
+                    fontWeight={`bold`}
+                    margin={`20px 0 0`}>
+                    제목
+                  </Text>
+                  <Wrapper padding={`10px`}>
+                    <Form.Item
+                      name="messageTitle"
+                      rules={[
+                        { required: true, message: "제목을 입력해주세요." },
+                      ]}>
+                      <CusotmInput width={`100%`} />
+                    </Form.Item>
+                  </Wrapper>
+
+                  <Text fontSize={`18px`} fontWeight={`bold`}>
+                    내용
+                  </Text>
+                  <Wrapper padding={`10px`}>
+                    <Form.Item
+                      name="messageContent"
+                      rules={[
+                        { required: true, message: "내용을 입력해주세요." },
+                      ]}>
+                      <Input.TextArea style={{ height: `360px` }} />
+                    </Form.Item>
+                  </Wrapper>
+
+                  <Wrapper dr={`row`}>
+                    <CommonButton
+                      margin={`0 5px 0 0`}
+                      kindOf={`grey`}
+                      color={Theme.darkGrey_C}
+                      radius={`5px`}
+                      onClick={() => onReset()}>
+                      돌아가기
+                    </CommonButton>
+                    <CommonButton
+                      margin={`0 0 0 5px`}
+                      radius={`5px`}
+                      htmlType="submit">
+                      작성하기
+                    </CommonButton>
+                  </Wrapper>
+                </>
+              )}
             </CustomForm>
 
-            {!messageAnswerModal && (
+            {!messageAnswerModal && !messageAnswerAdminModal && (
               <>
                 <Wrapper
                   dr={`row`}
