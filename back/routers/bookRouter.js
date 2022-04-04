@@ -457,12 +457,18 @@ router.post("/lecture/create", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 교재입니다.");
     }
 
-    const exBookList = await BookList.findOne({
-      LectureId: parseInt(LectureId),
-      BookId: parseInt(BookId),
-    });
+    const selectQuery = `
+      SELECT  id,
+              LectureId,
+              BookId
+        FROM  bookLists
+       WHERE  LectureId = ${LectureId}
+         AND  BookId = ${BookId}
+    `;
 
-    if (exBookList) {
+    const exBookList = await models.sequelize.query(selectQuery);
+
+    if (exBookList[0].length > 0) {
       return res.status(401).send("이미 해당 강의에 교재가 등록되어 있습니다.");
     }
 
