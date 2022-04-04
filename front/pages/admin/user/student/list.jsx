@@ -74,8 +74,12 @@ const UserList = ({}) => {
   const [lectureList, setLectureList] = useState(null);
   const [selectedList, setSelectedList] = useState([]);
 
+  const [detailDatum, setDetailDatum] = useState([]);
+
   const [opt1, setOpt1] = useState(null);
   const [opt2, setOpt2] = useState(null);
+
+  const [detailToggle, setDetailToggle] = useState(false);
 
   const [parData, setParData] = useState(null);
 
@@ -280,9 +284,14 @@ const UserList = ({}) => {
     console.log(value);
   }, []);
 
+  const detailModalOpen = useCallback((data) => {
+    setDetailToggle(true);
+    setDetailDatum(data);
+  }, []);
+
   ////// DATAVIEW //////
 
-  const columns = [
+  const column = [
     {
       title: "번호",
       dataIndex: "id",
@@ -330,8 +339,7 @@ const UserList = ({}) => {
             data.level === 5
               ? message.error("개발사는 권한을 수정할 수 없습니다.")
               : classChangeModalOpen(data)
-          }
-        >
+          }>
           반 옮기기
         </Button>
       ),
@@ -347,9 +355,20 @@ const UserList = ({}) => {
             data.level === 5
               ? message.error("개발사는 권한을 수정할 수 없습니다.")
               : classPartModalOpen(data)
-          }
-        >
+          }>
           수업참여
+        </Button>
+      ),
+    },
+
+    {
+      title: "상세보기",
+      render: (data) => (
+        <Button
+          size="small"
+          type="primary"
+          onClick={() => detailModalOpen(data.Participants)}>
+          상세보기
         </Button>
       ),
     },
@@ -364,6 +383,38 @@ const UserList = ({}) => {
     // },
   ];
 
+  {
+    console.log(allUsers, "allUsers");
+  }
+
+  console.log(detailDatum, "detailDatum");
+
+  const columnsList = [
+    {
+      title: "No",
+      dataIndex: "LectureId",
+    },
+
+    {
+      title: "수업 이름",
+      render: (data) => <div>{data.Lecture.course}</div>,
+    },
+
+    {
+      title: "요일",
+      render: (data) => <div>{data.Lecture.day}</div>,
+    },
+
+    {
+      title: "시간",
+      render: (data) => <div>{data.Lecture.time}</div>,
+    },
+
+    {
+      title: "총 강의 수",
+      render: (data) => <div>{data.Lecture.lecDate * data.Lecture.count}</div>,
+    },
+  ];
   return (
     <AdminLayout>
       <PageHeader
@@ -376,7 +427,7 @@ const UserList = ({}) => {
       <AdminContent>
         <Table
           rowKey="id"
-          columns={columns}
+          columns={column}
           dataSource={allUsers ? allUsers : []}
           size="small"
         />
@@ -387,8 +438,7 @@ const UserList = ({}) => {
         width={`400px`}
         title={`학생 수업 변경`}
         onCancel={classChangeModalClose}
-        onOk={onModalOk}
-      >
+        onOk={onModalOk}>
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form form={form} style={{ width: `100%` }} onFinish={onSubmit}>
             <Form.Item label={`학생`}>
@@ -400,8 +450,7 @@ const UserList = ({}) => {
                 width={`100%`}
                 height={`32px`}
                 showSearch
-                placeholder="Select a Lecture"
-              >
+                placeholder="Select a Lecture">
                 {opt1}
               </Select>
             </Form.Item>
@@ -426,14 +475,12 @@ const UserList = ({}) => {
         width={`400px`}
         title={`학생 수업 참여`}
         onCancel={classPartModalClose}
-        onOk={onModalChangeOk}
-      >
+        onOk={onModalChangeOk}>
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
             form={updateClassform}
             style={{ width: `100%` }}
-            onFinish={onUpdateClassSubmit}
-          >
+            onFinish={onUpdateClassSubmit}>
             <Form.Item label={`학생`}>
               <Input disabled value={parData && parData.username} />
             </Form.Item>
@@ -448,13 +495,26 @@ const UserList = ({}) => {
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
                 }
-                placeholder="Select a Lecture"
-              >
+                placeholder="Select a Lecture">
                 {opt2}
               </Select>
             </Form.Item>
           </Form>
         </Wrapper>
+      </Modal>
+
+      <Modal
+        visible={detailToggle}
+        width={`80%`}
+        title={`학생 수업 강의 목록`}
+        footer={null}
+        onCancel={() => setDetailToggle(false)}>
+        <Table
+          rowKey="id"
+          columns={columnsList}
+          dataSource={detailDatum}
+          size="small"
+        />
       </Modal>
     </AdminLayout>
   );
