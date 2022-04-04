@@ -244,7 +244,8 @@ const List = () => {
         endLv: "-",
         startDate: data.startDate,
         endDate: data.endDate,
-        memo: data.memo,
+        // memo: data.memo,
+        memo: "-",
         price: data.price,
         UserId: data.UserId,
       },
@@ -422,7 +423,7 @@ const List = () => {
             </FormItem>
           </Wrapper>
 
-          <Wrapper dr={`row`} margin={`0 0 20px`} al={`flex-start`}>
+          {/* <Wrapper dr={`row`} margin={`0 0 20px`} al={`flex-start`}>
             <Text width={`100px`} margin={`8px 0 0`}>
               메모
             </Text>
@@ -432,7 +433,7 @@ const List = () => {
             >
               <CustomArea />
             </FormItem>
-          </Wrapper>
+          </Wrapper> */}
 
           <Wrapper>
             <Button type={`primary`} htmlType={`submit`}>

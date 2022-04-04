@@ -270,7 +270,7 @@ const List = () => {
           lecDate: parseInt(data.lecDate),
           startLv: data.startLv,
           startDate: moment(data.startDate, "YYYY-MM-DD").format("YYYY-MM-DD"),
-          memo: data.memo,
+          // memo: data.memo,
           price: data.price,
           UserId: data.UserId,
         },
@@ -317,7 +317,7 @@ const List = () => {
         lecDate: parseInt(data.lecDate.replace("주", "")),
         startLv: data.startLv,
         startDate: moment(data.startDate, "YYYY-MM-DD"),
-        memo: data.memo,
+        // memo: data.memo,
         price: data.price,
         UserId: data.User.id,
       });
@@ -744,7 +744,7 @@ const List = () => {
               </FormItem>
             </Wrapper>
 
-            <Wrapper dr={`row`} margin={`0 0 20px`} al={`flex-start`}>
+            {/* <Wrapper dr={`row`} margin={`0 0 20px`} al={`flex-start`}>
               <Text width={`100px`} margin={`8px 0 0`}>
                 메모
               </Text>
@@ -754,7 +754,7 @@ const List = () => {
               >
                 <CustomArea />
               </FormItem>
-            </Wrapper>
+            </Wrapper> */}
           </Wrapper>
         </Form>
       </Modal>
