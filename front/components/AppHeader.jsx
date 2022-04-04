@@ -91,10 +91,17 @@ const AppHeader = ({ width }) => {
   }, [pageY]);
 
   useEffect(() => {
-    if (st_loginDone) {
+    if (st_loginDone && me) {
+      moveLinkHandler(
+        me.level === 1
+          ? "/student"
+          : me.level === 2
+          ? "/teacher"
+          : message.error("회원 또는 강사가 아닙니다.")
+      );
       return message.success("로그인을 성공하셨습니다.");
     }
-  }, [st_loginDone]);
+  }, [st_loginDone, me]);
 
   useEffect(() => {
     if (st_loginError) {
@@ -124,8 +131,7 @@ const AppHeader = ({ width }) => {
       position={`fixed`}
       top={`0`}
       left={`0`}
-      zIndex={`100`}
-    >
+      zIndex={`100`}>
       <RsWrapper>
         <Wrapper dr={`row`} ju={width < 900 ? `center` : `space-between`}>
           <Image
@@ -152,16 +158,14 @@ const AppHeader = ({ width }) => {
                   height={width < 700 ? `30px` : `50px`}
                   width={width < 700 ? `auto` : `110px`}
                   fontSize={width < 700 && `11px`}
-                  margin={`0 10px 0 0`}
-                >
+                  margin={`0 10px 0 0`}>
                   MYPAGE
                 </CommonButton>
                 <CommonButton
                   onClick={() => logoutHandler()}
                   height={width < 700 ? `30px` : `50px`}
                   width={width < 700 ? `auto` : `110px`}
-                  fontSize={width < 700 && `11px`}
-                >
+                  fontSize={width < 700 && `11px`}>
                   LOGOUT
                 </CommonButton>
               </Wrapper>
@@ -176,6 +180,7 @@ const AppHeader = ({ width }) => {
                   radius={`25px`}
                   placeholder={`ID`}
                   {...inputId}
+                  onKeyDown={(e) => e.keyCode === 13 && loginHandler()}
                 />
                 <TextInput
                   type={`password`}
@@ -187,14 +192,14 @@ const AppHeader = ({ width }) => {
                   margin={width < 700 ? `0 5px` : `0 10px`}
                   placeholder={`PW`}
                   {...inputPw}
+                  onKeyDown={(e) => e.keyCode === 13 && loginHandler()}
                 />
 
                 <CommonButton
                   onClick={() => loginHandler()}
                   height={width < 700 ? `30px` : `50px`}
                   width={width < 700 ? `auto` : `110px`}
-                  fontSize={width < 700 && `11px`}
-                >
+                  fontSize={width < 700 && `11px`}>
                   LOGIN
                 </CommonButton>
               </>
