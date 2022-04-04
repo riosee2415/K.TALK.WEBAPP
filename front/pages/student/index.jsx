@@ -32,6 +32,7 @@ import {
   Select,
   Slider,
   Switch,
+  Table,
 } from "antd";
 import styled from "styled-components";
 import useWidth from "../../hooks/useWidth";
@@ -69,6 +70,7 @@ import {
 import { saveAs } from "file-saver";
 import { COMMUTE_LIST_REQUEST } from "../../reducers/commute";
 import { FileDoneOutlined } from "@ant-design/icons";
+import { BOOK_LECTURE_LIST_REQUEST } from "../../reducers/book";
 
 const PROFILE_WIDTH = `184`;
 const PROFILE_HEIGHT = `190`;
@@ -310,6 +312,9 @@ const Student = () => {
     st_lectureHomeworkStuListError,
   } = useSelector((state) => state.lecture);
 
+  const { bookLecture, st_bookLectureListDone, st_bookLectureListError } =
+    useSelector((state) => state.book);
+
   ////// HOOKS //////
   const width = useWidth();
   const router = useRouter();
@@ -349,10 +354,50 @@ const Student = () => {
   const [lectureId, setLectureId] = useState("");
   const [lectureUserId, setLectureUserId] = useState([]);
 
+  const [detailBook, setDetailBook] = useState(null);
+  const [bookModal, setBookModal] = useState(false);
+
   const [currentPage1, setCurrentPage1] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
   const [currentPage3, setCurrentPage3] = useState(1);
 
+  const bookColumns = [
+    {
+      title: "No",
+      dataIndex: "id",
+    },
+    {
+      title: "이미지",
+      render: (data) => {
+        return (
+          <Wrapper width={`100px`}>
+            {console.log(data, "data,qwidfhjqiwfhjqiwhjqijqi")}
+            <Image src={data.Book.thumbnail} alt={`thumbnail`} />
+          </Wrapper>
+        );
+      },
+    },
+    {
+      title: "제목",
+      render: (data) => {
+        return <Text>{data.Book.title}</Text>;
+      },
+    },
+
+    {
+      title: "다운로드",
+      render: (data) => {
+        return (
+          <Button
+            type={`primary`}
+            size={`small`}
+            onClick={() => fileDownloadHandler(data.Book.file)}>
+            다운로드
+          </Button>
+        );
+      },
+    },
+  ];
   ////// USEEFFECT //////
 
   useEffect(() => {
@@ -364,6 +409,21 @@ const Student = () => {
       return router.push(`/`);
     }
   }, [me]);
+
+  useEffect(() => {
+    if (st_bookLectureListDone) {
+      setDetailBook(bookLecture);
+      setBookModal(true);
+    }
+  }, [st_bookLectureListDone]);
+
+  console.log(bookLecture, "bookLecture");
+
+  useEffect(() => {
+    if (st_bookLectureListError) {
+      return message.error(st_bookLectureListError);
+    }
+  }, [st_bookLectureListError]);
 
   useEffect(() => {
     dispatch({
@@ -893,6 +953,10 @@ const Student = () => {
       }
     }
 
+    // console.log(add); 13
+    // console.log(count); 4
+    // console.log(lecDate); 3
+
     return parseInt((add / (count * lecDate)) * 100);
   }, []);
 
@@ -936,6 +1000,23 @@ const Student = () => {
       return add;
     },
     []
+  );
+
+  const detailBookClose = useCallback(() => {
+    setDetailBook(null);
+    setBookModal(false);
+  }, []);
+
+  const detailBookOpen = useCallback(
+    (data) => {
+      dispatch({
+        type: BOOK_LECTURE_LIST_REQUEST,
+        data: {
+          LectureId: data.id,
+        },
+      });
+    },
+    [bookLecture]
   );
 
   ////// DATAVIEW //////
@@ -1026,7 +1107,7 @@ const Student = () => {
               </Wrapper>
             </Wrapper>
 
-            <Wrapper al={`flex-start`} margin={`0 0 20px`}>
+            <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 20px`}>
               <Text
                 fontSize={width < 800 ? `18px` : `22px`}
                 fontWeight={`bold`}>
@@ -1132,7 +1213,7 @@ const Student = () => {
                     <Wrapper
                       width={width < 1280 ? `100%` : `38%`}
                       dr={`row`}
-                      ju={`flex-start`}
+                      ju={`space-between`}
                       al={`flex-start`}>
                       <Wrapper
                         width={`25%`}
@@ -1365,6 +1446,7 @@ const Student = () => {
                         />
 
                         <Wrapper
+                          al={`flex-start`}
                           width={width < 1100 ? `100%` : `calc(30% - 80px)`}
                           margin={
                             width < 1100 && width < 800
@@ -1452,6 +1534,13 @@ const Student = () => {
                               줌 상담신청
                             </Text>
                           </Wrapper>
+                          <Button
+                            type={`primary`}
+                            size={`small`}
+                            style={{ marginTop: 10 }}
+                            onClick={() => detailBookOpen(data)}>
+                            교재 리스트
+                          </Button>
                         </Wrapper>
                       </Wrapper>
                     </Wrapper>
@@ -1469,7 +1558,7 @@ const Student = () => {
               전체보기
             </CommonButton>
 
-            <Wrapper al={`flex-start`} margin={`0 0 20px`}>
+            <Wrapper al={`flex-start`} margin={`80px 0 20px`}>
               <Text
                 fontSize={width < 800 ? `18px` : `22px`}
                 fontWeight={`bold`}>
@@ -2489,6 +2578,26 @@ const Student = () => {
               </Wrapper>
             </CustomForm>
           </CustomModal>
+
+          <Modal
+            visible={bookModal}
+            footer={null}
+            onCancel={detailBookClose}
+            width={width < 700 ? `100%` : 700}>
+            <Wrapper al={`flex-start`}>
+              <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
+                교재
+              </Text>
+              <Wrapper al={`flex-start`} ju={`flex-start`}>
+                <Table
+                  style={{ width: `100%` }}
+                  size={`small`}
+                  columns={bookColumns}
+                  dataSource={bookLecture}
+                />
+              </Wrapper>
+            </Wrapper>
+          </Modal>
         </WholeWrapper>
       </ClientLayout>
     </>

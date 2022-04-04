@@ -31,6 +31,8 @@ import {
   Select,
   Slider,
   Badge,
+  Table,
+  Button,
 } from "antd";
 import styled from "styled-components";
 import useWidth from "../../hooks/useWidth";
@@ -61,6 +63,7 @@ import {
 import { LECTURE_STU_LECTURE_LIST_REQUEST } from "../../reducers/lecture";
 import { FileDoneOutlined } from "@ant-design/icons";
 import { saveAs } from "file-saver";
+import { BOOK_LECTURE_LIST_REQUEST } from "../../reducers/book";
 
 const CustomSlide = styled(Slider)`
   width: 100%;
@@ -222,6 +225,9 @@ const LectureAll = () => {
     st_noticeMyLectureListError,
   } = useSelector((state) => state.notice);
 
+  const { bookLecture, st_bookLectureListDone, st_bookLectureListError } =
+    useSelector((state) => state.book);
+
   ////// HOOKS //////
   const width = useWidth();
   const router = useRouter();
@@ -242,6 +248,47 @@ const LectureAll = () => {
   const [currentPage1, setCurrentPage1] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
 
+  const [detailBook, setDetailBook] = useState(null);
+  const [bookModal, setBookModal] = useState(false);
+
+  const bookColumns = [
+    {
+      title: "No",
+      dataIndex: "id",
+    },
+    {
+      title: "이미지",
+      render: (data) => {
+        return (
+          <Wrapper width={`100px`}>
+            {console.log(data, "data,qwidfhjqiwfhjqiwhjqijqi")}
+            <Image src={data.Book.thumbnail} alt={`thumbnail`} />
+          </Wrapper>
+        );
+      },
+    },
+    {
+      title: "제목",
+      render: (data) => {
+        return <Text>{data.Book.title}</Text>;
+      },
+    },
+
+    {
+      title: "다운로드",
+      render: (data) => {
+        return (
+          <Button
+            type={`primary`}
+            size={`small`}
+            onClick={() => fileDownloadHandler(data.Book.file)}>
+            다운로드
+          </Button>
+        );
+      },
+    },
+  ];
+
   ////// USEEFFECT //////
 
   useEffect(() => {
@@ -253,6 +300,19 @@ const LectureAll = () => {
       return router.push(`/`);
     }
   }, [me]);
+
+  useEffect(() => {
+    if (st_bookLectureListDone) {
+      setDetailBook(bookLecture);
+      setBookModal(true);
+    }
+  }, [st_bookLectureListDone]);
+
+  useEffect(() => {
+    if (st_bookLectureListError) {
+      return message.error(st_bookLectureListError);
+    }
+  }, [st_bookLectureListError]);
 
   useEffect(() => {
     dispatch({
@@ -530,6 +590,38 @@ const LectureAll = () => {
         page,
       },
     });
+  }, []);
+
+  const detailBookClose = useCallback(() => {
+    setDetailBook(null);
+    setBookModal(false);
+  }, []);
+
+  const detailBookOpen = useCallback(
+    (data) => {
+      dispatch({
+        type: BOOK_LECTURE_LIST_REQUEST,
+        data: {
+          LectureId: data.id,
+        },
+      });
+    },
+    [bookLecture]
+  );
+
+  const fileDownloadHandler = useCallback(async (filePath) => {
+    let blob = await fetch(filePath).then((r) => r.blob());
+
+    const file = new Blob([blob]);
+
+    const ext = filePath.substring(
+      filePath.lastIndexOf(".") + 1,
+      filePath.length
+    );
+
+    const originName = `첨부파일.${ext}`;
+
+    saveAs(file, originName);
   }, []);
 
   ////// DATAVIEW //////
@@ -1013,6 +1105,7 @@ const LectureAll = () => {
                           }
                         />
                         <Wrapper
+                          al={`flex-start`}
                           width={width < 1100 ? `100%` : `calc(30% - 80px)`}
                           margin={
                             width < 1100 && width < 800
@@ -1100,6 +1193,14 @@ const LectureAll = () => {
                               줌 상담신청
                             </Text>
                           </Wrapper>
+
+                          <Button
+                            type={`primary`}
+                            size={`small`}
+                            style={{ marginTop: 10 }}
+                            onClick={() => detailBookOpen(data)}>
+                            교재 리스트
+                          </Button>
                         </Wrapper>
                       </Wrapper>
                     </Wrapper>
@@ -1277,6 +1378,26 @@ const LectureAll = () => {
             </CommonButton>
           </Wrapper>
         </CustomModal>
+
+        <Modal
+          visible={bookModal}
+          footer={null}
+          onCancel={detailBookClose}
+          width={width < 700 ? `80%` : 700}>
+          <Wrapper al={`flex-start`}>
+            <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
+              교재
+            </Text>
+            <Wrapper al={`flex-start`} ju={`flex-start`}>
+              <Table
+                style={{ width: `100%` }}
+                size={`small`}
+                columns={bookColumns}
+                dataSource={bookLecture}
+              />
+            </Wrapper>
+          </Wrapper>
+        </Modal>
       </ClientLayout>
     </>
   );
