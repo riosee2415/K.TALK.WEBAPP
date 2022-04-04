@@ -470,7 +470,8 @@ const List = ({ router }) => {
         <Button
           type="primary"
           size="small"
-          onClick={() => updateModalOpen(data)}>
+          onClick={() => updateModalOpen(data)}
+        >
           답변하기
         </Button>
       ),
@@ -480,9 +481,9 @@ const List = ({ router }) => {
   return (
     <AdminLayout>
       <PageHeader
-        breadcrumbs={["게시판 관리", "공지사항 관리"]}
-        title={`공지사항 리스트`}
-        subTitle={`사용자에게 제공하는 공지사항을 관리할 수 있습니다.`}
+        breadcrumbs={["게시판 관리", "쪽지 관리"]}
+        title={`쪽지 리스트`}
+        subTitle={`사용자에게 제공하는 쪽지을 관리할 수 있습니다.`}
       />
 
       {/* <AdminTop createButton={true} createButtonAction={Open} /> */}
@@ -492,14 +493,16 @@ const List = ({ router }) => {
           <Button
             style={{ margin: "0 5px 0" }}
             size="small"
-            onClick={() => sendAllToggleHandler()}>
+            onClick={() => sendAllToggleHandler()}
+          >
             전체 보내기
           </Button>
 
           <Button
             style={{ margin: "0 5px 0" }}
             size="small"
-            onClick={() => sendManyToggleHandler()}>
+            onClick={() => sendManyToggleHandler()}
+          >
             단체로 보내기
           </Button>
 
@@ -529,7 +532,8 @@ const List = ({ router }) => {
             <Button
               style={{ margin: "0 5px" }}
               onClick={() => listTypeHandler(1)}
-              size="small">
+              size="small"
+            >
               학생 조회
             </Button>
             <Button onClick={() => listTypeHandler(2)} size="small">
@@ -562,27 +566,31 @@ const List = ({ router }) => {
         width={`1100px`}
         title={`답변하기`}
         onCancel={() => onReset()}
-        footer={null}>
+        footer={null}
+      >
         <Wrapper padding={`10px`}>
           <CustomForm ref={formRef} form={form} onFinish={onSubmit}>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}>
+              margin={`0 0 10px`}
+            >
               받는 사람
             </Text>
             <Form.Item name="receivePerson" rules={[{ required: true }]}>
               <Select
                 value={selectValue}
                 style={{ width: `100%` }}
-                onChange={handleChange}>
+                onChange={handleChange}
+              >
                 {/* <Option value="jack">Jack</Option> */}
               </Select>
             </Form.Item>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}>
+              margin={`0 0 10px`}
+            >
               제목
             </Text>
             <Form.Item name="title1" rules={[{ required: true }]}>
@@ -591,7 +599,8 @@ const List = ({ router }) => {
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}>
+              margin={`0 0 10px`}
+            >
               내용
             </Text>
             <Form.Item name="content1" rules={[{ required: true }]}>
@@ -603,14 +612,16 @@ const List = ({ router }) => {
                 kindOf={`grey`}
                 color={Theme.darkGrey_C}
                 radius={`5px`}
-                onClick={() => onReset()}>
+                onClick={() => onReset()}
+              >
                 돌아가기
                 {/* cancelNoteSendHanlder() */}
               </CommonButton>
               <CommonButton
                 margin={`0 0 0 5px`}
                 radius={`5px`}
-                htmlType="submit">
+                htmlType="submit"
+              >
                 답변 하기
               </CommonButton>
             </Wrapper>
@@ -623,24 +634,26 @@ const List = ({ router }) => {
         width={`1100px`}
         title={`전체 보내기`}
         onCancel={() => onReset()}
-        footer={null}>
+        footer={null}
+      >
         <Wrapper padding={`10px`}>
           <CustomForm ref={formRef} form={form} onFinish={onAllSubmit}>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}>
+              margin={`0 0 10px`}
+            >
               받는 사람
             </Text>
             <Form.Item
               name="type"
-              rules={[
-                { required: true, message: "받는 사람을 선택해주세요." },
-              ]}>
+              rules={[{ required: true, message: "받는 사람을 선택해주세요." }]}
+            >
               <Select
                 value={selectValue}
                 style={{ width: `100%` }}
-                onChange={handleChange}>
+                onChange={handleChange}
+              >
                 <Option value="1">학생</Option>
                 <Option value="2">강사</Option>
                 <Option value="3">전체</Option>
@@ -649,23 +662,27 @@ const List = ({ router }) => {
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}>
+              margin={`0 0 10px`}
+            >
               제목
             </Text>
             <Form.Item
               name="title"
-              rules={[{ required: true, message: "제목을 입력해주세요." }]}>
+              rules={[{ required: true, message: "제목을 입력해주세요." }]}
+            >
               <CusotmInput width={`100%`} />
             </Form.Item>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}>
+              margin={`0 0 10px`}
+            >
               내용
             </Text>
             <Form.Item
               name="content"
-              rules={[{ required: true, message: "내용을 입력해주세요." }]}>
+              rules={[{ required: true, message: "내용을 입력해주세요." }]}
+            >
               <Input.TextArea style={{ height: `360px` }} />
             </Form.Item>
             <Wrapper dr={`row`}>
@@ -674,14 +691,16 @@ const List = ({ router }) => {
                 kindOf={`grey`}
                 color={Theme.darkGrey_C}
                 radius={`5px`}
-                onClick={() => onReset()}>
+                onClick={() => onReset()}
+              >
                 돌아가기
                 {/* cancelNoteSendHanlder() */}
               </CommonButton>
               <CommonButton
                 margin={`0 0 0 5px`}
                 radius={`5px`}
-                htmlType="submit">
+                htmlType="submit"
+              >
                 답변 하기
               </CommonButton>
             </Wrapper>
@@ -694,13 +713,15 @@ const List = ({ router }) => {
         width={`1100px`}
         title={`단체로 보내기`}
         onCancel={() => onReset()}
-        footer={null}>
+        footer={null}
+      >
         <Wrapper padding={`10px`}>
           <CustomForm ref={formRef} form={form} onFinish={onManySubmit}>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}>
+              margin={`0 0 10px`}
+            >
               받는 사람
             </Text>
             <Wrapper al={`flex-start`} margin={`15px 0`}>
@@ -724,23 +745,27 @@ const List = ({ router }) => {
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}>
+              margin={`0 0 10px`}
+            >
               제목
             </Text>
             <Form.Item
               name="title"
-              rules={[{ required: true, message: "제목을 입력해주세요." }]}>
+              rules={[{ required: true, message: "제목을 입력해주세요." }]}
+            >
               <CusotmInput width={`100%`} />
             </Form.Item>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}>
+              margin={`0 0 10px`}
+            >
               내용
             </Text>
             <Form.Item
               name="content"
-              rules={[{ required: true, message: "내용을 입력해주세요." }]}>
+              rules={[{ required: true, message: "내용을 입력해주세요." }]}
+            >
               <Input.TextArea style={{ height: `360px` }} />
             </Form.Item>
             <Wrapper dr={`row`}>
@@ -749,14 +774,16 @@ const List = ({ router }) => {
                 kindOf={`grey`}
                 color={Theme.darkGrey_C}
                 radius={`5px`}
-                onClick={() => onReset()}>
+                onClick={() => onReset()}
+              >
                 돌아가기
                 {/* cancelNoteSendHanlder() */}
               </CommonButton>
               <CommonButton
                 margin={`0 0 0 5px`}
                 radius={`5px`}
-                htmlType="submit">
+                htmlType="submit"
+              >
                 답변 하기
               </CommonButton>
             </Wrapper>
@@ -769,22 +796,26 @@ const List = ({ router }) => {
         width={`1100px`}
         title={`강의 단위 보내기`}
         onCancel={() => onReset()}
-        footer={null}>
+        footer={null}
+      >
         <Wrapper padding={`10px`}>
           <CustomForm ref={formRef} form={form} onFinish={onLectureSubmit}>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}>
+              margin={`0 0 10px`}
+            >
               받는 사람
             </Text>
             <Form.Item
               name="lectureId"
-              rules={[{ required: true, message: "강의를 선택해주세요." }]}>
+              rules={[{ required: true, message: "강의를 선택해주세요." }]}
+            >
               <Select
                 value={selectValue}
                 style={{ width: `100%` }}
-                onChange={handleChange}>
+                onChange={handleChange}
+              >
                 {lectures && lectures.length === 0 ? (
                   <Option value={"0"}>진행 중인 강의가 없습니다.</Option>
                 ) : (
@@ -802,23 +833,27 @@ const List = ({ router }) => {
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}>
+              margin={`0 0 10px`}
+            >
               제목
             </Text>
             <Form.Item
               name="title"
-              rules={[{ required: true, message: "제목을 입력해주세요." }]}>
+              rules={[{ required: true, message: "제목을 입력해주세요." }]}
+            >
               <CusotmInput width={`100%`} />
             </Form.Item>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
-              margin={`0 0 10px`}>
+              margin={`0 0 10px`}
+            >
               내용
             </Text>
             <Form.Item
               name="content"
-              rules={[{ required: true, message: "내용을 입력해주세요." }]}>
+              rules={[{ required: true, message: "내용을 입력해주세요." }]}
+            >
               <Input.TextArea style={{ height: `360px` }} />
             </Form.Item>
             <Wrapper dr={`row`}>
@@ -827,14 +862,16 @@ const List = ({ router }) => {
                 kindOf={`grey`}
                 color={Theme.darkGrey_C}
                 radius={`5px`}
-                onClick={() => onReset()}>
+                onClick={() => onReset()}
+              >
                 돌아가기
                 {/* cancelNoteSendHanlder() */}
               </CommonButton>
               <CommonButton
                 margin={`0 0 0 5px`}
                 radius={`5px`}
-                htmlType="submit">
+                htmlType="submit"
+              >
                 답변 하기
               </CommonButton>
             </Wrapper>
@@ -846,7 +883,8 @@ const List = ({ router }) => {
         visible={deletePopVisible}
         onOk={deleteNoticeHandler}
         onCancel={deletePopToggle(null)}
-        title="정말 삭제하시겠습니까?">
+        title="정말 삭제하시겠습니까?"
+      >
         <Wrapper>삭제 된 데이터는 다시 복구할 수 없습니다.</Wrapper>
         <Wrapper>정말 삭제하시겠습니까?</Wrapper>
       </Modal>
