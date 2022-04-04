@@ -116,7 +116,9 @@ router.post("/leture/list", isLoggedIn, async (req, res, next) => {
               C.endLv,
               C.startDate,
               C.endDate,
-              C.price
+              C.price,
+              C.day,
+              C.count
         FROM	participants				A
        INNER
         JOIN	users						    B

@@ -36,7 +36,7 @@ import {
   Select,
 } from "antd";
 
-import { CalendarOutlined, UploadOutlined } from "@ant-design/icons";
+import { CloseOutlined } from "@ant-design/icons";
 
 import styled from "styled-components";
 import useWidth from "../../hooks/useWidth";
@@ -66,6 +66,13 @@ import {
 
 const PROFILE_WIDTH = `184`;
 const PROFILE_HEIGHT = `190`;
+
+const Close = styled(CloseOutlined)`
+  & svg {
+    width: 200px;
+    height: 250px;
+  }
+`;
 
 const CustomPage = styled(Pagination)`
   & .ant-pagination-next > button {
@@ -1845,16 +1852,16 @@ const Index = () => {
             </Text>
 
             <Wrapper margin={`0 20px 0 0`}>
-              <Image
-                width={`auto`}
-                height={`300px`}
-                src={
-                  thumbnail
-                    ? thumbnail
-                    : `https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_delet.png`
-                }
-                alt={`menu_icon`}
-              />
+              {thumbnail ? (
+                <Image
+                  width={`auto`}
+                  height={`250px`}
+                  src={thumbnail}
+                  alt={`menu_icon`}
+                />
+              ) : (
+                <Close />
+              )}
             </Wrapper>
 
             <Text
