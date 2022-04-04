@@ -318,18 +318,16 @@ const DetailClass = () => {
       render: (data) => {
         return (
           <Wrapper width={`100px`}>
-            <Image src={data.thumbnail} alt={`thumbnail`} />
+            <Image src={data.Book.thumbnail} alt={`thumbnail`} />
           </Wrapper>
         );
       },
     },
     {
       title: "제목",
-      dataIndex: "title",
-    },
-    {
-      title: "분류",
-      dataIndex: "value",
+      render: (data) => {
+        return <Text>{data.Book.title}</Text>;
+      },
     },
     {
       title: "첨부파일 다운로드",
@@ -338,7 +336,7 @@ const DetailClass = () => {
           <Button
             type={`primary`}
             size={`small`}
-            onClick={() => fileDownloadHandler(data.file)}
+            onClick={() => fileDownloadHandler(data.Book.file)}
           >
             다운로드
           </Button>
