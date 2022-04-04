@@ -49,6 +49,7 @@ import {
 } from "../../../../components/commonComponents";
 import useWidth from "../../../../hooks/useWidth";
 import Theme from "../../../../components/Theme";
+import moment from "moment";
 
 const CustomForm = styled(Form)`
   width: 100%;
@@ -108,7 +109,6 @@ const List = ({ router }) => {
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
   const { me, st_loadMyInfoDone } = useSelector((state) => state.user);
 
-  console.log(me, "me");
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
@@ -126,6 +126,8 @@ const List = ({ router }) => {
   const [selectValue, setSelectValue] = useState("");
 
   const [updateData, setUpdateData] = useState(null);
+  const [contentViewToggle, setContentViewToggle] = useState(false);
+  const [contentData, setContentData] = useState(null);
 
   const [allSendToggle, setAllSendToggle] = useState(false);
   const [lectureToggle, setLectureToggle] = useState(false);
@@ -253,16 +255,12 @@ const List = ({ router }) => {
     onFill(data);
   }, []);
 
-  // const updateModalClose = useCallback(() => {
-  //   dispatch({
-  //     type: CREATE_MODAL_CLOSE_REQUEST,
-  //   });
-  //   setUpdateData(null);
-  // }, []);
+  const contentViewOpen = useCallback((data) => {
+    setContentViewToggle(true);
+    setContentData(data);
+  }, []);
 
   const sendManyToggleHandler = useCallback(() => {
-    console.log(messageCheckDatum, "messageCheckDatum");
-
     if (messageCheckDatum.length !== 0) {
       setManySendToggle(true);
     } else {
@@ -300,15 +298,15 @@ const List = ({ router }) => {
         type: MESSAGE_CREATE_REQUEST,
         data: {
           title: value.title1,
-          author: updateData.author,
-          senderId: updateData.id,
+          author: me.author,
+          senderId: me.id,
           receiverId: updateData.receiverId,
           content: value.content1,
           level: updateData.level,
         },
       });
     },
-    [updateData]
+    [updateData, me]
   );
 
   const onAllSubmit = useCallback(
@@ -343,8 +341,6 @@ const List = ({ router }) => {
 
   const onManySubmit = useCallback(
     (value) => {
-      console.log(value, "valuye");
-      console.log(messageCheckDatum, "valuye");
       dispatch({
         type: MESSAGE_MANY_CREATE_REQUEST,
         data: {
@@ -358,29 +354,14 @@ const List = ({ router }) => {
     [me, messageCheckDatum]
   );
 
-  // const onLectureSubmit = useCallback(
-  //   (value) => {
-  //     console.log(typeof value.type, "value");
-
-  //     dispatch({
-  //       type: MESSAGE_ALL_CREATE_REQUEST,
-  //       data: {
-  //         type: parseInt(value.type),
-  //         title: value.title,
-  //         author: me.username,
-  //         content: value.content,
-  //       },
-  //     });
-  //   },
-  //   [me]
-  // );
-
   const onReset = useCallback(() => {
     form.resetFields();
     setAnswerModal(false);
     setAllSendToggle(false);
     setLectureToggle(false);
     setManySendToggle(false);
+    setContentViewToggle(false);
+    setContentData(null);
   }, []);
 
   function handleChange(value) {
@@ -455,6 +436,7 @@ const List = ({ router }) => {
       title: "제목",
       dataIndex: "title",
     },
+
     {
       title: "작성자",
       dataIndex: "author",
@@ -463,6 +445,17 @@ const List = ({ router }) => {
     {
       title: "생성일",
       render: (data) => <div>{data.createdAt.substring(0, 14)}</div>,
+    },
+    {
+      title: "상세보기",
+      render: (data) => (
+        <Button
+          type="primary"
+          size="small"
+          onClick={() => contentViewOpen(data)}>
+          확인
+        </Button>
+      ),
     },
     {
       title: "답변하기",
@@ -483,7 +476,11 @@ const List = ({ router }) => {
       <PageHeader
         breadcrumbs={["게시판 관리", "쪽지 관리"]}
         title={`쪽지 리스트`}
+<<<<<<< HEAD
         subTitle={`사용자에게 제공하는 쪽지을 관리할 수 있습니다.`}
+=======
+        subTitle={`사용자에게 제공하는 쪽지를 관리할 수 있습니다.`}
+>>>>>>> refs/remotes/origin/master
       />
 
       {/* <AdminTop createButton={true} createButtonAction={Open} /> */}
@@ -877,6 +874,69 @@ const List = ({ router }) => {
             </Wrapper>
           </CustomForm>
         </Wrapper>
+      </CustomModal>
+
+      {/* 여기부터!! */}
+
+      <CustomModal
+        visible={contentViewToggle}
+        width={`1350px`}
+        title={"쪽지함"}
+        footer={null}
+        closable={false}>
+        <CustomForm>
+          <Wrapper
+            dr={`row`}
+            ju={`space-between`}
+            margin={`0 0 35px`}
+            fontSize={width < 700 ? `14px` : `16px`}>
+            <Text margin={`0 54px 0 0`}>
+              {`작성자 :${contentData && contentData.author}`}
+            </Text>
+            <Text>{`날짜: ${
+              contentData &&
+              moment(contentData.createdAt, "YYYY/MM/DD").format("YYYY/MM/DD")
+            }`}</Text>
+          </Wrapper>
+          <Text fontSize={`18px`} fontWeight={`bold`}>
+            제목
+          </Text>
+          <Wrapper
+            padding={`10px`}
+            al={`flex-start`}
+            fontSize={width < 700 ? `14px` : `16px`}>
+            <Text>{contentData && contentData.title}</Text>
+          </Wrapper>
+          <Text fontSize={`18px`} fontWeight={`bold`}>
+            내용
+          </Text>
+          <Wrapper
+            padding={`10px`}
+            al={`flex-start`}
+            fontSize={width < 700 ? `14px` : `16px`}>
+            <Text minHeight={`360px`}>
+              {contentData &&
+                contentData.content.split("\n").map((data, idx) => {
+                  return (
+                    <Text key={`${data}${idx}`}>
+                      {data}
+                      <br />
+                    </Text>
+                  );
+                })}
+            </Text>
+          </Wrapper>
+          <Wrapper dr={`row`}>
+            <CommonButton
+              margin={`0 5px 0 0`}
+              kindOf={`grey`}
+              color={Theme.darkGrey_C}
+              radius={`5px`}
+              onClick={() => onReset()}>
+              돌아가기
+            </CommonButton>
+          </Wrapper>
+        </CustomForm>
       </CustomModal>
 
       <Modal
