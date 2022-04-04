@@ -91,12 +91,14 @@ import {
 } from "../../../reducers/commute";
 import { saveAs } from "file-saver";
 
-const CustomPopconfirm = styled(Popconfirm)`
-  position: static;
+const CustomButton = styled(Button)`
+  width: ${(props) => props.width};
 
-  & span {
-    display: none;
-  }
+  border: none;
+  font-weight: "boled";
+  box-shadow: none;
+  background-color: ${(props) => props.bgColor};
+  color: ${(props) => props.color};
 `;
 
 const CusotmInput = styled(TextInput)`
@@ -1471,6 +1473,45 @@ const Index = () => {
     return parseInt((add / (count * lecDate)) * 100);
   }, []);
 
+  const stepHanlder2 = useCallback(
+    (startDate, endDate, count, lecDate, day) => {
+      console.log(startDate, "startDate");
+      console.log(endDate, "endDate");
+
+      const save = moment
+        .duration(
+          moment("2022-03-30", "YYYY-MM-DD").diff(moment().format("YYYY-MM-DD"))
+        )
+        .asDays();
+
+      const saveEnd = moment
+        .duration(
+          moment("2022-04-05", "YYYY-MM-DD").diff(moment().format("YYYY-MM-DD"))
+        )
+        .asDays();
+
+      console.log(save, "save");
+
+      let saveCheckStartDay = Math.sign(save);
+
+      if (saveCheckStartDay > 0) {
+        return false;
+      }
+
+      if (saveEnd < 0) {
+        return false;
+      }
+
+      const arr = ["일", "월", "화", "수", "목", "금", "토"];
+
+      let toDay = moment().add("days").day();
+      let toDayCheck = day.includes(arr[toDay]);
+
+      return toDayCheck;
+    },
+    []
+  );
+
   ////// DATAVIEW //////
 
   return (
@@ -1915,6 +1956,7 @@ const Index = () => {
                               }
                             >
                               {"출석"}
+                              {}
                             </Text>
                           </Wrapper>
                         );
@@ -2067,11 +2109,23 @@ const Index = () => {
                               작성하기
                             </Text>
 
-                            <Text
+                            <CustomButton
+                              bgColor={idx % 2 === 0 && Theme.lightGrey_C}
                               onClick={() => onCommuteHandler(data)}
                               cursor={`pointer`}
                               width={`10%`}
                               fontSize={width < 700 ? `14px` : `16px`}
+                              disabled={
+                                stepHanlder2(
+                                  data.startDate,
+                                  data.endDate,
+                                  data.count,
+                                  data.lecDate,
+                                  data.day
+                                )
+                                  ? false
+                                  : true
+                              }
                               color={
                                 "출석"
                                   ? `${Theme.basicTheme_C}`
@@ -2079,7 +2133,7 @@ const Index = () => {
                               }
                             >
                               {"출석"}
-                            </Text>
+                            </CustomButton>
                           </Wrapper>
                         );
                       })
