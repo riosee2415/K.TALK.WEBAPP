@@ -326,6 +326,7 @@ const Student = () => {
 
   const [form] = Form.useForm();
   const [answerform] = Form.useForm();
+  const [answerAdminform] = Form.useForm();
   const [sendform] = Form.useForm();
 
   const [isCalendar, setIsCalendar] = useState(false);
@@ -339,6 +340,7 @@ const Student = () => {
   const [messageSendModal, setMessageSendModal] = useState(false);
   const [messageViewModal, setMessageViewModal] = useState(false);
   const [messageAnswerModal, setMessageAnswerModal] = useState(false);
+  const [messageAnswerAdminModal, setMessageAnswerAdminModal] = useState(false);
 
   const [noticeViewModal, setNoticeViewModal] = useState(false);
   const [noticeViewDatum, setNoticeViewDatum] = useState(null);
@@ -371,7 +373,6 @@ const Student = () => {
       render: (data) => {
         return (
           <Wrapper width={`100px`}>
-            {console.log(data, "data,qwidfhjqiwfhjqiwhjqijqi")}
             <Image src={data.Book.thumbnail} alt={`thumbnail`} />
           </Wrapper>
         );
@@ -416,8 +417,6 @@ const Student = () => {
       setBookModal(true);
     }
   }, [st_bookLectureListDone]);
-
-  console.log(bookLecture, "bookLecture");
 
   useEffect(() => {
     if (st_bookLectureListError) {
@@ -611,8 +610,12 @@ const Student = () => {
     });
   }, [meUpdateModal]);
 
-  const messageAnswerToggleHanlder = useCallback((e) => {
+  const messageAnswerToggleHanlder = useCallback((data) => {
     setMessageAnswerModal(true);
+
+    if (data.level >= 3) {
+      setMessageAnswerAdminModal(true);
+    }
   }, []);
 
   const messageSendModalHandler = useCallback((data, num) => {
@@ -761,6 +764,7 @@ const Student = () => {
 
   const sendMessageAdminFinishHandler = useCallback(
     (data) => {
+      console.log("이건 답장에 d");
       dispatch({
         type: MESSAGE_FOR_ADMIN_CREATE_REQUEST,
         data: {
@@ -952,10 +956,6 @@ const Student = () => {
         add += 1;
       }
     }
-
-    // console.log(add); 13
-    // console.log(count); 4
-    // console.log(lecDate); 3
 
     return parseInt((add / (count * lecDate)) * 100);
   }, []);
@@ -1992,7 +1992,11 @@ const Student = () => {
             closable={false}>
             <CustomForm
               form={answerform}
-              onFinish={(data) => answerFinishHandler(data, messageDatum)}>
+              onFinish={
+                messageAnswerAdminModal
+                  ? (data) => sendMessageAdminFinishHandler(data)
+                  : (data) => answerFinishHandler(data, messageDatum)
+              }>
               {messageAnswerModal && (
                 <>
                   <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
@@ -2013,7 +2017,7 @@ const Student = () => {
                         { required: true, message: "강의를 선택해주세요." },
                       ]}>
                       <Select
-                        value={lectureId}
+                        value={messageAnswerModal ? "" : lectureId}
                         style={{ width: `400px` }}
                         showSearch
                         onSearch={onSearchHandler}
@@ -2152,7 +2156,7 @@ const Student = () => {
                     돌아가기
                   </CommonButton>
                   <CommonButton
-                    onClick={() => messageAnswerToggleHanlder()}
+                    onClick={() => messageAnswerToggleHanlder(messageDatum)}
                     margin={`0 0 0 5px`}
                     radius={`5px`}>
                     답변하기

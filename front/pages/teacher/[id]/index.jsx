@@ -930,8 +930,6 @@ const Index = () => {
       return data.isCheck ? true : false;
     });
 
-    console.log(result);
-
     if (result.length !== 0) {
       setMessageSendModalToggle((prev) => !prev);
       setCheckedList(result);
@@ -1470,9 +1468,6 @@ const Index = () => {
 
   const stepHanlder2 = useCallback(
     (startDate, endDate, count, lecDate, day) => {
-      console.log(startDate, "startDate");
-      console.log(endDate, "endDate");
-
       const save = moment
         .duration(
           moment("2022-03-30", "YYYY-MM-DD").diff(moment().format("YYYY-MM-DD"))
@@ -1484,8 +1479,6 @@ const Index = () => {
           moment("2022-04-05", "YYYY-MM-DD").diff(moment().format("YYYY-MM-DD"))
         )
         .asDays();
-
-      console.log(save, "save");
 
       let saveCheckStartDay = Math.sign(save);
 
