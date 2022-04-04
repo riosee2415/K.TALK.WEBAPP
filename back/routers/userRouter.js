@@ -3,6 +3,7 @@ const passport = require("passport");
 const bcrypt = require("bcrypt");
 const { User, Participant, Lecture } = require("../models");
 const isAdminCheck = require("../middlewares/isAdminCheck");
+const isNanCheck = require("../middlewares/isNanCheck");
 const isLoggedIn = require("../middlewares/isLoggedIn");
 const { Op } = require("sequelize");
 const generateUUID = require("../utils/generateUUID");
@@ -216,6 +217,10 @@ router.get(
   isAdminCheck,
   async (req, res, next) => {
     const { listType } = req.params;
+    const { name, email } = req.query;
+
+    const searchName = name ? name : "";
+    const searchEmail = email ? email : "";
 
     let nanFlag = isNaN(listType);
 
@@ -238,7 +243,18 @@ router.get(
       switch (_listType) {
         case 1:
           users = await User.findAll({
-            where: { level: 1 },
+            where: {
+              level: 1,
+              username: {
+                [Op.like]: `%${searchName}%`,
+              },
+              email: {
+                [Op.like]: `%${searchEmail}%`,
+              },
+            },
+            attributes: {
+              exclude: ["password"],
+            },
             include: [
               {
                 model: Participant,
@@ -255,13 +271,36 @@ router.get(
 
         case 2:
           users = await User.findAll({
-            where: { level: 2 },
+            where: {
+              level: 2,
+              username: {
+                [Op.like]: `%${searchName}%`,
+              },
+              email: {
+                [Op.like]: `%${searchEmail}%`,
+              },
+            },
+            attributes: {
+              exclude: ["password"],
+            },
             order: [["createdAt", "DESC"]],
           });
           break;
 
         case 3:
           users = await User.findAll({
+            where: {
+              level: 2,
+              username: {
+                [Op.like]: `%${searchName}%`,
+              },
+              email: {
+                [Op.like]: `%${searchEmail}%`,
+              },
+            },
+            attributes: {
+              exclude: ["password"],
+            },
             order: [["createdAt", "DESC"]],
           });
           break;
@@ -277,6 +316,41 @@ router.get(
     }
   }
 );
+
+router.get("/detail/:UserId", isAdminCheck, async (req, res, next) => {
+  const { UserId } = req.params;
+
+  if (isNanCheck(UserId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+  try {
+    const exUser = await User.findOne({
+      where: { id: parseInt(UserId) },
+      attributes: {
+        exclude: ["password"],
+      },
+      include: [
+        {
+          model: Participant,
+          include: [
+            {
+              model: Lecture,
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!exUser) {
+      return res.status(401).send("존재하지 않는 사용자입니다.");
+    }
+
+    return res.status(200).json(exUser);
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("사용자 정보를 불러올 수 없습니다.");
+  }
+});
 
 router.post("/signup", async (req, res, next) => {
   const { userId, email, username, mobile, password, birth, gender } = req.body;
