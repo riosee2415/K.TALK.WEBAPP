@@ -305,20 +305,17 @@ const BookFolderList = ({ router }) => {
         width={`1100px`}
         title={`새로운 폴더 작성`}
         onOk={createModalOk}
-        onCancel={updateData ? updateModalClose : createModalClose}
-      >
+        onCancel={updateData ? updateModalClose : createModalClose}>
         <Wrapper padding={`10px`}>
           <Form
             style={{ width: `100%` }}
             onFinish={updateData ? onSubmitUpdate : onSubmit}
             form={form}
-            ref={formRef}
-          >
+            ref={formRef}>
             <Form.Item
               name={"title"}
               label="폴더 이름"
-              rules={[{ required: true }]}
-            >
+              rules={[{ required: true }]}>
               <Input allowClear placeholder="Title..." />
             </Form.Item>
           </Form>
@@ -329,8 +326,7 @@ const BookFolderList = ({ router }) => {
         visible={deletePopVisible}
         onOk={deleteNoticeHandler}
         onCancel={deletePopToggle(null)}
-        title="정말 삭제하시겠습니까?"
-      >
+        title="정말 삭제하시겠습니까?">
         <Wrapper>삭제 된 데이터는 다시 복구할 수 없습니다.</Wrapper>
         <Wrapper>정말 삭제하시겠습니까?</Wrapper>
       </Modal>

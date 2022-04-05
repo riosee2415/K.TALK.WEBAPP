@@ -877,7 +877,7 @@ const LectureAll = () => {
                     <Wrapper
                       width={width < 1280 ? `100%` : `38%`}
                       dr={`row`}
-                      ju={`flex-start`}
+                      ju={`space-between`}
                       al={`flex-start`}>
                       <Wrapper
                         width={`25%`}
@@ -895,6 +895,15 @@ const LectureAll = () => {
                           {data.User.username}
                         </Text>
                       </Wrapper>
+
+                      <Text
+                        cursor={`pointer`}
+                        color={Theme.basicTheme_C}
+                        onClick={() =>
+                          window.open(`${data.zoomLink}`, "_blank")
+                        }>
+                        강의 이동
+                      </Text>
                     </Wrapper>
                   </Wrapper>
                 );
@@ -1112,45 +1121,6 @@ const LectureAll = () => {
                               ? `10px 0 0`
                               : `20px 0 0`
                           }>
-                          <Wrapper
-                            borderBottom={`1px dashed ${Theme.grey_C}`}
-                            al={`flex-start`}
-                            ju={`flex-start`}>
-                            <Text
-                              cursor={`pointer`}
-                              padding={width < 800 ? `8px 0` : `16px 0`}
-                              color={Theme.basicTheme_C}
-                              onClick={() =>
-                                window.open(`${data.zoomLink}`, "_blank")
-                              }>
-                              ZOOM 이동
-                            </Text>
-
-                            <Wrapper
-                              width={`auto`}
-                              al={`flex-start`}
-                              fontSize={width < 700 ? `12px` : `14px`}>
-                              <Text color={Theme.grey2_C}>
-                                <SpanText
-                                  fontWeight={`bold`}
-                                  margin={`0 16px 0 0`}
-                                  color={Theme.black_C}>
-                                  ZOOM ID
-                                </SpanText>
-
-                                {data.zoomLink}
-                              </Text>
-                              <Text color={Theme.grey2_C}>
-                                <SpanText
-                                  fontWeight={`bold`}
-                                  margin={`0 14px 0 0`}
-                                  color={Theme.black_C}>
-                                  Password
-                                </SpanText>
-                                {data.zoomPass}
-                              </Text>
-                            </Wrapper>
-                          </Wrapper>
                           <Wrapper
                             borderBottom={`1px dashed ${Theme.grey_C}`}
                             dr={`row`}

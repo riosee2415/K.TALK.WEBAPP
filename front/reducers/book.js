@@ -318,7 +318,6 @@ const reducer = (state = initailState, action) =>
       case BOOK_CREATE_SUCCESS: {
         draft.st_bookCreateLoading = false;
         draft.st_bookCreateDone = true;
-
         break;
       }
       case BOOK_CREATE_FAILURE: {

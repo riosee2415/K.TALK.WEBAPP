@@ -1,4 +1,4 @@
-import { Row, Col, Button } from "antd";
+import { Row, Col, Button, Form } from "antd";
 import styled from "styled-components";
 
 export const RowWrapper = styled(Row)`
@@ -626,4 +626,37 @@ export const Combo = styled.select`
   box-shadow: ${(props) => props.boxShadow};
   border-radius: ${(props) => props.radius};
   background-color: ${(props) => props.bgColor};
+`;
+
+export const AdminContent = styled.div`
+  padding: 20px;
+`;
+
+export const SearchForm = styled(Form)`
+  background-color: ${(props) => props.theme.grey_C};
+  padding: 0px 5px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+`;
+
+export const SearchFormItem = styled(Form.Item)`
+  margin-bottom: 0px;
+
+  .ant-form-item-label > label {
+    color: #fff;
+  }
+`;
+
+export const ModalBtn = styled(Button)`
+  margin-left: 5px;
+`;
+
+export const GuideUl = styled.ul`
+  width: 100%;
+  padding: 5px;
+`;
+export const GuideLi = styled.li`
+  width: 100%;
+  margin-bottom: 5px;
+  color: ${(props) => (props.isImpo ? props.theme.red_C : "")};
 `;

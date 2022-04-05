@@ -254,7 +254,9 @@ function* userList(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function userAllListAPI(data) {
-  return axios.get(`/api/user/allUsers/${data.type}`);
+  return axios.get(
+    `/api/user/allUsers/${data.type}?name=${data.name}&email=${data.email}`
+  );
 }
 // 1 => 학생 리스트
 // 2 => 강사 리스트

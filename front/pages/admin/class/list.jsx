@@ -400,16 +400,14 @@ const List = () => {
             <Button
               size="small"
               type="primary"
-              onClick={() => moveLinkHandler(`/admin/class/create`)}
-            >
+              onClick={() => moveLinkHandler(`/admin/class/create`)}>
               새 클래스 추가
             </Button>
           </Wrapper>
           <Select
             style={{ width: `200px` }}
             placeholder={`정렬을 선택해주세요.`}
-            onChange={(e) => comboChangeHandler(e)}
-          >
+            onChange={(e) => comboChangeHandler(e)}>
             <Select.Option value={`1`}>강의명순</Select.Option>
             <Select.Option value={`2`}>생성일순</Select.Option>
           </Select>
@@ -430,27 +428,23 @@ const List = () => {
                     shadow={`0 5px 15px rgba(0,0,0,0.05)`}
                     margin={`0 20px 30px 0`}
                     padding={`20px`}
-                    ju={`space-between`}
-                  >
+                    ju={`space-between`}>
                     <Wrapper>
                       <Wrapper
                         dr={`row`}
                         ju={`space-between`}
                         al={`flex-start`}
                         padding={`0 0 20px`}
-                        borderBottom={`1px solid ${Theme.grey2_C}`}
-                      >
+                        borderBottom={`1px solid ${Theme.grey2_C}`}>
                         <Wrapper width={`auto`}>
                           <Wrapper
                             dr={`row`}
                             ju={`flex-start`}
-                            margin={`0 0 15px`}
-                          >
+                            margin={`0 0 15px`}>
                             <Wrapper
                               width={`34px`}
                               padding={`0 5px`}
-                              margin={`0 10px 0 0`}
-                            >
+                              margin={`0 10px 0 0`}>
                               <Image
                                 src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png`}
                                 alt={`icon_lecture`}
@@ -466,13 +460,11 @@ const List = () => {
                           <Wrapper
                             dr={`row`}
                             ju={`flex-start`}
-                            margin={`0 0 15px`}
-                          >
+                            margin={`0 0 15px`}>
                             <Wrapper
                               width={`34px`}
                               padding={`0 5px`}
-                              margin={`0 10px 0 0`}
-                            >
+                              margin={`0 10px 0 0`}>
                               <Image
                                 src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name_yellow.png`}
                                 alt={`icon_lecture`}
@@ -487,8 +479,7 @@ const List = () => {
                             <Wrapper
                               width={`34px`}
                               padding={`0 5px`}
-                              margin={`0 10px 0 0`}
-                            >
+                              margin={`0 10px 0 0`}>
                               <Image
                                 src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_number.png`}
                                 alt={`icon_lecture`}
@@ -504,8 +495,7 @@ const List = () => {
                           fontSize={`15px`}
                           color={Theme.grey2_C}
                           al={width < 1350 ? `flex-start` : `flex-end`}
-                          margin={width < 1350 ? `20px 0 0` : `0`}
-                        >
+                          margin={width < 1350 ? `20px 0 0` : `0`}>
                           <Text fontSize={`14px`} fontWeight={`bold`}>
                             {data.startLv}
                           </Text>
@@ -536,8 +526,7 @@ const List = () => {
                         fontSize={`14px`}
                         onClick={() =>
                           moveLinkHandler(`/admin/class/${data.id}`)
-                        }
-                      >
+                        }>
                         자세히 보기
                       </CommonButton>
                       <CommonButton
@@ -547,14 +536,12 @@ const List = () => {
                         radius={`5px`}
                         margin={`0 10px 0 0`}
                         fontSize={`14px`}
-                        onClick={() => updateModalOpen(data)}
-                      >
+                        onClick={() => updateModalOpen(data)}>
                         수정
                       </CommonButton>
                       <CustomButton
                         type={`danger`}
-                        onClick={() => deletePopToggle(data.id)}
-                      >
+                        onClick={() => deletePopToggle(data.id)}>
                         삭제
                       </CustomButton>
                     </Wrapper>
@@ -570,8 +557,7 @@ const List = () => {
         visible={deletePopVisible}
         onOk={deleteClassHandler}
         onCancel={() => deletePopToggle(null)}
-        title="정말 삭제하시겠습니까?"
-      >
+        title="정말 삭제하시겠습니까?">
         <Wrapper>삭제 된 데이터는 다시 복구할 수 없습니다.</Wrapper>
         <Wrapper>정말 삭제하시겠습니까?</Wrapper>
       </Modal>
@@ -581,16 +567,14 @@ const List = () => {
         width={`1100px`}
         title={`클래스 수정`}
         onOk={updateModalOk}
-        onCancel={updateModalClose}
-      >
+        onCancel={updateModalClose}>
         <Form form={form} ref={formRef} onFinish={onSubmitUpdate}>
           <Wrapper padding={`0 50px`}>
             <Wrapper dr={`row`} margin={`0 0 20px`}>
               <Text width={`100px`}>강의명</Text>
               <FormItem
                 rules={[{ required: true, message: "강의명을 입력해주세요." }]}
-                name={`course`}
-              >
+                name={`course`}>
                 <CusotmInput />
               </FormItem>
             </Wrapper>
@@ -599,8 +583,7 @@ const List = () => {
               <Text width={`100px`}>강사</Text>
               <FormItem
                 rules={[{ required: true, message: "강사를 선택해주세요." }]}
-                name={`UserId`}
-              >
+                name={`UserId`}>
                 <Select size={`large`}>
                   {allUsers &&
                     allUsers.map((data) => {
@@ -619,8 +602,7 @@ const List = () => {
               <Text width={`100px`}>레벨</Text>
               <FormItem
                 rules={[{ required: true, message: "레벨을 입력해주세요." }]}
-                name={`startLv`}
-              >
+                name={`startLv`}>
                 <CusotmInput />
               </FormItem>
             </Wrapper>
@@ -631,8 +613,7 @@ const List = () => {
               <FormItem
                 rules={[{ required: true, message: "가격을 입력해주세요." }]}
                 name={`price`}
-                width={`calc(100% - 120px)`}
-              >
+                width={`calc(100% - 120px)`}>
                 <CusotmInput type={`number`} />
               </FormItem>
             </Wrapper>
@@ -643,8 +624,7 @@ const List = () => {
                 rules={[
                   { required: true, message: "수업 시간을 입력해주세요." },
                 ]}
-                name={`time`}
-              >
+                name={`time`}>
                 <TimeInput size={`large`} format={`HH:mm`} />
               </FormItem>
             </Wrapper>
@@ -656,8 +636,7 @@ const List = () => {
                   { required: true, message: "강의 기간을 입력해주세요." },
                 ]}
                 name={`lecDate`}
-                width={`calc(100% - 130px)`}
-              >
+                width={`calc(100% - 130px)`}>
                 <CusotmInput
                   onChange={startDateChangeHandler}
                   type={`number`}
@@ -673,8 +652,7 @@ const List = () => {
               <FormItem
                 rules={[{ required: true, message: "횟수를 입력해주세요." }]}
                 name={`cnt`}
-                width={`calc(100% - 130px)`}
-              >
+                width={`calc(100% - 130px)`}>
                 <CusotmInput disabled type={`number`} {...inputCnt} />
               </FormItem>
               <Text width={`30px`} padding={`0 0 0 10px`}>
@@ -686,8 +664,7 @@ const List = () => {
               <Text width={`100px`}>진행 요일</Text>
               <FormItem
                 rules={[{ required: true, message: "요일을 입력해주세요." }]}
-                name={`day`}
-              >
+                name={`day`}>
                 <CusotmInput disabled />
               </FormItem>
             </Wrapper>
@@ -697,8 +674,7 @@ const List = () => {
               <FormItem
                 // rules={[{ required: true, message: "횟수를 입력해주세요." }]}
                 name={`allCnt`}
-                width={`calc(100% - 130px)`}
-              >
+                width={`calc(100% - 130px)`}>
                 <CusotmInput type={`number`} disabled />
               </FormItem>
               <Text width={`30px`} padding={`0 0 0 10px`}>
@@ -712,8 +688,7 @@ const List = () => {
                 rules={[
                   { required: true, message: "시작 날짜를 입력해주세요." },
                 ]}
-                name={`startDate`}
-              >
+                name={`startDate`}>
                 <DateInput
                   format={`YYYY-MM-DD`}
                   size={`large`}
@@ -733,8 +708,7 @@ const List = () => {
                 rules={[
                   { required: true, message: "종료 날짜를 입력해주세요." },
                 ]}
-                name={`endDate`}
-              >
+                name={`endDate`}>
                 <CusotmInput
                   format={`YYYY-MM-DD`}
                   size={`large`}
