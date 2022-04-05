@@ -9,6 +9,10 @@ module.exports = class Commute extends Model {
           type: DataTypes.STRING(100),
           allowNull: false, // 필수
         },
+        status: {
+          type: DataTypes.STRING(50),
+          allowNull: false, // 필수
+        },
       },
       {
         modelName: "Commute",

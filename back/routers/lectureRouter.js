@@ -158,6 +158,7 @@ router.get(
   isAdminCheck,
   async (req, res, next) => {
     const { listType } = req.params;
+    const { TeacherId } = req.query;
 
     let nanFlag = isNaN(listType);
 
@@ -175,18 +176,35 @@ router.get(
       _listType = 2;
     }
 
+    let newWhere = {};
+
+    if (TeacherId) {
+      newWhere = {
+        isDelete: false,
+        UserId: parseInt(TeacherId),
+      };
+    }
+
+    if (!TeacherId) {
+      newWhere = {
+        isDelete: false,
+      };
+    }
+
     try {
       const lecture = await Lecture.findAll({
-        where: { isDelete: false },
+        where: newWhere,
         include: [
           {
             model: User,
+            attributes: ["id", "username", "level"],
           },
           {
             model: Participant,
             include: [
               {
                 model: User,
+                attributes: ["id", "username", "level"],
                 order: [["createdAt", "DESC"]],
               },
             ],
@@ -1047,7 +1065,7 @@ router.post("/diary/admin/list", isAdminCheck, async (req, res, next) => {
 });
 
 router.post("/diary/create", isLoggedIn, async (req, res, next) => {
-  const { author, process, lectureMemo, LectureId } = req.body;
+  const { author, process, lectureMemo, LectureId, startLv } = req.body;
 
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
@@ -1078,6 +1096,15 @@ router.post("/diary/create", isLoggedIn, async (req, res, next) => {
       lectureMemo,
       LectureId: parseInt(LectureId),
     });
+
+    await Lecture.update(
+      {
+        startLv,
+      },
+      {
+        where: { id: parseInt(LectureId) },
+      }
+    );
 
     if (!createResult) {
       return res.status(401).send("처리중 문제가 발생하였습니다.");
