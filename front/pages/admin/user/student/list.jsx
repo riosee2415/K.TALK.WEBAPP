@@ -26,6 +26,9 @@ import {
 import { LECTURE_ALL_LIST_REQUEST } from "../../../../reducers/lecture";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import { PARTICIPANT_CREATE_REQUEST } from "../../../../reducers/participant";
+import useInput from "../../../../hooks//useInput";
+import { SearchOutlined } from "@ant-design/icons";
+import Theme from "../../../../components/Theme";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -86,6 +89,9 @@ const UserList = ({}) => {
   const [form] = Form.useForm();
   const [updateClassform] = Form.useForm();
 
+  const inputName = useInput("");
+  const inputEmail = useInput("");
+
   ////// USEEFFECT //////
 
   useEffect(() => {
@@ -93,6 +99,8 @@ const UserList = ({}) => {
       type: USER_ALL_LIST_REQUEST,
       data: {
         type: 1,
+        name: "",
+        email: "",
       },
     });
 
@@ -257,6 +265,17 @@ const UserList = ({}) => {
     [parData]
   );
 
+  const onSeachStuHandler = useCallback(() => {
+    dispatch({
+      type: USER_ALL_LIST_REQUEST,
+      data: {
+        type: 1,
+        name: inputName.value,
+        email: inputEmail.value,
+      },
+    });
+  }, [inputName.value, inputEmail.value]);
+
   // const selectChangeHandler = useCallback(
   //   (e) => {
   //     const id = parseInt(e.split(`.`)[0]);
@@ -383,16 +402,10 @@ const UserList = ({}) => {
     // },
   ];
 
-  {
-    console.log(allUsers, "allUsers");
-  }
-
-  console.log(detailDatum, "detailDatum");
-
   const columnsList = [
     {
       title: "No",
-      dataIndex: "LectureId",
+      dataIndex: "id",
     },
 
     {
@@ -419,12 +432,31 @@ const UserList = ({}) => {
     <AdminLayout>
       <PageHeader
         breadcrumbs={["회원 관리", "관리"]}
-        title={`회원 리스트`}
-        subTitle={`홈페이지에 가입한 회원를 확인할 수 있습니다.`}
+        title={`학생 목록`}
+        subTitle={`홈페이지에 가입한 학생을 확인할 수 있습니다.`}
       />
       {/* <AdminTop createButton={true} createButtonAction={() => {})} /> */}
 
       <AdminContent>
+        <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
+          <Input
+            size="small"
+            style={{ width: "20%" }}
+            placeholder="사용자명"
+            {...inputName}
+          />
+          <Input
+            size="small"
+            style={{ width: "20%" }}
+            placeholder="이메일"
+            {...inputEmail}
+          />
+          <Button size="small" onClick={() => onSeachStuHandler()}>
+            <SearchOutlined />
+            검색
+          </Button>
+        </Wrapper>
+
         <Table
           rowKey="id"
           columns={column}
@@ -506,9 +538,23 @@ const UserList = ({}) => {
       <Modal
         visible={detailToggle}
         width={`80%`}
-        title={`학생 수업 강의 목록`}
+        title={`학생 강의 목록`}
         footer={null}
         onCancel={() => setDetailToggle(false)}>
+        <Table
+          rowKey="id"
+          columns={columnsList}
+          dataSource={detailDatum}
+          size="small"
+        />
+        <Text
+          padding={`16px 0px`}
+          color={Theme.black_2C}
+          fontSize={`16px`}
+          fontWeight={`500`}>
+          학생강의 참여 및 이동 기록
+        </Text>
+
         <Table
           rowKey="id"
           columns={columnsList}
