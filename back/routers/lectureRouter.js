@@ -777,26 +777,6 @@ router.post("/memo/student/create", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("해당 강의에 참여하고 있는 학생이 아닙니다.");
     }
 
-    const exMemoQuery = `
-    SELECT	id,
-            memo,
-            createdAt,
-            updatedAt,
-            LectureId,
-            UserId 
-      FROM	lectureStuMemos
-     WHERE  1 = 1
-       AND  DATE_FORMAT(createdAt, '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d')
-       AND  LectureId = ${LectureId}
-       AND  UserId = ${UserId}
-    `;
-
-    const exMemo = await models.sequelize.query(exMemoQuery);
-
-    if (exMemo[0].length > 0) {
-      return res.status(401).send("이미 해당 학생의 메모가 등록되었습니다.");
-    }
-
     const createResult = await LectureStuMemo.create({
       memo,
       UserId: parseInt(UserId),
