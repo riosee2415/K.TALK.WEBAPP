@@ -290,7 +290,6 @@ router.get(
         case 3:
           users = await User.findAll({
             where: {
-              level: 2,
               username: {
                 [Op.like]: `%${searchName}%`,
               },

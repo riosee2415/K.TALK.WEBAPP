@@ -12,6 +12,7 @@ import {
   CREATE_MODAL_TOGGLE,
   USER_STU_CREATE_REQUEST,
   USER_TEA_CREATE_REQUEST,
+  USER_ALL_LIST_REQUEST,
 } from "../../../reducers/user";
 import {
   Table,
@@ -77,7 +78,7 @@ const UserList = ({}) => {
   const dispatch = useDispatch();
 
   const {
-    users,
+    allUsers,
     createModal,
     updateModal,
 
@@ -110,21 +111,60 @@ const UserList = ({}) => {
 
   const [lectureList, setLectureList] = useState(null);
   const [selectedList, setSelectedList] = useState([]);
+  const [currentType, setCurrentType] = useState(3);
+
+  const getQs = useCallback(() => {
+    const qs = router.query;
+
+    let value = "";
+
+    if (currentType) {
+      value = `${currentType}`;
+    } else {
+      value = `3`;
+    }
+
+    if (qs.name) {
+      value += `?name=${qs.name}`;
+    }
+
+    if (qs.email) {
+      value += `&email=${qs.email}`;
+    }
+
+    return value;
+  }, [currentType, router.query]);
+
+  console.log(getQs());
 
   ////// USEEFFECT //////
 
   useEffect(() => {
-    const query = router.query;
+    const type = getQs();
+    dispatch({
+      type: USER_ALL_LIST_REQUEST,
+      data: {
+        type,
+      },
+    });
 
     dispatch({
-      type: USERLIST_REQUEST,
+      type: LECTURE_ALL_LIST_REQUEST,
       data: {
-        name: query.name ? query.name : ``,
-        email: query.email ? query.email : ``,
-        listType: query.sort,
+        listType: 2,
       },
     });
   }, [router.query]);
+
+  useEffect(() => {
+    const type = getQs();
+    dispatch({
+      type: USER_ALL_LIST_REQUEST,
+      data: {
+        type,
+      },
+    });
+  }, [currentType]);
 
   useEffect(() => {
     if (st_userListUpdateDone) {
@@ -240,21 +280,6 @@ const UserList = ({}) => {
       return message.error(st_userTeaCreateError);
     }
   }, [st_userTeaCreateError]);
-
-  useEffect(() => {
-    router.push(
-      `/admin/user/userList?name=${inputName.value}&email=${inputEmail.value}&sort=${inputSort.value}`
-    );
-  }, [inputSort.value]);
-
-  useEffect(() => {
-    dispatch({
-      type: LECTURE_ALL_LIST_REQUEST,
-      data: {
-        listType: 2,
-      },
-    });
-  }, []);
 
   useEffect(() => {
     setLectureList(
@@ -395,7 +420,6 @@ const UserList = ({}) => {
       title: "번호",
       dataIndex: "id",
     },
-
     {
       title: "회원이름",
       render: (data) => <div>{data.username}</div>,
@@ -470,11 +494,11 @@ const UserList = ({}) => {
             size="small"
             defaultValue="1"
             style={{ width: "10%" }}
-            value={inputSort.value}
-            onChange={(data) => inputSort.setValue(data)}
+            onChange={(data) => setCurrentType(data)}
           >
-            <Select.Option value="1">최근 가입일</Select.Option>
-            <Select.Option value="2">이름순</Select.Option>
+            <Select.Option value="3">전체</Select.Option>
+            <Select.Option value="1">학생</Select.Option>
+            <Select.Option value="2">강사</Select.Option>
           </Select>
           <Input
             size="small"
@@ -507,7 +531,7 @@ const UserList = ({}) => {
         <Table
           rowKey="id"
           columns={columns}
-          dataSource={users ? users : []}
+          dataSource={allUsers ? allUsers : []}
           size="small"
         />
       </AdminContent>
