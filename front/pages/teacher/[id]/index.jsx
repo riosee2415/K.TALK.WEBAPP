@@ -49,6 +49,7 @@ import {
   Upload,
   Select,
   Popconfirm,
+  Tabs,
 } from "antd";
 import {
   MESSAGE_CREATE_REQUEST,
@@ -319,6 +320,8 @@ const Index = () => {
   ////// GLOBAL STATE //////
 
   const { Option } = Select;
+
+  const { TabPane } = Tabs;
 
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
@@ -1383,13 +1386,14 @@ const Index = () => {
     setNoticeContent(contentValue);
   }, []);
 
-  const onCommuteHandler = useCallback((data, isAtt) => {
+  const onCommuteHandler = useCallback((data, status) => {
     dispatch({
       type: COMMUTE_CREATE_REQUEST,
       data: {
         time: moment().format("YYYY-MM-DD HH:MM"),
         LectureId: data.LectureId,
         UserId: data.UserId,
+        status,
       },
     });
   }, []);
@@ -1907,17 +1911,79 @@ const Index = () => {
                               작성하기
                             </Text>
 
-                            <Text
-                              onClick={() => onCommuteHandler(data)}
-                              fontSize={width < 700 ? `14px` : `16px`}
-                              width={`25%`}
-                              color={
-                                "출석"
-                                  ? `${Theme.basicTheme_C}`
-                                  : `${Theme.red_C}`
-                              }>
-                              {"출석"}
-                            </Text>
+                            <Wrapper width={`25%`}>
+                              <CustomButton
+                                bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                                onClick={() => onCommuteHandler(data, "출석")}
+                                cursor={`pointer`}
+                                fontSize={width < 700 ? `14px` : `16px`}
+                                disabled={
+                                  stepHanlder2(
+                                    data.startDate,
+                                    data.endDate,
+                                    data.count,
+                                    data.lecDate,
+                                    data.day
+                                  )
+                                    ? false
+                                    : true
+                                }
+                                color={
+                                  "출석"
+                                    ? `${Theme.basicTheme_C}`
+                                    : `${Theme.red_C}`
+                                }>
+                                {"출석"}
+                              </CustomButton>
+
+                              <CustomButton
+                                bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                                onClick={() => onCommuteHandler(data, "결석")}
+                                cursor={`pointer`}
+                                fontSize={width < 700 ? `14px` : `16px`}
+                                disabled={
+                                  stepHanlder2(
+                                    data.startDate,
+                                    data.endDate,
+                                    data.count,
+                                    data.lecDate,
+                                    data.day
+                                  )
+                                    ? false
+                                    : true
+                                }
+                                color={
+                                  "결석"
+                                    ? `${Theme.basicTheme_C}`
+                                    : `${Theme.red_C}`
+                                }>
+                                {"결석"}
+                              </CustomButton>
+
+                              <CustomButton
+                                bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                                onClick={() => onCommuteHandler(data, "지각")}
+                                cursor={`pointer`}
+                                fontSize={width < 700 ? `14px` : `16px`}
+                                disabled={
+                                  stepHanlder2(
+                                    data.startDate,
+                                    data.endDate,
+                                    data.count,
+                                    data.lecDate,
+                                    data.day
+                                  )
+                                    ? false
+                                    : true
+                                }
+                                color={
+                                  "지각"
+                                    ? `${Theme.basicTheme_C}`
+                                    : `${Theme.red_C}`
+                                }>
+                                {"지각"}
+                              </CustomButton>
+                            </Wrapper>
                           </Wrapper>
                         );
                       })
@@ -2053,30 +2119,82 @@ const Index = () => {
                               작성하기
                             </Text>
 
-                            <CustomButton
-                              bgColor={idx % 2 === 0 && Theme.lightGrey_C}
-                              onClick={() => onCommuteHandler(data)}
-                              cursor={`pointer`}
-                              width={`10%`}
-                              fontSize={width < 700 ? `14px` : `16px`}
-                              disabled={
-                                stepHanlder2(
-                                  data.startDate,
-                                  data.endDate,
-                                  data.count,
-                                  data.lecDate,
-                                  data.day
-                                )
-                                  ? false
-                                  : true
-                              }
-                              color={
-                                "출석"
-                                  ? `${Theme.basicTheme_C}`
-                                  : `${Theme.red_C}`
-                              }>
-                              {"출석"}
-                            </CustomButton>
+                            <Wrapper width={`10%`}>
+                              <CustomButton
+                                width={`55px`}
+                                bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                                onClick={() => onCommuteHandler(data, "출석")}
+                                cursor={`pointer`}
+                                fontSize={width < 700 ? `14px` : `16px`}
+                                disabled={
+                                  stepHanlder2(
+                                    data.startDate,
+                                    data.endDate,
+                                    data.count,
+                                    data.lecDate,
+                                    data.day
+                                  )
+                                    ? false
+                                    : true
+                                }
+                                color={
+                                  "출석"
+                                    ? `${Theme.basicTheme_C}`
+                                    : `${Theme.red_C}`
+                                }>
+                                {"출석"}
+                              </CustomButton>
+
+                              <CustomButton
+                                width={`55px`}
+                                bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                                onClick={() => onCommuteHandler(data, "결석")}
+                                cursor={`pointer`}
+                                fontSize={width < 700 ? `14px` : `16px`}
+                                disabled={
+                                  stepHanlder2(
+                                    data.startDate,
+                                    data.endDate,
+                                    data.count,
+                                    data.lecDate,
+                                    data.day
+                                  )
+                                    ? false
+                                    : true
+                                }
+                                color={
+                                  "결석"
+                                    ? `${Theme.basicTheme_C}`
+                                    : `${Theme.red_C}`
+                                }>
+                                {"결석"}
+                              </CustomButton>
+
+                              <CustomButton
+                                width={`55px`}
+                                bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                                onClick={() => onCommuteHandler(data, "지각")}
+                                cursor={`pointer`}
+                                fontSize={width < 700 ? `14px` : `16px`}
+                                disabled={
+                                  stepHanlder2(
+                                    data.startDate,
+                                    data.endDate,
+                                    data.count,
+                                    data.lecDate,
+                                    data.day
+                                  )
+                                    ? false
+                                    : true
+                                }
+                                color={
+                                  "지각"
+                                    ? `${Theme.basicTheme_C}`
+                                    : `${Theme.red_C}`
+                                }>
+                                {"지각"}
+                              </CustomButton>
+                            </Wrapper>
                           </Wrapper>
                         );
                       })
@@ -2086,7 +2204,7 @@ const Index = () => {
               </Wrapper>
               <Wrapper
                 dr={`row`}
-                ju={width < 700 ? `flex-start` : `flex-end`}
+                ju={width < 700 ? `center` : `flex-end`}
                 margin={`20px 0 0 0`}>
                 <CommonButton
                   radius={`5px`}
@@ -3594,14 +3712,21 @@ const Index = () => {
               <Text
                 fontSize={width < 700 ? `14px` : `18px`}
                 fontWeight={`Bold`}
-                width={`50%`}>
+                width={`45%`}>
                 출석일
               </Text>
               <Text
                 fontSize={width < 700 ? `14px` : `18px`}
                 fontWeight={`Bold`}
-                width={`50%`}>
+                width={`45%`}>
                 학생명
+              </Text>
+
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`Bold`}
+                width={`10%`}>
+                출석
               </Text>
             </Wrapper>
 
@@ -3623,13 +3748,18 @@ const Index = () => {
                     bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
                     <Text
                       fontSize={width < 700 ? `14px` : `16px`}
-                      width={`50%`}>
+                      width={`45%`}>
                       {data.time}
                     </Text>
                     <Text
                       fontSize={width < 700 ? `14px` : `16px`}
-                      width={`50%`}>
+                      width={`45%`}>
                       {data.username}
+                    </Text>
+                    <Text
+                      fontSize={width < 700 ? `14px` : `16px`}
+                      width={`10%`}>
+                      {data.status}
                     </Text>
                   </Wrapper>
                 );

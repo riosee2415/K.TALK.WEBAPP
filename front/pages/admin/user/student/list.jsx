@@ -88,6 +88,7 @@ const UserList = ({}) => {
 
   const [form] = Form.useForm();
   const [updateClassform] = Form.useForm();
+  const [updateEndClassform] = Form.useForm();
 
   const inputName = useInput("");
   const inputEmail = useInput("");
@@ -265,6 +266,28 @@ const UserList = ({}) => {
     [parData]
   );
 
+  const onUpdateEndClassSubmit = useCallback(
+    (data) => {
+      if (!data.lecture || data.lecture === "--- 선택 ---") {
+        return message.error(`현재 강의를 선택해주세요.`);
+      }
+      if (!data.changelecture || data.changelecture === "--- 선택 ---") {
+        return message.error(`바꿀 강의를 선택해주세요.`);
+      }
+
+      dispatch({
+        type: USER_CLASS_CHANGE_REQUEST,
+        data: {
+          UserId: updateData.id,
+          LectureId: data.lecture,
+          ChangeLectureId: data.changelecture,
+        },
+      });
+    },
+
+    []
+  );
+
   const onSeachStuHandler = useCallback(() => {
     dispatch({
       type: USER_ALL_LIST_REQUEST,
@@ -304,8 +327,9 @@ const UserList = ({}) => {
   }, []);
 
   const detailModalOpen = useCallback((data) => {
+    console.log(data, "data");
     setDetailToggle(true);
-    setDetailDatum(data);
+    setDetailDatum(data.Participants);
   }, []);
 
   ////// DATAVIEW //////
@@ -381,12 +405,28 @@ const UserList = ({}) => {
     },
 
     {
+      title: "수업종료",
+      render: (data) => (
+        <Button
+          size="small"
+          type="primary"
+          onClick={() =>
+            data.level === 5
+              ? message.error("개발사는 권한을 수정할 수 없습니다.")
+              : classPartModalOpen(data)
+          }>
+          수업종료
+        </Button>
+      ),
+    },
+
+    {
       title: "상세보기",
       render: (data) => (
         <Button
           size="small"
           type="primary"
-          onClick={() => detailModalOpen(data.Participants)}>
+          onClick={() => detailModalOpen(data)}>
           상세보기
         </Button>
       ),
@@ -536,6 +576,37 @@ const UserList = ({}) => {
       </Modal>
 
       <Modal
+        visible={classPartModal}
+        width={`400px`}
+        title={`학생 수업 종료`}
+        onCancel={classPartModalClose}
+        onOk={onModalChangeOk}>
+        <Wrapper padding={`10px`} al={`flex-start`}>
+          <Form
+            form={updateEndClassform}
+            style={{ width: `100%` }}
+            onFinish={onUpdateEndClassSubmit}>
+            <Form.Item label={`학생`}>
+              <Input disabled value={parData && parData.username} />
+            </Form.Item>
+
+            <Form.Item label={`종료할 강의`} name={`partLecture`}>
+              <Select
+                width={`100%`}
+                height={`32px`}
+                showSearch
+                onChange={onSeachHandler}
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
+                placeholder="Select a Lecture"></Select>
+            </Form.Item>
+          </Form>
+        </Wrapper>
+      </Modal>
+
+      <Modal
         visible={detailToggle}
         width={`80%`}
         title={`학생 강의 목록`}
@@ -555,12 +626,12 @@ const UserList = ({}) => {
           학생강의 참여 및 이동 기록
         </Text>
 
-        <Table
+        {/* <Table
           rowKey="id"
           columns={columnsList}
           dataSource={detailDatum}
           size="small"
-        />
+        /> */}
       </Modal>
     </AdminLayout>
   );

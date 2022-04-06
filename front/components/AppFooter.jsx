@@ -13,10 +13,10 @@ const AppFooter = () => {
   const width = useWidth();
   return (
     <WholeWrapper
+      postion
       bgColor={Theme.black_C}
       color={Theme.white_C}
-      padding={`55px 0`}
-    >
+      padding={`55px 0`}>
       <RsWrapper dr={`row`} ju={`space-between`} al={`flex-end`}>
         <Wrapper width={`auto`} al={`flex-start`}>
           <Text fontSize={width < 800 ? `16px` : `20px`} fontWeight={`bold`}>
@@ -35,8 +35,7 @@ const AppFooter = () => {
             fontWeight={`300`}
             margin={width < 800 ? `20px 0` : `20px 0 0`}
             fontSize={width < 800 ? `10px` : `14px`}
-            color={Theme.grey2_C}
-          >
+            color={Theme.grey2_C}>
             Copyright 2021. Ktalklive inc. all rights reserved. By 4LEAF
             SOFTWARE
           </Text>

@@ -120,6 +120,9 @@ const AdminMenu = () => {
           <Menu.Item key="/admin/class/list">
             <MenuName>클래스 목록, 검색, 정렬</MenuName>
           </Menu.Item>
+          <Menu.Item key="/admin/class/payment">
+            <MenuName>결제 클래스 관리</MenuName>
+          </Menu.Item>
           <Menu.Item key="/admin/class/create">
             <MenuName>클래스 추가</MenuName>
           </Menu.Item>
