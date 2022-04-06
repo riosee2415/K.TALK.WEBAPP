@@ -1,7 +1,7 @@
 const passport = require("passport");
 const { Strategy: LocalStrategy } = require("passport-local");
 const bcrypt = require("bcrypt");
-const { User } = require("../models");
+const { User, Participant } = require("../models");
 
 module.exports = () => {
   passport.use(
@@ -22,7 +22,18 @@ module.exports = () => {
             });
           }
 
+          const exParts = await Participant.findAll({
+            where: { UserId: parseInt(user.id) },
+          });
+
+          if (exParts.length === 0) {
+            return done(null, false, {
+              reason: "참여중인 강의가 없습니다.",
+            });
+          }
+
           const result = await bcrypt.compare(password, user.password);
+
           if (result) {
             return done(null, user);
           }
