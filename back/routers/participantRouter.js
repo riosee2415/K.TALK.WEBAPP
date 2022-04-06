@@ -31,12 +31,9 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
                 B.level,
                 C.course,
                 C.lecDate,
-                C.lecTime,
                 C.startLv,
-                C.endLv,
                 C.startDate,
-                C.endDate,
-                C.price
+                C.endDate
         FROM	participants				A
        INNER
         JOIN	users						B
@@ -57,18 +54,15 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
                 B.level,
                 C.course,
                 C.lecDate,
-                C.lecTime,
                 C.startLv,
-                C.endLv,
                 C.startDate,
-                C.endDate,
-                C.price
+                C.endDate
         FROM	  participants				A
        INNER 
-        JOIN  	users						B
+        JOIN  	users					      B
           ON	  A.UserId  = B.id
        INNER
-        JOIN	  lectures					C
+        JOIN	  lectures					  C
           ON	  A.LectureId = C.id
        WHERE    A.UserId = ${req.user.id}
        LIMIT    ${LIMIT}
@@ -111,12 +105,9 @@ router.post("/leture/list", isLoggedIn, async (req, res, next) => {
               B.stuCountry,
               C.course,
               C.lecDate,
-              C.lecTime,
               C.startLv,
-              C.endLv,
               C.startDate,
               C.endDate,
-              C.price,
               C.day,
               C.count
         FROM	participants				A
@@ -159,12 +150,9 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
                 B.level,
                 C.course,
                 C.lecDate,
-                C.lecTime,
                 C.startLv,
-                C.endLv,
                 C.startDate,
-                C.endDate,
-                C.price
+                C.endDate
         FROM	participants				A
        INNER
         JOIN	users						B
