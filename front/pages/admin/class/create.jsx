@@ -478,6 +478,18 @@ const List = () => {
             </FormItem>
           </Wrapper>
 
+          <Wrapper dr={`row`} margin={`0 0 20px`}>
+            <Text width={`80px`} onClick={() => setEndDate(null)}>
+              줌 링크
+            </Text>
+            <FormItem
+              rules={[{ required: true, message: "종료 날짜를 입력해주세요." }]}
+              name={`zoomLink`}
+            >
+              <CusotmInput format={`YYYY-MM-DD`} size={`large`} type="url" />
+            </FormItem>
+          </Wrapper>
+
           {/* <Wrapper dr={`row`} margin={`0 0 20px`} al={`flex-start`}>
             <Text width={`100px`} margin={`8px 0 0`}>
               메모

@@ -258,7 +258,9 @@ function* userList(action) {
 // ******************************************************************************************************************
 function userAllListAPI(data) {
   return axios.get(
-    `/api/user/allUsers/${data.type}?name=${data.name}&email=${data.email}`
+    `/api/user/allUsers/${data.type}${data.name ? `?name=${data.name}` : ``}${
+      data.email ? `&email=${data.email}` : ``
+    }`
   );
 }
 // 1 => 학생 리스트
