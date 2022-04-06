@@ -22,14 +22,16 @@ module.exports = () => {
             });
           }
 
-          const exParts = await Participant.findAll({
-            where: { UserId: parseInt(user.id) },
-          });
-
-          if (exParts.length === 0) {
-            return done(null, false, {
-              reason: "참여중인 강의가 없습니다.",
+          if (user.level === 1) {
+            const exParts = await Participant.findAll({
+              where: { UserId: parseInt(user.id) },
             });
+
+            if (exParts.length === 0) {
+              return done(null, false, {
+                reason: "참여중인 강의가 없습니다.",
+              });
+            }
           }
 
           const result = await bcrypt.compare(password, user.password);
