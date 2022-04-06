@@ -1,0 +1,133 @@
+const express = require("express");
+const { Op } = require("sequelize");
+const isAdminCheck = require("../middlewares/isAdminCheck");
+const isNanCheck = require("../middlewares/isNanCheck");
+const { PayClass, Lecture } = require("../models");
+
+const router = express.Router();
+
+router.get("/list", isAdminCheck, async (req, res, next) => {
+  const { search } = req.query;
+
+  const _search = search ? search : null;
+
+  try {
+    const list = await PayClass.findAll({
+      where: {
+        name: {
+          [Op.like]: `%${_search}%`,
+        },
+        isDelete: false,
+      },
+      order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: Lecture,
+        },
+      ],
+    });
+
+    return res.status(200).json(list);
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("결제 클래스 목록을 불러올 수 없습니다.");
+  }
+});
+
+router.get("/detail/:classId", isAdminCheck, async (req, res, next) => {
+  const { classId } = req.params;
+
+  if (isNanCheck(classId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+
+  try {
+    const exClass = await PayClass.findOne({
+      where: { id: parseInt(classId), isDelete: false },
+      include: [
+        {
+          model: Lecture,
+        },
+      ],
+    });
+
+    if (!exClass) {
+      return res.status(401).send("존재하지 않는 결제 클래스 정보입니다.");
+    }
+
+    return res.status(200).json(exClass);
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("결제 클래스 정보를 불러올 수 없습니다.");
+  }
+});
+
+router.post("/create", isAdminCheck, async (req, res, next) => {
+  const { name, price, discount, link, memo, startDate, endDate, LectureId } =
+    req.body;
+  try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의입니다.");
+    }
+
+    const createResult = await PayClass.create({
+      name,
+      price,
+      discount,
+      link,
+      memo,
+      startDate,
+      endDate,
+      LectureId: parseInt(LectureId),
+    });
+
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    }
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("결제 클래스를 생성할 수 없습니다.");
+  }
+});
+
+router.delete("/delete/:classId", isAdminCheck, async (req, res, next) => {
+  const { classId } = req.params;
+
+  if (isNanCheck(classId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+
+  try {
+    const exClass = await PayClass.findOne({
+      where: { id: parseInt(classId), isDelete: false },
+    });
+
+    if (!exClass) {
+      return res.status(401).send("존재하지 않는 결제 클래스 정보입니다.");
+    }
+
+    const deleteResult = await PayClass.update(
+      { isDelete: true },
+      {
+        where: { id: parseInt(classId) },
+      }
+    );
+
+    if (deleteResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("결제 클래스를 삭제할 수 없습니다.");
+  }
+});
+
+module.exports = router;

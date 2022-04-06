@@ -26,6 +26,14 @@ module.exports = class PayClass extends Model {
           type: DataTypes.TEXT,
           allowNull: true,
         },
+        startDate: {
+          type: DataTypes.STRING(100),
+          allowNull: false,
+        },
+        endDate: {
+          type: DataTypes.STRING(100),
+          allowNull: false,
+        },
         isDelete: {
           type: DataTypes.BOOLEAN,
           allowNull: false,
