@@ -32,6 +32,7 @@ import {
   UPDATE_MODAL_CLOSE_REQUEST,
   LECTURE_UPDATE_REQUEST,
   LECTURE_ALL_LIST_REQUEST,
+  LECTURE_TEACHER_LIST_REQUEST,
 } from "../../../reducers/lecture";
 
 import { withRouter } from "next/router";
@@ -43,6 +44,7 @@ import { useRouter } from "next/router";
 import {
   LOAD_MY_INFO_REQUEST,
   USER_ALL_LIST_REQUEST,
+  USER_TEACHER_LIST_REQUEST,
 } from "../../../reducers/user";
 import wrapper from "../../../store/configureStore";
 import {
@@ -147,6 +149,9 @@ const List = () => {
 
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+
+  const [currentTeacher, setCurrentTeacher] = useState(null);
+  const [showList, setShowList] = useState(null);
   const inputPeriod = useInput(``);
   const inputCnt = useInput();
   const inputStartDate = useInput();
@@ -156,14 +161,17 @@ const List = () => {
 
   const {
     allLectures,
+
     st_lectureDeleteDone,
     st_lectureDeleteError,
     updateModal,
     st_lectureUpdateDone,
     st_lectureUpdateError,
+    st_lectureAllListLoading,
+    st_lectureTeacherListLoading,
   } = useSelector((state) => state.lecture);
 
-  const { allUsers } = useSelector((state) => state.user);
+  const { allUsers, teachers } = useSelector((state) => state.user);
 
   ////// USEEFFECT //////
   useEffect(() => {
@@ -171,6 +179,7 @@ const List = () => {
       type: LECTURE_ALL_LIST_REQUEST,
       data: {
         listType: currentSort,
+        TeacherId: currentTeacher ? currentTeacher : "",
       },
     });
   }, [currentSort]);
@@ -191,6 +200,7 @@ const List = () => {
         type: LECTURE_ALL_LIST_REQUEST,
         data: {
           listType: currentSort,
+          TeacherId: currentTeacher ? currentTeacher : "",
         },
       });
     }
@@ -209,11 +219,21 @@ const List = () => {
         type: LECTURE_ALL_LIST_REQUEST,
         data: {
           listType: currentSort,
+          TeacherId: currentTeacher ? currentTeacher : "",
         },
       });
       updateModalClose();
     }
   }, [st_lectureUpdateDone, currentSort]);
+  useEffect(() => {
+    dispatch({
+      type: LECTURE_ALL_LIST_REQUEST,
+      data: {
+        listType: currentSort,
+        TeacherId: currentTeacher ? currentTeacher : "",
+      },
+    });
+  }, [currentTeacher]);
 
   useEffect(() => {
     if (st_lectureUpdateError) {
@@ -247,7 +267,11 @@ const List = () => {
     }
   }, [updateData]);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    dispatch({
+      type: USER_TEACHER_LIST_REQUEST,
+    });
+  }, []);
 
   ////// HANDLER ///////
 
@@ -382,7 +406,7 @@ const List = () => {
       render: (data) => <div>{data.createdAt.substring(0, 10)}</div>,
     },
   ];
-
+  console.log(showList);
   return (
     <AdminLayout>
       <PageHeader
@@ -400,17 +424,37 @@ const List = () => {
             <Button
               size="small"
               type="primary"
-              onClick={() => moveLinkHandler(`/admin/class/create`)}>
+              onClick={() => moveLinkHandler(`/admin/class/create`)}
+            >
               새 클래스 추가
             </Button>
           </Wrapper>
-          <Select
-            style={{ width: `200px` }}
-            placeholder={`정렬을 선택해주세요.`}
-            onChange={(e) => comboChangeHandler(e)}>
-            <Select.Option value={`1`}>강의명순</Select.Option>
-            <Select.Option value={`2`}>생성일순</Select.Option>
-          </Select>
+          <Wrapper dr={`row`} ju={`flex-start`}>
+            <Select
+              style={{ width: `200px` }}
+              placeholder={`정렬을 선택해주세요.`}
+              onChange={(e) => comboChangeHandler(e)}
+            >
+              <Select.Option value={`1`}>강의명순</Select.Option>
+              <Select.Option value={`2`}>생성일순</Select.Option>
+            </Select>
+
+            <Select
+              style={{ width: `200px` }}
+              placeholder={`강사를 선택해주세요.`}
+              onChange={(e) => setCurrentTeacher(e)}
+            >
+              <Select.Option value={null}>전체</Select.Option>
+              {teachers &&
+                teachers.map((data) => {
+                  return (
+                    <Select.Option value={data.id}>
+                      {data.username}
+                    </Select.Option>
+                  );
+                })}
+            </Select>
+          </Wrapper>
         </Wrapper>
         <Wrapper dr={`row`} ju={`flex-start`}>
           {allLectures &&
@@ -419,6 +463,7 @@ const List = () => {
                 <Empty description={`조회된 강의가 없습니다.`} />
               </Wrapper>
             ) : (
+              allLectures &&
               allLectures.map((data) => {
                 return (
                   <Wrapper
@@ -428,23 +473,27 @@ const List = () => {
                     shadow={`0 5px 15px rgba(0,0,0,0.05)`}
                     margin={`0 20px 30px 0`}
                     padding={`20px`}
-                    ju={`space-between`}>
+                    ju={`space-between`}
+                  >
                     <Wrapper>
                       <Wrapper
                         dr={`row`}
                         ju={`space-between`}
                         al={`flex-start`}
                         padding={`0 0 20px`}
-                        borderBottom={`1px solid ${Theme.grey2_C}`}>
+                        borderBottom={`1px solid ${Theme.grey2_C}`}
+                      >
                         <Wrapper width={`auto`}>
                           <Wrapper
                             dr={`row`}
                             ju={`flex-start`}
-                            margin={`0 0 15px`}>
+                            margin={`0 0 15px`}
+                          >
                             <Wrapper
                               width={`34px`}
                               padding={`0 5px`}
-                              margin={`0 10px 0 0`}>
+                              margin={`0 10px 0 0`}
+                            >
                               <Image
                                 src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png`}
                                 alt={`icon_lecture`}
@@ -460,18 +509,22 @@ const List = () => {
                           <Wrapper
                             dr={`row`}
                             ju={`flex-start`}
-                            margin={`0 0 15px`}>
+                            margin={`0 0 15px`}
+                          >
                             <Wrapper
                               width={`34px`}
                               padding={`0 5px`}
-                              margin={`0 10px 0 0`}>
+                              margin={`0 10px 0 0`}
+                            >
                               <Image
                                 src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name_yellow.png`}
                                 alt={`icon_lecture`}
                               />
                             </Wrapper>
+
                             <Text fontSize={`16px`} fontWeight={`700`}>
-                              {data.course}&nbsp;/&nbsp;{data.User.username}
+                              {data.course}&nbsp;/&nbsp;
+                              {data.User.username}
                             </Text>
                           </Wrapper>
 
@@ -479,7 +532,8 @@ const List = () => {
                             <Wrapper
                               width={`34px`}
                               padding={`0 5px`}
-                              margin={`0 10px 0 0`}>
+                              margin={`0 10px 0 0`}
+                            >
                               <Image
                                 src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_number.png`}
                                 alt={`icon_lecture`}
@@ -495,7 +549,8 @@ const List = () => {
                           fontSize={`15px`}
                           color={Theme.grey2_C}
                           al={width < 1350 ? `flex-start` : `flex-end`}
-                          margin={width < 1350 ? `20px 0 0` : `0`}>
+                          margin={width < 1350 ? `20px 0 0` : `0`}
+                        >
                           <Text fontSize={`14px`} fontWeight={`bold`}>
                             {data.startLv}
                           </Text>
@@ -526,7 +581,8 @@ const List = () => {
                         fontSize={`14px`}
                         onClick={() =>
                           moveLinkHandler(`/admin/class/${data.id}`)
-                        }>
+                        }
+                      >
                         자세히 보기
                       </CommonButton>
                       <CommonButton
@@ -536,12 +592,14 @@ const List = () => {
                         radius={`5px`}
                         margin={`0 10px 0 0`}
                         fontSize={`14px`}
-                        onClick={() => updateModalOpen(data)}>
+                        onClick={() => updateModalOpen(data)}
+                      >
                         수정
                       </CommonButton>
                       <CustomButton
                         type={`danger`}
-                        onClick={() => deletePopToggle(data.id)}>
+                        onClick={() => deletePopToggle(data.id)}
+                      >
                         삭제
                       </CustomButton>
                     </Wrapper>
@@ -557,7 +615,8 @@ const List = () => {
         visible={deletePopVisible}
         onOk={deleteClassHandler}
         onCancel={() => deletePopToggle(null)}
-        title="정말 삭제하시겠습니까?">
+        title="정말 삭제하시겠습니까?"
+      >
         <Wrapper>삭제 된 데이터는 다시 복구할 수 없습니다.</Wrapper>
         <Wrapper>정말 삭제하시겠습니까?</Wrapper>
       </Modal>
@@ -567,14 +626,16 @@ const List = () => {
         width={`1100px`}
         title={`클래스 수정`}
         onOk={updateModalOk}
-        onCancel={updateModalClose}>
+        onCancel={updateModalClose}
+      >
         <Form form={form} ref={formRef} onFinish={onSubmitUpdate}>
           <Wrapper padding={`0 50px`}>
             <Wrapper dr={`row`} margin={`0 0 20px`}>
               <Text width={`100px`}>강의명</Text>
               <FormItem
                 rules={[{ required: true, message: "강의명을 입력해주세요." }]}
-                name={`course`}>
+                name={`course`}
+              >
                 <CusotmInput />
               </FormItem>
             </Wrapper>
@@ -583,7 +644,8 @@ const List = () => {
               <Text width={`100px`}>강사</Text>
               <FormItem
                 rules={[{ required: true, message: "강사를 선택해주세요." }]}
-                name={`UserId`}>
+                name={`UserId`}
+              >
                 <Select size={`large`}>
                   {allUsers &&
                     allUsers.map((data) => {
@@ -602,7 +664,8 @@ const List = () => {
               <Text width={`100px`}>레벨</Text>
               <FormItem
                 rules={[{ required: true, message: "레벨을 입력해주세요." }]}
-                name={`startLv`}>
+                name={`startLv`}
+              >
                 <CusotmInput />
               </FormItem>
             </Wrapper>
@@ -613,7 +676,8 @@ const List = () => {
               <FormItem
                 rules={[{ required: true, message: "가격을 입력해주세요." }]}
                 name={`price`}
-                width={`calc(100% - 120px)`}>
+                width={`calc(100% - 120px)`}
+              >
                 <CusotmInput type={`number`} />
               </FormItem>
             </Wrapper>
@@ -624,7 +688,8 @@ const List = () => {
                 rules={[
                   { required: true, message: "수업 시간을 입력해주세요." },
                 ]}
-                name={`time`}>
+                name={`time`}
+              >
                 <TimeInput size={`large`} format={`HH:mm`} />
               </FormItem>
             </Wrapper>
@@ -636,7 +701,8 @@ const List = () => {
                   { required: true, message: "강의 기간을 입력해주세요." },
                 ]}
                 name={`lecDate`}
-                width={`calc(100% - 130px)`}>
+                width={`calc(100% - 130px)`}
+              >
                 <CusotmInput
                   onChange={startDateChangeHandler}
                   type={`number`}
@@ -652,7 +718,8 @@ const List = () => {
               <FormItem
                 rules={[{ required: true, message: "횟수를 입력해주세요." }]}
                 name={`cnt`}
-                width={`calc(100% - 130px)`}>
+                width={`calc(100% - 130px)`}
+              >
                 <CusotmInput disabled type={`number`} {...inputCnt} />
               </FormItem>
               <Text width={`30px`} padding={`0 0 0 10px`}>
@@ -664,7 +731,8 @@ const List = () => {
               <Text width={`100px`}>진행 요일</Text>
               <FormItem
                 rules={[{ required: true, message: "요일을 입력해주세요." }]}
-                name={`day`}>
+                name={`day`}
+              >
                 <CusotmInput disabled />
               </FormItem>
             </Wrapper>
@@ -674,7 +742,8 @@ const List = () => {
               <FormItem
                 // rules={[{ required: true, message: "횟수를 입력해주세요." }]}
                 name={`allCnt`}
-                width={`calc(100% - 130px)`}>
+                width={`calc(100% - 130px)`}
+              >
                 <CusotmInput type={`number`} disabled />
               </FormItem>
               <Text width={`30px`} padding={`0 0 0 10px`}>
@@ -688,7 +757,8 @@ const List = () => {
                 rules={[
                   { required: true, message: "시작 날짜를 입력해주세요." },
                 ]}
-                name={`startDate`}>
+                name={`startDate`}
+              >
                 <DateInput
                   format={`YYYY-MM-DD`}
                   size={`large`}
@@ -708,7 +778,8 @@ const List = () => {
                 rules={[
                   { required: true, message: "종료 날짜를 입력해주세요." },
                 ]}
-                name={`endDate`}>
+                name={`endDate`}
+              >
                 <CusotmInput
                   format={`YYYY-MM-DD`}
                   size={`large`}

@@ -5,6 +5,7 @@ export const initailState = {
   currentAdminMenu: [],
   users: null,
   allUsers: null,
+  teachers: null,
 
   userProfilePath: null,
 
@@ -82,6 +83,10 @@ export const initailState = {
   st_userChangeLoading: false,
   st_userChangeDone: false,
   st_userChangeError: null,
+  //
+  st_userTeacherListLoading: false,
+  st_userTeacherListDone: false,
+  st_userTeacherListError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -111,6 +116,10 @@ export const USERLIST_FAILURE = "USERLIST_FAILURE";
 export const USER_ALL_LIST_REQUEST = "USER_ALL_LIST_REQUEST";
 export const USER_ALL_LIST_SUCCESS = "USER_ALL_LIST_SUCCESS";
 export const USER_ALL_LIST_FAILURE = "USER_ALL_LIST_FAILURE";
+
+export const USER_TEACHER_LIST_REQUEST = "USER_TEACHER_LIST_REQUEST";
+export const USER_TEACHER_LIST_SUCCESS = "USER_TEACHER_LIST_SUCCESS";
+export const USER_TEACHER_LIST_FAILURE = "USER_TEACHER_LIST_FAILURE";
 
 export const USERLIST_UPDATE_REQUEST = "USERLIST_UPDATE_REQUEST";
 export const USERLIST_UPDATE_SUCCESS = "USERLIST_UPDATE_SUCCESS";
@@ -327,6 +336,25 @@ const reducer = (state = initailState, action) =>
         draft.st_userAllListLoading = false;
         draft.st_userAllListDone = false;
         draft.st_userAllListError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+      case USER_TEACHER_LIST_REQUEST: {
+        draft.st_userTeacherListLoading = true;
+        draft.st_userTeacherListDone = null;
+        draft.st_userTeacherListError = false;
+        break;
+      }
+      case USER_TEACHER_LIST_SUCCESS: {
+        draft.st_userTeacherListLoading = false;
+        draft.st_userTeacherListDone = true;
+        draft.teachers = action.data;
+        break;
+      }
+      case USER_TEACHER_LIST_FAILURE: {
+        draft.st_userTeacherListLoading = false;
+        draft.st_userTeacherListDone = false;
+        draft.st_userTeacherListError = action.error;
         break;
       }
       //////////////////////////////////////////////

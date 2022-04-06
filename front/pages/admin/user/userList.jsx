@@ -152,6 +152,7 @@ const UserList = ({}) => {
       type: LECTURE_ALL_LIST_REQUEST,
       data: {
         listType: 2,
+        TeacherId: "",
       },
     });
   }, [router.query]);
@@ -225,6 +226,7 @@ const UserList = ({}) => {
         type: LECTURE_ALL_LIST_REQUEST,
         data: {
           listType: 2,
+          TeacherId: "",
         },
       });
 
@@ -324,6 +326,7 @@ const UserList = ({}) => {
       type: LECTURE_ALL_LIST_REQUEST,
       data: {
         listType: 2,
+        TeacherId: "",
       },
     });
   }, [createModal, selectUserLevel, allLectures]);

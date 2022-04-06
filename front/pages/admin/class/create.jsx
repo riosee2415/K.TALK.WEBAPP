@@ -234,25 +234,48 @@ const List = () => {
     if (parseInt(data.cnt) !== data.day.length) {
       return message.error("횟수와 요일의 개수는 같아야합니다.");
     }
-    dispatch({
-      type: LECTURE_CREATE_REQUEST,
-      data: {
-        time: moment(data.time, "HH:mm").format("HH:mm"),
-        day: data.day.join(" "),
-        count: data.cnt,
-        course: data.course,
-        lecDate: data.lecDate,
-        lecTime: "-",
-        startLv: data.startLv,
-        endLv: "-",
-        startDate: data.startDate,
-        endDate: data.endDate,
-        // memo: data.memo,
-        memo: "-",
-        price: data.price,
-        UserId: data.UserId,
-      },
-    });
+    let day = "";
+    if (data.time_1) {
+      day += data.time_1.format(`HH:mm`) + " ";
+    }
+    if (data.time_2) {
+      day += data.time_2.format(`HH:mm`) + " ";
+    }
+    if (data.time_3) {
+      day += data.time_3.format(`HH:mm`) + " ";
+    }
+    if (data.time_4) {
+      day += data.time_4.format(`HH:mm`) + " ";
+    }
+    if (data.time_5) {
+      day += data.time_5.format(`HH:mm`) + " ";
+    }
+    if (data.time_6) {
+      day += data.time_6.format(`HH:mm`) + " ";
+    }
+    if (data.time_7) {
+      day += data.time_7.format(`HH:mm`) + " ";
+    }
+    console.log(day);
+    // dispatch({
+    //   type: LECTURE_CREATE_REQUEST,
+    //   data: {
+    //     time: moment(data.time, "HH:mm").format("HH:mm"),
+    //     day: data.day.join(" "),
+    //     count: data.cnt,
+    //     course: data.course,
+    //     lecDate: data.lecDate,
+    //     // lecTime: "-",
+    //     startLv: data.startLv,
+    //     // endLv: "-",
+    //     startDate: data.startDate,
+    //     endDate: data.endDate,
+    //     // memo: data.memo,
+    //     // memo: "-",
+    //     // price: data.price,
+    //     UserId: data.UserId,
+    //   },
+    // });
   }, []);
 
   ////// TOGGLE ///////
@@ -397,7 +420,7 @@ const List = () => {
                   width={`auto`}
                   margin={`0 10px 0 0`}
                   label={data}
-                  name={`time_${idx}`}
+                  name={`time_${idx + 1}`}
                   rules={[
                     {
                       required: true,
@@ -452,6 +475,18 @@ const List = () => {
                 size={`large`}
                 readOnly={true}
               />
+            </FormItem>
+          </Wrapper>
+
+          <Wrapper dr={`row`} margin={`0 0 20px`}>
+            <Text width={`80px`} onClick={() => setEndDate(null)}>
+              줌 링크
+            </Text>
+            <FormItem
+              rules={[{ required: true, message: "종료 날짜를 입력해주세요." }]}
+              name={`zoomLink`}
+            >
+              <CusotmInput format={`YYYY-MM-DD`} size={`large`} type="url" />
             </FormItem>
           </Wrapper>
 

@@ -26,15 +26,7 @@ module.exports = class Lecture extends Model {
           type: DataTypes.STRING(100),
           allowNull: false,
         },
-        lecTime: {
-          type: DataTypes.STRING(100),
-          allowNull: false,
-        },
         startLv: {
-          type: DataTypes.STRING(50),
-          allowNull: false,
-        },
-        endLv: {
           type: DataTypes.STRING(50),
           allowNull: false,
         },
@@ -46,20 +38,8 @@ module.exports = class Lecture extends Model {
           type: DataTypes.STRING(100),
           allowNull: false,
         },
-        memo: {
-          type: DataTypes.STRING(300),
-          allowNull: false,
-        },
-        price: {
-          type: DataTypes.INTEGER,
-          allowNull: false,
-        },
         zoomLink: {
           type: DataTypes.STRING(300),
-          allowNull: true,
-        },
-        zoomPass: {
-          type: DataTypes.STRING(100),
           allowNull: true,
         },
         isDelete: {

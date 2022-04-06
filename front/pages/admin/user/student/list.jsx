@@ -109,6 +109,7 @@ const UserList = ({}) => {
       type: LECTURE_ALL_LIST_REQUEST,
       data: {
         listType: 2,
+        TeacherId: "",
       },
     });
   }, [router.query]);
@@ -119,6 +120,8 @@ const UserList = ({}) => {
         type: USER_ALL_LIST_REQUEST,
         data: {
           type: 1,
+          name: "",
+          email: "",
         },
       });
 
@@ -126,6 +129,7 @@ const UserList = ({}) => {
         type: LECTURE_ALL_LIST_REQUEST,
         data: {
           listType: 2,
+          TeacherId: "",
         },
       });
       classChangeModalClose();
