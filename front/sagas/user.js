@@ -64,6 +64,9 @@ import {
   USER_CLASS_CHANGE_REQUEST,
   USER_CLASS_CHANGE_FAILURE,
   /////////////////////////////
+  USER_TEACHER_LIST_REQUEST,
+  USER_TEACHER_LIST_SUCCESS,
+  USER_TEACHER_LIST_FAILURE,
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -273,6 +276,32 @@ function* userAllList(action) {
     console.error(err);
     yield put({
       type: USER_ALL_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function userTeacherListAPI(data) {
+  return axios.get(`/api/user/allUsers/2`);
+}
+
+function* userTeacherList(action) {
+  try {
+    const result = yield call(userTeacherListAPI, action.data);
+    yield put({
+      type: USER_TEACHER_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_TEACHER_LIST_FAILURE,
       error: err.response.data,
     });
   }
@@ -563,6 +592,10 @@ function* watchClassChange() {
   yield takeLatest(USER_CLASS_CHANGE_REQUEST, changeClass);
 }
 
+function* watchTeacherList() {
+  yield takeLatest(USER_TEACHER_LIST_REQUEST, userTeacherList);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -582,6 +615,7 @@ export default function* userSaga() {
     fork(watchProfileUpload),
     fork(watchTeaUpdate),
     fork(watchClassChange),
+    fork(watchTeacherList),
     //
   ]);
 }
