@@ -341,11 +341,11 @@ const Pay = ({}) => {
       <Modal
         visible={createModal}
         width="900px"
-        onOk={modalOk}
+        onOk={updateData ? modalClose : modalOk}
         onCancel={modalClose}
         title={updateData ? "상세보기" : "결제 클래스 생성"}
-        footer={updateData && null}
       >
+        {console.log(updateData)}
         <Wrapper>
           <FormTag form={cForm} onFinish={onSubmit}>
             <Wrapper dr={`row`} margin={`0 0 20px`}>
@@ -354,7 +354,7 @@ const Pay = ({}) => {
                 rules={[{ required: true, message: "강의명을 입력해주세요." }]}
                 name={`course`}
               >
-                <CusotmInput disabled />
+                <CusotmInput disabled={updateData ? true : false} />
               </FormItem>
             </Wrapper>
 
@@ -364,7 +364,7 @@ const Pay = ({}) => {
                 rules={[{ required: true, message: "강사를 선택해주세요." }]}
                 name={`lecture`}
               >
-                <Select size={`large`} disabled>
+                <Select size={`large`} disabled={updateData ? true : false}>
                   {allLectures &&
                     allLectures.map((data) => {
                       return (
@@ -389,7 +389,10 @@ const Pay = ({}) => {
                 name={`price`}
                 width={`calc(100% - 110px)`}
               >
-                <CusotmInput disabled type={`number`} />
+                <CusotmInput
+                  disabled={updateData ? true : false}
+                  type={`number`}
+                />
               </FormItem>
             </Wrapper>
 
@@ -402,7 +405,10 @@ const Pay = ({}) => {
                 name={`discount`}
                 width={`calc(100% - 110px)`}
               >
-                <CusotmInput disabled type={`number`} />
+                <CusotmInput
+                  disabled={updateData ? true : false}
+                  type={`number`}
+                />
               </FormItem>
               <Text width={`30px`} padding={`0 0 0 10px`}>
                 %
@@ -417,7 +423,11 @@ const Pay = ({}) => {
                 ]}
                 name={`startDate`}
               >
-                <DateInput disabled format={`YYYY-MM-DD`} size={`large`} />
+                <DateInput
+                  disabled={updateData ? true : false}
+                  format={`YYYY-MM-DD`}
+                  size={`large`}
+                />
               </FormItem>
             </Wrapper>
 
@@ -429,7 +439,11 @@ const Pay = ({}) => {
                 ]}
                 name={`endDate`}
               >
-                <DateInput disabled format={`YYYY-MM-DD`} size={`large`} />
+                <DateInput
+                  disabled={updateData ? true : false}
+                  format={`YYYY-MM-DD`}
+                  size={`large`}
+                />
               </FormItem>
             </Wrapper>
 
@@ -441,7 +455,7 @@ const Pay = ({}) => {
                 ]}
                 name={`link`}
               >
-                <CusotmInput disabled />
+                <CusotmInput disabled={updateData ? true : false} />
               </FormItem>
             </Wrapper>
 
@@ -453,7 +467,7 @@ const Pay = ({}) => {
                 rules={[{ required: true, message: "메모를 작성해주세요." }]}
                 name={`memo`}
               >
-                <CustomArea disabled />
+                <CustomArea disabled={updateData ? true : false} />
               </FormItem>
             </Wrapper>
           </FormTag>

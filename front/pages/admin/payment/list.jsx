@@ -25,6 +25,7 @@ import {
   ModalBtn,
   GuideUl,
   GuideLi,
+  Text,
 } from "../../../components/commonComponents";
 import {
   LOAD_MY_INFO_REQUEST,
@@ -140,12 +141,16 @@ const PaymentList = ({}) => {
 
     {
       title: "가격",
-      dataIndex: "price",
+      render: (data) => {
+        return <Text>${data.price}</Text>;
+      },
     },
 
     {
       title: "생성일",
-      dataIndex: "createdAt",
+      render: (data) => {
+        return <Text>{data.createdAt.slice(0, 10)}</Text>;
+      },
     },
 
     {
