@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isNanCheck = require("../middlewares/isNanCheck");
 const { PayClass, Lecture } = require("../models");
+const moment = require("moment");
 
 const router = express.Router();
 
@@ -73,6 +74,16 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
     if (!exLecture) {
       return res.status(401).send("존재하지 않는 강의입니다.");
     }
+
+    const today = moment().format("YYYY-MM-DD");
+
+    if (new Date(exLecture.startDate) < new Date(today)) {
+      return res
+        .status(401)
+        .send("해당 강의의 시작 날짜보다 이전 날짜를 선택할 수 없습니다.");
+    }
+
+    // 강의 날짜가 1주일 남았을 때 2주를 선택하면 나도록하는 에러
 
     const createResult = await PayClass.create({
       name,
