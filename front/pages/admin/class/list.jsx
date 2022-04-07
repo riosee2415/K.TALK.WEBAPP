@@ -652,18 +652,6 @@ const List = () => {
               </FormItem>
             </Wrapper>
 
-            {/* <Wrapper dr={`row`} margin={`0 0 20px`}>
-              <Text width={`100px`}>가격</Text>
-              <Wrapper width={`20px`}>$</Wrapper>
-              <FormItem
-                rules={[{ required: true, message: "가격을 입력해주세요." }]}
-                name={`price`}
-                width={`calc(100% - 120px)`}
-              >
-                <CusotmInput type={`number`} />
-              </FormItem>
-            </Wrapper> */}
-
             <Wrapper dr={`row`} margin={`0 0 20px`}>
               <Text width={`100px`}>수업 시간</Text>
               <FormItem

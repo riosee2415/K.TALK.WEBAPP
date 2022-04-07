@@ -104,7 +104,7 @@ router.get(["/list", "/list/:sort"], async (req, res, next) => {
                               A.startLv,
                               A.startDate,
                               A.endDate,
-                              CONCAT(A.startDate, " ~ ", A.endDate)			                 AS viewDate
+                              CONCAT(A.startDate, " ~ ", A.endDate)			                 AS viewDate,
                               A.zoomLink,
                               DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일")		AS createdAt,
                               CONCAT(COUNT(B.id) OVER(PARTITION BY B.LectureId), "명")   AS parti,
