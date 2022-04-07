@@ -178,11 +178,11 @@ const Pay = ({}) => {
         name: data.course,
         price: data.price,
         discount: data.discount,
-        link: data.link,
         memo: data.memo,
         startDate: data.startDate,
-        endDate: data.endDate,
+        week: data.week,
         LectureId: data.lecture,
+        domain: "http://localhost:3000/",
       },
     });
   }, []);
@@ -221,7 +221,7 @@ const Pay = ({}) => {
           link: data.link,
           memo: data.memo,
           startDate: moment(data.startDate, "YYYY-MM-DD"),
-          endDate: moment(data.endDate, "YYYY-MM-DD"),
+          week: data.week,
           lecture: data.LectureId,
         });
       }, 500);
@@ -248,8 +248,14 @@ const Pay = ({}) => {
       dataIndex: "id",
     },
     {
-      title: "번호",
+      title: "결제 강의",
       dataIndex: "name",
+    },
+    {
+      title: "강의 제목",
+      render: (data) => {
+        return <Text>{data.Lecture.course}</Text>;
+      },
     },
     {
       title: "가격",
@@ -393,9 +399,7 @@ const Pay = ({}) => {
             <Wrapper dr={`row`} margin={`0 0 20px`}>
               <Text width={`80px`}>할인률</Text>
               <FormItem
-                rules={[
-                  { required: true, message: "강의 기간을 입력해주세요." },
-                ]}
+                rules={[{ required: true, message: "할인률을 입력해주세요." }]}
                 name={`discount`}
                 width={`calc(100% - 110px)`}>
                 <CusotmInput
@@ -424,29 +428,21 @@ const Pay = ({}) => {
             </Wrapper>
 
             <Wrapper dr={`row`} margin={`0 0 20px`}>
-              <Text width={`80px`}>종료 날짜</Text>
+              <Text width={`80px`}>강의 기간</Text>
               <FormItem
                 rules={[
-                  { required: true, message: "종료 날짜를 입력해주세요." },
+                  { required: true, message: "강의 기간을 입력해주세요." },
                 ]}
-                name={`endDate`}>
-                <DateInput
+                name={`week`}
+                width={`calc(100% - 110px)`}>
+                <CusotmInput
                   disabled={updateData ? true : false}
-                  format={`YYYY-MM-DD`}
-                  size={`large`}
+                  type={`number`}
                 />
               </FormItem>
-            </Wrapper>
-
-            <Wrapper dr={`row`} margin={`0 0 20px`}>
-              <Text width={`80px`}>결제 링크</Text>
-              <FormItem
-                rules={[
-                  { required: true, message: "결제링크를 입력해주세요." },
-                ]}
-                name={`link`}>
-                <CusotmInput disabled={updateData ? true : false} />
-              </FormItem>
+              <Text width={`30px`} padding={`0 0 0 10px`}>
+                주
+              </Text>
             </Wrapper>
 
             <Wrapper dr={`row`} margin={`0 0 20px`} al={`flex-start`}>
