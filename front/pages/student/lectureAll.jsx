@@ -377,6 +377,12 @@ const LectureAll = () => {
     }
   }, [st_messageTeacherListError]);
 
+  useEffect(() => {
+    if (st_lectureStuLectureListError) {
+      return message.error(st_lectureStuLectureListError);
+    }
+  }, []);
+
   const onReset = useCallback(() => {
     form.resetFields();
 
@@ -824,155 +830,6 @@ const LectureAll = () => {
               <Text
                 fontSize={width < 800 ? `18px` : `22px`}
                 fontWeight={`bold`}>
-                내 시간표
-              </Text>
-            </Wrapper>
-
-            {lectureStuLectureList && lectureStuLectureList.length === 0 ? (
-              <Wrapper>
-                <Empty description="조회된 시간표 목록이 없습니다." />
-              </Wrapper>
-            ) : (
-              lectureStuLectureList &&
-              lectureStuLectureList.map((data, idx) => {
-                return (
-                  <Wrapper
-                    padding={width < 700 ? `15px 10px 10px` : `40px 30px 35px`}
-                    dr={`row`}
-                    ju={`flex-start`}
-                    bgColor={Theme.white_C}
-                    radius={`10px`}
-                    shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
-                    margin={`0 0 20px`}
-                    al={`flex-start`}>
-                    <Wrapper
-                      width={
-                        width < 1280 ? (width < 800 ? `100%` : `60%`) : `37%`
-                      }
-                      dr={`row`}
-                      ju={`flex-start`}
-                      al={`flex-start`}>
-                      <Wrapper
-                        width={`auto`}
-                        padding={width < 700 ? `0` : `5px`}
-                        margin={`0 10px 0 0`}>
-                        <Image
-                          width={`22px`}
-                          height={`22px`}
-                          src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
-                          alt="clock_icon"
-                        />
-                      </Wrapper>
-                      <Wrapper
-                        width={`calc(100% - 42px)`}
-                        dr={`row`}
-                        ju={`flex-start`}>
-                        <Text
-                          fontSize={width < 800 ? `14px` : `18px`}
-                          fontWeight={`bold`}
-                          lineHeight={`1.22`}>
-                          {data.day}&nbsp;&nbsp;|&nbsp;&nbsp;
-                          {data.time}
-                        </Text>
-                        <Wrapper
-                          display={
-                            width < 1280
-                              ? `flex`
-                              : (idx + 1) % 3 === 0 && `none`
-                          }
-                          width={`1px`}
-                          height={width < 800 ? `20px` : `34px`}
-                          borderLeft={`1px dashed ${Theme.grey_C}`}
-                          margin={
-                            width < 1350
-                              ? width < 800
-                                ? `0 4px`
-                                : `0 10px`
-                              : `0 20px`
-                          }
-                        />
-                        <Text>{data.course}</Text>
-                      </Wrapper>
-                    </Wrapper>
-
-                    <Wrapper
-                      width={
-                        width < 1280 ? (width < 800 ? `100%` : `40%`) : `25%`
-                      }
-                      dr={`row`}
-                      ju={`flex-start`}
-                      margin={width < 800 && `5px 0`}>
-                      <Wrapper width={`auto`} margin={`0 10px 0 0`}>
-                        <Image
-                          width={`22px`}
-                          height={`22px`}
-                          src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
-                          alt="clender_icon"
-                        />
-                      </Wrapper>
-                      <Text fontSize={width < 700 ? `14px` : `18px`}>
-                        {`${moment(data.startDate, "YYYY/MM/DD").format(
-                          "YYYY/MM/DD"
-                        )} ~ ${moment(data.endDate, "YYYY/MM/DD").format(
-                          "YYYY/MM/DD"
-                        )}`}
-
-                        <SpanText
-                          fontWeight={`bold`}
-                          color={Theme.red_C}
-                          margin={`0 0 0 15px`}>
-                          {/* D-{DDay(data.startDate, data.endDate)} */}
-                          {DDay(
-                            data.startDate,
-                            data.endDate,
-                            data.count,
-                            data.lecDate,
-                            data.day
-                          )}
-                          회
-                        </SpanText>
-                      </Text>
-                    </Wrapper>
-                    <Wrapper
-                      width={width < 1280 ? `100%` : `38%`}
-                      dr={`row`}
-                      ju={`space-between`}
-                      al={`flex-start`}>
-                      <Wrapper
-                        width={`25%`}
-                        dr={`row`}
-                        ju={`flex-start`}
-                        margin={`0 20px 0 0`}>
-                        <Image
-                          margin={`0 10px 0 0`}
-                          width={`22px`}
-                          height={`22px`}
-                          src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name.png"
-                          alt="clender_icon"
-                        />
-                        <Text fontSize={width < 700 ? `14px` : `18px`}>
-                          {data.User.username}
-                        </Text>
-                      </Wrapper>
-
-                      <Text
-                        cursor={`pointer`}
-                        color={Theme.basicTheme_C}
-                        onClick={() =>
-                          window.open(`${data.zoomLink}`, "_blank")
-                        }>
-                        강의 이동
-                      </Text>
-                    </Wrapper>
-                  </Wrapper>
-                );
-              })
-            )}
-
-            <Wrapper al={`flex-start`} margin={`0 0 20px`}>
-              <Text
-                fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}>
                 내 강의정보
               </Text>
             </Wrapper>
@@ -984,6 +841,7 @@ const LectureAll = () => {
             ) : (
               lectureStuLectureList &&
               lectureStuLectureList.map((data, idx) => {
+                console.log(data, "data");
                 return (
                   <Wrapper
                     dr={`row`}
@@ -1056,6 +914,7 @@ const LectureAll = () => {
                                     data.day
                                   )} / ${data.lecDate * data.count}`}
                                 </Text>
+
                                 {/* <Text
                                   lineHeight={`1.19`}
                                   margin={width < 800 ? `5px` : `0 10px`}>
@@ -1064,6 +923,119 @@ const LectureAll = () => {
                                 <Text lineHeight={`1.19`}>
                                   등록상황 : 수료중
                                 </Text> */}
+                              </Wrapper>
+
+                              <Wrapper
+                                dr={`row`}
+                                ju={`flex-start`}
+                                color={Theme.grey2_C}
+                                margin={width < 800 && `5px 0`}>
+                                <Wrapper
+                                  width={`auto`}
+                                  dr={`row`}
+                                  margin={`0 10px 0 0`}>
+                                  <Image
+                                    width={`18px`}
+                                    height={`18px`}
+                                    margin={`0 5px 0 0`}
+                                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
+                                    alt="clender_icon"
+                                  />
+
+                                  <Text
+                                    fontSize={width < 700 ? `14px` : `16px`}>
+                                    {`${moment(
+                                      data.startDate,
+                                      "YYYY/MM/DD"
+                                    ).format("YYYY/MM/DD")} ~ ${moment(
+                                      data.endDate,
+                                      "YYYY/MM/DD"
+                                    ).format("YYYY/MM/DD")}`}
+
+                                    <SpanText
+                                      fontWeight={`bold`}
+                                      color={Theme.red_C}
+                                      margin={`0 0 0 15px`}>
+                                      {/* D-{DDay(data.startDate, data.endDate)} */}
+                                      {DDay(
+                                        data.startDate,
+                                        data.endDate,
+                                        data.count,
+                                        data.lecDate,
+                                        data.day
+                                      )}
+                                      회
+                                    </SpanText>
+                                  </Text>
+                                </Wrapper>
+
+                                <Wrapper
+                                  width={`auto`}
+                                  dr={`row`}
+                                  ju={`flex-start`}
+                                  margin={`5px 0 0 0`}
+                                  color={Theme.grey2_C}>
+                                  <Wrapper width={`auto`} margin={`0 5px 0 0`}>
+                                    <Image
+                                      width={`16px`}
+                                      height={`16px`}
+                                      src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
+                                      alt="clock_icon"
+                                    />
+                                  </Wrapper>
+
+                                  <Text
+                                    fontSize={width < 800 ? `14px` : `16px`}
+                                    lineHeight={`1.22`}>
+                                    {data.day}&nbsp;&nbsp;|&nbsp;&nbsp;
+                                    {data.time}
+                                  </Text>
+                                  <Wrapper
+                                    display={
+                                      width < 1280
+                                        ? `flex`
+                                        : (idx + 1) % 3 === 0 && `none`
+                                    }
+                                    width={`1px`}
+                                    height={width < 800 ? `20px` : `34px`}
+                                    borderLeft={`1px dashed ${Theme.grey_C}`}
+                                    margin={
+                                      width < 1350
+                                        ? width < 800
+                                          ? `0 4px`
+                                          : `0 10px`
+                                        : `0 20px`
+                                    }
+                                  />
+                                </Wrapper>
+
+                                <Wrapper
+                                  dr={`row`}
+                                  width={`100%`}
+                                  margin={`5px 0 0 0`}>
+                                  <Wrapper dr={`row`} width={`auto`}>
+                                    <Image
+                                      margin={`0 5px 0 0`}
+                                      width={`18px`}
+                                      height={`18px`}
+                                      src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name.png"
+                                      alt="clender_icon"
+                                    />
+                                    <Text
+                                      fontSize={width < 700 ? `14px` : `18px`}>
+                                      {data.User.username}
+                                    </Text>
+                                  </Wrapper>
+
+                                  <Text
+                                    cursor={`pointer`}
+                                    color={Theme.basicTheme_C}
+                                    onClick={() =>
+                                      window.open(`${data.zoomLink}`, "_blank")
+                                    }>
+                                    강의 이동
+                                  </Text>
+                                </Wrapper>
                               </Wrapper>
                             </Wrapper>
                             <Wrapper
@@ -1100,6 +1072,7 @@ const LectureAll = () => {
                                   )}%)`}
                                 </Text>
                               </Wrapper>
+
                               {/* <Wrapper
                                 dr={`row`}
                                 ju={`flex-start`}

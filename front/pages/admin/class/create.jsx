@@ -249,19 +249,14 @@ const List = () => {
     dispatch({
       type: LECTURE_CREATE_REQUEST,
       data: {
-        time: moment(data.time, "HH:mm").format("HH:mm"),
+        time: day,
         day: data.day.join(" "), //
         count: data.cnt, //
         course: data.course, //
         lecDate: data.lecDate, //
-        // lecTime: "-",
         startLv: data.lv1 + "권 " + data.lv2 + "단원 " + data.lv3 + "페이지", //
-        // endLv: "-",
         startDate: data.startDate.format(`YYYY-MM-DD`), //
         endDate: data.endDate, //
-        // memo: data.memo,
-        // memo: "-",
-        // price: data.price,
         UserId: data.UserId, //
         zoomLink: data.zoomLink,
       },
@@ -286,8 +281,7 @@ const List = () => {
             <Text width={`80px`}>강의명</Text>
             <FormItem
               rules={[{ required: true, message: "강의명을 입력해주세요." }]}
-              name={`course`}
-            >
+              name={`course`}>
               <CusotmInput />
             </FormItem>
           </Wrapper>
@@ -296,8 +290,7 @@ const List = () => {
             <Text width={`80px`}>강사</Text>
             <FormItem
               rules={[{ required: true, message: "강사를 선택해주세요." }]}
-              name={`UserId`}
-            >
+              name={`UserId`}>
               <Select size={`large`}>
                 {allUsers &&
                   allUsers.map((data) => {
@@ -347,8 +340,7 @@ const List = () => {
             <FormItem
               rules={[{ required: true, message: "강의 기간을 입력해주세요." }]}
               name={`lecDate`}
-              width={`calc(100% - 110px)`}
-            >
+              width={`calc(100% - 110px)`}>
               <CusotmInput
                 onChange={startDateChangeHandler}
                 type={`number`}
@@ -366,8 +358,7 @@ const List = () => {
               rules={[{ required: true, message: "횟수를 입력해주세요." }]}
               name={`cnt`}
               {...inputCnt}
-              width={`calc(100% - 110px)`}
-            >
+              width={`calc(100% - 110px)`}>
               <CusotmInput type={`number`} />
             </FormItem>
             <Text width={`30px`} padding={`0 0 0 10px`}>
@@ -379,15 +370,13 @@ const List = () => {
             <Text width={`80px`}>진행 요일</Text>
             <FormItem
               rules={[{ required: true, message: "요일을 입력해주세요." }]}
-              name={`day`}
-            >
+              name={`day`}>
               <Select
                 mode="multiple"
                 size={`large`}
                 onChange={(e) => {
                   setDayArr(e);
-                }}
-              >
+                }}>
                 <Select.Option value={`월`}>월</Select.Option>
                 <Select.Option value={`화`}>화</Select.Option>
                 <Select.Option value={`수`}>수</Select.Option>
@@ -403,7 +392,7 @@ const List = () => {
             {dayArr.map((data, idx) => {
               return (
                 <FormItem
-                  width={`calc(q00% - 80px)`}
+                  width={`calc(100% - 80px)`}
                   margin={`0 10px 0 0`}
                   label={data}
                   name={`time_${idx + 1}`}
@@ -412,8 +401,7 @@ const List = () => {
                       required: true,
                       message: `${data}요일의 수업시간을 입력해주세요.`,
                     },
-                  ]}
-                >
+                  ]}>
                   <TimeInput format={`HH:mm`} />
                 </FormItem>
               );
@@ -425,8 +413,7 @@ const List = () => {
             <FormItem
               rules={[{ required: true, message: "횟수를 입력해주세요." }]}
               name={`allCnt`}
-              width={`calc(100% - 110px)`}
-            >
+              width={`calc(100% - 110px)`}>
               <CusotmInput type={`number`} readOnly={true} />
             </FormItem>
             <Text width={`30px`} padding={`0 0 0 10px`}>
@@ -438,8 +425,7 @@ const List = () => {
             <Text width={`80px`}>시작 날짜</Text>
             <FormItem
               rules={[{ required: true, message: "시작 날짜를 입력해주세요." }]}
-              name={`startDate`}
-            >
+              name={`startDate`}>
               <DateInput
                 format={`YYYY-MM-DD`}
                 size={`large`}
@@ -454,8 +440,7 @@ const List = () => {
             </Text>
             <FormItem
               rules={[{ required: true, message: "종료 날짜를 입력해주세요." }]}
-              name={`endDate`}
-            >
+              name={`endDate`}>
               <CusotmInput
                 format={`YYYY-MM-DD`}
                 size={`large`}
@@ -470,8 +455,7 @@ const List = () => {
             </Text>
             <FormItem
               rules={[{ required: true, message: "종료 날짜를 입력해주세요." }]}
-              name={`zoomLink`}
-            >
+              name={`zoomLink`}>
               <CusotmInput format={`YYYY-MM-DD`} size={`large`} type="url" />
             </FormItem>
           </Wrapper>

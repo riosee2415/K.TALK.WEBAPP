@@ -19,13 +19,17 @@ import {
   Wrapper,
   Image,
   Text,
+  SpanText,
 } from "../../components/commonComponents";
-import { Button, message, Select } from "antd";
+import { Button, Empty, message, Select } from "antd";
 import PaypalExpressBtn from "react-paypal-express-checkout";
 import {
   PAYMENT_CREATE_REQUEST,
   PAYMENT_LIST_REQUEST,
 } from "../../reducers/payment";
+import { useRouter } from "next/router";
+import { PAY_CLASS_DETAIL_REQUEST } from "../../reducers/payClass";
+import moment from "moment";
 
 const PaypalBtn = styled(PaypalExpressBtn)``;
 
@@ -35,6 +39,11 @@ const Index = () => {
     (state) => state.seo
   );
 
+  const { me } = useSelector((state) => state.user);
+
+  const router = useRouter();
+  const dispatch = useDispatch();
+
   const {
     paymentList,
     st_paymentListDone,
@@ -43,6 +52,9 @@ const Index = () => {
     st_paymentCreateError,
   } = useSelector((state) => state.payment);
 
+  const { payClassDetail, st_payClassDetailDone, st_payClassDetailError } =
+    useSelector((state) => state.payClass);
+
   const width = useWidth();
 
   const [toggle, setToggle] = useState(false);
@@ -50,7 +62,7 @@ const Index = () => {
 
   useEffect(() => {
     if (st_paymentCreateDone) {
-      return message.error(st_paymentCreateDone);
+      return message.success("결제를 완료했습니다.");
     }
   }, [st_paymentCreateDone]);
 
@@ -59,6 +71,12 @@ const Index = () => {
       return message.error(st_paymentCreateError);
     }
   }, [st_paymentCreateError]);
+
+  useEffect(() => {
+    if (st_payClassDetailError) {
+      return message.error(st_payClassDetailError);
+    }
+  }, [st_payClassDetailError]);
 
   // useEffect(() => {
   //   if (st_paymentListError) {
@@ -71,18 +89,30 @@ const Index = () => {
   ////// USEEFFECT //////
 
   useEffect(() => {
+    dispatch({
+      type: PAY_CLASS_DETAIL_REQUEST,
+      data: {
+        classId: router.query.id,
+      },
+    });
+
+    setToggle(true);
+  }, []);
+
+  useEffect(() => {
     if (successData) {
       dispatch({
         type: PAYMENT_CREATE_REQUEST,
         data: {
-          price: "",
-          email: "",
-          PayClassId: "",
+          price:
+            payClassDetail &&
+            payClassDetail.price -
+              (payClassDetail.price * payClassDetail.discount) / 100,
+          email: successData && successData.email,
+          PayClassId: payClassDetail && payClassDetail.id,
         },
       });
     }
-
-    setToggle(true);
   }, [successData]);
 
   ////// TOGGLE //////
@@ -104,13 +134,12 @@ const Index = () => {
 
   // 결제 성공
   const onSuccess = (payment) => {
-    console.log(payment, "payment");
     setSuccessData(payment);
   };
 
   // 결제 취소
   const onCancel = (data) => {
-    console.log("The payment was cancelled!", data);
+    return message.error("The payment was cancelled!", data);
   };
 
   // 결제 실패
@@ -176,109 +205,147 @@ const Index = () => {
       <ClientLayout>
         <WholeWrapper>
           <RsWrapper>
-            <Wrapper margin={`100px 0 0 0`} al={`flex-start`} ju={`flex-start`}>
+            {payClassDetail ? (
               <Wrapper
-                dr={`row`}
-                width={`auto`}
-                ju={`flex-start`}
-                padding={`15px 20px`}
-                margin={`80px 0 0 0`}
-                fontSize={width < 700 ? `14px` : `18px`}
-                color={Theme.black_3C}
-                minHeight={width < 700 ? `80px` : `94px`}
-                shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}
-                radius={`10px`}>
-                <Image
-                  width={`22px`}
-                  margin={width < 900 ? `0 5px 0 0` : `0 16px 0 0`}
-                  src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png"
-                  alt="lecture_icon"
-                />
-                <Text fontWeight={`600`}>강의명</Text>
-                &nbsp;
-                <Text>|</Text>&nbsp;
-                <Text>한국어 완벽 학습</Text>
-              </Wrapper>
-
-              <Wrapper al={`flex-start`} dr={`row`} margin={`30px 0 100px 0`}>
+                margin={`100px 0 0 0`}
+                minHeight={`600px`}
+                al={`flex-start`}
+                ju={`flex-start`}>
                 <Wrapper
-                  al={`flex-start`}
-                  padding={`35px 25px`}
-                  width={`calc(100% - 30% - 22px)`}
+                  dr={`row`}
+                  width={`auto`}
+                  ju={`flex-start`}
+                  padding={`15px 20px`}
+                  margin={`80px 0 0 0`}
                   fontSize={width < 700 ? `14px` : `18px`}
                   color={Theme.black_3C}
-                  height={`auto`}
+                  minHeight={width < 700 ? `80px` : `94px`}
                   shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}
-                  radius={`10px `}>
-                  한국어 완벽 학습 한국어 완벽 학습 한국어 완벽 학습 한국어 완벽
+                  radius={`10px`}>
+                  <Image
+                    width={`22px`}
+                    margin={width < 900 ? `0 5px 0 0` : `0 16px 0 0`}
+                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png"
+                    alt="lecture_icon"
+                  />
+                  <Text fontWeight={`600`}>강의명</Text>
+                  &nbsp;
+                  <Text>|</Text>&nbsp;
+                  <Text>{payClassDetail && payClassDetail.name}</Text>
                 </Wrapper>
 
-                <Wrapper
-                  width={`30%`}
-                  margin={`0 0 0 22px`}
-                  top={`100px`}
-                  position={`sticky`}>
+                <Wrapper dr={`row`} ju={`flex-start`} margin={`30px 0 0 0`}>
+                  <Text fontSize={width < 700 ? `16px` : `20px`}>
+                    {`4주 = 28일`}
+                  </Text>
+                </Wrapper>
+
+                <Wrapper al={`flex-start`} dr={`row`} margin={`30px 0 100px 0`}>
                   <Wrapper
+                    al={`flex-start`}
+                    padding={`35px 25px`}
+                    width={`calc(100% - 30% - 22px)`}
                     fontSize={width < 700 ? `14px` : `18px`}
                     color={Theme.black_3C}
-                    padding={width < 700 ? `10px` : `20px 30px`}
+                    height={`auto`}
                     shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}
                     radius={`10px `}>
-                    <Wrapper borderBottom={`1px dashed ${Theme.grey_C}`}>
-                      <Wrapper
-                        dr={`row`}
-                        ju={`space-between`}
-                        fontSize={width < 700 ? `14px` : `18px`}>
-                        <Text fontWeight={`600`}>수업 금액</Text>
-                        <Text>52,000원</Text>
-                      </Wrapper>
-
-                      <Wrapper
-                        dr={`row`}
-                        ju={`space-between`}
-                        margin={`13px 0 10px 0`}
-                        fontSize={width < 700 ? `14px` : `18px`}>
-                        <Text>할인율</Text>
-                        <Text color={Theme.subTheme2_C}>20%</Text>
-                      </Wrapper>
-                    </Wrapper>
-
-                    <Wrapper
-                      dr={`row`}
-                      ju={`space-between`}
-                      fontSize={width < 700 ? `14px` : `18px`}>
-                      <Text>총 결제 금액</Text>
-                      <Text
-                        color={Theme.black_3C}
-                        fontSize={width < 700 ? `16px` : `24px`}>
-                        18,200원
-                      </Text>
-                    </Wrapper>
+                    {payClassDetail && payClassDetail.memo}
                   </Wrapper>
 
-                  {toggle && (
-                    <Wrapper margin={`10px 0 0`}>
-                      <PaypalBtn
-                        style={style}
-                        env={env}
-                        client={client}
-                        total={"1"}
-                        currency={currency}
-                        onSuccess={onSuccess}
-                        onError={onError}
-                        onCancel={onCancel}
-                      />
-                    </Wrapper>
-                  )}
+                  <Wrapper
+                    width={`30%`}
+                    margin={`0 0 0 22px`}
+                    top={`100px`}
+                    position={`sticky`}>
+                    <Wrapper
+                      fontSize={width < 700 ? `14px` : `18px`}
+                      color={Theme.black_3C}
+                      padding={width < 700 ? `10px` : `20px 30px`}
+                      shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}
+                      radius={`10px `}>
+                      <Wrapper borderBottom={`1px dashed ${Theme.grey_C}`}>
+                        <Wrapper
+                          dr={`row`}
+                          ju={`space-between`}
+                          fontSize={width < 700 ? `14px` : `18px`}>
+                          <Text fontWeight={`600`}>수업 금액</Text>
+                          <Text>
+                            {payClassDetail &&
+                              String(payClassDetail.price).replace(
+                                /\B(?=(\d{3})+(?!\d))/g,
+                                ","
+                              )}
+                            원
+                          </Text>
+                        </Wrapper>
 
-                  {/* <Button
+                        <Wrapper
+                          dr={`row`}
+                          ju={`space-between`}
+                          margin={`13px 0 10px 0`}
+                          fontSize={width < 700 ? `14px` : `18px`}>
+                          <Text>할인율</Text>
+                          <Text color={Theme.subTheme2_C}>
+                            {payClassDetail && payClassDetail.discount}%
+                          </Text>
+                        </Wrapper>
+                      </Wrapper>
+
+                      <Wrapper
+                        dr={`row`}
+                        ju={`space-between`}
+                        fontSize={width < 700 ? `14px` : `18px`}>
+                        <Text>총 결제 금액</Text>
+                        <Text
+                          color={Theme.black_3C}
+                          fontSize={width < 700 ? `16px` : `24px`}>
+                          {String(
+                            Math.floor(
+                              payClassDetail.price -
+                                (payClassDetail.price *
+                                  payClassDetail.discount) /
+                                  100
+                            )
+                          ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                          원
+                        </Text>
+                      </Wrapper>
+                    </Wrapper>
+
+                    {toggle && (
+                      <Wrapper margin={`10px 0 0`}>
+                        <PaypalBtn
+                          style={style}
+                          env={env}
+                          client={client}
+                          total={
+                            payClassDetail &&
+                            payClassDetail.price -
+                              (payClassDetail.price * payClassDetail.discount) /
+                                100
+                          }
+                          currency={currency}
+                          onSuccess={onSuccess}
+                          onError={onError}
+                          onCancel={onCancel}
+                        />
+                      </Wrapper>
+                    )}
+
+                    {/* <Button
                     type="primary"
                     style={{ width: "100%", marginTop: 10 }}>
                     결제하기
                   </Button> */}
+                  </Wrapper>
                 </Wrapper>
               </Wrapper>
-            </Wrapper>
+            ) : (
+              <Wrapper height={`100vh`}>
+                <Empty description="존재하지 않는 결제 클래스 정보입니다." />
+              </Wrapper>
+            )}
           </RsWrapper>
         </WholeWrapper>
       </ClientLayout>

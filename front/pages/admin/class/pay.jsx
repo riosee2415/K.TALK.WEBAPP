@@ -254,7 +254,7 @@ const Pay = ({}) => {
     {
       title: "가격",
       render: (data) => {
-        return <Text>${data.price}</Text>;
+        return <Text>{data.price}</Text>;
       },
     },
     {
@@ -268,7 +268,7 @@ const Pay = ({}) => {
       render: (data) => {
         return (
           <Text>
-            ${Math.floor(data.price - (data.price * data.discount) / 100)}
+            {Math.floor(data.price - (data.price * data.discount) / 100)}
           </Text>
         );
       },
@@ -288,8 +288,7 @@ const Pay = ({}) => {
           <Button
             type={`primary`}
             size={`small`}
-            onClick={() => updateModalOpen(data)}
-          >
+            onClick={() => updateModalOpen(data)}>
             DETAIL
           </Button>
         );
@@ -304,8 +303,7 @@ const Pay = ({}) => {
             title={"삭제하시겠습니까?"}
             onConfirm={() => onSubmitDelete(data)}
             okText="Yes"
-            cancelText="No"
-          >
+            cancelText="No">
             <Button type={`danger`} size={`small`}>
               DELETE
             </Button>
@@ -344,16 +342,14 @@ const Pay = ({}) => {
         onOk={modalOk}
         onCancel={modalClose}
         title={updateData ? "상세보기" : "결제 클래스 생성"}
-        footer={updateData && null}
-      >
+        footer={updateData && null}>
         <Wrapper>
           <FormTag form={cForm} onFinish={onSubmit}>
             <Wrapper dr={`row`} margin={`0 0 20px`}>
               <Text width={`80px`}>제목</Text>
               <FormItem
                 rules={[{ required: true, message: "강의명을 입력해주세요." }]}
-                name={`course`}
-              >
+                name={`course`}>
                 <CusotmInput disabled />
               </FormItem>
             </Wrapper>
@@ -362,8 +358,7 @@ const Pay = ({}) => {
               <Text width={`80px`}>강의</Text>
               <FormItem
                 rules={[{ required: true, message: "강사를 선택해주세요." }]}
-                name={`lecture`}
-              >
+                name={`lecture`}>
                 <Select size={`large`} disabled>
                   {allLectures &&
                     allLectures.map((data) => {
@@ -387,8 +382,7 @@ const Pay = ({}) => {
                   { required: true, message: "강의 기간을 입력해주세요." },
                 ]}
                 name={`price`}
-                width={`calc(100% - 110px)`}
-              >
+                width={`calc(100% - 110px)`}>
                 <CusotmInput disabled type={`number`} />
               </FormItem>
             </Wrapper>
@@ -400,8 +394,7 @@ const Pay = ({}) => {
                   { required: true, message: "강의 기간을 입력해주세요." },
                 ]}
                 name={`discount`}
-                width={`calc(100% - 110px)`}
-              >
+                width={`calc(100% - 110px)`}>
                 <CusotmInput disabled type={`number`} />
               </FormItem>
               <Text width={`30px`} padding={`0 0 0 10px`}>
@@ -415,8 +408,7 @@ const Pay = ({}) => {
                 rules={[
                   { required: true, message: "시작 날짜를 입력해주세요." },
                 ]}
-                name={`startDate`}
-              >
+                name={`startDate`}>
                 <DateInput disabled format={`YYYY-MM-DD`} size={`large`} />
               </FormItem>
             </Wrapper>
@@ -427,8 +419,7 @@ const Pay = ({}) => {
                 rules={[
                   { required: true, message: "종료 날짜를 입력해주세요." },
                 ]}
-                name={`endDate`}
-              >
+                name={`endDate`}>
                 <DateInput disabled format={`YYYY-MM-DD`} size={`large`} />
               </FormItem>
             </Wrapper>
@@ -439,8 +430,7 @@ const Pay = ({}) => {
                 rules={[
                   { required: true, message: "결제링크를 입력해주세요." },
                 ]}
-                name={`link`}
-              >
+                name={`link`}>
                 <CusotmInput disabled />
               </FormItem>
             </Wrapper>
@@ -451,8 +441,7 @@ const Pay = ({}) => {
               </Text>
               <FormItem
                 rules={[{ required: true, message: "메모를 작성해주세요." }]}
-                name={`memo`}
-              >
+                name={`memo`}>
                 <CustomArea disabled />
               </FormItem>
             </Wrapper>
@@ -465,8 +454,7 @@ const Pay = ({}) => {
         width="900px"
         onOk={() => {}}
         onCancel={() => {}}
-        title="주의사항"
-      >
+        title="주의사항">
         <GuideUl>
           <GuideLi>asdfasdf</GuideLi>
           <GuideLi isImpo={true}>asdfasdf</GuideLi>
