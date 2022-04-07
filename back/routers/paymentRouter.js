@@ -32,7 +32,7 @@ router.post("/create", async (req, res, next) => {
 
   try {
     const exPayClass = await PayClass.findOne({
-      where: { PayClassId: parseInt(PayClassId) },
+      where: { id: parseInt(PayClassId) },
     });
 
     if (!exPayClass) {
