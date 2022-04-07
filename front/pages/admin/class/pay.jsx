@@ -294,7 +294,8 @@ const Pay = ({}) => {
           <Button
             type={`primary`}
             size={`small`}
-            onClick={() => updateModalOpen(data)}>
+            onClick={() => updateModalOpen(data)}
+          >
             DETAIL
           </Button>
         );
@@ -309,7 +310,8 @@ const Pay = ({}) => {
             title={"삭제하시겠습니까?"}
             onConfirm={() => onSubmitDelete(data)}
             okText="Yes"
-            cancelText="No">
+            cancelText="No"
+          >
             <Button type={`danger`} size={`small`}>
               DELETE
             </Button>
@@ -345,9 +347,10 @@ const Pay = ({}) => {
       <Modal
         visible={createModal}
         width="900px"
-        onOk={updateData ? modalClose : modalOk}
-        onCancel={modalClose}
-        title={updateData ? "상세보기" : "결제 클래스 생성"}>
+        onOk={updateData ? updateModalClose : modalOk}
+        onCancel={updateData ? updateModalClose : modalClose}
+        title={updateData ? "상세보기" : "결제 클래스 생성"}
+      >
         {console.log(updateData)}
         <Wrapper>
           <FormTag form={cForm} onFinish={onSubmit}>
@@ -355,16 +358,18 @@ const Pay = ({}) => {
               <Text width={`80px`}>제목</Text>
               <FormItem
                 rules={[{ required: true, message: "강의명을 입력해주세요." }]}
-                name={`course`}>
+                name={`course`}
+              >
                 <CusotmInput disabled={updateData ? true : false} />
               </FormItem>
             </Wrapper>
-
+            {console.log(updateData)}
             <Wrapper dr={`row`} margin={`0 0 20px`}>
               <Text width={`80px`}>강의</Text>
               <FormItem
                 rules={[{ required: true, message: "강사를 선택해주세요." }]}
-                name={`lecture`}>
+                name={`lecture`}
+              >
                 <Select size={`large`} disabled={updateData ? true : false}>
                   {allLectures &&
                     allLectures.map((data) => {
@@ -388,7 +393,8 @@ const Pay = ({}) => {
                   { required: true, message: "강의 기간을 입력해주세요." },
                 ]}
                 name={`price`}
-                width={`calc(100% - 110px)`}>
+                width={`calc(100% - 110px)`}
+              >
                 <CusotmInput
                   disabled={updateData ? true : false}
                   type={`number`}
@@ -401,7 +407,8 @@ const Pay = ({}) => {
               <FormItem
                 rules={[{ required: true, message: "할인률을 입력해주세요." }]}
                 name={`discount`}
-                width={`calc(100% - 110px)`}>
+                width={`calc(100% - 110px)`}
+              >
                 <CusotmInput
                   disabled={updateData ? true : false}
                   type={`number`}
@@ -418,7 +425,8 @@ const Pay = ({}) => {
                 rules={[
                   { required: true, message: "시작 날짜를 입력해주세요." },
                 ]}
-                name={`startDate`}>
+                name={`startDate`}
+              >
                 <DateInput
                   disabled={updateData ? true : false}
                   format={`YYYY-MM-DD`}
@@ -434,7 +442,8 @@ const Pay = ({}) => {
                   { required: true, message: "강의 기간을 입력해주세요." },
                 ]}
                 name={`week`}
-                width={`calc(100% - 110px)`}>
+                width={`calc(100% - 110px)`}
+              >
                 <CusotmInput
                   disabled={updateData ? true : false}
                   type={`number`}
@@ -451,7 +460,8 @@ const Pay = ({}) => {
               </Text>
               <FormItem
                 rules={[{ required: true, message: "메모를 작성해주세요." }]}
-                name={`memo`}>
+                name={`memo`}
+              >
                 <CustomArea disabled={updateData ? true : false} />
               </FormItem>
             </Wrapper>
@@ -464,7 +474,8 @@ const Pay = ({}) => {
         width="900px"
         onOk={() => {}}
         onCancel={() => {}}
-        title="주의사항">
+        title="주의사항"
+      >
         <GuideUl>
           <GuideLi>asdfasdf</GuideLi>
           <GuideLi isImpo={true}>asdfasdf</GuideLi>

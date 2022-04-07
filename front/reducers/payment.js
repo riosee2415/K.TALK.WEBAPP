@@ -32,7 +32,7 @@ const reducer = (state = initialState, action) =>
       case PAYMENT_LIST_SUCCESS: {
         draft.st_paymentListLoading = false;
         draft.st_paymentListDone = true;
-        draft.paymentList = action.data;
+        draft.paymentList = action.data.list;
         break;
       }
       case PAYMENT_LIST_FAILURE: {
