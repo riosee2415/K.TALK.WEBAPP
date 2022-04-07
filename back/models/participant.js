@@ -5,11 +5,10 @@ module.exports = class Participant extends Model {
   static init(sequelize) {
     return super.init(
       {
-        // id가 기본적으로 들어있다.
-        temp: {
-          type: DataTypes.INTEGER, // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
+        isDelete: {
+          type: DataTypes.BOOLEAN,
           allowNull: false,
-          defaultValue: 0, // 필수
+          defaultValue: false,
         },
       },
       {

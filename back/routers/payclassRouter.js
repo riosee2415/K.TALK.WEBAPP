@@ -9,7 +9,7 @@ const router = express.Router();
 router.get("/list", isAdminCheck, async (req, res, next) => {
   const { search } = req.query;
 
-  const _search = search ? search : null;
+  const _search = search ? search : ``;
 
   try {
     const list = await PayClass.findAll({

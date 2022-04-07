@@ -23,6 +23,7 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
   try {
     const lengthQuery = `
       SELECT	A.id,
+              A.isDelete,
                 A.UserId,
                 A.LectureId,
                 DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
@@ -41,11 +42,13 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
        INNER
         JOIN	lectures					C
           ON	A.LectureId = C.id
-       WHERE    A.UserId = ${req.user.id}
+       WHERE  A.UserId = ${req.user.id}
+         AND  A.isDelete = FALSE
 `;
 
     const selectQuery = `
         SELECT	A.id,
+                A.isDelete,
                 A.UserId,
                 A.LectureId,
                 DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
@@ -65,6 +68,7 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
         JOIN	  lectures					  C
           ON	  A.LectureId = C.id
        WHERE    A.UserId = ${req.user.id}
+         AND    A.isDelete = FALSE
        LIMIT    ${LIMIT}
       OFFSET    ${OFFSET}
 `;
@@ -95,6 +99,7 @@ router.post("/leture/list", isLoggedIn, async (req, res, next) => {
   try {
     const selectQuery = `
       SELECT	A.id,
+              A.isDelete,
               A.UserId,
               A.LectureId,
               DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
@@ -118,6 +123,7 @@ router.post("/leture/list", isLoggedIn, async (req, res, next) => {
         JOIN	lectures					  C
           ON	A.LectureId = C.id
        WHERE  1 = 1
+         AND  A.isDelete = FALSE
          ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
          AND  C.UserId = ${req.user.id}
        ORDER  BY A.createdAt DESC

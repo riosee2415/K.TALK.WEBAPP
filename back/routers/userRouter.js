@@ -981,4 +981,22 @@ router.post("/teacher/create", isAdminCheck, async (req, res, next) => {
   }
 });
 
+router.post("/findUserByEmail", isAdminCheck, async (req, res, next) => {
+  const { email } = req.body;
+  try {
+    const exUser = await User.findOne({
+      where: { email },
+    });
+
+    if (exUser) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("잠시 후 다시 시도하여 주십시오.");
+  }
+});
+
 module.exports = router;
