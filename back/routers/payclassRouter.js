@@ -63,7 +63,7 @@ router.get("/detail/:classId", isAdminCheck, async (req, res, next) => {
 });
 
 router.post("/create", isAdminCheck, async (req, res, next) => {
-  const { name, price, discount, link, memo, startDate, endDate, LectureId } =
+  const { name, price, discount, memo, startDate, week, LectureId, domain } =
     req.body;
   try {
     const exLecture = await Lecture.findOne({
@@ -78,16 +78,24 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
       name,
       price,
       discount,
-      link,
       memo,
       startDate,
-      endDate,
+      week,
       LectureId: parseInt(LectureId),
     });
 
     if (!createResult) {
       return res.status(401).send("처리중 문제가 발생하였습니다.");
     }
+
+    await PayClass.update(
+      {
+        link: `${domain}/${createResult.id}`,
+      },
+      {
+        where: { id: parseInt(createResult.id) },
+      }
+    );
 
     return res.status(201).json({ result: true });
   } catch (error) {

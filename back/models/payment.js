@@ -16,7 +16,7 @@ module.exports = class Payment extends Model {
       },
       {
         modelName: "Payment",
-        tableName: "Payments",
+        tableName: "payments",
         charset: "utf8mb4",
         collate: "utf8mb4_general_ci", // 한글 저장
         sequelize,

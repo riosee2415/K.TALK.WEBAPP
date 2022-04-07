@@ -1,7 +1,7 @@
 const express = require("express");
 const passport = require("passport");
 const bcrypt = require("bcrypt");
-const { User, Participant, Lecture } = require("../models");
+const { User, Participant, Lecture, Payment } = require("../models");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isNanCheck = require("../middlewares/isNanCheck");
 const isLoggedIn = require("../middlewares/isLoggedIn");
@@ -777,6 +777,7 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
     stuJob,
     gender,
     LectureId,
+    PaymentId,
   } = req.body;
 
   if (!Array.isArray(LectureId)) {
@@ -831,6 +832,15 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
     if (!result) {
       return res.status(401).send("처리중 문제가 발생하였습니다.");
     }
+
+    await Payment.update(
+      {
+        UserId: parseInt(result.id),
+      },
+      {
+        where: { id: parseInt(PaymentId) },
+      }
+    );
 
     const exLecture = await Lecture.findOne({
       where: { id: parseInt(LectureId) },
@@ -896,20 +906,25 @@ router.patch("/class/update", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("이미 해당 강의에 참여하고 있습니다.");
     }
 
-    const updateResult = await Participant.update(
+    const createResult = await Participant.create({
+      LectureId: parseInt(ChangeLectureId),
+      UserId: parseInt(UserId),
+    });
+
+    if (!createResult) {
+      return res.status(400).send("처리중 문제가 발생하였습니다.");
+    }
+
+    await Participant.update(
       {
-        LectureId: parseInt(ChangeLectureId),
+        isChange: true,
       },
       {
         where: { UserId: parseInt(UserId), LectureId: parseInt(LectureId) },
       }
     );
 
-    if (updateResult[0] > 0) {
-      return res.status(200).json({ result: true });
-    } else {
-      return res.status(200).json({ result: false });
-    }
+    return res.status(200).json({ result: true });
   } catch (error) {
     console.error(error);
     return res.status(401).send("학생의 반을 옮길 수 없습니다.");
@@ -989,7 +1004,7 @@ router.post("/findUserByEmail", isAdminCheck, async (req, res, next) => {
     });
 
     if (exUser) {
-      return res.status(200).json({ result: true });
+      return res.status(200).json({ result: true, UserId: exUser.id });
     } else {
       return res.status(200).json({ result: false });
     }

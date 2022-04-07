@@ -20,7 +20,7 @@ module.exports = class PayClass extends Model {
         },
         link: {
           type: DataTypes.STRING(600),
-          allowNull: false,
+          allowNull: true,
         },
         memo: {
           type: DataTypes.TEXT,
@@ -30,8 +30,8 @@ module.exports = class PayClass extends Model {
           type: DataTypes.STRING(100),
           allowNull: false,
         },
-        endDate: {
-          type: DataTypes.STRING(100),
+        week: {
+          type: DataTypes.STRING(50),
           allowNull: false,
         },
         isDelete: {

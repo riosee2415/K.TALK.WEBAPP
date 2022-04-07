@@ -24,17 +24,19 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
     const lengthQuery = `
       SELECT	A.id,
               A.isDelete,
-                A.UserId,
-                A.LectureId,
-                DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
-                B.userId,
-                B.username,
-                B.level,
-                C.course,
-                C.lecDate,
-                C.startLv,
-                C.startDate,
-                C.endDate
+              A.UserId,
+              A.LectureId,
+              A.date,
+              A.endDate,
+              DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
+              B.userId,
+              B.username,
+              B.level,
+              C.course,
+              C.lecDate,
+              C.startLv,
+              C.startDate,
+              C.endDate
         FROM	participants				A
        INNER
         JOIN	users						B
@@ -44,6 +46,7 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
           ON	A.LectureId = C.id
        WHERE  A.UserId = ${req.user.id}
          AND  A.isDelete = FALSE
+         AND  A.isChange = FALSE
 `;
 
     const selectQuery = `
@@ -51,6 +54,8 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
                 A.isDelete,
                 A.UserId,
                 A.LectureId,
+                A.date,
+                A.endDate,
                 DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
                 B.userId,
                 B.username,
@@ -69,6 +74,7 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
           ON	  A.LectureId = C.id
        WHERE    A.UserId = ${req.user.id}
          AND    A.isDelete = FALSE
+         AND    A.isChange = FALSE
        LIMIT    ${LIMIT}
       OFFSET    ${OFFSET}
 `;
@@ -102,6 +108,8 @@ router.post("/leture/list", isLoggedIn, async (req, res, next) => {
               A.isDelete,
               A.UserId,
               A.LectureId,
+              A.date,
+              A.endDate,
               DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
               B.userId,
               B.username,
@@ -126,6 +134,7 @@ router.post("/leture/list", isLoggedIn, async (req, res, next) => {
          AND  A.isDelete = FALSE
          ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
          AND  C.UserId = ${req.user.id}
+         AND A.isChange = FALSE
        ORDER  BY A.createdAt DESC
 `;
 
@@ -150,6 +159,8 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
       SELECT	A.id,
                 A.UserId,
                 A.LectureId,
+                A.date,
+                A.endDate,
                 DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
                 B.userId,
                 B.username,
@@ -169,6 +180,8 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
        WHERE    1 = 1
          ${_UserId ? `AND A.UserId = ${_UserId}` : ``}
          ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
+         AND  A.isChange = FALSE
+         AND  A.isDelete = FALSE
       ORDER    BY A.createdAt DESC
 `;
 
@@ -182,7 +195,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
 });
 
 router.post("/create", isAdminCheck, async (req, res, next) => {
-  const { UserId, LectureId } = req.body;
+  const { UserId, LectureId, date, endDate } = req.body;
   try {
     const exLecture = await Lecture.findOne({
       where: { id: parseInt(LectureId) },
@@ -217,6 +230,8 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
     const createResult = await Participant.create({
       UserId: parseInt(UserId),
       LectureId: parseInt(LectureId),
+      date,
+      endDate,
     });
 
     if (!createResult) {
@@ -230,4 +245,112 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
   }
 });
 
+// 학생 강의에서 빼기
+router.post("/delete", isAdminCheck, async (req, res, next) => {
+  const { UserId, LectureId } = req.body;
+  try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의입니다.");
+    }
+
+    const exUser = await User.findOne({
+      where: { id: parseInt(UserId) },
+    });
+
+    if (!exUser) {
+      return res.status(401).send("존재하지 않는 사용자입니다.");
+    }
+
+    if (exUser.level < 1) {
+      return res.status(401).send("해당 사용자는 학생이 아닙니다.");
+    }
+
+    const partValidation = await Participant.findOne({
+      where: { UserId: parseInt(UserId), LectureId: parseInt(LectureId) },
+    });
+
+    if (!partValidation) {
+      return res
+        .status(401)
+        .send("해당 학생은 해당 강의에 참여하고 있지 않습니다.");
+    }
+
+    const updateResult = await Participant.update(
+      {
+        isDelete: true,
+      },
+      {
+        where: { UserId: parseInt(UserId), LectureId: parseInt(LectureId) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("학생의 강의를 옮길 수 없습니다.");
+  }
+});
+
+// 반 옮긴 학생 리스트
+
+router.post("/user/delete/list", isAdminCheck, async (req, res, next) => {
+  const { UserId, isDelete, isChange } = req.body;
+
+  let _isDelete = isDelete || null;
+  let _isChange = isChange || null;
+
+  try {
+    const exUser = await User.findOne({
+      where: { id: parseInt(UserId) },
+    });
+
+    if (!exUser) {
+      return res.status(401).send("존재하지 않는 학생입니다.");
+    }
+
+    if (exUser.level !== 1) {
+      return res.status(401).send("해당 사용자는 학생이 아닙니다.");
+    }
+
+    const selectQuery = `
+    SELECT	A.id,
+            A.date,
+            A.endDate,
+            A.updatedAt,
+            A.LectureId,
+            A.UserId,
+            A.isDelete,
+            B.time,
+            B.course,
+            B.day,
+            B.UserId 						AS TeacherId
+      FROM	participants		A
+     INNER
+      JOIN	lectures 			B	
+        ON	A.LectureId = B.id
+     WHERE	1 = 1
+      ${_isDelete ? `AND A.isDelete = ${_isDelete}` : ``}
+      ${_isChange ? `AND A.isChange = ${_isChange}` : ``}
+       AND	A.UserId = ${UserId}
+    `;
+
+    const list = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ list: list[0] });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("반을 옮긴 학생 목록을 불러올 수 없습니다.");
+  }
+});
+
 module.exports = router;
+
+/// 도메인/페이먼트/id

@@ -2,25 +2,39 @@ const express = require("express");
 const { Op } = require("sequelize");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const { PayClass, Payment } = require("../models");
+const models = require("../models");
 
 const router = express.Router();
 
-router.get("/list", isAdminCheck, async (req, res, next) => {
-  const { email } = req.query;
+router.post("/list", isAdminCheck, async (req, res, next) => {
+  const { email } = req.body;
 
   const _email = email ? email : ``;
 
   try {
-    const list = await Payment.findAll({
-      where: {
-        email: {
-          [Op.like]: `%${_email}%`,
-        },
-      },
-      order: [["createdAt", "DESC"]],
-    });
+    const selectQuery = `
+    SELECT  A.id,
+            A.price,
+            A.email,
+            A.createdAt,
+            A.updatedAt,
+            A.UserId,
+            A.PayClassId,
+            C.course 
+      FROM  payments		A
+     INNER
+      JOIN  payClass 		B
+        ON  A.PayClassId = B.id
+     INNER 
+      JOIN  lectures 		C
+        ON  B.LectureId = C.id
+     WHERE  1 = 1
+       ${_email ? `AND A.email LIKE '%${_email}%'` : ``}
+    `;
 
-    return res.status(200).json(list);
+    const list = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ list: list[0] });
   } catch (error) {
     console.error(error);
     return res.status(401).send("결제내역을 불러올 수 없습니다.");

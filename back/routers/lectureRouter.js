@@ -347,22 +347,48 @@ router.post("/student/list", isLoggedIn, async (req, res, next) => {
     }
 
     const myusers = await Participant.findAll({
-      where: { LectureId: parseInt(LectureId) },
+      where: {
+        LectureId: parseInt(LectureId),
+        isDelete: false,
+        isChange: false,
+      },
     });
 
-    let students = [];
+    let studentIds = [];
 
-    await Promise.all(
-      myusers.map(async (data) => {
-        students.push(
-          await User.findOne({
-            where: { id: parseInt(data.UserId) },
-          })
-        );
-      })
-    );
+    for (let i = 0; i < myusers.length; i++) {
+      studentIds.push(myusers[i].UserId);
+    }
 
-    return res.status(200).json(students);
+    const studentListQuery = `
+SELECT	A.id,
+        A.createdAt,
+        A.updatedAt,
+        A.LectureId,
+        A.UserId,
+        A.isDelete,
+        A.isChange,
+        A.date,
+        A.endDate,
+        B.birth,
+        B.username,
+        C.price,
+        B.stuCountry 
+  FROM	participants		A
+ INNER
+  JOIN	users				    B
+    ON	A.UserId = B.id
+ INNER
+  JOIN	payments 			  C
+    ON	C.UserId = B.id
+ WHERE	A.UserId IN (${studentIds})
+   AND	A.LectureId = ${LectureId}
+   AND	DATE_FORMAT(A.endDate, "%Y-%m-%d") > DATE_FORMAT(now(), "%Y-%m-%d")
+`;
+
+    const students = await models.sequelize.query(studentListQuery);
+
+    return res.status(200).json({ students: students[0] });
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의를 듣는 학생 목록을 불러올 수 없습니다.");

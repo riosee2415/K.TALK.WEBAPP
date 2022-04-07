@@ -10,6 +10,19 @@ module.exports = class Participant extends Model {
           allowNull: false,
           defaultValue: false,
         },
+        isChange: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+        },
+        date: {
+          type: DataTypes.STRING(100),
+          allowNull: false,
+        },
+        endDate: {
+          type: DataTypes.STRING(100),
+          allowNull: false,
+        },
       },
       {
         modelName: "Participant",
