@@ -17,6 +17,7 @@ import commuteSaga from "./commute";
 import processApplySaga from "./processApply";
 import paymentSaga from "./payment";
 import bookSaga from "./book";
+import payClassSaga from "./payClass";
 //
 import axios from "axios";
 import backURL from "../config/config";
@@ -44,5 +45,6 @@ export default function* rootSaga() {
     fork(processApplySaga),
     fork(paymentSaga),
     fork(bookSaga),
+    fork(payClassSaga),
   ]);
 }

@@ -135,8 +135,6 @@ const UserList = ({}) => {
     return value;
   }, [currentType, router.query]);
 
-  console.log(getQs());
-
   ////// USEEFFECT //////
 
   useEffect(() => {

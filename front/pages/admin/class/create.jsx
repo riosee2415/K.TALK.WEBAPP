@@ -109,17 +109,6 @@ const CusotmInput = styled(TextInput)`
   }
 `;
 
-const CustomArea = styled(TextArea)`
-  width: 100%;
-  border-radius: 0;
-  &::placeholder {
-    color: ${Theme.grey2_C};
-  }
-  &:focus {
-    border: 1px solid ${Theme.grey2_C};
-  }
-`;
-
 const DateInput = styled(DatePicker)`
   width: ${(props) => props.width || `100%`};
   &::placeholder {
@@ -256,26 +245,27 @@ const List = () => {
     if (data.time_7) {
       day += data.time_7.format(`HH:mm`) + " ";
     }
-    console.log(day);
-    // dispatch({
-    //   type: LECTURE_CREATE_REQUEST,
-    //   data: {
-    //     time: moment(data.time, "HH:mm").format("HH:mm"),
-    //     day: data.day.join(" "),
-    //     count: data.cnt,
-    //     course: data.course,
-    //     lecDate: data.lecDate,
-    //     // lecTime: "-",
-    //     startLv: data.startLv,
-    //     // endLv: "-",
-    //     startDate: data.startDate,
-    //     endDate: data.endDate,
-    //     // memo: data.memo,
-    //     // memo: "-",
-    //     // price: data.price,
-    //     UserId: data.UserId,
-    //   },
-    // });
+
+    dispatch({
+      type: LECTURE_CREATE_REQUEST,
+      data: {
+        time: moment(data.time, "HH:mm").format("HH:mm"),
+        day: data.day.join(" "), //
+        count: data.cnt, //
+        course: data.course, //
+        lecDate: data.lecDate, //
+        // lecTime: "-",
+        startLv: data.lv1 + "권 " + data.lv2 + "단원 " + data.lv3 + "페이지", //
+        // endLv: "-",
+        startDate: data.startDate.format(`YYYY-MM-DD`), //
+        endDate: data.endDate, //
+        // memo: data.memo,
+        // memo: "-",
+        // price: data.price,
+        UserId: data.UserId, //
+        zoomLink: data.zoomLink,
+      },
+    });
   }, []);
 
   ////// TOGGLE ///////
@@ -408,16 +398,12 @@ const List = () => {
               </Select>
             </FormItem>
           </Wrapper>
-          <Wrapper
-            dr={`row`}
-            ju={`flex-start`}
-            padding={`0 0 0 80px`}
-            margin={`0 0 20px`}
-          >
+          <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
+            <Text width={`80px`}>강의 시간</Text>
             {dayArr.map((data, idx) => {
               return (
                 <FormItem
-                  width={`auto`}
+                  width={`calc(q00% - 80px)`}
                   margin={`0 10px 0 0`}
                   label={data}
                   name={`time_${idx + 1}`}
