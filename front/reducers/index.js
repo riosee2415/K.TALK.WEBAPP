@@ -16,6 +16,7 @@ import lecture from "./lecture";
 import participant from "./participant";
 import commute from "./commute";
 import processApply from "./processApply";
+import payment from "./payment";
 import book from "./book";
 
 const rootReducer = (state, action) => {
@@ -42,6 +43,7 @@ const rootReducer = (state, action) => {
         commute,
         processApply,
         book,
+        payment,
       });
       return combinedReducer(state, action);
     }

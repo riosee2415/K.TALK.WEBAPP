@@ -6,7 +6,7 @@ import companySaga from "./company";
 import noticeSage from "./notice";
 import gallerySage from "./gallery";
 import questionSage from "./question";
-import accept from "./accept";
+import acceptSaga from "./accept";
 import seoSaga from "./seo";
 import editSaga from "./editor";
 import appSaga from "./application";
@@ -15,6 +15,7 @@ import lectureSaga from "./lecture";
 import participantSaga from "./participant";
 import commuteSaga from "./commute";
 import processApplySaga from "./processApply";
+import paymentSaga from "./payment";
 import bookSaga from "./book";
 //
 import axios from "axios";
@@ -32,7 +33,7 @@ export default function* rootSaga() {
     fork(noticeSage),
     fork(gallerySage),
     fork(questionSage),
-    fork(accept),
+    fork(acceptSaga),
     fork(seoSaga),
     fork(editSaga),
     fork(appSaga),
@@ -41,6 +42,7 @@ export default function* rootSaga() {
     fork(participantSaga),
     fork(commuteSaga),
     fork(processApplySaga),
+    fork(paymentSaga),
     fork(bookSaga),
   ]);
 }

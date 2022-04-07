@@ -463,41 +463,92 @@ const LectureAll = () => {
     router.push(link);
   }, []);
 
-  const DDay = useCallback((startDate, endDate) => {
-    let save = moment
-      .duration(
-        moment(startDate, "YYYY-MM-DD").diff(moment().format("YYYY-MM-DD"))
-      )
+  const DDay = useCallback((startDate, endDate, count, lecDate, day) => {
+    let dir = 0;
+
+    let startDay = moment
+      .duration(moment(startDate).diff(moment().format("YYYY-MM-DD")))
       .asDays();
 
-    if (save < 0) {
-      let saveDday =
-        Math.abs(
-          moment
-            .duration(
-              moment(endDate, "YYYY-MM-DD").diff(moment().format("YYYY-MM-DD"))
-            )
-            .asDays()
-        ) < 1
-          ? "종료"
-          : Math.abs(
-              moment
-                .duration(
-                  moment(endDate, "YYYY-MM-DD").diff(
-                    moment().format("YYYY-MM-DD")
-                  )
-                )
-                .asDays()
-            );
+    let endDay = moment
+      .duration(moment(endDate).diff(moment().format("YYYY-MM-DD")))
+      .asDays();
 
-      return saveDday;
+    let diff = moment
+      .duration(moment(endDate).diff(moment(startDate)))
+      .asDays();
+
+    if (startDay < 0 && endDay < 0) {
+      return 0;
+    } else if (startDay > 0) {
+      const arr = ["일", "월", "화", "수", "목", "금", "토"];
+      let add = 0;
+
+      for (let i = 0; i < diff; i++) {
+        let saveDay = moment(startDate)
+          .add(i + 1, "days")
+          .day();
+
+        const saveResult = day.includes(arr[saveDay]);
+
+        if (saveResult) {
+          add += 1;
+        }
+      }
+
+      return add;
     } else {
-      return moment
-        .duration(
-          moment(endDate, "YYYY-MM-DD").diff(moment(startDate, "YYYY-MM-DD"))
-        )
-        .asDays();
+      const arr = ["일", "월", "화", "수", "목", "금", "토"];
+      let add = 0;
+
+      for (let i = 0; i < endDay; i++) {
+        let saveDay = moment(startDate)
+          .add(i + 1, "days")
+          .day();
+
+        const saveResult = day.includes(arr[saveDay]);
+
+        if (saveResult) {
+          add += 1;
+        }
+      }
+
+      return add;
     }
+
+    // const save = Math.abs(
+    //   moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays() -
+    //     1
+    // );
+
+    // let check = parseInt(
+    //   moment
+    //     .duration(moment(endDate).diff(moment(startDate, "YYYY-MM-DD")))
+    //     .asDays() + 1
+    // );
+
+    // if (save >= check) {
+    //   dir = check;
+    // } else {
+    //   dir = save;
+    // }
+
+    // const arr = ["일", "월", "화", "수", "목", "금", "토"];
+    // let add = 0;
+
+    // for (let i = 0; i < dir; i++) {
+    //   let saveDay = moment(startDate)
+    //     .add(i + 1, "days")
+    //     .day();
+
+    //   const saveResult = day.includes(arr[saveDay]);
+
+    //   if (saveResult) {
+    //     add += 1;
+    //   }
+    // }
+
+    // return add;
   }, []);
 
   const stepHanlder = useCallback((startDate, endDate, count, lecDate, day) => {
@@ -870,7 +921,15 @@ const LectureAll = () => {
                           fontWeight={`bold`}
                           color={Theme.red_C}
                           margin={`0 0 0 15px`}>
-                          D-{DDay(data.startDate, data.endDate)}
+                          {/* D-{DDay(data.startDate, data.endDate)} */}
+                          {DDay(
+                            data.startDate,
+                            data.endDate,
+                            data.count,
+                            data.lecDate,
+                            data.day
+                          )}
+                          회
                         </SpanText>
                       </Text>
                     </Wrapper>
@@ -1041,7 +1100,7 @@ const LectureAll = () => {
                                   )}%)`}
                                 </Text>
                               </Wrapper>
-                              <Wrapper
+                              {/* <Wrapper
                                 dr={`row`}
                                 ju={`flex-start`}
                                 margin={`10px 0`}>
@@ -1077,7 +1136,7 @@ const LectureAll = () => {
                                     data.day
                                   )}%)`}
                                 </Text>
-                              </Wrapper>
+                              </Wrapper> */}
                               {/* <Wrapper dr={`row`} ju={`flex-start`}>
                                 <Text width={width < 800 ? `100%` : `15%`}>
                                   <SpanText color={Theme.subTheme6_C}>

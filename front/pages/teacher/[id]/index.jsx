@@ -458,6 +458,7 @@ const Index = () => {
   const [noticeWriteform] = Form.useForm();
   const [homeworkUploadform] = Form.useForm();
   const [diaryform] = Form.useForm();
+  const [diaryViewform] = Form.useForm();
   const [homeworkSubmitform] = Form.useForm();
   const [memoform] = Form.useForm();
   const [memoWriteform] = Form.useForm();
@@ -472,6 +473,8 @@ const Index = () => {
   const [noticeModalToggle, setNoticeModalToggle] = useState(false);
   const [homeWorkModalToggle, setHomeWorkModalToggle] = useState(false);
   const [diaryModalToggle, setDiaryModalToggle] = useState(false);
+  const [diaryViewModalToggle, setDiaryViewModalToggle] = useState(false);
+  const [diaryData, setDiaryData] = useState([]);
   const [memoStuDetailToggle, setMemoStuDetailToggle] = useState(false);
   const [messageAnswerModal, setMessageAnswerModal] = useState(false);
 
@@ -1135,6 +1138,7 @@ const Index = () => {
           process: value.process,
           lectureMemo: value.lectureMemo,
           LectureId: router.query.id,
+          startLv: value.process,
         },
       });
     },
@@ -1176,6 +1180,7 @@ const Index = () => {
     setNoticeViewDatum("");
     setMemoStuBackToggle(false);
     setCommuteToggle(false);
+    setDiaryViewModalToggle(false);
 
     dispatch({
       type: DETAIL_MODAL_CLOSE_REQUEST,
@@ -1508,6 +1513,12 @@ const Index = () => {
     },
     []
   );
+
+  const diaryViewClickHandler = useCallback((data) => {
+    console.log(data, "data");
+    setDiaryViewModalToggle(true);
+    setDiaryData(data);
+  }, []);
 
   ////// DATAVIEW //////
 
@@ -1916,6 +1927,7 @@ const Index = () => {
                                 bgColor={idx % 2 === 0 && Theme.lightGrey_C}
                                 onClick={() => onCommuteHandler(data, "출석")}
                                 cursor={`pointer`}
+                                size={`small`}
                                 fontSize={width < 700 ? `14px` : `16px`}
                                 disabled={
                                   stepHanlder2(
@@ -1940,6 +1952,7 @@ const Index = () => {
                                 bgColor={idx % 2 === 0 && Theme.lightGrey_C}
                                 onClick={() => onCommuteHandler(data, "결석")}
                                 cursor={`pointer`}
+                                size={`small`}
                                 fontSize={width < 700 ? `14px` : `16px`}
                                 disabled={
                                   stepHanlder2(
@@ -1964,6 +1977,7 @@ const Index = () => {
                                 bgColor={idx % 2 === 0 && Theme.lightGrey_C}
                                 onClick={() => onCommuteHandler(data, "지각")}
                                 cursor={`pointer`}
+                                size={`small`}
                                 fontSize={width < 700 ? `14px` : `16px`}
                                 disabled={
                                   stepHanlder2(
@@ -2308,7 +2322,8 @@ const Index = () => {
                         textAlign={`center`}
                         padding={`25px 0 20px`}
                         cursor={`pointer`}
-                        bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
+                        bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                        onClick={() => diaryViewClickHandler(data)}>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
                           width={`15%`}
@@ -3303,6 +3318,51 @@ const Index = () => {
                 radius={`5px`}
                 htmlType="submit">
                 작성하기
+              </CommonButton>
+            </Wrapper>
+          </CustomForm>
+        </CustomModal>
+
+        <CustomModal
+          visible={diaryViewModalToggle}
+          width={`1350px`}
+          title="자세한 강사일지"
+          footer={null}
+          closable={false}>
+          <CustomForm form={diaryViewform}>
+            <Wrapper al={`flex-start`} fontSize={width < 700 ? `14px` : `18px`}>
+              <Text fontWeight={`bold`} margin={`0 0 10px`}>
+                진도
+              </Text>
+
+              <Text>{diaryData && diaryData.process}</Text>
+            </Wrapper>
+
+            <Wrapper al={`flex-start`} fontSize={width < 700 ? `14px` : `18px`}>
+              <Text fontWeight={`bold`} margin={`0 0 10px`}>
+                수업 메모
+              </Text>
+
+              {diaryData &&
+                diaryData.lectureMemo &&
+                diaryData.lectureMemo.split("\n").map((data, idx) => {
+                  return (
+                    <Text key={`${data}${idx}`}>
+                      {data}
+                      <br />
+                    </Text>
+                  );
+                })}
+            </Wrapper>
+
+            <Wrapper dr={`row`}>
+              <CommonButton
+                margin={`0 5px 0 0`}
+                kindOf={`grey`}
+                color={Theme.darkGrey_C}
+                radius={`5px`}
+                onClick={() => onReset()}>
+                돌아가기
               </CommonButton>
             </Wrapper>
           </CustomForm>

@@ -8,6 +8,7 @@ export const initailState = {
   teachers: null,
 
   userProfilePath: null,
+  emailCheckBool: null,
 
   createModal: false,
   updateModal: false,
@@ -87,6 +88,10 @@ export const initailState = {
   st_userTeacherListLoading: false,
   st_userTeacherListDone: false,
   st_userTeacherListError: null,
+  //
+  st_userFindEmailByLoading: false,
+  st_userFindEmailByDone: false,
+  st_userFindEmailByError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -160,6 +165,10 @@ export const USER_STU_UPDATE_FAILURE = "USER_STU_UPDATE_FAILURE";
 export const USER_CLASS_CHANGE_REQUEST = "USER_CLASS_CHANGE_REQUEST";
 export const USER_CLASS_CHANGE_SUCCESS = "USER_CLASS_CHANGE_SUCCESS";
 export const USER_CLASS_CHANGE_FAILURE = "USER_CLASS_CHANGE_FAILURE";
+
+export const USER_FIND_EMAIL_BY_REQUEST = "USER_FIND_EMAIL_BY_REQUEST";
+export const USER_FIND_EMAIL_BY_SUCCESS = "USER_FIND_EMAIL_BY_SUCCESS";
+export const USER_FIND_EMAIL_BY_FAILURE = "USER_FIND_EMAIL_BY_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -537,6 +546,27 @@ const reducer = (state = initailState, action) =>
         draft.st_userChangeLoading = false;
         draft.st_userChangeDone = false;
         draft.st_userChangeError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case USER_FIND_EMAIL_BY_REQUEST: {
+        draft.st_userFindEmailByLoading = true;
+        draft.st_userFindEmailByDone = null;
+        draft.st_userFindEmailByError = false;
+        break;
+      }
+      case USER_FIND_EMAIL_BY_SUCCESS: {
+        draft.st_userFindEmailByLoading = false;
+        draft.st_userFindEmailByDone = true;
+        draft.emailCheckBool = action.data;
+        break;
+      }
+      case USER_FIND_EMAIL_BY_FAILURE: {
+        draft.st_userFindEmailByLoading = false;
+        draft.st_userFindEmailByDone = false;
+        draft.st_userFindEmailByError = action.error;
         break;
       }
 

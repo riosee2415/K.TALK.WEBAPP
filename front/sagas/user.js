@@ -67,6 +67,10 @@ import {
   USER_TEACHER_LIST_REQUEST,
   USER_TEACHER_LIST_SUCCESS,
   USER_TEACHER_LIST_FAILURE,
+  /////////////////////////////
+  USER_FIND_EMAIL_BY_REQUEST,
+  USER_FIND_EMAIL_BY_SUCCESS,
+  USER_FIND_EMAIL_BY_FAILURE,
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -528,6 +532,37 @@ function* changeClass(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function findEmailByAPI(data) {
+  return axios.post(`/api/user/findUserByEmail`, data);
+}
+
+function* findEmailBy(action) {
+  try {
+    const result = yield call(findEmailByAPI, action.data);
+
+    yield put({
+      type: USER_FIND_EMAIL_BY_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_FIND_EMAIL_BY_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchLoadMyInfo() {
@@ -598,6 +633,10 @@ function* watchTeacherList() {
   yield takeLatest(USER_TEACHER_LIST_REQUEST, userTeacherList);
 }
 
+function* watchFindEmailBy() {
+  yield takeLatest(USER_FIND_EMAIL_BY_REQUEST, findEmailBy);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -618,6 +657,7 @@ export default function* userSaga() {
     fork(watchTeaUpdate),
     fork(watchClassChange),
     fork(watchTeacherList),
+    fork(watchFindEmailBy),
     //
   ]);
 }

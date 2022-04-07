@@ -9,6 +9,7 @@ import {
   BookOutlined,
   PhoneOutlined,
   FolderOutlined,
+  MoneyCollectOutlined,
 } from "@ant-design/icons";
 import styled from "styled-components";
 import { useRouter } from "next/router";
@@ -111,6 +112,16 @@ const AdminMenu = () => {
             <Menu.Item key="7">Option 7</Menu.Item>
             <Menu.Item key="8">Option 8</Menu.Item>
           </SubMenu> */}
+        </SubMenu>
+
+        <SubMenu
+          key="sub20"
+          icon={<MoneyCollectOutlined />}
+          title="결제내역 관리"
+          onTitleClick={titleClickHandler("sub8")}>
+          <Menu.Item key="/admin/payment/list">
+            <MenuName>결제 목록 관리</MenuName>
+          </Menu.Item>
         </SubMenu>
         <SubMenu
           key="sub8"

@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import ClientLayout from "../../components/ClientLayout";
 import { useDispatch, useSelector } from "react-redux";
 
 import wrapper from "../../store/configureStore";
 import { END } from "redux-saga";
 import useWidth from "../../hooks/useWidth";
-import useInput from "../../hooks/useInput";
 import Theme from "../../components/Theme";
 import styled from "styled-components";
 import axios from "axios";
@@ -21,8 +20,14 @@ import {
   Image,
   Text,
 } from "../../components/commonComponents";
-import { Button } from "antd";
+import { Button, message, Select } from "antd";
 import PaypalExpressBtn from "react-paypal-express-checkout";
+import {
+  PAYMENT_CREATE_REQUEST,
+  PAYMENT_LIST_REQUEST,
+} from "../../reducers/payment";
+
+const PaypalBtn = styled(PaypalExpressBtn)``;
 
 const Index = () => {
   ////// GLOBAL STATE //////
@@ -30,29 +35,68 @@ const Index = () => {
     (state) => state.seo
   );
 
+  const {
+    paymentList,
+    st_paymentListDone,
+    st_paymentListError,
+    st_paymentCreateDone,
+    st_paymentCreateError,
+  } = useSelector((state) => state.payment);
+
   const width = useWidth();
 
   const [toggle, setToggle] = useState(false);
+  const [successData, setSuccessData] = useState("");
 
   useEffect(() => {
-    setToggle(true);
-  }, []);
+    if (st_paymentCreateDone) {
+      return message.error(st_paymentCreateDone);
+    }
+  }, [st_paymentCreateDone]);
 
-  // 결제 성공
+  useEffect(() => {
+    if (st_paymentCreateError) {
+      return message.error(st_paymentCreateError);
+    }
+  }, [st_paymentCreateError]);
+
+  // useEffect(() => {
+  //   if (st_paymentListError) {
+  //     return message.error(st_paymentListError);
+  //   }
+  // }, [st_paymentListError]);
 
   ////// HOOKS //////
   ////// REDUX //////
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (successData) {
+      dispatch({
+        type: PAYMENT_CREATE_REQUEST,
+        data: {
+          price: "",
+          email: "",
+          PayClassId: "",
+        },
+      });
+    }
+
+    setToggle(true);
+  }, [successData]);
+
   ////// TOGGLE //////
   ////// HANDLER //////
   ////// DATAVIEW //////
 
   const style = {
+    display: "none",
     size: "responsive",
-    color: "white",
+    color: "blue",
     shape: "rect",
     label: "checkout",
     tagline: "true",
+    layout: "horizontal",
   };
   let env = "sandbox";
   let currency = "USD";
@@ -61,6 +105,7 @@ const Index = () => {
   // 결제 성공
   const onSuccess = (payment) => {
     console.log(payment, "payment");
+    setSuccessData(payment);
   };
 
   // 결제 취소
@@ -131,11 +176,7 @@ const Index = () => {
       <ClientLayout>
         <WholeWrapper>
           <RsWrapper>
-            <Wrapper
-              margin={`100px 0 0 0`}
-              al={`flex-start`}
-              height={`100vh`}
-              ju={`flex-start`}>
+            <Wrapper margin={`100px 0 0 0`} al={`flex-start`} ju={`flex-start`}>
               <Wrapper
                 dr={`row`}
                 width={`auto`}
@@ -159,11 +200,7 @@ const Index = () => {
                 <Text>한국어 완벽 학습</Text>
               </Wrapper>
 
-              <Wrapper
-                al={`flex-start`}
-                dr={`row`}
-                minHeight={`190px`}
-                margin={`30px 0 100px 0`}>
+              <Wrapper al={`flex-start`} dr={`row`} margin={`30px 0 100px 0`}>
                 <Wrapper
                   al={`flex-start`}
                   padding={`35px 25px`}
@@ -220,23 +257,25 @@ const Index = () => {
                   </Wrapper>
 
                   {toggle && (
-                    <PaypalExpressBtn
-                      style={style}
-                      env={env}
-                      client={client}
-                      total={"1"}
-                      currency={currency}
-                      onSuccess={onSuccess}
-                      onError={onError}
-                      onCancel={onCancel}
-                    />
+                    <Wrapper margin={`10px 0 0`}>
+                      <PaypalBtn
+                        style={style}
+                        env={env}
+                        client={client}
+                        total={"1"}
+                        currency={currency}
+                        onSuccess={onSuccess}
+                        onError={onError}
+                        onCancel={onCancel}
+                      />
+                    </Wrapper>
                   )}
 
-                  <Button
+                  {/* <Button
                     type="primary"
                     style={{ width: "100%", marginTop: 10 }}>
                     결제하기
-                  </Button>
+                  </Button> */}
                 </Wrapper>
               </Wrapper>
             </Wrapper>
@@ -264,6 +303,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: SEO_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: PAYMENT_LIST_REQUEST,
     });
 
     // 구현부 종료
