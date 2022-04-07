@@ -178,7 +178,7 @@ const Pay = ({}) => {
         name: data.course,
         price: data.price,
         discount: data.discount,
-        link: data.zoomLink,
+        link: data.link,
         memo: data.memo,
         startDate: data.startDate,
         endDate: data.endDate,
@@ -218,7 +218,7 @@ const Pay = ({}) => {
           course: data.name,
           price: data.price,
           discount: data.discount,
-          zoomLink: data.link,
+          link: data.link,
           memo: data.memo,
           startDate: moment(data.startDate, "YYYY-MM-DD"),
           endDate: moment(data.endDate, "YYYY-MM-DD"),
@@ -434,10 +434,12 @@ const Pay = ({}) => {
             </Wrapper>
 
             <Wrapper dr={`row`} margin={`0 0 20px`}>
-              <Text width={`80px`}>줌링크</Text>
+              <Text width={`80px`}>결제 링크</Text>
               <FormItem
-                rules={[{ required: true, message: "줌링크를 입력해주세요." }]}
-                name={`zoomLink`}
+                rules={[
+                  { required: true, message: "결제링크를 입력해주세요." },
+                ]}
+                name={`link`}
               >
                 <CusotmInput disabled />
               </FormItem>

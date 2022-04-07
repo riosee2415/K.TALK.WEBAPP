@@ -43,7 +43,7 @@ const LoadNotification = (msg, content) => {
   });
 };
 
-const UserDeliAddress = ({}) => {
+const PaymentList = ({}) => {
   const { st_loadMyInfoDone, me } = useSelector((state) => state.user);
 
   const {
@@ -150,8 +150,16 @@ const UserDeliAddress = ({}) => {
 
     {
       title: "아이디 여부",
-      render: (data) => {
-        <Button onClick={() => onClickCheckID(data)}>아이디 확인</Button>;
+      render: (data, _, j) => {
+        return (
+          <Button
+            type={`primary`}
+            size={`small`}
+            onClick={() => onClickCheckID(data)}
+          >
+            아이디 확인
+          </Button>
+        );
       },
     },
   ];
@@ -179,7 +187,13 @@ const UserDeliAddress = ({}) => {
           </Button>
         </Input.Group>
 
-        <Table rowKey="id" columns={columns} dataSource={[]} size="small" />
+        <Table
+          rowKey="id"
+          columns={columns}
+          dataSource={paymentList ? paymentList : []}
+          size="small"
+        />
+        {console.log(paymentList)}
       </AdminContent>
 
       <Modal
@@ -187,7 +201,8 @@ const UserDeliAddress = ({}) => {
         width="900px"
         onOk={() => {}}
         onCancel={() => {}}
-        title="주의사항">
+        title="주의사항"
+      >
         <GuideUl>
           <GuideLi>asdfasdf</GuideLi>
           <GuideLi isImpo={true}>asdfasdf</GuideLi>
@@ -223,4 +238,4 @@ export const getServerSideProps = wrapper.getServerSideProps(
   }
 );
 
-export default withRouter(UserDeliAddress);
+export default withRouter(PaymentList);
