@@ -29,6 +29,8 @@ import { PARTICIPANT_CREATE_REQUEST } from "../../../../reducers/participant";
 import useInput from "../../../../hooks//useInput";
 import { SearchOutlined } from "@ant-design/icons";
 import Theme from "../../../../components/Theme";
+import { PAYMENT_LIST_REQUEST } from "../../../../reducers/payment";
+import moment from "moment";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -73,6 +75,11 @@ const UserList = ({}) => {
     (state) => state.participant
   );
 
+  const { paymentList, st_paymentListDone, st_paymentListError } = useSelector(
+    (state) => state.payment
+  );
+
+  const [paymentData, setPaymentData] = useState([]);
   const [updateData, setUpdateData] = useState(null);
   const [lectureList, setLectureList] = useState(null);
   const [selectedList, setSelectedList] = useState([]);
@@ -82,12 +89,16 @@ const UserList = ({}) => {
   const [opt1, setOpt1] = useState(null);
   const [opt2, setOpt2] = useState(null);
   const [opt3, setOpt3] = useState(null);
+  const [opt4, setOpt4] = useState(null);
 
   const [detailToggle, setDetailToggle] = useState(false);
   const [classPartEndModal, setClassPartEndModal] = useState(false);
 
   const [parData, setParData] = useState(null);
   const [parEndData, setParEndData] = useState(null);
+
+  const [classChangeId, setClassChangeId] = useState("");
+
   const [form] = Form.useForm();
   const [updateClassform] = Form.useForm();
   const [updateEndClassform] = Form.useForm();
@@ -184,8 +195,24 @@ const UserList = ({}) => {
 
   useEffect(() => {
     setOpt2(
+      paymentList &&
+        paymentList.map((data) => {
+          if (data.UserId !== null) return;
+          return (
+            <Option key={data.id} value={data.LetureId}>
+              {data.course}
+            </Option>
+          );
+        })
+    );
+  }, [paymentList]);
+
+  useEffect(() => {
+    setOpt4(
       allLectures &&
         allLectures.map((data) => {
+          if (classChangeId === data.id) return;
+
           return (
             <Option key={data.id} value={data.id}>
               {data.course}
@@ -193,13 +220,26 @@ const UserList = ({}) => {
           );
         })
     );
-  }, [allLectures]);
+  }, [allLectures, classChangeId]);
+
+  useEffect(() => {
+    if (st_paymentListError) {
+      return message.error(st_paymentListError);
+    }
+  }, [st_paymentListError]);
 
   ////// TOGGLE //////
   const classChangeModalOpen = useCallback(
     (data) => {
       dispatch({
         type: CHANGE_CLASS_OPEN_REQUEST,
+      });
+
+      dispatch({
+        type: PAYMENT_LIST_REQUEST,
+        data: {
+          email: data.email,
+        },
       });
 
       setUpdateData(data);
@@ -220,10 +260,16 @@ const UserList = ({}) => {
       dispatch({
         type: CLASS_PART_OPEN_REQUEST,
       });
+
+      dispatch({
+        type: PAYMENT_LIST_REQUEST,
+        data: {
+          email: data.email,
+        },
+      });
+
       updateClassform.resetFields();
       setParData(data);
-
-      console.log(data, "data");
     },
     [classPartModal]
   );
@@ -241,8 +287,6 @@ const UserList = ({}) => {
 
   const classPartEndModalOpen = useCallback((data) => {
     setClassPartEndModal(true);
-
-    console.log(data, "Data");
 
     updateEndClassform.resetFields();
 
@@ -265,7 +309,7 @@ const UserList = ({}) => {
   }, [form]);
 
   const onSubmit = useCallback(
-    (data) => {
+    async (data) => {
       if (!data.lecture || data.lecture === "--- 선택 ---") {
         return message.error(`현재 강의를 선택해주세요.`);
       }
@@ -273,32 +317,70 @@ const UserList = ({}) => {
         return message.error(`바꿀 강의를 선택해주세요.`);
       }
 
+      let current = {};
+      let endDate = {};
+
+      await paymentList.filter((payData) => {
+        if (payData.LetureId === data.lecture) {
+          current = payData;
+          return true;
+        }
+      });
+
+      await updateData.Participants.filter((payData, idx) => {
+        if (payData.LectureId === data.lecture) {
+          endDate = payData.endDate;
+          return true;
+        }
+      });
+
+      // let currentEndDate = moment()
+      //   .add(current.week * 7, "days")
+      //   .format("YYYY-MM-DD");
+
+      let Day = Math.abs(
+        moment.duration(moment().diff(moment(endDate))).asDays()
+      );
+
+      console.log(Day);
+
       dispatch({
         type: USER_CLASS_CHANGE_REQUEST,
         data: {
           UserId: updateData.id,
           LectureId: data.lecture,
           ChangeLectureId: data.changelecture,
+          data: Day,
+          endDate: currentEndDate,
         },
       });
     },
-    [selectedList, updateData]
+    [selectedList, updateData, paymentList]
   );
 
   const onUpdateClassSubmit = useCallback(
     (data) => {
-      console.log(data, "data", parData);
-      // dispatch({
-      //   type: PARTICIPANT_CREATE_REQUEST,
-      //   data: {
-      //     UserId: parData.id,
-      //     LectureId: data.partLecture,
-      //     date: "",
-      //     endDate: "",
-      //   },
-      // });
+      let day = 0;
+      let saveData = "YYY-MM-DD";
+      if (paymentData.length !== 0) {
+        day = paymentData[0].week * 7;
+        saveData = moment().add(day, "days").format("YYYY-MM-DD");
+      } else {
+        return message.error("잠시후 실행해주세요.");
+      }
+
+      dispatch({
+        type: PARTICIPANT_CREATE_REQUEST,
+        data: {
+          UserId: parData.id,
+          LectureId: data.partLecture,
+          date: day,
+          endDate: saveData,
+          PaymentId: paymentData && paymentData[0].id,
+        },
+      });
     },
-    [parData]
+    [parData, paymentData]
   );
 
   const onUpdateEndClassSubmit = useCallback(
@@ -357,12 +439,26 @@ const UserList = ({}) => {
     [lectureList, selectedList]
   );
 
-  const onSeachHandler = useCallback((value) => {
-    console.log(value);
+  const onSeachHandler = useCallback((LectureId, paymentData) => {
+    let arr = [];
+
+    paymentData.map((data, idx) => {
+      if (data.LetureId === LectureId) {
+        arr.push({
+          id: data.id,
+          week: data.week,
+        });
+      }
+    });
+
+    setPaymentData(arr);
+  }, []);
+
+  const onChangeClass = useCallback((data) => {
+    setClassChangeId(data);
   }, []);
 
   const detailModalOpen = useCallback((data) => {
-    console.log(data, "data");
     setDetailToggle(true);
     setDetailDatum(data.Participants);
   }, []);
@@ -547,7 +643,10 @@ const UserList = ({}) => {
         onCancel={classChangeModalClose}
         onOk={onModalOk}>
         <Wrapper padding={`10px`} al={`flex-start`}>
-          <Form form={form} style={{ width: `100%` }} onFinish={onSubmit}>
+          <Form
+            form={form}
+            style={{ width: `100%` }}
+            onFinish={(data) => onSubmit(data)}>
             <Form.Item label={`학생`}>
               <Input disabled value={updateData && updateData.username} />
             </Form.Item>
@@ -557,6 +656,7 @@ const UserList = ({}) => {
                 width={`100%`}
                 height={`32px`}
                 showSearch
+                onChange={onChangeClass}
                 placeholder="Select a Lecture">
                 {opt1}
               </Select>
@@ -570,7 +670,7 @@ const UserList = ({}) => {
                 placeholder="Select a Lecture"
                 // name={`changelecture`}
               >
-                {opt2}
+                {opt4}
               </Select>
             </Form.Item>
           </Form>
@@ -602,7 +702,7 @@ const UserList = ({}) => {
                 width={`100%`}
                 height={`32px`}
                 showSearch
-                onChange={onSeachHandler}
+                onChange={(LectureId) => onSeachHandler(LectureId, paymentList)}
                 filterOption={(input, option) =>
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
@@ -643,7 +743,6 @@ const UserList = ({}) => {
                 placeholder="Select a Lecture">
                 {parEndData &&
                   parEndData.map((data, idx) => {
-                    console.log(data, "data");
                     return <Option key={data.id}></Option>;
                   })}
               </Select>
