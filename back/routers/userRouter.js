@@ -776,6 +776,8 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
     gender,
     LectureId,
     PaymentId,
+    date,
+    endDate,
   } = req.body;
 
   try {
@@ -845,6 +847,8 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
     await Participant.create({
       LetureId: parseInt(LectureId),
       UserId: parseInt(result.id),
+      date,
+      endDate,
     });
 
     return res.status(201).json({ result: true });
