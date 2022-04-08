@@ -860,7 +860,7 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
 
 // 학생 반 옮기기
 router.patch("/class/update", isAdminCheck, async (req, res, next) => {
-  const { UserId, LectureId, ChangeLectureId } = req.body;
+  const { UserId, LectureId, ChangeLectureId, endDate, date } = req.body;
   try {
     const exLecture = await Lecture.findOne({
       where: { id: parseInt(LectureId) },
@@ -901,6 +901,8 @@ router.patch("/class/update", isAdminCheck, async (req, res, next) => {
     const createResult = await Participant.create({
       LectureId: parseInt(ChangeLectureId),
       UserId: parseInt(UserId),
+      endDate,
+      date,
     });
 
     if (!createResult) {
