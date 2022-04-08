@@ -35,6 +35,7 @@ import axios from "axios";
 import { Text, Wrapper } from "../../../components/commonComponents";
 
 import { LECTURE_ALL_LIST_REQUEST } from "../../../reducers/lecture";
+import { PAYMENT_LIST_REQUEST } from "../../../reducers/payment";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -60,6 +61,8 @@ const UserList = ({}) => {
   const { allLectures } = useSelector((state) => state.lecture);
 
   const router = useRouter();
+
+  const inputCreateEmail = useInput("");
 
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
@@ -365,8 +368,8 @@ const UserList = ({}) => {
             email: data.email,
             address: data.address,
             detailAddress: data.detailAddress,
-            startDate: "-",
-            endDate: "-",
+            // startDate: "-",
+            // endDate: "-",
             // startDate: data.dates[0].format("YYYY-MM-DD"),
             // endDate: data.dates[1].format("YYYY-MM-DD"),
             stuLanguage: data.stuLanguage,
@@ -414,6 +417,14 @@ const UserList = ({}) => {
     [selectUserLevel]
   );
 
+  const onPaymentHanlder = useCallback(() => {
+    dispatch({
+      type: PAYMENT_LIST_REQUEST,
+      data: {
+        email: inputCreateEmail.value,
+      },
+    });
+  }, [inputCreateEmail.value]);
   ////// DATAVIEW //////
 
   const columns = [
@@ -463,8 +474,7 @@ const UserList = ({}) => {
             data.level === 5
               ? message.error("개발사는 권한을 수정할 수 없습니다.")
               : updateModalOpen(data)
-          }
-        >
+          }>
           수정
         </Button>
       ),
@@ -495,8 +505,7 @@ const UserList = ({}) => {
             size="small"
             defaultValue="1"
             style={{ width: "10%" }}
-            onChange={(data) => setCurrentType(data)}
-          >
+            onChange={(data) => setCurrentType(data)}>
             <Select.Option value="3">전체</Select.Option>
             <Select.Option value="1">학생</Select.Option>
             <Select.Option value="2">강사</Select.Option>
@@ -519,8 +528,7 @@ const UserList = ({}) => {
               moveLinkHandler(
                 `/admin/user/userList?name=${inputName.value}&email=${inputEmail.value}`
               )
-            }
-          >
+            }>
             <SearchOutlined />
             검색
           </Button>
@@ -542,15 +550,13 @@ const UserList = ({}) => {
         width={`400px`}
         title={`사용자 레벨 수정`}
         onCancel={updateModalClose}
-        onOk={onSubmitUpdate}
-      >
+        onOk={onSubmitUpdate}>
         <Wrapper padding={`10px`} al={`flex-start`}>
           <div>사용자 레벨</div>
           <Select
             style={{ width: "100%" }}
             value={String(inputLevel.value)}
-            onChange={(data) => inputLevel.setValue(data)}
-          >
+            onChange={(data) => inputLevel.setValue(data)}>
             <Select.Option value="1">일반학생</Select.Option>
             <Select.Option value="2">강사</Select.Option>
             <Select.Option value="3">운영자</Select.Option>
@@ -564,51 +570,48 @@ const UserList = ({}) => {
         onCancel={createModalToggle}
         title="회원 리스트"
         footer={null}
-        width={`800px`}
-      >
+        width={`800px`}>
         <Form
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 20 }}
           form={form}
-          onFinish={onSubmitCreate}
-        >
+          onFinish={onSubmitCreate}>
           <Form.Item
             label="이메일"
             rules={[{ required: true, message: "이메일을 입력해주세요." }]}
-            name="email"
-          >
-            <Input type="email" />
+            name="email">
+            <Input
+              {...inputCreateEmail}
+              type="email"
+              onBlur={() => onPaymentHanlder()}
+            />
           </Form.Item>
 
           <Form.Item
             label="회원아이디"
             rules={[{ required: true, message: "회원아이디를 입력해주세요." }]}
-            name="userId"
-          >
+            name="userId">
             <Input />
           </Form.Item>
 
           <Form.Item
             label="회원이름"
             rules={[{ required: true, message: "회원이름을 입력해주세요." }]}
-            name="username"
-          >
+            name="username">
             <Input />
           </Form.Item>
 
           <Form.Item
             label="생년월일"
             rules={[{ required: true, message: "생년월일을 선택해주세요.." }]}
-            name="birth"
-          >
+            name="birth">
             <Calendar fullscreen={false} />
           </Form.Item>
 
           <Form.Item
             label="성별"
             rules={[{ required: true, message: "생별을 선택해주세요." }]}
-            name="gender"
-          >
+            name="gender">
             <Select>
               <Select.Option value={`남`}>남자</Select.Option>
               <Select.Option value={`여`}>여자</Select.Option>
@@ -618,48 +621,42 @@ const UserList = ({}) => {
           <Form.Item
             label="전화번호"
             rules={[{ required: true, message: "전화번호를 입력해주세요." }]}
-            name="mobile"
-          >
+            name="mobile">
             <Input type="number" />
           </Form.Item>
 
           <Form.Item
             label="비밀번호"
             rules={[{ required: true, message: "비밀번호를 입력해주세요." }]}
-            name="password"
-          >
+            name="password">
             <Input type="password" />
           </Form.Item>
 
           <Form.Item
             label="비밀번호 재입력"
             rules={[{ required: true, message: "비밀번호를 재입력해주세요." }]}
-            name="repassword"
-          >
+            name="repassword">
             <Input type="password" />
           </Form.Item>
 
           <Form.Item
             label="주소"
             rules={[{ required: true, message: "주소를 입력해주세요." }]}
-            name="address"
-          >
+            name="address">
             <Input />
           </Form.Item>
 
           <Form.Item
             label="상세주소"
             rules={[{ required: true, message: "상세주소를 입력해주세요." }]}
-            name="detailAddress"
-          >
+            name="detailAddress">
             <Input />
           </Form.Item>
 
           <Form.Item
             label="권한"
             rules={[{ required: true, message: "권한을 선택해주세요." }]}
-            name="lavel"
-          >
+            name="lavel">
             <Select onChange={changeSelectLevel}>
               <Select.Option value="1">일반학생</Select.Option>
               <Select.Option value="2">강사</Select.Option>
@@ -688,13 +685,8 @@ const UserList = ({}) => {
                     message: "강의를 선택해주세요.",
                   },
                 ]}
-                name="lecture"
-              >
-                <Select
-                  showSearch
-                  placeholder="Select a Lecture"
-                  mode="multiple"
-                >
+                name="lecture">
+                <Select showSearch placeholder="Select a Lecture">
                   {lectureList}
                 </Select>
               </Form.Item>
@@ -704,8 +696,7 @@ const UserList = ({}) => {
                 rules={[
                   { required: true, message: "학생 언어를 입력해주세요." },
                 ]}
-                name="stuLanguage"
-              >
+                name="stuLanguage">
                 <Input />
               </Form.Item>
 
@@ -714,8 +705,7 @@ const UserList = ({}) => {
                 rules={[
                   { required: true, message: "학생 나라를 입력해주세요." },
                 ]}
-                name="stuCountry"
-              >
+                name="stuCountry">
                 <Input />
               </Form.Item>
 
@@ -724,16 +714,14 @@ const UserList = ({}) => {
                 rules={[
                   { required: true, message: "학생 거주 나라를 입력해주세요." },
                 ]}
-                name="stuLiveCon"
-              >
+                name="stuLiveCon">
                 <Input />
               </Form.Item>
 
               <Form.Item
                 label="sns"
                 rules={[{ required: true, message: "sns를 입력해주세요." }]}
-                name="sns"
-              >
+                name="sns">
                 <Input />
               </Form.Item>
 
@@ -742,8 +730,7 @@ const UserList = ({}) => {
                 rules={[
                   { required: true, message: "sns아이디를 입력해주세요." },
                 ]}
-                name="snsId"
-              >
+                name="snsId">
                 <Input />
               </Form.Item>
 
@@ -752,8 +739,7 @@ const UserList = ({}) => {
                 rules={[
                   { required: true, message: "학생직업을 입력해주세요." },
                 ]}
-                name="stuJob"
-              >
+                name="stuJob">
                 <Input />
               </Form.Item>
             </>
@@ -778,8 +764,7 @@ const UserList = ({}) => {
                         }
                       },
                     },
-                  ]}
-                >
+                  ]}>
                   {(fields, { add, remove }, { errors }) => {
                     return (
                       <>
@@ -788,8 +773,7 @@ const UserList = ({}) => {
                             <Wrapper width={`48%`}>
                               <Form.Item
                                 style={{ width: `100%`, margin: 0 }}
-                                name="firstIdentifyNum"
-                              >
+                                name="firstIdentifyNum">
                                 <Input
                                   type="number"
                                   style={{ width: `100%` }}
@@ -802,8 +786,7 @@ const UserList = ({}) => {
                             <Wrapper width={`48%`}>
                               <Form.Item
                                 style={{ width: `100%`, margin: 0 }}
-                                name="endIdentifyNum"
-                              >
+                                name="endIdentifyNum">
                                 <Input
                                   type="password"
                                   style={{ width: `100%` }}
@@ -828,8 +811,7 @@ const UserList = ({}) => {
                       message: "강사가 가능한 언어를 입력해주세요.",
                     },
                   ]}
-                  name="teaLanguage"
-                >
+                  name="teaLanguage">
                   <Input />
                 </Form.Item>
 
@@ -848,8 +830,7 @@ const UserList = ({}) => {
                   rules={[
                     { required: true, message: "은행이름을 입력해주세요." },
                   ]}
-                  name="bankName"
-                >
+                  name="bankName">
                   <Input />
                 </Form.Item>
 
@@ -858,8 +839,7 @@ const UserList = ({}) => {
                   rules={[
                     { required: true, message: "계좌번호를 입력해주세요." },
                   ]}
-                  name="bankNo"
-                >
+                  name="bankNo">
                   <Input />
                 </Form.Item>
               </>
@@ -870,8 +850,7 @@ const UserList = ({}) => {
             <Button
               size="small"
               style={{ margin: `0 10px 0 0` }}
-              onClick={createModalToggle}
-            >
+              onClick={createModalToggle}>
               취소
             </Button>
             <Button size="small" type="primary" htmlType="submit">

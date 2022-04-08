@@ -84,9 +84,10 @@ const UserList = ({}) => {
   const [opt3, setOpt3] = useState(null);
 
   const [detailToggle, setDetailToggle] = useState(false);
+  const [classPartEndModal, setClassPartEndModal] = useState(false);
 
   const [parData, setParData] = useState(null);
-
+  const [parEndData, setParEndData] = useState(null);
   const [form] = Form.useForm();
   const [updateClassform] = Form.useForm();
   const [updateEndClassform] = Form.useForm();
@@ -221,6 +222,8 @@ const UserList = ({}) => {
       });
       updateClassform.resetFields();
       setParData(data);
+
+      console.log(data, "data");
     },
     [classPartModal]
   );
@@ -235,6 +238,21 @@ const UserList = ({}) => {
     },
     [classPartModal]
   );
+
+  const classPartEndModalOpen = useCallback((data) => {
+    setClassPartEndModal(true);
+
+    console.log(data, "Data");
+
+    updateEndClassform.resetFields();
+
+    setParEndData(data.Participants);
+  }, []);
+
+  const classPartEndModalClose = useCallback((data) => {
+    setClassPartEndModal(false);
+    setParEndData(null);
+  }, []);
 
   ////// HANDLER //////
 
@@ -269,13 +287,16 @@ const UserList = ({}) => {
 
   const onUpdateClassSubmit = useCallback(
     (data) => {
-      dispatch({
-        type: PARTICIPANT_CREATE_REQUEST,
-        data: {
-          UserId: parData.id,
-          LectureId: data.partLecture,
-        },
-      });
+      console.log(data, "data", parData);
+      // dispatch({
+      //   type: PARTICIPANT_CREATE_REQUEST,
+      //   data: {
+      //     UserId: parData.id,
+      //     LectureId: data.partLecture,
+      //     date: "",
+      //     endDate: "",
+      //   },
+      // });
     },
     [parData]
   );
@@ -313,28 +334,28 @@ const UserList = ({}) => {
     });
   }, [inputName.value, inputEmail.value]);
 
-  // const selectChangeHandler = useCallback(
-  //   (e) => {
-  //     const id = parseInt(e.split(`.`)[0]);
-  //     setLectureList(lectureList.filter((data) => data.id !== id));
+  const selectChangeHandler = useCallback(
+    (e) => {
+      const id = parseInt(e.split(`.`)[0]);
+      setLectureList(lectureList.filter((data) => data.id !== id));
 
-  //     const state = selectedList;
-  //     state.push(lectureList.filter((data) => data.id === id)[0]);
-  //     setSelectedList(state);
-  //   },
-  //   [lectureList, selectedList]
-  // );
+      const state = selectedList;
+      state.push(lectureList.filter((data) => data.id === id)[0]);
+      setSelectedList(state);
+    },
+    [lectureList, selectedList]
+  );
 
-  // const selectCancelHandler = useCallback(
-  //   (cancelData) => {
-  //     setSelectedList(selectedList.filter((data) => data.id !== cancelData.id));
+  const selectCancelHandler = useCallback(
+    (cancelData) => {
+      setSelectedList(selectedList.filter((data) => data.id !== cancelData.id));
 
-  //     const state = lectureList;
-  //     state.push(cancelData);
-  //     setLectureList(state);
-  //   },
-  //   [lectureList, selectedList]
-  // );
+      const state = lectureList;
+      state.push(cancelData);
+      setLectureList(state);
+    },
+    [lectureList, selectedList]
+  );
 
   const onSeachHandler = useCallback((value) => {
     console.log(value);
@@ -396,8 +417,7 @@ const UserList = ({}) => {
             data.level === 5
               ? message.error("개발사는 권한을 수정할 수 없습니다.")
               : classChangeModalOpen(data)
-          }
-        >
+          }>
           반 옮기기
         </Button>
       ),
@@ -413,8 +433,7 @@ const UserList = ({}) => {
             data.level === 5
               ? message.error("개발사는 권한을 수정할 수 없습니다.")
               : classPartModalOpen(data)
-          }
-        >
+          }>
           수업참여
         </Button>
       ),
@@ -429,9 +448,8 @@ const UserList = ({}) => {
           onClick={() =>
             data.level === 5
               ? message.error("개발사는 권한을 수정할 수 없습니다.")
-              : classPartModalOpen(data)
-          }
-        >
+              : classPartEndModalOpen(data)
+          }>
           수업종료
         </Button>
       ),
@@ -443,8 +461,7 @@ const UserList = ({}) => {
         <Button
           size="small"
           type="primary"
-          onClick={() => detailModalOpen(data)}
-        >
+          onClick={() => detailModalOpen(data)}>
           참가중인 강의
         </Button>
       ),
@@ -528,8 +545,7 @@ const UserList = ({}) => {
         width={`400px`}
         title={`학생 수업 변경`}
         onCancel={classChangeModalClose}
-        onOk={onModalOk}
-      >
+        onOk={onModalOk}>
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form form={form} style={{ width: `100%` }} onFinish={onSubmit}>
             <Form.Item label={`학생`}>
@@ -541,8 +557,7 @@ const UserList = ({}) => {
                 width={`100%`}
                 height={`32px`}
                 showSearch
-                placeholder="Select a Lecture"
-              >
+                placeholder="Select a Lecture">
                 {opt1}
               </Select>
             </Form.Item>
@@ -567,19 +582,22 @@ const UserList = ({}) => {
         width={`400px`}
         title={`학생 수업 참여`}
         onCancel={classPartModalClose}
-        onOk={onModalChangeOk}
-      >
+        onOk={onModalChangeOk}>
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
             form={updateClassform}
             style={{ width: `100%` }}
-            onFinish={onUpdateClassSubmit}
-          >
+            onFinish={onUpdateClassSubmit}>
             <Form.Item label={`학생`}>
               <Input disabled value={parData && parData.username} />
             </Form.Item>
 
-            <Form.Item label={`참여할 강의`} name={`partLecture`}>
+            <Form.Item
+              label={`참여할 강의`}
+              name={`partLecture`}
+              rules={[
+                { required: true, message: "참가시킬 강의를 선택해주세요." },
+              ]}>
               <Select
                 width={`100%`}
                 height={`32px`}
@@ -589,8 +607,7 @@ const UserList = ({}) => {
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
                 }
-                placeholder="Select a Lecture"
-              >
+                placeholder="Select a Lecture">
                 {opt2}
               </Select>
             </Form.Item>
@@ -599,18 +616,16 @@ const UserList = ({}) => {
       </Modal>
 
       <Modal
-        visible={classPartModal}
+        visible={classPartEndModal}
         width={`400px`}
         title={`학생 수업 종료`}
-        onCancel={classPartModalClose}
-        onOk={onModalChangeOk}
-      >
+        onCancel={classPartEndModalClose}
+        onOk={classPartEndModalClose}>
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
             form={updateEndClassform}
             style={{ width: `100%` }}
-            onFinish={onUpdateEndClassSubmit}
-          >
+            onFinish={onUpdateEndClassSubmit}>
             <Form.Item label={`학생`}>
               <Input disabled value={parData && parData.username} />
             </Form.Item>
@@ -625,9 +640,12 @@ const UserList = ({}) => {
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
                 }
-                placeholder="Select a Lecture"
-              >
-                {opt3}
+                placeholder="Select a Lecture">
+                {parEndData &&
+                  parEndData.map((data, idx) => {
+                    console.log(data, "data");
+                    return <Option key={data.id}></Option>;
+                  })}
               </Select>
             </Form.Item>
           </Form>
@@ -639,8 +657,7 @@ const UserList = ({}) => {
         width={`80%`}
         title={`학생 강의 목록`}
         footer={null}
-        onCancel={() => setDetailToggle(false)}
-      >
+        onCancel={() => setDetailToggle(false)}>
         <Table
           rowKey="id"
           columns={columnsList}
@@ -651,8 +668,7 @@ const UserList = ({}) => {
           padding={`16px 0px`}
           color={Theme.black_2C}
           fontSize={`16px`}
-          fontWeight={`500`}
-        >
+          fontWeight={`500`}>
           학생강의 참여 및 이동 기록
         </Text>
 

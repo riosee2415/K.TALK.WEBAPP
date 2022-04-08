@@ -40,7 +40,10 @@ import {
   PAY_CLASS_DELETE_REQUEST,
   PAY_CLASS_LIST_REQUEST,
 } from "../../../reducers/payClass";
-import { LECTURE_ALL_LIST_REQUEST } from "../../../reducers/lecture";
+import {
+  LECTURE_ALL_LIST_REQUEST,
+  LECTURE_DETAIL_REQUEST,
+} from "../../../reducers/lecture";
 import moment from "moment";
 
 const LoadNotification = (msg, content) => {
@@ -98,7 +101,8 @@ const Pay = ({}) => {
     st_payClassListDone,
     st_payClassListError,
   } = useSelector((state) => state.payClass);
-  const { allLectures } = useSelector((state) => state.lecture);
+  const { allLectures, st_lectureDetailDone, st_lectureDetailError } =
+    useSelector((state) => state.lecture);
 
   const router = useRouter();
 
@@ -238,6 +242,14 @@ const Pay = ({}) => {
     cForm.resetFields();
   }, [cForm]);
 
+  const onChangeDetail = useCallback((data) => {
+    console.log(data, "data");
+    dispatch({
+      type: LECTURE_DETAIL_REQUEST,
+      data: {},
+    });
+  }, []);
+
   ////// DATAVIEW //////
 
   ////// DATA COLUMNS //////
@@ -260,7 +272,7 @@ const Pay = ({}) => {
     {
       title: "가격",
       render: (data) => {
-        return <Text>{data.price}</Text>;
+        return <Text>&#36;{data.price}</Text>;
       },
     },
     {
@@ -294,8 +306,7 @@ const Pay = ({}) => {
           <Button
             type={`primary`}
             size={`small`}
-            onClick={() => updateModalOpen(data)}
-          >
+            onClick={() => updateModalOpen(data)}>
             DETAIL
           </Button>
         );
@@ -310,8 +321,7 @@ const Pay = ({}) => {
             title={"삭제하시겠습니까?"}
             onConfirm={() => onSubmitDelete(data)}
             okText="Yes"
-            cancelText="No"
-          >
+            cancelText="No">
             <Button type={`danger`} size={`small`}>
               DELETE
             </Button>
@@ -349,8 +359,7 @@ const Pay = ({}) => {
         width="900px"
         onOk={updateData ? updateModalClose : modalOk}
         onCancel={updateData ? updateModalClose : modalClose}
-        title={updateData ? "상세보기" : "결제 클래스 생성"}
-      >
+        title={updateData ? "상세보기" : "결제 클래스 생성"}>
         {console.log(updateData)}
         <Wrapper>
           <FormTag form={cForm} onFinish={onSubmit}>
@@ -358,8 +367,7 @@ const Pay = ({}) => {
               <Text width={`80px`}>제목</Text>
               <FormItem
                 rules={[{ required: true, message: "강의명을 입력해주세요." }]}
-                name={`course`}
-              >
+                name={`course`}>
                 <CusotmInput disabled={updateData ? true : false} />
               </FormItem>
             </Wrapper>
@@ -368,9 +376,11 @@ const Pay = ({}) => {
               <Text width={`80px`}>강의</Text>
               <FormItem
                 rules={[{ required: true, message: "강사를 선택해주세요." }]}
-                name={`lecture`}
-              >
-                <Select size={`large`} disabled={updateData ? true : false}>
+                name={`lecture`}>
+                <Select
+                  size={`large`}
+                  disabled={updateData ? true : false}
+                  onChange={(e) => onChangeDetail(e)}>
                   {allLectures &&
                     allLectures.map((data) => {
                       return (
@@ -393,8 +403,7 @@ const Pay = ({}) => {
                   { required: true, message: "강의 기간을 입력해주세요." },
                 ]}
                 name={`price`}
-                width={`calc(100% - 110px)`}
-              >
+                width={`calc(100% - 110px)`}>
                 <CusotmInput
                   disabled={updateData ? true : false}
                   type={`number`}
@@ -407,8 +416,7 @@ const Pay = ({}) => {
               <FormItem
                 rules={[{ required: true, message: "할인률을 입력해주세요." }]}
                 name={`discount`}
-                width={`calc(100% - 110px)`}
-              >
+                width={`calc(100% - 110px)`}>
                 <CusotmInput
                   disabled={updateData ? true : false}
                   type={`number`}
@@ -425,8 +433,7 @@ const Pay = ({}) => {
                 rules={[
                   { required: true, message: "시작 날짜를 입력해주세요." },
                 ]}
-                name={`startDate`}
-              >
+                name={`startDate`}>
                 <DateInput
                   disabled={updateData ? true : false}
                   format={`YYYY-MM-DD`}
@@ -442,8 +449,7 @@ const Pay = ({}) => {
                   { required: true, message: "강의 기간을 입력해주세요." },
                 ]}
                 name={`week`}
-                width={`calc(100% - 110px)`}
-              >
+                width={`calc(100% - 110px)`}>
                 <CusotmInput
                   disabled={updateData ? true : false}
                   type={`number`}
@@ -460,8 +466,7 @@ const Pay = ({}) => {
               </Text>
               <FormItem
                 rules={[{ required: true, message: "메모를 작성해주세요." }]}
-                name={`memo`}
-              >
+                name={`memo`}>
                 <CustomArea disabled={updateData ? true : false} />
               </FormItem>
             </Wrapper>
@@ -474,8 +479,7 @@ const Pay = ({}) => {
         width="900px"
         onOk={() => {}}
         onCancel={() => {}}
-        title="주의사항"
-      >
+        title="주의사항">
         <GuideUl>
           <GuideLi>asdfasdf</GuideLi>
           <GuideLi isImpo={true}>asdfasdf</GuideLi>

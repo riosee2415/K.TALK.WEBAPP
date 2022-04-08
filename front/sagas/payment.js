@@ -13,7 +13,7 @@ import {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function paymentListAPI(data) {
-  return axios.post(`/api/payment/list`);
+  return axios.post(`/api/payment/list`, data);
 }
 
 function* paymentList(action) {

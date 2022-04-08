@@ -131,7 +131,7 @@ const PaymentList = ({}) => {
 
     {
       title: "결제한 강의",
-      dataIndex: "class",
+      dataIndex: "course",
     },
 
     {
@@ -160,8 +160,7 @@ const PaymentList = ({}) => {
           <Button
             type={`primary`}
             size={`small`}
-            onClick={() => onClickCheckID(data)}
-          >
+            onClick={() => onClickCheckID(data)}>
             아이디 확인
           </Button>
         );
@@ -206,8 +205,7 @@ const PaymentList = ({}) => {
         width="900px"
         onOk={() => {}}
         onCancel={() => {}}
-        title="주의사항"
-      >
+        title="주의사항">
         <GuideUl>
           <GuideLi>asdfasdf</GuideLi>
           <GuideLi isImpo={true}>asdfasdf</GuideLi>
