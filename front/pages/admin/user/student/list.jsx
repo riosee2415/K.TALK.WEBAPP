@@ -489,22 +489,22 @@ const UserList = ({}) => {
 
     {
       title: "수업 이름",
-      render: (data) => <div>""{console.log(data)}</div>,
+      render: (data) => <div>{data.Lecture && data.Lecture.course}</div>,
     },
 
     {
       title: "요일",
-      render: (data) => <div>""</div>,
+      render: (data) => <div>{data.Lecture && data.Lecture.day}</div>,
     },
 
     {
       title: "시간",
-      render: (data) => <div>""</div>,
+      render: (data) => <div>{data.Lecture && data.Lecture.time}</div>,
     },
 
     {
       title: "총 강의 수",
-      render: (data) => <div>""</div>,
+      render: (data) => <div>{data.Lecture && data.Lecture.count}</div>,
     },
   ];
   return (
@@ -668,10 +668,11 @@ const UserList = ({}) => {
       <Modal
         visible={detailToggle}
         width={`80%`}
-        title={`학생 강의 목록11`}
+        title={`학생 강의 목록`}
         footer={null}
         onCancel={() => setDetailToggle(false)}
       >
+        {console.log(detailDatum)}
         <Table
           rowKey="id"
           columns={columnsList}
