@@ -16,6 +16,10 @@ import {
   PARTICIPANT_CREATE_REQUEST,
   PARTICIPANT_CREATE_SUCCESS,
   PARTICIPANT_CREATE_FAILURE,
+  //////////////////////////////////////////////////////////
+  PARTICIPANT_DELETE_REQUEST,
+  PARTICIPANT_DELETE_SUCCESS,
+  PARTICIPANT_DELETE_FAILURE,
 } from "../reducers/participant";
 
 // SAGA AREA ********************************************************************************************************
@@ -110,6 +114,29 @@ function* participantCreate(action) {
   }
 }
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function participantDeleteAPI(data) {
+  return axios.post(`/api/part/delete`, data);
+}
+
+function* participantDelete(action) {
+  try {
+    const result = yield call(participantDeleteAPI, action.data);
+
+    yield put({
+      type: PARTICIPANT_DELETE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: PARTICIPANT_DELETE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 // ******************************************************************************************************************
@@ -132,6 +159,10 @@ function* watchParticipantCreate() {
   yield takeLatest(PARTICIPANT_CREATE_REQUEST, participantCreate);
 }
 
+function* watchParticipantDelete() {
+  yield takeLatest(PARTICIPANT_DELETE_REQUEST, participantDelete);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* participantSaga() {
   yield all([
@@ -139,6 +170,7 @@ export default function* participantSaga() {
     fork(watchParticipantLectureList),
     fork(watchParticipantAdminList),
     fork(watchParticipantCreate),
+    fork(watchParticipantDelete),
     //
   ]);
 }

@@ -25,7 +25,10 @@ import {
 } from "../../../../components/commonComponents";
 import { LECTURE_ALL_LIST_REQUEST } from "../../../../reducers/lecture";
 import { CloseCircleOutlined } from "@ant-design/icons";
-import { PARTICIPANT_CREATE_REQUEST } from "../../../../reducers/participant";
+import {
+  PARTICIPANT_CREATE_REQUEST,
+  PARTICIPANT_DELETE_REQUEST,
+} from "../../../../reducers/participant";
 import useInput from "../../../../hooks//useInput";
 import { SearchOutlined } from "@ant-design/icons";
 import Theme from "../../../../components/Theme";
@@ -39,8 +42,22 @@ const AdminContent = styled.div`
 const UserList = ({}) => {
   const { Option } = Select;
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
-  const { me, st_loadMyInfoDone } = useSelector((state) => state.user);
+
   const { allLectures } = useSelector((state) => state.lecture);
+
+  const {
+    me,
+    st_loadMyInfoDone,
+
+    allUsers,
+    classChangeModal,
+    classPartModal,
+    //
+    st_userListError,
+    //
+    st_userChangeDone,
+    st_userChangeError,
+  } = useSelector((state) => state.user);
 
   const router = useRouter();
 
@@ -61,19 +78,11 @@ const UserList = ({}) => {
   const dispatch = useDispatch();
 
   const {
-    allUsers,
-    classChangeModal,
-    classPartModal,
-    //
-    st_userListError,
-    //
-    st_userChangeDone,
-    st_userChangeError,
-  } = useSelector((state) => state.user);
-
-  const { st_participantCreateDone, st_participantCreateError } = useSelector(
-    (state) => state.participant
-  );
+    st_participantCreateDone,
+    st_participantCreateError,
+    st_participantDeleteDone,
+    st_participantDeleteError,
+  } = useSelector((state) => state.participant);
 
   const { paymentList, st_paymentListDone, st_paymentListError } = useSelector(
     (state) => state.payment
@@ -86,9 +95,7 @@ const UserList = ({}) => {
 
   const [detailDatum, setDetailDatum] = useState([]);
 
-  const [opt1, setOpt1] = useState(null);
   const [opt2, setOpt2] = useState(null);
-  const [opt3, setOpt3] = useState(null);
   const [opt4, setOpt4] = useState(null);
 
   const [detailToggle, setDetailToggle] = useState(false);
@@ -96,8 +103,6 @@ const UserList = ({}) => {
 
   const [parData, setParData] = useState(null);
   const [parEndData, setParEndData] = useState(null);
-
-  const [classChangeId, setClassChangeId] = useState("");
 
   const [form] = Form.useForm();
   const [updateClassform] = Form.useForm();
@@ -125,7 +130,7 @@ const UserList = ({}) => {
         TeacherId: "",
       },
     });
-  }, [router.query]);
+  }, [router.query, st_participantDeleteDone, st_participantCreateDone]);
 
   useEffect(() => {
     if (st_userChangeDone) {
@@ -176,35 +181,23 @@ const UserList = ({}) => {
   }, [st_participantCreateError]);
 
   useEffect(() => {
-    setOpt1(
-      allLectures &&
-        allLectures.map((data) => {
-          return <Option value={data.LectureId}>{data.course}</Option>;
-        })
-    );
-  }, [allLectures]);
+    // console.log(parData.Participants, "aaaa");
 
-  // useEffect(() => {
-  //   setOpt3(
-  //     parData &&
-  //       parData.Participants.map((data) => {
-  //         console.log(data, "data");
-  //         return <Option value={data.LectureId}>{data.Lecture.course}</Option>;
-  //       })
-  //   );
-  // }, [parData]);
-  useEffect(() => {
     setOpt2(
-      allLectures &&
-        allLectures.map((data) => {
+      paymentList &&
+        paymentList.map((data) => {
+          if (data.UserId) return;
           return (
-            <Option key={data.id} value={data.LetureId}>
-              {data.course}
+            <Option
+              key={data.id}
+              value={`${data.id},${data.LetureId},${data.week}`}>
+              {data.createdAt.slice(0, 10)} | {data.course} | &#36;
+              {data.price} | &nbsp;{data.email}
             </Option>
           );
         })
     );
-  }, [allLectures]);
+  }, [paymentList]);
 
   useEffect(() => {
     setOpt4(
@@ -217,7 +210,7 @@ const UserList = ({}) => {
           );
         })
     );
-  }, [allLectures, classChangeId]);
+  }, [allLectures]);
 
   useEffect(() => {
     if (st_paymentListError) {
@@ -225,18 +218,24 @@ const UserList = ({}) => {
     }
   }, [st_paymentListError]);
 
+  useEffect(() => {
+    if (st_participantDeleteDone) {
+      classPartEndModalClose();
+      return message.success("해당 학생이 수업에서 제외되었습니다.");
+    }
+  }, [st_participantDeleteDone]);
+
+  useEffect(() => {
+    if (st_participantDeleteError) {
+      return message.error(st_participantDeleteError);
+    }
+  }, [st_participantDeleteError]);
+
   ////// TOGGLE //////
   const classChangeModalOpen = useCallback(
     (data) => {
       dispatch({
         type: CHANGE_CLASS_OPEN_REQUEST,
-      });
-
-      dispatch({
-        type: PAYMENT_LIST_REQUEST,
-        data: {
-          email: data.email,
-        },
       });
 
       setUpdateData(data);
@@ -287,9 +286,8 @@ const UserList = ({}) => {
 
     updateEndClassform.resetFields();
 
-    console.log(data, "data");
-
-    setParEndData(data.Participants);
+    onFillEnd(data);
+    setParEndData(data);
   }, []);
 
   const classPartEndModalClose = useCallback((data) => {
@@ -297,7 +295,17 @@ const UserList = ({}) => {
     setParEndData(null);
   }, []);
 
+  const onFillEnd = useCallback((data) => {
+    updateEndClassform.setFieldsValue({
+      userName: data.username,
+    });
+  }, []);
+
   ////// HANDLER //////
+
+  const onSubmitEnd = useCallback(() => {
+    updateEndClassform.submit();
+  }, []);
 
   const onModalOk = useCallback(() => {
     form.submit();
@@ -309,45 +317,28 @@ const UserList = ({}) => {
 
   const onSubmit = useCallback(
     async (data) => {
-      if (!data.lecture || data.lecture === "--- 선택 ---") {
+      if (!data.lecture) {
         return message.error(`현재 강의를 선택해주세요.`);
       }
-      if (!data.changelecture || data.changelecture === "--- 선택 ---") {
+      if (!data.changelecture) {
         return message.error(`바꿀 강의를 선택해주세요.`);
       }
 
-      let current = {};
-      let endDate = {};
-
-      await paymentList.filter((payData) => {
-        if (payData.LetureId === data.lecture) {
-          current = payData;
-          return true;
-        }
-      });
-
-      await updateData.Participants.filter((payData, idx) => {
-        if (payData.LectureId === data.lecture) {
-          endDate = payData.endDate;
-          return true;
-        }
-      });
+      let LectureId = data.lecture.split(",")[0];
+      let endDate = data.lecture.split(",")[2];
 
       let Day = Math.abs(
         parseInt(moment.duration(moment().diff(moment(endDate))).asDays())
       );
 
-      let currentEndDate = moment().add(Day, "days").format("YYYY-MM-DD");
-      console.log(currentEndDate, "currentEndDate");
-
       dispatch({
         type: USER_CLASS_CHANGE_REQUEST,
         data: {
           UserId: updateData.id,
-          LectureId: data.lecture,
-          // ChangeLectureId: data.changelecture,
-          // date: parseInt(Day),
-          // endDate: currentEndDate,
+          LectureId: LectureId,
+          ChangeLectureId: data.changelecture,
+          date: Day,
+          endDate: endDate,
         },
       });
     },
@@ -356,49 +347,44 @@ const UserList = ({}) => {
 
   const onUpdateClassSubmit = useCallback(
     (data) => {
-      let day = 0;
-      let saveData = "YYY-MM-DD";
       // if (paymentData.length !== 0) {
       //   day = paymentData[0].week * 7;
       //   saveData = moment().add(day, "days").format("YYYY-MM-DD");
       // }
 
-      console.log(allLectures, "allLectures");
+      console.log(data, "data");
+      console.log(parData, "parData");
+
+      let PaymentId = data.partLecture.split(",")[0];
+      let LectureId = data.partLecture.split(",")[1];
+      let date = parseInt(data.partLecture.split(",")[2]) * 7;
+      let saveData = moment().add(date, "days").format("YYYY-MM-DD");
 
       dispatch({
         type: PARTICIPANT_CREATE_REQUEST,
         data: {
           UserId: parData.id,
-          LectureId: data.partLecture,
-          date: "",
-          endDate: "",
-          PaymentId: "",
+          LectureId: LectureId,
+          date: date,
+          endDate: saveData,
+          PaymentId,
         },
       });
     },
     [parData, allLectures]
   );
 
-  const onUpdateEndClassSubmit = useCallback(
+  const onEndClassSubmit = useCallback(
     (data) => {
-      if (!data.lecture || data.lecture === "--- 선택 ---") {
-        return message.error(`현재 강의를 선택해주세요.`);
-      }
-      if (!data.changelecture || data.changelecture === "--- 선택 ---") {
-        return message.error(`바꿀 강의를 선택해주세요.`);
-      }
-
       dispatch({
-        type: USER_CLASS_CHANGE_REQUEST,
+        type: PARTICIPANT_DELETE_REQUEST,
         data: {
-          UserId: updateData.id,
-          LectureId: data.lecture,
-          ChangeLectureId: data.changelecture,
+          UserId: parEndData.id,
+          LectureId: data.partLecture,
         },
       });
     },
-
-    []
+    [parEndData]
   );
 
   const onSeachStuHandler = useCallback(() => {
@@ -450,13 +436,14 @@ const UserList = ({}) => {
     setPaymentData(arr);
   }, []);
 
-  const onChangeClass = useCallback((data) => {
-    setClassChangeId(data);
-  }, []);
-
   const detailModalOpen = useCallback((data) => {
     setDetailToggle(true);
-    setDetailDatum(data.Participants);
+
+    let save = data.Participants.filter((Datum, idx) => {
+      return !Datum.isChange && !Datum.isDelete;
+    });
+
+    setDetailDatum(save);
   }, []);
 
   ////// DATAVIEW //////
@@ -510,8 +497,7 @@ const UserList = ({}) => {
               data.level === 5
                 ? message.error("개발사는 권한을 수정할 수 없습니다.")
                 : classChangeModalOpen(data)
-            }
-          >
+            }>
             반 옮기기
           </Button>
 
@@ -521,8 +507,7 @@ const UserList = ({}) => {
               data.level === 5
                 ? message.error("개발사는 권한을 수정할 수 없습니다.")
                 : classPartModalOpen(data)
-            }
-          >
+            }>
             수업참여
           </Button>
 
@@ -546,8 +531,7 @@ const UserList = ({}) => {
         <Button
           size="small"
           type="primary"
-          onClick={() => detailModalOpen(data)}
-        >
+          onClick={() => detailModalOpen(data)}>
           참가중인 강의
         </Button>
       ),
@@ -631,14 +615,12 @@ const UserList = ({}) => {
         width={`400px`}
         title={`학생 수업 변경`}
         onCancel={classChangeModalClose}
-        onOk={onModalOk}
-      >
+        onOk={onModalOk}>
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
             form={form}
             style={{ width: `100%` }}
-            onFinish={(data) => onSubmit(data)}
-          >
+            onFinish={(data) => onSubmit(data)}>
             <Form.Item label={`학생`}>
               <Input disabled value={updateData && updateData.username} />
             </Form.Item>
@@ -648,9 +630,23 @@ const UserList = ({}) => {
                 width={`100%`}
                 height={`32px`}
                 showSearch
-                placeholder="Select a Lecture"
-              >
-                {opt1}
+                placeholder="Select a Lecture">
+                {updateData &&
+                  updateData.Participants.map((data, idx) => {
+                    if (data.isDelete) {
+                      return null;
+                    } else if (data.isChange) {
+                      return null;
+                    }
+
+                    return (
+                      <Option
+                        key={data.id}
+                        value={`${data.LectureId},${data.date},${data.endDate}`}>
+                        {data.Lecture?.course}
+                      </Option>
+                    );
+                  })}
               </Select>
             </Form.Item>
 
@@ -671,17 +667,15 @@ const UserList = ({}) => {
 
       <Modal
         visible={classPartModal}
-        width={`400px`}
+        width={`800px`}
         title={`학생 수업 참여`}
         onCancel={classPartModalClose}
-        onOk={onModalChangeOk}
-      >
+        onOk={onModalChangeOk}>
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
             form={updateClassform}
             style={{ width: `100%` }}
-            onFinish={onUpdateClassSubmit}
-          >
+            onFinish={onUpdateClassSubmit}>
             <Form.Item label={`학생`}>
               <Input disabled value={parData && parData.username} />
             </Form.Item>
@@ -691,8 +685,7 @@ const UserList = ({}) => {
               name={`partLecture`}
               rules={[
                 { required: true, message: "참가시킬 강의를 선택해주세요." },
-              ]}
-            >
+              ]}>
               <Select
                 width={`100%`}
                 height={`32px`}
@@ -702,8 +695,7 @@ const UserList = ({}) => {
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
                 }
-                placeholder="Select a Lecture"
-              >
+                placeholder="Select a Lecture">
                 {opt2}
               </Select>
             </Form.Item>
@@ -714,18 +706,16 @@ const UserList = ({}) => {
       <Modal
         visible={classPartEndModal}
         width={`400px`}
-        title={`학생 수업 뺴기`}
+        title={`학생 수업 변경`}
         onCancel={classPartEndModalClose}
-        onOk={classPartEndModalClose}
-      >
+        onOk={onSubmitEnd}>
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
             form={updateEndClassform}
             style={{ width: `100%` }}
-            onFinish={onUpdateEndClassSubmit}
-          >
-            <Form.Item label={`학생`}>
-              <Input disabled value={parData && parData.username} />
+            onFinish={onEndClassSubmit}>
+            <Form.Item label={`학생`} name={`userName`}>
+              <Input disabled value={parEndData && parEndData.username} />
             </Form.Item>
 
             <Form.Item label={`종료할 강의`} name={`partLecture`}>
@@ -733,17 +723,19 @@ const UserList = ({}) => {
                 width={`100%`}
                 height={`32px`}
                 showSearch
-                onChange={onSeachHandler}
-                filterOption={(input, option) =>
-                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
-                  0
-                }
-                placeholder="Select a Lecture"
-              >
+                placeholder="Select a Lecture">
                 {parEndData &&
-                  parEndData.map((data, idx) => {
+                  parEndData.Participants.map((data, idx) => {
+                    if (data.isDelete) {
+                      return null;
+                    } else if (data.isChange) {
+                      return null;
+                    }
+
                     return (
-                      <Option key={data.id}> {data.Lecture?.course}</Option>
+                      <Option key={data.id} value={data.LectureId}>
+                        {data.Lecture?.course}
+                      </Option>
                     );
                   })}
               </Select>
@@ -757,8 +749,7 @@ const UserList = ({}) => {
         width={`80%`}
         title={`학생 강의 목록`}
         footer={null}
-        onCancel={() => setDetailToggle(false)}
-      >
+        onCancel={() => setDetailToggle(false)}>
         <Table
           rowKey="id"
           columns={columnsList}
@@ -769,8 +760,7 @@ const UserList = ({}) => {
           padding={`16px 0px`}
           color={Theme.black_2C}
           fontSize={`16px`}
-          fontWeight={`500`}
-        >
+          fontWeight={`500`}>
           학생강의 참여 및 이동 기록
         </Text>
 

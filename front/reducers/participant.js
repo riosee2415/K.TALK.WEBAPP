@@ -21,6 +21,10 @@ export const initialState = {
   st_participantAdminLoading: false,
   st_participantAdminDone: false,
   st_participantAdminError: null,
+  //
+  st_participantDeleteLoading: false,
+  st_participantDeleteDone: false,
+  st_participantDeleteError: null,
 };
 
 export const PARTICIPANT_LIST_REQUEST = "PARTICIPANT_LIST_REQUEST";
@@ -41,6 +45,10 @@ export const PARTICIPANT_ADMIN_LIST_FAILURE = "PARTICIPANT_ADMIN_LIST_FAILURE";
 export const PARTICIPANT_CREATE_REQUEST = "PARTICIPANT_CREATE_REQUEST";
 export const PARTICIPANT_CREATE_SUCCESS = "PARTICIPANT_CREATE_SUCCESS";
 export const PARTICIPANT_CREATE_FAILURE = "PARTICIPANT_CREATE_FAILURE";
+
+export const PARTICIPANT_DELETE_REQUEST = "PARTICIPANT_DELETE_REQUEST";
+export const PARTICIPANT_DELETE_SUCCESS = "PARTICIPANT_DELETE_SUCCESS";
+export const PARTICIPANT_DELETE_FAILURE = "PARTICIPANT_DELETE_FAILURE";
 
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
@@ -125,6 +133,26 @@ const reducer = (state = initialState, action) =>
         draft.st_participantCreateLoading = false;
         draft.st_participantCreateDone = false;
         draft.st_participantCreateError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case PARTICIPANT_DELETE_REQUEST: {
+        draft.st_participantDeleteLoading = true;
+        draft.st_participantDeleteDone = null;
+        draft.st_participantDeleteError = false;
+        break;
+      }
+      case PARTICIPANT_DELETE_SUCCESS: {
+        draft.st_participantDeleteDone = true;
+        draft.st_participantDeleteLoading = false;
+        break;
+      }
+      case PARTICIPANT_DELETE_FAILURE: {
+        draft.st_participantDeleteLoading = false;
+        draft.st_participantDeleteDone = false;
+        draft.st_participantDeleteError = action.error;
         break;
       }
 

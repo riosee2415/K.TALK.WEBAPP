@@ -754,7 +754,6 @@ const Student = () => {
 
   const sendMessageAnswerAdminFinish = useCallback(
     (data) => {
-      console.log("한번만!");
       dispatch({
         type: MESSAGE_FOR_ADMIN_CREATE_REQUEST,
         data: {
