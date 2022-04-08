@@ -20,6 +20,8 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
             A.updatedAt,
             A.UserId,
             A.PayClassId,
+            B.startDate,
+            B.week,
             C.id                  AS LetureId,
             C.course
       FROM  payments		A
