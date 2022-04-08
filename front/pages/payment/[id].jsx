@@ -235,9 +235,7 @@ const Index = () => {
                 </Wrapper>
 
                 <Wrapper dr={`row`} ju={`flex-start`} margin={`30px 0 0 0`}>
-                  <Text fontSize={width < 700 ? `16px` : `20px`}>
-                    {`4주 = 28일`}
-                  </Text>
+                  <Text fontSize={width < 700 ? `16px` : `20px`}></Text>
                 </Wrapper>
 
                 <Wrapper al={`flex-start`} dr={`row`} margin={`30px 0 100px 0`}>

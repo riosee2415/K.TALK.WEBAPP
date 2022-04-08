@@ -179,6 +179,8 @@ const UserList = ({}) => {
     setOpt1(
       updateData &&
         updateData.Participants.map((data) => {
+          if (data.isChange) return;
+
           return <Option value={data.LectureId}>{data.Lecture.course}</Option>;
         })
     );
@@ -188,6 +190,7 @@ const UserList = ({}) => {
     setOpt3(
       parData &&
         parData.Participants.map((data) => {
+          console.log(data, "data");
           return <Option value={data.LectureId}>{data.Lecture.course}</Option>;
         })
     );
@@ -211,8 +214,6 @@ const UserList = ({}) => {
     setOpt4(
       allLectures &&
         allLectures.map((data) => {
-          if (classChangeId === data.id) return;
-
           return (
             <Option key={data.id} value={data.id}>
               {data.course}
@@ -334,15 +335,12 @@ const UserList = ({}) => {
         }
       });
 
-      // let currentEndDate = moment()
-      //   .add(current.week * 7, "days")
-      //   .format("YYYY-MM-DD");
-
       let Day = Math.abs(
-        moment.duration(moment().diff(moment(endDate))).asDays()
+        parseInt(moment.duration(moment().diff(moment(endDate))).asDays())
       );
 
-      console.log(Day);
+      let currentEndDate = moment().add(Day, "days").format("YYYY-MM-DD");
+      console.log(currentEndDate, "currentEndDate");
 
       dispatch({
         type: USER_CLASS_CHANGE_REQUEST,
@@ -350,7 +348,7 @@ const UserList = ({}) => {
           UserId: updateData.id,
           LectureId: data.lecture,
           ChangeLectureId: data.changelecture,
-          data: Day,
+          date: parseInt(Day),
           endDate: currentEndDate,
         },
       });
@@ -504,50 +502,41 @@ const UserList = ({}) => {
       ),
     },
     {
-      title: "반 옮기기",
+      title: "기능",
       render: (data) => (
-        <Button
-          size="small"
-          type="primary"
-          onClick={() =>
-            data.level === 5
-              ? message.error("개발사는 권한을 수정할 수 없습니다.")
-              : classChangeModalOpen(data)
-          }>
-          반 옮기기
-        </Button>
-      ),
-    },
+        <Wrapper>
+          <Button
+            size="small"
+            type="primary"
+            onClick={() =>
+              data.level === 5
+                ? message.error("개발사는 권한을 수정할 수 없습니다.")
+                : classChangeModalOpen(data)
+            }>
+            반 옮기기
+          </Button>
 
-    {
-      title: "수업참여",
-      render: (data) => (
-        <Button
-          size="small"
-          type="primary"
-          onClick={() =>
-            data.level === 5
-              ? message.error("개발사는 권한을 수정할 수 없습니다.")
-              : classPartModalOpen(data)
-          }>
-          수업참여
-        </Button>
-      ),
-    },
+          <Button
+            size="small"
+            onClick={() =>
+              data.level === 5
+                ? message.error("개발사는 권한을 수정할 수 없습니다.")
+                : classPartModalOpen(data)
+            }>
+            수업참여
+          </Button>
 
-    {
-      title: "수업종료",
-      render: (data) => (
-        <Button
-          size="small"
-          type="primary"
-          onClick={() =>
-            data.level === 5
-              ? message.error("개발사는 권한을 수정할 수 없습니다.")
-              : classPartEndModalOpen(data)
-          }>
-          수업종료
-        </Button>
+          {/* <Button
+            size="small"
+            type="primary"
+            onClick={() =>
+              data.level === 5
+                ? message.error("개발사는 권한을 수정할 수 없습니다.")
+                : classPartEndModalOpen(data)
+            }>
+            수업뺴기
+          </Button> */}
+        </Wrapper>
       ),
     },
 
@@ -717,7 +706,7 @@ const UserList = ({}) => {
       <Modal
         visible={classPartEndModal}
         width={`400px`}
-        title={`학생 수업 종료`}
+        title={`학생 수업 뺴기`}
         onCancel={classPartEndModalClose}
         onOk={classPartEndModalClose}>
         <Wrapper padding={`10px`} al={`flex-start`}>
@@ -742,7 +731,7 @@ const UserList = ({}) => {
                 placeholder="Select a Lecture">
                 {parEndData &&
                   parEndData.map((data, idx) => {
-                    return <Option key={data.id}></Option>;
+                    return <Option key={data.id}>{data.Lecture.course}</Option>;
                   })}
               </Select>
             </Form.Item>
