@@ -55,14 +55,6 @@ module.exports = class User extends Model {
           type: DataTypes.STRING(100), // 강사 언어
           allowNull: true,
         },
-        startDate: {
-          type: DataTypes.STRING(100), // 첫 수업일자
-          allowNull: true,
-        },
-        endDate: {
-          type: DataTypes.STRING(100), // 마지막 수업일자
-          allowNull: true,
-        },
         adminMemo: {
           type: DataTypes.TEXT, // 관리자 메모
           allowNull: true,
