@@ -287,6 +287,8 @@ const UserList = ({}) => {
 
     updateEndClassform.resetFields();
 
+    console.log(data, "data");
+
     setParEndData(data.Participants);
   }, []);
 
@@ -501,7 +503,7 @@ const UserList = ({}) => {
       title: "기능",
       render: (data) => (
         <Wrapper>
-          {/* <Button
+          <Button
             size="small"
             type="primary"
             onClick={() =>
@@ -510,7 +512,7 @@ const UserList = ({}) => {
                 : classChangeModalOpen(data)
             }>
             반 옮기기
-          </Button> */}
+          </Button>
 
           <Button
             size="small"
@@ -522,7 +524,7 @@ const UserList = ({}) => {
             수업참여
           </Button>
 
-          {/* <Button
+          <Button
             size="small"
             type="primary"
             onClick={() =>
@@ -531,7 +533,7 @@ const UserList = ({}) => {
                 : classPartEndModalOpen(data)
             }>
             수업뺴기
-          </Button> */}
+          </Button>
         </Wrapper>
       ),
     },
@@ -727,7 +729,9 @@ const UserList = ({}) => {
                 placeholder="Select a Lecture">
                 {parEndData &&
                   parEndData.map((data, idx) => {
-                    return <Option key={data.id}>{data.Lecture.course}</Option>;
+                    return (
+                      <Option key={data.id}> {data.Lecture?.course}</Option>
+                    );
                   })}
               </Select>
             </Form.Item>

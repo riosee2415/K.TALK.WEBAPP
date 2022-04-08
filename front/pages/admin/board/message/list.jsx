@@ -209,6 +209,7 @@ const List = ({ router }) => {
   useEffect(() => {
     if (st_messageCreateDone) {
       onReset();
+      return message.success("쪽지를 보냈습니다.");
     }
   }, [st_messageCreateDone]);
 
@@ -298,11 +299,11 @@ const List = ({ router }) => {
         type: MESSAGE_CREATE_REQUEST,
         data: {
           title: value.title1,
-          author: me.author,
+          author: me.userId,
           senderId: me.id,
           receiverId: updateData.receiverId,
           content: value.content1,
-          level: updateData.level,
+          level: me.level,
         },
       });
     },

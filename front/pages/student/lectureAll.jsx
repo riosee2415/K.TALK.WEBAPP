@@ -297,8 +297,7 @@ const LectureAll = () => {
           <Button
             type={`primary`}
             size={`small`}
-            onClick={() => fileDownloadHandler(data.Book.file)}
-          >
+            onClick={() => fileDownloadHandler(data.Book.file)}>
             다운로드
           </Button>
         );
@@ -759,14 +758,12 @@ const LectureAll = () => {
                 margin={width < 700 ? `30px 0` : `60px 0`}
                 dr={`row`}
                 ju={`space-between`}
-                width={`auto`}
-              >
+                width={`auto`}>
                 <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
                   <Wrapper
                     width={`auto`}
                     padding={`9px`}
-                    bgColor={Theme.white_C}
-                  >
+                    bgColor={Theme.white_C}>
                     <Image
                       width={width < 700 ? `65px` : `75px`}
                       height={width < 700 ? `65px` : `75px`}
@@ -782,8 +779,7 @@ const LectureAll = () => {
                   <Text
                     fontSize={width < 700 ? `20px` : `28px`}
                     fontWeight={`bold`}
-                    padding={`0 0 0 15px`}
-                  >
+                    padding={`0 0 0 15px`}>
                     안녕하세요,&nbsp;
                     <SpanText color={Theme.basicTheme_C}>
                       {me && me.username}
@@ -801,8 +797,7 @@ const LectureAll = () => {
             <Wrapper al={`flex-start`} margin={`0 0 20px`}>
               <Text
                 fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-              >
+                fontWeight={`bold`}>
                 강의 공지사항
               </Text>
             </Wrapper>
@@ -810,14 +805,12 @@ const LectureAll = () => {
             <Wrapper
               radius={`10px`}
               shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}
-              margin={`0 0 60px`}
-            >
+              margin={`0 0 60px`}>
               <Wrapper
                 dr={`row`}
                 fontWeight={`bold`}
                 padding={`20px 0`}
-                fontSize={width < 800 ? `14px` : `18px`}
-              >
+                fontSize={width < 800 ? `14px` : `18px`}>
                 <Wrapper width={width < 800 ? `15%` : `10%`}>번호</Wrapper>
                 <Wrapper width={width < 800 ? `45%` : `70%`}>제목</Wrapper>
                 <Wrapper width={width < 800 ? `15%` : `10%`}>작성자</Wrapper>
@@ -834,16 +827,14 @@ const LectureAll = () => {
                       <CustomTableHoverWrapper
                         onClick={() => onClickNoticeHandler(data)}
                         key={data.id}
-                        bgColor={idx % 2 === 0}
-                      >
+                        bgColor={idx % 2 === 0}>
                         <Wrapper width={width < 800 ? `15%` : `10%`}>
                           {data.id}
                         </Wrapper>
                         <Wrapper
                           width={width < 800 ? `45%` : `70%`}
                           al={`flex-start`}
-                          padding={`0 0 0 10px`}
-                        >
+                          padding={`0 0 0 10px`}>
                           {data.title}
                         </Wrapper>
                         <Wrapper width={width < 800 ? `15%` : `10%`}>
@@ -869,8 +860,7 @@ const LectureAll = () => {
             <Wrapper al={`flex-start`} margin={`0 0 20px`}>
               <Text
                 fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-              >
+                fontWeight={`bold`}>
                 내 강의정보
               </Text>
             </Wrapper>
@@ -893,21 +883,17 @@ const LectureAll = () => {
                     margin={
                       lectureStuLectureList.length - 1 ? `0 0 70px` : `0 0 60px`
                     }
-                    al={width < 1100 && `flex-start`}
-                  >
+                    al={width < 1100 && `flex-start`}>
                     <Wrapper
                       width={width < 800 ? `calc(100%)` : `calc(100%)`}
-                      position={`relative`}
-                    >
+                      position={`relative`}>
                       <Wrapper dr={`row`}>
                         <Wrapper
-                          width={width < 1100 ? `100%` : `calc(70% - 1px)`}
-                        >
+                          width={width < 1100 ? `100%` : `calc(70% - 1px)`}>
                           <Wrapper
                             width={`100%`}
                             dr={`row`}
-                            al={width < 800 && `flex-start`}
-                          >
+                            al={width < 800 && `flex-start`}>
                             <Image
                               position={`absolute`}
                               top={`0`}
@@ -925,14 +911,12 @@ const LectureAll = () => {
                             <Wrapper
                               margin={
                                 width < 800 ? `0 0 0 100px` : `0 0 0 204px`
-                              }
-                            >
+                              }>
                               <Wrapper dr={`row`} ju={`flex-start`}>
                                 <Text
                                   margin={`0 10px 0 0`}
                                   fontSize={width < 800 ? `16px` : `18px`}
-                                  fontWeight={`bold`}
-                                >
+                                  fontWeight={`bold`}>
                                   강의명
                                 </Text>
                                 <Text margin={`0 10px 0 0`}>{data.course}</Text>
@@ -942,15 +926,13 @@ const LectureAll = () => {
                                 dr={`row`}
                                 ju={`flex-start`}
                                 color={Theme.grey2_C}
-                                fontSize={width < 800 ? `12px` : `16px`}
-                              >
+                                fontSize={width < 800 ? `12px` : `16px`}>
                                 <Text lineHeight={`1.19`}>
                                   {data.User.username}
                                 </Text>
                                 <Text
                                   lineHeight={`1.19`}
-                                  margin={width < 800 ? `5px` : `0 10px`}
-                                >
+                                  margin={width < 800 ? `5px` : `0 10px`}>
                                   |
                                 </Text>
                                 <Text lineHeight={`1.19`}>
@@ -977,13 +959,11 @@ const LectureAll = () => {
                                 dr={`row`}
                                 ju={`flex-start`}
                                 color={Theme.grey2_C}
-                                margin={width < 800 && `5px 0`}
-                              >
+                                margin={width < 800 && `5px 0`}>
                                 <Wrapper
                                   width={`auto`}
                                   dr={`row`}
-                                  margin={`0 10px 0 0`}
-                                >
+                                  margin={`0 10px 0 0`}>
                                   <Image
                                     width={`18px`}
                                     height={`18px`}
@@ -993,8 +973,7 @@ const LectureAll = () => {
                                   />
 
                                   <Text
-                                    fontSize={width < 700 ? `14px` : `16px`}
-                                  >
+                                    fontSize={width < 700 ? `14px` : `16px`}>
                                     {`${moment(
                                       data.startDate,
                                       "YYYY/MM/DD"
@@ -1006,8 +985,7 @@ const LectureAll = () => {
                                     <SpanText
                                       fontWeight={`bold`}
                                       color={Theme.red_C}
-                                      margin={`0 0 0 15px`}
-                                    >
+                                      margin={`0 0 0 15px`}>
                                       {/* D-{DDay(data.startDate, data.endDate)} */}
                                       {DDay(
                                         data.startDate,
@@ -1026,8 +1004,7 @@ const LectureAll = () => {
                                   dr={`row`}
                                   ju={`flex-start`}
                                   margin={`5px 0 0 0`}
-                                  color={Theme.grey2_C}
-                                >
+                                  color={Theme.grey2_C}>
                                   <Wrapper width={`auto`} margin={`0 5px 0 0`}>
                                     <Image
                                       width={`16px`}
@@ -1039,8 +1016,7 @@ const LectureAll = () => {
 
                                   <Text
                                     fontSize={width < 800 ? `14px` : `16px`}
-                                    lineHeight={`1.22`}
-                                  >
+                                    lineHeight={`1.22`}>
                                     {data.day}&nbsp;&nbsp;|&nbsp;&nbsp;
                                     {data.time}
                                   </Text>
@@ -1065,9 +1041,8 @@ const LectureAll = () => {
 
                                 <Wrapper
                                   dr={`row`}
-                                  width={`100%`}
-                                  margin={`5px 0 0 0`}
-                                >
+                                  ju={`space-between`}
+                                  margin={`5px 0 0 0`}>
                                   <Wrapper dr={`row`} width={`auto`}>
                                     <Image
                                       margin={`0 5px 0 0`}
@@ -1077,8 +1052,7 @@ const LectureAll = () => {
                                       alt="clender_icon"
                                     />
                                     <Text
-                                      fontSize={width < 700 ? `14px` : `18px`}
-                                    >
+                                      fontSize={width < 700 ? `14px` : `18px`}>
                                       {data.User.username}
                                     </Text>
                                   </Wrapper>
@@ -1088,8 +1062,7 @@ const LectureAll = () => {
                                     color={Theme.basicTheme_C}
                                     onClick={() =>
                                       window.open(`${data.zoomLink}`, "_blank")
-                                    }
-                                  >
+                                    }>
                                     강의 이동
                                   </Text>
                                 </Wrapper>
@@ -1098,8 +1071,7 @@ const LectureAll = () => {
                             <Wrapper
                               margin={
                                 width < 800 ? `40px 0 0` : `35px 0 0  204px`
-                              }
-                            >
+                              }>
                               <Wrapper dr={`row`} ju={`flex-start`}>
                                 <Text width={width < 800 ? `100%` : `15%`}>
                                   <SpanText color={Theme.subTheme2_C}>
@@ -1122,8 +1094,7 @@ const LectureAll = () => {
                                 <Text
                                   width={`10%`}
                                   color={Theme.grey2_C}
-                                  padding={`0 0 0 10px`}
-                                >
+                                  padding={`0 0 0 10px`}>
                                   {`(${parseInt(
                                     data.Commutes &&
                                       (data.Commutes.length * 100) /
@@ -1211,26 +1182,22 @@ const LectureAll = () => {
                             width < 1100 && width < 800
                               ? `10px 0 0`
                               : `20px 0 0`
-                          }
-                        >
+                          }>
                           <Wrapper
                             borderBottom={`1px dashed ${Theme.grey_C}`}
                             dr={`row`}
                             al={`flex-start`}
                             ju={`flex-start`}
-                            padding={width < 800 ? `8px 0` : `16px 0`}
-                          >
+                            padding={width < 800 ? `8px 0` : `16px 0`}>
                             <Text
                               cursor={`pointer`}
-                              onClick={() => messageSendModalHandler(data)}
-                            >
+                              onClick={() => messageSendModalHandler(data)}>
                               수료증 신청
                             </Text>
                             <Text> | </Text>
                             <Text
                               cursor={`pointer`}
-                              onClick={() => messageSendModalHandler(data)}
-                            >
+                              onClick={() => messageSendModalHandler(data)}>
                               강의수 늘리기 요청
                             </Text>
                           </Wrapper>
@@ -1239,26 +1206,22 @@ const LectureAll = () => {
                             al={`flex-start`}
                             ju={`flex-start`}
                             dr={`row`}
-                            padding={width < 800 ? `8px 0` : `16px 0`}
-                          >
+                            padding={width < 800 ? `8px 0` : `16px 0`}>
                             <Text
                               cursor={`pointer`}
-                              onClick={() => messageSendModalHandler(data)}
-                            >
+                              onClick={() => messageSendModalHandler(data)}>
                               결석 예고
                             </Text>
                             <Text> | </Text>
                             <Text
                               cursor={`pointer`}
-                              onClick={() => messageSendModalHandler(data, 1)}
-                            >
+                              onClick={() => messageSendModalHandler(data, 1)}>
                               반이동 요청
                             </Text>
                             <Text> | </Text>
                             <Text
                               cursor={`pointer`}
-                              onClick={() => messageSendModalHandler(data)}
-                            >
+                              onClick={() => messageSendModalHandler(data)}>
                               줌 상담신청
                             </Text>
                           </Wrapper>
@@ -1267,8 +1230,7 @@ const LectureAll = () => {
                             type={`primary`}
                             size={`small`}
                             style={{ marginTop: 10 }}
-                            onClick={() => detailBookOpen(data)}
-                          >
+                            onClick={() => detailBookOpen(data)}>
                             교재 리스트
                           </Button>
                         </Wrapper>
@@ -1293,8 +1255,7 @@ const LectureAll = () => {
               : sendMessageType === 3 && "관리자에게 쪽지 보내기"
           }
           footer={null}
-          closable={false}
-        >
+          closable={false}>
           <CustomForm
             ref={formRef}
             form={form}
@@ -1304,8 +1265,7 @@ const LectureAll = () => {
                 : sendMessageType === 2
                 ? sendMessageLectureFinishHanlder(data, messageTeacherList)
                 : sendMessageType === 3 && sendMessageAdminFinishHandler(data)
-            }
-          >
+            }>
             <Wrapper dr={`row`} ju={`flex-end`}>
               <CommonButton
                 margin={`0 0 0 5px`}
@@ -1313,8 +1273,7 @@ const LectureAll = () => {
                 width={`100px`}
                 height={`32px`}
                 size="small"
-                onClick={() => sendMessageTypeHandler(1)}
-              >
+                onClick={() => sendMessageTypeHandler(1)}>
                 {"강사"}
               </CommonButton>
 
@@ -1324,8 +1283,7 @@ const LectureAll = () => {
                 width={`100px`}
                 height={`32px`}
                 size="small"
-                onClick={() => sendMessageTypeHandler(2)}
-              >
+                onClick={() => sendMessageTypeHandler(2)}>
                 {"수업"}
               </CommonButton>
 
@@ -1335,8 +1293,7 @@ const LectureAll = () => {
                 width={`100px`}
                 height={`32px`}
                 size="small"
-                onClick={() => sendMessageTypeHandler(3)}
-              >
+                onClick={() => sendMessageTypeHandler(3)}>
                 {"관리자"}
               </CommonButton>
             </Wrapper>
@@ -1346,8 +1303,7 @@ const LectureAll = () => {
             </Text>
             <Form.Item
               name="title"
-              rules={[{ required: true, message: "제목을 입력해주세요." }]}
-            >
+              rules={[{ required: true, message: "제목을 입력해주세요." }]}>
               <Input />
             </Form.Item>
             <Text fontSize={`18px`} fontWeight={`bold`}>
@@ -1355,8 +1311,7 @@ const LectureAll = () => {
             </Text>
             <Form.Item
               name="content"
-              rules={[{ required: true, message: "내용을 입력해주세요." }]}
-            >
+              rules={[{ required: true, message: "내용을 입력해주세요." }]}>
               <Input.TextArea style={{ height: `360px` }} />
             </Form.Item>
             <Wrapper dr={`row`}>
@@ -1365,15 +1320,13 @@ const LectureAll = () => {
                 kindOf={`grey`}
                 color={Theme.darkGrey_C}
                 radius={`5px`}
-                onClick={() => onReset()}
-              >
+                onClick={() => onReset()}>
                 돌아가기
               </CommonButton>
               <CommonButton
                 margin={`0 0 0 5px`}
                 radius={`5px`}
-                htmlType="submit"
-              >
+                htmlType="submit">
                 쪽지 보내기
               </CommonButton>
             </Wrapper>
@@ -1385,14 +1338,12 @@ const LectureAll = () => {
           width={`1350px`}
           title="공지사항"
           footer={null}
-          closable={false}
-        >
+          closable={false}>
           <Wrapper
             dr={`row`}
             ju={`space-between`}
             margin={`0 0 35px`}
-            fontSize={width < 700 ? "14px" : "16px"}
-          >
+            fontSize={width < 700 ? "14px" : "16px"}>
             <Text margin={`0 54px 0 0`}>
               {`작성자: ${noticeViewDatum && noticeViewDatum.author}`}
             </Text>
@@ -1423,8 +1374,7 @@ const LectureAll = () => {
                 size={`small`}
                 radius={`5px`}
                 fontSize={`14px`}
-                onClick={() => fileDownloadHandler(noticeViewDatum.file)}
-              >
+                onClick={() => fileDownloadHandler(noticeViewDatum.file)}>
                 다운로드
               </CommonButton>
             </Wrapper>
@@ -1447,8 +1397,7 @@ const LectureAll = () => {
               fontSize={width < 700 ? "14px" : "16px"}
               dangerouslySetInnerHTML={{
                 __html: noticeViewDatum && noticeViewDatum.content,
-              }}
-            ></WordbreakText>
+              }}></WordbreakText>
           </Wrapper>
 
           <Wrapper>
@@ -1456,8 +1405,7 @@ const LectureAll = () => {
               onClick={() => onReset()}
               kindOf={`grey`}
               color={Theme.darkGrey_C}
-              radius={`5px`}
-            >
+              radius={`5px`}>
               돌아가기
             </CommonButton>
           </Wrapper>
@@ -1467,8 +1415,7 @@ const LectureAll = () => {
           visible={bookModal}
           footer={null}
           onCancel={detailBookClose}
-          width={width < 700 ? `80%` : 700}
-        >
+          width={width < 700 ? `80%` : 700}>
           <Wrapper al={`flex-start`}>
             <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
               교재
