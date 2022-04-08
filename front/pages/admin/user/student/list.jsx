@@ -177,30 +177,26 @@ const UserList = ({}) => {
 
   useEffect(() => {
     setOpt1(
-      updateData &&
-        updateData.Participants.map((data) => {
-          if (data.isChange) return;
-
-          return <Option value={data.LectureId}>{data.Lecture.course}</Option>;
+      allLectures &&
+        allLectures.map((data) => {
+          return <Option value={data.LectureId}>{data.course}</Option>;
         })
     );
-  }, [updateData]);
+  }, [allLectures]);
 
-  useEffect(() => {
-    setOpt3(
-      parData &&
-        parData.Participants.map((data) => {
-          console.log(data, "data");
-          return <Option value={data.LectureId}>{data.Lecture.course}</Option>;
-        })
-    );
-  }, [parData]);
+  // useEffect(() => {
+  //   setOpt3(
+  //     parData &&
+  //       parData.Participants.map((data) => {
+  //         return <Option value={data.LectureId}>{data.Lecture.course}</Option>;
+  //       })
+  //   );
+  // }, [parData]);
 
   useEffect(() => {
     setOpt2(
-      paymentList &&
-        paymentList.map((data) => {
-          if (data.UserId !== null) return;
+      allLectures &&
+        allLectures.map((data) => {
           return (
             <Option key={data.id} value={data.LetureId}>
               {data.course}
@@ -208,7 +204,7 @@ const UserList = ({}) => {
           );
         })
     );
-  }, [paymentList]);
+  }, [allLectures]);
 
   useEffect(() => {
     setOpt4(
@@ -347,9 +343,9 @@ const UserList = ({}) => {
         data: {
           UserId: updateData.id,
           LectureId: data.lecture,
-          ChangeLectureId: data.changelecture,
-          date: parseInt(Day),
-          endDate: currentEndDate,
+          // ChangeLectureId: data.changelecture,
+          // date: parseInt(Day),
+          // endDate: currentEndDate,
         },
       });
     },
@@ -360,25 +356,25 @@ const UserList = ({}) => {
     (data) => {
       let day = 0;
       let saveData = "YYY-MM-DD";
-      if (paymentData.length !== 0) {
-        day = paymentData[0].week * 7;
-        saveData = moment().add(day, "days").format("YYYY-MM-DD");
-      } else {
-        return message.error("잠시후 실행해주세요.");
-      }
+      // if (paymentData.length !== 0) {
+      //   day = paymentData[0].week * 7;
+      //   saveData = moment().add(day, "days").format("YYYY-MM-DD");
+      // }
+
+      console.log(allLectures, "allLectures");
 
       dispatch({
         type: PARTICIPANT_CREATE_REQUEST,
         data: {
           UserId: parData.id,
           LectureId: data.partLecture,
-          date: day,
-          endDate: saveData,
-          PaymentId: paymentData && paymentData[0].id,
+          date: "",
+          endDate: "",
+          PaymentId: "",
         },
       });
     },
-    [parData, paymentData]
+    [parData, allLectures]
   );
 
   const onUpdateEndClassSubmit = useCallback(
@@ -505,7 +501,7 @@ const UserList = ({}) => {
       title: "기능",
       render: (data) => (
         <Wrapper>
-          <Button
+          {/* <Button
             size="small"
             type="primary"
             onClick={() =>
@@ -514,7 +510,7 @@ const UserList = ({}) => {
                 : classChangeModalOpen(data)
             }>
             반 옮기기
-          </Button>
+          </Button> */}
 
           <Button
             size="small"
