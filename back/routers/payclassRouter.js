@@ -35,7 +35,7 @@ router.get("/list", isAdminCheck, async (req, res, next) => {
   }
 });
 
-router.get("/detail/:classId", isAdminCheck, async (req, res, next) => {
+router.get("/detail/:classId", async (req, res, next) => {
   const { classId } = req.params;
 
   if (isNanCheck(classId)) {

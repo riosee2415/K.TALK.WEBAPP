@@ -20,7 +20,8 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
             A.updatedAt,
             A.UserId,
             A.PayClassId,
-            C.course 
+            C.id                  AS LetureId,
+            C.course
       FROM  payments		A
      INNER
       JOIN  payClass 		B
