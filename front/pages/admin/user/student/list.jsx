@@ -188,11 +188,11 @@ const UserList = ({}) => {
   //   setOpt3(
   //     parData &&
   //       parData.Participants.map((data) => {
+  //         console.log(data, "data");
   //         return <Option value={data.LectureId}>{data.Lecture.course}</Option>;
   //       })
   //   );
   // }, [parData]);
-
   useEffect(() => {
     setOpt2(
       allLectures &&
@@ -510,7 +510,8 @@ const UserList = ({}) => {
               data.level === 5
                 ? message.error("개발사는 권한을 수정할 수 없습니다.")
                 : classChangeModalOpen(data)
-            }>
+            }
+          >
             반 옮기기
           </Button>
 
@@ -520,7 +521,8 @@ const UserList = ({}) => {
               data.level === 5
                 ? message.error("개발사는 권한을 수정할 수 없습니다.")
                 : classPartModalOpen(data)
-            }>
+            }
+          >
             수업참여
           </Button>
 
@@ -544,7 +546,8 @@ const UserList = ({}) => {
         <Button
           size="small"
           type="primary"
-          onClick={() => detailModalOpen(data)}>
+          onClick={() => detailModalOpen(data)}
+        >
           참가중인 강의
         </Button>
       ),
@@ -628,12 +631,14 @@ const UserList = ({}) => {
         width={`400px`}
         title={`학생 수업 변경`}
         onCancel={classChangeModalClose}
-        onOk={onModalOk}>
+        onOk={onModalOk}
+      >
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
             form={form}
             style={{ width: `100%` }}
-            onFinish={(data) => onSubmit(data)}>
+            onFinish={(data) => onSubmit(data)}
+          >
             <Form.Item label={`학생`}>
               <Input disabled value={updateData && updateData.username} />
             </Form.Item>
@@ -643,7 +648,8 @@ const UserList = ({}) => {
                 width={`100%`}
                 height={`32px`}
                 showSearch
-                placeholder="Select a Lecture">
+                placeholder="Select a Lecture"
+              >
                 {opt1}
               </Select>
             </Form.Item>
@@ -668,12 +674,14 @@ const UserList = ({}) => {
         width={`400px`}
         title={`학생 수업 참여`}
         onCancel={classPartModalClose}
-        onOk={onModalChangeOk}>
+        onOk={onModalChangeOk}
+      >
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
             form={updateClassform}
             style={{ width: `100%` }}
-            onFinish={onUpdateClassSubmit}>
+            onFinish={onUpdateClassSubmit}
+          >
             <Form.Item label={`학생`}>
               <Input disabled value={parData && parData.username} />
             </Form.Item>
@@ -683,7 +691,8 @@ const UserList = ({}) => {
               name={`partLecture`}
               rules={[
                 { required: true, message: "참가시킬 강의를 선택해주세요." },
-              ]}>
+              ]}
+            >
               <Select
                 width={`100%`}
                 height={`32px`}
@@ -693,7 +702,8 @@ const UserList = ({}) => {
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
                 }
-                placeholder="Select a Lecture">
+                placeholder="Select a Lecture"
+              >
                 {opt2}
               </Select>
             </Form.Item>
@@ -706,12 +716,14 @@ const UserList = ({}) => {
         width={`400px`}
         title={`학생 수업 뺴기`}
         onCancel={classPartEndModalClose}
-        onOk={classPartEndModalClose}>
+        onOk={classPartEndModalClose}
+      >
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
             form={updateEndClassform}
             style={{ width: `100%` }}
-            onFinish={onUpdateEndClassSubmit}>
+            onFinish={onUpdateEndClassSubmit}
+          >
             <Form.Item label={`학생`}>
               <Input disabled value={parData && parData.username} />
             </Form.Item>
@@ -726,7 +738,8 @@ const UserList = ({}) => {
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
                 }
-                placeholder="Select a Lecture">
+                placeholder="Select a Lecture"
+              >
                 {parEndData &&
                   parEndData.map((data, idx) => {
                     return (
@@ -744,7 +757,8 @@ const UserList = ({}) => {
         width={`80%`}
         title={`학생 강의 목록`}
         footer={null}
-        onCancel={() => setDetailToggle(false)}>
+        onCancel={() => setDetailToggle(false)}
+      >
         <Table
           rowKey="id"
           columns={columnsList}
@@ -755,7 +769,8 @@ const UserList = ({}) => {
           padding={`16px 0px`}
           color={Theme.black_2C}
           fontSize={`16px`}
-          fontWeight={`500`}>
+          fontWeight={`500`}
+        >
           학생강의 참여 및 이동 기록
         </Text>
 

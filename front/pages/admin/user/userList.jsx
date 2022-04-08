@@ -299,7 +299,7 @@ const UserList = ({}) => {
         })
     );
   }, [allLectures]);
-
+  console.log(paymentList);
   useEffect(() => {
     if (selectUserLevel === "1") {
       const payOpt =
@@ -310,7 +310,8 @@ const UserList = ({}) => {
               key={data.id}
               value={`${data.id},${data.LetureId},${data.week}`}
             >
-              {data.createdAt.slice(0, 10)} | {data.course} | ${data.price}
+              {data.createdAt.slice(0, 10)} | {data.course} | ${data.price} |
+              &nbsp;{data.email}
             </Select.Option>
           );
         });
@@ -379,6 +380,29 @@ const UserList = ({}) => {
         return message.error("비밀번호를 동일하게 입력해주세요.");
       }
       if (selectUserLevel === "1") {
+        console.log({
+          userId: data.userId,
+          password: data.password,
+          username: data.username,
+          mobile: data.mobile,
+          email: data.email,
+          address: data.address,
+          detailAddress: data.detailAddress,
+          stuLanguage: data.stuLanguage,
+          birth: data.birth.format("YYYY-MM-DD"),
+          stuCountry: data.stuCountry,
+          stuLiveCon: data.stuLiveCon,
+          sns: data.sns,
+          snsId: data.snsId,
+          stuJob: data.stuJob,
+          gender: data.gender,
+          PaymentId: data.payment.split(",")[0],
+          LectureId: data.payment.split(",")[1],
+          date: parseInt(data.payment.split(",")[2]) * 7,
+          endDate: moment()
+            .add(parseInt(data.payment.split(",")[2]) * 7, "days")
+            .format("YYYY-MM-DD"),
+        });
         dispatch({
           type: USER_STU_CREATE_REQUEST,
           data: {
