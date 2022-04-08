@@ -581,22 +581,22 @@ const UserList = ({}) => {
 
     {
       title: "수업 이름",
-      render: (data) => <div>{data.Lecture.course}</div>,
+      render: (data) => <div>""{console.log(data)}</div>,
     },
 
     {
       title: "요일",
-      render: (data) => <div>{data.Lecture.day}</div>,
+      render: (data) => <div>""</div>,
     },
 
     {
       title: "시간",
-      render: (data) => <div>{data.Lecture.time}</div>,
+      render: (data) => <div>""</div>,
     },
 
     {
       title: "총 강의 수",
-      render: (data) => <div>{data.Lecture.lecDate * data.Lecture.count}</div>,
+      render: (data) => <div>""</div>,
     },
   ];
   return (
@@ -656,7 +656,6 @@ const UserList = ({}) => {
                 width={`100%`}
                 height={`32px`}
                 showSearch
-                onChange={onChangeClass}
                 placeholder="Select a Lecture">
                 {opt1}
               </Select>
@@ -754,7 +753,7 @@ const UserList = ({}) => {
       <Modal
         visible={detailToggle}
         width={`80%`}
-        title={`학생 강의 목록`}
+        title={`학생 강의 목록11`}
         footer={null}
         onCancel={() => setDetailToggle(false)}>
         <Table

@@ -776,11 +776,9 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
     gender,
     LectureId,
     PaymentId,
+    date,
+    endDate,
   } = req.body;
-
-  if (!Array.isArray(LectureId)) {
-    return res.status(401).send("잘못된 요청입니다.");
-  }
 
   try {
     const exUser = await User.findOne({
@@ -846,14 +844,12 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의 입니다.");
     }
 
-    await Promise.all(
-      LectureId.map(async (data) => {
-        await Participant.create({
-          LectureId: parseInt(data),
-          UserId: parseInt(result.id),
-        });
-      })
-    );
+    await Participant.create({
+      LetureId: parseInt(LectureId),
+      UserId: parseInt(result.id),
+      date,
+      endDate,
+    });
 
     return res.status(201).json({ result: true });
   } catch (error) {
@@ -864,7 +860,7 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
 
 // 학생 반 옮기기
 router.patch("/class/update", isAdminCheck, async (req, res, next) => {
-  const { UserId, LectureId, ChangeLectureId } = req.body;
+  const { UserId, LectureId, ChangeLectureId, endDate, date } = req.body;
   try {
     const exLecture = await Lecture.findOne({
       where: { id: parseInt(LectureId) },
@@ -905,6 +901,8 @@ router.patch("/class/update", isAdminCheck, async (req, res, next) => {
     const createResult = await Participant.create({
       LectureId: parseInt(ChangeLectureId),
       UserId: parseInt(UserId),
+      endDate,
+      date,
     });
 
     if (!createResult) {

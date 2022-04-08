@@ -1538,6 +1538,10 @@ const Index = () => {
     setDiaryData(data);
   }, []);
 
+  const moveBackHandler = useCallback(() => {
+    router.back();
+  }, []);
+
   ////// DATAVIEW //////
 
   return (
@@ -1632,7 +1636,7 @@ const Index = () => {
                   </Text>
                 </Wrapper>
               </Wrapper>
-              <BackIcon width={`auto`} onClick={``}>
+              <BackIcon width={`auto`} onClick={moveBackHandler}>
                 <RollbackOutlined />
                 <Text>뒤로가기</Text>
               </BackIcon>
