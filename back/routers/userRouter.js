@@ -778,10 +778,6 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
     PaymentId,
   } = req.body;
 
-  if (!Array.isArray(LectureId)) {
-    return res.status(401).send("잘못된 요청입니다.");
-  }
-
   try {
     const exUser = await User.findOne({
       where: { userId },
@@ -846,14 +842,10 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의 입니다.");
     }
 
-    await Promise.all(
-      LectureId.map(async (data) => {
-        await Participant.create({
-          LectureId: parseInt(data),
-          UserId: parseInt(result.id),
-        });
-      })
-    );
+    await Participant.create({
+      LetureId: parseInt(LectureId),
+      UserId: parseInt(result.id),
+    });
 
     return res.status(201).json({ result: true });
   } catch (error) {
