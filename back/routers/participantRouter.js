@@ -1,7 +1,7 @@
 const express = require("express");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isLoggedIn = require("../middlewares/isLoggedIn");
-const { Lecture, User, Participant } = require("../models");
+const { Lecture, User, Participant, Payment } = require("../models");
 const models = require("../models");
 
 const router = express.Router();
@@ -195,7 +195,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
 });
 
 router.post("/create", isAdminCheck, async (req, res, next) => {
-  const { UserId, LectureId, date, endDate } = req.body;
+  const { UserId, LectureId, date, endDate, PaymentId } = req.body;
   try {
     const exLecture = await Lecture.findOne({
       where: { id: parseInt(LectureId) },
@@ -237,6 +237,15 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
     if (!createResult) {
       return res.status(401).send("처리중 문제가 발생하였습니다.");
     }
+
+    await Payment.update(
+      {
+        UserId: parseInt(UserId),
+      },
+      {
+        where: { id: parseInt(PaymentId) },
+      }
+    );
 
     return res.status(201).json({ result: true });
   } catch (error) {
