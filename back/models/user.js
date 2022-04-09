@@ -18,7 +18,7 @@ module.exports = class User extends Model {
           allowNull: false, // 필수
         },
         username: {
-          type: DataTypes.STRING(30), // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
+          type: DataTypes.STRING(60), // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
           allowNull: false, // 필수
         },
         mobile: {

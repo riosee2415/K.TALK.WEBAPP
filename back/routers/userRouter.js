@@ -845,7 +845,7 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
     }
 
     await Participant.create({
-      LetureId: parseInt(LectureId),
+      LectureId: parseInt(LectureId),
       UserId: parseInt(result.id),
       date,
       endDate,
@@ -891,11 +891,24 @@ router.patch("/class/update", isAdminCheck, async (req, res, next) => {
     }
 
     const exPart = await Participant.findOne({
-      where: { UserId: parseInt(UserId), LectureId: parseInt(ChangeLectureId) },
+      where: {
+        UserId: parseInt(UserId),
+        LectureId: parseInt(ChangeLectureId),
+        isChange: false,
+        isDelete: false,
+      },
     });
 
     if (exPart) {
       return res.status(401).send("이미 해당 강의에 참여하고 있습니다.");
+    }
+
+    if (new Date(exLecture.endDate) > new Date(exLecture2)) {
+      return res
+        .status(401)
+        .send(
+          "옮길 강의의 종료일이 원래 참여하고 있던 강의의 종료일보다 큽니다."
+        );
     }
 
     const createResult = await Participant.create({
