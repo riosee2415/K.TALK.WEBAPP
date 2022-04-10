@@ -379,7 +379,7 @@ const UserList = ({}) => {
       if (data.password !== data.repassword) {
         return message.error("비밀번호를 동일하게 입력해주세요.");
       }
-      if (data.payment.split(",")[3] === data.email) {
+      if (data.payment.split(",")[3] !== data.email) {
         return message.error(
           `입력하신 이메일과 결제한 목록의 이메일이 같아야합니다.`
         );

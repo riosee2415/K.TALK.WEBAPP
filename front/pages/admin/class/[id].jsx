@@ -38,6 +38,7 @@ import {
 } from "../../../reducers/book";
 import { saveAs } from "file-saver";
 import useWidth from "../../../hooks/useWidth";
+import { PARTICIPANT_ADMIN_LIST_REQUEST } from "../../../reducers/participant";
 const AdminContent = styled.div`
   padding: 20px;
 `;
@@ -91,13 +92,18 @@ const DetailClass = () => {
     lectureDiaryAdminList,
     lectureMemoStuCommute,
   } = useSelector((state) => state.lecture);
+  const { partAdminList } = useSelector((state) => state.participant);
   const { bookLecture } = useSelector((state) => state.book);
   const dispatch = useDispatch();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
-  const [detailMemo, setDetailMemo] = useState(null);
+
   const [memoModal, setMemoModal] = useState(false);
+  const [currentStudentId, setCurrentStudentId] = useState(null);
+
+  const [detailMemoModal, setDetailMemoModal] = useState(null);
+  const [detailMemo, setDetailMemo] = useState(null);
 
   const [detailBook, setDetailBook] = useState(null);
   const [bookModal, setBookModal] = useState(false);
@@ -106,8 +112,6 @@ const DetailClass = () => {
 
   ////// REDUX //////
   ////// USEEFFECT //////
-
-  useEffect(() => {}, [router.query]);
 
   useEffect(() => {
     if (router.query) {
@@ -129,6 +133,12 @@ const DetailClass = () => {
           LectureId: router.query.id,
         },
       });
+      dispatch({
+        type: PARTICIPANT_ADMIN_LIST_REQUEST,
+        data: {
+          LectureId: router.query.id,
+        },
+      });
     }
   }, [router.query]);
 
@@ -139,9 +149,10 @@ const DetailClass = () => {
         LectureId: parseInt(router.query.id),
         page: currentPage,
         search: "",
+        StudentId: currentStudentId,
       },
     });
-  }, [router.query, currentPage]);
+  }, [router.query, currentPage, currentStudentId]);
 
   ////// HANDLER //////
 
@@ -161,12 +172,12 @@ const DetailClass = () => {
   }, []);
 
   const detailMemoOpen = useCallback((data) => {
-    setDetailMemo(data);
+    setCurrentStudentId(data.UserId);
     setMemoModal(true);
   }, []);
   const detailMemoClose = useCallback(() => {
-    setDetailMemo(null);
     setMemoModal(false);
+    setCurrentStudentId(null);
   }, []);
 
   const detailBookOpen = useCallback(() => {
@@ -222,7 +233,6 @@ const DetailClass = () => {
   ////// TOGGLE //////
 
   ////// DATAVIEW //////
-
   const stuColumns = [
     {
       title: "No",
@@ -230,7 +240,9 @@ const DetailClass = () => {
     },
     {
       title: "수강생 이름(출생년도)",
-      render: (data) => `${data.username}(${data.birth.slice(0, 10)})`,
+      render: (data) => {
+        return `${data.username}(${data.birth.slice(0, 10)})`;
+      },
     },
     {
       title: "국가",
@@ -238,7 +250,15 @@ const DetailClass = () => {
     },
     {
       title: "수업료",
-      render: () => lectureDetail && lectureDetail[0].price,
+      render: (data) => (
+        <Text>
+          &#36;
+          {
+            partAdminList.price.find((value) => value.UserId === data.UserId)
+              .price
+          }
+        </Text>
+      ),
     },
     {
       title: "만기일",
@@ -250,28 +270,11 @@ const DetailClass = () => {
         <Button
           size={`small`}
           type={`primary`}
-          onClick={() => detailMemoOpen(data.memo)}
+          onClick={() => detailMemoOpen(data)}
         >
           메모 보기
         </Button>
       ),
-    },
-    {
-      title: "출석률",
-      render: (data) => {
-        return (
-          <Text>
-            {Math.floor(
-              (lectureMemoStuCommute.find(
-                (value) => value.UserId === data.UserId
-              ).CommuteCnt /
-                (lectureDetail[0].count * lectureDetail[0].lecDate)) *
-                100
-            )}
-            %
-          </Text>
-        );
-      },
     },
   ];
   // console.log(
@@ -331,6 +334,31 @@ const DetailClass = () => {
     },
     {
       title: "첨부파일 다운로드",
+      render: (data) => {
+        return (
+          <Button
+            type={`primary`}
+            size={`small`}
+            onClick={() => fileDownloadHandler(data.Book.file)}
+          >
+            다운로드
+          </Button>
+        );
+      },
+    },
+  ];
+
+  const memoListColumns = [
+    {
+      title: "No",
+      dataIndex: "id",
+    },
+    {
+      title: "작성일",
+      dataIndex: "createdAt",
+    },
+    {
+      title: "메모 보기",
       render: (data) => {
         return (
           <Button
@@ -537,15 +565,9 @@ const DetailClass = () => {
         <Table
           size={`small`}
           columns={stuColumns}
-          dataSource={lectureMemoStuList}
-          pagination={{
-            defaultCurrent: 1,
-            current: parseInt(currentPage),
-            total: lectureMemoStuLastPage * 10,
-            onChange: (page) => setCurrentPage(page),
-          }}
+          dataSource={partAdminList.partList}
         />
-
+        {console.log(partAdminList)}
         {/* <Wrapper al={`flex-end`} margin={`10px 0 32px`}>
           <CommonButton kindOf={`white`} radius={`5px`}>
             추가하기
@@ -569,15 +591,12 @@ const DetailClass = () => {
             메모
           </Text>
           <Wrapper al={`flex-start`} ju={`flex-start`}>
-            {detailMemo &&
-              detailMemo.split(`\n`).map((content, idx) => {
-                return (
-                  <SpanText key={`${content}${idx}`}>
-                    {content}
-                    <br />
-                  </SpanText>
-                );
-              })}
+            <Table
+              style={{ width: `100%` }}
+              size={`small`}
+              columns={memoListColumns}
+              dataSource={bookLecture}
+            />
           </Wrapper>
         </Wrapper>
       </Modal>
