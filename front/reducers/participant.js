@@ -132,7 +132,7 @@ const reducer = (state = initialState, action) =>
       case PARTICIPANT_ADMIN_LIST_SUCCESS: {
         draft.st_participantAdminLoading = false;
         draft.st_participantAdminDone = true;
-        draft.partAdminList = action.data.partList;
+        draft.partAdminList = action.data;
         break;
       }
       case PARTICIPANT_ADMIN_LIST_FAILURE: {
