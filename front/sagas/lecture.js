@@ -592,9 +592,7 @@ function* lectureStuLectureList(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function lectureMemoStuListAPI(data) {
-  return axios.get(
-    `/api/lecture/memo/student/list?page=${data.page}&search=${data.search}&LectureId=${data.LectureId}`
-  );
+  return axios.post(`/api/lecture/memo/student/list`, data);
 }
 
 function* lectureMemoStuList(action) {
