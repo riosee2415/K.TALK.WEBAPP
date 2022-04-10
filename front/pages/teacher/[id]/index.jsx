@@ -1623,7 +1623,6 @@ const Index = () => {
   );
 
   const diaryViewClickHandler = useCallback((data) => {
-    console.log(data, "data");
     setDiaryViewModalToggle(true);
     setDiaryData(data);
   }, []);
@@ -2519,7 +2518,7 @@ const Index = () => {
                   lectureDiaryList.map((data, idx) => {
                     return (
                       <Wrapper
-                        key={data.id}
+                        key={data.idx}
                         dr={`row`}
                         textAlign={`center`}
                         padding={`25px 0 20px`}

@@ -184,7 +184,7 @@ const DetailClass = () => {
     setBookModal(true);
   }, [bookLecture]);
 
-  console.log(bookLecture);
+  // console.log(bookLecture);
 
   const detailBookClose = useCallback(() => {
     setDetailBook(null);
@@ -566,7 +566,7 @@ const DetailClass = () => {
           columns={stuColumns}
           dataSource={partAdminList.partList}
         />
-        {console.log(partAdminList)}
+
         {/* <Wrapper al={`flex-end`} margin={`10px 0 32px`}>
           <CommonButton kindOf={`white`} radius={`5px`}>
             추가하기
@@ -625,7 +625,6 @@ const DetailClass = () => {
                   <br />
                 </>
               ))}
-            {console.log(detailMemo)}
           </Wrapper>
         </Wrapper>
       </Modal>

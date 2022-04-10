@@ -201,7 +201,8 @@ const UserList = ({}) => {
           return (
             <Option
               key={data.id}
-              value={`${data.id},${data.LetureId},${data.week}`}>
+              value={`${data.id},${data.LetureId},${data.week}`}
+            >
               {data.createdAt.slice(0, 10)} | {data.course} | &#36;
               {data.price} | &nbsp;{data.email}
             </Option>
@@ -255,7 +256,6 @@ const UserList = ({}) => {
 
   useEffect(() => {
     if (st_participantUserMoveListDone) {
-      console.log("st_participantUserMoveListDone");
     }
   }, [st_participantUserMoveListDone]);
 
@@ -380,9 +380,6 @@ const UserList = ({}) => {
       //   saveData = moment().add(day, "days").format("YYYY-MM-DD");
       // }
 
-      console.log(data, "data");
-      console.log(parData, "parData");
-
       let PaymentId = data.partLecture.split(",")[0];
       let LectureId = data.partLecture.split(",")[1];
       let date = parseInt(data.partLecture.split(",")[2]) * 7;
@@ -416,8 +413,6 @@ const UserList = ({}) => {
   );
 
   const onSeachStuHandler = useCallback(() => {
-    console.log(inputName.value, inputEmail.value);
-
     dispatch({
       type: USER_ALL_LIST_REQUEST,
       data: {
@@ -545,7 +540,8 @@ const UserList = ({}) => {
               data.level === 5
                 ? message.error("개발사는 권한을 수정할 수 없습니다.")
                 : classChangeModalOpen(data)
-            }>
+            }
+          >
             반 옮기기
           </Button>
 
@@ -555,7 +551,8 @@ const UserList = ({}) => {
               data.level === 5
                 ? message.error("개발사는 권한을 수정할 수 없습니다.")
                 : classPartModalOpen(data)
-            }>
+            }
+          >
             수업참여
           </Button>
 
@@ -566,7 +563,8 @@ const UserList = ({}) => {
               data.level === 5
                 ? message.error("개발사는 권한을 수정할 수 없습니다.")
                 : classPartEndModalOpen(data)
-            }>
+            }
+          >
             수업뺴기
           </Button>
         </Wrapper>
@@ -579,7 +577,8 @@ const UserList = ({}) => {
         <Button
           size="small"
           type="primary"
-          onClick={() => detailModalOpen(data)}>
+          onClick={() => detailModalOpen(data)}
+        >
           상세보기
         </Button>
       ),
@@ -722,8 +721,6 @@ const UserList = ({}) => {
           dataSource={allUsers ? allUsers : []}
           size="small"
         />
-
-        {console.log(allUsers, "allUsers")}
       </AdminContent>
 
       <Modal
@@ -731,12 +728,14 @@ const UserList = ({}) => {
         width={`400px`}
         title={`학생 수업 변경`}
         onCancel={classChangeModalClose}
-        onOk={onModalOk}>
+        onOk={onModalOk}
+      >
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
             form={form}
             style={{ width: `100%` }}
-            onFinish={(data) => onSubmit(data)}>
+            onFinish={(data) => onSubmit(data)}
+          >
             <Form.Item label={`학생`}>
               <Input disabled value={updateData && updateData.username} />
             </Form.Item>
@@ -746,7 +745,8 @@ const UserList = ({}) => {
                 width={`100%`}
                 height={`32px`}
                 showSearch
-                placeholder="Select a Lecture">
+                placeholder="Select a Lecture"
+              >
                 {updateData &&
                   updateData.Participants.map((data, idx) => {
                     if (data.isDelete) {
@@ -758,7 +758,8 @@ const UserList = ({}) => {
                     return (
                       <Option
                         key={data.id}
-                        value={`${data.LectureId},${data.date},${data.endDate}`}>
+                        value={`${data.LectureId},${data.date},${data.endDate}`}
+                      >
                         {data.Lecture?.course}
                       </Option>
                     );
@@ -786,12 +787,14 @@ const UserList = ({}) => {
         width={`800px`}
         title={`학생 수업 참여`}
         onCancel={classPartModalClose}
-        onOk={onModalChangeOk}>
+        onOk={onModalChangeOk}
+      >
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
             form={updateClassform}
             style={{ width: `100%` }}
-            onFinish={onUpdateClassSubmit}>
+            onFinish={onUpdateClassSubmit}
+          >
             <Form.Item label={`학생`}>
               <Input disabled value={parData && parData.username} />
             </Form.Item>
@@ -801,7 +804,8 @@ const UserList = ({}) => {
               name={`partLecture`}
               rules={[
                 { required: true, message: "참가시킬 강의를 선택해주세요." },
-              ]}>
+              ]}
+            >
               <Select
                 width={`100%`}
                 height={`32px`}
@@ -811,7 +815,8 @@ const UserList = ({}) => {
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
                 }
-                placeholder="Select a Lecture">
+                placeholder="Select a Lecture"
+              >
                 {opt2}
               </Select>
             </Form.Item>
@@ -824,12 +829,14 @@ const UserList = ({}) => {
         width={`400px`}
         title={`학생 수업 변경`}
         onCancel={classPartEndModalClose}
-        onOk={onSubmitEnd}>
+        onOk={onSubmitEnd}
+      >
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
             form={updateEndClassform}
             style={{ width: `100%` }}
-            onFinish={onEndClassSubmit}>
+            onFinish={onEndClassSubmit}
+          >
             <Form.Item label={`학생`} name={`userName`}>
               <Input disabled value={parEndData && parEndData.username} />
             </Form.Item>
@@ -839,7 +846,8 @@ const UserList = ({}) => {
                 width={`100%`}
                 height={`32px`}
                 showSearch
-                placeholder="Select a Lecture">
+                placeholder="Select a Lecture"
+              >
                 {parEndData &&
                   parEndData.Participants.map((data, idx) => {
                     if (data.isDelete) {
@@ -865,12 +873,14 @@ const UserList = ({}) => {
         width={`80%`}
         title={`학생 강의 목록`}
         footer={null}
-        onCancel={() => setDetailToggle(false)}>
+        onCancel={() => setDetailToggle(false)}
+      >
         <Text
           padding={`16px 0px`}
           color={Theme.black_2C}
           fontSize={`16px`}
-          fontWeight={`500`}>
+          fontWeight={`500`}
+        >
           참여하고 있는 강의
           <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
             *수업 참여일:관리자가 학생의 수업을 참여시킨 날짜
@@ -887,7 +897,8 @@ const UserList = ({}) => {
           padding={`16px 0px`}
           color={Theme.black_2C}
           fontSize={`16px`}
-          fontWeight={`500`}>
+          fontWeight={`500`}
+        >
           반 이동 내역
           <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
             *수업 변경일:관리자가 학생의 수업을 변경시킨 날짜
@@ -904,7 +915,8 @@ const UserList = ({}) => {
           padding={`16px 0px`}
           color={Theme.black_2C}
           fontSize={`16px`}
-          fontWeight={`500`}>
+          fontWeight={`500`}
+        >
           종료된 강의 내역
           <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
             *수업 종료일:관리자가 학생의 수업을 종료시킨 날짜

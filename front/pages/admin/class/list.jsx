@@ -357,7 +357,6 @@ const List = () => {
 
       inputPeriod.setValue(parseInt(data.lecDate.replace("주", "")));
       setStartDate(data.startDate);
-      console.log(data.day.split(" "));
 
       let day = "";
       if (data.time_1) {
@@ -466,7 +465,7 @@ const List = () => {
       render: (data) => <div>{data.createdAt.substring(0, 10)}</div>,
     },
   ];
-  console.log(showList);
+
   return (
     <AdminLayout>
       <PageHeader

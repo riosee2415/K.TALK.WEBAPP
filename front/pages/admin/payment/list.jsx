@@ -200,7 +200,6 @@ const PaymentList = ({}) => {
           dataSource={paymentList ? paymentList : []}
           size="small"
         />
-        {console.log(paymentList)}
       </AdminContent>
 
       <Modal

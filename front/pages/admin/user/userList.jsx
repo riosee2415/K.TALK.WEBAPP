@@ -299,7 +299,7 @@ const UserList = ({}) => {
         })
     );
   }, [allLectures]);
-  console.log(paymentList, "paymentList");
+
   useEffect(() => {
     if (selectUserLevel === "1") {
       const payOpt =
@@ -385,29 +385,6 @@ const UserList = ({}) => {
         );
       }
       if (selectUserLevel === "1") {
-        console.log({
-          userId: data.userId,
-          password: data.password,
-          username: data.username,
-          mobile: data.mobile,
-          email: data.email,
-          address: data.address,
-          detailAddress: data.detailAddress,
-          stuLanguage: data.stuLanguage,
-          birth: data.birth.format("YYYY-MM-DD"),
-          stuCountry: data.stuCountry,
-          stuLiveCon: data.stuLiveCon,
-          sns: data.sns,
-          snsId: data.snsId,
-          stuJob: data.stuJob,
-          gender: data.gender,
-          PaymentId: data.payment.split(",")[0],
-          LectureId: data.payment.split(",")[1],
-          date: parseInt(data.payment.split(",")[2]) * 7,
-          endDate: moment()
-            .add(parseInt(data.payment.split(",")[2]) * 7, "days")
-            .format("YYYY-MM-DD"),
-        });
         dispatch({
           type: USER_STU_CREATE_REQUEST,
           data: {
@@ -476,7 +453,7 @@ const UserList = ({}) => {
       },
     });
   }, [inputCreateEmail.value]);
-  console.log(paymentList);
+
   ////// DATAVIEW //////
 
   const columns = [
