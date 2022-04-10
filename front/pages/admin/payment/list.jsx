@@ -102,14 +102,14 @@ const PaymentList = ({}) => {
     }
   }, [st_loadMyInfoDone]);
 
-  const onClickCheckID = useCallback((data) => {
-    dispatch({
-      type: USER_FIND_EMAIL_BY_REQUEST,
-      data: {
-        email: data.email,
-      },
-    });
-  }, []);
+  // const onClickCheckID = useCallback((data) => {
+  //   dispatch({
+  //     type: USER_FIND_EMAIL_BY_REQUEST,
+  //     data: {
+  //       email: data.email,
+  //     },
+  //   });
+  // }, []);
   /////////////////////////////////////////////////////////////////////////
 
   ////// HOOKS //////
@@ -131,7 +131,9 @@ const PaymentList = ({}) => {
 
     {
       title: "결제한 강의",
-      dataIndex: "course",
+      render: (data) => {
+        return <Text>{data.course}</Text>;
+      },
     },
 
     {
@@ -153,19 +155,20 @@ const PaymentList = ({}) => {
       },
     },
 
-    {
-      title: "아이디 여부",
-      render: (data, _, j) => {
-        return (
-          <Button
-            type={`primary`}
-            size={`small`}
-            onClick={() => onClickCheckID(data)}>
-            아이디 확인
-          </Button>
-        );
-      },
-    },
+    // {
+    //   title: "아이디 여부",
+    //   render: (data, _, j) => {
+    //     return (
+    //       <Button
+    //         type={`primary`}
+    //         size={`small`}
+    //         onClick={() => onClickCheckID(data)}
+    //       >
+    //         아이디 확인
+    //       </Button>
+    //     );
+    //   },
+    // },
   ];
 
   return (
@@ -205,7 +208,8 @@ const PaymentList = ({}) => {
         width="900px"
         onOk={() => {}}
         onCancel={() => {}}
-        title="주의사항">
+        title="주의사항"
+      >
         <GuideUl>
           <GuideLi>asdfasdf</GuideLi>
           <GuideLi isImpo={true}>asdfasdf</GuideLi>

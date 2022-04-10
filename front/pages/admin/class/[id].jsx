@@ -516,29 +516,17 @@ const DetailClass = () => {
             <Wrapper dr={`row`} ju={`flex-start`}>
               <Text
                 fontWeight={`bold`}
-                width={`80px`}
+                width={`90px`}
                 margin={`0 20px 0 0`}
                 color={Theme.black_C}
               >
-                ZOOM ID
+                ZOOM LINK
               </Text>
               {lectureDetail && lectureDetail[0].zoomLink
                 ? lectureDetail[0].zoomLink
                 : "-"}
             </Wrapper>
-            <Wrapper dr={`row`} ju={`flex-start`}>
-              <Text
-                fontWeight={`bold`}
-                width={`80px`}
-                margin={`0 20px 0 0`}
-                color={Theme.black_C}
-              >
-                Password
-              </Text>
-              {lectureDetail && lectureDetail[0].zoomPass
-                ? lectureDetail[0].zoomPass
-                : "-"}
-            </Wrapper>
+            <Wrapper dr={`row`} ju={`flex-start`}></Wrapper>
           </Wrapper>
         </Wrapper>
 

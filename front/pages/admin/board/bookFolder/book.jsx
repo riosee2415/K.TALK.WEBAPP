@@ -175,6 +175,14 @@ const UserDeliAddress = ({}) => {
       setImagePathTh("");
       setCreateModal(false);
       filename.setValue("");
+      dispatch({
+        type: BOOK_LIST_REQUEST,
+        data: {
+          BookFolderId: bookMenuId,
+          search: "",
+          page: "",
+        },
+      });
       return message.success("교재를 업로드 했습니다.");
     }
   }, [st_bookCreateDone]);
@@ -424,7 +432,8 @@ const UserDeliAddress = ({}) => {
           type="primary"
           onClick={() => updateBookModal(data)}
           size={`small`}
-          pri>
+          pri
+        >
           수정
         </Button>
       ),
@@ -438,7 +447,8 @@ const UserDeliAddress = ({}) => {
           type="primary"
           onClick={() => fileDownloadHandler(data.file)}
           size={`small`}
-          pri>
+          pri
+        >
           다운로드
         </Button>
       ),
@@ -452,7 +462,8 @@ const UserDeliAddress = ({}) => {
           type="danger"
           onClick={() => deletePopToggle(data)}
           size={`small`}
-          pri>
+          pri
+        >
           삭제
         </Button>
       ),
@@ -513,7 +524,8 @@ const UserDeliAddress = ({}) => {
                     key={data.id}
                     type="primary"
                     size="small"
-                    onClick={() => onClickBookFolder(data)}>
+                    onClick={() => onClickBookFolder(data)}
+                  >
                     {data.value}
                   </ModalBtn>
                 );
@@ -540,7 +552,8 @@ const UserDeliAddress = ({}) => {
         visible={deletePopVisible}
         onOk={deleteBookHandler}
         onCancel={() => setDeletePopVisible(false)}
-        title="정말 삭제하시겠습니까?">
+        title="정말 삭제하시겠습니까?"
+      >
         <Wrapper>삭제 된 데이터는 다시 복구할 수 없습니다.</Wrapper>
         <Wrapper>정말 삭제하시겠습니까?</Wrapper>
       </Modal>
@@ -548,29 +561,34 @@ const UserDeliAddress = ({}) => {
       <Modal
         visible={createModal}
         onCancel={updateData ? updateModalClose : () => modalClose()}
-        onOk={modalOk}>
+        onOk={modalOk}
+      >
         <Wrapper al={`flex-start`}>
           <Form
             form={form}
             ref={formRef}
-            onFinish={updateData ? updateSubmit : onSubmit}>
+            onFinish={updateData ? updateSubmit : onSubmit}
+          >
             <Form.Item
               rules={[{ required: true, message: "교재 제목을 입력해주세요." }]}
               label={`교재 제목`}
-              name={`title`}>
+              name={`title`}
+            >
               <TextInput height={`30px`} />
             </Form.Item>
             <Form.Item
               rules={[{ required: true, message: "폴더를 선택해주세요." }]}
               label={`폴더 선택`}
-              name={`folder`}>
+              name={`folder`}
+            >
               <Select
                 placeholder="Select a Folder"
                 optionFilterProp="children"
                 filterOption={(input, option) =>
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
-                }>
+                }
+              >
                 {bookFolderList &&
                   bookFolderList.map((data) => {
                     return (
@@ -614,7 +632,8 @@ const UserDeliAddress = ({}) => {
             width={`auto`}
             margin={`20px 0 0`}
             dr={`row`}
-            ju={`flex-end`}>
+            ju={`flex-end`}
+          >
             <input
               type="file"
               name="file"
