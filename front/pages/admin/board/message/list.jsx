@@ -545,8 +545,7 @@ const List = ({ router }) => {
           </Wrapper>
         </Wrapper>
 
-        <Button onClick={() => setCurrentChecks([])}>버튼</Button>
-
+      
         <Table
           rowKey="id"
           rowSelection={rowSelection}
