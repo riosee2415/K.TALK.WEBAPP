@@ -97,12 +97,11 @@ const DetailClass = () => {
   const dispatch = useDispatch();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentPage2, setCurrentPage2] = useState(1);
 
   const [memoModal, setMemoModal] = useState(false);
   const [currentStudentId, setCurrentStudentId] = useState(null);
 
-  const [detailMemoModal, setDetailMemoModal] = useState(null);
+  const [detailMemoModal, setDetailMemoModal] = useState(false);
   const [detailMemo, setDetailMemo] = useState(null);
 
   const [detailBook, setDetailBook] = useState(null);
@@ -192,6 +191,16 @@ const DetailClass = () => {
     setBookModal(false);
   }, []);
 
+  const detailMemoContentOpen = useCallback((data) => {
+    setDetailMemo(data);
+    setDetailMemoModal(true);
+  }, []);
+
+  const detailMemoContentClose = useCallback(() => {
+    setDetailMemo(null);
+    setDetailMemoModal(false);
+  }, []);
+
   const stepHanlder = useCallback((startDate, endDate, count, lecDate, day) => {
     let dir = 0;
 
@@ -228,6 +237,29 @@ const DetailClass = () => {
     }
 
     return parseInt((add / (count * lecDate)) * 100);
+  }, []);
+
+  const stepEnd = useCallback((endDate, day) => {
+    let endDay = moment
+      .duration(moment(endDate).diff(moment().format("YYYY-MM-DD")))
+      .asDays();
+
+    const arr = ["일", "월", "화", "수", "목", "금", "토"];
+    let add = 0;
+
+    for (let i = 0; i < endDay; i++) {
+      let saveDay = moment()
+        .add(i + 1, "days")
+        .day();
+
+      const saveResult = day.includes(arr[saveDay]);
+
+      if (saveResult) {
+        add += 1;
+      }
+    }
+
+    return add;
   }, []);
 
   ////// TOGGLE //////
@@ -355,7 +387,7 @@ const DetailClass = () => {
     },
     {
       title: "작성일",
-      dataIndex: "createdAt",
+      render: (data) => <Text>{data.createdAt.slice(0, 13)}</Text>,
     },
     {
       title: "메모 보기",
@@ -364,9 +396,9 @@ const DetailClass = () => {
           <Button
             type={`primary`}
             size={`small`}
-            onClick={() => fileDownloadHandler(data.Book.file)}
+            onClick={() => detailMemoContentOpen(data)}
           >
-            다운로드
+            내용 보기
           </Button>
         );
       },
@@ -401,35 +433,7 @@ const DetailClass = () => {
           </Wrapper>
         </Wrapper>
         <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 14px`}>
-          <Wrapper width={`50%`} dr={`row`} ju={`flex-start`}>
-            {lectureDetail && (
-              <CustomSlide
-                defaultValue={stepHanlder(
-                  lectureDetail[0].startDate,
-                  lectureDetail[0].endDate,
-                  lectureDetail[0].count,
-                  lectureDetail[0].lecDate,
-                  lectureDetail[0].day
-                )}
-                disabled={true}
-                draggableTrack={true}
-              />
-            )}
-
-            <Text>
-              &nbsp;(
-              {lectureDetail &&
-                stepHanlder(
-                  lectureDetail[0].startDate,
-                  lectureDetail[0].endDate,
-                  lectureDetail[0].count,
-                  lectureDetail[0].lecDate,
-                  lectureDetail[0].day
-                )}
-              %)
-            </Text>
-          </Wrapper>
-          <Wrapper width={`50%`} dr={`row`} ju={`flex-end`}>
+          <Wrapper dr={`row`} ju={`flex-start`}>
             <CommonButton
               radius={`5px`}
               width={`130px`}
@@ -489,13 +493,8 @@ const DetailClass = () => {
                 margin={`0 0 0 15px`}
               >
                 {lectureDetail &&
-                  `D-${moment
-                    .duration(
-                      moment(lectureDetail[0].endDate, "YYYY-MM-DD").diff(
-                        moment().format("YYYY-MM-DD")
-                      )
-                    )
-                    .asDays()}`}
+                  stepEnd(lectureDetail[0].endDate, lectureDetail[0].day)}
+                회
               </SpanText>
             </Text>
           </Wrapper>
@@ -595,8 +594,38 @@ const DetailClass = () => {
               style={{ width: `100%` }}
               size={`small`}
               columns={memoListColumns}
-              dataSource={bookLecture}
+              dataSource={lectureMemoStuList}
+              pagination={{
+                current: parseInt(currentPage),
+                total: lectureMemoStuLastPage * 10,
+                onChange: (page) => setCurrentPage(page),
+              }}
             />
+          </Wrapper>
+        </Wrapper>
+      </Modal>
+
+      <Modal
+        visible={detailMemoModal}
+        footer={null}
+        onCancel={detailMemoContentClose}
+        width={800}
+        title={`메모 내용`}
+      >
+        <Wrapper al={`flex-start`}>
+          <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
+            {detailMemo && detailMemo.username} &nbsp;| &nbsp;
+            {detailMemo && detailMemo.createdAt.slice(0, 13)}
+          </Text>
+          <Wrapper al={`flex-start`} ju={`flex-start`} height={`500px`}>
+            {detailMemo &&
+              detailMemo.memo.split(`\n`).map((data) => (
+                <>
+                  <SpanText>{data}</SpanText>
+                  <br />
+                </>
+              ))}
+            {console.log(detailMemo)}
           </Wrapper>
         </Wrapper>
       </Modal>
