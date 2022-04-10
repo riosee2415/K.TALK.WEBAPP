@@ -3,8 +3,11 @@ import produce from "../util/produce";
 export const initialState = {
   partList: [],
   partLectureList: [],
+  partLecturePrice: null,
   partAdminList: [], // 관리자에서 보는 참여 목록
   partLastPage: 1,
+  partUserDeleteList: [],
+  partUserMoveList: [],
   //
   st_participantListLoading: false,
   st_participantListDone: false,
@@ -25,6 +28,14 @@ export const initialState = {
   st_participantDeleteLoading: false,
   st_participantDeleteDone: false,
   st_participantDeleteError: null,
+  //
+  st_participantUserDeleteListLoading: false,
+  st_participantUserDeleteListDone: false,
+  st_participantUserDeleteListError: null,
+  //
+  st_participantUserMoveListLoading: false,
+  st_participantUserMoveListDone: false,
+  st_participantUserMoveListError: null,
 };
 
 export const PARTICIPANT_LIST_REQUEST = "PARTICIPANT_LIST_REQUEST";
@@ -49,6 +60,20 @@ export const PARTICIPANT_CREATE_FAILURE = "PARTICIPANT_CREATE_FAILURE";
 export const PARTICIPANT_DELETE_REQUEST = "PARTICIPANT_DELETE_REQUEST";
 export const PARTICIPANT_DELETE_SUCCESS = "PARTICIPANT_DELETE_SUCCESS";
 export const PARTICIPANT_DELETE_FAILURE = "PARTICIPANT_DELETE_FAILURE";
+
+export const PARTICIPANT_USER_DELETE_LIST_REQUEST =
+  "PARTICIPANT_USER_DELETE_LIST_REQUEST";
+export const PARTICIPANT_USER_DELETE_LIST_SUCCESS =
+  "PARTICIPANT_USER_DELETE_LIST_SUCCESS";
+export const PARTICIPANT_USER_DELETE_LIST_FAILURE =
+  "PARTICIPANT_USER_DELETE_LIST_FAILURE";
+
+export const PARTICIPANT_USER_MOVE_LIST_REQUEST =
+  "PARTICIPANT_USER_MOVE_LIST_REQUEST";
+export const PARTICIPANT_USER_MOVE_LIST_SUCCESS =
+  "PARTICIPANT_USER_MOVE_LIST_SUCCESS";
+export const PARTICIPANT_USER_MOVE_LIST_FAILURE =
+  "PARTICIPANT_USER_MOVE_LIST_FAILURE";
 
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
@@ -85,6 +110,7 @@ const reducer = (state = initialState, action) =>
         draft.st_participantLectureListLoading = false;
         draft.st_participantLectureListDone = true;
         draft.partLectureList = action.data.partList;
+        draft.partLecturePrice = action.data.price;
         break;
       }
       case PARTICIPANT_LECTURE_LIST_FAILURE: {
@@ -153,6 +179,48 @@ const reducer = (state = initialState, action) =>
         draft.st_participantDeleteLoading = false;
         draft.st_participantDeleteDone = false;
         draft.st_participantDeleteError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case PARTICIPANT_USER_DELETE_LIST_REQUEST: {
+        draft.st_participantUserDeleteListLoading = true;
+        draft.st_participantUserDeleteListDone = null;
+        draft.st_participantUserDeleteListError = false;
+        break;
+      }
+      case PARTICIPANT_USER_DELETE_LIST_SUCCESS: {
+        draft.st_participantUserDeleteListDone = true;
+        draft.st_participantUserDeleteListLoading = false;
+        draft.partUserDeleteList = action.data.list;
+        break;
+      }
+      case PARTICIPANT_USER_DELETE_LIST_FAILURE: {
+        draft.st_participantUserDeleteListLoading = false;
+        draft.st_participantUserDeleteListDone = false;
+        draft.st_participantUserDeleteListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case PARTICIPANT_USER_MOVE_LIST_REQUEST: {
+        draft.st_participantUserMoveListLoading = true;
+        draft.st_participantUserMoveListDone = null;
+        draft.st_participantUserMoveListError = false;
+        break;
+      }
+      case PARTICIPANT_USER_MOVE_LIST_SUCCESS: {
+        draft.st_participantUserMoveListDone = true;
+        draft.st_participantUserMoveListLoading = false;
+        draft.partUserMoveList = action.data.list;
+        break;
+      }
+      case PARTICIPANT_USER_MOVE_LIST_FAILURE: {
+        draft.st_participantUserMoveListLoading = false;
+        draft.st_participantUserMoveListDone = false;
+        draft.st_participantUserMoveListError = action.error;
         break;
       }
 

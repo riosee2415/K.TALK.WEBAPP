@@ -269,12 +269,13 @@ const Index = () => {
                           fontSize={width < 700 ? `14px` : `18px`}>
                           <Text fontWeight={`600`}>수업 금액</Text>
                           <Text>
-                            {payClassDetail &&
+                            {`$${
+                              payClassDetail &&
                               String(payClassDetail.price).replace(
                                 /\B(?=(\d{3})+(?!\d))/g,
                                 ","
-                              )}
-                            원
+                              )
+                            }`}
                           </Text>
                         </Wrapper>
 
@@ -298,15 +299,14 @@ const Index = () => {
                         <Text
                           color={Theme.black_3C}
                           fontSize={width < 700 ? `16px` : `24px`}>
-                          {String(
+                          {` $${String(
                             Math.floor(
                               payClassDetail.price -
                                 (payClassDetail.price *
                                   payClassDetail.discount) /
                                   100
                             )
-                          ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                          원
+                          ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
                         </Text>
                       </Wrapper>
                     </Wrapper>
@@ -317,12 +317,13 @@ const Index = () => {
                           style={style}
                           env={env}
                           client={client}
-                          total={
+                          total={Math.floor(
                             payClassDetail &&
-                            payClassDetail.price -
-                              (payClassDetail.price * payClassDetail.discount) /
-                                100
-                          }
+                              payClassDetail.price -
+                                (payClassDetail.price *
+                                  payClassDetail.discount) /
+                                  100
+                          )}
                           currency={currency}
                           onSuccess={onSuccess}
                           onError={onError}

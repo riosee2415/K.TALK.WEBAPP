@@ -20,6 +20,14 @@ import {
   PARTICIPANT_DELETE_REQUEST,
   PARTICIPANT_DELETE_SUCCESS,
   PARTICIPANT_DELETE_FAILURE,
+  //////////////////////////////////////////////////////////
+  PARTICIPANT_USER_DELETE_LIST_REQUEST,
+  PARTICIPANT_USER_DELETE_LIST_SUCCESS,
+  PARTICIPANT_USER_DELETE_LIST_FAILURE,
+  //////////////////////////////////////////////////////////
+  PARTICIPANT_USER_MOVE_LIST_REQUEST,
+  PARTICIPANT_USER_MOVE_LIST_SUCCESS,
+  PARTICIPANT_USER_MOVE_LIST_FAILURE,
 } from "../reducers/participant";
 
 // SAGA AREA ********************************************************************************************************
@@ -48,7 +56,7 @@ function* participantList(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function participantLectureListAPI(data) {
-  return axios.post(`/api/part/leture/list`, data);
+  return axios.post(`/api/part/lecture/list`, data);
 }
 
 function* participantLectureList(action) {
@@ -141,6 +149,60 @@ function* participantDelete(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function participantUserDeleteListAPI(data) {
+  return axios.post(`/api/part/user/delete/list`, data);
+}
+
+function* participantUserDeleteList(action) {
+  try {
+    const result = yield call(participantUserDeleteListAPI, action.data);
+
+    yield put({
+      type: PARTICIPANT_USER_DELETE_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: PARTICIPANT_USER_DELETE_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function participantUserMoveListAPI(data) {
+  return axios.post(`/api/part/user/delete/list`, data);
+}
+
+function* participantUserMoveList(action) {
+  try {
+    const result = yield call(participantUserMoveListAPI, action.data);
+
+    yield put({
+      type: PARTICIPANT_USER_MOVE_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: PARTICIPANT_USER_MOVE_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchParticipantList() {
@@ -163,6 +225,17 @@ function* watchParticipantDelete() {
   yield takeLatest(PARTICIPANT_DELETE_REQUEST, participantDelete);
 }
 
+function* watchParticipantUserDeleteList() {
+  yield takeLatest(
+    PARTICIPANT_USER_DELETE_LIST_REQUEST,
+    participantUserDeleteList
+  );
+}
+
+function* watchParticipantUserMoveList() {
+  yield takeLatest(PARTICIPANT_USER_MOVE_LIST_REQUEST, participantUserMoveList);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* participantSaga() {
   yield all([
@@ -171,6 +244,8 @@ export default function* participantSaga() {
     fork(watchParticipantAdminList),
     fork(watchParticipantCreate),
     fork(watchParticipantDelete),
+    fork(watchParticipantUserDeleteList),
+    fork(watchParticipantUserMoveList),
     //
   ]);
 }

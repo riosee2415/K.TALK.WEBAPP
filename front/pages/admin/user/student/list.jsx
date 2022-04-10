@@ -20,6 +20,7 @@ import axios from "axios";
 import {
   Combo,
   ComboOption,
+  SpanText,
   Text,
   Wrapper,
 } from "../../../../components/commonComponents";
@@ -28,6 +29,8 @@ import { CloseCircleOutlined } from "@ant-design/icons";
 import {
   PARTICIPANT_CREATE_REQUEST,
   PARTICIPANT_DELETE_REQUEST,
+  PARTICIPANT_USER_DELETE_LIST_REQUEST,
+  PARTICIPANT_USER_MOVE_LIST_REQUEST,
 } from "../../../../reducers/participant";
 import useInput from "../../../../hooks//useInput";
 import { SearchOutlined } from "@ant-design/icons";
@@ -82,6 +85,14 @@ const UserList = ({}) => {
     st_participantCreateError,
     st_participantDeleteDone,
     st_participantDeleteError,
+
+    partUserDeleteList,
+    st_participantUserDeleteListDone,
+    st_participantUserDeleteListError,
+
+    partUserMoveList,
+    st_participantUserMoveListDone,
+    st_participantUserMoveListError,
   } = useSelector((state) => state.participant);
 
   const { paymentList, st_paymentListDone, st_paymentListError } = useSelector(
@@ -230,6 +241,23 @@ const UserList = ({}) => {
       return message.error(st_participantDeleteError);
     }
   }, [st_participantDeleteError]);
+
+  useEffect(() => {
+    if (st_participantUserDeleteListError) {
+      return message.error(st_participantUserDeleteListError);
+    }
+  }, [st_participantUserDeleteListError]);
+
+  useEffect(() => {
+    if (st_participantUserDeleteListDone) {
+    }
+  }, [st_participantUserDeleteListDone]);
+
+  useEffect(() => {
+    if (st_participantUserMoveListDone) {
+      console.log("st_participantUserMoveListDone");
+    }
+  }, [st_participantUserMoveListDone]);
 
   ////// TOGGLE //////
   const classChangeModalOpen = useCallback(
@@ -388,6 +416,8 @@ const UserList = ({}) => {
   );
 
   const onSeachStuHandler = useCallback(() => {
+    console.log(inputName.value, inputEmail.value);
+
     dispatch({
       type: USER_ALL_LIST_REQUEST,
       data: {
@@ -437,13 +467,31 @@ const UserList = ({}) => {
   }, []);
 
   const detailModalOpen = useCallback((data) => {
-    setDetailToggle(true);
+    dispatch({
+      type: PARTICIPANT_USER_DELETE_LIST_REQUEST,
+      data: {
+        UserId: data.id,
+        isDelete: true,
+        isChange: false,
+      },
+    });
+
+    dispatch({
+      type: PARTICIPANT_USER_MOVE_LIST_REQUEST,
+      data: {
+        UserId: data.id,
+        isDelete: false,
+        isChange: true,
+      },
+    });
 
     let save = data.Participants.filter((Datum, idx) => {
       return !Datum.isChange && !Datum.isDelete;
     });
 
     setDetailDatum(save);
+
+    setDetailToggle(true);
   }, []);
 
   ////// DATAVIEW //////
@@ -526,13 +574,13 @@ const UserList = ({}) => {
     },
 
     {
-      title: "참가중인 강의",
+      title: "학생 강의 현황",
       render: (data) => (
         <Button
           size="small"
           type="primary"
           onClick={() => detailModalOpen(data)}>
-          참가중인 강의
+          상세보기
         </Button>
       ),
     },
@@ -569,10 +617,76 @@ const UserList = ({}) => {
     },
 
     {
-      title: "총 강의 수",
-      render: (data) => <div>{data.Lecture && data.Lecture.count}</div>,
+      title: "수업 참여일",
+      render: (data) => <div>{data.createdAt.slice(0, 10)}</div>,
     },
   ];
+
+  const columnsMove = [
+    {
+      title: "No",
+      dataIndex: "id",
+    },
+
+    {
+      title: "수업 이름",
+      render: (data) => <div>{data.course}</div>,
+    },
+
+    {
+      title: "요일",
+      render: (data) => <div>{data.day}</div>,
+    },
+
+    {
+      title: "시간",
+      render: (data) => <div>{data.time}</div>,
+    },
+
+    {
+      title: "수업 참여일",
+      render: (data) => (
+        <div>
+          {moment(data.endDate)
+            .add(parseInt(-data.date), "days")
+            .format("YYYY-MM-DD")}
+        </div>
+      ),
+    },
+
+    {
+      title: "수업 변경일",
+      render: (data) => <div>{data.updatedAt.slice(0, 10)}</div>,
+    },
+  ];
+
+  const columnsEnd = [
+    {
+      title: "No",
+      dataIndex: "id",
+    },
+
+    {
+      title: "수업 이름",
+      render: (data) => <div>{data.course}</div>,
+    },
+
+    {
+      title: "요일",
+      render: (data) => <div>{data.day}</div>,
+    },
+
+    {
+      title: "시간",
+      render: (data) => <div>{data.time}</div>,
+    },
+
+    {
+      title: "수업 종료일",
+      render: (data) => <div>{data.updatedAt.slice(0, 10)}</div>,
+    },
+  ];
+
   return (
     <AdminLayout>
       <PageHeader
@@ -608,6 +722,8 @@ const UserList = ({}) => {
           dataSource={allUsers ? allUsers : []}
           size="small"
         />
+
+        {console.log(allUsers, "allUsers")}
       </AdminContent>
 
       <Modal
@@ -750,10 +866,38 @@ const UserList = ({}) => {
         title={`학생 강의 목록`}
         footer={null}
         onCancel={() => setDetailToggle(false)}>
+        <Text
+          padding={`16px 0px`}
+          color={Theme.black_2C}
+          fontSize={`16px`}
+          fontWeight={`500`}>
+          참여하고 있는 강의
+          <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
+            *수업 참여일:관리자가 학생의 수업을 참여시킨 날짜
+          </SpanText>
+        </Text>
         <Table
           rowKey="id"
           columns={columnsList}
           dataSource={detailDatum}
+          size="small"
+        />
+
+        <Text
+          padding={`16px 0px`}
+          color={Theme.black_2C}
+          fontSize={`16px`}
+          fontWeight={`500`}>
+          반 이동 내역
+          <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
+            *수업 변경일:관리자가 학생의 수업을 변경시킨 날짜
+          </SpanText>
+        </Text>
+
+        <Table
+          rowKey="id"
+          columns={columnsMove}
+          dataSource={st_participantUserMoveListDone ? partUserMoveList : []}
           size="small"
         />
         <Text
@@ -761,15 +905,19 @@ const UserList = ({}) => {
           color={Theme.black_2C}
           fontSize={`16px`}
           fontWeight={`500`}>
-          학생강의 참여 및 이동 기록
+          종료된 강의 내역
+          <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
+            *수업 종료일:관리자가 학생의 수업을 종료시킨 날짜
+          </SpanText>
         </Text>
-
-        {/* <Table
+        <Table
           rowKey="id"
-          columns={columnsList}
-          dataSource={detailDatum}
+          columns={columnsEnd}
+          dataSource={
+            st_participantUserDeleteListDone ? partUserDeleteList : []
+          }
           size="small"
-        /> */}
+        />
       </Modal>
     </AdminLayout>
   );
