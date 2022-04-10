@@ -679,7 +679,7 @@ const Index = () => {
   useEffect(() => {
     if (st_messageManyCreateDone) {
       onReset();
-
+      setD;
       return message.success("해당 학생에게 쪽지를 보냈습니다.");
     }
   }, [st_messageManyCreateDone]);
@@ -1160,7 +1160,13 @@ const Index = () => {
         type: LECTURE_DIARY_CREATE_REQUEST,
         data: {
           author: me.userId,
-          process: value.process,
+          process:
+            value.process1 +
+            "권 " +
+            value.process2 +
+            "단원 " +
+            value.process3 +
+            "페이지",
           lectureMemo: value.lectureMemo,
           LectureId: router.query.id,
           startLv: value.process,
@@ -1715,7 +1721,7 @@ const Index = () => {
                   <Text fontWeight={`bold`}>
                     안녕하세요,&nbsp;
                     <SpanText color={Theme.basicTheme_C}>
-                      {me && me.username}님
+                      {me && me.userId}님
                     </SpanText>
                     !
                   </Text>
@@ -2197,9 +2203,7 @@ const Index = () => {
                             key={data.id}
                             dr={`row`}
                             textAlign={`center`}
-                            wordBreak={`break-word`}
                             padding={`25px 0 20px`}
-                            ju={`center`}
                             bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
                             <CustomCheckBox
                               checked={
@@ -2213,7 +2217,8 @@ const Index = () => {
                             />
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
-                              width={`15%`}>
+                              width={`15%`}
+                              wordBreak={`break-word`}>
                               {data.username}
                             </Text>
                             <Text
@@ -3423,11 +3428,40 @@ const Index = () => {
               margin={`0 0 10px`}>
               진도
             </Text>
-            <Form.Item
-              name="process"
-              rules={[{ required: true, message: "진도를 입력해주세요." }]}>
-              <CusotmInput width={`100%`} />
-            </Form.Item>
+            <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px 0`}>
+              <Form.Item
+                style={{
+                  width: `calc(100% / 3 - 10px - 100px)`,
+                  margin: `0`,
+                }}
+                name="process1"
+                rules={[{ required: true, message: "진도를 입력해주세요." }]}>
+                <CusotmInput type={`number`} width={`100%`} />
+              </Form.Item>
+              <Text margin={`0 15px 0 0`} width={`50px`}>
+                &nbsp; 권
+              </Text>
+              <Form.Item
+                style={{
+                  width: `calc(100% / 3 - 10px - 100px)`,
+                  margin: `0`,
+                }}
+                name="process2"
+                rules={[{ required: true, message: "진도를 입력해주세요." }]}>
+                <CusotmInput type={`number`} width={`100%`} />
+              </Form.Item>
+              <Text margin={`0 15px 0 0`} width={`50px`}>
+                &nbsp; 단원
+              </Text>
+              <Form.Item
+                style={{ width: `calc(100% / 3 - 10px - 100px)`, margin: `0` }}
+                name="process3"
+                rules={[{ required: true, message: "진도를 입력해주세요." }]}>
+                <CusotmInput type={`number`} width={`100%`} />
+              </Form.Item>
+              <Text width={`100px`}>&nbsp; 페이지</Text>
+            </Wrapper>
+
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
@@ -3511,7 +3545,7 @@ const Index = () => {
           title="학생 숙제 제출 목록"
           footer={null}
           closable={false}>
-          <CustomForm form={homeworkSubmitform} onFinish={diaryFinishHandler}>
+          <CustomForm>
             {lectureSubmitList && lectureSubmitList.length === 0 ? (
               <Wrapper margin={`50px 0`}>
                 <Empty description="조회된 학생 숙제 리스트가 없습니다." />

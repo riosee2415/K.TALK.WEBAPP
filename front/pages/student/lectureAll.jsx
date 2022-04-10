@@ -782,7 +782,7 @@ const LectureAll = () => {
                     padding={`0 0 0 15px`}>
                     안녕하세요,&nbsp;
                     <SpanText color={Theme.basicTheme_C}>
-                      {me && me.username}
+                      {me && me.userId}
                     </SpanText>
                     님!
                   </Text>

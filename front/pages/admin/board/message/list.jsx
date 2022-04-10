@@ -141,6 +141,9 @@ const List = ({ router }) => {
 
   const [messageCheckDatum, setMessageCheckDatum] = useState([]);
 
+  const [currentChecks, setCurrentChecks] = useState([]);
+  const [currentCheckDatum, setCurrentCheckDatum] = useState([]);
+
   ////// HOOKS //////
 
   const width = useWidth();
@@ -152,6 +155,9 @@ const List = ({ router }) => {
   const inputSearch = useInput("");
 
   const [form] = Form.useForm();
+  const [Allform] = Form.useForm();
+  const [groupform] = Form.useForm();
+  const [lectureform] = Form.useForm();
 
   ////// REDUX //////
   const {
@@ -239,6 +245,9 @@ const List = ({ router }) => {
   useEffect(() => {
     if (st_messageManyCreateDone) {
       onReset();
+      setCurrentCheckDatum([]);
+      setCurrentChecks([]);
+      return message.success("쪽지를 보냈습니다.");
     }
   }, [st_messageManyCreateDone]);
 
@@ -262,12 +271,12 @@ const List = ({ router }) => {
   }, []);
 
   const sendManyToggleHandler = useCallback(() => {
-    if (messageCheckDatum.length !== 0) {
+    if (currentChecks.length !== 0) {
       setManySendToggle(true);
     } else {
       return message.error("체크 박스를 선택해주세요.");
     }
-  }, [messageCheckDatum.length]);
+  }, [currentChecks.length]);
 
   const sendAllToggleHandler = useCallback(() => {
     setAllSendToggle(true);
@@ -301,7 +310,7 @@ const List = ({ router }) => {
           title: value.title1,
           author: me.userId,
           senderId: me.id,
-          receiverId: updateData.receiverId,
+          receiverId: updateData.senderId,
           content: value.content1,
           level: me.level,
         },
@@ -357,6 +366,10 @@ const List = ({ router }) => {
 
   const onReset = useCallback(() => {
     form.resetFields();
+    Allform.resetFields();
+    groupform.resetFields();
+    lectureform.resetFields();
+
     setAnswerModal(false);
     setAllSendToggle(false);
     setLectureToggle(false);
@@ -364,10 +377,6 @@ const List = ({ router }) => {
     setContentViewToggle(false);
     setContentData(null);
   }, []);
-
-  function handleChange(value) {
-    console.log(`selected ${value}`);
-  }
 
   const deleteNoticeHandler = useCallback(() => {
     if (!deleteId) {
@@ -410,22 +419,19 @@ const List = ({ router }) => {
   );
 
   const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows, test) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        "selectedRows: ",
-        selectedRows
-      );
-
-      setMessageCheckDatum([...selectedRows]);
+    selectedRowKeys: currentChecks,
+    onChange: (selectedRowKeys, selectedRowDaum) => {
+      setCurrentChecks(selectedRowKeys);
+      setCurrentCheckDatum(selectedRowDaum);
     },
-
-    getCheckboxProps: (record) => ({
-      disabled: record.name === "Disabled User",
-      // Column configuration not to be checked
-      name: record.name,
-    }),
   };
+
+  console.log(currentChecks);
+
+  // const rowSelection = {
+  //   onChange: (selectedRowKeys, selectedRowDaum) =>
+  //     onSelectChange(selectedRowDaum),
+  // };
 
   ////// DATAVIEW //////
   const columns = [
@@ -532,6 +538,8 @@ const List = ({ router }) => {
           </Wrapper>
         </Wrapper>
 
+        <Button onClick={() => setCurrentChecks([])}>버튼</Button>
+
         <Table
           rowKey="id"
           rowSelection={rowSelection}
@@ -579,7 +587,9 @@ const List = ({ router }) => {
               margin={`0 0 10px`}>
               제목
             </Text>
-            <Form.Item name="title1" rules={[{ required: true }]}>
+            <Form.Item
+              name="title1"
+              rules={[{ required: true, message: "제목을 입력해주세요." }]}>
               <CusotmInput width={`100%`} />
             </Form.Item>
             <Text
@@ -588,7 +598,9 @@ const List = ({ router }) => {
               margin={`0 0 10px`}>
               내용
             </Text>
-            <Form.Item name="content1" rules={[{ required: true }]}>
+            <Form.Item
+              name="content1"
+              rules={[{ required: true, message: "내용을 입력해주세요." }]}>
               <Input.TextArea style={{ height: `360px` }} />
             </Form.Item>
             <Wrapper dr={`row`}>
@@ -619,7 +631,7 @@ const List = ({ router }) => {
         onCancel={() => onReset()}
         footer={null}>
         <Wrapper padding={`10px`}>
-          <CustomForm ref={formRef} form={form} onFinish={onAllSubmit}>
+          <CustomForm form={Allform} onFinish={onAllSubmit}>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
@@ -690,7 +702,7 @@ const List = ({ router }) => {
         onCancel={() => onReset()}
         footer={null}>
         <Wrapper padding={`10px`}>
-          <CustomForm ref={formRef} form={form} onFinish={onManySubmit}>
+          <CustomForm form={groupform} onFinish={onManySubmit}>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
@@ -698,14 +710,14 @@ const List = ({ router }) => {
               받는 사람
             </Text>
             <Wrapper al={`flex-start`} margin={`15px 0`}>
-              {messageCheckDatum && messageCheckDatum.length === 0 ? (
+              {currentCheckDatum && currentCheckDatum.length === 0 ? (
                 <Wrapper>
                   <Empty description="단체로 선택하신 박스가 없습니다." />
                 </Wrapper>
               ) : (
                 <Wrapper dr={`row`} width={`auto`} ju={`flex-start`}>
-                  {messageCheckDatum &&
-                    messageCheckDatum.map((data, idx) => {
+                  {currentCheckDatum &&
+                    currentCheckDatum.map((data, idx) => {
                       return (
                         <Text margin={`0 5px 0`} color={Theme.basicTheme_C}>
                           {data.author}
@@ -765,7 +777,10 @@ const List = ({ router }) => {
         onCancel={() => onReset()}
         footer={null}>
         <Wrapper padding={`10px`}>
-          <CustomForm ref={formRef} form={form} onFinish={onLectureSubmit}>
+          <CustomForm
+            ref={formRef}
+            form={lectureform}
+            onFinish={onLectureSubmit}>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}

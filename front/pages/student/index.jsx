@@ -1103,7 +1103,7 @@ const Student = () => {
                   padding={`0 0 0 15px`}>
                   안녕하세요,&nbsp;
                   <SpanText color={Theme.basicTheme_C}>
-                    {me && me.username}
+                    {me && me.userId}
                   </SpanText>
                   님!
                 </Text>
@@ -1715,10 +1715,10 @@ const Student = () => {
                 <Wrapper width={width < 800 ? `15%` : `10%`}>작성자</Wrapper>
                 <Wrapper width={width < 800 ? `25%` : `10%`}>날짜</Wrapper>
               </Wrapper>
-              {console.log(noticeList)}
+
               {noticeList &&
                 (noticeList.length === 0 ? (
-                  <Wrapper>
+                  <Wrapper margin={`50px 0`}>
                     <Empty description="공지사항이 없습니다." />
                   </Wrapper>
                 ) : (
