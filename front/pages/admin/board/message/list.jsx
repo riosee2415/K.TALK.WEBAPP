@@ -378,6 +378,10 @@ const List = ({ router }) => {
     setContentData(null);
   }, []);
 
+  function handleChange(value) {
+    console.log(`selected ${value}`);
+  }
+
   const deleteNoticeHandler = useCallback(() => {
     if (!deleteId) {
       return LoadNotification(
