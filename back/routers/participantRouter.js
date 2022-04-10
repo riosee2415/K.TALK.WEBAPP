@@ -1,7 +1,7 @@
 const express = require("express");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isLoggedIn = require("../middlewares/isLoggedIn");
-const { Lecture, User, Participant, Payment } = require("../models");
+const { Lecture, User, Participant, Payment, PayClass } = require("../models");
 const models = require("../models");
 
 const router = express.Router();
@@ -97,7 +97,7 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
 });
 
 // 강의별 참여 목록
-router.post("/leture/list", isLoggedIn, async (req, res, next) => {
+router.post("/lecture/list", isLoggedIn, async (req, res, next) => {
   const { LectureId } = req.body;
 
   const _LectureId = LectureId || ``;
@@ -119,8 +119,8 @@ router.post("/leture/list", isLoggedIn, async (req, res, next) => {
               C.course,
               C.lecDate,
               C.startLv,
-              C.startDate,
-              C.endDate,
+              C.startDate             AS LectureStartDate,
+              C.endDate               AS LectureEndDate,
               C.day,
               C.count
         FROM	participants				A
@@ -134,13 +134,33 @@ router.post("/leture/list", isLoggedIn, async (req, res, next) => {
          AND  A.isDelete = FALSE
          ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
          AND  C.UserId = ${req.user.id}
-         AND A.isChange = FALSE
+         AND  A.isChange = FALSE
        ORDER  BY A.createdAt DESC
-`;
+    `;
 
     const partList = await models.sequelize.query(selectQuery);
 
-    return res.status(200).json({ partList: partList[0] });
+    let userIds = [];
+
+    for (let i = 0; i < partList[0].length; i++) {
+      userIds.push(partList[0][i].UserId);
+    }
+
+    const priceQuery = `
+    SELECT  A.price,
+            A.UserId,
+            B.LectureId
+      FROM  payments    A
+     INNER
+      JOIN  payClass    B
+        ON  A.PayClassId = B.id
+     WHERE  UserId in (${userIds})
+       AND  B.LectureId = ${LectureId}
+  `;
+
+    const price = await models.sequelize.query(priceQuery);
+
+    return res.status(200).json({ partList: partList[0], price: price[0] });
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의 별 목록을 불러올 수 없습니다.");
@@ -157,37 +177,66 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
   try {
     const selectQuery = `
       SELECT	A.id,
-                A.UserId,
-                A.LectureId,
-                A.date,
-                A.endDate,
-                DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
-                B.userId,
-                B.username,
-                B.level,
-                C.course,
-                C.lecDate,
-                C.startLv,
-                C.startDate,
-                C.endDate
+              A.isDelete,
+              A.UserId,
+              A.LectureId,
+              A.date,
+              A.endDate,
+              DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
+              B.userId,
+              B.username,
+              B.level,
+              B.birth,
+              B.stuCountry,
+              C.course,
+              C.lecDate,
+              C.startLv,
+              C.startDate             AS LectureStartDate,
+              C.endDate               AS LectureEndDate,
+              C.day,
+              C.count
         FROM	participants				A
        INNER
-        JOIN	users						B
+        JOIN	users						    B
           ON	A.UserId  = B.id
        INNER
-        JOIN	lectures					C
+        JOIN	lectures					  C
           ON	A.LectureId = C.id
-       WHERE    1 = 1
-         ${_UserId ? `AND A.UserId = ${_UserId}` : ``}
-         ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
-         AND  A.isChange = FALSE
+       WHERE  1 = 1
          AND  A.isDelete = FALSE
-      ORDER    BY A.createdAt DESC
-`;
+         ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
+         ${_UserId ? `AND A.LectureId = ${_UserId}` : ``}
+         AND  A.isChange = FALSE
+       ORDER  BY A.createdAt DESC
+    `;
 
     const partList = await models.sequelize.query(selectQuery);
 
-    return res.status(200).json({ partList: partList[0] });
+    let userIds = [];
+
+    for (let i = 0; i < partList[0].length; i++) {
+      userIds.push(partList[0][i].UserId);
+    }
+
+    let price = [];
+
+    if (userIds.length !== 0) {
+      const priceQuery = `
+      SELECT  A.price,
+              A.UserId,
+              B.LectureId
+        FROM  payments    A
+       INNER
+        JOIN  payClass    B
+          ON  A.PayClassId = B.id
+       WHERE  A.UserId in (${userIds})
+         AND  B.LectureId = ${LectureId}
+    `;
+
+      price = await models.sequelize.query(priceQuery);
+    }
+
+    return res.status(200).json({ partList: partList[0], price: price[0] });
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의 참여 리스트를 불러올 수 없습니다.");

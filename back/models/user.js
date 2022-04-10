@@ -142,5 +142,6 @@ module.exports = class User extends Model {
   }
   static associate(db) {
     db.User.hasMany(db.Participant);
+    db.User.hasMany(db.Payment);
   }
 };
