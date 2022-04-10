@@ -199,7 +199,7 @@ router.get(
             ? ["course", "DESC"]
             : _listType === 2
             ? ["createdAt", "DESC"]
-            : ["course", "DESC"],
+            : ["course", "ASC"],
         ],
       });
 
@@ -591,13 +591,15 @@ router.delete("/delete/:lectureId", isAdminCheck, async (req, res, next) => {
 ///////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////// - 강의 별 학생 메모 작성 -///////////////////////////////////
 
-router.get("/memo/student/list", async (req, res, next) => {
-  const { page, search, LectureId } = req.query;
+router.post("/memo/student/list", async (req, res, next) => {
+  const { page, search, LectureId, StudentId } = req.body;
 
   const LIMIT = 5;
 
   const _page = page ? page : 1;
   const _search = search ? search : ``;
+
+  const _StudentId = StudentId || null;
 
   const __page = _page - 1;
   const OFFSET = __page * 5;
@@ -619,6 +621,7 @@ router.get("/memo/student/list", async (req, res, next) => {
         ON  A.UserId = B.id
      WHERE  LectureId = ${LectureId}
      ${_search ? `AND B.username LIKE '%${_search}%'` : ``}
+     ${_StudentId ? `AND A.UserId =  ${_StudentId}` : ``}
      `;
 
     const studentMemoQuery = `
@@ -637,6 +640,7 @@ router.get("/memo/student/list", async (req, res, next) => {
         ON  A.UserId = B.id
      WHERE  LectureId = ${LectureId}
      ${_search ? `AND B.username LIKE '%${_search}%'` : ``}
+     ${_StudentId ? `AND A.UserId =  ${_StudentId}` : ``}
      ORDER  BY A.createdAt DESC
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
