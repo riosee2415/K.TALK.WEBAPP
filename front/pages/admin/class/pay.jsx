@@ -186,7 +186,7 @@ const Pay = ({}) => {
         startDate: data.startDate,
         week: data.week,
         LectureId: data.lecture,
-        domain: "http://localhost:3000/",
+        domain: "https://pinterleaf.com/payment",
       },
     });
   }, []);
@@ -479,6 +479,19 @@ const Pay = ({}) => {
                 <CustomArea disabled={updateData ? true : false} />
               </FormItem>
             </Wrapper>
+            {updateData && (
+              <Wrapper dr={`row`} margin={`0 0 20px`} al={`flex-start`}>
+                <Text width={`80px`} margin={`8px 0 0`}>
+                  결제창 링크
+                </Text>
+                <FormItem
+                  rules={[{ required: true, message: "메모를 작성해주세요." }]}
+                  name={`link`}
+                >
+                  <CusotmInput disabled={updateData ? true : false} />
+                </FormItem>
+              </Wrapper>
+            )}
           </FormTag>
         </Wrapper>
       </Modal>
