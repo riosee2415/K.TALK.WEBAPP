@@ -105,7 +105,8 @@ router.get("/all/list", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	Messages
-     WHERE  level = ${req.user.level}
+     WHERE  1 = 1
+    ${`AND level = IN (${req.user.level}, 3)`}
        AND  receiveLectureId IS NULL
        AND  receiverId IS NULL     
     `;
@@ -122,7 +123,8 @@ router.get("/all/list", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	Messages
-     WHERE  level = ${req.user.level} 
+     WHERE  1 = 1
+    ${`AND  level = IN (${req.user.level}, 3)`}
        AND  receiveLectureId IS NULL
        AND  receiverId IS NULL    
      ORDER  BY createdAt  DESC
@@ -608,12 +610,7 @@ router.post("/all/create", isAdminCheck, async (req, res, next) => {
       title,
       author,
       content,
-      level:
-        parseInt(type) === 1
-          ? 1
-          : parseInt(type) === 2
-          ? 2
-          : parseInt(type) === 3,
+      level: parseInt(type),
     });
 
     if (!createResult) {
