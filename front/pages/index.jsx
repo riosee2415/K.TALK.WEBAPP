@@ -42,9 +42,7 @@ const Home = ({}) => {
   ////// HANDLER //////
   ////// DATAVIEW //////
 
-  const getEditContent = (contentValue) => {
-    console.log(contentValue);
-  };
+  const getEditContent = (contentValue) => {};
 
   return (
     <>

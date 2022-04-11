@@ -396,7 +396,7 @@ const List = () => {
           </Wrapper>
           {dayArr && dayArr.length !== 0 && (
             <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
-              <Text width={`80px`}>강의 시간</Text>
+              <Text width={`80px`}>수업 시간</Text>
               <Wrapper dr={`row`} ju={`flex-start`} width={`calc(100% - 80px)`}>
                 {dayArr.map((data, idx) => {
                   return (
