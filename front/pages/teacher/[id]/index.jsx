@@ -1592,22 +1592,20 @@ const Index = () => {
 
   const stepHanlder2 = useCallback(
     (startDate, endDate, count, lecDate, day) => {
+      let saveStart = moment(startDate).format("YYYY-MM-DD");
+
       const save = moment
-        .duration(
-          moment("2022-03-30", "YYYY-MM-DD").diff(moment().format("YYYY-MM-DD"))
-        )
+        .duration(moment(saveStart).diff(moment().format("YYYY-MM-DD")))
         .asDays();
 
       const saveEnd = moment
         .duration(
-          moment("2022-04-05", "YYYY-MM-DD").diff(moment().format("YYYY-MM-DD"))
+          moment(endDate, "YYYY-MM-DD").diff(moment().format("YYYY-MM-DD"))
         )
         .asDays();
 
-      let saveCheckStartDay = Math.sign(save);
-
-      if (saveCheckStartDay > 0) {
-        return false;
+      if (save < 0) {
+        return true;
       }
 
       if (saveEnd < 0) {
@@ -2045,8 +2043,8 @@ const Index = () => {
                                     data.lecDate,
                                     data.day
                                   )
-                                    ? false
-                                    : true
+                                    ? true
+                                    : false
                                 }>
                                 작성하기
                               </CustomButton>
@@ -2067,8 +2065,8 @@ const Index = () => {
                                     data.lecDate,
                                     data.day
                                   )
-                                    ? false
-                                    : true
+                                    ? true
+                                    : false
                                 }
                                 color={
                                   "출석"
@@ -2092,8 +2090,8 @@ const Index = () => {
                                     data.lecDate,
                                     data.day
                                   )
-                                    ? false
-                                    : true
+                                    ? true
+                                    : false
                                 }
                                 color={
                                   "결석"
@@ -2117,8 +2115,8 @@ const Index = () => {
                                     data.lecDate,
                                     data.day
                                   )
-                                    ? false
-                                    : true
+                                    ? true
+                                    : false
                                 }
                                 color={
                                   "지각"
@@ -2199,7 +2197,6 @@ const Index = () => {
                     ) : (
                       partLectureList &&
                       partLectureList.map((data, idx) => {
-                        
                         return (
                           <Wrapper
                             key={data.id}
@@ -3555,7 +3552,6 @@ const Index = () => {
             ) : (
               lectureSubmitList &&
               lectureSubmitList.map((data, idx) => {
-         
                 return (
                   <Wrapper
                     key={data.id}
