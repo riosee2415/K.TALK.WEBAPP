@@ -105,7 +105,7 @@ router.get("/all/list", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	Messages
      WHERE  1 = 1
-    ${`AND level = IN (${req.user.level}, 3)`}
+    ${`AND  level IN (${req.user.level}, 3)`}
        AND  receiveLectureId IS NULL
        AND  receiverId IS NULL     
     `;
@@ -123,7 +123,7 @@ router.get("/all/list", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	Messages
      WHERE  1 = 1
-    ${`AND  level = IN (${req.user.level}, 3)`}
+    ${`AND  level IN (${req.user.level}, 3)`}
        AND  receiveLectureId IS NULL
        AND  receiverId IS NULL    
      ORDER  BY createdAt  DESC
