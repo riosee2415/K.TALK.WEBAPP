@@ -36,7 +36,8 @@ router.get("/user/list", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	Messages
      WHERE  receiverId = ${req.user.id}
-       AND  receiveLectureId IS NULL     
+       AND  receiveLectureId IS NULL
+       AND  receiverId IS NULL     
     `;
 
     const selectQuery = `
@@ -51,8 +52,79 @@ router.get("/user/list", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	Messages
-     WHERE  receiverId = ${req.user.id}
-       AND  receiveLectureId IS NULL     
+     WHERE  receiverId = ${req.user.id} 
+       AND  receiveLectureId IS NULL
+       AND  receiverId IS NULL    
+     ORDER  BY createdAt  DESC
+     LIMIT  ${LIMIT}
+    OFFSET  ${OFFSET}
+    `;
+
+    const length = await models.sequelize.query(lengthQuery);
+    const message = await models.sequelize.query(selectQuery);
+
+    const messagelen = length[0].length;
+
+    const lastPage =
+      messagelen % LIMIT > 0 ? messagelen / LIMIT + 1 : messagelen / LIMIT;
+
+    return res
+      .status(200)
+      .json({ message: message[0], lastPage: parseInt(lastPage) });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("쪽지를 확인할 수 없습니다.");
+  }
+});
+
+// 전체 쪽지
+router.get("/all/list", isLoggedIn, async (req, res, next) => {
+  const { page } = req.query;
+
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
+  const LIMIT = 5;
+
+  const _page = page ? page : 1;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 5;
+
+  try {
+    const lengthQuery = `
+    SELECT	id,
+            title,
+            author,
+            senderId,
+            receiverId,
+            receiveLectureId,
+            content,
+            level,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
+      FROM	Messages
+     WHERE  level = ${req.user.level}
+       AND  receiveLectureId IS NULL
+       AND  receiverId IS NULL     
+    `;
+
+    const selectQuery = `
+    SELECT	id,
+            title,
+            author,
+            senderId,
+            receiverId,
+            receiveLectureId,
+            content,
+            level,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
+      FROM	Messages
+     WHERE  level = ${req.user.level} 
+       AND  receiveLectureId IS NULL
+       AND  receiverId IS NULL    
      ORDER  BY createdAt  DESC
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
@@ -531,7 +603,7 @@ router.post("/all/create", isAdminCheck, async (req, res, next) => {
 
   try {
     const createResult = await Message.create({
-      receiverId: parseInt(data.id),
+      receiverId: null,
       senderId: parseInt(req.user.id),
       title,
       author,
