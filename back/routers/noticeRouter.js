@@ -228,7 +228,11 @@ router.get("/myLecture/list", isLoggedIn, async (req, res, next) => {
 
   try {
     const exPart = await Participant.findAll({
-      where: { UserId: parseInt(req.user.id) },
+      where: {
+        UserId: parseInt(req.user.id),
+        isDelete: false,
+        isChange: false,
+      },
     });
 
     if (exPart.length === 0) {

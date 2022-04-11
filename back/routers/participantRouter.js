@@ -267,7 +267,12 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
     }
 
     const partValidation = await Participant.findOne({
-      where: { UserId: parseInt(UserId), LectureId: parseInt(LectureId) },
+      where: {
+        UserId: parseInt(UserId),
+        LectureId: parseInt(LectureId),
+        isDelete: false,
+        isChange: false,
+      },
     });
 
     if (partValidation) {
@@ -328,7 +333,12 @@ router.post("/delete", isAdminCheck, async (req, res, next) => {
     }
 
     const partValidation = await Participant.findOne({
-      where: { UserId: parseInt(UserId), LectureId: parseInt(LectureId) },
+      where: {
+        UserId: parseInt(UserId),
+        LectureId: parseInt(LectureId),
+        isDelete: false,
+        isChange: false,
+      },
     });
 
     if (!partValidation) {

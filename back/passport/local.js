@@ -24,7 +24,11 @@ module.exports = () => {
 
           if (user.level === 1) {
             const exParts = await Participant.findAll({
-              where: { UserId: parseInt(user.id) },
+              where: {
+                UserId: parseInt(user.id),
+                isDelete: false,
+                isChange: false,
+              },
             });
 
             if (exParts.length === 0) {
