@@ -1827,6 +1827,7 @@ const Student = () => {
                   </Wrapper>
                 ) : (
                   messageUserList.map((data, idx) => {
+                    console.log(data,"datra")
                     return (
                       <CustomTableHoverWrapper
                         key={data.id}

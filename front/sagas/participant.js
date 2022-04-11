@@ -246,6 +246,7 @@ export default function* participantSaga() {
     fork(watchParticipantDelete),
     fork(watchParticipantUserDeleteList),
     fork(watchParticipantUserMoveList),
+
     //
   ]);
 }

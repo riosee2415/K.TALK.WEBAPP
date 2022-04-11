@@ -52,6 +52,7 @@ import Theme from "../../components/Theme";
 import {
   MESSAGE_CREATE_REQUEST,
   MESSAGE_FOR_ADMIN_CREATE_REQUEST,
+  MESSAGE_PART_LIST_REQUEST,
   MESSAGE_TEACHER_LIST_REQUEST,
   MESSAGE_USER_LIST_REQUEST,
 } from "../../reducers/message";
@@ -226,6 +227,11 @@ const LectureAll = () => {
 
     st_messageForAdminCreateDone,
     st_messageForAdminCreateError,
+
+    messagePartList,
+    messagePartLastPage,
+    st_messagePartListDone,
+    st_messagePartListError,
   } = useSelector((state) => state.message);
 
   const {
@@ -253,9 +259,14 @@ const LectureAll = () => {
   const formRef = useRef();
 
   const [form] = Form.useForm();
+  const [answerform] = Form.useForm();
+  const [sendform] = Form.useForm();
 
   const [sendMessageType, setSendMessageType] = useState(1);
   const [messageSendModal, setMessageSendModal] = useState(false);
+  const [messageViewModal, setMessageViewModal] = useState(false);
+  const [messageAnswerModal, setMessageAnswerModal] = useState(false);
+  const [messageAnswerAdminModal, setMessageAnswerAdminModal] = useState(false);
 
   const [messageDatum, setMessageDatum] = useState();
 
@@ -264,9 +275,14 @@ const LectureAll = () => {
 
   const [currentPage1, setCurrentPage1] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
+  const [currentPage3, setCurrentPage3] = useState(1);
 
   const [detailBook, setDetailBook] = useState(null);
   const [bookModal, setBookModal] = useState(false);
+
+  const [lectureId, setLectureId] = useState("");
+
+  const [selectValue, setSelectValue] = useState("");
 
   const bookColumns = [
     {
@@ -318,6 +334,12 @@ const LectureAll = () => {
   }, [me]);
 
   useEffect(() => {
+    if (st_messageCreateError) {
+      return message.error(st_messageCreateError);
+    }
+  }, [st_messageCreateError]);
+
+  useEffect(() => {
     if (st_bookLectureListDone) {
       setDetailBook(bookLecture);
       setBookModal(true);
@@ -352,12 +374,14 @@ const LectureAll = () => {
         page: 1,
       },
     });
-  }, []);
 
-  useEffect(() => {
-    if (st_messageCreateDone) {
-    }
-  }, [st_messageCreateDone]);
+    dispatch({
+      type: MESSAGE_PART_LIST_REQUEST,
+      data: {
+        page: 1,
+      },
+    });
+  }, []);
 
   useEffect(() => {
     if (st_noticeMyLectureListError) {
@@ -400,9 +424,21 @@ const LectureAll = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (st_messagePartListError) {
+      return message.error(st_messagePartListError);
+    }
+  }, [st_messagePartListError]);
+
   const onReset = useCallback(() => {
     form.resetFields();
+    answerform.resetFields();
+    sendform.resetFields();
 
+    setSendMessageType(1);
+    setMessageViewModal(false);
+    setMessageAnswerModal(false);
+    setMessageAnswerAdminModal(false);
     setMessageSendModal(false);
 
     setNoticeViewModal(false);
@@ -418,11 +454,21 @@ const LectureAll = () => {
       setSendMessageType(3);
     }
 
+    console.log(data, "kigkm");
+
     setMessageDatum(data);
     // setSelectValue(data.id);
   }, []);
 
+  const messageAnswerToggleHanlder = useCallback((data) => {
+    setMessageAnswerModal(true);
+  }, []);
+
   ////// HANDLER //////
+
+  const receiveLectureIdtHandler = useCallback((value) => {
+    setLectureId(value);
+  }, []);
 
   const onClickNoticeHandler = useCallback((data) => {
     setNoticeViewDatum(data);
@@ -654,11 +700,30 @@ const LectureAll = () => {
     []
   );
 
+  const receiveSelectHandler = useCallback((value) => {
+    setSelectValue(value);
+  }, []);
+
+  const messageViewModalHandler = useCallback((data) => {
+    setMessageViewModal((prev) => !prev);
+
+    setMessageDatum(data);
+  }, []);
+
   const noticeChangePage = useCallback((page) => {
     setCurrentPage2(page);
 
     dispatch({
       type: NOTICE_MY_LECTURE_LIST_REQUEST,
+      data: {
+        page,
+      },
+    });
+  }, []);
+
+  const messageChangePage = useCallback((page) => {
+    dispatch({
+      type: MESSAGE_PART_LIST_REQUEST,
       data: {
         page,
       },
@@ -856,6 +921,73 @@ const LectureAll = () => {
               tota={noticeMyLectureLastPage * 10}
               onChange={(page) => noticeChangePage(page)}
             />
+
+            <Wrapper al={`flex-start`} margin={`0 0 20px`}>
+              <Text
+                fontSize={width < 800 ? `18px` : `22px`}
+                fontWeight={`bold`}>
+                관리자 강의 쪽지함
+              </Text>
+
+              <Text fontSize={width < 800 ? `18px` : `14px`}>
+                관리자에서 강의 단위로 보낸 쪽지 목록 입니다.
+              </Text>
+            </Wrapper>
+
+            <Wrapper radius={`10px`} shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}>
+              <Wrapper
+                dr={`row`}
+                fontWeight={`bold`}
+                padding={`20px 0`}
+                fontSize={width < 800 ? `14px` : `18px`}>
+                <Wrapper width={width < 800 ? `15%` : `10%`}>번호</Wrapper>
+                <Wrapper width={width < 800 ? `45%` : `70%`}>제목</Wrapper>
+                <Wrapper width={width < 800 ? `15%` : `10%`}>작성자</Wrapper>
+                <Wrapper width={width < 800 ? `25%` : `10%`}>날짜</Wrapper>
+              </Wrapper>
+              {messagePartList &&
+                (messagePartList.length === 0 ? (
+                  <Wrapper margin={`50px 0`}>
+                    <Empty description="내게 온 쪽지가 없습니다." />
+                  </Wrapper>
+                ) : (
+                  messagePartList.map((data, idx) => {
+                    return (
+                      <CustomTableHoverWrapper
+                        key={data.id}
+                        bgColor={idx % 2 === 0}
+                        onClick={() => messageViewModalHandler(data)}>
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.id}
+                        </Wrapper>
+                        <Wrapper
+                          width={width < 800 ? `45%` : `70%`}
+                          al={`flex-start`}
+                          padding={`0 0 0 10px`}>
+                          {data.title}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.author}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `25%` : `10%`}>
+                          {moment(data.createdAt, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )}
+                        </Wrapper>
+                      </CustomTableHoverWrapper>
+                    );
+                  })
+                ))}
+            </Wrapper>
+
+            <Wrapper margin={`60px 0`}>
+              <CustomPage
+                size="small"
+                current={currentPage3}
+                tota={messagePartLastPage * 10}
+                onChange={(page) => messageChangePage(page)}
+              />
+            </Wrapper>
 
             <Wrapper al={`flex-start`} margin={`0 0 20px`}>
               <Text
@@ -1175,6 +1307,7 @@ const LectureAll = () => {
                             width < 1100 ? `0` : `1px dashed ${Theme.grey_C}`
                           }
                         />
+
                         <Wrapper
                           al={`flex-start`}
                           width={width < 1100 ? `100%` : `calc(30% - 80px)`}
@@ -1225,14 +1358,24 @@ const LectureAll = () => {
                               줌 상담신청
                             </Text>
                           </Wrapper>
+                          <Wrapper
+                            dr={`row`}
+                            ju={`space-between`}
+                            al={`center`}>
+                            <Button
+                              type={`primary`}
+                              size={`small`}
+                              style={{ marginTop: 10 }}
+                              onClick={() => detailBookOpen(data)}>
+                              교재 리스트
+                            </Button>
 
-                          <Button
-                            type={`primary`}
-                            size={`small`}
-                            style={{ marginTop: 10 }}
-                            onClick={() => detailBookOpen(data)}>
-                            교재 리스트
-                          </Button>
+                            <Text
+                              cursor={`pointer`}
+                              onClick={() => messageSendModalHandler(data)}>
+                              쪽지보내기
+                            </Text>
+                          </Wrapper>
                         </Wrapper>
                       </Wrapper>
                     </Wrapper>
@@ -1243,95 +1386,6 @@ const LectureAll = () => {
             )}
           </RsWrapper>
         </WholeWrapper>
-
-        <CustomModal
-          visible={messageSendModal}
-          width={`1350px`}
-          title={
-            sendMessageType === 1
-              ? "강사에게 쪽지 보내기"
-              : sendMessageType === 2
-              ? "수업에 대해 쪽지 보내기"
-              : sendMessageType === 3 && "관리자에게 쪽지 보내기"
-          }
-          footer={null}
-          closable={false}>
-          <CustomForm
-            ref={formRef}
-            form={form}
-            onFinish={(data) =>
-              sendMessageType === 1
-                ? sendMessageFinishHandler(data)
-                : sendMessageType === 2
-                ? sendMessageLectureFinishHanlder(data, messageTeacherList)
-                : sendMessageType === 3 && sendMessageAdminFinishHandler(data)
-            }>
-            <Wrapper dr={`row`} ju={`flex-end`}>
-              <CommonButton
-                margin={`0 0 0 5px`}
-                radius={`5px`}
-                width={`100px`}
-                height={`32px`}
-                size="small"
-                onClick={() => sendMessageTypeHandler(1)}>
-                {"강사"}
-              </CommonButton>
-
-              <CommonButton
-                margin={`0 0 0 5px`}
-                radius={`5px`}
-                width={`100px`}
-                height={`32px`}
-                size="small"
-                onClick={() => sendMessageTypeHandler(2)}>
-                {"수업"}
-              </CommonButton>
-
-              <CommonButton
-                margin={`0 0 0 5px`}
-                radius={`5px`}
-                width={`100px`}
-                height={`32px`}
-                size="small"
-                onClick={() => sendMessageTypeHandler(3)}>
-                {"관리자"}
-              </CommonButton>
-            </Wrapper>
-
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              제목
-            </Text>
-            <Form.Item
-              name="title"
-              rules={[{ required: true, message: "제목을 입력해주세요." }]}>
-              <Input />
-            </Form.Item>
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              내용
-            </Text>
-            <Form.Item
-              name="content"
-              rules={[{ required: true, message: "내용을 입력해주세요." }]}>
-              <Input.TextArea style={{ height: `360px` }} />
-            </Form.Item>
-            <Wrapper dr={`row`}>
-              <CommonButton
-                margin={`0 5px 0 0`}
-                kindOf={`grey`}
-                color={Theme.darkGrey_C}
-                radius={`5px`}
-                onClick={() => onReset()}>
-                돌아가기
-              </CommonButton>
-              <CommonButton
-                margin={`0 0 0 5px`}
-                radius={`5px`}
-                htmlType="submit">
-                쪽지 보내기
-              </CommonButton>
-            </Wrapper>
-          </CustomForm>
-        </CustomModal>
 
         <CustomModal
           visible={noticeViewModal}
@@ -1430,6 +1484,164 @@ const LectureAll = () => {
             </Wrapper>
           </Wrapper>
         </Modal>
+
+        <CustomModal
+          visible={messageViewModal}
+          width={`1350px`}
+          title={"쪽지 상세"}
+          footer={null}
+          closable={false}>
+          {!messageAnswerModal && !messageAnswerAdminModal && (
+            <>
+              <Wrapper
+                dr={`row`}
+                ju={`space-between`}
+                margin={`0 0 35px`}
+                fontSize={width < 700 ? "14px" : "16px"}>
+                <Text margin={`0 54px 0 0`}>
+                  {messageDatum && messageDatum.author}
+                </Text>
+                <Text>{`날짜 ${
+                  messageDatum &&
+                  moment(messageDatum.createdAt, "YYYY/MM/DD").format(
+                    "YYYY/MM/DD"
+                  )
+                }`}</Text>
+              </Wrapper>
+
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                제목
+              </Text>
+
+              <Wrapper
+                padding={`10px`}
+                al={`flex-start`}
+                fontSize={width < 700 ? "14px" : "16px"}>
+                <Text>{messageDatum && messageDatum.title}</Text>
+              </Wrapper>
+
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                내용
+              </Text>
+              <Wrapper
+                padding={`10px`}
+                al={`flex-start`}
+                fontSize={width < 700 ? "14px" : "16px"}>
+                <Text minHeight={`360px`}>
+                  {messageDatum &&
+                    messageDatum.content?.split("\n").map((data, idx) => {
+                      return (
+                        <Text key={`${data}${idx}`}>
+                          {data}
+                          <br />
+                        </Text>
+                      );
+                    })}
+                </Text>
+              </Wrapper>
+
+              <Wrapper dr={`row`}>
+                <CommonButton
+                  margin={`0 5px 0 0`}
+                  kindOf={`grey`}
+                  color={Theme.darkGrey_C}
+                  radius={`5px`}
+                  onClick={() => onReset()}>
+                  돌아가기
+                </CommonButton>
+              </Wrapper>
+            </>
+          )}
+        </CustomModal>
+
+        <CustomModal
+          visible={messageSendModal}
+          width={`1350px`}
+          title={
+            sendMessageType === 1
+              ? "강사에게 쪽지 보내기"
+              : sendMessageType === 2
+              ? "수업에 대해 쪽지 보내기"
+              : sendMessageType === 3 && "관리자에게 쪽지 보내기"
+          }
+          footer={null}
+          closable={false}>
+          <CustomForm
+            ref={formRef}
+            form={form}
+            onFinish={(data) =>
+              sendMessageType === 1
+                ? sendMessageFinishHandler(data)
+                : sendMessageType === 2
+                ? sendMessageLectureFinishHanlder(data, messageTeacherList)
+                : sendMessageType === 3 && sendMessageAdminFinishHandler(data)
+            }>
+            <Wrapper dr={`row`} ju={`flex-end`}>
+              <CommonButton
+                margin={`0 0 0 5px`}
+                radius={`5px`}
+                width={`100px`}
+                height={`32px`}
+                size="small"
+                onClick={() => sendMessageTypeHandler(1)}>
+                {"강사"}
+              </CommonButton>
+
+              <CommonButton
+                margin={`0 0 0 5px`}
+                radius={`5px`}
+                width={`100px`}
+                height={`32px`}
+                size="small"
+                onClick={() => sendMessageTypeHandler(2)}>
+                {"수업"}
+              </CommonButton>
+
+              <CommonButton
+                margin={`0 0 0 5px`}
+                radius={`5px`}
+                width={`100px`}
+                height={`32px`}
+                size="small"
+                onClick={() => sendMessageTypeHandler(3)}>
+                {"관리자"}
+              </CommonButton>
+            </Wrapper>
+
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              제목
+            </Text>
+            <Form.Item
+              name="title"
+              rules={[{ required: true, message: "제목을 입력해주세요." }]}>
+              <Input />
+            </Form.Item>
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              내용
+            </Text>
+            <Form.Item
+              name="content"
+              rules={[{ required: true, message: "내용을 입력해주세요." }]}>
+              <Input.TextArea style={{ height: `360px` }} />
+            </Form.Item>
+            <Wrapper dr={`row`}>
+              <CommonButton
+                margin={`0 5px 0 0`}
+                kindOf={`grey`}
+                color={Theme.darkGrey_C}
+                radius={`5px`}
+                onClick={() => onReset()}>
+                돌아가기
+              </CommonButton>
+              <CommonButton
+                margin={`0 0 0 5px`}
+                radius={`5px`}
+                htmlType="submit">
+                쪽지 보내기
+              </CommonButton>
+            </Wrapper>
+          </CustomForm>
+        </CustomModal>
       </ClientLayout>
     </>
   );

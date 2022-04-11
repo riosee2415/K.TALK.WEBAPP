@@ -1272,6 +1272,8 @@ const Index = () => {
 
   const answerFinishHandler = useCallback(
     (data, messageData) => {
+
+      console.log(data,messageData)
       if (messageData) {
         dispatch({
           type: MESSAGE_CREATE_REQUEST,

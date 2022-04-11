@@ -52,6 +52,10 @@ import {
   MESSAGE_LECTURE_LIST_REQUEST,
   MESSAGE_LECTURE_LIST_SUCCESS,
   MESSAGE_LECTURE_LIST_FAILURE,
+  //////////////////////////////////////////////////////////
+  MESSAGE_PART_LIST_REQUEST,
+  MESSAGE_PART_LIST_SUCCESS,
+  MESSAGE_PART_LIST_FAILURE,
 } from "../reducers/message";
 
 // SAGA AREA ********************************************************************************************************
@@ -311,6 +315,33 @@ function* messageLectureList(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function messagePartListAPI(data) {
+  return axios.get(`/api/message/user/partList`, data);
+}
+
+function* messagePartList(action) {
+  try {
+    const result = yield call(messagePartListAPI, action.data);
+
+    yield put({
+      type: MESSAGE_PART_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: MESSAGE_PART_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchMessageUserList() {
   yield takeLatest(MESSAGE_USER_LIST_REQUEST, messageUserList);
@@ -356,6 +387,10 @@ function* watchMessageLectureList() {
   yield takeLatest(MESSAGE_LECTURE_LIST_REQUEST, messageLectureList);
 }
 
+function* watchMessagePartList() {
+  yield takeLatest(MESSAGE_PART_LIST_REQUEST, messagePartList);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* messagerSaga() {
   yield all([
@@ -370,6 +405,7 @@ export default function* messagerSaga() {
     fork(watchMessageLectureCreate),
     fork(watchMessageForAdminCreate),
     fork(watchMessageLectureList),
+    fork(watchMessagePartList),
     //
   ]);
 }
