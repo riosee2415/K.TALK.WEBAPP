@@ -567,7 +567,7 @@ router.delete("/delete/:messageId", async (req, res, next) => {
 // 단체로 보내기 (한명만 보내기도 가능)
 
 router.post("/many/create", isLoggedIn, async (req, res, next) => {
-  const { title, author, content, receiverId } = req.body;
+  const { title, author, content, receiverId, level } = req.body;
 
   if (!req.user) {
     return res.status(403).send("잘못된 요청입니다.");
@@ -577,19 +577,21 @@ router.post("/many/create", isLoggedIn, async (req, res, next) => {
     return res.status(401).send("잘못된 요청입니다.");
   }
 
+  if (!Array.isArray(level)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+
   try {
-    await Promise.all(
-      receiverId.map(async (data) => {
-        await Message.create({
-          receiverId: parseInt(data),
-          senderId: parseInt(req.user.id),
-          title,
-          author,
-          content,
-          level: parseInt(req.user.level),
-        });
-      })
-    );
+    for (let i = 0; i < prodId.length; i++) {
+      await Message.create({
+        receiverId: parseInt(receiverId[i]),
+        senderId: parseInt(req.user.id),
+        title,
+        author,
+        content,
+        level: parseInt(level[i]),
+      });
+    }
 
     return res.status(201).json({ result: true });
   } catch (error) {
