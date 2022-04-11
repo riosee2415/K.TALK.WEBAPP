@@ -8,6 +8,7 @@ const models = require("../models");
 const router = express.Router();
 
 // 쪽지 사용자 리스트 (강사 or 학생)
+
 router.get("/user/list", isLoggedIn, async (req, res, next) => {
   const { page } = req.query;
 
