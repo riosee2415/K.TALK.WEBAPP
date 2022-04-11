@@ -55,7 +55,10 @@ import {
   MESSAGE_USER_LIST_REQUEST,
 } from "../../reducers/message";
 
-import { NOTICE_LIST_REQUEST } from "../../reducers/notice";
+import {
+  NOTICE_LIST_FAILURE,
+  NOTICE_LIST_REQUEST,
+} from "../../reducers/notice";
 import {
   LECTURE_FILE_REQUEST,
   LECTURE_HOMEWORK_STU_LIST_REQUEST,
@@ -339,8 +342,6 @@ const Student = () => {
 
   const [messageSendModal, setMessageSendModal] = useState(false);
   const [messageViewModal, setMessageViewModal] = useState(false);
-  const [messageAnswerModal, setMessageAnswerModal] = useState(false);
-  const [messageAnswerAdminModal, setMessageAnswerAdminModal] = useState(false);
 
   const [noticeViewModal, setNoticeViewModal] = useState(false);
   const [noticeViewDatum, setNoticeViewDatum] = useState(null);
@@ -348,6 +349,7 @@ const Student = () => {
   const [messageDatum, setMessageDatum] = useState();
 
   const [sendMessageType, setSendMessageType] = useState(1);
+  const [sendMessageAnswerType, setSendMessageAnswerType] = useState(0);
   const [homeWorkModalToggle, setHomeWorkModalToggle] = useState(false);
   const [homeWorkData, setHomeWorkData] = useState("");
 
@@ -560,15 +562,14 @@ const Student = () => {
     sendform.resetFields();
     answerform.resetFields();
 
-    setMessageAnswerAdminModal(false);
     setNoticeViewModal(false);
-    setMessageAnswerModal(false);
     setMessageSendModal(false);
     setMessageViewModal(false);
     setHomeWorkModalToggle(false);
     setFileName("");
     setLectureId("");
     setSendMessageType(1);
+    setSendMessageAnswerType(0);
   }, [fileInput]);
 
   ////// TOGGLE //////
@@ -581,10 +582,9 @@ const Student = () => {
 
   const messageAnswerToggleHanlder = useCallback((data) => {
     if (data.level >= 3) {
-      setMessageAnswerAdminModal(true);
-      setLectureId(data.id);
+      setSendMessageAnswerType(3);
     } else {
-      setMessageAnswerModal(true);
+      setSendMessageAnswerType(1);
     }
   }, []);
 
@@ -606,6 +606,10 @@ const Student = () => {
 
   const sendMessageTypeHandler = useCallback((num) => {
     setSendMessageType(num);
+  }, []);
+
+  const sendMessageAnswerTypeHandler = useCallback((num) => {
+    setSendMessageAnswerType(num);
   }, []);
 
   const homeworkSubmitHanlder = useCallback((data) => {
@@ -688,32 +692,29 @@ const Student = () => {
 
   const sendMessageFinishHandler = useCallback(
     (data) => {
+      let userId = data.receiveLectureId.split(",")[1];
+      let level = data.receiveLectureId.split(",")[2];
+
       dispatch({
         type: MESSAGE_CREATE_REQUEST,
         data: {
           title: data.title,
           author: me.userId,
           senderId: me.id,
-          receiverId: lectureId,
+          receiverId: userId,
           content: data.content,
-          level: me.level,
+          level: level,
         },
       });
     },
-    [me, lectureId]
+    [me]
   );
 
   const sendMessageLectureFinishHanlder = useCallback(
-    (data, messageDatum) => {
-      let save = messageDatum.find((data2, idx) => {
-        if (data2.id === data.receiveLectureId) {
-          return true;
-        }
-      });
-
-      if (!save) {
-        return message.error("잠시후 다시 실행해주세요.");
-      }
+    (data) => {
+      let receiveLectureId = data.receiveLectureId.split(",")[0];
+      let userId = data.receiveLectureId.split(",")[1];
+      let level = data.receiveLectureId.split(",")[2];
 
       dispatch({
         type: MESSAGE_CREATE_REQUEST,
@@ -721,15 +722,15 @@ const Student = () => {
           title: data.title,
           author: me.userId,
           senderId: me.id,
-          receiverId: save.UserId,
-          receiveLectureId: data.receiveLectureId,
+          receiverId: userId,
+          receiveLectureId: receiveLectureId,
           content: data.content,
-          level: me.level,
+          level: level,
         },
       });
     },
 
-    [me, lectureId]
+    [me]
   );
 
   const sendMessageAdminFinishHandler = useCallback(
@@ -761,23 +762,43 @@ const Student = () => {
   );
 
   const answerFinishHandler = useCallback(
-    async (data, messageData) => {
-      if (messageData) {
+    async (data) => {
+      if (messageDatum) {
         dispatch({
           type: MESSAGE_CREATE_REQUEST,
           data: {
-            title: data.messageTitle,
+            title: data.title,
             author: me.userId,
-            senderId: messageData.receiverId,
-            receiverId: messageData.senderId,
-            receiveLectureId: data.receiveLectureId,
-            content: data.messageContent,
-            level: me.level,
+            senderId: me.id,
+            receiverId: messageDatum.senderId,
+            content: data.content,
+            level: messageDatum.level,
           },
         });
       }
     },
-    [me]
+    [me, messageDatum]
+  );
+
+  const answerLectureFinishHanlder = useCallback(
+    (data) => {
+      if (messageDatum) {
+        dispatch({
+          type: MESSAGE_CREATE_REQUEST,
+          data: {
+            title: data.title,
+            author: me.userId,
+            senderId: me.id,
+            receiverId: messageDatum.senderId,
+            receiveLectureId: data.receiveLectureId,
+            content: data.content,
+            level: messageDatum.level,
+          },
+        });
+      }
+    },
+
+    [me, messageDatum]
   );
 
   const homeWorkFinishHandler = useCallback(() => {
@@ -811,18 +832,6 @@ const Student = () => {
     const originName = `첨부파일.${ext}`;
 
     saveAs(file, originName);
-  }, []);
-
-  const receiveSelectHandler = useCallback((value) => {
-    setSelectValue(value);
-  }, []);
-
-  const receiveLectureIdtHandler = useCallback((value) => {
-    setLectureId(value);
-  }, []);
-
-  const onSearchHandler = useCallback((value) => {
-    setLectureId(value);
   }, []);
 
   const noticeChangePage = useCallback((page) => {
@@ -922,43 +931,43 @@ const Student = () => {
     }
   }, []);
 
-  const stepHanlder = useCallback((startDate, endDate, count, lecDate, day) => {
-    let dir = 0;
+  // const stepHanlder = useCallback((startDate, endDate, count, lecDate, day) => {
+  //   let dir = 0;
 
-    const save = Math.abs(
-      moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays() -
-        1
-    );
+  //   const save = Math.abs(
+  //     moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays() -
+  //       1
+  //   );
 
-    let check = parseInt(
-      moment
-        .duration(moment(endDate).diff(moment(startDate, "YYYY-MM-DD")))
-        .asDays() + 1
-    );
+  //   let check = parseInt(
+  //     moment
+  //       .duration(moment(endDate).diff(moment(startDate, "YYYY-MM-DD")))
+  //       .asDays() + 1
+  //   );
 
-    if (save >= check) {
-      dir = check;
-    } else {
-      dir = save;
-    }
+  //   if (save >= check) {
+  //     dir = check;
+  //   } else {
+  //     dir = save;
+  //   }
 
-    const arr = ["일", "월", "화", "수", "목", "금", "토"];
-    let add = 0;
+  //   const arr = ["일", "월", "화", "수", "목", "금", "토"];
+  //   let add = 0;
 
-    for (let i = 0; i < dir; i++) {
-      let saveDay = moment(startDate)
-        .add(i + 1, "days")
-        .day();
+  //   for (let i = 0; i < dir; i++) {
+  //     let saveDay = moment(startDate)
+  //       .add(i + 1, "days")
+  //       .day();
 
-      const saveResult = day.includes(arr[saveDay]);
+  //     const saveResult = day.includes(arr[saveDay]);
 
-      if (saveResult) {
-        add += 1;
-      }
-    }
+  //     if (saveResult) {
+  //       add += 1;
+  //     }
+  //   }
 
-    return parseInt((add / (count * lecDate)) * 100);
-  }, []);
+  //   return parseInt((add / (count * lecDate)) * 100);
+  // }, []);
 
   const stepHanlder2 = useCallback(
     (startDate, endDate, count, lecDate, day) => {
@@ -1966,206 +1975,167 @@ const Student = () => {
           <CustomModal
             visible={messageViewModal}
             width={`1350px`}
-            title={messageAnswerModal ? "쪽지 답변" : "쪽지함"}
+            title={
+              sendMessageAnswerType === 0
+                ? "쪽지 보기"
+                : sendMessageAnswerType === 1
+                ? "강사에게 쪽지 보내기"
+                : sendMessageAnswerType === 2
+                ? "수업에 대한 쪽지 보내기"
+                : sendMessageAnswerType === 3 && "관리자에게 쪽지 보내기"
+            }
             footer={null}
             closable={false}>
             <CustomForm
               form={answerform}
-              onFinish={
-                messageAnswerAdminModal
-                  ? (data) => sendMessageAnswerAdminFinish(data)
-                  : (data) => answerFinishHandler(data, messageDatum)
+              onFinish={(data) =>
+                sendMessageAnswerType === 1
+                  ? answerFinishHandler(data)
+                  : sendMessageAnswerType === 2
+                  ? answerLectureFinishHanlder(data, messageTeacherList)
+                  : sendMessageAnswerType === 3 &&
+                    sendMessageAnswerAdminFinish(data)
               }>
-              {messageAnswerModal && (
+              {sendMessageAnswerType !== 0 && (
+                <Wrapper dr={`row`} ju={`flex-end`}>
+                  <CommonButton
+                    margin={`0 0 0 5px`}
+                    radius={`5px`}
+                    width={`100px`}
+                    height={`32px`}
+                    size="small"
+                    onClick={() => sendMessageAnswerTypeHandler(1)}>
+                    {"강사"}
+                  </CommonButton>
+
+                  <CommonButton
+                    margin={`0 0 0 5px`}
+                    radius={`5px`}
+                    width={`100px`}
+                    height={`32px`}
+                    size="small"
+                    onClick={() => sendMessageAnswerTypeHandler(2)}>
+                    {"수업"}
+                  </CommonButton>
+
+                  <CommonButton
+                    margin={`0 0 0 5px`}
+                    radius={`5px`}
+                    width={`100px`}
+                    height={`32px`}
+                    size="small"
+                    onClick={() => sendMessageAnswerTypeHandler(3)}>
+                    {"관리자"}
+                  </CommonButton>
+                </Wrapper>
+              )}
+
+              {sendMessageAnswerType === 1 && (
                 <>
-                  <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
-                    <Text
-                      fontSize={`18px`}
-                      fontWeight={`bold`}
-                      margin={`0 35px 0 0`}>
-                      작성자
-                    </Text>
+                  <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
+                    듣고 있는 강의 목록
+                  </Text>
 
-                    <Text>{messageDatum && messageDatum.author}</Text>
-                  </Wrapper>
+                  <Form.Item
+                    name="receiveLectureId"
+                    rules={[
+                      {
+                        required: true,
+                        message: "듣고있는 강의 목록을 선택해주세요.",
+                      },
+                    ]}>
+                    <Select style={{ width: `100%` }}>
+                      {lectureStuLectureList &&
+                      lectureStuLectureList.length === 0 ? (
+                        <Option value="참여 중인 강의가 없습니다.">
+                          참여 중인 강의가 없습니다.
+                        </Option>
+                      ) : (
+                        lectureStuLectureList &&
+                        lectureStuLectureList.map((data, idx) => {
+                          if (data.UserId !== messageDatum.senderId) return;
 
-                  <Wrapper dr={`row`} ju={`flex-start`}>
-                    <Form.Item
-                      name="receiveLectureId"
-                      rules={[
-                        { required: true, message: "강의를 선택해주세요." },
-                      ]}>
-                      <Select
-                        value={lectureId}
-                        style={{ width: `400px` }}
-                        showSearch
-                        onSearch={onSearchHandler}
-                        onChange={receiveLectureIdtHandler}
-                        filterOption={(input, option) =>
-                          option.children
-                            .toLowerCase()
-                            .indexOf(input.toLowerCase()) >= 0
-                        }
-                        disabled={messageAnswerAdminModal ? true : false}>
-                        {lectureStuLectureList &&
-                        lectureStuLectureList.length === 0 ? (
-                          <Option value="참여 중인 강의가 없습니다." disabled>
-                            참여 중인 강의가 없습니다.
-                          </Option>
-                        ) : (
-                          lectureStuLectureList &&
-                          lectureStuLectureList.map((data, idx) => {
-                            if (
-                              messageDatum &&
-                              messageDatum.senderId !== data.UserId
-                            )
-                              return;
-
-                            return (
-                              <Option key={`${data.id}${idx}`} value={data.id}>
-                                {data.course}
-                              </Option>
-                            );
-                          })
-                        )}
-                      </Select>
-                    </Form.Item>
-                  </Wrapper>
-
+                          return (
+                            <Option key={`${data.id}${idx}`} value={data.id}>
+                              {data.course}
+                            </Option>
+                          );
+                        })
+                      )}
+                    </Select>
+                  </Form.Item>
                   <Text
-                    fontSize={`18px`}
-                    fontWeight={`bold`}
-                    margin={`20px 0 0`}>
-                    제목
+                    fontSize={`14px`}
+                    color={Theme.grey2_C}
+                    margin={`0 0 20px`}>
+                    강사님 개인쪽지함에 쪽지가 전달됩니다.
                   </Text>
-                  <Wrapper padding={`10px`}>
-                    <Form.Item
-                      name="messageTitle"
-                      rules={[
-                        { required: true, message: "제목을 입력해주세요." },
-                      ]}>
-                      <CusotmInput width={`100%`} />
-                    </Form.Item>
-                  </Wrapper>
-
-                  <Text fontSize={`18px`} fontWeight={`bold`}>
-                    내용
-                  </Text>
-                  <Wrapper padding={`10px`}>
-                    <Form.Item
-                      name="messageContent"
-                      rules={[
-                        { required: true, message: "내용을 입력해주세요." },
-                      ]}>
-                      <Input.TextArea style={{ height: `360px` }} />
-                    </Form.Item>
-                  </Wrapper>
-
-                  <Wrapper dr={`row`}>
-                    <CommonButton
-                      margin={`0 5px 0 0`}
-                      kindOf={`grey`}
-                      color={Theme.darkGrey_C}
-                      radius={`5px`}
-                      onClick={() => onReset()}>
-                      돌아가기
-                    </CommonButton>
-                    <CommonButton
-                      margin={`0 0 0 5px`}
-                      radius={`5px`}
-                      htmlType="submit">
-                      작성하기
-                    </CommonButton>
-                  </Wrapper>
                 </>
               )}
 
-              {messageAnswerAdminModal && (
+              {sendMessageAnswerType === 2 && (
                 <>
-                  <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
-                    <Text
-                      fontSize={`18px`}
-                      fontWeight={`bold`}
-                      margin={`0 35px 0 0`}>
-                      관리자
-                    </Text>
+                  <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
+                    듣고 있는 강의 목록
+                  </Text>
 
-                    <Text>{messageDatum && messageDatum.author}</Text>
-                    <Text>{`외 모든 관리자`}</Text>
-                  </Wrapper>
-
-                  {/* <Wrapper dr={`row`} ju={`flex-start`}>
-                    <Form.Item
-                      name="receiveLectureId"
-                      rules={[
-                        { required: true, message: "강의를 선택해주세요." },
-                      ]}>
-                      <Select
-                        value={lectureId}
-                        style={{ width: `400px` }}
-                        showSearch
-                        onSearch={onSearchHandler}
-                        onChange={receiveLectureIdtHandler}
-                        filterOption={(input, option) =>
-                          option.children
-                            .toLowerCase()
-                            .indexOf(input.toLowerCase()) >= 0
-                        }
-                        disabled={messageAnswerAdminModal ? true : false}>
-                        {lectureStuLectureList &&
-                        lectureStuLectureList.length === 0 ? (
-                          <Option value="참여 중인 강의가 없습니다." disabled>
-                            참여 중인 강의가 없습니다.
-                          </Option>
-                        ) : (
-                          lectureStuLectureList &&
-                          lectureStuLectureList.map((data, idx) => {
-                            if (
-                              messageDatum &&
-                              messageDatum.senderId !== data.UserId
-                            )
-                              return;
-
-                            return (
-                              <Option key={`${data.id}${idx}`} value={data.id}>
-                                {data.course}
-                              </Option>
-                            );
-                          })
-                        )}
-                      </Select>
-                    </Form.Item>
-                  </Wrapper> */}
-
+                  <Form.Item
+                    name="receiveLectureId"
+                    rules={[
+                      {
+                        required: true,
+                        message: "듣고있는 강의 목록을 선택해주세요.",
+                      },
+                    ]}>
+                    <Select style={{ width: `100%` }}>
+                      {lectureStuLectureList &&
+                      lectureStuLectureList.length === 0 ? (
+                        <Option value="참여 중인 강의가 없습니다.">
+                          참여 중인 강의가 없습니다.
+                        </Option>
+                      ) : (
+                        lectureStuLectureList &&
+                        lectureStuLectureList.map((data, idx) => {
+                          if (data.UserId !== messageDatum.senderId) return;
+                          return (
+                            <Option key={`${data.id}${idx}`} value={data.id}>
+                              {data.course}
+                            </Option>
+                          );
+                        })
+                      )}
+                    </Select>
+                  </Form.Item>
                   <Text
-                    fontSize={`18px`}
-                    fontWeight={`bold`}
-                    margin={`20px 0 0`}>
+                    fontSize={`14px`}
+                    color={Theme.grey2_C}
+                    margin={`0 0 20px`}>
+                    강사님에 수업 상세페이지 쪽지함에 전달 됩니다.
+                  </Text>
+                </>
+              )}
+              {sendMessageAnswerType !== 0 && (
+                <>
+                  <Text fontSize={`18px`} fontWeight={`bold`}>
                     제목
                   </Text>
-                  <Wrapper padding={`10px`}>
-                    <Form.Item
-                      name="messageTitle"
-                      rules={[
-                        { required: true, message: "제목을 입력해주세요." },
-                      ]}>
-                      <CusotmInput width={`100%`} />
-                    </Form.Item>
-                  </Wrapper>
-
+                  <Form.Item
+                    name="title"
+                    rules={[
+                      { required: true, message: "제목을 입력해주세요." },
+                    ]}>
+                    <Input />
+                  </Form.Item>
                   <Text fontSize={`18px`} fontWeight={`bold`}>
                     내용
                   </Text>
-                  <Wrapper padding={`10px`}>
-                    <Form.Item
-                      name="messageContent"
-                      rules={[
-                        { required: true, message: "내용을 입력해주세요." },
-                      ]}>
-                      <Input.TextArea style={{ height: `360px` }} />
-                    </Form.Item>
-                  </Wrapper>
-
+                  <Form.Item
+                    name="content"
+                    rules={[
+                      { required: true, message: "내용을 입력해주세요." },
+                    ]}>
+                    <Input.TextArea style={{ height: `360px` }} />
+                  </Form.Item>
                   <Wrapper dr={`row`}>
                     <CommonButton
                       margin={`0 5px 0 0`}
@@ -2179,14 +2149,14 @@ const Student = () => {
                       margin={`0 0 0 5px`}
                       radius={`5px`}
                       htmlType="submit">
-                      작성하기
+                      쪽지 보내기
                     </CommonButton>
                   </Wrapper>
                 </>
               )}
             </CustomForm>
 
-            {!messageAnswerModal && !messageAnswerAdminModal && (
+            {sendMessageAnswerType === 0 && (
               <>
                 <Wrapper
                   dr={`row`}
@@ -2194,7 +2164,7 @@ const Student = () => {
                   margin={`0 0 35px`}
                   fontSize={width < 700 ? "14px" : "16px"}>
                   <Text margin={`0 54px 0 0`}>
-                    {messageDatum && messageDatum.author}
+                    {`작성자: ${messageDatum && messageDatum.author}`}
                   </Text>
                   <Text>{`날짜 ${
                     messageDatum &&
@@ -2203,18 +2173,15 @@ const Student = () => {
                     )
                   }`}</Text>
                 </Wrapper>
-
                 <Text fontSize={`18px`} fontWeight={`bold`}>
                   제목
                 </Text>
-
                 <Wrapper
                   padding={`10px`}
                   al={`flex-start`}
                   fontSize={width < 700 ? "14px" : "16px"}>
                   <Text>{messageDatum && messageDatum.title}</Text>
                 </Wrapper>
-
                 <Text fontSize={`18px`} fontWeight={`bold`}>
                   내용
                 </Text>
@@ -2234,7 +2201,6 @@ const Student = () => {
                       })}
                   </Text>
                 </Wrapper>
-
                 <Wrapper dr={`row`}>
                   <CommonButton
                     margin={`0 5px 0 0`}
@@ -2557,17 +2523,14 @@ const Student = () => {
                   </Text>
 
                   <Form.Item
-                    name="receivePerson"
+                    name="receiveLectureId"
                     rules={[
                       {
                         required: true,
                         message: "듣고있는 강의 목록을 선택해주세요.",
                       },
                     ]}>
-                    <Select
-                      value={lectureId}
-                      style={{ width: `100%` }}
-                      onChange={receiveLectureIdtHandler}>
+                    <Select style={{ width: `100%` }}>
                       {lectureStuLectureList &&
                       lectureStuLectureList.length === 0 ? (
                         <Option value="참여 중인 강의가 없습니다.">
@@ -2577,7 +2540,9 @@ const Student = () => {
                         lectureStuLectureList &&
                         lectureStuLectureList.map((data, idx) => {
                           return (
-                            <Option key={`${data.id}${idx}`} value={data.id}>
+                            <Option
+                              key={`${data.id}${idx}`}
+                              value={`${data.id},${data.User.id},${data.User.level}`}>
                               {data.course}
                             </Option>
                           );
@@ -2608,19 +2573,19 @@ const Student = () => {
                         message: "듣고있는 강의 목록을 선택해주세요.",
                       },
                     ]}>
-                    <Select
-                      value={selectValue}
-                      style={{ width: `100%` }}
-                      onChange={receiveSelectHandler}>
-                      {messageTeacherList && messageTeacherList.length === 0 ? (
+                    <Select style={{ width: `100%` }}>
+                      {lectureStuLectureList &&
+                      lectureStuLectureList.length === 0 ? (
                         <Option value="참여 중인 강의가 없습니다.">
                           참여 중인 강의가 없습니다.
                         </Option>
                       ) : (
-                        messageTeacherList &&
-                        messageTeacherList.map((data, idx) => {
+                        lectureStuLectureList &&
+                        lectureStuLectureList.map((data, idx) => {
                           return (
-                            <Option key={`${data.id}${idx}`} value={data.id}>
+                            <Option
+                              key={`${data.id}${idx}`}
+                              value={`${data.id},${data.User.id},${data.User.level}`}>
                               {data.course}
                             </Option>
                           );

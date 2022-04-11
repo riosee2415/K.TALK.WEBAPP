@@ -474,7 +474,6 @@ const LectureAll = () => {
     }
 
     setMessageDatum(data);
-    // setSelectValue(data.id);
   }, []);
 
   const messageAnswerToggleHanlder = useCallback((data) => {
@@ -1095,6 +1094,7 @@ const LectureAll = () => {
               lectureStuLectureList.map((data, idx) => {
                 return (
                   <Wrapper
+                    key={data.id}
                     dr={`row`}
                     padding={width < 800 ? `10px` : `30px`}
                     bgColor={Theme.white_C}
