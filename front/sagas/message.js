@@ -56,6 +56,10 @@ import {
   MESSAGE_PART_LIST_REQUEST,
   MESSAGE_PART_LIST_SUCCESS,
   MESSAGE_PART_LIST_FAILURE,
+  //
+  MESSAGE_ALL_LIST_REQUEST,
+  MESSAGE_ALL_LIST_SUCCESS,
+  MESSAGE_ALL_LIST_FAILURE,
 } from "../reducers/message";
 
 // SAGA AREA ********************************************************************************************************
@@ -342,6 +346,37 @@ function* messagePartList(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function messageAllListAPI(data) {
+  return axios.get(`/api/message/all/list`, data);
+}
+
+function* messageAllList(action) {
+  try {
+    const result = yield call(messageAllListAPI, action.data);
+
+    yield put({
+      type: MESSAGE_ALL_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: MESSAGE_ALL_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchMessageUserList() {
   yield takeLatest(MESSAGE_USER_LIST_REQUEST, messageUserList);
@@ -391,6 +426,10 @@ function* watchMessagePartList() {
   yield takeLatest(MESSAGE_PART_LIST_REQUEST, messagePartList);
 }
 
+function* watchMessageAllList() {
+  yield takeLatest(MESSAGE_ALL_LIST_REQUEST, messageAllList);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* messagerSaga() {
   yield all([
@@ -406,6 +445,7 @@ export default function* messagerSaga() {
     fork(watchMessageForAdminCreate),
     fork(watchMessageLectureList),
     fork(watchMessagePartList),
+    fork(watchMessageAllList),
     //
   ]);
 }

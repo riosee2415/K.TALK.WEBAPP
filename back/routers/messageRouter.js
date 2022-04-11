@@ -8,6 +8,7 @@ const models = require("../models");
 const router = express.Router();
 
 // 쪽지 사용자 리스트 (강사 or 학생)
+
 router.get("/user/list", isLoggedIn, async (req, res, next) => {
   const { page } = req.query;
 
@@ -36,8 +37,7 @@ router.get("/user/list", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	Messages
      WHERE  receiverId = ${req.user.id}
-       AND  receiveLectureId IS NULL
-       AND  receiverId IS NULL     
+       AND  receiveLectureId IS NULL     
     `;
 
     const selectQuery = `
@@ -53,8 +53,7 @@ router.get("/user/list", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	Messages
      WHERE  receiverId = ${req.user.id} 
-       AND  receiveLectureId IS NULL
-       AND  receiverId IS NULL    
+       AND  receiveLectureId IS NULL    
      ORDER  BY createdAt  DESC
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
@@ -106,7 +105,7 @@ router.get("/all/list", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	Messages
      WHERE  1 = 1
-    ${`AND level = IN (${req.user.level}, 3)`}
+    ${`AND  level IN (${req.user.level}, 3)`}
        AND  receiveLectureId IS NULL
        AND  receiverId IS NULL     
     `;
@@ -124,7 +123,7 @@ router.get("/all/list", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	Messages
      WHERE  1 = 1
-    ${`AND  level = IN (${req.user.level}, 3)`}
+    ${`AND  level IN (${req.user.level}, 3)`}
        AND  receiveLectureId IS NULL
        AND  receiverId IS NULL    
      ORDER  BY createdAt  DESC
@@ -568,7 +567,7 @@ router.delete("/delete/:messageId", async (req, res, next) => {
 // 단체로 보내기 (한명만 보내기도 가능)
 
 router.post("/many/create", isLoggedIn, async (req, res, next) => {
-  const { title, author, content, receiverId } = req.body;
+  const { title, author, content, receiverId, level } = req.body;
 
   if (!req.user) {
     return res.status(403).send("잘못된 요청입니다.");
@@ -578,19 +577,21 @@ router.post("/many/create", isLoggedIn, async (req, res, next) => {
     return res.status(401).send("잘못된 요청입니다.");
   }
 
+  if (!Array.isArray(level)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+
   try {
-    await Promise.all(
-      receiverId.map(async (data) => {
-        await Message.create({
-          receiverId: parseInt(data),
-          senderId: parseInt(req.user.id),
-          title,
-          author,
-          content,
-          level: parseInt(req.user.level),
-        });
-      })
-    );
+    for (let i = 0; i < receiverId.length; i++) {
+      await Message.create({
+        receiverId: parseInt(receiverId[i]),
+        senderId: parseInt(req.user.id),
+        title,
+        author,
+        content,
+        level: parseInt(level[i]),
+      });
+    }
 
     return res.status(201).json({ result: true });
   } catch (error) {

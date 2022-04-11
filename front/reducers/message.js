@@ -9,6 +9,8 @@ export const initialState = {
   messageLectureLastPage: 1,
   messagePartList: [],
   messagePartLastPage: 1,
+  messageAllList: [],
+  messageAllLastPage: 1,
   //
   st_messageUserListLoading: false,
   st_messageUserListDone: false,
@@ -58,6 +60,10 @@ export const initialState = {
   st_messagePartListLoading: false,
   st_messagePartListDone: false,
   st_messagePartListError: null,
+  //
+  st_messageAllListLoading: false,
+  st_messageAllListDone: false,
+  st_messageAllListError: null,
 };
 
 export const MESSAGE_USER_LIST_REQUEST = "MESSAGE_USER_LIST_REQUEST";
@@ -110,6 +116,10 @@ export const MESSAGE_LECTURE_LIST_FAILURE = "MESSAGE_LECTURE_LIST_FAILURE";
 export const MESSAGE_PART_LIST_REQUEST = "MESSAGE_PART_LIST_REQUEST";
 export const MESSAGE_PART_LIST_SUCCESS = "MESSAGE_PART_LIST_SUCCESS";
 export const MESSAGE_PART_LIST_FAILURE = "MESSAGE_PART_LIST_FAILURE";
+
+export const MESSAGE_ALL_LIST_REQUEST = "MESSAGE_ALL_LIST_REQUEST";
+export const MESSAGE_ALL_LIST_SUCCESS = "MESSAGE_ALL_LIST_SUCCESS";
+export const MESSAGE_ALL_LIST_FAILURE = "MESSAGE_ALL_LIST_FAILURE";
 
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
@@ -358,6 +368,28 @@ const reducer = (state = initialState, action) =>
         draft.st_messagePartListLoading = false;
         draft.st_messagePartListDone = false;
         draft.st_messagePartListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case MESSAGE_ALL_LIST_REQUEST: {
+        draft.st_messageAllListLoading = true;
+        draft.st_messageAllListDone = null;
+        draft.st_messageAllListError = false;
+        break;
+      }
+      case MESSAGE_ALL_LIST_SUCCESS: {
+        draft.st_messageAllListLoading = false;
+        draft.st_messageAllListDone = true;
+        draft.messageAllList = action.data.message;
+        draft.messagePartLastPage = action.data.lastPage;
+        break;
+      }
+      case MESSAGE_ALL_LIST_FAILURE: {
+        draft.st_messageAllListLoading = false;
+        draft.st_messageAllListDone = false;
+        draft.st_messageAllListError = action.error;
         break;
       }
 
