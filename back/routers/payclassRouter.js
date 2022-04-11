@@ -77,7 +77,7 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
 
     const today = moment().format("YYYY-MM-DD");
 
-    if (new Date(exLecture.startDate) > new Date(today)) {
+    if (new Date(exLecture.startDate) < new Date(today)) {
       return res
         .status(401)
         .send("해당 강의의 시작 날짜보다 이전 날짜를 선택할 수 없습니다.");
