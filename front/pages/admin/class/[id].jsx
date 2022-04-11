@@ -620,10 +620,10 @@ const DetailClass = () => {
           <Wrapper al={`flex-start`} ju={`flex-start`} height={`500px`}>
             {detailMemo &&
               detailMemo.memo.split(`\n`).map((data) => (
-                <>
-                  <SpanText>{data}</SpanText>
+                <SpanText>
+                  {data}
                   <br />
-                </>
+                </SpanText>
               ))}
           </Wrapper>
         </Wrapper>
