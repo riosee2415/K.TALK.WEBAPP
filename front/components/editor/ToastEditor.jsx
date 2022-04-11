@@ -13,7 +13,7 @@ const Editor = dynamic(
 
 const ToastEditor = ({ vRef }) => {
   const editorRef = useRef(null);
-  console.log(editorRef.current); // {retry: ƒ}
+  // console.log(editorRef.current); // {retry: ƒ}
 
   return (
     <>
