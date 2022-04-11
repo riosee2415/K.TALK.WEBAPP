@@ -101,6 +101,9 @@ const DetailClass = () => {
   const [memoModal, setMemoModal] = useState(false);
   const [currentStudentId, setCurrentStudentId] = useState(null);
 
+  const [lecModal, setLecModal] = useState(false);
+  const [lecMemoData, setLecMemoData] = useState(null);
+
   const [detailMemoModal, setDetailMemoModal] = useState(false);
   const [detailMemo, setDetailMemo] = useState(null);
 
@@ -177,6 +180,15 @@ const DetailClass = () => {
   const detailMemoClose = useCallback(() => {
     setMemoModal(false);
     setCurrentStudentId(null);
+  }, []);
+
+  const lecMemoOpen = useCallback((data) => {
+    setLecModal(true);
+    setLecMemoData(data);
+  }, []);
+  const lecMemoClose = useCallback(() => {
+    setLecModal(false);
+    setLecMemoData(null);
   }, []);
 
   const detailBookOpen = useCallback(() => {
@@ -335,7 +347,7 @@ const DetailClass = () => {
         <Button
           size={`small`}
           type={`primary`}
-          onClick={() => detailMemoOpen(data.memo)}
+          onClick={() => lecMemoOpen(data)}
         >
           메모 보기
         </Button>
@@ -620,6 +632,28 @@ const DetailClass = () => {
           <Wrapper al={`flex-start`} ju={`flex-start`} height={`500px`}>
             {detailMemo &&
               detailMemo.memo.split(`\n`).map((data) => (
+                <SpanText>
+                  {data}
+                  <br />
+                </SpanText>
+              ))}
+          </Wrapper>
+        </Wrapper>
+      </Modal>
+      <Modal
+        visible={lecModal}
+        footer={null}
+        onCancel={lecMemoClose}
+        width={600}
+        title={`메모 내용`}
+      >
+        <Wrapper al={`flex-start`}>
+          <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
+            {lecMemoData && lecMemoData.createdAt.slice(0, 10)}
+          </Text>
+          <Wrapper al={`flex-start`} ju={`flex-start`} minHeight={`300px`}>
+            {lecMemoData &&
+              lecMemoData.lectureMemo.split(`\n`).map((data) => (
                 <SpanText>
                   {data}
                   <br />
