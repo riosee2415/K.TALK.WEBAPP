@@ -318,11 +318,11 @@ const List = ({ router }) => {
         type: MESSAGE_CREATE_REQUEST,
         data: {
           title: value.title1,
-          author: me.userId,
-          senderId: me.id,
+          author: me && me.userId,
+          senderId: me && me.id,
           receiverId: updateData.senderId,
           content: value.content1,
-          level: me.level,
+          level: updateData.level,
         },
       });
     },
@@ -341,7 +341,7 @@ const List = ({ router }) => {
         },
       });
     },
-    [me]
+    [me, selectValue]
   );
 
   const onLectureSubmit = useCallback(
@@ -361,13 +361,17 @@ const List = ({ router }) => {
 
   const onManySubmit = useCallback(
     (value) => {
+      let level = currentCheckDatum.map((data) => data.level);
+      let receiverId = currentCheckDatum.map((data) => data.senderId);
+
       dispatch({
         type: MESSAGE_MANY_CREATE_REQUEST,
         data: {
           title: value.title,
           author: me.username,
           content: value.content,
-          receiverId: currentCheckDatum.map((data) => data.receiverId),
+          receiverId: receiverId,
+          level: level,
         },
       });
     },
@@ -389,9 +393,10 @@ const List = ({ router }) => {
   }, []);
 
   function handleChange(value) {
-    // console.log(`selected ${value}`);
+    setSelectValue(value);
   }
 
+  console.log(selectValue, "asldaklsd");
   const deleteNoticeHandler = useCallback(() => {
     if (!deleteId) {
       return LoadNotification(

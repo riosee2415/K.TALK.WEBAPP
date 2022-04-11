@@ -76,7 +76,7 @@ const AdminHome = () => {
 
   return (
     <>
-      {me && me.level > 3 ? (
+      {me && me.level >= 3 ? (
         <AdminLayout>
           <Wrapper height={`100%`} padding={`30px`}>
             <Image
