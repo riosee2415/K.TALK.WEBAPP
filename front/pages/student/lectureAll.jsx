@@ -454,8 +454,6 @@ const LectureAll = () => {
       setSendMessageType(3);
     }
 
-    console.log(data, "kigkm");
-
     setMessageDatum(data);
     // setSelectValue(data.id);
   }, []);

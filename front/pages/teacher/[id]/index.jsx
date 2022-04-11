@@ -3709,6 +3709,7 @@ const Index = () => {
           visible={studentToggle}
           width={`1350px`}
           title="학생 숙제 제출 목록"
+          onCancel={() => onReset()}
           footer={null}
         >
           <CustomForm>

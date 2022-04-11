@@ -205,6 +205,7 @@ const List = ({ router }) => {
   useEffect(() => {
     if (st_messageAllCreateDone) {
       onReset();
+      return message.success("쪽지를 보냈습니다.");
     }
   }, [st_messageAllCreateDone]);
 
