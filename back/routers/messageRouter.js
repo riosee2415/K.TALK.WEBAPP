@@ -582,7 +582,7 @@ router.post("/many/create", isLoggedIn, async (req, res, next) => {
   }
 
   try {
-    for (let i = 0; i < prodId.length; i++) {
+    for (let i = 0; i < receiverId.length; i++) {
       await Message.create({
         receiverId: parseInt(receiverId[i]),
         senderId: parseInt(req.user.id),
