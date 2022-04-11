@@ -111,7 +111,12 @@ router.post("/create", async (req, res, next) => {
     });
 
     const exPart = await Participant.findOne({
-      where: { LectureId: parseInt(LectureId), UserId: parseInt(UserId) },
+      where: {
+        LectureId: parseInt(LectureId),
+        UserId: parseInt(UserId),
+        isDelete: false,
+        isChange: false,
+      },
     });
 
     if (!exLecture) {

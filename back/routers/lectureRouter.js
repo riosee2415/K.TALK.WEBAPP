@@ -403,7 +403,11 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
   }
   try {
     const exParts = await Participant.findAll({
-      where: { UserId: parseInt(req.user.id) },
+      where: {
+        UserId: parseInt(req.user.id),
+        isDelete: false,
+        isChange: false,
+      },
     });
 
     if (exParts.length === 0) {
@@ -718,7 +722,12 @@ router.post("/memo/student/create", isLoggedIn, async (req, res, next) => {
     }
 
     const exPart = await Participant.findOne({
-      where: { UserId: parseInt(UserId), LectureId: parseInt(LectureId) },
+      where: {
+        UserId: parseInt(UserId),
+        LectureId: parseInt(LectureId),
+        isDelete: false,
+        isChange: false,
+      },
     });
 
     if (!exPart) {
@@ -1139,7 +1148,11 @@ router.get("/homework/student/list", isLoggedIn, async (req, res, next) => {
 
   try {
     const lectures = await Participant.findAll({
-      where: { UserId: parseInt(req.user.id) },
+      where: {
+        UserId: parseInt(req.user.id),
+        isDelete: false,
+        isChange: false,
+      },
     });
 
     if (!lectures) {
@@ -1356,7 +1369,12 @@ router.post("/submit/create", isLoggedIn, async (req, res, next) => {
   }
   try {
     const exPart = await Participant.findOne({
-      where: { LectureId: parseInt(LectureId), UserId: parseInt(req.user.id) },
+      where: {
+        LectureId: parseInt(LectureId),
+        UserId: parseInt(req.user.id),
+        isDelete: false,
+        isChange: false,
+      },
     });
 
     if (!exPart) {

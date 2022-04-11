@@ -324,7 +324,11 @@ router.get("/teacherList", isLoggedIn, async (req, res, next) => {
   }
   try {
     const parts = await Participant.findAll({
-      where: { UserId: parseInt(req.user.id) },
+      where: {
+        UserId: parseInt(req.user.id),
+        isDelete: false,
+        isChange: false,
+      },
     });
 
     if (parts.length === 0) {
@@ -525,67 +529,24 @@ router.post("/many/create", isLoggedIn, async (req, res, next) => {
 router.post("/all/create", isAdminCheck, async (req, res, next) => {
   const { type, title, author, content } = req.body;
 
-  if (!req.user) {
-    return res.status(403).send("잘못된 요청입니다.");
-  }
-
   try {
-    const users = await User.findAll({});
+    const createResult = await Message.create({
+      receiverId: parseInt(data.id),
+      senderId: parseInt(req.user.id),
+      title,
+      author,
+      content,
+      level:
+        parseInt(type) === 1
+          ? 1
+          : parseInt(type) === 2
+          ? 2
+          : parseInt(type) === 3,
+    });
 
-    if (type === 1) {
-      const students = await User.findAll({
-        where: { level: 1 },
-      });
-
-      await Promise.all(
-        students.map(async (data) => {
-          await Message.create({
-            receiverId: parseInt(data.id),
-            senderId: parseInt(req.user.level),
-            title,
-            author,
-            content,
-            level: parseInt(req.user.id),
-          });
-        })
-      );
-
-      return res.status(201).json({ result: true });
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
     }
-
-    if (type === 2) {
-      const teachers = await User.findAll({
-        where: { level: 2 },
-      });
-
-      await Promise.all(
-        teachers.map(async (data) => {
-          await Message.create({
-            receiverId: parseInt(data.id),
-            senderId: parseInt(req.user.level),
-            title,
-            author,
-            content,
-            level: parseInt(req.user.id),
-          });
-        })
-      );
-
-      return res.status(201).json({ result: true });
-    }
-
-    await Promise.all(
-      users.map(async (data) => {
-        await Message.create({
-          receiverId: parseInt(data.id),
-          senderId: parseInt(req.user.level),
-          title,
-          author,
-          content,
-          level: parseInt(req.user.id),
-        });
-      })
-    );
 
     return res.status(201).json({ result: true });
   } catch (error) {
@@ -607,27 +568,19 @@ router.post("/lecture/create", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의 입니다.");
     }
 
-    const userList = await Participant.findAll({
-      where: { LectureId: parseInt(LectureId) },
+    const createResult = await Message.create({
+      title,
+      content,
+      author,
+      receiveLectureId: parseInt(LectureId),
+      senderId: null,
+      receiverId: null,
+      level: parseInt(req.user.level),
     });
 
-    if (userList.length === 0) {
-      return res.status(401).send("해당 강의에 참여하고 있는 학생이 없습니다.");
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
     }
-
-    await Promise.all(
-      userList.map(async (data) => {
-        await Message.create({
-          title,
-          content,
-          author,
-          receiveLectureId: parseInt(LectureId),
-          senderId: null,
-          receiverId: null,
-          level: parseInt(req.user.level),
-        });
-      })
-    );
 
     return res.status(201).json({ result: true });
   } catch (error) {
