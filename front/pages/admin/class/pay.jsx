@@ -285,7 +285,7 @@ const Pay = ({}) => {
       render: (data) => {
         return (
           <Text>
-            {Math.floor(data.price - (data.price * data.discount) / 100)}
+            &#36;{Math.floor(data.price - (data.price * data.discount) / 100)}
           </Text>
         );
       },

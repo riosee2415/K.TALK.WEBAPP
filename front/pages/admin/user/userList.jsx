@@ -591,8 +591,12 @@ const UserList = ({}) => {
             value={String(inputLevel.value)}
             onChange={(data) => inputLevel.setValue(data)}
           >
-            <Select.Option value="1">일반학생</Select.Option>
-            <Select.Option value="2">강사</Select.Option>
+            <Select.Option disabled value="1">
+              일반학생
+            </Select.Option>
+            <Select.Option disabled value="2">
+              강사
+            </Select.Option>
             <Select.Option value="3">운영자</Select.Option>
             <Select.Option value="4">최고관리자</Select.Option>
           </Select>
