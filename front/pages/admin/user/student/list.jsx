@@ -565,7 +565,7 @@ const UserList = ({}) => {
                 : classPartEndModalOpen(data)
             }
           >
-            수업뺴기
+            수업빼기
           </Button>
         </Wrapper>
       ),
