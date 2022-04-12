@@ -427,25 +427,29 @@ const DetailClass = () => {
       />
 
       <AdminContent>
-        <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
-          <Wrapper width={`4%`} padding={`11px 8px`}>
-            <Image
-              width={`33px`}
-              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png"
-              alt="lecture_icon"
-            />
+        <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 30px`}>
+          <Wrapper dr={`row`} ju={`flex-start`} width={`auto`}>
+            <Wrapper width={`auto`} padding={`11px 8px`}>
+              <Image
+                width={`33px`}
+                src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png"
+                alt="lecture_icon"
+              />
+            </Wrapper>
+            <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
+              <Text fontSize={`24px`} fontWeight={`bold`}>
+                수업 시간 / 요일
+              </Text>
+              <Text
+                fontSize={`16px`}
+                color={Theme.grey2_C}
+                margin={`0 0 0 15px`}
+              >
+                NO.{router.query && router.query.id}
+              </Text>
+            </Wrapper>
           </Wrapper>
-          <Wrapper width={`96%`} dr={`row`} ju={`flex-start`}>
-            <Text fontSize={`24px`} fontWeight={`bold`}>
-              수업 시간 / 요일
-            </Text>
-            <Text fontSize={`16px`} color={Theme.grey2_C} margin={`0 0 0 15px`}>
-              NO.{router.query && router.query.id}
-            </Text>
-          </Wrapper>
-        </Wrapper>
-        <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 14px`}>
-          <Wrapper dr={`row`} ju={`flex-start`}>
+          <Wrapper dr={`row`} ju={`flex-start`} width={`auto`}>
             <CommonButton
               radius={`5px`}
               width={`130px`}
