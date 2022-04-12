@@ -1158,13 +1158,6 @@ const Index = () => {
               </Wrapper>
             </Wrapper>
 
-            <Wrapper margin={`110px 0`}>
-              <CustomPage
-                current={currentPage3}
-                total={messageUserLastPage * 10}
-                onChange={(page) => onChangeMessagePage(page)}></CustomPage>
-            </Wrapper>
-
             <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
               <Text
                 color={Theme.black_2C}
@@ -1250,7 +1243,7 @@ const Index = () => {
               )}
             </Wrapper>
 
-            <Wrapper margin={`60px 0`}>
+            <Wrapper margin={`65px 0`}>
               <CustomPage
                 size="small"
                 current={currentPage4}
@@ -1343,6 +1336,13 @@ const Index = () => {
                   );
                 })
               )}
+            </Wrapper>
+
+            <Wrapper margin={`65px 0 0`}>
+              <CustomPage
+                current={currentPage3}
+                total={messageUserLastPage * 10}
+                onChange={(page) => onChangeMessagePage(page)}></CustomPage>
             </Wrapper>
 
             <Wrapper

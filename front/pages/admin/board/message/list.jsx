@@ -396,7 +396,6 @@ const List = ({ router }) => {
     setSelectValue(value);
   }
 
-  console.log(selectValue, "asldaklsd");
   const deleteNoticeHandler = useCallback(() => {
     if (!deleteId) {
       return LoadNotification(

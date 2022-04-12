@@ -92,7 +92,6 @@ import {
   COMMUTE_LIST_REQUEST,
 } from "../../../reducers/commute";
 import { saveAs } from "file-saver";
-import { retry } from "redux-saga/effects";
 
 const BackIcon = styled(Wrapper)`
   cursor: pointer;
@@ -338,10 +337,6 @@ const Filename = styled.span`
 const Index = () => {
   ////// GLOBAL STATE //////
 
-  const { Option } = Select;
-
-  const { TabPane } = Tabs;
-
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
   );
@@ -362,12 +357,10 @@ const Index = () => {
     st_messageForAdminCreateDone,
     st_messageForAdminCreateError,
 
-    lectureTearcherList,
-    st_messageTeacherListDone,
-    st_messageTeacherListError,
-
     messageLectureList,
+    messageLectureLastPage,
     messageUserLastPage,
+
     st_messageLectureListDone,
     st_messageLectureListError,
 
@@ -926,6 +919,18 @@ const Index = () => {
       return message.error(st_lectureHomeWorkError);
     }
   }, [st_lectureHomeWorkError]);
+
+  useEffect(() => {
+    if (st_messageCreateError) {
+      return message.error(st_messageCreateError);
+    }
+  }, [st_messageCreateError]);
+
+  useEffect(() => {
+    if (st_messageLectureListError) {
+      return message.error(st_messageLectureListError);
+    }
+  }, [st_messageLectureListError]);
 
   ////// TOGGLE //////
 
@@ -2824,7 +2829,7 @@ const Index = () => {
               <Wrapper margin={`110px 0`}>
                 <CustomPage
                   current={currentPage2}
-                  total={messageUserLastPage * 10}
+                  total={messageLectureLastPage * 10}
                   onChange={(page) => onChangeMessagePage(page)}></CustomPage>
               </Wrapper>
             </Wrapper>
@@ -4038,10 +4043,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
     context.store.dispatch({
       type: SEO_LIST_REQUEST,
     });
-
-    // context.store.dispatch({
-    //   type: MESSAGE_LECTURE_LIST_REQUEST,
-    // });
 
     // 구현부 종료
     context.store.dispatch(END);
