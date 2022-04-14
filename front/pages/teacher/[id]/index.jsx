@@ -822,6 +822,16 @@ const Index = () => {
   useEffect(() => {
     if (st_lectureMemoStuCreateDone) {
       onReset();
+
+      dispatch({
+        type: LECTURE_MEMO_STU_LIST_REQUEST,
+        data: {
+          LectureId: parseInt(router.query.id),
+          page: 1,
+          search: "",
+        },
+      });
+
       return message.success("해당 학생에게 메모를 작성했습니다.");
     }
   }, [st_lectureMemoStuCreateDone]);
@@ -2483,6 +2493,8 @@ const Index = () => {
                           width={`20%`}>
                           {data.process}
                         </Text>
+
+                        
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
                           width={`25%`}>

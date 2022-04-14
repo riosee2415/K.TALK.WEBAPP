@@ -53,7 +53,7 @@ router.post("/create", async (req, res, next) => {
     });
 
     if (!exPayClass) {
-      return res.status(401).send();
+      return res.status(401).send("존재하지 않는 정보입니다.");
     }
 
     const createResult = await Payment.create({
