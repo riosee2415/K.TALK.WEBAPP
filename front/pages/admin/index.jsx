@@ -100,21 +100,19 @@ const AdminHome = () => {
                       height={`32px`}
                       radius={`2px`}
                       width={`100%`}
-                      padding={`0`}
-                    >
+                      padding={`0`}>
                       클래스 관리
                     </CommonButton>
                   </Link>
                 </ColWrapper>
                 <ColWrapper width={`calc(100% / 5 - 20px)`}>
-                  <Link href={`/admin/info/popup`}>
+                  <Link href={`/admin/user/student/list`}>
                     <CommonButton
                       kindOf={`black`}
                       height={`32px`}
                       radius={`2px`}
                       width={`100%`}
-                      padding={`0`}
-                    >
+                      padding={`0`}>
                       학생 관리
                     </CommonButton>
                   </Link>
@@ -126,8 +124,7 @@ const AdminHome = () => {
                       height={`32px`}
                       radius={`2px`}
                       width={`100%`}
-                      padding={`0`}
-                    >
+                      padding={`0`}>
                       결제 목록 관리
                     </CommonButton>
                   </Link>
@@ -139,9 +136,8 @@ const AdminHome = () => {
                       height={`32px`}
                       radius={`2px`}
                       width={`100%`}
-                      padding={`0`}
-                    >
-                      게시판 관리
+                      padding={`0`}>
+                      공지사항 관리
                     </CommonButton>
                   </Link>
                 </ColWrapper>
@@ -152,8 +148,7 @@ const AdminHome = () => {
                       height={`32px`}
                       radius={`2px`}
                       width={`100%`}
-                      padding={`0`}
-                    >
+                      padding={`0`}>
                       쪽지 관리
                     </CommonButton>
                   </Link>
@@ -182,8 +177,7 @@ const AdminHome = () => {
             <Wrapper
               width={`50%`}
               height={`100%`}
-              bgImg={`url("https://firebasestorage.googleapis.com/v0/b/storage-4leaf.appspot.com/o/4leaf%2F5137894.jpg?alt=media&token=99858357-4602-44aa-b32a-e6c9867788ff")`}
-            >
+              bgImg={`url("https://firebasestorage.googleapis.com/v0/b/storage-4leaf.appspot.com/o/4leaf%2F5137894.jpg?alt=media&token=99858357-4602-44aa-b32a-e6c9867788ff")`}>
               <Image
                 width={`300px`}
                 alt="logo"
@@ -192,8 +186,7 @@ const AdminHome = () => {
               <Wrapper
                 color={Theme.white_C}
                 margin={`15px 0 0`}
-                fontSize={`1.1rem`}
-              >
+                fontSize={`1.1rem`}>
                 관리자페이지에 오신걸 환영합니다.
               </Wrapper>
             </Wrapper>
@@ -203,8 +196,7 @@ const AdminHome = () => {
                   fontSize={`2rem`}
                   fontWeight={`bold`}
                   margin={`0 0 30px`}
-                  al={`flex-start`}
-                >
+                  al={`flex-start`}>
                   Log in
                 </Wrapper>
                 <Wrapper al={`flex-start`}>아이디</Wrapper>
