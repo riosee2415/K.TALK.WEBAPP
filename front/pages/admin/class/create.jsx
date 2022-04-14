@@ -45,6 +45,8 @@ import {
 import wrapper from "../../../store/configureStore";
 import {
   CommonButton,
+  GuideLi,
+  GuideUl,
   Image,
   RowWrapper,
   Text,
@@ -277,6 +279,25 @@ const List = () => {
       />
 
       <AdminContent>
+        <Wrapper
+          width={`60%`}
+          al={`flex-start`}
+          bgColor={Theme.lightGrey_C}
+          padding={`20px 20px 0 30px`}
+          margin={`0 0 30px`}
+          radius={`10px`}
+          shadow={`0 0 6px rgba(0,0,0,0.16)`}
+        >
+          <GuideUl>
+            <GuideLi color={Theme.red_C} margin={`0 0 5px`} isImpo>
+              강의시간을 선택하려면 강의를 진행하는 요일부터 선택해야 합니다.
+            </GuideLi>
+            <GuideLi color={Theme.red_C} isImpo>
+              횟수는 일주일에 강의를 몇 번 진행할지를 의미합니다. 횟수와 진행
+              요일을 선택하면 총 횟수가 자동으로 계산됩니다.
+            </GuideLi>
+          </GuideUl>
+        </Wrapper>
         <FormTag form={form} ref={formRef} onFinish={onSubmit}>
           <Wrapper dr={`row`} margin={`0 0 20px`}>
             <Text width={`80px`}>강의명</Text>
@@ -312,22 +333,60 @@ const List = () => {
             <Text width={`80px`}>레벨</Text>
             <Wrapper dr={`row`} width={`calc(100% - 80px)`}>
               <Wrapper width={`calc(100% / 3)`} dr={`row`} ju={`flex-start`}>
-                <FormItem name={`lv1`} width={`calc(100% - 50px)`}>
-                  <Input type={`number`} />
+                <FormItem
+                  name={`lv1`}
+                  width={`calc(100% - 50px)`}
+                  rules={[
+                    { required: true, message: "강의 레벨을 입력해주세요." },
+                  ]}
+                >
+                  <Select>
+                    <Select.Option value={`1`}>1</Select.Option>
+                    <Select.Option value={`2`}>2</Select.Option>
+                    <Select.Option value={`3`}>3</Select.Option>
+                    <Select.Option value={`4`}>4</Select.Option>
+                    <Select.Option value={`5`}>5</Select.Option>
+                    <Select.Option value={`6`}>6</Select.Option>
+                    <Select.Option value={`7`}>7</Select.Option>
+                    <Select.Option value={`8`}>8</Select.Option>
+                    <Select.Option value={`9`}>9</Select.Option>
+                    <Select.Option value={`10`}>10</Select.Option>
+                    <Select.Option value={`11`}>11</Select.Option>
+                    <Select.Option value={`12`}>12</Select.Option>
+                  </Select>
                 </FormItem>
                 <Text>&nbsp;권</Text>
               </Wrapper>
 
               <Wrapper width={`calc(100% / 3)`} dr={`row`} ju={`flex-start`}>
-                <FormItem name={`lv2`} width={`calc(100% - 50px)`}>
-                  <Input type={`number`} />
+                <FormItem
+                  name={`lv2`}
+                  width={`calc(100% - 50px)`}
+                  rules={[
+                    { required: true, message: "강의 레벨을 입력해주세요." },
+                  ]}
+                >
+                  <Select>
+                    <Select.Option value={`1`}>1</Select.Option>
+                    <Select.Option value={`2`}>2</Select.Option>
+                    <Select.Option value={`3`}>3</Select.Option>
+                    <Select.Option value={`4`}>4</Select.Option>
+                    <Select.Option value={`5`}>5</Select.Option>
+                    <Select.Option value={`6`}>6</Select.Option>
+                  </Select>
                 </FormItem>
                 <Text>&nbsp;단원</Text>
               </Wrapper>
 
               <Wrapper width={`calc(100% / 3)`} dr={`row`} ju={`flex-start`}>
-                <FormItem name={`lv3`} width={`calc(100% - 50px)`}>
-                  <Input type={`number`} />
+                <FormItem
+                  name={`lv3`}
+                  width={`calc(100% - 50px)`}
+                  rules={[
+                    { required: true, message: "강의 레벨을 입력해주세요." },
+                  ]}
+                >
+                  <Input type={`number`} min={`0`} />
                 </FormItem>
                 <Text>&nbsp;페이지</Text>
               </Wrapper>
@@ -422,11 +481,7 @@ const List = () => {
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
             <Text width={`80px`}>총 횟수</Text>
-            <FormItem
-              rules={[{ required: true, message: "횟수를 입력해주세요." }]}
-              name={`allCnt`}
-              width={`calc(100% - 110px)`}
-            >
+            <FormItem name={`allCnt`} width={`calc(100% - 110px)`}>
               <CusotmInput type={`number`} readOnly={true} />
             </FormItem>
             <Text width={`30px`} padding={`0 0 0 10px`}>
@@ -469,10 +524,13 @@ const List = () => {
               줌 링크
             </Text>
             <FormItem
-              rules={[{ required: true, message: "종료 날짜를 입력해주세요." }]}
+              rules={[
+                { required: true, message: "줌링크를 입력해주세요." },
+                { type: `url`, message: "https://를 붙여주세요." },
+              ]}
               name={`zoomLink`}
             >
-              <CusotmInput format={`YYYY-MM-DD`} size={`large`} type="url" />
+              <CusotmInput format={`YYYY-MM-DD`} size={`large`} />
             </FormItem>
           </Wrapper>
 

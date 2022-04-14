@@ -561,8 +561,7 @@ const List = () => {
                             </Wrapper>
 
                             <Text fontSize={`16px`} fontWeight={`700`}>
-                              {data.time}&nbsp;/&nbsp;
-                              {data.day}
+                              {data.day}&nbsp;/&nbsp;{data.time}
                             </Text>
                           </Wrapper>
 
@@ -583,8 +582,7 @@ const List = () => {
                             </Wrapper>
 
                             <Text fontSize={`16px`} fontWeight={`700`}>
-                              {data.course}&nbsp;/&nbsp;
-                              {data.User.username}
+                              {data.User.username}&nbsp;/&nbsp;{data.course}
                             </Text>
                           </Wrapper>
 
@@ -734,21 +732,41 @@ const List = () => {
               <Wrapper dr={`row`} width={`calc(100% - 100px)`}>
                 <Wrapper width={`calc(100% / 3)`} dr={`row`} ju={`flex-start`}>
                   <FormItem name={`lv1`} width={`calc(100% - 50px)`}>
-                    <Input type={`number`} />
+                    <Select>
+                      <Select.Option value={`1`}>1</Select.Option>
+                      <Select.Option value={`2`}>2</Select.Option>
+                      <Select.Option value={`3`}>3</Select.Option>
+                      <Select.Option value={`4`}>4</Select.Option>
+                      <Select.Option value={`5`}>5</Select.Option>
+                      <Select.Option value={`6`}>6</Select.Option>
+                      <Select.Option value={`7`}>7</Select.Option>
+                      <Select.Option value={`8`}>8</Select.Option>
+                      <Select.Option value={`9`}>9</Select.Option>
+                      <Select.Option value={`10`}>10</Select.Option>
+                      <Select.Option value={`11`}>11</Select.Option>
+                      <Select.Option value={`12`}>12</Select.Option>
+                    </Select>
                   </FormItem>
                   <Text>&nbsp;권</Text>
                 </Wrapper>
 
                 <Wrapper width={`calc(100% / 3)`} dr={`row`} ju={`flex-start`}>
                   <FormItem name={`lv2`} width={`calc(100% - 50px)`}>
-                    <Input type={`number`} />
+                    <Select>
+                      <Select.Option value={`1`}>1</Select.Option>
+                      <Select.Option value={`2`}>2</Select.Option>
+                      <Select.Option value={`3`}>3</Select.Option>
+                      <Select.Option value={`4`}>4</Select.Option>
+                      <Select.Option value={`5`}>5</Select.Option>
+                      <Select.Option value={`6`}>6</Select.Option>
+                    </Select>
                   </FormItem>
                   <Text>&nbsp;단원</Text>
                 </Wrapper>
 
                 <Wrapper width={`calc(100% / 3)`} dr={`row`} ju={`flex-start`}>
                   <FormItem name={`lv3`} width={`calc(100% - 50px)`}>
-                    <Input type={`number`} />
+                    <Input type={`number`} min={`0`} />
                   </FormItem>
                   <Text>&nbsp;페이지</Text>
                 </Wrapper>
