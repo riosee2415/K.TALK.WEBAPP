@@ -438,7 +438,9 @@ const DetailClass = () => {
             </Wrapper>
             <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
               <Text fontSize={`24px`} fontWeight={`bold`}>
-                수업 시간 / 요일
+                {console.log(lectureDetail && lectureDetail[0].day)}
+                {lectureDetail && lectureDetail[0].day}&nbsp;/&nbsp;
+                {lectureDetail && lectureDetail[0].time}
               </Text>
               <Text
                 fontSize={`16px`}
@@ -529,8 +531,8 @@ const DetailClass = () => {
             </Wrapper>
 
             <Text fontSize={`18px`}>
-              {lectureDetail && lectureDetail[0].course}&nbsp;/&nbsp;
-              {lectureDetail && lectureDetail[0].teacherName}
+              {lectureDetail && lectureDetail[0].teacherName}&nbsp;/&nbsp;
+              {lectureDetail && lectureDetail[0].course}
             </Text>
           </Wrapper>
           <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>

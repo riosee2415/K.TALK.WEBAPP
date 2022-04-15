@@ -688,11 +688,21 @@ const NoticeList = ({ router }) => {
             form={form}
             ref={formRef}
           >
-            <Form.Item name={"title"} label="제목" rules={[{ required: true }]}>
+            <Form.Item
+              name={"title"}
+              label="제목"
+              rules={[{ required: true, message: "제목을 입력해 주세요" }]}
+            >
               <Input allowClear placeholder="Title..." />
             </Form.Item>
 
-            <Form.Item name={"type"} label="유형" rules={[{ required: true }]}>
+            <Form.Item
+              name={"type"}
+              label="유형"
+              rules={[
+                { required: true, message: "메세지 유형을 선택해 주세요." },
+              ]}
+            >
               <Select
                 disabled={updateData ? true : false}
                 showSearch
@@ -717,7 +727,7 @@ const NoticeList = ({ router }) => {
               <Form.Item
                 name={"lecture"}
                 label="강의"
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: "강의를 선택해 주세요." }]}
               >
                 <Select
                   disabled={updateData ? true : false}
@@ -746,7 +756,7 @@ const NoticeList = ({ router }) => {
             <Form.Item
               name={"author"}
               label="작성자"
-              rules={[{ required: true }]}
+              rules={[{ required: true, message: "작성자를 입력해 주세요." }]}
             >
               <Input
                 allowClear
@@ -758,7 +768,7 @@ const NoticeList = ({ router }) => {
             <Form.Item
               name={"content"}
               label="본문"
-              rules={[{ required: true }]}
+              rules={[{ required: true, message: "본문을 입력해 주세요." }]}
             >
               {/* <Input.TextArea
                 allowClear

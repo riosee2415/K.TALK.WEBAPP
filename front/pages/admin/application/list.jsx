@@ -181,10 +181,12 @@ const List = ({ location }) => {
         return <div>{data.createdAt.substring(0, 10)}</div>;
       },
     },
+
     {
       title: "처리일",
       render: (data) => <div>{data.updatedAt.substring(0, 10)}</div>,
     },
+
     {
       title: "수정",
       render: (data) => (
