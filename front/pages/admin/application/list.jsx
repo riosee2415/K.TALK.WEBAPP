@@ -14,6 +14,11 @@ import {
   Layout,
   Input,
   message,
+  Form,
+  Calendar,
+  Select,
+  Switch,
+  DatePicker,
 } from "antd";
 import { Wrapper, Text, SpanText } from "../../../components/commonComponents";
 import {
@@ -22,34 +27,57 @@ import {
   APP_UPDATE_REQUEST,
   APP_LIST_REQUEST,
 } from "../../../reducers/application";
-import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
+import {
+  LOAD_MY_INFO_REQUEST,
+  USER_TEACHER_LIST_REQUEST,
+} from "../../../reducers/user";
 import { useRouter } from "next/router";
 import { render } from "react-dom";
 import useInput from "../../../hooks/useInput";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
-import { ColWrapper, RowWrapper } from "../../../components/commonComponents";
+import {
+  ColWrapper,
+  RowWrapper,
+  TextArea,
+} from "../../../components/commonComponents";
 import { saveAs } from "file-saver";
 import Theme from "../../../components/Theme";
+import { PAYMENT_LIST_REQUEST } from "../../../reducers/payment";
+import useWidth from "../../../hooks/useWidth";
+import moment from "moment";
 
-const { Sider, Content } = Layout;
+const CustomInput = styled(Input)`
+  width: ${(props) => props.width};
+`;
+
+const CustomForm = styled(Form)`
+  width: 718px;
+
+  & .ant-form-item {
+    width: 100%;
+    margin: 0 0 48px;
+  }
+
+  @media (max-width: 700px) {
+    width: 100%;
+
+    & .ant-form-item {
+      margin: 0 0 28px;
+    }
+  }
+`;
+
+const CustomForm2 = styled(Form)`
+  width: 100%;
+
+  @media (max-width: 700px) {
+  }
+`;
 
 const AdminContent = styled.div`
   padding: 20px;
-`;
-
-const FileBox = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-`;
-
-const Filename = styled.span`
-  margin-right: 15px;
-  color: #555;
-  font-size: 13px;
 `;
 
 const LoadNotification = (msg, content) => {
@@ -62,9 +90,13 @@ const LoadNotification = (msg, content) => {
 
 const List = ({ location }) => {
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
-  const { me, st_loadMyInfoDone } = useSelector((state) => state.user);
+  const { me, st_loadMyInfoDone, teachers } = useSelector(
+    (state) => state.user
+  );
 
   const router = useRouter();
+
+  const width = useWidth();
 
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
@@ -82,17 +114,29 @@ const List = ({ location }) => {
   ////// HOOKS //////
   const dispatch = useDispatch();
 
+  const [createData, setCreateData] = useState(null);
+  const [createModal, setCreateModal] = useState(false);
+
   const [updateData, setUpdateData] = useState(null);
+
+  const inputCreateEmail = useInput("");
+
+  const [createForm] = Form.useForm();
+  const [updateForm] = Form.useForm();
 
   const {
     applicationList,
     updateModal,
+
+    st_appListDone,
+    st_appListError,
 
     st_appUpdateDone,
     st_appUpdateError,
   } = useSelector((state) => state.app);
 
   ////// USEEFFECT //////
+
   useEffect(() => {
     const qs = router.query;
 
@@ -104,6 +148,8 @@ const List = ({ location }) => {
 
   useEffect(() => {
     if (st_appUpdateDone) {
+      onReset();
+
       const qs = router.query;
 
       dispatch({
@@ -111,9 +157,12 @@ const List = ({ location }) => {
         data: { isComplete: qs.type ? qs.type : null },
       });
 
-      dispatch({
-        type: UPDATE_MODAL_CLOSE_REQUEST,
-      });
+      return message.success("신청서 정보를 추가했습니다.");
+    }
+  }, [st_appUpdateDone]);
+
+  useEffect(() => {
+    if (st_appUpdateDone) {
     }
   }, [st_appUpdateDone]);
 
@@ -123,37 +172,160 @@ const List = ({ location }) => {
     }
   }, [st_appUpdateError]);
 
+  useEffect(() => {
+    if (st_appListError) {
+      return message.error(st_appListError);
+    }
+  }, [st_appListError]);
+
   ////// TOGGLE //////
 
-  const updateModalOpen = useCallback(
-    (data) => {
-      dispatch({
-        type: UPDATE_MODAL_OPEN_REQUEST,
-      });
+  const createModalToggle = useCallback((data) => {
+    setCreateModal((prev) => !prev);
+    onFillUser(data);
 
-      setUpdateData(data);
-    },
-    [updateModal]
-  );
+    setCreateData(data);
+  }, []);
 
-  const updateModalClose = useCallback(() => {
+  const updateModalOpen = useCallback((data) => {
+    onFillApp(data);
+    setUpdateData(data);
+
+    dispatch({
+      type: UPDATE_MODAL_OPEN_REQUEST,
+    });
+  }, []);
+
+  ////// HANDLER //////
+
+  const onReset = useCallback(() => {
+    createForm.resetFields();
+    updateForm.resetFields();
+
     dispatch({
       type: UPDATE_MODAL_CLOSE_REQUEST,
     });
-    setUpdateData(null);
-  }, [updateModal]);
 
-  ////// HANDLER //////
-  const onSubmitUpdate = useCallback(() => {
+    setCreateModal(false);
+    setCreateData(null);
+    setUpdateData(null);
+  }, []);
+
+  const createClick = useCallback(() => {
+    createForm.submit();
+  }, [createForm]);
+
+  const updateClick = useCallback(() => {
+    updateForm.submit();
+  }, [updateForm]);
+
+  const createFinish = useCallback((data) => {
+    // if (data.password !== data.repassword) {
+    //   return message.error("비밀번호를 동일하게 입력해주세요.");
+    // }
+
+    // if (data.payment.split(",")[3] !== data.email) {
+    //   return message.error(
+    //     `입력하신 이메일과 결제한 목록의 이메일이 같아야합니다.`
+    //   );
+    // }
+
     dispatch({
-      type: APP_UPDATE_REQUEST,
+      type: USER_STU_CREATE_REQUEST,
       data: {
-        id: updateData.id,
+        userId: data.userId,
+        password: data.password,
+        username: data.username,
+        mobile: data.mobile,
+        email: data.email,
+        address: data.address,
+        detailAddress: data.detailAddress,
+        stuLanguage: data.stuLanguage,
+        birth: data.birth.format("YYYY-MM-DD"),
+        stuCountry: data.stuCountry,
+        stuLiveCon: data.stuLiveCon,
+        sns: data.sns,
+        snsId: data.snsId,
+        stuJob: data.stuJob,
+        gender: data.gender,
+        PaymentId: null,
+        LectureId: null,
+        date: parseInt(data.payment.split(",")[2]) * 7,
+        endDate: moment()
+          .add(parseInt(data.payment.split(",")[2]) * 7, "days")
+          .format("YYYY-MM-DD"),
       },
     });
-  }, [updateData]);
+  }, []);
+
+  const updateFinish = useCallback(
+    (data) => {
+      dispatch({
+        type: APP_UPDATE_REQUEST,
+        data: {
+          id: updateData.id,
+          timeDiff: data.timeDiff,
+          wantStartDate: data.wantStartDate.format("YYYY-MM-DD"),
+          teacher: data.teacher,
+          isDiscount: data.isDiscount,
+          meetDate: data.meetDate.format("YYYY-MM-DD"),
+          level: data.level,
+          job: data.job,
+          purpose: data.purpose,
+        },
+      });
+    },
+    [updateData]
+  );
+
+  const onPaymentHanlder = useCallback(() => {
+    dispatch({
+      type: PAYMENT_LIST_REQUEST,
+      data: {
+        email: inputCreateEmail.value,
+      },
+    });
+  }, [inputCreateEmail.value]);
+
+  const onFillUser = useCallback((data) => {
+    if (data) {
+      console.log(data, "data");
+      let password = data.phoneNumber2.slice(-4);
+
+      createForm.setFieldsValue({
+        userId: data.gmailAddress,
+        password: password,
+        repassword: password,
+        username: `${data.firstName}${data.lastName}`,
+        mobile: `${data.phoneNumber}${data.phoneNumber2}`,
+        email: data.gmailAddress,
+        stuLanguage: data.languageYouUse,
+        birth: data.dateOfBirth,
+        stuJob: data.job,
+        stuCountry: data.nationality,
+        stuLiveCon: data.countryOfResidence,
+      });
+    }
+  }, []);
+
+  const onFillApp = useCallback((data) => {
+    if (data) {
+      updateForm.setFieldsValue({
+        timeDiff: data.timeDiff,
+        wantStartDate: moment(data.wantStartDate),
+        teacher: data.teacher,
+        isDiscount: data.isDiscount ? true : false,
+        meetDate: moment(data.meetDate),
+        level: data.level,
+        job: data.job,
+        purpose: data.purpose,
+      });
+    }
+  }, []);
 
   ////// DATAVIEW //////
+
+  const levelData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   // Table
   const columns = [
@@ -188,14 +360,20 @@ const List = ({ location }) => {
     },
 
     {
-      title: "수정",
+      title: "신청자",
+
       render: (data) => (
-        <Button
-          type="primary"
-          size={`small`}
-          onClick={() => updateModalOpen(data)}>
-          UPDATE
-        </Button>
+        <ColWrapper al={`flex-start`}>
+          <Button size={`small`} onClick={() => createModalToggle(data)}>
+            회원 생성
+          </Button>
+          <Button
+            type="primary"
+            size={`small`}
+            onClick={() => updateModalOpen(data)}>
+            정보 추가
+          </Button>
+        </ColWrapper>
       ),
     },
   ];
@@ -203,9 +381,9 @@ const List = ({ location }) => {
   return (
     <AdminLayout>
       <PageHeader
-        breadcrumbs={["신청서 관리", "신청서 리스트"]}
-        title={`신청서 리스트`}
-        subTitle={`홈페이지의 신청서를 관리할 수 있습니다.`}
+        breadcrumbs={["신청서 관리", "신청서 목록"]}
+        title={`신청서 목록`}
+        subTitle={`홈페이지의 사용자에게 입력받은 신청서 목록을 관리할 수 있습니다.`}
       />
       {/* <AdminTop createButton={true} createButtonAction={() => {})} /> */}
 
@@ -245,10 +423,10 @@ const List = ({ location }) => {
         visible={updateModal}
         width={`1000px`}
         title={`신청서`}
-        onCancel={updateModalClose}
-        onOk={onSubmitUpdate}
-        okText="Complete"
-        cancelText="Cancel">
+        onCancel={() => onReset()}
+        onOk={() => updateClick()}
+        okText="추가"
+        cancelText="취소">
         <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
           <Text fontSize={`16px`} fontWeight={`700`} margin={`0 20px 0 0`}>
             신청일 |&nbsp;{updateData && updateData.createdAt.slice(0, 10)}
@@ -257,12 +435,12 @@ const List = ({ location }) => {
             처리 완료일 |&nbsp;
             {updateData && updateData.completedAt
               ? updateData.completedAt.slice(0, 10)
-              : `-`}
+              : `미완료`}
           </Text>
         </Wrapper>
-        <Wrapper al={`flex-start`} ju={`flex-start`}>
-          <Text fontSize={`16px`} fontWeight={`700`} margin={` 0 0 10px`}>
-            설명회 참가 신청서
+        <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 50px`}>
+          <Text fontSize={`16px`} fontWeight={`700`} margin={`0 0 10px`}>
+            사용자가 입력한 양식
           </Text>
           <Wrapper dr={`row`} al={`flex-start`}>
             <Wrapper width={`50%`} al={`flex-start`} margin={`0 0 20px`}>
@@ -279,18 +457,6 @@ const List = ({ location }) => {
                   {updateData && updateData.firstName}&nbsp;
                   {updateData && updateData.lastName}
                 </ColWrapper>
-              </RowWrapper>
-
-              <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                <ColWrapper
-                  width={`120px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  성별
-                </ColWrapper>
-                <ColWrapper>{updateData && updateData.title}</ColWrapper>
               </RowWrapper>
 
               <RowWrapper width={`100%`} margin={`0 0 10px`}>
@@ -408,6 +574,294 @@ const List = ({ location }) => {
             </Wrapper>
           </Wrapper>
         </Wrapper>
+
+        <Wrapper al={`flex-start`}>
+          <CustomForm2
+            form={updateForm}
+            onFinish={updateFinish}
+            labelCol={{ span: 4 }}
+            wrapperCol={{ span: 24 }}>
+            <Wrapper>
+              <Wrapper dr={`row`} ju={`flex-start`} al={`flex-start`}>
+                <Wrapper
+                  width={`120px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
+                  시차
+                </Wrapper>
+
+                <Form.Item
+                  rules={[{ required: true, message: "시차를 입력해주세요." }]}
+                  name="timeDiff">
+                  <CustomInput min={1} type={`number`} width={`100%`} />
+                </Form.Item>
+              </Wrapper>
+
+              <RowWrapper width={`100%`} al={`flex-start`}>
+                <ColWrapper
+                  width={`120px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
+                  원하는 날짜
+                </ColWrapper>
+                <ColWrapper>
+                  <Form.Item
+                    rules={[
+                      { required: true, message: "날짜를 입력해주세요." },
+                    ]}
+                    name="wantStartDate">
+                    <DatePicker />
+                  </Form.Item>
+                </ColWrapper>
+              </RowWrapper>
+
+              <RowWrapper width={`100%`} al={`flex-start`}>
+                <ColWrapper
+                  width={`120px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
+                  담당강사
+                </ColWrapper>
+                <ColWrapper>
+                  <Form.Item
+                    rules={[
+                      { required: true, message: "날짜를 입력해주세요." },
+                    ]}
+                    name="teacher">
+                    <Select
+                      style={{ width: `200px` }}
+                      placeholder={`강사를 선택해주세요.`}>
+                      {teachers &&
+                        teachers.map((data) => {
+                          return (
+                            <Select.Option value={data.username}>
+                              {data.username}
+                            </Select.Option>
+                          );
+                        })}
+                    </Select>
+                  </Form.Item>
+                </ColWrapper>
+              </RowWrapper>
+
+              <RowWrapper width={`100%`} al={`flex-start`}>
+                <ColWrapper
+                  width={`120px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
+                  할인 여부
+                </ColWrapper>
+                <ColWrapper>
+                  <Form.Item name="isDiscount">
+                    <Switch
+                      defaultChecked={updateData && updateData.isDiscount}
+                    />
+                  </Form.Item>
+                </ColWrapper>
+              </RowWrapper>
+
+              <RowWrapper width={`100%`} al={`flex-start`}>
+                <ColWrapper
+                  width={`120px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
+                  줌 미팅 날짜
+                </ColWrapper>
+                <ColWrapper>
+                  <Form.Item
+                    rules={[
+                      { required: true, message: "날짜를 입력해주세요." },
+                    ]}
+                    name="meetDate">
+                    <DatePicker />
+                  </Form.Item>
+                </ColWrapper>
+              </RowWrapper>
+
+              <RowWrapper width={`100%`} al={`flex-start`}>
+                <ColWrapper
+                  width={`120px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
+                  레벨
+                </ColWrapper>
+                <ColWrapper>
+                  <Form.Item
+                    rules={[
+                      { required: true, message: "레벨을 입력해주세요." },
+                    ]}
+                    name="level">
+                    <Select style={{ width: 176 }}>
+                      {levelData.map((data, idx) => {
+                        return (
+                          <Select.Option key={idx} value={data}>
+                            {data}
+                          </Select.Option>
+                        );
+                      })}
+                    </Select>
+                  </Form.Item>
+                </ColWrapper>
+              </RowWrapper>
+
+              <RowWrapper width={`100%`} al={`flex-start`}>
+                <ColWrapper
+                  width={`120px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
+                  직업
+                </ColWrapper>
+                <ColWrapper>
+                  <Form.Item
+                    rules={[
+                      { required: true, message: "직업를 입력해주세요." },
+                    ]}
+                    name="job">
+                    <CustomInput width={`100%`} />
+                  </Form.Item>
+                </ColWrapper>
+              </RowWrapper>
+
+              <RowWrapper al={`flex-start`}>
+                <ColWrapper
+                  width={`120px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
+                  배우는 목적
+                </ColWrapper>
+                <ColWrapper>
+                  <Form.Item
+                    rules={[
+                      {
+                        required: true,
+                        message: "배우는 목적을 입력해주세요.",
+                      },
+                    ]}
+                    name="purpose">
+                    <TextArea width={`90%`} />
+                  </Form.Item>
+                </ColWrapper>
+              </RowWrapper>
+            </Wrapper>
+          </CustomForm2>
+        </Wrapper>
+      </Modal>
+
+      {/* 학생 생성 */}
+
+      <Modal
+        visible={createModal}
+        width={`1000px`}
+        title={`학생 생성`}
+        onCancel={() => createModalToggle()}
+        onOk={() => createClick()}
+        okText="생성"
+        cancelText="취소">
+        <CustomForm
+          form={createForm}
+          onFinish={createFinish}
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 20 }}>
+          <Form.Item label="이메일" name="email">
+            <Input disabled type="email" />
+          </Form.Item>
+
+          <Form.Item label="회원아이디" name="userId">
+            <Input disabled />
+          </Form.Item>
+
+          <Form.Item label="회원이름" name="username">
+            <Input disabled />
+          </Form.Item>
+
+          <Form.Item label="생년월일" name="birth">
+            <Input disabled />
+          </Form.Item>
+
+          <Form.Item label="전화번호" name="mobile">
+            <Input disabled />
+          </Form.Item>
+
+          <Form.Item label="비밀번호" name="password">
+            <Input type="password" disabled />
+          </Form.Item>
+
+          <Form.Item label="비밀번호 재입력" name="repassword">
+            <Input type="password" disabled />
+          </Form.Item>
+
+          <Form.Item label="학생 직업" name="stuJob">
+            <Input disabled />
+          </Form.Item>
+
+          <Form.Item label="학생 언어" name="stuLanguage">
+            <Input disabled />
+          </Form.Item>
+
+          <Form.Item label="학생 나라" name="stuCountry">
+            <Input disabled />
+          </Form.Item>
+
+          <Form.Item label="현재 거주 나라" name="stuLiveCon">
+            <Input disabled />
+          </Form.Item>
+
+          <Form.Item
+            label="주소"
+            rules={[{ required: true, message: "주소를 입력해주세요." }]}
+            name="address">
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="상세주소"
+            rules={[{ required: true, message: "상세주소를 입력해주세요." }]}
+            name="detailAddress">
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="sns"
+            rules={[{ required: true, message: "sns를 입력해주세요." }]}
+            name="sns">
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="sns아이디"
+            rules={[{ required: true, message: "sns아이디를 입력해주세요." }]}
+            name="snsId">
+            <Input />
+          </Form.Item>
+
+          {/* <Wrapper dr={`row`} ju={`flex-end`}>
+            <Button
+              size="small"
+              style={{ margin: `0 10px 0 0` }}
+              onClick={createModalToggle}>
+              취소
+            </Button>
+            <Button size="small" type="primary" htmlType="submit">
+              생성
+            </Button>
+          </Wrapper> */}
+        </CustomForm>
       </Modal>
     </AdminLayout>
   );
@@ -426,6 +880,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: USER_TEACHER_LIST_REQUEST,
     });
 
     // 구현부 종료

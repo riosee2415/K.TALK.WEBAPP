@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
-import { Calendar, Checkbox, Form, message, Select } from "antd";
+import { Calendar, Checkbox, Form, InputNumber, message, Select } from "antd";
 import { CalendarOutlined, CaretDownOutlined } from "@ant-design/icons";
 
 import { END } from "redux-saga";
@@ -47,16 +47,23 @@ const CustomForm = styled(Form)`
   }
 `;
 
-const CustomCheckBox = styled(Checkbox)`
-  & .ant-checkbox-checked .ant-checkbox-inner {
-    background-color: ${Theme.white_C} !important;
-    border-color: ${Theme.grey_C} !important;
+const CustomInputNumber = styled(InputNumber)`
+  width: 100%;
+  height: 40px;
+  border: none;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.16);
+  border-radius: 5px;
+
+  .ant-input-number-input {
+    height: 40px;
   }
 
-  & .ant-checkbox-checked .ant-checkbox-inner::after {
-    border: 2px solid ${Theme.red_C};
-    border-top: 0;
-    border-left: 0;
+  .ant-input-number-handler-wrap {
+    display: none;
+  }
+
+  &::placeholder {
+    color: ${Theme.grey2_C};
   }
 `;
 
@@ -142,39 +149,14 @@ const Application = () => {
   const dispatch = useDispatch();
 
   const [timeSelect, setTimeSelect] = useState([]);
-  const [timeSelectCheck, setTimeSelectCheck] = useState([
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-  ]);
+  const [timeSelectCheck, setTimeSelectCheck] = useState(
+    new Array(24).fill(false)
+  );
 
   const [agreeCheck, setAgreeCheck] = useState(false);
   const [isCalendar, setIsCalendar] = useState(false);
 
   const [form] = Form.useForm();
-  const formRef = useRef();
 
   ////// REDUX //////
   ////// USEEFFECT //////
@@ -188,7 +170,11 @@ const Application = () => {
   useEffect(() => {
     if (st_appCreateDone) {
       form.resetFields();
+      form.setFieldsValue({
+        lastEmail: "@gmail.com",
+      });
 
+      setTimeSelectCheck(new Array(24).fill(false));
       setTimeSelect([]);
       setAgreeCheck(false);
       setIsCalendar(false);
@@ -208,13 +194,10 @@ const Application = () => {
     (select, idx) => {
       let arrPush = [...timeSelect];
 
-      console.log(arrPush, "arrPush");
-
       let save = timeSelectCheck.map((data, idx2) => {
         if (idx2 === idx) {
-          console.log(arrPush.includes(select));
           arrPush.includes(select)
-            ? arrPush.push(arrPush.slice(idx, idx))
+            ? arrPush.splice(arrPush.indexOf(select), 1)
             : arrPush.push(select);
 
           return !data;
@@ -222,8 +205,6 @@ const Application = () => {
           return data;
         }
       });
-
-      console.log(arrPush, "arrPush");
 
       setTimeSelect(arrPush);
       setTimeSelectCheck(save);
@@ -252,6 +233,8 @@ const Application = () => {
       if (!agreeCheck) {
         return message.error("Please agree to the terms and conditions.");
       }
+      let classHour = "";
+      timeSelect.map((data) => (classHour += `${data}  `));
 
       dispatch({
         type: APP_CREATE_REQUEST,
@@ -266,18 +249,18 @@ const Application = () => {
           languageYouUse: data.languageYouUse,
           phoneNumber: data.phoneNumber,
           phoneNumber2: data.phoneNumber2,
-          classHour: timeSelect,
+          classHour: classHour,
           terms: agreeCheck,
           comment: data.comment,
         },
       });
     },
-    [timeSelect, agreeCheck, timeSelect, agreeCheck]
+    [timeSelect, agreeCheck]
   );
 
   const dateChagneHandler = useCallback((data) => {
     const birth = data.format("YYYY-MM-DD");
-    formRef.current.setFieldsValue({
+    form.setFieldsValue({
       date: birth.split("-")[2],
       month: birth.split("-")[1],
       year: birth.split("-")[0],
@@ -312,8 +295,6 @@ const Application = () => {
     "21:00 - 21:50 KST",
     "05:00 - 05:50 KST",
   ];
-
-  console.log(timeArr.length, "timeArr");
 
   const firstPhoneArr = [
     "+93",
@@ -916,7 +897,10 @@ const Application = () => {
               Thank you very much!
             </Wrapper>
 
-            <CustomForm onFinish={submissionHandler} form={form} ref={formRef}>
+            <CustomForm
+              onFinish={submissionHandler}
+              form={form}
+              scrollToFirstError>
               <Wrapper al={`flex-start`}>
                 <Text
                   fontSize={width < 700 ? `16px` : `18px`}
@@ -958,18 +942,18 @@ const Application = () => {
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
                   <Wrapper width={`calc(100% / 3 - 16px)`}>
-                    <Form.Item name="date" rules={[{ requierd: true }]}>
+                    <Form.Item name="year" rules={[{ required: true }]}>
                       <CusotmInput
                         readOnly
                         width={`100%`}
                         radius={`5px`}
-                        placeholder={"Date"}
+                        placeholder={"Year"}
                       />
                     </Form.Item>
                   </Wrapper>
 
                   <Wrapper width={`calc(100% / 3 - 16px)`} margin={`0 9px`}>
-                    <Form.Item name="month" rules={[{ requierd: true }]}>
+                    <Form.Item name="month" rules={[{ required: true }]}>
                       <CusotmInput
                         readOnly
                         width={`100%`}
@@ -980,15 +964,16 @@ const Application = () => {
                   </Wrapper>
 
                   <Wrapper width={`calc(100% / 3 - 16px)`}>
-                    <Form.Item name="year" rules={[{ requierd: true }]}>
+                    <Form.Item name="date" rules={[{ required: true }]}>
                       <CusotmInput
                         readOnly
                         width={`100%`}
                         radius={`5px`}
-                        placeholder={"Year"}
+                        placeholder={"Date"}
                       />
                     </Form.Item>
                   </Wrapper>
+
                   <Wrapper
                     width={`30px`}
                     margin={width < 700 ? `0 0 28px` : `0 0 48px`}
@@ -1117,7 +1102,7 @@ const Application = () => {
                   lineHeight={`1.22`}>
                   Phone number
                 </Text>
-                <Wrapper dr={`row`} ju={`flex-start`}>
+                <Wrapper dr={`row`} al={`flex-start`}>
                   <Wrapper width={`calc(20% - 4px)`} margin={`0 8px 0 0`}>
                     <Form.Item name="phoneNumber" rules={[{ required: true }]}>
                       <CustomSelect
@@ -1136,15 +1121,10 @@ const Application = () => {
 
                   <Wrapper width={`calc(80% - 4px)`}>
                     <Form.Item name="phoneNumber2" rules={[{ required: true }]}>
-                      <CusotmInput width={`100%`} radius={`5px`} />
+                      <CustomInputNumber type="number" />
                     </Form.Item>
                   </Wrapper>
                 </Wrapper>
-              </Wrapper>
-              <Wrapper>
-                <Form.Item>
-                  <CusotmInput width={`100%`} radius={`5px`} />
-                </Form.Item>
               </Wrapper>
 
               <Wrapper al={`flex-start`} margin={`0 0 35px`}>
