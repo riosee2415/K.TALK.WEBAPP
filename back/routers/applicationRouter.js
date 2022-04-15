@@ -17,7 +17,6 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
       SELECT	  id,
                 firstName,
                 lastName,
-                title,
                 dateOfBirth,
                 gmailAddress,
                 nationality,
@@ -32,7 +31,15 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
                 DATE_FORMAT(payDate,       "%Y/%m/%d : %H:%i")						    AS	payDate,
                 DATE_FORMAT(completedAt,   "%Y/%m/%d : %H:%i")						    AS	completedAt,
                 DATE_FORMAT(createdAt,     "%Y/%m/%d : %H:%i")							  AS	createdAt,
-                DATE_FORMAT(updatedAt,     "%Y/%m/%d : %H:%i") 					      AS	updatedAt
+                DATE_FORMAT(updatedAt,     "%Y/%m/%d : %H:%i") 					      AS	updatedAt,
+                timeDiff,
+                wantStartDate,
+                teacher,
+                isDiscount,
+                meetDate,
+                level,
+                job,
+                purpose
         FROM	  applications
        WHERE    1 = 1
          ${_isComplete ? `AND   isComplete = ${_isComplete}` : ``}
@@ -68,7 +75,6 @@ router.get("/detail/:applicationId", isAdminCheck, async (req, res, next) => {
      SELECT	    id,
                 firstName,
                 lastName,
-                title,
                 dateOfBirth,
                 gmailAddress,
                 nationality,
@@ -83,7 +89,15 @@ router.get("/detail/:applicationId", isAdminCheck, async (req, res, next) => {
                 DATE_FORMAT(payDate,       "%Y/%m/%d : %H:%i")						  AS	payDate,
                 DATE_FORMAT(completedAt,   "%Y/%m/%d : %H:%i")						  AS	completedAt,
                 DATE_FORMAT(createdAt,     "%Y/%m/%d : %H:%i")							AS	createdAt,
-                DATE_FORMAT(updatedAt,     "%Y/%m/%d : %H:%i") 					   	AS	updatedAt
+                DATE_FORMAT(updatedAt,     "%Y/%m/%d : %H:%i") 					   	AS	updatedAt,
+                timeDiff,
+                wantStartDate,
+                teacher,
+                isDiscount,
+                meetDate,
+                level,
+                job,
+                purpose
       FROM	    applications
      WHERE      1 = 1
        AND      id = ${applicationId}
@@ -102,7 +116,6 @@ router.post("/create", async (req, res, next) => {
   const {
     firstName,
     lastName,
-    title,
     dateOfBirth,
     gmailAddress,
     nationality,
@@ -118,7 +131,6 @@ router.post("/create", async (req, res, next) => {
     const createResult = await Application.create({
       firstName,
       lastName,
-      title,
       dateOfBirth,
       gmailAddress,
       nationality,
@@ -143,7 +155,17 @@ router.post("/create", async (req, res, next) => {
 });
 
 router.patch("/update", isAdminCheck, async (req, res, next) => {
-  const { id } = req.body;
+  const {
+    id,
+    timeDiff,
+    wantStartDate,
+    teacher,
+    isDiscount,
+    meetDate,
+    level,
+    job,
+    purpose,
+  } = req.body;
   try {
     const exApp = await Application.findOne({
       where: { id: parseInt(id) },
@@ -155,8 +177,14 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
 
     const updateResult = await Application.update(
       {
-        isComplete: true,
-        completedAt: new Date(),
+        timeDiff,
+        wantStartDate,
+        teacher,
+        isDiscount,
+        meetDate,
+        level,
+        job,
+        purpose,
       },
       {
         where: { id: parseInt(id) },

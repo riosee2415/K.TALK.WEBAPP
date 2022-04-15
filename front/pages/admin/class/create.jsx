@@ -180,7 +180,7 @@ const List = () => {
         allCnt: null,
         endDate: null,
       });
-      router.push(`/admin/class/list`);
+      router.push(`/admin`);
     }
   }, [st_lectureCreateDone]);
 
