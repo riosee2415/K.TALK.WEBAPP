@@ -417,6 +417,85 @@ const DetailClass = () => {
     },
   ];
 
+  const noticeColumns = [
+    {
+      title: "No",
+      dataIndex: "id",
+    },
+    {
+      title: "Title",
+      dataIndex: "title",
+    },
+    {
+      title: "Author",
+      dataIndex: "author",
+    },
+    {
+      title: "CreatedAt",
+      render: (data) => <div>{data.createdAt.substring(0, 13)}</div>,
+    },
+    {
+      title: "UPDATE",
+      render: (data) => (
+        <Button type="primary" onClick={() => updateModalOpen(data)}>
+          UPDATE
+        </Button>
+      ),
+    },
+    {
+      title: "DEL",
+      render: (data) => (
+        <Button type="danger" onClick={deletePopToggle(data.id)}>
+          DEL
+        </Button>
+      ),
+    },
+  ];
+
+  const messageColumns = [
+    {
+      title: "번호",
+      dataIndex: "id",
+    },
+    {
+      title: "제목",
+      dataIndex: "title",
+    },
+
+    {
+      title: "작성자",
+      dataIndex: "author",
+    },
+
+    {
+      title: "생성일",
+      render: (data) => <div>{data.createdAt.substring(0, 14)}</div>,
+    },
+    {
+      title: "상세보기",
+      render: (data) => (
+        <Button
+          type="primary"
+          size="small"
+          onClick={() => contentViewOpen(data)}
+        >
+          확인
+        </Button>
+      ),
+    },
+    {
+      title: "답변하기",
+      render: (data) => (
+        <Button
+          type="primary"
+          size="small"
+          onClick={() => updateModalOpen(data)}
+        >
+          답변하기
+        </Button>
+      ),
+    },
+  ];
   // console.log(lectureDiaryAdminList);
   return (
     <AdminLayout>
@@ -458,7 +537,7 @@ const DetailClass = () => {
               margin={`0 6px`}
               kindOf={`white`}
               padding={`0`}
-              onClick={() => moveLinkHandler(`/admin/class/list`)}
+              onClick={() => moveLinkHandler(`/admin`)}
             >
               강의 목록
             </CommonButton>
@@ -600,6 +679,22 @@ const DetailClass = () => {
           columns={lectureColumns}
           dataSource={lectureDiaryAdminList}
         />
+        <Wrapper dr={`row`}>
+          <Wrapper width={`50%`}>
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              공지사항
+            </Text>
+
+            <Table size={`small`} columns={noticeColumns} />
+          </Wrapper>
+          <Wrapper width={`50%`}>
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              쪽지
+            </Text>
+
+            <Table size={`small`} columns={messageColumns} />
+          </Wrapper>
+        </Wrapper>
       </AdminContent>
 
       <Modal visible={memoModal} footer={null} onCancel={detailMemoClose}>
