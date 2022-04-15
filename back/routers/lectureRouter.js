@@ -20,6 +20,7 @@ const path = require("path");
 const AWS = require("aws-sdk");
 const multerS3 = require("multer-s3");
 const moment = require("moment");
+const { Op } = require("sequelize");
 
 const router = express.Router();
 
@@ -79,6 +80,7 @@ router.get(["/list", "/list/:sort"], async (req, res, next) => {
   try {
     const selectQuery = `
       SELECT	X.id,
+              X.number,
               X.time,
               X.day,
               X.count,
@@ -96,6 +98,7 @@ router.get(["/list", "/list/:sort"], async (req, res, next) => {
               FROM	(
                       SELECT	DISTINCT
                               A.id,
+                              A.number,
                               A.time,
                               A.day,
                               A.count,
@@ -137,79 +140,59 @@ router.get(["/list", "/list/:sort"], async (req, res, next) => {
 });
 
 // 관리자에서 확인하는 모든 강의
-router.get(
-  ["/allLectures", "/allLectures/:listType"],
-  isAdminCheck,
-  async (req, res, next) => {
-    const { listType } = req.params;
-    const { TeacherId } = req.query;
+router.get("/allLectures", isAdminCheck, async (req, res, next) => {
+  const { TeacherId, studentName } = req.query;
 
-    let nanFlag = isNaN(listType);
+  const _studentName = studentName ? studentName : ``;
 
-    if (!listType) {
-      nanFlag = false;
-    }
+  let newWhere = {};
 
-    if (nanFlag) {
-      return res.status(400).send("잘못된 요청 입니다.");
-    }
-
-    let _listType = Number(listType);
-
-    if (_listType > 2 || !listType) {
-      _listType = 2;
-    }
-
-    let newWhere = {};
-
-    if (TeacherId) {
-      newWhere = {
-        isDelete: false,
-        UserId: parseInt(TeacherId),
-      };
-    }
-
-    if (!TeacherId) {
-      newWhere = {
-        isDelete: false,
-      };
-    }
-
-    try {
-      const lecture = await Lecture.findAll({
-        where: newWhere,
-        include: [
-          {
-            model: User,
-            attributes: ["id", "username", "level"],
-          },
-          {
-            model: Participant,
-            include: [
-              {
-                model: User,
-                attributes: ["id", "username", "level"],
-                order: [["createdAt", "DESC"]],
-              },
-            ],
-          },
-        ],
-        order: [
-          _listType === 1
-            ? ["course", "DESC"]
-            : _listType === 2
-            ? ["createdAt", "DESC"]
-            : ["course", "ASC"],
-        ],
-      });
-
-      return res.status(200).json(lecture);
-    } catch (error) {
-      console.error(error);
-      return res.status(401).send("모든 강의 목록을 불러올 수 없습니다.");
-    }
+  if (TeacherId) {
+    newWhere = {
+      isDelete: false,
+      UserId: parseInt(TeacherId),
+    };
   }
-);
+
+  if (!TeacherId) {
+    newWhere = {
+      isDelete: false,
+    };
+  }
+
+  try {
+    const lecture = await Lecture.findAll({
+      where: newWhere,
+      include: [
+        {
+          model: User,
+          attributes: ["id", "username", "level"],
+        },
+        {
+          model: Participant,
+          include: [
+            {
+              model: User,
+              attributes: ["id", "username", "level"],
+              where: {
+                username: {
+                  [Op.like]: `%${_studentName}%`,
+                },
+              },
+              order: [["createdAt", "DESC"]],
+            },
+          ],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
+
+    return res.status(200).json(lecture);
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("모든 강의 목록을 불러올 수 없습니다.");
+  }
+});
 
 router.get("/detail/:LectureId", async (req, res, next) => {
   const { LectureId } = req.params;
@@ -221,6 +204,7 @@ router.get("/detail/:LectureId", async (req, res, next) => {
     const selectQuery = `
      SELECT   DISTINCT
               A.id,
+              A.number,
               A.time,
               A.day,
               A.count,
@@ -290,6 +274,7 @@ router.get("/teacher/list/:TeacherId", async (req, res, next) => {
     const selectQuery = `
     SELECT   DISTINCT
              A.id,
+             A.number,
              A.time,
              A.day,
              A.count,
@@ -449,6 +434,7 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
 
 router.post("/create", isAdminCheck, async (req, res, next) => {
   const {
+    number,
     time,
     day,
     count,
@@ -470,6 +456,7 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
     }
 
     const createResult = await Lecture.create({
+      number,
       time,
       day,
       count,
@@ -496,6 +483,7 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
 router.patch("/update", isAdminCheck, async (req, res, next) => {
   const {
     id,
+    number,
     time,
     day,
     count,
@@ -526,6 +514,7 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
 
     const updateResult = await Lecture.update(
       {
+        number,
         time,
         day,
         count,
@@ -987,6 +976,7 @@ router.post("/diary/admin/list", isAdminCheck, async (req, res, next) => {
             A.createdAt,
             A.updatedAt,
             A.LectureId,
+            B.number,
             B.course,
             B.lecDate,
             B.startLv,
@@ -1174,6 +1164,7 @@ router.get("/homework/student/list", isLoggedIn, async (req, res, next) => {
             A.createdAt,
             A.updatedAt, 
             A.LectureId,
+            B.number,
             B.course,
             C.username 
       FROM	homeworks			A
@@ -1196,6 +1187,7 @@ router.get("/homework/student/list", isLoggedIn, async (req, res, next) => {
             A.createdAt,
             A.updatedAt, 
             A.LectureId,
+            B.number,
             B.course,
             C.username 
       FROM	homeworks			A
@@ -1297,6 +1289,7 @@ router.post("/submit/list", isLoggedIn, async (req, res, next) => {
             B.level,
             C.title,
             C.date,
+            D.number,
             D.course
       FROM	submits				A
      INNER
@@ -1326,6 +1319,7 @@ router.post("/submit/list", isLoggedIn, async (req, res, next) => {
             B.level,
             C.title,
             C.date,
+            D.number,
             D.course
       FROM	submits				A
      INNER

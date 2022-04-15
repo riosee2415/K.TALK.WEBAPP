@@ -419,6 +419,54 @@ router.post("/user/delete/list", isAdminCheck, async (req, res, next) => {
   }
 });
 
+router.post("/user/limit/list", isAdminCheck, async (req, res, next) => {
+  const { UserId } = req.body;
+
+  try {
+    const exUser = await User.findOne({
+      where: { id: parseInt(UserId) },
+    });
+
+    if (!exUser) {
+      return res.status(401).send("존재하지 않는 학생입니다.");
+    }
+
+    if (exUser.level !== 1) {
+      return res.status(401).send("해당 사용자는 학생이 아닙니다.");
+    }
+
+    const selectQuery = `
+    SELECT	A.id,
+            A.date,
+            A.endDate,
+            A.updatedAt,
+            A.LectureId,
+            A.UserId,
+            A.isDelete,
+            B.time,
+            B.course,
+            B.day,
+            B.UserId 						AS TeacherId
+      FROM	participants		A
+     INNER
+      JOIN	lectures 			B	
+        ON	A.LectureId = B.id
+     WHERE	1 = 1
+       AND  A.isDelete = FALSE
+       AND  A.isChange = FALSE
+       AND	A.UserId = ${UserId}
+       AND  DATE_ADD(DATE_FORMAT(now(), '%Y-%m-%d'), INTERVAL 7 DAY) >= A.endDate
+    `;
+
+    const list = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ list: list[0] });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("반을 옮긴 학생 목록을 불러올 수 없습니다.");
+  }
+});
+
 module.exports = router;
 
 /// 도메인/페이먼트/id

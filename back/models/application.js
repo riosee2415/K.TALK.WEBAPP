@@ -13,10 +13,6 @@ module.exports = class Application extends Model {
           type: DataTypes.STRING(30),
           allowNull: false,
         },
-        title: {
-          type: DataTypes.STRING(50),
-          allowNull: false,
-        },
         dateOfBirth: {
           type: DataTypes.STRING(100),
           allowNull: false,
@@ -65,6 +61,38 @@ module.exports = class Application extends Model {
         },
         payDate: {
           type: DataTypes.DATE,
+          allowNull: true,
+        },
+        timeDiff: {
+          type: DataTypes.STRING(100),
+          allowNull: true,
+        },
+        wantStartDate: {
+          type: DataTypes.STRING(100),
+          allowNull: true,
+        },
+        teacher: {
+          type: DataTypes.STRING(100),
+          allowNull: true,
+        },
+        isDiscount: {
+          type: DataTypes.BOOLEAN,
+          allowNull: true,
+        },
+        meetDate: {
+          type: DataTypes.STRING(100),
+          allowNull: true,
+        },
+        level: {
+          type: DataTypes.STRING(100),
+          allowNull: true,
+        },
+        job: {
+          type: DataTypes.STRING(100),
+          allowNull: true,
+        },
+        purpose: {
+          type: DataTypes.TEXT,
           allowNull: true,
         },
         isComplete: {

@@ -1,7 +1,13 @@
 const express = require("express");
 const passport = require("passport");
 const bcrypt = require("bcrypt");
-const { User, Participant, Lecture, Payment } = require("../models");
+const {
+  User,
+  Participant,
+  Lecture,
+  Payment,
+  Application,
+} = require("../models");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isNanCheck = require("../middlewares/isNanCheck");
 const isLoggedIn = require("../middlewares/isLoggedIn");
@@ -850,6 +856,24 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
       date,
       endDate,
     });
+
+    const exApp = await Application.findOne({
+      where: { gmailAddress: email },
+    });
+
+    if (!exApp) {
+      return res.status(401).send("신청서 정보가 존재하지 않습니다.");
+    }
+
+    await Application.update(
+      {
+        isComplete: true,
+        completedAt: new Date(),
+      },
+      {
+        where: { gmailAddress: email },
+      }
+    );
 
     return res.status(201).json({ result: true });
   } catch (error) {
