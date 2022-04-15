@@ -191,8 +191,7 @@ const List = ({ location }) => {
         <Button
           type="primary"
           size={`small`}
-          onClick={() => updateModalOpen(data)}
-        >
+          onClick={() => updateModalOpen(data)}>
           UPDATE
         </Button>
       ),
@@ -219,8 +218,7 @@ const List = ({ location }) => {
             <Button
               onClick={() =>
                 moveLinkHandler(`/admin/application/list?type=true`)
-              }
-            >
+              }>
               처리완료
             </Button>
           </Col>
@@ -228,8 +226,7 @@ const List = ({ location }) => {
             <Button
               onClick={() =>
                 moveLinkHandler(`/admin/application/list?type=false`)
-              }
-            >
+              }>
               미처리
             </Button>
           </Col>
@@ -249,8 +246,7 @@ const List = ({ location }) => {
         onCancel={updateModalClose}
         onOk={onSubmitUpdate}
         okText="Complete"
-        cancelText="Cancel"
-      >
+        cancelText="Cancel">
         <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
           <Text fontSize={`16px`} fontWeight={`700`} margin={`0 20px 0 0`}>
             신청일 |&nbsp;{updateData && updateData.createdAt.slice(0, 10)}
@@ -274,8 +270,7 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   이름
                 </ColWrapper>
                 <ColWrapper>
@@ -290,8 +285,7 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   성별
                 </ColWrapper>
                 <ColWrapper>{updateData && updateData.title}</ColWrapper>
@@ -303,8 +297,7 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   생년월일
                 </ColWrapper>
                 <ColWrapper>{updateData && updateData.dateOfBirth}</ColWrapper>
@@ -316,8 +309,7 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   이메일
                 </ColWrapper>
                 <ColWrapper>{updateData && updateData.gmailAddress}</ColWrapper>
@@ -329,8 +321,7 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   국가
                 </ColWrapper>
                 <ColWrapper>{updateData && updateData.nationality}</ColWrapper>
@@ -342,8 +333,7 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   거주 국가
                 </ColWrapper>
                 <ColWrapper>
@@ -357,8 +347,7 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   사용언어
                 </ColWrapper>
                 <ColWrapper>
@@ -372,8 +361,7 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   휴대폰번호
                 </ColWrapper>
                 <ColWrapper>
@@ -388,8 +376,7 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   가능한 수업시간
                 </ColWrapper>
                 <ColWrapper>{updateData && updateData.classHour}</ColWrapper>
@@ -401,12 +388,12 @@ const List = ({ location }) => {
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
                 color={Theme.white_C}
-                margin={`0 5px 0 0`}
-              >
+                margin={`0 5px 0 0`}>
                 내용
               </ColWrapper>
               <ColWrapper width={`100%`} al={`flex-start`}>
                 {updateData &&
+                  updateData.comment &&
                   updateData.comment.split(`\n`).map((content, idx) => {
                     return (
                       <SpanText key={`${content}${idx}`}>
