@@ -249,6 +249,22 @@ const Pay = ({}) => {
     });
   }, []);
 
+  const copyTextHandler = useCallback(() => {
+    const obj = document.getElementById("copyInput");
+
+    obj.select();
+
+    obj.setSelectionRange(0, 9999);
+
+    navigator.clipboard.writeText(obj.value).then(() => {
+      message.success("복사되었습니다.");
+    });
+  }, []);
+
+  const openLinkHandler = useCallback((link) => {
+    window.open(link);
+  }, []);
+
   ////// DATAVIEW //////
 
   ////// DATA COLUMNS //////
@@ -484,12 +500,45 @@ const Pay = ({}) => {
                 <Text width={`80px`} margin={`8px 0 0`}>
                   결제창 링크
                 </Text>
-                <FormItem
-                  rules={[{ required: true, message: "메모를 작성해주세요." }]}
-                  name={`link`}
+                <Wrapper
+                  dr={`row`}
+                  width={`calc(100% - 80px)`}
+                  al={`flex-start`}
                 >
-                  <CusotmInput disabled={updateData ? true : false} />
-                </FormItem>
+                  <Wrapper width={`calc(100% - 100px)`}>
+                    <Form.Item
+                      style={{ width: `100%` }}
+                      rules={[
+                        { required: true, message: "메모를 작성해주세요." },
+                      ]}
+                      name={`link`}
+                    >
+                      <CusotmInput
+                        id="copyInput"
+                        height={`48px`}
+                        disabled={updateData ? true : false}
+                      />
+                    </Form.Item>
+                  </Wrapper>
+                  <Wrapper width={`100px`}>
+                    <Button
+                      size="small"
+                      type="primary"
+                      style={{ width: `100px`, borderRadius: `0` }}
+                      onClick={copyTextHandler}
+                    >
+                      복사하기
+                    </Button>
+                    <Button
+                      size="small"
+                      type="primary"
+                      style={{ width: `100px`, borderRadius: `0` }}
+                      onClick={() => openLinkHandler(updateData.link)}
+                    >
+                      이동하기
+                    </Button>
+                  </Wrapper>
+                </Wrapper>
               </Wrapper>
             )}
           </FormTag>
