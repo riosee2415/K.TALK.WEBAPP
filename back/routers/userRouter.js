@@ -833,14 +833,16 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("처리중 문제가 발생하였습니다.");
     }
 
-    await Payment.update(
-      {
-        UserId: parseInt(result.id),
-      },
-      {
-        where: { id: parseInt(PaymentId) },
-      }
-    );
+    if (PaymentId) {
+      await Payment.update(
+        {
+          UserId: parseInt(result.id),
+        },
+        {
+          where: { id: parseInt(PaymentId) },
+        }
+      );
+    }
 
     const exLecture = await Lecture.findOne({
       where: { id: parseInt(LectureId) },

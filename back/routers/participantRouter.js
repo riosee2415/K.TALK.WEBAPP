@@ -312,14 +312,16 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("처리중 문제가 발생하였습니다.");
     }
 
-    await Payment.update(
-      {
-        UserId: parseInt(UserId),
-      },
-      {
-        where: { id: parseInt(PaymentId) },
-      }
-    );
+    if (PaymentId) {
+      await Payment.update(
+        {
+          UserId: parseInt(UserId),
+        },
+        {
+          where: { id: parseInt(PaymentId) },
+        }
+      );
+    }
 
     return res.status(201).json({ result: true });
   } catch (error) {
