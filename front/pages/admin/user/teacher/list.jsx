@@ -91,6 +91,8 @@ const UserList = ({}) => {
   const inputEmail = useInput("");
 
   const [modal, setModal] = useState(false);
+  const [detailmodal, setDetailModal] = useState(false);
+  const [detailModalData, setDetailModalData] = useState(null);
 
   ////// USEEFFECT //////
 
@@ -135,6 +137,11 @@ const UserList = ({}) => {
 
   const modalToggle = useCallback(() => {
     setModal((prev) => !prev);
+  }, []);
+
+  const detailModalToggle = useCallback((data) => {
+    setDetailModal((prev) => !prev);
+    setDetailModalData(data);
   }, []);
 
   const onSubmitCreate = useCallback((data) => {
@@ -183,7 +190,11 @@ const UserList = ({}) => {
     {
       title: "강사 디테일",
       render: (data) => (
-        <Button size="small" type="primary">
+        <Button
+          size="small"
+          type="primary"
+          onClick={() => detailModalToggle(data)}
+        >
           DETAIL
         </Button>
       ),
@@ -423,6 +434,114 @@ const UserList = ({}) => {
             </Button>
           </Wrapper>
         </Form>
+      </Modal>
+
+      <Modal
+        visible={detailmodal}
+        footer={null}
+        onCancel={() => detailModalToggle(null)}
+        title={`강사 정보`}
+      >
+        <Wrapper>
+          <Wrapper dr={`row`} margin={`0 0 20px`}>
+            <Text width={`80px`} fontWeight={`600`}>
+              이름 :
+            </Text>
+            <Text width={`calc(100% - 80px)`}>
+              {detailModalData && detailModalData.username}
+            </Text>
+          </Wrapper>
+
+          <Wrapper dr={`row`} margin={`0 0 20px`}>
+            <Text width={`80px`} fontWeight={`600`}>
+              성별 :
+            </Text>
+            <Text width={`calc(100% - 80px)`}>
+              {detailModalData && detailModalData.gender}
+            </Text>
+          </Wrapper>
+
+          <Wrapper dr={`row`} margin={`0 0 20px`}>
+            <Text width={`80px`} fontWeight={`600`}>
+              가입일 :
+            </Text>
+            <Text width={`calc(100% - 80px)`}>
+              {detailModalData && detailModalData.createdAt.slice(0, 10)}
+            </Text>
+          </Wrapper>
+
+          <Wrapper dr={`row`} margin={`0 0 20px`}>
+            <Text width={`80px`} fontWeight={`600`}>
+              이메일 :
+            </Text>
+            <Text width={`calc(100% - 80px)`}>
+              {detailModalData && detailModalData.email}
+            </Text>
+          </Wrapper>
+
+          <Wrapper dr={`row`} margin={`0 0 20px`}>
+            <Text width={`80px`} fontWeight={`600`}>
+              아이디 :
+            </Text>
+            <Text width={`calc(100% - 80px)`}>
+              {detailModalData && detailModalData.userId}
+            </Text>
+          </Wrapper>
+
+          <Wrapper dr={`row`} margin={`0 0 20px`}>
+            <Text width={`80px`} fontWeight={`600`}>
+              가능 언어 :
+            </Text>
+            <Text width={`calc(100% - 80px)`}>
+              {detailModalData && detailModalData.teaLanguage}
+            </Text>
+          </Wrapper>
+
+          <Wrapper dr={`row`} margin={`0 0 20px`}>
+            <Text width={`80px`} fontWeight={`600`}>
+              은행 :
+            </Text>
+            <Text width={`calc(100% - 80px)`}>
+              {detailModalData && detailModalData.bankName}
+            </Text>
+          </Wrapper>
+
+          <Wrapper dr={`row`} margin={`0 0 20px`}>
+            <Text width={`80px`} fontWeight={`600`}>
+              계좌번호 :
+            </Text>
+            <Text width={`calc(100% - 80px)`}>
+              {detailModalData && detailModalData.bankNo}
+            </Text>
+          </Wrapper>
+
+          <Wrapper dr={`row`} margin={`0 0 20px`}>
+            <Text width={`80px`} fontWeight={`600`}>
+              생년월일 :
+            </Text>
+            <Text width={`calc(100% - 80px)`}>
+              {detailModalData && detailModalData.birth.slice(0, 10)}
+            </Text>
+          </Wrapper>
+
+          <Wrapper dr={`row`} margin={`0 0 20px`}>
+            <Text width={`80px`} fontWeight={`600`}>
+              주소 :
+            </Text>
+            <Text width={`calc(100% - 80px)`}>
+              {detailModalData && detailModalData.address}
+            </Text>
+          </Wrapper>
+
+          <Wrapper dr={`row`} margin={`0 0 20px`}>
+            <Text width={`80px`} fontWeight={`600`}>
+              상세주소 :
+            </Text>
+            <Text width={`calc(100% - 80px)`}>
+              {detailModalData && detailModalData.detailAddress}
+            </Text>
+          </Wrapper>
+        </Wrapper>
       </Modal>
     </AdminLayout>
   );

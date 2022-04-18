@@ -189,6 +189,9 @@ const AdminMenu = () => {
           <Menu.Item key="/admin/user/student/list">
             <MenuName>학생 관리</MenuName>
           </Menu.Item>
+          <Menu.Item key="/admin/user/teacher/list">
+            <MenuName>강사 관리</MenuName>
+          </Menu.Item>
         </SubMenu>
         <SubMenu
           key="sub6"
