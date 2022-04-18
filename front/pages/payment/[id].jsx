@@ -137,7 +137,7 @@ const Index = () => {
   // 결제 성공
   const onSuccess = (payment) => {
     setSuccessData(payment);
-    console.log(payment);
+    // console.log(payment);
   };
 
   // 결제 취소
@@ -235,7 +235,8 @@ const Index = () => {
                 margin={`100px 0 0 0`}
                 minHeight={`600px`}
                 al={`flex-start`}
-                ju={`flex-start`}>
+                ju={`flex-start`}
+              >
                 <Wrapper
                   dr={`row`}
                   width={`auto`}
@@ -246,7 +247,8 @@ const Index = () => {
                   color={Theme.black_3C}
                   minHeight={width < 700 ? `80px` : `94px`}
                   shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}
-                  radius={`10px`}>
+                  radius={`10px`}
+                >
                   <Image
                     width={`22px`}
                     margin={width < 900 ? `0 5px 0 0` : `0 16px 0 0`}
@@ -273,7 +275,8 @@ const Index = () => {
                     color={Theme.black_3C}
                     height={`auto`}
                     shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}
-                    radius={`10px `}>
+                    radius={`10px `}
+                  >
                     {payClassDetail &&
                       payClassDetail.memo.split(`\n`).map((data) => {
                         return (
@@ -289,18 +292,21 @@ const Index = () => {
                     width={`30%`}
                     margin={`0 0 0 22px`}
                     top={`100px`}
-                    position={`sticky`}>
+                    position={`sticky`}
+                  >
                     <Wrapper
                       fontSize={width < 700 ? `14px` : `18px`}
                       color={Theme.black_3C}
                       padding={width < 700 ? `10px` : `20px 30px`}
                       shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}
-                      radius={`10px `}>
+                      radius={`10px `}
+                    >
                       <Wrapper borderBottom={`1px dashed ${Theme.grey_C}`}>
                         <Wrapper
                           dr={`row`}
                           ju={`space-between`}
-                          fontSize={width < 700 ? `14px` : `18px`}>
+                          fontSize={width < 700 ? `14px` : `18px`}
+                        >
                           <Text fontWeight={`600`}>수업 금액</Text>
                           <Text>
                             {`$${
@@ -317,7 +323,8 @@ const Index = () => {
                           dr={`row`}
                           ju={`space-between`}
                           margin={`13px 0 10px 0`}
-                          fontSize={width < 700 ? `14px` : `18px`}>
+                          fontSize={width < 700 ? `14px` : `18px`}
+                        >
                           <Text>할인율</Text>
                           <Text color={Theme.subTheme2_C}>
                             {payClassDetail && payClassDetail.discount}%
@@ -328,11 +335,13 @@ const Index = () => {
                       <Wrapper
                         dr={`row`}
                         ju={`space-between`}
-                        fontSize={width < 700 ? `14px` : `18px`}>
+                        fontSize={width < 700 ? `14px` : `18px`}
+                      >
                         <Text>총 결제 금액</Text>
                         <Text
                           color={Theme.black_3C}
-                          fontSize={width < 700 ? `16px` : `24px`}>
+                          fontSize={width < 700 ? `16px` : `24px`}
+                        >
                           {` $${String(
                             Math.floor(
                               payClassDetail.price -

@@ -541,7 +541,7 @@ const DetailClass = () => {
             </Wrapper>
             <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
               <Text fontSize={`24px`} fontWeight={`bold`}>
-                {console.log(lectureDetail && lectureDetail[0].day)}
+                {/* {console.log(lectureDetail && lectureDetail[0].day)} */}
                 {lectureDetail && lectureDetail[0].day}&nbsp;/&nbsp;
                 {lectureDetail && lectureDetail[0].time}
               </Text>
@@ -709,7 +709,7 @@ const DetailClass = () => {
               게시판
             </Text>
 
-            {console.log(noticeLectureList)}
+            {/* {console.log(noticeLectureList)} */}
             <Table
               columns={noticeColumns}
               style={{ width: `100%` }}
