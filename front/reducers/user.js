@@ -16,6 +16,8 @@ export const initailState = {
   postCodeModal: false,
   classChangeModal: false,
   classPartModal: false,
+
+  userStuList: null,
   //
   st_loginLoading: false,
   st_loginDone: false,
@@ -92,6 +94,10 @@ export const initailState = {
   st_userFindEmailByLoading: false,
   st_userFindEmailByDone: false,
   st_userFindEmailByError: null,
+  //
+  st_userStuListLoading: false,
+  st_userStuListDone: false,
+  st_userStuListError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -169,6 +175,10 @@ export const USER_CLASS_CHANGE_FAILURE = "USER_CLASS_CHANGE_FAILURE";
 export const USER_FIND_EMAIL_BY_REQUEST = "USER_FIND_EMAIL_BY_REQUEST";
 export const USER_FIND_EMAIL_BY_SUCCESS = "USER_FIND_EMAIL_BY_SUCCESS";
 export const USER_FIND_EMAIL_BY_FAILURE = "USER_FIND_EMAIL_BY_FAILURE";
+
+export const USER_STU_LIST_REQUEST = "USER_STU_LIST_REQUEST";
+export const USER_STU_LIST_SUCCESS = "USER_STU_LIST_SUCCESS";
+export const USER_STU_LIST_FAILURE = "USER_STU_LIST_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -567,6 +577,27 @@ const reducer = (state = initailState, action) =>
         draft.st_userFindEmailByLoading = false;
         draft.st_userFindEmailByDone = false;
         draft.st_userFindEmailByError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case USER_STU_LIST_REQUEST: {
+        draft.st_userStuListLoading = true;
+        draft.st_userStuListDone = null;
+        draft.st_userStuListError = false;
+        break;
+      }
+      case USER_STU_LIST_SUCCESS: {
+        draft.st_userStuListLoading = false;
+        draft.st_userStuListDone = true;
+        draft.userStuList = action.data;
+        break;
+      }
+      case USER_STU_LIST_FAILURE: {
+        draft.st_userStuListLoading = false;
+        draft.st_userStuListDone = false;
+        draft.st_userStuListError = action.error;
         break;
       }
 

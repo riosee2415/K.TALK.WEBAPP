@@ -29,6 +29,7 @@ import {
 } from "../../../reducers/application";
 import {
   LOAD_MY_INFO_REQUEST,
+  USER_STU_CREATE_REQUEST,
   USER_TEACHER_LIST_REQUEST,
 } from "../../../reducers/user";
 import { useRouter } from "next/router";
@@ -47,6 +48,14 @@ import Theme from "../../../components/Theme";
 import { PAYMENT_LIST_REQUEST } from "../../../reducers/payment";
 import useWidth from "../../../hooks/useWidth";
 import moment from "moment";
+
+const FormItem = styled(Form.Item)`
+  width: 80%;
+
+  @media (max-width: 700px) {
+    width: 100%;
+  }
+`;
 
 const CustomInput = styled(Input)`
   width: ${(props) => props.width};
@@ -90,9 +99,13 @@ const LoadNotification = (msg, content) => {
 
 const List = ({ location }) => {
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
-  const { me, st_loadMyInfoDone, teachers } = useSelector(
-    (state) => state.user
-  );
+  const {
+    me,
+    st_loadMyInfoDone,
+    teachers,
+    st_userStuCreateDone,
+    st_userStuCreateError,
+  } = useSelector((state) => state.user);
 
   const router = useRouter();
 
@@ -119,10 +132,14 @@ const List = ({ location }) => {
 
   const [updateData, setUpdateData] = useState(null);
 
-  const inputCreateEmail = useInput("");
-
   const [createForm] = Form.useForm();
   const [updateForm] = Form.useForm();
+
+  const [paymentOpt, setPaymentOpt] = useState(null);
+
+  const { paymentList, st_paymentListDone, st_paymentListError } = useSelector(
+    (state) => state.payment
+  );
 
   const {
     applicationList,
@@ -178,11 +195,56 @@ const List = ({ location }) => {
     }
   }, [st_appListError]);
 
+  useEffect(() => {
+    if (st_paymentListDone) {
+      const payOpt =
+        paymentList &&
+        paymentList.map((data) => {
+          return (
+            <Select.Option
+              key={data.id}
+              value={`${data.id},${data.LetureId},${data.week},${data.email}`}>
+              {data.createdAt.slice(0, 10)} | {data.course} | &#36;{data.price}{" "}
+              | &nbsp;{data.email}
+            </Select.Option>
+          );
+        });
+
+      setPaymentOpt(payOpt);
+    }
+  }, [st_paymentListDone]);
+
+  useEffect(() => {
+    if (st_paymentListError) {
+      return message.error(st_paymentListError);
+    }
+  }, [st_paymentListError]);
+
+  useEffect(() => {
+    if (st_userStuCreateDone) {
+      onReset();
+      return message.success("회원을 생성 했습니다.");
+    }
+  }, [st_userStuCreateDone]);
+
+  useEffect(() => {
+    if (st_userStuCreateError) {
+      return message.error(st_userStuCreateError);
+    }
+  }, [st_userStuCreateError]);
+
   ////// TOGGLE //////
 
   const createModalToggle = useCallback((data) => {
     setCreateModal((prev) => !prev);
     onFillUser(data);
+
+    dispatch({
+      type: PAYMENT_LIST_REQUEST,
+      data: {
+        email: data && data.gmailAddress,
+      },
+    });
 
     setCreateData(data);
   }, []);
@@ -209,7 +271,7 @@ const List = ({ location }) => {
     setCreateModal(false);
     setCreateData(null);
     setUpdateData(null);
-  }, []);
+  }, [updateData, createData, createModal, updateModal]);
 
   const createClick = useCallback(() => {
     createForm.submit();
@@ -220,16 +282,6 @@ const List = ({ location }) => {
   }, [updateForm]);
 
   const createFinish = useCallback((data) => {
-    // if (data.password !== data.repassword) {
-    //   return message.error("비밀번호를 동일하게 입력해주세요.");
-    // }
-
-    // if (data.payment.split(",")[3] !== data.email) {
-    //   return message.error(
-    //     `입력하신 이메일과 결제한 목록의 이메일이 같아야합니다.`
-    //   );
-    // }
-
     dispatch({
       type: USER_STU_CREATE_REQUEST,
       data: {
@@ -241,15 +293,15 @@ const List = ({ location }) => {
         address: data.address,
         detailAddress: data.detailAddress,
         stuLanguage: data.stuLanguage,
-        birth: data.birth.format("YYYY-MM-DD"),
+        birth: data.birth,
         stuCountry: data.stuCountry,
         stuLiveCon: data.stuLiveCon,
         sns: data.sns,
         snsId: data.snsId,
         stuJob: data.stuJob,
         gender: data.gender,
-        PaymentId: null,
-        LectureId: null,
+        PaymentId: data.payment.split(",")[0],
+        LectureId: data.payment.split(",")[1],
         date: parseInt(data.payment.split(",")[2]) * 7,
         endDate: moment()
           .add(parseInt(data.payment.split(",")[2]) * 7, "days")
@@ -278,18 +330,8 @@ const List = ({ location }) => {
     [updateData]
   );
 
-  const onPaymentHanlder = useCallback(() => {
-    dispatch({
-      type: PAYMENT_LIST_REQUEST,
-      data: {
-        email: inputCreateEmail.value,
-      },
-    });
-  }, [inputCreateEmail.value]);
-
   const onFillUser = useCallback((data) => {
     if (data) {
-      console.log(data, "data");
       let password = data.phoneNumber2.slice(-4);
 
       createForm.setFieldsValue({
@@ -308,19 +350,28 @@ const List = ({ location }) => {
     }
   }, []);
 
-  const onFillApp = useCallback((data) => {
-    if (data) {
-      updateForm.setFieldsValue({
-        timeDiff: data.timeDiff,
-        wantStartDate: moment(data.wantStartDate),
-        teacher: data.teacher,
-        isDiscount: data.isDiscount ? true : false,
-        meetDate: moment(data.meetDate),
-        level: data.level,
-        job: data.job,
-        purpose: data.purpose,
-      });
-    }
+  const onFillApp = useCallback(
+    (data) => {
+      if (data) {
+        updateForm.setFieldsValue({
+          timeDiff: data.timeDiff,
+          wantStartDate: moment(data.wantStartDate),
+          teacher: data.teacher,
+          isDiscount: data.isDiscount,
+          meetDate: moment(data.meetDate),
+          level: data.level,
+          job: data.job,
+          purpose: data.purpose,
+        });
+      }
+    },
+    [updateForm]
+  );
+
+  const onChangeSwitch = useCallback((e) => {
+    updateForm.setFieldsValue({
+      isDiscount: e ? 1 : 0,
+    });
   }, []);
 
   ////// DATAVIEW //////
@@ -592,11 +643,11 @@ const List = ({ location }) => {
                   시차
                 </Wrapper>
 
-                <Form.Item
+                <FormItem
                   rules={[{ required: true, message: "시차를 입력해주세요." }]}
                   name="timeDiff">
                   <CustomInput min={1} type={`number`} width={`100%`} />
-                </Form.Item>
+                </FormItem>
               </Wrapper>
 
               <RowWrapper width={`100%`} al={`flex-start`}>
@@ -660,11 +711,12 @@ const List = ({ location }) => {
                   할인 여부
                 </ColWrapper>
                 <ColWrapper>
-                  <Form.Item name="isDiscount">
+                  <FormItem name="isDiscount">
                     <Switch
-                      defaultChecked={updateData && updateData.isDiscount}
+                      defaultChecked={updateForm.getFieldValue("isDiscount")}
+                      onChange={(e) => onChangeSwitch(e)}
                     />
-                  </Form.Item>
+                  </FormItem>
                 </ColWrapper>
               </RowWrapper>
 
@@ -745,8 +797,8 @@ const List = ({ location }) => {
                   margin={`0 5px 0 0`}>
                   배우는 목적
                 </ColWrapper>
-                <ColWrapper>
-                  <Form.Item
+                <ColWrapper width={`80%`} al={`flex-start`}>
+                  <FormItem
                     rules={[
                       {
                         required: true,
@@ -754,8 +806,8 @@ const List = ({ location }) => {
                       },
                     ]}
                     name="purpose">
-                    <TextArea width={`90%`} />
-                  </Form.Item>
+                    <TextArea height={`200px`} width={`100%`} />
+                  </FormItem>
                 </ColWrapper>
               </RowWrapper>
             </Wrapper>
@@ -820,6 +872,30 @@ const List = ({ location }) => {
 
           <Form.Item label="현재 거주 나라" name="stuLiveCon">
             <Input disabled />
+          </Form.Item>
+
+          <Form.Item
+            label="결제 목록"
+            rules={[
+              {
+                required: true,
+                message: "회원에 추가할 강의의 결제목록을 선택해 주세요.",
+              },
+            ]}
+            name="payment">
+            <Select showSearch placeholder="Select a Lecture">
+              {paymentOpt}
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            label="성별"
+            rules={[{ required: true, message: "생별을 선택해주세요." }]}
+            name="gender">
+            <Select>
+              <Select.Option value={`남`}>남자</Select.Option>
+              <Select.Option value={`여`}>여자</Select.Option>
+            </Select>
           </Form.Item>
 
           <Form.Item

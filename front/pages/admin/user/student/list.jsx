@@ -23,6 +23,8 @@ import {
   SpanText,
   Text,
   Wrapper,
+  RowWrapper,
+  ColWrapper,
 } from "../../../../components/commonComponents";
 import { LECTURE_ALL_LIST_REQUEST } from "../../../../reducers/lecture";
 import { CloseCircleOutlined } from "@ant-design/icons";
@@ -31,6 +33,7 @@ import {
   PARTICIPANT_DELETE_REQUEST,
   PARTICIPANT_USER_DELETE_LIST_REQUEST,
   PARTICIPANT_USER_MOVE_LIST_REQUEST,
+  PARTICIPANT_USER_LIMIT_LIST_REQUEST,
 } from "../../../../reducers/participant";
 import useInput from "../../../../hooks//useInput";
 import { SearchOutlined } from "@ant-design/icons";
@@ -93,6 +96,11 @@ const UserList = ({}) => {
     partUserMoveList,
     st_participantUserMoveListDone,
     st_participantUserMoveListError,
+
+    partUserLimitList,
+
+    st_participantUserLimitListDone,
+    st_participantUserLimitListError,
   } = useSelector((state) => state.participant);
 
   const { paymentList, st_paymentListDone, st_paymentListError } = useSelector(
@@ -111,6 +119,8 @@ const UserList = ({}) => {
 
   const [detailToggle, setDetailToggle] = useState(false);
   const [classPartEndModal, setClassPartEndModal] = useState(false);
+  const [stuDetail, setStuDetail] = useState([]);
+  const [stuDetailModal, setStuDetailModal] = useState([]);
 
   const [parData, setParData] = useState(null);
   const [parEndData, setParEndData] = useState(null);
@@ -201,8 +211,7 @@ const UserList = ({}) => {
           return (
             <Option
               key={data.id}
-              value={`${data.id},${data.LetureId},${data.week}`}
-            >
+              value={`${data.id},${data.LetureId},${data.week}`}>
               {data.createdAt.slice(0, 10)} | {data.course} | &#36;
               {data.price} | &nbsp;{data.email}
             </Option>
@@ -248,6 +257,23 @@ const UserList = ({}) => {
       return message.error(st_participantUserDeleteListError);
     }
   }, [st_participantUserDeleteListError]);
+
+  useEffect(() => {
+    if (st_participantUserMoveListError) {
+      return message.error(st_participantUserMoveListError);
+    }
+  }, [st_participantUserMoveListError]);
+
+  useEffect(() => {
+    if (st_participantUserLimitListError) {
+      return message.error(st_participantUserLimitListError);
+    }
+  }, [st_participantUserLimitListError]);
+
+  useEffect(() => {
+    if (st_participantUserLimitListDone) {
+    }
+  }, [st_participantUserLimitListDone]);
 
   useEffect(() => {
     if (st_participantUserDeleteListDone) {
@@ -321,6 +347,11 @@ const UserList = ({}) => {
   const classPartEndModalClose = useCallback((data) => {
     setClassPartEndModal(false);
     setParEndData(null);
+  }, []);
+
+  const classPartDetailModalOpen = useCallback((data) => {
+    setStuDetail(data);
+    setStuDetailModal(true);
   }, []);
 
   const onFillEnd = useCallback((data) => {
@@ -480,6 +511,13 @@ const UserList = ({}) => {
       },
     });
 
+    dispatch({
+      type: PARTICIPANT_USER_LIMIT_LIST_REQUEST,
+      data: {
+        UserId: data.id,
+      },
+    });
+
     let save = data.Participants.filter((Datum, idx) => {
       return !Datum.isChange && !Datum.isDelete;
     });
@@ -540,8 +578,7 @@ const UserList = ({}) => {
               data.level === 5
                 ? message.error("개발사는 권한을 수정할 수 없습니다.")
                 : classChangeModalOpen(data)
-            }
-          >
+            }>
             반 옮기기
           </Button>
 
@@ -551,8 +588,7 @@ const UserList = ({}) => {
               data.level === 5
                 ? message.error("개발사는 권한을 수정할 수 없습니다.")
                 : classPartModalOpen(data)
-            }
-          >
+            }>
             수업참여
           </Button>
 
@@ -563,22 +599,30 @@ const UserList = ({}) => {
               data.level === 5
                 ? message.error("개발사는 권한을 수정할 수 없습니다.")
                 : classPartEndModalOpen(data)
-            }
-          >
+            }>
             수업빼기
+          </Button>
+
+          <Button
+            size="small"
+            onClick={() =>
+              data.level === 5
+                ? message.error("개발사는 권한을 수정할 수 없습니다.")
+                : classPartDetailModalOpen(data)
+            }>
+            학생상세
           </Button>
         </Wrapper>
       ),
     },
 
     {
-      title: "학생 강의 현황",
+      title: "학생 강의 상세",
       render: (data) => (
         <Button
           size="small"
           type="primary"
-          onClick={() => detailModalOpen(data)}
-        >
+          onClick={() => detailModalOpen(data)}>
           상세보기
         </Button>
       ),
@@ -686,6 +730,35 @@ const UserList = ({}) => {
     },
   ];
 
+  const columns7End = [
+    {
+      title: "No",
+      dataIndex: "id",
+    },
+
+    {
+      title: "수업 이름",
+      render: (data) => <div>{data.course}</div>,
+    },
+
+    {
+      title: "요일",
+      render: (data) => <div>{data.day}</div>,
+    },
+
+    {
+      title: "시간",
+      render: (data) => <div>{data.time}</div>,
+    },
+
+    {
+      title: "수업 남은 날",
+      render: (data) => (
+        <div style={{ color: Theme.red_C }}>{`${data.lastDate}`}</div>
+      ),
+    },
+  ];
+
   return (
     <AdminLayout>
       <PageHeader
@@ -728,14 +801,12 @@ const UserList = ({}) => {
         width={`400px`}
         title={`학생 수업 변경`}
         onCancel={classChangeModalClose}
-        onOk={onModalOk}
-      >
+        onOk={onModalOk}>
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
             form={form}
             style={{ width: `100%` }}
-            onFinish={(data) => onSubmit(data)}
-          >
+            onFinish={(data) => onSubmit(data)}>
             <Form.Item label={`학생`}>
               <Input disabled value={updateData && updateData.username} />
             </Form.Item>
@@ -745,8 +816,7 @@ const UserList = ({}) => {
                 width={`100%`}
                 height={`32px`}
                 showSearch
-                placeholder="Select a Lecture"
-              >
+                placeholder="Select a Lecture">
                 {updateData &&
                   updateData.Participants.map((data, idx) => {
                     if (data.isDelete) {
@@ -758,8 +828,7 @@ const UserList = ({}) => {
                     return (
                       <Option
                         key={data.id}
-                        value={`${data.LectureId},${data.date},${data.endDate}`}
-                      >
+                        value={`${data.LectureId},${data.date},${data.endDate}`}>
                         {data.Lecture?.course}
                       </Option>
                     );
@@ -787,14 +856,12 @@ const UserList = ({}) => {
         width={`800px`}
         title={`학생 수업 참여`}
         onCancel={classPartModalClose}
-        onOk={onModalChangeOk}
-      >
+        onOk={onModalChangeOk}>
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
             form={updateClassform}
             style={{ width: `100%` }}
-            onFinish={onUpdateClassSubmit}
-          >
+            onFinish={onUpdateClassSubmit}>
             <Form.Item label={`학생`}>
               <Input disabled value={parData && parData.username} />
             </Form.Item>
@@ -804,8 +871,7 @@ const UserList = ({}) => {
               name={`partLecture`}
               rules={[
                 { required: true, message: "참가시킬 강의를 선택해주세요." },
-              ]}
-            >
+              ]}>
               <Select
                 width={`100%`}
                 height={`32px`}
@@ -815,8 +881,7 @@ const UserList = ({}) => {
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
                 }
-                placeholder="Select a Lecture"
-              >
+                placeholder="Select a Lecture">
                 {opt2}
               </Select>
             </Form.Item>
@@ -829,14 +894,12 @@ const UserList = ({}) => {
         width={`400px`}
         title={`학생 수업 변경`}
         onCancel={classPartEndModalClose}
-        onOk={onSubmitEnd}
-      >
+        onOk={onSubmitEnd}>
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
             form={updateEndClassform}
             style={{ width: `100%` }}
-            onFinish={onEndClassSubmit}
-          >
+            onFinish={onEndClassSubmit}>
             <Form.Item label={`학생`} name={`userName`}>
               <Input disabled value={parEndData && parEndData.username} />
             </Form.Item>
@@ -846,8 +909,7 @@ const UserList = ({}) => {
                 width={`100%`}
                 height={`32px`}
                 showSearch
-                placeholder="Select a Lecture"
-              >
+                placeholder="Select a Lecture">
                 {parEndData &&
                   parEndData.Participants.map((data, idx) => {
                     if (data.isDelete) {
@@ -873,14 +935,12 @@ const UserList = ({}) => {
         width={`80%`}
         title={`학생 강의 목록`}
         footer={null}
-        onCancel={() => setDetailToggle(false)}
-      >
+        onCancel={() => setDetailToggle(false)}>
         <Text
           padding={`16px 0px`}
           color={Theme.black_2C}
           fontSize={`16px`}
-          fontWeight={`500`}
-        >
+          fontWeight={`500`}>
           참여하고 있는 강의
           <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
             *수업 참여일:관리자가 학생의 수업을 참여시킨 날짜
@@ -897,8 +957,7 @@ const UserList = ({}) => {
           padding={`16px 0px`}
           color={Theme.black_2C}
           fontSize={`16px`}
-          fontWeight={`500`}
-        >
+          fontWeight={`500`}>
           반 이동 내역
           <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
             *수업 변경일:관리자가 학생의 수업을 변경시킨 날짜
@@ -915,8 +974,7 @@ const UserList = ({}) => {
           padding={`16px 0px`}
           color={Theme.black_2C}
           fontSize={`16px`}
-          fontWeight={`500`}
-        >
+          fontWeight={`500`}>
           종료된 강의 내역
           <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
             *수업 종료일:관리자가 학생의 수업을 종료시킨 날짜
@@ -930,6 +988,158 @@ const UserList = ({}) => {
           }
           size="small"
         />
+
+        <Text
+          padding={`16px 0px`}
+          color={Theme.black_2C}
+          fontSize={`16px`}
+          fontWeight={`500`}>
+          일주일 이하로 남은 강의
+          <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
+            *수업 7일 이하:학생의 수업 7일 이하 남은 강의
+          </SpanText>
+        </Text>
+        <Table
+          rowKey="id"
+          columns={columns7End}
+          dataSource={st_participantUserLimitListDone ? partUserLimitList : []}
+          size="small"
+        />
+      </Modal>
+
+      <Modal
+        visible={stuDetailModal}
+        width={`1000px`}
+        title={`신청서`}
+        onCancel={() => setStuDetailModal(false)}
+        footer={null}>
+        <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 50px`}>
+          <Text fontSize={`16px`} fontWeight={`700`} margin={`0 0 10px`}>
+            사용자가 정보 양식
+          </Text>
+          <Wrapper dr={`row`} al={`flex-start`}>
+            <Wrapper width={`100%`} al={`flex-start`} margin={`0 0 20px`}>
+              <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                <ColWrapper
+                  width={`120px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
+                  이름
+                </ColWrapper>
+                <ColWrapper>
+                  {stuDetail && stuDetail.username}&nbsp;
+                  {stuDetail && stuDetail.lastName}
+                </ColWrapper>
+              </RowWrapper>
+
+              <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                <ColWrapper
+                  width={`120px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
+                  생년월일
+                </ColWrapper>
+                <ColWrapper>
+                  {stuDetail && stuDetail.birth && stuDetail.birth.slice(0, 10)}
+                </ColWrapper>
+              </RowWrapper>
+
+              <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                <ColWrapper
+                  width={`120px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
+                  이메일
+                </ColWrapper>
+                <ColWrapper>{stuDetail && stuDetail.email}</ColWrapper>
+              </RowWrapper>
+
+              <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                <ColWrapper
+                  width={`120px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
+                  국가
+                </ColWrapper>
+                <ColWrapper>{stuDetail && stuDetail.stuCountry}</ColWrapper>
+              </RowWrapper>
+
+              <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                <ColWrapper
+                  width={`120px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
+                  거주 국가
+                </ColWrapper>
+                <ColWrapper>{stuDetail && stuDetail.stuLiveCon}</ColWrapper>
+              </RowWrapper>
+
+              <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                <ColWrapper
+                  width={`120px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
+                  사용언어
+                </ColWrapper>
+                <ColWrapper>{stuDetail && stuDetail.stuLanguage}</ColWrapper>
+              </RowWrapper>
+
+              <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                <ColWrapper
+                  width={`120px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
+                  휴대폰번호
+                </ColWrapper>
+                <ColWrapper>{stuDetail && stuDetail.mobile}</ColWrapper>
+              </RowWrapper>
+
+              <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                <ColWrapper
+                  width={`120px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
+                  SNS
+                </ColWrapper>
+                <ColWrapper>{stuDetail && stuDetail.sns}</ColWrapper>
+              </RowWrapper>
+
+              <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                <ColWrapper
+                  width={`120px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
+                  SNS Id
+                </ColWrapper>
+                <ColWrapper>{stuDetail && stuDetail.snsId}</ColWrapper>
+              </RowWrapper>
+            </Wrapper>
+          </Wrapper>
+        </Wrapper>
+
+        <Wrapper al={`flex-end`}>
+          <Button size={`small`} onClick={() => setStuDetailModal(false)}>
+            취소
+          </Button>
+        </Wrapper>
       </Modal>
     </AdminLayout>
   );

@@ -28,6 +28,10 @@ import {
   PARTICIPANT_USER_MOVE_LIST_REQUEST,
   PARTICIPANT_USER_MOVE_LIST_SUCCESS,
   PARTICIPANT_USER_MOVE_LIST_FAILURE,
+  //////////////////////////////////////////////////////////
+  PARTICIPANT_USER_LIMIT_LIST_REQUEST,
+  PARTICIPANT_USER_LIMIT_LIST_SUCCESS,
+  PARTICIPANT_USER_LIMIT_LIST_FAILURE,
 } from "../reducers/participant";
 
 // SAGA AREA ********************************************************************************************************
@@ -203,6 +207,37 @@ function* participantUserMoveList(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function participantUserLimitListAPI(data) {
+  return axios.post(`/api/part/user/limit/list`, data);
+}
+
+function* participantUserLimitList(action) {
+  try {
+    const result = yield call(participantUserLimitListAPI, action.data);
+
+    yield put({
+      type: PARTICIPANT_USER_LIMIT_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: PARTICIPANT_USER_LIMIT_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchParticipantList() {
@@ -236,6 +271,13 @@ function* watchParticipantUserMoveList() {
   yield takeLatest(PARTICIPANT_USER_MOVE_LIST_REQUEST, participantUserMoveList);
 }
 
+function* watchParticipantUserLimitList() {
+  yield takeLatest(
+    PARTICIPANT_USER_LIMIT_LIST_REQUEST,
+    participantUserLimitList
+  );
+}
+
 //////////////////////////////////////////////////////////////
 export default function* participantSaga() {
   yield all([
@@ -246,6 +288,7 @@ export default function* participantSaga() {
     fork(watchParticipantDelete),
     fork(watchParticipantUserDeleteList),
     fork(watchParticipantUserMoveList),
+    fork(watchParticipantUserLimitList),
 
     //
   ]);

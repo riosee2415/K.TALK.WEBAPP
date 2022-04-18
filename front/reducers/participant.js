@@ -8,6 +8,7 @@ export const initialState = {
   partLastPage: 1,
   partUserDeleteList: [],
   partUserMoveList: [],
+  partUserLimitList: [],
   //
   st_participantListLoading: false,
   st_participantListDone: false,
@@ -36,6 +37,10 @@ export const initialState = {
   st_participantUserMoveListLoading: false,
   st_participantUserMoveListDone: false,
   st_participantUserMoveListError: null,
+  //
+  st_participantUserLimitListLoading: false,
+  st_participantUserLimitListDone: false,
+  st_participantUserLimitListError: null,
 };
 
 export const PARTICIPANT_LIST_REQUEST = "PARTICIPANT_LIST_REQUEST";
@@ -74,6 +79,13 @@ export const PARTICIPANT_USER_MOVE_LIST_SUCCESS =
   "PARTICIPANT_USER_MOVE_LIST_SUCCESS";
 export const PARTICIPANT_USER_MOVE_LIST_FAILURE =
   "PARTICIPANT_USER_MOVE_LIST_FAILURE";
+
+export const PARTICIPANT_USER_LIMIT_LIST_REQUEST =
+  "PARTICIPANT_USER_LIMIT_LIST_REQUEST";
+export const PARTICIPANT_USER_LIMIT_LIST_SUCCESS =
+  "PARTICIPANT_USER_LIMIT_LIST_SUCCESS";
+export const PARTICIPANT_USER_LIMIT_LIST_FAILURE =
+  "PARTICIPANT_USER_LIMIT_LIST_FAILURE";
 
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
@@ -221,6 +233,27 @@ const reducer = (state = initialState, action) =>
         draft.st_participantUserMoveListLoading = false;
         draft.st_participantUserMoveListDone = false;
         draft.st_participantUserMoveListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case PARTICIPANT_USER_LIMIT_LIST_REQUEST: {
+        draft.st_participantUserLimitListLoading = true;
+        draft.st_participantUserLimitListDone = null;
+        draft.st_participantUserLimitListError = false;
+        break;
+      }
+      case PARTICIPANT_USER_LIMIT_LIST_SUCCESS: {
+        draft.st_participantUserLimitListDone = true;
+        draft.st_participantUserLimitListLoading = false;
+        draft.partUserLimitList = action.data.list;
+        break;
+      }
+      case PARTICIPANT_USER_LIMIT_LIST_FAILURE: {
+        draft.st_participantUserLimitListLoading = false;
+        draft.st_participantUserLimitListDone = false;
+        draft.st_participantUserLimitListError = action.error;
         break;
       }
 

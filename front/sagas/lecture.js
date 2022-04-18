@@ -92,6 +92,14 @@ import {
   LECTURE_HOMEWORK_STU_LIST_REQUEST,
   LECTURE_HOMEWORK_STU_LIST_SUCCESS,
   LECTURE_HOMEWORK_STU_LIST_FAILURE,
+  //
+  LECTURE_ALL_TIME_REQUEST,
+  LECTURE_ALL_TIME_SUCCESS,
+  LECTURE_ALL_TIME_FAILURE,
+  //
+  LECTURE_ALL_LEVEL_REQUEST,
+  LECTURE_ALL_LEVEL_SUCCESS,
+  LECTURE_ALL_LEVEL_FAILURE,
 } from "../reducers/lecture";
 
 // SAGA AREA ********************************************************************************************************
@@ -125,7 +133,7 @@ function* lectureList(action) {
 // ******************************************************************************************************************
 function lectureAllListAPI(data) {
   return axios.get(
-    `/api/lecture/allLectures?TeacherId=${data.TeacherId}`,
+    `/api/lecture/allLectures?TeacherId=${data.TeacherId}&time=${data.time}&startLv=${data.startLv}&studentName=${data.studentName}`,
     data
   );
 }
@@ -664,6 +672,68 @@ function* lectureHomeworkStuList(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureAllTimeListAPI(data) {
+  return axios.get(`/api/lecture/allLectures?time=${data.time}`, data);
+}
+
+function* lectureAllTimeList(action) {
+  try {
+    const result = yield call(lectureAllTimeListAPI, action.data);
+
+    yield put({
+      type: LECTURE_ALL_TIME_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_ALL_TIME_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureAllLevelListAPI(data) {
+  return axios.get(`/api/lecture/allLectures?startLv=${data.startLv}`, data);
+}
+
+function* lectureAllLevelList(action) {
+  try {
+    const result = yield call(lectureAllLevelListAPI, action.data);
+
+    yield put({
+      type: LECTURE_ALL_LEVEL_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_ALL_LEVEL_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchLectureList() {
   yield takeLatest(LECTURE_LIST_REQUEST, lectureList);
@@ -757,6 +827,14 @@ function* watchLectureHomeworkStuList() {
   yield takeLatest(LECTURE_HOMEWORK_STU_LIST_REQUEST, lectureHomeworkStuList);
 }
 
+function* watchLectureAllTimeList() {
+  yield takeLatest(LECTURE_ALL_TIME_REQUEST, lectureAllTimeList);
+}
+
+function* watchLectureAllLevelList() {
+  yield takeLatest(LECTURE_ALL_LEVEL_REQUEST, lectureAllLevelList);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* lectureSaga() {
   yield all([
@@ -783,7 +861,8 @@ export default function* lectureSaga() {
     fork(watchLectureMemoStuList),
     fork(watchLectureMemoStuUpdate),
     fork(watchLectureHomeworkStuList),
-
+    fork(watchLectureAllTimeList),
+    fork(watchLectureAllLevelList),
     //
   ]);
 }

@@ -30,6 +30,9 @@ export const initailState = {
   lectureHomeworkStuList: null,
   lectureHomeworkStuLastPage: 1,
 
+  lectureAllTime: null,
+  lectureAllLevel: null,
+
   createModal: false,
   detailModal: false,
   updateModal: false,
@@ -124,6 +127,14 @@ export const initailState = {
   st_lectureHomeWorkStuListLoading: false,
   st_lectureHomeWorkStuListDone: false,
   st_lectureHomeWorkStuListError: null,
+  //
+  st_lectureAllTimeLoading: false,
+  st_lectureAllTimeDone: false,
+  st_lectureAllTimeError: null,
+  //
+  st_lectureAllLevelLoading: false,
+  st_lectureAllLevelDone: false,
+  st_lectureAllLevelError: null,
 };
 
 export const LECTURE_LIST_REQUEST = "LECTURE_LIST_REQUEST";
@@ -242,6 +253,14 @@ export const LECTURE_HOMEWORK_STU_LIST_SUCCESS =
   "LECTURE_HOMEWORK_STU_LIST_SUCCESS";
 export const LECTURE_HOMEWORK_STU_LIST_FAILURE =
   "LECTURE_HOMEWORK_STU_LIST_FAILURE";
+//
+export const LECTURE_ALL_TIME_REQUEST = "LECTURE_ALL_TIME_REQUEST";
+export const LECTURE_ALL_TIME_SUCCESS = "LECTURE_ALL_TIME_SUCCESS";
+export const LECTURE_ALL_TIME_FAILURE = "LECTURE_ALL_TIME_FAILURE";
+
+export const LECTURE_ALL_LEVEL_REQUEST = "LECTURE_ALL_LEVEL_REQUEST";
+export const LECTURE_ALL_LEVEL_SUCCESS = "LECTURE_ALL_LEVEL_SUCCESS";
+export const LECTURE_ALL_LEVEL_FAILURE = "LECTURE_ALL_LEVEL_FAILURE";
 //
 
 export const CREATE_MODAL_OPEN_REQUEST = "CREATE_MODAL_OPEN_REQUEST";
@@ -725,6 +744,50 @@ const reducer = (state = initailState, action) =>
         draft.st_lectureHomeworkStuListLoading = false;
         draft.st_lectureHomeworkStuListDone = false;
         draft.st_lectureHomeworkStuListError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case LECTURE_ALL_LEVEL_REQUEST: {
+        draft.st_lectureAllLevelLoading = true;
+        draft.st_lectureAllLevelDone = null;
+        draft.st_lectureAllLevelError = false;
+        break;
+      }
+      case LECTURE_ALL_LEVEL_SUCCESS: {
+        draft.st_lectureAllLevelLoading = false;
+        draft.st_lectureAllLevelDone = true;
+        draft.lectureAllLevel = action.data;
+        draft.lectureAllLevelPage = action.data.lastPage;
+        break;
+      }
+      case LECTURE_ALL_LEVEL_FAILURE: {
+        draft.st_lectureAllLevelLoading = false;
+        draft.st_lectureAllLevelDone = false;
+        draft.st_lectureAllLevelError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case LECTURE_ALL_TIME_REQUEST: {
+        draft.st_lectureAllTimeLoading = true;
+        draft.st_lectureAllTimeDone = null;
+        draft.st_lectureAllTimeError = false;
+        break;
+      }
+      case LECTURE_ALL_TIME_SUCCESS: {
+        draft.st_lectureAllTimeLoading = false;
+        draft.st_lectureAllTimeDone = true;
+        draft.lectureAllTime = action.data;
+        draft.lectureAllTimePage = action.data.lastPage;
+        break;
+      }
+      case LECTURE_ALL_TIME_FAILURE: {
+        draft.st_lectureAllTimeLoading = false;
+        draft.st_lectureAllTimeDone = false;
+        draft.st_lectureAllTimeError = action.error;
         break;
       }
 
