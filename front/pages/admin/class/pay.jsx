@@ -127,6 +127,18 @@ const Pay = ({}) => {
   ////// USEEFFECT //////
 
   useEffect(() => {
+    dispatch({
+      type: LECTURE_ALL_LIST_REQUEST,
+      data: {
+        TeacherId: "",
+        time: "",
+        startLv: "",
+        studentName: "",
+      },
+    });
+  }, [router.query]);
+
+  useEffect(() => {
     if (st_payClassListDone) {
       message.success("결제클래스가 조회되었습니다.");
     }
@@ -578,13 +590,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: PAY_CLASS_LIST_REQUEST,
-    });
-    context.store.dispatch({
-      type: LECTURE_ALL_LIST_REQUEST,
-      data: {
-        listType: 3,
-        TeacherId: "",
-      },
     });
 
     // 구현부 종료

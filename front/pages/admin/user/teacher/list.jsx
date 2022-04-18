@@ -110,7 +110,17 @@ const UserList = ({}) => {
   useEffect(() => {
     if (st_userTeaCreateDone) {
       message.success("강사가 생성되었습니다.");
+      dispatch({
+        type: USER_ALL_LIST_REQUEST,
+        data: {
+          type: 2,
+          name: "",
+          email: "",
+        },
+      });
       modalToggle();
+      inputName.setValue("");
+      inputEmail.setValue("");
     }
   }, [st_userTeaCreateDone]);
 
