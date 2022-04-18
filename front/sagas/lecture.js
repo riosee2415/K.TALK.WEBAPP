@@ -125,7 +125,7 @@ function* lectureList(action) {
 // ******************************************************************************************************************
 function lectureAllListAPI(data) {
   return axios.get(
-    `/api/lecture/allLectures/${data.listType}?TeacherId=${data.TeacherId}`,
+    `/api/lecture/allLectures?TeacherId=${data.TeacherId}`,
     data
   );
 }

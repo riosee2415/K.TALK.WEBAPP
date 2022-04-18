@@ -1020,6 +1020,14 @@ export const getServerSideProps = wrapper.getServerSideProps(
       type: LOAD_MY_INFO_REQUEST,
     });
 
+    context.store.dispatch({
+      type: LECTURE_ALL_LIST_REQUEST,
+      data: {
+        listType: 1,
+        TeacherId: "",
+      },
+    });
+
     // context.store.dispatch({
     //   type: ACCEPT_LOG_REQUEST,
     //   data: { typeId: "1" },

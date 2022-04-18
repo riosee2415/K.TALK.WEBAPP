@@ -39,6 +39,8 @@ import {
 import { saveAs } from "file-saver";
 import useWidth from "../../../hooks/useWidth";
 import { PARTICIPANT_ADMIN_LIST_REQUEST } from "../../../reducers/participant";
+import { NOTICE_LECTURE_LIST_REQUEST } from "../../../reducers/notice";
+import { MESSAGE_LECTURE_LIST_REQUEST } from "../../../reducers/message";
 const AdminContent = styled.div`
   padding: 20px;
 `;
@@ -86,14 +88,17 @@ const DetailClass = () => {
 
   const {
     lectureDetail,
-    lectureDiaryLastPage,
     lectureMemoStuLastPage,
     lectureMemoStuList,
     lectureDiaryAdminList,
-    lectureMemoStuCommute,
+    noticeLectureLastPage,
   } = useSelector((state) => state.lecture);
   const { partAdminList } = useSelector((state) => state.participant);
   const { bookLecture } = useSelector((state) => state.book);
+  const { noticeLectureList } = useSelector((state) => state.notice);
+  const { messageLectureList, messageLectureLastPage } = useSelector(
+    (state) => state.message
+  );
   const dispatch = useDispatch();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -109,6 +114,15 @@ const DetailClass = () => {
 
   const [detailBook, setDetailBook] = useState(null);
   const [bookModal, setBookModal] = useState(false);
+
+  const [currentNoticePage, setCurrentNoticePage] = useState(1);
+  const [currentMessagePage, setCurrentMessagePage] = useState(1);
+
+  const [noticeModal, setNoticeModal] = useState(false);
+  const [noticeDetail, setNoticeDetail] = useState(null);
+
+  const [messageModal, setMessageModal] = useState(false);
+  const [messageDetail, setMessageDetail] = useState(null);
 
   // console.log(lectureStudentList);
 
@@ -155,6 +169,26 @@ const DetailClass = () => {
       },
     });
   }, [router.query, currentPage, currentStudentId]);
+
+  useEffect(() => {
+    dispatch({
+      type: NOTICE_LECTURE_LIST_REQUEST,
+      data: {
+        LectureId: router.query.id,
+        page: currentNoticePage,
+      },
+    });
+  }, [router.query, currentNoticePage]);
+
+  useEffect(() => {
+    dispatch({
+      type: MESSAGE_LECTURE_LIST_REQUEST,
+      data: {
+        LectureId: router.query.id,
+        page: currentMessagePage,
+      },
+    });
+  }, [router.query, currentMessagePage]);
 
   ////// HANDLER //////
 
@@ -276,6 +310,16 @@ const DetailClass = () => {
 
   ////// TOGGLE //////
 
+  const noticeToggle = useCallback((data) => {
+    setNoticeModal((prev) => !prev);
+    setNoticeDetail(data);
+  }, []);
+
+  const messageToggle = useCallback((data) => {
+    setMessageModal((prev) => !prev);
+    setMessageDetail(data);
+  }, []);
+
   ////// DATAVIEW //////
   const stuColumns = [
     {
@@ -299,13 +343,17 @@ const DetailClass = () => {
           &#36;
           {
             partAdminList.price.find((value) => value.UserId === data.UserId)
-              .price
+              ?.price
           }
         </Text>
       ),
     },
     {
       title: "만기일",
+      render: () => lectureDetail && lectureDetail[0].endDate.slice(0, 10),
+    },
+    {
+      title: "출석 (지각 포함)",
       render: () => lectureDetail && lectureDetail[0].endDate.slice(0, 10),
     },
     {
@@ -326,7 +374,7 @@ const DetailClass = () => {
   // );
   const lectureColumns = [
     {
-      title: "No",
+      title: "번호",
       dataIndex: "id",
     },
     {
@@ -357,7 +405,7 @@ const DetailClass = () => {
 
   const bookColumns = [
     {
-      title: "No",
+      title: "번호",
       dataIndex: "id",
     },
     {
@@ -394,7 +442,7 @@ const DetailClass = () => {
 
   const memoListColumns = [
     {
-      title: "No",
+      title: "번호",
       dataIndex: "id",
     },
     {
@@ -419,34 +467,30 @@ const DetailClass = () => {
 
   const noticeColumns = [
     {
-      title: "No",
+      title: "번호",
       dataIndex: "id",
     },
     {
-      title: "Title",
+      title: "제목",
       dataIndex: "title",
     },
     {
-      title: "Author",
+      title: "작성자",
       dataIndex: "author",
     },
     {
-      title: "CreatedAt",
+      title: "작성일",
       render: (data) => <div>{data.createdAt.substring(0, 13)}</div>,
     },
     {
-      title: "UPDATE",
+      title: "상세보기",
       render: (data) => (
-        <Button type="primary" onClick={() => updateModalOpen(data)}>
-          UPDATE
-        </Button>
-      ),
-    },
-    {
-      title: "DEL",
-      render: (data) => (
-        <Button type="danger" onClick={deletePopToggle(data.id)}>
-          DEL
+        <Button
+          type="primary"
+          size={`small`}
+          onClick={() => noticeToggle(data)}
+        >
+          상세보기
         </Button>
       ),
     },
@@ -471,27 +515,12 @@ const DetailClass = () => {
       title: "생성일",
       render: (data) => <div>{data.createdAt.substring(0, 14)}</div>,
     },
+
     {
       title: "상세보기",
       render: (data) => (
-        <Button
-          type="primary"
-          size="small"
-          onClick={() => contentViewOpen(data)}
-        >
-          확인
-        </Button>
-      ),
-    },
-    {
-      title: "답변하기",
-      render: (data) => (
-        <Button
-          type="primary"
-          size="small"
-          onClick={() => updateModalOpen(data)}
-        >
-          답변하기
+        <Button type="primary" size="small" onClick={() => messageToggle(data)}>
+          상세보기
         </Button>
       ),
     },
@@ -679,20 +708,43 @@ const DetailClass = () => {
           columns={lectureColumns}
           dataSource={lectureDiaryAdminList}
         />
-        <Wrapper dr={`row`}>
-          <Wrapper width={`50%`}>
+        <Wrapper dr={`row`} ju={`space-between`} al={`flex-start`}>
+          <Wrapper width={`47.5%`} al={`flex-start`}>
             <Text fontSize={`18px`} fontWeight={`bold`}>
               공지사항
             </Text>
 
-            <Table size={`small`} columns={noticeColumns} />
+            {console.log(noticeLectureList)}
+            <Table
+              columns={noticeColumns}
+              style={{ width: `100%` }}
+              dataSource={noticeLectureList ? noticeLectureList : []}
+              pagination={{
+                defaultCurrent: 1,
+                current: parseInt(currentNoticePage),
+                onChange: (page) => setCurrentNoticePage(page),
+                total: noticeLectureLastPage * 10,
+              }}
+              size={`small`}
+            />
           </Wrapper>
-          <Wrapper width={`50%`}>
+          <Wrapper width={`47.5%`} al={`flex-start`}>
             <Text fontSize={`18px`} fontWeight={`bold`}>
               쪽지
             </Text>
 
-            <Table size={`small`} columns={messageColumns} />
+            <Table
+              size={`small`}
+              columns={messageColumns}
+              style={{ width: `100%` }}
+              dataSource={messageLectureList ? messageLectureList : []}
+              pagination={{
+                defaultCurrent: 1,
+                current: parseInt(currentMessagePage),
+                onChange: (page) => setCurrentMessagePage(page),
+                total: messageLectureLastPage * 10,
+              }}
+            />
           </Wrapper>
         </Wrapper>
       </AdminContent>
@@ -784,6 +836,51 @@ const DetailClass = () => {
           </Wrapper>
         </Wrapper>
       </Modal>
+
+      <Modal
+        visible={noticeModal}
+        onCancel={() => noticeToggle(null)}
+        footer={null}
+        title={`공지사항 자세히 보기`}
+      >
+        <Wrapper>
+          <Wrapper dr={`row`}>
+            <Text>작성일 : </Text>
+            <Text>{noticeDetail && noticeDetail.createdAt.slice(0, 13)}</Text>
+          </Wrapper>
+
+          <Wrapper dr={`row`}>
+            <Text>제목 : </Text>
+            <Text>{noticeDetail && noticeDetail.title}</Text>
+          </Wrapper>
+
+          <Wrapper dr={`row`}>
+            <Text>작성자 : </Text>
+            <Text>{noticeDetail && noticeDetail.author}</Text>
+          </Wrapper>
+
+          <Wrapper dr={`row`}>
+            <Text>내용 : </Text>
+            <Wrapper al={`flex-start`} ju={`flex-start`}>
+              {noticeDetail &&
+                noticeDetail.content.split(`\n`).map((data) => {
+                  return (
+                    <SpanText>
+                      {data} <br />
+                    </SpanText>
+                  );
+                })}
+            </Wrapper>
+          </Wrapper>
+        </Wrapper>
+      </Modal>
+
+      <Modal
+        visible={messageModal}
+        onCancel={() => messageToggle(null)}
+        footer={null}
+        title={`쪽지 자세히 보기`}
+      ></Modal>
     </AdminLayout>
   );
 };
