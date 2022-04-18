@@ -542,6 +542,7 @@ const Application = () => {
     "+967",
     "+260",
     "+263",
+    "+82",
   ];
 
   const country = [
@@ -1110,9 +1111,11 @@ const Application = () => {
                           return <CaretDownOutlined />;
                         }}>
                         {firstPhoneArr &&
-                          firstPhoneArr.map((data) => {
+                          firstPhoneArr.map((data, idx) => {
                             return (
-                              <Select.Option value={data}>{data}</Select.Option>
+                              <Select.Option key={idx} value={data}>
+                                {data}
+                              </Select.Option>
                             );
                           })}
                       </CustomSelect>

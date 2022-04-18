@@ -20,7 +20,12 @@ import {
   Switch,
   DatePicker,
 } from "antd";
-import { Wrapper, Text, SpanText } from "../../../components/commonComponents";
+import {
+  Wrapper,
+  Text,
+  SpanText,
+  TextInput,
+} from "../../../components/commonComponents";
 import {
   UPDATE_MODAL_CLOSE_REQUEST,
   UPDATE_MODAL_OPEN_REQUEST,
@@ -48,6 +53,10 @@ import Theme from "../../../components/Theme";
 import { PAYMENT_LIST_REQUEST } from "../../../reducers/payment";
 import useWidth from "../../../hooks/useWidth";
 import moment from "moment";
+import {
+  LECTURE_ALL_LIST_REQUEST,
+  LECTURE_TEACHER_LIST_REQUEST,
+} from "../../../reducers/lecture";
 
 const FormItem = styled(Form.Item)`
   width: 80%;
@@ -109,8 +118,6 @@ const List = ({ location }) => {
 
   const router = useRouter();
 
-  const width = useWidth();
-
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
@@ -137,6 +144,8 @@ const List = ({ location }) => {
 
   const [paymentOpt, setPaymentOpt] = useState(null);
 
+  const [isPayment, setIsPayment] = useState(0);
+
   const { paymentList, st_paymentListDone, st_paymentListError } = useSelector(
     (state) => state.payment
   );
@@ -151,6 +160,9 @@ const List = ({ location }) => {
     st_appUpdateDone,
     st_appUpdateError,
   } = useSelector((state) => state.app);
+
+  const { st_lectureAllListDone, st_lectureAllListError, allLectures } =
+    useSelector((state) => state.lecture);
 
   ////// USEEFFECT //////
 
@@ -233,6 +245,17 @@ const List = ({ location }) => {
     }
   }, [st_userStuCreateError]);
 
+  useEffect(() => {
+    if (st_lectureAllListDone) {
+    }
+  }, [st_lectureAllListDone]);
+
+  useEffect(() => {
+    if (st_lectureAllListError) {
+      return message.error(st_lectureAllListError);
+    }
+  }, [st_lectureAllListError]);
+
   ////// TOGGLE //////
 
   const createModalToggle = useCallback((data) => {
@@ -243,6 +266,16 @@ const List = ({ location }) => {
       type: PAYMENT_LIST_REQUEST,
       data: {
         email: data && data.gmailAddress,
+      },
+    });
+
+    dispatch({
+      type: LECTURE_ALL_LIST_REQUEST,
+      data: {
+        TeacherId: "",
+        studentName: "",
+        time: "",
+        startLv: "",
       },
     });
 
@@ -268,10 +301,11 @@ const List = ({ location }) => {
       type: UPDATE_MODAL_CLOSE_REQUEST,
     });
 
+    setIsPayment(0);
     setCreateModal(false);
     setCreateData(null);
     setUpdateData(null);
-  }, [updateData, createData, createModal, updateModal]);
+  }, [updateData, createData, createModal, updateModal, isPayment]);
 
   const createClick = useCallback(() => {
     createForm.submit();
@@ -281,34 +315,83 @@ const List = ({ location }) => {
     updateForm.submit();
   }, [updateForm]);
 
-  const createFinish = useCallback((data) => {
-    dispatch({
-      type: USER_STU_CREATE_REQUEST,
-      data: {
-        userId: data.userId,
-        password: data.password,
-        username: data.username,
-        mobile: data.mobile,
-        email: data.email,
-        address: data.address,
-        detailAddress: data.detailAddress,
-        stuLanguage: data.stuLanguage,
-        birth: data.birth,
-        stuCountry: data.stuCountry,
-        stuLiveCon: data.stuLiveCon,
-        sns: data.sns,
-        snsId: data.snsId,
-        stuJob: data.stuJob,
-        gender: data.gender,
-        PaymentId: data.payment.split(",")[0],
-        LectureId: data.payment.split(",")[1],
-        date: parseInt(data.payment.split(",")[2]) * 7,
-        endDate: moment()
-          .add(parseInt(data.payment.split(",")[2]) * 7, "days")
-          .format("YYYY-MM-DD"),
-      },
-    });
-  }, []);
+  const createFinish = useCallback(
+    (data) => {
+      if (isPayment === 0) {
+        return message.error("결제 여부를 선택해주세요.");
+      }
+
+      // console.log({
+      //   userId: data.userId,
+      //   password: data.password,
+      //   username: data.username,
+      //   mobile: data.mobile,
+      //   email: data.email,
+      //   address: data.address,
+      //   detailAddress: data.detailAddress,
+      //   stuLanguage: data.stuLanguage,
+      //   birth: data.birth,
+      //   stuCountry: data.stuCountry,
+      //   stuLiveCon: data.stuLiveCon,
+      //   sns: data.sns,
+      //   snsId: data.snsId,
+      //   stuJob: data.stuJob,
+      //   gender: data.gender,
+      //   PaymentId: data && data.paymentList ? data.paymentList : null,
+      //   LectureId:
+      //     data && data.lectureList
+      //       ? data.lectureList
+      //       : data.payment.split(",")[1],
+      //   date: data.date
+      //     ? String(data.date * 7)
+      //     : parseInt(data.payment.split(",")[2]) * 7,
+      //   endDate: data.date
+      //     ? moment()
+      //         .add(parseInt(data.date) * 7, "days")
+      //         .format("YYYY-MM-DD")
+      //     : moment()
+      //         .add(parseInt(data.payment.split(",")[2]) * 7, "days")
+      //         .format("YYYY-MM-DD"),
+      // });
+
+      dispatch({
+        type: USER_STU_CREATE_REQUEST,
+        data: {
+          userId: data.userId,
+          password: data.password,
+          username: data.username,
+          mobile: data.mobile,
+          email: data.email,
+          address: data.address,
+          detailAddress: data.detailAddress,
+          stuLanguage: data.stuLanguage,
+          birth: data.birth,
+          stuCountry: data.stuCountry,
+          stuLiveCon: data.stuLiveCon,
+          sns: data.sns,
+          snsId: data.snsId,
+          stuJob: data.stuJob,
+          gender: data.gender,
+          PaymentId: data && data.paymentList ? data.paymentList : null,
+          LectureId:
+            data && data.lectureList
+              ? data.lectureList
+              : data.payment.split(",")[1],
+          date: data.date
+            ? String(data.date * 7)
+            : parseInt(data.payment.split(",")[2]) * 7,
+          endDate: data.date
+            ? moment()
+                .add(parseInt(data.date) * 7, "days")
+                .format("YYYY-MM-DD")
+            : moment()
+                .add(parseInt(data.payment.split(",")[2]) * 7, "days")
+                .format("YYYY-MM-DD"),
+        },
+      });
+    },
+    [isPayment]
+  );
 
   const updateFinish = useCallback(
     (data) => {
@@ -353,16 +436,27 @@ const List = ({ location }) => {
   const onFillApp = useCallback(
     (data) => {
       if (data) {
-        updateForm.setFieldsValue({
-          timeDiff: data.timeDiff,
-          wantStartDate: moment(data.wantStartDate),
-          teacher: data.teacher,
-          isDiscount: data.isDiscount,
-          meetDate: moment(data.meetDate),
-          level: data.level,
-          job: data.job,
-          purpose: data.purpose,
-        });
+        if (data.wantStartDate) {
+          updateForm.setFieldsValue({
+            timeDiff: data.timeDiff,
+            wantStartDate: moment(data.wantStartDate),
+            teacher: data.teacher,
+            isDiscount: data.isDiscount,
+            meetDate: moment(data.meetDate),
+            level: data.level,
+            job: data.job,
+            purpose: data.purpose,
+          });
+        } else {
+          updateForm.setFieldsValue({
+            timeDiff: data.timeDiff,
+            teacher: data.teacher,
+            isDiscount: data.isDiscount,
+            level: data.level,
+            job: data.job,
+            purpose: data.purpose,
+          });
+        }
       }
     },
     [updateForm]
@@ -415,9 +509,12 @@ const List = ({ location }) => {
 
       render: (data) => (
         <ColWrapper al={`flex-start`}>
-          <Button size={`small`} onClick={() => createModalToggle(data)}>
-            회원 생성
-          </Button>
+          {!Boolean(data.isComplete) && (
+            <Button size={`small`} onClick={() => createModalToggle(data)}>
+              회원 생성
+            </Button>
+          )}
+
           <Button
             type="primary"
             size={`small`}
@@ -689,9 +786,9 @@ const List = ({ location }) => {
                       style={{ width: `200px` }}
                       placeholder={`강사를 선택해주세요.`}>
                       {teachers &&
-                        teachers.map((data) => {
+                        teachers.map((data, idx) => {
                           return (
-                            <Select.Option value={data.username}>
+                            <Select.Option key={data.id} value={data.username}>
                               {data.username}
                             </Select.Option>
                           );
@@ -821,7 +918,7 @@ const List = ({ location }) => {
         visible={createModal}
         width={`1000px`}
         title={`학생 생성`}
-        onCancel={() => createModalToggle()}
+        onCancel={() => onReset()}
         onOk={() => createClick()}
         okText="생성"
         cancelText="취소">
@@ -833,60 +930,112 @@ const List = ({ location }) => {
           <Form.Item label="이메일" name="email">
             <Input disabled type="email" />
           </Form.Item>
-
           <Form.Item label="회원아이디" name="userId">
             <Input disabled />
           </Form.Item>
-
           <Form.Item label="회원이름" name="username">
             <Input disabled />
           </Form.Item>
-
           <Form.Item label="생년월일" name="birth">
             <Input disabled />
           </Form.Item>
-
           <Form.Item label="전화번호" name="mobile">
             <Input disabled />
           </Form.Item>
-
           <Form.Item label="비밀번호" name="password">
             <Input type="password" disabled />
           </Form.Item>
-
           <Form.Item label="비밀번호 재입력" name="repassword">
             <Input type="password" disabled />
           </Form.Item>
-
           <Form.Item label="학생 직업" name="stuJob">
             <Input disabled />
           </Form.Item>
-
           <Form.Item label="학생 언어" name="stuLanguage">
             <Input disabled />
           </Form.Item>
-
           <Form.Item label="학생 나라" name="stuCountry">
             <Input disabled />
           </Form.Item>
-
           <Form.Item label="현재 거주 나라" name="stuLiveCon">
             <Input disabled />
           </Form.Item>
-
-          <Form.Item
-            label="결제 목록"
-            rules={[
-              {
-                required: true,
-                message: "회원에 추가할 강의의 결제목록을 선택해 주세요.",
-              },
-            ]}
-            name="payment">
-            <Select showSearch placeholder="Select a Lecture">
-              {paymentOpt}
+          <Form.Item label="결제 여부">
+            <Select
+              defaultValue={0}
+              showSearch
+              placeholder="Select a Lecture"
+              onChange={(e) => setIsPayment(e)}>
+              <Select.Option value={0} key={0}>
+                ---선택---
+              </Select.Option>
+              <Select.Option value={1} key={1}>
+                네
+              </Select.Option>
+              <Select.Option value={2} key={2}>
+                아니요
+              </Select.Option>
             </Select>
           </Form.Item>
+
+          {isPayment === 1 && (
+            <Form.Item
+              label="결제 목록"
+              name="paymentList"
+              rules={[
+                { message: "결제 목록을 선택해주세요.", required: true },
+              ]}>
+              <Select showSearch placeholder="Select a Lecture">
+                {paymentOpt}
+              </Select>
+            </Form.Item>
+          )}
+
+          {isPayment === 2 && (
+            <>
+              <Form.Item
+                label="강의 목록"
+                name="lectureList"
+                rules={[
+                  { message: "강의목록을 선택해주세요.", required: true },
+                ]}>
+                <Select showSearch placeholder="Select a Lecture">
+                  {allLectures && allLectures.length === 0
+                    ? ""
+                    : allLectures &&
+                      allLectures.map((data, idx) => {
+                        if (
+                          createData &&
+                          createData.teacher !== data.User.username
+                        )
+                          return;
+
+                        return (
+                          <Select.Option key={data.id} value={data.id}>
+                            {`${data.course} | ${data.User.username}`}
+                          </Select.Option>
+                        );
+                      })}
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                label="강의 기간"
+                name="date"
+                rules={[{ message: "강의기간 입력해주세요.", required: true }]}>
+                <Wrapper dr={`row`}>
+                  <TextInput
+                    width={`calc(100% - 30px)`}
+                    type={`number`}
+                    min={1}
+                  />
+                  <Text width={`30px`} padding={`10px`}>
+                    주
+                  </Text>
+                </Wrapper>
+              </Form.Item>
+            </>
+          )}
 
           <Form.Item
             label="성별"
@@ -897,35 +1046,30 @@ const List = ({ location }) => {
               <Select.Option value={`여`}>여자</Select.Option>
             </Select>
           </Form.Item>
-
           <Form.Item
             label="주소"
             rules={[{ required: true, message: "주소를 입력해주세요." }]}
             name="address">
             <Input />
           </Form.Item>
-
           <Form.Item
             label="상세주소"
             rules={[{ required: true, message: "상세주소를 입력해주세요." }]}
             name="detailAddress">
             <Input />
           </Form.Item>
-
           <Form.Item
             label="sns"
             rules={[{ required: true, message: "sns를 입력해주세요." }]}
             name="sns">
             <Input />
           </Form.Item>
-
           <Form.Item
             label="sns아이디"
             rules={[{ required: true, message: "sns아이디를 입력해주세요." }]}
             name="snsId">
             <Input />
           </Form.Item>
-
           {/* <Wrapper dr={`row`} ju={`flex-end`}>
             <Button
               size="small"

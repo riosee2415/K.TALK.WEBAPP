@@ -120,6 +120,8 @@ const AdminHome = () => {
   const [searchTime, setSearchTime] = useState("");
   const [searchStuName, setSearchStuName] = useState("");
 
+  const [allLectureList, setAllLectureList] = useState([]);
+
   const [dayArr, setDayArr] = useState([]);
   const inputId = useInput("");
   const inputPw = useInput("");
@@ -139,6 +141,9 @@ const AdminHome = () => {
     updateModal,
     st_lectureUpdateDone,
     st_lectureUpdateError,
+
+    st_lectureAllListDone,
+    st_lectureAllListError,
   } = useSelector((state) => state.lecture);
 
   const {
@@ -280,6 +285,35 @@ const AdminHome = () => {
     }
   }, [st_userStuListError]);
 
+  useEffect(() => {
+    if (st_lectureAllListDone) {
+      let tempArr = [];
+
+      if (searchStuName) {
+        for (let i = 0; i < allLectures.length; i++) {
+          for (let j = 0; j < allLectures[i].Participants.length; j++) {
+            if (
+              allLectures[i].Participants[j].User.username === searchStuName
+            ) {
+              tempArr.push(allLectures[i]);
+            }
+          }
+        }
+
+        setAllLectureList(tempArr);
+      } else {
+        setAllLectureList(allLectures);
+      }
+    } else {
+      setAllLectureList(allLectures);
+    }
+  }, [st_lectureAllListDone, searchStuName, router.query]);
+
+  useEffect(() => {
+    if (st_lectureAllListError) {
+    }
+  }, [st_lectureAllListError]);
+
   // const config = {
   //   data: acceptList,
   //   height: 400,
@@ -391,8 +425,6 @@ const AdminHome = () => {
 
       inputPeriod.setValue(parseInt(data.lecDate.replace("주", "")));
       setStartDate(data.startDate);
-
-      console.log(data, "data ! ! ! ! ! !");
 
       let day = "";
       if (data.time_1) {
@@ -644,14 +676,14 @@ const AdminHome = () => {
             </Wrapper>
 
             <Wrapper dr={`row`} ju={`flex-start`}>
-              {allLectures &&
-                (allLectures.length === 0 ? (
+              {allLectureList &&
+                (allLectureList.length === 0 ? (
                   <Wrapper>
                     <Empty description={`조회된 강의가 없습니다.`} />
                   </Wrapper>
                 ) : (
-                  allLectures &&
-                  allLectures.map((data) => {
+                  allLectureList &&
+                  allLectureList.map((data) => {
                     return (
                       <Wrapper
                         key={data.id}
@@ -1143,13 +1175,13 @@ export const getServerSideProps = wrapper.getServerSideProps(
       type: LOAD_MY_INFO_REQUEST,
     });
 
-    context.store.dispatch({
-      type: LECTURE_ALL_LIST_REQUEST,
-      data: {
-        listType: 1,
-        TeacherId: "",
-      },
-    });
+    // context.store.dispatch({
+    //   type: LECTURE_ALL_LIST_REQUEST,
+    //   data: {
+    //     listType: 1,
+    //     TeacherId: "",
+    //   },
+    // });
 
     // context.store.dispatch({
     //   type: ACCEPT_LOG_REQUEST,
