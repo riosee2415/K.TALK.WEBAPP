@@ -105,6 +105,7 @@ const DetailClass = () => {
 
   const [memoModal, setMemoModal] = useState(false);
   const [currentStudentId, setCurrentStudentId] = useState(null);
+  const [commutesModal, setCommutesModal] = useState(false);
 
   const [lecModal, setLecModal] = useState(false);
   const [lecMemoData, setLecMemoData] = useState(null);
@@ -216,6 +217,15 @@ const DetailClass = () => {
     setCurrentStudentId(null);
   }, []);
 
+  const detailCommutesOpen = useCallback((data) => {
+    setCurrentStudentId(data.UserId);
+    setCommutesModal(true);
+  }, []);
+  const detailCommutesClose = useCallback(() => {
+    setCurrentStudentId(null);
+    setCommutesModal(false);
+  }, []);
+
   const lecMemoOpen = useCallback((data) => {
     setLecModal(true);
     setLecMemoData(data);
@@ -245,44 +255,6 @@ const DetailClass = () => {
   const detailMemoContentClose = useCallback(() => {
     setDetailMemo(null);
     setDetailMemoModal(false);
-  }, []);
-
-  const stepHanlder = useCallback((startDate, endDate, count, lecDate, day) => {
-    let dir = 0;
-
-    const save = Math.abs(
-      moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays() -
-        1
-    );
-
-    let check = parseInt(
-      moment
-        .duration(moment(endDate).diff(moment(startDate, "YYYY-MM-DD")))
-        .asDays() + 1
-    );
-
-    if (save >= check) {
-      dir = check;
-    } else {
-      dir = save;
-    }
-
-    const arr = ["일", "월", "화", "수", "목", "금", "토"];
-    let add = 0;
-
-    for (let i = 0; i < dir; i++) {
-      let saveDay = moment(startDate)
-        .add(i + 1, "days")
-        .day();
-
-      const saveResult = day.includes(arr[saveDay]);
-
-      if (saveResult) {
-        add += 1;
-      }
-    }
-
-    return parseInt((add / (count * lecDate)) * 100);
   }, []);
 
   const stepEnd = useCallback((endDate, day) => {
@@ -338,23 +310,28 @@ const DetailClass = () => {
     },
     {
       title: "수업료",
-      render: (data) => (
-        <Text>
-          &#36;
-          {
-            partAdminList.price.find((value) => value.UserId === data.UserId)
-              ?.price
-          }
-        </Text>
-      ),
+      render: (data) => {
+        const findData = partAdminList.price.find(
+          (value) => value.UserId === data.UserId
+        );
+        return <Text>{findData ? `$` + findData.price : `-`}</Text>;
+      },
     },
     {
       title: "만기일",
       render: () => lectureDetail && lectureDetail[0].endDate.slice(0, 10),
     },
     {
-      title: "출석 (지각 포함)",
-      render: () => lectureDetail && lectureDetail[0].endDate.slice(0, 10),
+      title: "출석 기록",
+      render: (data) => (
+        <Button
+          size={`small`}
+          type={`primary`}
+          onClick={() => detailCommutesOpen(data)}
+        >
+          상세보기
+        </Button>
+      ),
     },
     {
       title: "메모",
@@ -461,6 +438,24 @@ const DetailClass = () => {
             내용 보기
           </Button>
         );
+      },
+    },
+  ];
+
+  const commutesListColumns = [
+    {
+      title: "번호",
+      dataIndex: "id",
+    },
+
+    {
+      title: "출석일",
+      render: (data) => <Text>{data.time}</Text>,
+    },
+    {
+      title: "출석 여부",
+      render: (data) => {
+        return <Text>{data.status}</Text>;
       },
     },
   ];
@@ -771,6 +766,31 @@ const DetailClass = () => {
       </Modal>
 
       <Modal
+        visible={commutesModal}
+        footer={null}
+        onCancel={detailCommutesClose}
+      >
+        <Wrapper al={`flex-start`}>
+          <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
+            출석 기록
+          </Text>
+          <Wrapper al={`flex-start`} ju={`flex-start`}>
+            <Table
+              style={{ width: `100%` }}
+              size={`small`}
+              columns={commutesListColumns}
+              dataSource={partAdminList.commutes}
+              pagination={{
+                current: parseInt(currentPage),
+                total: lectureMemoStuLastPage * 10,
+                onChange: (page) => setCurrentPage(page),
+              }}
+            />
+          </Wrapper>
+        </Wrapper>
+      </Modal>
+
+      <Modal
         visible={detailMemoModal}
         footer={null}
         onCancel={detailMemoContentClose}
@@ -793,6 +813,7 @@ const DetailClass = () => {
           </Wrapper>
         </Wrapper>
       </Modal>
+
       <Modal
         visible={lecModal}
         footer={null}
