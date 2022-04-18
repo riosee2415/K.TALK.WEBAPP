@@ -545,7 +545,7 @@ router.patch("/leture/update", isLoggedIn, async (req, res, next) => {
     }
   } catch (error) {
     console.error(error);
-    return res.status(401).send("강의에 등록된 교제를 수정할 수 없습니다.");
+    return res.status(401).send("강의에 등록된 교재를 수정할 수 없습니다.");
   }
 });
 
@@ -572,7 +572,7 @@ router.delete("/delete/:BookListId", isLoggedIn, async (req, res, next) => {
     return res.status(200).json({ result: true });
   } catch (error) {
     console.error(error);
-    return res.status(401).send("강의에 등록된 교제를 삭제할 수 없습니다.");
+    return res.status(401).send("강의에 등록된 교재를 삭제할 수 없습니다.");
   }
 });
 

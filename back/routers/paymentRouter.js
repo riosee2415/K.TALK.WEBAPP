@@ -1,7 +1,7 @@
 const express = require("express");
 const { Op } = require("sequelize");
 const isAdminCheck = require("../middlewares/isAdminCheck");
-const { PayClass, Payment } = require("../models");
+const { PayClass, Payment, User } = require("../models");
 const models = require("../models");
 
 const router = express.Router();
@@ -67,6 +67,52 @@ router.post("/create", async (req, res, next) => {
     }
 
     return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("결제를 진행할 수 없습니다.");
+  }
+});
+
+router.patch("/update", async (req, res, next) => {
+  const { id, UserId } = req.body;
+
+  try {
+    const exPayment = await Payment.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exPayment) {
+      return res.status(401).send("존재하지 않는 결제정보 입니다.");
+    }
+
+    const exUser = await User.findOne({
+      where: { id: parseInt(UserId) },
+    });
+
+    if (!exUser) {
+      return res.status(401).send("존재하지 않는 사용자입니다.");
+    }
+
+    if (exPayment.email !== exUser.email) {
+      return res
+        .status(401)
+        .send("사용자 정보가 해당 결제 내역과 일치하지 않습니다.");
+    }
+
+    const updateResult = await Payment.update(
+      {
+        UserId: parseInt(UserId),
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(201).json({ result: true });
+    } else {
+      return res.status(201).json({ result: false });
+    }
   } catch (error) {
     console.error(error);
     return res.status(401).send("결제를 진행할 수 없습니다.");
