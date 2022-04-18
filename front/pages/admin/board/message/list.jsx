@@ -240,8 +240,10 @@ const List = ({ router }) => {
     dispatch({
       type: LECTURE_ALL_LIST_REQUEST,
       data: {
-        listType: 1,
         TeacherId: "",
+        studentName: "",
+        time: "",
+        startLv: "",
       },
     });
   }, []);

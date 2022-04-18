@@ -314,7 +314,7 @@ const Student = () => {
     st_lectureHomeworkStuListDone,
     st_lectureHomeworkStuListError,
   } = useSelector((state) => state.lecture);
-
+  console.log(lectureStuLectureList);
   const { bookLecture, st_bookLectureListDone, st_bookLectureListError } =
     useSelector((state) => state.book);
 
@@ -403,6 +403,42 @@ const Student = () => {
     },
   ];
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    dispatch({
+      type: LECTURE_STU_LECTURE_LIST_REQUEST,
+    });
+
+    dispatch({
+      type: MESSAGE_TEACHER_LIST_REQUEST,
+    });
+
+    dispatch({
+      type: MESSAGE_TEACHER_LIST_REQUEST,
+    });
+
+    dispatch({
+      type: MESSAGE_USER_LIST_REQUEST,
+      data: {
+        page: 1,
+      },
+    });
+
+    dispatch({
+      type: NOTICE_LIST_REQUEST,
+      data: {
+        page: 1,
+      },
+    });
+
+    dispatch({
+      type: LECTURE_HOMEWORK_STU_LIST_REQUEST,
+      data: {
+        page: 1,
+        search: "",
+      },
+    });
+  }, [router.query]);
 
   useEffect(() => {
     if (!me) {
@@ -2790,39 +2826,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: SEO_LIST_REQUEST,
-    });
-
-    context.store.dispatch({
-      type: MESSAGE_TEACHER_LIST_REQUEST,
-    });
-    context.store.dispatch({
-      type: MESSAGE_TEACHER_LIST_REQUEST,
-    });
-
-    context.store.dispatch({
-      type: MESSAGE_USER_LIST_REQUEST,
-      data: {
-        page: 1,
-      },
-    });
-
-    context.store.dispatch({
-      type: NOTICE_LIST_REQUEST,
-      data: {
-        page: 1,
-      },
-    });
-
-    context.store.dispatch({
-      type: LECTURE_STU_LECTURE_LIST_REQUEST,
-    });
-
-    context.store.dispatch({
-      type: LECTURE_HOMEWORK_STU_LIST_REQUEST,
-      data: {
-        page: 1,
-        search: "",
-      },
     });
 
     // 구현부 종료
