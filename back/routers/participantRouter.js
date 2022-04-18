@@ -205,7 +205,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
        WHERE  1 = 1
          AND  A.isDelete = FALSE
          ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
-         ${_UserId ? `AND A.LectureId = ${_UserId}` : ``}
+         ${_UserId ? `AND A.UserId = ${_UserId}` : ``}
          AND  A.isChange = FALSE
        ORDER  BY A.createdAt DESC
     `;
@@ -220,6 +220,8 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
 
     let price = [];
 
+    let commutes = [];
+
     if (userIds.length !== 0) {
       const priceQuery = `
       SELECT  A.price,
@@ -229,14 +231,32 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
        INNER
         JOIN  payClass    B
           ON  A.PayClassId = B.id
-       WHERE  A.UserId in (${userIds})
+       WHERE  1 = 1
+         AND  A.UserId IN (${parseInt(userIds)})
          AND  B.LectureId = ${LectureId}
     `;
 
       price = await models.sequelize.query(priceQuery);
+
+      const commuteQuery = `
+      SELECT	id,
+              time,
+              status,
+              createdAt,
+              LectureId,
+              UserId 
+        FROM	commutes
+       WHERE  1 = 1
+         AND  UserId IN (${parseInt(userIds)})
+         AND  LectureId = ${LectureId}
+      `;
+
+      commutes = await models.sequelize.query(commuteQuery);
     }
 
-    return res.status(200).json({ partList: partList[0], price: price[0] });
+    return res
+      .status(200)
+      .json({ partList: partList[0], price: price[0], commutes: commutes[0] });
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의 참여 리스트를 불러올 수 없습니다.");
@@ -419,6 +439,7 @@ router.post("/user/delete/list", isAdminCheck, async (req, res, next) => {
   }
 });
 
+// 몇일 남았는지 체크
 router.post("/user/limit/list", isAdminCheck, async (req, res, next) => {
   const { UserId } = req.body;
 
@@ -446,7 +467,8 @@ router.post("/user/limit/list", isAdminCheck, async (req, res, next) => {
             B.time,
             B.course,
             B.day,
-            B.UserId 						AS TeacherId
+            B.UserId 						AS TeacherId,
+            CONCAT(DATEDIFF(A.endDate, now()), "일") 			AS lastDate
       FROM	participants		A
      INNER
       JOIN	lectures 			B	

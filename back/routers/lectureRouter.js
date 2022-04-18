@@ -140,59 +140,100 @@ router.get(["/list", "/list/:sort"], async (req, res, next) => {
 });
 
 // 관리자에서 확인하는 모든 강의
-router.get("/allLectures", isAdminCheck, async (req, res, next) => {
-  const { TeacherId, studentName } = req.query;
+router.get(
+  ["/allLectures", "/allLectures/:listType"],
+  isAdminCheck,
+  async (req, res, next) => {
+    const { TeacherId, studentName, time, startLv } = req.query;
+    const { listType } = req.params;
 
-  const _studentName = studentName ? studentName : ``;
+    let nanFlag = isNaN(listType);
 
-  let newWhere = {};
+    const _studentName = studentName ? studentName : ``;
+    const _time = time ? time : ``;
+    const _startLv = startLv ? startLv : ``;
 
-  if (TeacherId) {
-    newWhere = {
-      isDelete: false,
-      UserId: parseInt(TeacherId),
-    };
-  }
+    if (!listType) {
+      nanFlag = false;
+    }
 
-  if (!TeacherId) {
-    newWhere = {
-      isDelete: false,
-    };
-  }
+    if (nanFlag) {
+      return res.status(400).send("잘못된 요청 입니다.");
+    }
 
-  try {
-    const lecture = await Lecture.findAll({
-      where: newWhere,
-      include: [
-        {
-          model: User,
-          attributes: ["id", "username", "level"],
+    let _listType = Number(listType);
+
+    if (_listType > 2 || !listType) {
+      _listType = 2;
+    }
+
+    let newWhere = {};
+
+    if (TeacherId) {
+      newWhere = {
+        isDelete: false,
+        UserId: parseInt(TeacherId),
+        time: {
+          [Op.like]: `%${_time}%`,
         },
-        {
-          model: Participant,
-          include: [
-            {
-              model: User,
-              attributes: ["id", "username", "level"],
-              where: {
-                username: {
-                  [Op.like]: `%${_studentName}%`,
+        startLv: {
+          [Op.like]: `%${_startLv}%`,
+        },
+      };
+    }
+
+    if (!TeacherId) {
+      newWhere = {
+        isDelete: false,
+        time: {
+          [Op.like]: `%${_time}%`,
+        },
+        startLv: {
+          [Op.like]: `%${_startLv}%`,
+        },
+      };
+    }
+
+    try {
+      const lecture = await Lecture.findAll({
+        where: newWhere,
+        include: [
+          {
+            model: User,
+            attributes: ["id", "username", "level"],
+          },
+          {
+            model: Participant,
+            include: [
+              {
+                model: User,
+                attributes: ["id", "username", "level"],
+                where: {
+                  username: {
+                    [Op.like]: `%${_studentName}%`,
+                  },
                 },
+                order: [["createdAt", "DESC"]],
               },
-              order: [["createdAt", "DESC"]],
-            },
-          ],
-        },
-      ],
-      order: [["createdAt", "DESC"]],
-    });
+            ],
+          },
+        ],
+        order: [
+          _listType === 1
+            ? ["startLv", "ASC"]
+            : _listType === 2
+            ? ["createdAt", "DESC"]
+            : ["createdAt", "DESC"],
+        ],
+      });
 
-    return res.status(200).json(lecture);
-  } catch (error) {
-    console.error(error);
-    return res.status(401).send("모든 강의 목록을 불러올 수 없습니다.");
+      return res.status(200).json(lecture);
+    } catch (error) {
+      console.error(error);
+      return res.status(401).send("모든 강의 목록을 불러올 수 없습니다.");
+    }
   }
-});
+);
 
 router.get("/detail/:LectureId", async (req, res, next) => {
   const { LectureId } = req.params;
