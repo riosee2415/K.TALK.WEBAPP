@@ -25,6 +25,7 @@ import {
   Wrapper,
   RowWrapper,
   ColWrapper,
+  TextInput,
 } from "../../../../components/commonComponents";
 import { LECTURE_ALL_LIST_REQUEST } from "../../../../reducers/lecture";
 import { CloseCircleOutlined } from "@ant-design/icons";
@@ -50,6 +51,8 @@ const UserList = ({}) => {
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
 
   const { allLectures } = useSelector((state) => state.lecture);
+
+  console.log(allLectures, "allLectures");
 
   const {
     me,
@@ -120,7 +123,7 @@ const UserList = ({}) => {
   const [detailToggle, setDetailToggle] = useState(false);
   const [classPartEndModal, setClassPartEndModal] = useState(false);
   const [stuDetail, setStuDetail] = useState([]);
-  const [stuDetailModal, setStuDetailModal] = useState([]);
+  const [stuDetailModal, setStuDetailModal] = useState(false);
 
   const [parData, setParData] = useState(null);
   const [parEndData, setParEndData] = useState(null);
@@ -131,6 +134,8 @@ const UserList = ({}) => {
 
   const inputName = useInput("");
   const inputEmail = useInput("");
+
+  const [isPayment, setIsPayment] = useState(0);
 
   ////// USEEFFECT //////
 
@@ -147,8 +152,10 @@ const UserList = ({}) => {
     dispatch({
       type: LECTURE_ALL_LIST_REQUEST,
       data: {
-        listType: 2,
         TeacherId: "",
+        studentName: "",
+        time: "",
+        startLv: "",
       },
     });
   }, [router.query, st_participantDeleteDone, st_participantCreateDone]);
@@ -167,8 +174,10 @@ const UserList = ({}) => {
       dispatch({
         type: LECTURE_ALL_LIST_REQUEST,
         data: {
-          listType: 2,
           TeacherId: "",
+          studentName: "",
+          time: "",
+          startLv: "",
         },
       });
       classChangeModalClose();
@@ -330,9 +339,12 @@ const UserList = ({}) => {
         type: CLASS_PART_CLOSE_REQUEST,
       });
 
+      updateClassform.resetFields();
+
+      setIsPayment(0);
       setParData(null);
     },
-    [classPartModal]
+    [classPartModal, updateClassform]
   );
 
   const classPartEndModalOpen = useCallback((data) => {
@@ -411,19 +423,48 @@ const UserList = ({}) => {
       //   saveData = moment().add(day, "days").format("YYYY-MM-DD");
       // }
 
-      let PaymentId = data.partLecture.split(",")[0];
-      let LectureId = data.partLecture.split(",")[1];
-      let date = parseInt(data.partLecture.split(",")[2]) * 7;
-      let saveData = moment().add(date, "days").format("YYYY-MM-DD");
+      console.log(data, "data");
+
+      console.log(data.paymentList);
+
+      console.log({
+        UserId: parData.id,
+        LectureId: data.lectureList
+          ? data.lectureList
+          : data.partLecture.split(",")[1],
+        date: data.date
+          ? parseInt(data.date) * 7
+          : parseInt(data.partLecture.split(",")[2]) * 7,
+        endDate: data.date
+          ? moment()
+              .add(parseInt(data.date) * 7, "days")
+              .format("YYYY-MM-DD")
+          : moment()
+              .add(parseInt(data.partLecture.split(",")[2]) * 7, "days")
+              .format("YYYY-MM-DD"),
+        PaymentId: data.partLecture ? data.partLecture.split(",")[0] : null,
+      });
+
+      // let date = parseInt(data.partLecture.split(",")[2]) * 7
 
       dispatch({
         type: PARTICIPANT_CREATE_REQUEST,
         data: {
           UserId: parData.id,
-          LectureId: LectureId,
-          date: date,
-          endDate: saveData,
-          PaymentId,
+          LectureId: data.lectureList
+            ? data.lectureList
+            : data.partLecture.split(",")[1],
+          date: data.date
+            ? parseInt(data.date) * 7
+            : parseInt(data.partLecture.split(",")[2]) * 7,
+          endDate: data.date
+            ? moment()
+                .add(parseInt(data.date) * 7, "days")
+                .format("YYYY-MM-DD")
+            : moment()
+                .add(parseInt(data.partLecture.split(",")[2]) * 7, "days")
+                .format("YYYY-MM-DD"),
+          PaymentId: data.partLecture ? data.partLecture.split(",")[0] : null,
         },
       });
     },
@@ -866,25 +907,82 @@ const UserList = ({}) => {
               <Input disabled value={parData && parData.username} />
             </Form.Item>
 
-            <Form.Item
-              label={`참여할 강의`}
-              name={`partLecture`}
-              rules={[
-                { required: true, message: "참가시킬 강의를 선택해주세요." },
-              ]}>
+            <Form.Item label="결제 여부" name="isPayment">
               <Select
-                width={`100%`}
-                height={`32px`}
                 showSearch
-                onChange={(LectureId) => onSeachHandler(LectureId, paymentList)}
-                filterOption={(input, option) =>
-                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
-                  0
-                }
-                placeholder="Select a Lecture">
-                {opt2}
+                placeholder="Select a Lecture"
+                onChange={(e) => setIsPayment(e)}>
+                <Select.Option value={1}>네</Select.Option>
+                <Select.Option value={2}>아니요</Select.Option>
               </Select>
             </Form.Item>
+
+            {isPayment === 1 && (
+              <Form.Item
+                label={`참여할 강의`}
+                name={`partLecture`}
+                rules={[
+                  { required: true, message: "참가시킬 강의를 선택해주세요." },
+                ]}>
+                <Select
+                  width={`100%`}
+                  height={`32px`}
+                  showSearch
+                  onChange={(LectureId) =>
+                    onSeachHandler(LectureId, paymentList)
+                  }
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  placeholder="Select a Lecture">
+                  {opt2}
+                </Select>
+              </Form.Item>
+            )}
+
+            {isPayment === 2 && (
+              <>
+                <Form.Item
+                  label="강의 목록"
+                  name="lectureList"
+                  rules={[
+                    { message: "강의목록을 선택해주세요.", required: true },
+                  ]}>
+                  <Select showSearch placeholder="Select a Lecture">
+                    {allLectures && allLectures.length === 0
+                      ? ""
+                      : allLectures &&
+                        allLectures.map((data, idx) => {
+                          return (
+                            <Select.Option key={data.id} value={data.id}>
+                              {`${data.course} | ${data.User.username}`}
+                            </Select.Option>
+                          );
+                        })}
+                  </Select>
+                </Form.Item>
+
+                <Form.Item
+                  label="강의 기간"
+                  name="date"
+                  rules={[
+                    { message: "강의기간 입력해주세요.", required: true },
+                  ]}>
+                  <Wrapper dr={`row`}>
+                    <TextInput
+                      width={`calc(100% - 30px)`}
+                      type={`number`}
+                      min={1}
+                    />
+                    <Text width={`30px`} padding={`10px`}>
+                      주
+                    </Text>
+                  </Wrapper>
+                </Form.Item>
+              </>
+            )}
           </Form>
         </Wrapper>
       </Modal>

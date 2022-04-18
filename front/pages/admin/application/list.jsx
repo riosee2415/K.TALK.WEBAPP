@@ -38,8 +38,7 @@ import {
   USER_TEACHER_LIST_REQUEST,
 } from "../../../reducers/user";
 import { useRouter } from "next/router";
-import { render } from "react-dom";
-import useInput from "../../../hooks/useInput";
+
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
@@ -235,6 +234,14 @@ const List = ({ location }) => {
   useEffect(() => {
     if (st_userStuCreateDone) {
       onReset();
+
+      const qs = router.query;
+
+      dispatch({
+        type: APP_LIST_REQUEST,
+        data: { isComplete: qs.type ? qs.type : null },
+      });
+
       return message.success("회원을 생성 했습니다.");
     }
   }, [st_userStuCreateDone]);
@@ -321,38 +328,39 @@ const List = ({ location }) => {
         return message.error("결제 여부를 선택해주세요.");
       }
 
-      // console.log({
-      //   userId: data.userId,
-      //   password: data.password,
-      //   username: data.username,
-      //   mobile: data.mobile,
-      //   email: data.email,
-      //   address: data.address,
-      //   detailAddress: data.detailAddress,
-      //   stuLanguage: data.stuLanguage,
-      //   birth: data.birth,
-      //   stuCountry: data.stuCountry,
-      //   stuLiveCon: data.stuLiveCon,
-      //   sns: data.sns,
-      //   snsId: data.snsId,
-      //   stuJob: data.stuJob,
-      //   gender: data.gender,
-      //   PaymentId: data && data.paymentList ? data.paymentList : null,
-      //   LectureId:
-      //     data && data.lectureList
-      //       ? data.lectureList
-      //       : data.payment.split(",")[1],
-      //   date: data.date
-      //     ? String(data.date * 7)
-      //     : parseInt(data.payment.split(",")[2]) * 7,
-      //   endDate: data.date
-      //     ? moment()
-      //         .add(parseInt(data.date) * 7, "days")
-      //         .format("YYYY-MM-DD")
-      //     : moment()
-      //         .add(parseInt(data.payment.split(",")[2]) * 7, "days")
-      //         .format("YYYY-MM-DD"),
-      // });
+      console.log({
+        userId: data.userId,
+        password: data.password,
+        username: data.username,
+        mobile: data.mobile,
+        email: data.email,
+        address: data.address,
+        detailAddress: data.detailAddress,
+        stuLanguage: data.stuLanguage,
+        birth: data.birth,
+        stuCountry: data.stuCountry,
+        stuLiveCon: data.stuLiveCon,
+        sns: data.sns,
+        snsId: data.snsId,
+        stuJob: data.stuJob,
+        gender: data.gender,
+        PaymentId:
+          data && data.paymentList ? data.paymentList.split(",")[0] : null,
+        LectureId:
+          data && data.lectureList
+            ? data.lectureList
+            : data.paymentList.split(",")[1],
+        date: data.date
+          ? String(data.date * 7)
+          : parseInt(data.paymentList.split(",")[2]) * 7,
+        endDate: data.date
+          ? moment()
+              .add(parseInt(data.date) * 7, "days")
+              .format("YYYY-MM-DD")
+          : moment()
+              .add(parseInt(data.paymentList.split(",")[2]) * 7, "days")
+              .format("YYYY-MM-DD"),
+      });
 
       dispatch({
         type: USER_STU_CREATE_REQUEST,
@@ -372,20 +380,21 @@ const List = ({ location }) => {
           snsId: data.snsId,
           stuJob: data.stuJob,
           gender: data.gender,
-          PaymentId: data && data.paymentList ? data.paymentList : null,
+          PaymentId:
+            data && data.paymentList ? data.paymentList.split(",")[0] : null,
           LectureId:
             data && data.lectureList
               ? data.lectureList
-              : data.payment.split(",")[1],
+              : data.paymentList.split(",")[1],
           date: data.date
             ? String(data.date * 7)
-            : parseInt(data.payment.split(",")[2]) * 7,
+            : parseInt(data.paymentList.split(",")[2]) * 7,
           endDate: data.date
             ? moment()
                 .add(parseInt(data.date) * 7, "days")
                 .format("YYYY-MM-DD")
             : moment()
-                .add(parseInt(data.payment.split(",")[2]) * 7, "days")
+                .add(parseInt(data.paymentList.split(",")[2]) * 7, "days")
                 .format("YYYY-MM-DD"),
         },
       });
@@ -960,21 +969,13 @@ const List = ({ location }) => {
           <Form.Item label="현재 거주 나라" name="stuLiveCon">
             <Input disabled />
           </Form.Item>
-          <Form.Item label="결제 여부">
+          <Form.Item label="결제 여부" name="isPayment">
             <Select
-              defaultValue={0}
               showSearch
               placeholder="Select a Lecture"
               onChange={(e) => setIsPayment(e)}>
-              <Select.Option value={0} key={0}>
-                ---선택---
-              </Select.Option>
-              <Select.Option value={1} key={1}>
-                네
-              </Select.Option>
-              <Select.Option value={2} key={2}>
-                아니요
-              </Select.Option>
+              <Select.Option value={1}>네</Select.Option>
+              <Select.Option value={2}>아니요</Select.Option>
             </Select>
           </Form.Item>
 
