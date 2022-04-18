@@ -706,7 +706,7 @@ const DetailClass = () => {
         <Wrapper dr={`row`} ju={`space-between`} al={`flex-start`}>
           <Wrapper width={`47.5%`} al={`flex-start`}>
             <Text fontSize={`18px`} fontWeight={`bold`}>
-              공지사항
+              게시판
             </Text>
 
             {console.log(noticeLectureList)}
@@ -862,7 +862,7 @@ const DetailClass = () => {
         visible={noticeModal}
         onCancel={() => noticeToggle(null)}
         footer={null}
-        title={`공지사항 자세히 보기`}
+        title={`게시글 자세히 보기`}
       >
         <Wrapper>
           <Wrapper dr={`row`}>

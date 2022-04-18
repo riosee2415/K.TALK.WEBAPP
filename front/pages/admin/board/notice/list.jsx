@@ -201,7 +201,7 @@ const NoticeList = ({ router }) => {
 
   useEffect(() => {
     if (st_noticeCreateDone) {
-      message.success("공지사항이 생성되었습니다.");
+      message.success("게시글이 생성되었습니다.");
       setCurrentListType(1);
 
       dispatch({
@@ -223,7 +223,7 @@ const NoticeList = ({ router }) => {
 
   useEffect(() => {
     if (st_noticeLectureCreateDone) {
-      message.success("공지사항이 생성되었습니다.");
+      message.success("게시글이 생성되었습니다.");
       setCurrentListType(1);
 
       dispatch({
@@ -245,7 +245,7 @@ const NoticeList = ({ router }) => {
 
   useEffect(() => {
     if (st_noticeUpdateDone) {
-      message.success("공지사항이 수정되었습니다.");
+      message.success("게시글이 수정되었습니다.");
       setCurrentListType(1);
 
       dispatch({
@@ -263,7 +263,7 @@ const NoticeList = ({ router }) => {
 
   useEffect(() => {
     if (st_noticeDeleteDone) {
-      message.success("공지사항이 삭제되었습니다.");
+      message.success("게시글이 삭제되었습니다.");
       currentListType === 4
         ? dispatch({
             type: NOTICE_LECTURE_LIST_REQUEST,
@@ -584,9 +584,9 @@ const NoticeList = ({ router }) => {
   return (
     <AdminLayout>
       <PageHeader
-        breadcrumbs={["게시판 관리", "공지사항 관리"]}
-        title={`공지사항 리스트`}
-        subTitle={`사용자에게 제공하는 공지사항을 관리할 수 있습니다.`}
+        breadcrumbs={["게시판 관리", "게시판 관리"]}
+        title={`게시 리스트`}
+        subTitle={`사용자에게 제공하는 게시판을 관리할 수 있습니다.`}
       />
 
       <AdminTop createButton={true} createButtonAction={createModalOpen} />
@@ -677,7 +677,7 @@ const NoticeList = ({ router }) => {
       <Modal
         visible={createModal}
         width={`1100px`}
-        title={`새로운 공지사항 작성`}
+        title={`새로운 게시글 작성`}
         onOk={createModalOk}
         onCancel={updateData ? updateModalClose : createModalClose}
       >
