@@ -262,6 +262,7 @@ const List = () => {
         endDate: data.endDate, //
         UserId: data.UserId, //
         zoomLink: data.zoomLink,
+        number: data.number,
       },
     });
   }, []);
@@ -304,6 +305,16 @@ const List = () => {
             <FormItem
               rules={[{ required: true, message: "강의명을 입력해주세요." }]}
               name={`course`}
+            >
+              <CusotmInput />
+            </FormItem>
+          </Wrapper>
+
+          <Wrapper dr={`row`} margin={`0 0 20px`}>
+            <Text width={`80px`}>강의 번호</Text>
+            <FormItem
+              rules={[{ required: true, message: "강의번호를 입력해주세요." }]}
+              name={`number`}
             >
               <CusotmInput />
             </FormItem>

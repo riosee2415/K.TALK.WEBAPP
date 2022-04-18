@@ -421,7 +421,8 @@ const List = ({ location }) => {
           <Button
             type="primary"
             size={`small`}
-            onClick={() => updateModalOpen(data)}>
+            onClick={() => updateModalOpen(data)}
+          >
             정보 추가
           </Button>
         </ColWrapper>
@@ -449,7 +450,8 @@ const List = ({ location }) => {
             <Button
               onClick={() =>
                 moveLinkHandler(`/admin/application/list?type=true`)
-              }>
+              }
+            >
               처리완료
             </Button>
           </Col>
@@ -457,7 +459,8 @@ const List = ({ location }) => {
             <Button
               onClick={() =>
                 moveLinkHandler(`/admin/application/list?type=false`)
-              }>
+              }
+            >
               미처리
             </Button>
           </Col>
@@ -477,7 +480,8 @@ const List = ({ location }) => {
         onCancel={() => onReset()}
         onOk={() => updateClick()}
         okText="추가"
-        cancelText="취소">
+        cancelText="취소"
+      >
         <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
           <Text fontSize={`16px`} fontWeight={`700`} margin={`0 20px 0 0`}>
             신청일 |&nbsp;{updateData && updateData.createdAt.slice(0, 10)}
@@ -501,7 +505,8 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
+                  margin={`0 5px 0 0`}
+                >
                   이름
                 </ColWrapper>
                 <ColWrapper>
@@ -516,7 +521,8 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
+                  margin={`0 5px 0 0`}
+                >
                   생년월일
                 </ColWrapper>
                 <ColWrapper>{updateData && updateData.dateOfBirth}</ColWrapper>
@@ -528,7 +534,8 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
+                  margin={`0 5px 0 0`}
+                >
                   이메일
                 </ColWrapper>
                 <ColWrapper>{updateData && updateData.gmailAddress}</ColWrapper>
@@ -540,7 +547,8 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
+                  margin={`0 5px 0 0`}
+                >
                   국가
                 </ColWrapper>
                 <ColWrapper>{updateData && updateData.nationality}</ColWrapper>
@@ -552,7 +560,8 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
+                  margin={`0 5px 0 0`}
+                >
                   거주 국가
                 </ColWrapper>
                 <ColWrapper>
@@ -566,7 +575,8 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
+                  margin={`0 5px 0 0`}
+                >
                   사용언어
                 </ColWrapper>
                 <ColWrapper>
@@ -580,7 +590,8 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
+                  margin={`0 5px 0 0`}
+                >
                   휴대폰번호
                 </ColWrapper>
                 <ColWrapper>
@@ -595,7 +606,8 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
+                  margin={`0 5px 0 0`}
+                >
                   가능한 수업시간
                 </ColWrapper>
                 <ColWrapper>{updateData && updateData.classHour}</ColWrapper>
@@ -607,7 +619,8 @@ const List = ({ location }) => {
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
                 color={Theme.white_C}
-                margin={`0 5px 0 0`}>
+                margin={`0 5px 0 0`}
+              >
                 내용
               </ColWrapper>
               <ColWrapper width={`100%`} al={`flex-start`}>
@@ -631,7 +644,8 @@ const List = ({ location }) => {
             form={updateForm}
             onFinish={updateFinish}
             labelCol={{ span: 4 }}
-            wrapperCol={{ span: 24 }}>
+            wrapperCol={{ span: 24 }}
+          >
             <Wrapper>
               <Wrapper dr={`row`} ju={`flex-start`} al={`flex-start`}>
                 <Wrapper
@@ -639,13 +653,15 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
+                  margin={`0 5px 0 0`}
+                >
                   시차
                 </Wrapper>
 
                 <FormItem
                   rules={[{ required: true, message: "시차를 입력해주세요." }]}
-                  name="timeDiff">
+                  name="timeDiff"
+                >
                   <CustomInput min={1} type={`number`} width={`100%`} />
                 </FormItem>
               </Wrapper>
@@ -656,7 +672,8 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
+                  margin={`0 5px 0 0`}
+                >
                   원하는 날짜
                 </ColWrapper>
                 <ColWrapper>
@@ -664,7 +681,8 @@ const List = ({ location }) => {
                     rules={[
                       { required: true, message: "날짜를 입력해주세요." },
                     ]}
-                    name="wantStartDate">
+                    name="wantStartDate"
+                  >
                     <DatePicker />
                   </Form.Item>
                 </ColWrapper>
@@ -676,7 +694,8 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
+                  margin={`0 5px 0 0`}
+                >
                   담당강사
                 </ColWrapper>
                 <ColWrapper>
@@ -684,10 +703,12 @@ const List = ({ location }) => {
                     rules={[
                       { required: true, message: "날짜를 입력해주세요." },
                     ]}
-                    name="teacher">
+                    name="teacher"
+                  >
                     <Select
                       style={{ width: `200px` }}
-                      placeholder={`강사를 선택해주세요.`}>
+                      placeholder={`강사를 선택해주세요.`}
+                    >
                       {teachers &&
                         teachers.map((data) => {
                           return (
@@ -707,7 +728,8 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
+                  margin={`0 5px 0 0`}
+                >
                   할인 여부
                 </ColWrapper>
                 <ColWrapper>
@@ -726,7 +748,8 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
+                  margin={`0 5px 0 0`}
+                >
                   줌 미팅 날짜
                 </ColWrapper>
                 <ColWrapper>
@@ -734,7 +757,8 @@ const List = ({ location }) => {
                     rules={[
                       { required: true, message: "날짜를 입력해주세요." },
                     ]}
-                    name="meetDate">
+                    name="meetDate"
+                  >
                     <DatePicker />
                   </Form.Item>
                 </ColWrapper>
@@ -746,7 +770,8 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
+                  margin={`0 5px 0 0`}
+                >
                   레벨
                 </ColWrapper>
                 <ColWrapper>
@@ -754,7 +779,8 @@ const List = ({ location }) => {
                     rules={[
                       { required: true, message: "레벨을 입력해주세요." },
                     ]}
-                    name="level">
+                    name="level"
+                  >
                     <Select style={{ width: 176 }}>
                       {levelData.map((data, idx) => {
                         return (
@@ -774,7 +800,8 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
+                  margin={`0 5px 0 0`}
+                >
                   직업
                 </ColWrapper>
                 <ColWrapper>
@@ -782,7 +809,8 @@ const List = ({ location }) => {
                     rules={[
                       { required: true, message: "직업를 입력해주세요." },
                     ]}
-                    name="job">
+                    name="job"
+                  >
                     <CustomInput width={`100%`} />
                   </Form.Item>
                 </ColWrapper>
@@ -794,7 +822,8 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
+                  margin={`0 5px 0 0`}
+                >
                   배우는 목적
                 </ColWrapper>
                 <ColWrapper width={`80%`} al={`flex-start`}>
@@ -805,9 +834,16 @@ const List = ({ location }) => {
                         message: "배우는 목적을 입력해주세요.",
                       },
                     ]}
+<<<<<<< HEAD
                     name="purpose">
                     <TextArea height={`200px`} width={`100%`} />
                   </FormItem>
+=======
+                    name="purpose"
+                  >
+                    <TextArea width={`90%`} />
+                  </Form.Item>
+>>>>>>> refs/remotes/origin/master
                 </ColWrapper>
               </RowWrapper>
             </Wrapper>
@@ -824,12 +860,14 @@ const List = ({ location }) => {
         onCancel={() => createModalToggle()}
         onOk={() => createClick()}
         okText="생성"
-        cancelText="취소">
+        cancelText="취소"
+      >
         <CustomForm
           form={createForm}
           onFinish={createFinish}
           labelCol={{ span: 4 }}
-          wrapperCol={{ span: 20 }}>
+          wrapperCol={{ span: 20 }}
+        >
           <Form.Item label="이메일" name="email">
             <Input disabled type="email" />
           </Form.Item>
@@ -901,28 +939,32 @@ const List = ({ location }) => {
           <Form.Item
             label="주소"
             rules={[{ required: true, message: "주소를 입력해주세요." }]}
-            name="address">
+            name="address"
+          >
             <Input />
           </Form.Item>
 
           <Form.Item
             label="상세주소"
             rules={[{ required: true, message: "상세주소를 입력해주세요." }]}
-            name="detailAddress">
+            name="detailAddress"
+          >
             <Input />
           </Form.Item>
 
           <Form.Item
             label="sns"
             rules={[{ required: true, message: "sns를 입력해주세요." }]}
-            name="sns">
+            name="sns"
+          >
             <Input />
           </Form.Item>
 
           <Form.Item
             label="sns아이디"
             rules={[{ required: true, message: "sns아이디를 입력해주세요." }]}
-            name="snsId">
+            name="snsId"
+          >
             <Input />
           </Form.Item>
 

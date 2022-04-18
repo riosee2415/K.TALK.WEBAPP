@@ -174,9 +174,9 @@ const PaymentList = ({}) => {
   return (
     <AdminLayout>
       <PageHeader
-        breadcrumbs={["결제내역 관리", "결제목록 관리"]}
-        title={`결제목록 관리`}
-        subTitle={`관리자가 결제내역을 관리할 수 있습니다.`}
+        breadcrumbs={["입금 관리", "입금 관리"]}
+        title={`입금 관리`}
+        subTitle={`관리자가 입금내역을 관리할 수 있습니다.`}
       />
 
       <AdminContent>
