@@ -216,7 +216,7 @@ const UserList = ({}) => {
             dr={`row`}
             ju={`flex-start`}
             margin={`0 0 10px`}
-            width={`auto`}
+            width={`calc(100% - 80px)`}
           >
             <Input
               size="small"
@@ -230,7 +230,11 @@ const UserList = ({}) => {
               placeholder="이메일"
               {...inputEmail}
             />
-            <Button size="small" onClick={() => onSeachTeaHandler()}>
+            <Button
+              widt={`80px`}
+              size="small"
+              onClick={() => onSeachTeaHandler()}
+            >
               <SearchOutlined />
               검색
             </Button>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   KAKAO_LOGIN_REQUEST,
@@ -27,6 +27,7 @@ import { SEO_LIST_REQUEST } from "../reducers/seo";
 import Head from "next/head";
 import Popup from "../components/popup/popup";
 import { useRef } from "react";
+import { useRouter } from "next/router";
 
 const Home = ({}) => {
   const width = useWidth();
@@ -36,10 +37,14 @@ const Home = ({}) => {
   );
 
   ////// HOOKS //////
+  const router = useRouter();
   ////// REDUX //////
   ////// USEEFFECT //////
   ////// TOGGLE //////
   ////// HANDLER //////
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
+  }, []);
   ////// DATAVIEW //////
 
   const getEditContent = (contentValue) => {};
@@ -136,24 +141,20 @@ const Home = ({}) => {
                     </Text>
                   </Wrapper>
                   <Wrapper width={`auto`}>
-                    <ATag
-                      href={`https://forms.gle/M4hQxCN8itnWkM3x7 `}
-                      target={`_blank`}
+                    <CommonButton
+                      height={`40px`}
+                      kindOf={`white`}
+                      padding={`5px 5px 5px 8px`}
+                      onClick={() => moveLinkHandler(`/application`)}
                     >
-                      <CommonButton
-                        height={`40px`}
-                        kindOf={`white`}
-                        padding={`5px 5px 5px 8px`}
-                      >
-                        apply here
-                        <Image
-                          alt="icon"
-                          margin={`0 0 0 15px`}
-                          width={width < 900 ? `25px` : `30px`}
-                          src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/blue-btn.png`}
-                        />
-                      </CommonButton>
-                    </ATag>
+                      apply here
+                      <Image
+                        alt="icon"
+                        margin={`0 0 0 15px`}
+                        width={width < 900 ? `25px` : `30px`}
+                        src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/blue-btn.png`}
+                      />
+                    </CommonButton>
                   </Wrapper>
                 </Wrapper>
                 <Wrapper
@@ -176,24 +177,20 @@ const Home = ({}) => {
                     <Text fontWeight={`300`}>2 sessions a week</Text>
                   </Wrapper>
                   <Wrapper width={`auto`}>
-                    <ATag
-                      href={`https://forms.gle/M4hQxCN8itnWkM3x7`}
-                      target={`_blank`}
+                    <CommonButton
+                      height={`40px`}
+                      kindOf={`white`}
+                      padding={`5px 5px 5px 8px`}
+                      onClick={() => moveLinkHandler(`/application`)}
                     >
-                      <CommonButton
-                        height={`40px`}
-                        kindOf={`white`}
-                        padding={`5px 5px 5px 8px`}
-                      >
-                        apply here
-                        <Image
-                          alt="icon"
-                          margin={`0 0 0 15px`}
-                          width={width < 900 ? `25px` : `30px`}
-                          src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/blue-btn.png`}
-                        />
-                      </CommonButton>
-                    </ATag>
+                      apply here
+                      <Image
+                        alt="icon"
+                        margin={`0 0 0 15px`}
+                        width={width < 900 ? `25px` : `30px`}
+                        src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/blue-btn.png`}
+                      />
+                    </CommonButton>
                   </Wrapper>
                 </Wrapper>
               </Wrapper>
