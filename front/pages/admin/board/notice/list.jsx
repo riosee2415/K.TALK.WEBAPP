@@ -138,7 +138,9 @@ const NoticeList = ({ router }) => {
     st_noticeUpdateDone,
     st_noticeDeleteDone,
 
-    st_noticeListError,
+    st_noticeLectureListError,
+    st_noticeAdminListError,
+
     st_noticeCreateError,
     st_noticeUpdateError,
     st_noticeDeleteError,
@@ -170,10 +172,16 @@ const NoticeList = ({ router }) => {
   ////// USEEFFECT //////
 
   useEffect(() => {
-    if (st_noticeListError) {
-      return message.error(st_noticeListError);
+    if (st_noticeLectureListError) {
+      return message.error(st_noticeLectureListError);
     }
-  }, [st_noticeListError]);
+  }, [st_noticeLectureListError]);
+
+  useEffect(() => {
+    if (st_noticeAdminListError) {
+      return message.error(st_noticeAdminListError);
+    }
+  }, [st_noticeAdminListError]);
 
   useEffect(() => {
     if (st_noticeCreateError) {

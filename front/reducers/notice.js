@@ -3,6 +3,7 @@ import produce from "../util/produce";
 export const initailState = {
   noticeLectureList: null,
   noticeLectureLastPage: 1,
+  notices: null,
 
   uploadPath: null,
 
@@ -21,11 +22,11 @@ export const initailState = {
   createModal: false,
   detailModal: false,
   //
-  st_noticeLectureListLoading: false,
+  st_noticeLectureListLoading: false, //
   st_noticeLectureListDone: false,
   st_noticeLectureListError: null,
   //
-  st_noticeListLoading: false,
+  st_noticeListLoading: false, //
   st_noticeListDone: false,
   st_noticeListError: null,
   //
@@ -33,7 +34,7 @@ export const initailState = {
   st_noticeDetailDone: false,
   st_noticeDetailError: null,
   //
-  st_noticeAdminListLoading: false,
+  st_noticeAdminListLoading: false, //
   st_noticeAdminListDone: false,
   st_noticeAdminListError: null,
   //
@@ -69,7 +70,7 @@ export const initailState = {
   st_noticePrevDone: false,
   st_noticePrevError: null,
   //
-  st_noticeMyLectureListLoading: false,
+  st_noticeMyLectureListLoading: false, //
   st_noticeMyLectureListDone: false,
   st_noticeMyLectureListError: null,
 };
@@ -143,22 +144,22 @@ const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
       case NOTICE_LECTURE_LIST_REQUEST: {
-        draft.st_noticeListLoading = true;
-        draft.st_noticeListDone = null;
-        draft.st_noticeListError = false;
+        draft.st_noticeLectureListLoading = true;
+        draft.st_noticeLectureListDone = null;
+        draft.st_noticeLectureListError = false;
         break;
       }
       case NOTICE_LECTURE_LIST_SUCCESS: {
-        draft.st_noticeListLoading = false;
-        draft.st_noticeListDone = true;
+        draft.st_noticeLectureListLoading = false;
+        draft.st_noticeLectureListDone = true;
         draft.noticeLectureList = action.data.notice;
         draft.noticeLectureLastPage = action.data.lastPage;
         break;
       }
       case NOTICE_LECTURE_LIST_FAILURE: {
-        draft.st_noticeListLoading = false;
-        draft.st_noticeListDone = false;
-        draft.st_noticeListError = action.error;
+        draft.st_noticeLectureListLoading = false;
+        draft.st_noticeLectureListDone = false;
+        draft.st_noticeLectureListError = action.error;
         break;
       }
 
@@ -208,22 +209,22 @@ const reducer = (state = initailState, action) =>
       ///////////////////////////////////////////////////////
 
       case NOTICE_ADMIN_LIST_REQUEST: {
-        draft.st_noticeListLoading = true;
-        draft.st_noticeListDone = null;
-        draft.st_noticeListError = false;
+        draft.st_noticeAdminListLoading = true;
+        draft.st_noticeAdminListDone = null;
+        draft.st_noticeAdminListError = false;
         break;
       }
       case NOTICE_ADMIN_LIST_SUCCESS: {
-        draft.st_noticeListLoading = false;
-        draft.st_noticeListDone = true;
+        draft.st_noticeAdminListLoading = false;
+        draft.st_noticeAdminListDone = true;
         draft.notices = action.data.notice;
-        draft.maxPage = action.data.lastPage;
+
         break;
       }
       case NOTICE_ADMIN_LIST_FAILURE: {
-        draft.st_noticeListLoading = false;
-        draft.st_noticeListDone = false;
-        draft.st_noticeListError = action.error;
+        draft.st_noticeAdminListLoading = false;
+        draft.st_noticeAdminListDone = false;
+        draft.st_noticeAdminListError = action.error;
         break;
       }
 

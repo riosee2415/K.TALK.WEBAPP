@@ -8,6 +8,7 @@ import {
   Modal,
   notification,
   Select,
+  Table,
   TimePicker,
 } from "antd";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -44,6 +45,8 @@ import {
 } from "../../reducers/lecture";
 import moment from "moment";
 import { SolutionOutlined } from "@ant-design/icons";
+import { MESSAGE_ADMIN_LIST_REQUEST } from "../../reducers/message";
+import { NOTICE_ADMIN_LIST_REQUEST } from "../../reducers/notice";
 
 // let Line;
 
@@ -157,7 +160,19 @@ const AdminHome = () => {
     st_userStuListError,
   } = useSelector((state) => state.user);
 
+  const { notices } = useSelector((state) => state.notice);
+  const { messageAdminList } = useSelector((state) => state.message);
+
   ////// USEEFFECT //////
+
+  // useEffect(() => {
+  //   dispatch({
+  //     type: NOTICE_ADMIN_LIST_REQUEST,
+  //     data: {
+  //       level: 4,
+  //     },
+  //   });
+  // }, [router.query]);
 
   useEffect(() => {
     dispatch({
@@ -523,9 +538,9 @@ const AdminHome = () => {
       searchStartLv += searchStep + "단원 ";
     }
 
-    if (searchPage) {
-      searchStartLv += searchPage + "페이지";
-    }
+    // if (searchPage) {
+    //   searchStartLv += searchPage + "페이지";
+    // }
 
     // if (!startLv || startLv.trim() === "" || startLv.includes("undefined")) {
     //   startLv = "";
@@ -549,6 +564,78 @@ const AdminHome = () => {
     searchStuName,
   ]);
 
+  const noticeColumns = [
+    {
+      title: "No",
+      dataIndex: "id",
+    },
+    {
+      title: "Title",
+      dataIndex: "title",
+    },
+    {
+      title: "Author",
+      dataIndex: "author",
+    },
+    {
+      title: "CreatedAt",
+      render: (data) => <div>{data.createdAt.substring(0, 13)}</div>,
+    },
+    {
+      title: "UPDATE",
+      render: (data) => (
+        <Button type="primary" onClick={() => {}}>
+          UPDATE
+        </Button>
+      ),
+    },
+    {
+      title: "DEL",
+      render: (data) => (
+        <Button type="danger" onClick={() => {}}>
+          DEL
+        </Button>
+      ),
+    },
+  ];
+
+  const columns = [
+    {
+      title: "번호",
+      dataIndex: "id",
+    },
+    {
+      title: "제목",
+      dataIndex: "title",
+    },
+
+    {
+      title: "작성자",
+      dataIndex: "author",
+    },
+
+    {
+      title: "생성일",
+      render: (data) => <div>{data.createdAt.substring(0, 14)}</div>,
+    },
+    {
+      title: "상세보기",
+      render: (data) => (
+        <Button type="primary" size="small" onClick={() => {}}>
+          확인
+        </Button>
+      ),
+    },
+    {
+      title: "답변하기",
+      render: (data) => (
+        <Button type="primary" size="small" onClick={() => {}}>
+          답변하기
+        </Button>
+      ),
+    },
+  ];
+
   return (
     <>
       {me && me.level >= 3 ? (
@@ -560,6 +647,35 @@ const AdminHome = () => {
           /> */}
 
           <AdminContent>
+            <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 30px`}>
+              <Wrapper al={`flex-start`} width={`49%`}>
+                <Text margin={`0 0 10px`} fontSize={`18px`} fontWeight={`bold`}>
+                  전체 이용자 게시판
+                </Text>
+
+                <Table
+                  rowKey="id"
+                  dataSource={notices ? notices : []}
+                  size="small"
+                  columns={noticeColumns}
+                  style={{ width: `100%` }}
+                />
+              </Wrapper>
+              <Wrapper al={`flex-start`} width={`49%`}>
+                <Text margin={`0 0 10px`} fontSize={`18px`} fontWeight={`bold`}>
+                  전체 쪽지 목록
+                </Text>
+
+                <Table
+                  rowKey="id"
+                  dataSource={messageAdminList ? messageAdminList : []}
+                  size="small"
+                  columns={columns}
+                  style={{ width: `100%` }}
+                />
+              </Wrapper>
+            </Wrapper>
+
             <Wrapper al={`flex-start`} margin={`0 0 10px`}>
               <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 16px`}>
                 <Text
@@ -630,14 +746,13 @@ const AdminHome = () => {
                 </Wrapper>
 
                 <Wrapper dr={`row`} width={`auto`} ju={`flex-start`}>
-                  <Text width={`auto`}>진도별 조회</Text>
                   <Wrapper
                     width={`auto`}
                     dr={`row`}
                     ju={`flex-start`}
                     margin={`0 10px 0 0`}
                   >
-                    <FormItem width={`200px`}>
+                    <FormItem width={`70px`}>
                       <Select onChange={(e) => setSearchLevel(e)} allowClear>
                         <Select.Option value={`1`}>1</Select.Option>
                         <Select.Option value={`2`}>2</Select.Option>
@@ -662,7 +777,7 @@ const AdminHome = () => {
                     ju={`flex-start`}
                     margin={`0 10px 0 0`}
                   >
-                    <FormItem width={`200px`}>
+                    <FormItem width={`70px`}>
                       <Select onChange={(e) => setSearchStep(e)} allowClear>
                         <Select.Option value={`1`}>1</Select.Option>
                         <Select.Option value={`2`}>2</Select.Option>
@@ -675,13 +790,13 @@ const AdminHome = () => {
                     <Text>&nbsp;단원</Text>
                   </Wrapper>
 
-                  <Wrapper
+                  {/* <Wrapper
                     width={`auto`}
                     dr={`row`}
                     ju={`flex-start`}
                     margin={`0 10px 0 0`}
                   >
-                    <FormItem width={`200px`}>
+                    <FormItem width={`70px`}>
                       <Input
                         type={`number`}
                         num={`1`}
@@ -690,7 +805,7 @@ const AdminHome = () => {
                       />
                     </FormItem>
                     <Text>&nbsp;페이지</Text>
-                  </Wrapper>
+                  </Wrapper> */}
 
                   <Button
                     type="primary"
@@ -710,16 +825,18 @@ const AdminHome = () => {
                   </Wrapper>
                 ) : (
                   allLectureList &&
-                  allLectureList.map((data) => {
+                  allLectureList.map((data, idx) => {
                     return (
                       <Wrapper
                         key={data.id}
-                        width={`calc(100% / 3 - 20px)`}
+                        width={`calc(100% / 3 - 10px)`}
                         minHeight={`370px`}
                         radius={`10px`}
                         shadow={`0 5px 15px rgba(0,0,0,0.05)`}
-                        margin={`0 20px 30px 0`}
-                        padding={`20px`}
+                        margin={
+                          (idx + 1) % 3 === 0 ? `0 0 30px 0` : `0 10px 30px 0`
+                        }
+                        padding={`20px 10px`}
                         ju={`space-between`}
                       >
                         <Wrapper>
@@ -1241,6 +1358,20 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: MESSAGE_ADMIN_LIST_REQUEST,
+      data: {
+        listType: "",
+        search: "",
+      },
+    });
+    context.store.dispatch({
+      type: NOTICE_ADMIN_LIST_REQUEST,
+      data: {
+        level: 4,
+      },
     });
 
     // context.store.dispatch({

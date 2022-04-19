@@ -98,7 +98,7 @@ const FormTag = styled(Form)`
   width: 60%;
 `;
 const FormItem = styled(Form.Item)`
-  width: ${(props) => props.width || `calc(100% - 80px)`};
+  width: ${(props) => props.width || `calc(100% - 90px)`};
   margin: ${(props) => props.margin || `0`};
   display: flex;
   flex-direction: ${(props) => props.dr || ``};
@@ -294,14 +294,14 @@ const List = () => {
               강의시간을 선택하려면 강의를 진행하는 요일부터 선택해야 합니다.
             </GuideLi>
             <GuideLi color={Theme.red_C} isImpo>
-              횟수는 일주일에 강의를 몇 번 진행할지를 의미합니다. 횟수와 진행
-              요일을 선택하면 총 횟수가 자동으로 계산됩니다.
+              일주일별 횟수는 일주일에 강의를 몇 번 진행할지를 의미합니다.
+              횟수와 진행 요일을 선택하면 총 횟수가 자동으로 계산됩니다.
             </GuideLi>
           </GuideUl>
         </Wrapper>
         <FormTag form={form} ref={formRef} onFinish={onSubmit}>
           <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`}>강의명</Text>
+            <Text width={`90px`}>강의명</Text>
             <FormItem
               rules={[{ required: true, message: "강의명을 입력해주세요." }]}
               name={`course`}
@@ -311,7 +311,7 @@ const List = () => {
           </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`}>강의 번호</Text>
+            <Text width={`90px`}>강의 번호</Text>
             <FormItem
               rules={[{ required: true, message: "강의번호를 입력해주세요." }]}
               name={`number`}
@@ -321,7 +321,7 @@ const List = () => {
           </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`}>강사</Text>
+            <Text width={`90px`}>강사</Text>
             <FormItem
               rules={[{ required: true, message: "강사를 선택해주세요." }]}
               name={`UserId`}
@@ -341,8 +341,8 @@ const List = () => {
           </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`}>레벨</Text>
-            <Wrapper dr={`row`} width={`calc(100% - 80px)`}>
+            <Text width={`90px`}>레벨</Text>
+            <Wrapper dr={`row`} width={`calc(100% - 90px)`}>
               <Wrapper width={`calc(100% / 3)`} dr={`row`} ju={`flex-start`}>
                 <FormItem
                   name={`lv1`}
@@ -409,15 +409,16 @@ const List = () => {
           </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`}>강의 기간</Text>
+            <Text width={`90px`}>강의 기간</Text>
             <FormItem
               rules={[{ required: true, message: "강의 기간을 입력해주세요." }]}
               name={`lecDate`}
-              width={`calc(100% - 110px)`}
+              width={`calc(100% - 120px)`}
             >
               <CusotmInput
                 onChange={startDateChangeHandler}
                 type={`number`}
+                min={1}
                 {...inputPeriod}
               />
             </FormItem>
@@ -427,12 +428,14 @@ const List = () => {
           </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`}>횟수</Text>
+            <Text width={`90px`}>일주일별 횟수</Text>
             <FormItem
-              rules={[{ required: true, message: "횟수를 입력해주세요." }]}
+              rules={[
+                { required: true, message: "일주일별 횟수를 입력해주세요." },
+              ]}
               name={`cnt`}
               {...inputCnt}
-              width={`calc(100% - 110px)`}
+              width={`calc(100% - 120px)`}
             >
               <CusotmInput type={`number`} />
             </FormItem>
@@ -442,7 +445,7 @@ const List = () => {
           </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`}>진행 요일</Text>
+            <Text width={`90px`}>진행 요일</Text>
             <FormItem
               rules={[{ required: true, message: "요일을 입력해주세요." }]}
               name={`day`}
@@ -466,8 +469,8 @@ const List = () => {
           </Wrapper>
           {dayArr && dayArr.length !== 0 && (
             <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
-              <Text width={`80px`}>수업 시간</Text>
-              <Wrapper dr={`row`} ju={`flex-start`} width={`calc(100% - 80px)`}>
+              <Text width={`90px`}>수업 시간</Text>
+              <Wrapper dr={`row`} ju={`flex-start`} width={`calc(100% - 90px)`}>
                 {dayArr.map((data, idx) => {
                   return (
                     <FormItem
@@ -491,8 +494,8 @@ const List = () => {
           )}
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`}>총 횟수</Text>
-            <FormItem name={`allCnt`} width={`calc(100% - 110px)`}>
+            <Text width={`90px`}>총 횟수</Text>
+            <FormItem name={`allCnt`} width={`calc(100% - 120px)`}>
               <CusotmInput type={`number`} readOnly={true} />
             </FormItem>
             <Text width={`30px`} padding={`0 0 0 10px`}>
@@ -501,7 +504,7 @@ const List = () => {
           </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`}>시작 날짜</Text>
+            <Text width={`90px`}>시작 날짜</Text>
             <FormItem
               rules={[{ required: true, message: "시작 날짜를 입력해주세요." }]}
               name={`startDate`}
@@ -515,7 +518,7 @@ const List = () => {
           </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`} onClick={() => setEndDate(null)}>
+            <Text width={`90px`} onClick={() => setEndDate(null)}>
               종료 날짜
             </Text>
             <FormItem
@@ -531,7 +534,7 @@ const List = () => {
           </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`} onClick={() => setEndDate(null)}>
+            <Text width={`90px`} onClick={() => setEndDate(null)}>
               줌 링크
             </Text>
             <FormItem

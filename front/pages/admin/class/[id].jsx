@@ -550,7 +550,7 @@ const DetailClass = () => {
                 color={Theme.grey2_C}
                 margin={`0 0 0 15px`}
               >
-                NO.{router.query && router.query.id}
+                NO.{lectureDetail && lectureDetail[0].number}
               </Text>
             </Wrapper>
           </Wrapper>
@@ -703,8 +703,13 @@ const DetailClass = () => {
           columns={lectureColumns}
           dataSource={lectureDiaryAdminList}
         />
-        <Wrapper dr={`row`} ju={`space-between`} al={`flex-start`}>
-          <Wrapper width={`47.5%`} al={`flex-start`}>
+        <Wrapper
+          dr={`row`}
+          ju={`space-between`}
+          al={`flex-start`}
+          margin={`30px 0 0`}
+        >
+          <Wrapper width={`49%`} al={`flex-start`}>
             <Text fontSize={`18px`} fontWeight={`bold`}>
               게시판
             </Text>
@@ -723,7 +728,7 @@ const DetailClass = () => {
               size={`small`}
             />
           </Wrapper>
-          <Wrapper width={`47.5%`} al={`flex-start`}>
+          <Wrapper width={`49%`} al={`flex-start`}>
             <Text fontSize={`18px`} fontWeight={`bold`}>
               쪽지
             </Text>
