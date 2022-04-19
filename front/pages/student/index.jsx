@@ -804,18 +804,17 @@ const Student = () => {
   const answerFinishHandler = useCallback(
     async (data) => {
       if (messageDatum) {
-        console.log(data, "data");
-        // dispatch({
-        //   type: MESSAGE_CREATE_REQUEST,
-        //   data: {
-        //     title: data.title,
-        //     author: me.userId,
-        //     senderId: me.id,
-        //     receiverId: messageDatum.senderId,
-        //     content: data.content,
-        //     level: messageDatum.userLevel,
-        //   },
-        // });
+        dispatch({
+          type: MESSAGE_CREATE_REQUEST,
+          data: {
+            title: data.title,
+            author: me.userId,
+            senderId: me.id,
+            receiverId: messageDatum.senderId,
+            content: data.content,
+            level: messageDatum.userLevel,
+          },
+        });
       }
     },
     [me, messageDatum]

@@ -317,18 +317,17 @@ const List = ({ router }) => {
 
   const onSubmit = useCallback(
     (value) => {
-      console.log(updateData, "updateData");
-      // dispatch({
-      //   type: MESSAGE_CREATE_REQUEST,
-      //   data: {
-      //     title: value.title1,
-      //     author: me && me.userId,
-      //     senderId: me && me.id,
-      //     receiverId: updateData.senderId,
-      //     content: value.content1,
-      //     level: updateData.level,
-      //   },
-      // });
+      dispatch({
+        type: MESSAGE_CREATE_REQUEST,
+        data: {
+          title: value.title1,
+          author: me && me.userId,
+          senderId: me && me.id,
+          receiverId: updateData.senderId,
+          content: value.content1,
+          level: updateData.level,
+        },
+      });
     },
     [updateData, me]
   );

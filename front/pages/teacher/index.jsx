@@ -759,10 +759,10 @@ const Index = () => {
           data: {
             title: data.messageTitle,
             author: me.userId,
-            senderId: messageData.receiverId,
+            senderId: me.id,
             receiverId: messageData.senderId,
             content: data.messageContent,
-            level: me.level,
+            level: messageData.userLevel,
           },
         });
       }
