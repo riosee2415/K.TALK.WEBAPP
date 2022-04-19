@@ -445,17 +445,21 @@ router.post("/user/delete/list", isAdminCheck, async (req, res, next) => {
 router.post("/user/limit/list", isAdminCheck, async (req, res, next) => {
   const { UserId } = req.body;
 
+  let _UserId = UserId || null;
+
   try {
-    const exUser = await User.findOne({
-      where: { id: parseInt(UserId) },
-    });
+    if (_UserId) {
+      const exUser = await User.findOne({
+        where: { id: parseInt(UserId) },
+      });
 
-    if (!exUser) {
-      return res.status(401).send("존재하지 않는 학생입니다.");
-    }
+      if (!exUser) {
+        return res.status(401).send("존재하지 않는 학생입니다.");
+      }
 
-    if (exUser.level !== 1) {
-      return res.status(401).send("해당 사용자는 학생이 아닙니다.");
+      if (exUser.level !== 1) {
+        return res.status(401).send("해당 사용자는 학생이 아닙니다.");
+      }
     }
 
     const selectQuery = `
@@ -473,12 +477,12 @@ router.post("/user/limit/list", isAdminCheck, async (req, res, next) => {
             CONCAT(DATEDIFF(A.endDate, now()), "일") 			AS lastDate
       FROM	participants		A
      INNER
-      JOIN	lectures 			B	
+      JOIN	lectures 			  B	
         ON	A.LectureId = B.id
      WHERE	1 = 1
        AND  A.isDelete = FALSE
        AND  A.isChange = FALSE
-       AND	A.UserId = ${UserId}
+      ${_UserId ? `AND	A.UserId = ${_UserId}` : ``} 
        AND  DATE_ADD(DATE_FORMAT(now(), '%Y-%m-%d'), INTERVAL 7 DAY) >= A.endDate
     `;
 
