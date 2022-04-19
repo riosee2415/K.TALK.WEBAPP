@@ -510,20 +510,33 @@ const AdminHome = () => {
   }, []);
 
   const onClickSearchLevelHandle = useCallback(() => {
-    let startLv = `${searchLevel ? searchLevel : ""} ${
-      searchStep ? searchStep : ""
-    } ${searchPage ? `${searchPage}페이지` : ""}`;
+    // let startLv = `${searchLevel ? searchLevel : ""} ${
+    //   searchStep ? searchStep : ""
+    // } ${searchPage ? `${searchPage}페이지` : ""}`;
+    let searchStartLv = "";
 
-    if (!startLv || startLv.trim() === "" || startLv.includes("undefined")) {
-      startLv = "";
+    if (searchLevel) {
+      searchStartLv += searchLevel + "권 ";
     }
+
+    if (searchStep) {
+      searchStartLv += searchStep + "단원 ";
+    }
+
+    if (searchPage) {
+      searchStartLv += searchPage + "페이지";
+    }
+
+    // if (!startLv || startLv.trim() === "" || startLv.includes("undefined")) {
+    //   startLv = "";
+    // }
 
     dispatch({
       type: LECTURE_ALL_LIST_REQUEST,
       data: {
         TeacherId: currentTeacher ? currentTeacher : "",
         time: searchTime ? searchTime : "",
-        startLv: startLv,
+        startLv: searchStartLv,
         studentName: searchStuName ? searchStuName : "",
       },
     });
@@ -616,24 +629,9 @@ const AdminHome = () => {
                   </Select>
                 </Wrapper>
 
-                <Button
-                  type="primary"
-                  onClick={() => onClickSearchLevelHandle()}
-                >
-                  검색
-                </Button>
-              </Wrapper>
-
-              <Wrapper dr={`row`} ju={`flex-start`} margin={`10px 0 0`}>
-                <Text width={`auto`} margin={`0 10px 0 0`}>
-                  진도별 조회
-                </Text>
                 <Wrapper width={`200px`} dr={`row`} ju={`flex-start`}>
                   <FormItem width={`calc(100% - 50px)`}>
-                    <Select
-                      onChange={(e) => setSearchLevel(`${e}권`)}
-                      allowClear
-                    >
+                    <Select onChange={(e) => setSearchLevel(e)} allowClear>
                       <Select.Option value={`1`}>1</Select.Option>
                       <Select.Option value={`2`}>2</Select.Option>
                       <Select.Option value={`3`}>3</Select.Option>
@@ -653,10 +651,7 @@ const AdminHome = () => {
 
                 <Wrapper width={`200px`} dr={`row`} ju={`flex-start`}>
                   <FormItem width={`calc(100% - 50px)`}>
-                    <Select
-                      onChange={(e) => setSearchStep(`${e}단원`)}
-                      allowClear
-                    >
+                    <Select onChange={(e) => setSearchStep(e)} allowClear>
                       <Select.Option value={`1`}>1</Select.Option>
                       <Select.Option value={`2`}>2</Select.Option>
                       <Select.Option value={`3`}>3</Select.Option>
@@ -679,6 +674,19 @@ const AdminHome = () => {
                   </FormItem>
                   <Text>&nbsp;페이지</Text>
                 </Wrapper>
+
+                <Button
+                  type="primary"
+                  onClick={() => onClickSearchLevelHandle()}
+                >
+                  검색
+                </Button>
+              </Wrapper>
+
+              <Wrapper dr={`row`} ju={`flex-start`} margin={`10px 0 0`}>
+                <Text width={`auto`} margin={`0 10px 0 0`}>
+                  진도별 조회
+                </Text>
               </Wrapper>
             </Wrapper>
 
@@ -714,6 +722,7 @@ const AdminHome = () => {
                               <Wrapper
                                 dr={`row`}
                                 ju={`flex-start`}
+                                al={`flex-start`}
                                 margin={`0 0 15px`}
                               >
                                 <Wrapper
@@ -726,10 +735,17 @@ const AdminHome = () => {
                                     alt={`icon_lecture`}
                                   />
                                 </Wrapper>
-
-                                <Text fontSize={`16px`} fontWeight={`700`}>
-                                  {data.day}&nbsp;/&nbsp;{data.time}
-                                </Text>
+                                <Wrapper
+                                  width={`calc(100% - 44px)`}
+                                  al={`flex-start`}
+                                >
+                                  <Text fontSize={`16px`} fontWeight={`700`}>
+                                    {data.day}
+                                  </Text>
+                                  <Text fontSize={`16px`} fontWeight={`700`}>
+                                    {data.time}
+                                  </Text>
+                                </Wrapper>
                               </Wrapper>
 
                               <Wrapper
