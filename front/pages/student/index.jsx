@@ -314,7 +314,7 @@ const Student = () => {
     st_lectureHomeworkStuListDone,
     st_lectureHomeworkStuListError,
   } = useSelector((state) => state.lecture);
-  console.log(lectureStuLectureList);
+
   const { bookLecture, st_bookLectureListDone, st_bookLectureListError } =
     useSelector((state) => state.book);
 
@@ -394,8 +394,7 @@ const Student = () => {
           <Button
             type={`primary`}
             size={`small`}
-            onClick={() => fileDownloadHandler(data.Book.file)}
-          >
+            onClick={() => fileDownloadHandler(data.Book.file)}>
             다운로드
           </Button>
         );
@@ -638,6 +637,10 @@ const Student = () => {
   const messageViewModalHandler = useCallback((data) => {
     setMessageViewModal((prev) => !prev);
 
+    if (data.userLevel === 3 || data.userLevel === 4) {
+      setSendMessageType(3);
+    }
+
     setMessageDatum(data);
   }, []);
 
@@ -789,9 +792,9 @@ const Student = () => {
       dispatch({
         type: MESSAGE_FOR_ADMIN_CREATE_REQUEST,
         data: {
-          title: data.messageTitle,
+          title: data.title,
           author: me.userId,
-          content: data.messageContent,
+          content: data.content,
         },
       });
     },
@@ -801,17 +804,18 @@ const Student = () => {
   const answerFinishHandler = useCallback(
     async (data) => {
       if (messageDatum) {
-        dispatch({
-          type: MESSAGE_CREATE_REQUEST,
-          data: {
-            title: data.title,
-            author: me.userId,
-            senderId: me.id,
-            receiverId: messageDatum.senderId,
-            content: data.content,
-            level: messageDatum.level,
-          },
-        });
+        console.log(data, "data");
+        // dispatch({
+        //   type: MESSAGE_CREATE_REQUEST,
+        //   data: {
+        //     title: data.title,
+        //     author: me.userId,
+        //     senderId: me.id,
+        //     receiverId: messageDatum.senderId,
+        //     content: data.content,
+        //     level: messageDatum.userLevel,
+        //   },
+        // });
       }
     },
     [me, messageDatum]
@@ -1120,8 +1124,7 @@ const Student = () => {
             <Wrapper
               margin={width < 700 ? `30px 0` : `60px 0`}
               dr={`row`}
-              ju={`space-between`}
-            >
+              ju={`space-between`}>
               <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
                 <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
                   <Image
@@ -1139,8 +1142,7 @@ const Student = () => {
                 <Text
                   fontSize={width < 700 ? `20px` : `28px`}
                   fontWeight={`bold`}
-                  padding={`0 0 0 15px`}
-                >
+                  padding={`0 0 0 15px`}>
                   안녕하세요,&nbsp;
                   <SpanText color={Theme.basicTheme_C}>
                     {me && me.userId}
@@ -1158,8 +1160,7 @@ const Student = () => {
             <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 20px`}>
               <Text
                 fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-              >
+                fontWeight={`bold`}>
                 내 시간표
               </Text>
             </Wrapper>
@@ -1181,21 +1182,18 @@ const Student = () => {
                     radius={`10px`}
                     shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
                     margin={`0 0 86px`}
-                    al={`flex-start`}
-                  >
+                    al={`flex-start`}>
                     <Wrapper
                       width={
                         width < 1280 ? (width < 800 ? `100%` : `60%`) : `37%`
                       }
                       dr={`row`}
                       ju={`space-between`}
-                      al={`flex-start`}
-                    >
+                      al={`flex-start`}>
                       <Wrapper
                         width={`auto`}
                         padding={width < 700 ? `0` : `5px`}
-                        margin={`0 10px 0 0`}
-                      >
+                        margin={`0 10px 0 0`}>
                         <Image
                           width={`22px`}
                           height={`22px`}
@@ -1206,13 +1204,11 @@ const Student = () => {
                       <Wrapper
                         width={`calc(100% - 42px)`}
                         dr={`row`}
-                        ju={`flex-start`}
-                      >
+                        ju={`flex-start`}>
                         <Text
                           fontSize={width < 800 ? `14px` : `18px`}
                           fontWeight={`bold`}
-                          lineHeight={`1.22`}
-                        >
+                          lineHeight={`1.22`}>
                           {data.day}&nbsp;&nbsp;|&nbsp;&nbsp;
                           {data.time}
                         </Text>
@@ -1242,8 +1238,7 @@ const Student = () => {
                       }
                       dr={`row`}
                       ju={`flex-start`}
-                      margin={width < 800 && `5px 0`}
-                    >
+                      margin={width < 800 && `5px 0`}>
                       <Wrapper width={`auto`} margin={`0 10px 0 0`}>
                         <Image
                           width={`22px`}
@@ -1261,8 +1256,7 @@ const Student = () => {
                         <SpanText
                           fontWeight={`bold`}
                           color={Theme.red_C}
-                          margin={`0 0 0 15px`}
-                        >
+                          margin={`0 0 0 15px`}>
                           {DDay(
                             data.startDate,
                             data.endDate,
@@ -1278,14 +1272,12 @@ const Student = () => {
                       width={width < 1280 ? `100%` : `38%`}
                       dr={`row`}
                       ju={`space-between`}
-                      al={`flex-start`}
-                    >
+                      al={`flex-start`}>
                       <Wrapper
                         width={`25%`}
                         dr={`row`}
                         ju={`flex-start`}
-                        margin={`0 20px 0 0`}
-                      >
+                        margin={`0 20px 0 0`}>
                         <Image
                           margin={`0 10px 0 0`}
                           width={`22px`}
@@ -1303,8 +1295,7 @@ const Student = () => {
                         color={Theme.basicTheme_C}
                         onClick={() =>
                           window.open(`${data.zoomLink}`, "_blank")
-                        }
-                      >
+                        }>
                         강의 이동
                       </Text>
                     </Wrapper>
@@ -1316,8 +1307,7 @@ const Student = () => {
             <Wrapper al={`flex-start`} margin={`0 0 20px`}>
               <Text
                 fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-              >
+                fontWeight={`bold`}>
                 내 강의정보
               </Text>
             </Wrapper>
@@ -1339,21 +1329,17 @@ const Student = () => {
                     ju={`space-between`}
                     shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
                     margin={`0 0 86px`}
-                    al={width < 1100 && `flex-start`}
-                  >
+                    al={width < 1100 && `flex-start`}>
                     <Wrapper
                       width={width < 800 ? `calc(100%)` : `calc(100%)`}
-                      position={`relative`}
-                    >
+                      position={`relative`}>
                       <Wrapper dr={`row`}>
                         <Wrapper
-                          width={width < 1100 ? `100%` : `calc(70% - 1px)`}
-                        >
+                          width={width < 1100 ? `100%` : `calc(70% - 1px)`}>
                           <Wrapper
                             width={`100%`}
                             dr={`row`}
-                            al={width < 800 && `flex-start`}
-                          >
+                            al={width < 800 && `flex-start`}>
                             <Image
                               position={`absolute`}
                               top={`0`}
@@ -1371,14 +1357,12 @@ const Student = () => {
                             <Wrapper
                               margin={
                                 width < 800 ? `0 0 0 100px` : `0 0 0 204px`
-                              }
-                            >
+                              }>
                               <Wrapper dr={`row`} ju={`flex-start`}>
                                 <Text
                                   margin={`0 10px 0 0`}
                                   fontSize={width < 800 ? `16px` : `18px`}
-                                  fontWeight={`bold`}
-                                >
+                                  fontWeight={`bold`}>
                                   강의명
                                 </Text>
                                 <Text margin={`0 10px 0 0`}>{data.course}</Text>
@@ -1387,8 +1371,7 @@ const Student = () => {
                                 dr={`row`}
                                 ju={`flex-start`}
                                 color={Theme.grey2_C}
-                                fontSize={width < 800 ? `12px` : `16px`}
-                              >
+                                fontSize={width < 800 ? `12px` : `16px`}>
                                 <Text lineHeight={`1.19`}>
                                   {data.User.username}
                                 </Text>
@@ -1399,8 +1382,7 @@ const Student = () => {
 
                                 <Text
                                   lineHeight={`1.19`}
-                                  margin={width < 800 ? `5px` : `0 10px`}
-                                >
+                                  margin={width < 800 ? `5px` : `0 10px`}>
                                   |
                                 </Text>
                                 <Text lineHeight={`1.19`}>
@@ -1425,8 +1407,7 @@ const Student = () => {
                             <Wrapper
                               margin={
                                 width < 800 ? `40px 0 0` : `35px 0 0  204px`
-                              }
-                            >
+                              }>
                               <Wrapper dr={`row`} ju={`flex-start`}>
                                 <Text width={width < 800 ? `100%` : `15%`}>
                                   <SpanText color={Theme.subTheme2_C}>
@@ -1450,8 +1431,7 @@ const Student = () => {
                                 <Text
                                   width={`10%`}
                                   color={Theme.grey2_C}
-                                  padding={`0 0 0 10px`}
-                                >
+                                  padding={`0 0 0 10px`}>
                                   {`(${parseInt(
                                     data.Commutes &&
                                       (data.Commutes.length * 100) /
@@ -1539,26 +1519,22 @@ const Student = () => {
                             width < 1100 && width < 800
                               ? `10px 0 0`
                               : `20px 0 0`
-                          }
-                        >
+                          }>
                           <Wrapper
                             borderBottom={`1px dashed ${Theme.grey_C}`}
                             dr={`row`}
                             al={`flex-start`}
                             ju={`flex-start`}
-                            padding={width < 800 ? `8px 0` : `16px 0`}
-                          >
+                            padding={width < 800 ? `8px 0` : `16px 0`}>
                             <Text
                               cursor={`pointer`}
-                              onClick={() => messageSendModalHandler(data)}
-                            >
+                              onClick={() => messageSendModalHandler(data)}>
                               수료증 신청
                             </Text>
                             <Text> | </Text>
                             <Text
                               cursor={`pointer`}
-                              onClick={() => messageSendModalHandler(data)}
-                            >
+                              onClick={() => messageSendModalHandler(data)}>
                               강의수 늘리기 요청
                             </Text>
                           </Wrapper>
@@ -1567,26 +1543,22 @@ const Student = () => {
                             al={`flex-start`}
                             ju={`flex-start`}
                             dr={`row`}
-                            padding={width < 800 ? `8px 0` : `16px 0`}
-                          >
+                            padding={width < 800 ? `8px 0` : `16px 0`}>
                             <Text
                               cursor={`pointer`}
-                              onClick={() => messageSendModalHandler(data)}
-                            >
+                              onClick={() => messageSendModalHandler(data)}>
                               결석 예고
                             </Text>
                             <Text> | </Text>
                             <Text
                               cursor={`pointer`}
-                              onClick={() => messageSendModalHandler(data, 1)}
-                            >
+                              onClick={() => messageSendModalHandler(data, 1)}>
                               반이동 요청
                             </Text>
                             <Text> | </Text>
                             <Text
                               cursor={`pointer`}
-                              onClick={() => messageSendModalHandler(data)}
-                            >
+                              onClick={() => messageSendModalHandler(data)}>
                               줌 상담신청
                             </Text>
                           </Wrapper>
@@ -1610,16 +1582,14 @@ const Student = () => {
               radius={`10px`}
               height={`34px`}
               width={`107px`}
-              onClick={() => moveLinkHandler(`student/lectureAll`)}
-            >
+              onClick={() => moveLinkHandler(`student/lectureAll`)}>
               전체보기
             </CommonButton>
 
             <Wrapper al={`flex-start`} margin={`80px 0 20px`}>
               <Text
                 fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-              >
+                fontWeight={`bold`}>
                 숙제보기 / 제출하기
               </Text>
             </Wrapper>
@@ -1640,14 +1610,12 @@ const Student = () => {
                         shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
                         radius={`10px`}
                         padding={`20px`}
-                        margin={`0 0 10px`}
-                      >
+                        margin={`0 0 10px`}>
                         <Wrapper
                           width={width < 900 ? `100%` : `55%`}
                           margin={width < 900 && `0 0 10px`}
                           dr={`row`}
-                          ju={`flex-start`}
-                        >
+                          ju={`flex-start`}>
                           <Wrapper dr={`row`} width={`25%`} ju={`flex-start`}>
                             <Image
                               width={`22px`}
@@ -1661,8 +1629,7 @@ const Student = () => {
                           <Wrapper
                             dr={`row`}
                             width={width < 900 ? `30%` : `25%`}
-                            ju={`flex-start`}
-                          >
+                            ju={`flex-start`}>
                             <Text fontSize={`14px`}>
                               {`${data.username} 강사님`}
                             </Text>
@@ -1671,22 +1638,19 @@ const Student = () => {
                           <Wrapper
                             dr={`row`}
                             width={width < 900 ? `45%` : `50%`}
-                            ju={`flex-start`}
-                          >
+                            ju={`flex-start`}>
                             <Text fontSize={`14px`}>{data.title}</Text>
                           </Wrapper>
                         </Wrapper>
                         <Wrapper
                           width={width < 900 ? `100%` : `45%`}
                           dr={`row`}
-                          ju={`flex-start`}
-                        >
+                          ju={`flex-start`}>
                           <Wrapper
                             dr={`row`}
                             width={width < 900 ? `10%` : `35%`}
                             ju={`flex-start`}
-                            onClick={() => fileDownloadHandler(data.file)}
-                          >
+                            onClick={() => fileDownloadHandler(data.file)}>
                             <Image
                               cursor={`pointer`}
                               width={`22px`}
@@ -1704,8 +1668,7 @@ const Student = () => {
                             width={
                               width < 1100 ? `40%` : width < 900 ? `62%` : `35%`
                             }
-                            ju={`flex-start`}
-                          >
+                            ju={`flex-start`}>
                             <Image
                               width={`22px`}
                               margin={width < 700 ? `0 5px 0 0` : `0 16px 0 0`}
@@ -1725,8 +1688,7 @@ const Student = () => {
                             width={
                               width < 1100 ? `25%` : width < 900 ? `28%` : `30%`
                             }
-                            cursor={`pointer`}
-                          >
+                            cursor={`pointer`}>
                             <CustomButton
                               color={
                                 moment
@@ -1748,8 +1710,7 @@ const Student = () => {
                                     )
                                   )
                                   .asDays() < -1
-                              }
-                            >
+                              }>
                               {moment
                                 .duration(
                                   moment(data.date, "YYYY-MM-DD").diff(
@@ -1777,8 +1738,7 @@ const Student = () => {
             <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
               <Text
                 fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-              >
+                fontWeight={`bold`}>
                 공지사항
               </Text>
             </Wrapper>
@@ -1786,14 +1746,12 @@ const Student = () => {
             <Wrapper
               radius={`10px`}
               shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}
-              margin={`0 0 60px`}
-            >
+              margin={`0 0 60px`}>
               <Wrapper
                 dr={`row`}
                 fontWeight={`bold`}
                 padding={`20px 0`}
-                fontSize={width < 800 ? `14px` : `18px`}
-              >
+                fontSize={width < 800 ? `14px` : `18px`}>
                 <Wrapper width={width < 800 ? `15%` : `10%`}>번호</Wrapper>
                 <Wrapper width={width < 800 ? `45%` : `70%`}>제목</Wrapper>
                 <Wrapper width={width < 800 ? `15%` : `10%`}>작성자</Wrapper>
@@ -1811,16 +1769,14 @@ const Student = () => {
                       <CustomTableHoverWrapper
                         onClick={() => onClickNoticeHandler(data)}
                         key={data.id}
-                        bgColor={idx % 2 === 0}
-                      >
+                        bgColor={idx % 2 === 0}>
                         <Wrapper width={width < 800 ? `15%` : `10%`}>
                           {data.id}
                         </Wrapper>
                         <Wrapper
                           width={width < 800 ? `45%` : `70%`}
                           al={`flex-start`}
-                          padding={`0 0 0 10px`}
-                        >
+                          padding={`0 0 0 10px`}>
                           {data.title}
                         </Wrapper>
                         <Wrapper width={width < 800 ? `15%` : `10%`}>
@@ -1846,8 +1802,7 @@ const Student = () => {
             <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
               <Text
                 fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-              >
+                fontWeight={`bold`}>
                 내게 온 쪽지
               </Text>
             </Wrapper>
@@ -1857,8 +1812,7 @@ const Student = () => {
                 dr={`row`}
                 fontWeight={`bold`}
                 padding={`20px 0`}
-                fontSize={width < 800 ? `14px` : `18px`}
-              >
+                fontSize={width < 800 ? `14px` : `18px`}>
                 <Wrapper width={width < 800 ? `15%` : `10%`}>번호</Wrapper>
                 <Wrapper width={width < 800 ? `45%` : `70%`}>제목</Wrapper>
                 <Wrapper width={width < 800 ? `15%` : `10%`}>작성자</Wrapper>
@@ -1875,16 +1829,14 @@ const Student = () => {
                       <CustomTableHoverWrapper
                         key={data.id}
                         bgColor={idx % 2 === 0}
-                        onClick={() => messageViewModalHandler(data)}
-                      >
+                        onClick={() => messageViewModalHandler(data)}>
                         <Wrapper width={width < 800 ? `15%` : `10%`}>
                           {data.id}
                         </Wrapper>
                         <Wrapper
                           width={width < 800 ? `45%` : `70%`}
                           al={`flex-start`}
-                          padding={`0 0 0 10px`}
-                        >
+                          padding={`0 0 0 10px`}>
                           {data.title}
                         </Wrapper>
                         <Wrapper width={width < 800 ? `15%` : `10%`}>
@@ -1904,8 +1856,7 @@ const Student = () => {
             <Wrapper al={`flex-end`} margin={`20px 0 40px`}>
               <CommonButton
                 radius={`5px`}
-                onClick={() => messageSendModalHandler()}
-              >
+                onClick={() => messageSendModalHandler()}>
                 쪽지 보내기
               </CommonButton>
             </Wrapper>
@@ -1989,14 +1940,12 @@ const Student = () => {
             width={`1350px`}
             title="공지사항"
             footer={null}
-            closable={false}
-          >
+            closable={false}>
             <Wrapper
               dr={`row`}
               ju={`space-between`}
               margin={`0 0 35px`}
-              fontSize={width < 700 ? "14px" : "16px"}
-            >
+              fontSize={width < 700 ? "14px" : "16px"}>
               <Text margin={`0 54px 0 0`}>
                 {`작성자: ${noticeViewDatum && noticeViewDatum.author}`}
               </Text>
@@ -2027,8 +1976,7 @@ const Student = () => {
                   size={`small`}
                   radius={`5px`}
                   fontSize={`14px`}
-                  onClick={() => fileDownloadHandler(noticeViewDatum.file)}
-                >
+                  onClick={() => fileDownloadHandler(noticeViewDatum.file)}>
                   다운로드
                 </CommonButton>
               </Wrapper>
@@ -2051,8 +1999,7 @@ const Student = () => {
                 fontSize={width < 700 ? "14px" : "16px"}
                 dangerouslySetInnerHTML={{
                   __html: noticeViewDatum && noticeViewDatum.content,
-                }}
-              ></WordbreakText>
+                }}></WordbreakText>
             </Wrapper>
 
             <Wrapper>
@@ -2060,8 +2007,7 @@ const Student = () => {
                 onClick={() => onReset()}
                 kindOf={`grey`}
                 color={Theme.darkGrey_C}
-                radius={`5px`}
-              >
+                radius={`5px`}>
                 돌아가기
               </CommonButton>
             </Wrapper>
@@ -2080,8 +2026,7 @@ const Student = () => {
                 : sendMessageAnswerType === 3 && "관리자에게 쪽지 보내기"
             }
             footer={null}
-            closable={false}
-          >
+            closable={false}>
             <CustomForm
               form={answerform}
               onFinish={(data) =>
@@ -2091,8 +2036,7 @@ const Student = () => {
                   ? answerLectureFinishHanlder(data, messageTeacherList)
                   : sendMessageAnswerType === 3 &&
                     sendMessageAnswerAdminFinish(data)
-              }
-            >
+              }>
               {sendMessageAnswerType !== 0 && (
                 <Wrapper dr={`row`} ju={`flex-end`}>
                   <CommonButton
@@ -2101,8 +2045,7 @@ const Student = () => {
                     width={`100px`}
                     height={`32px`}
                     size="small"
-                    onClick={() => sendMessageAnswerTypeHandler(1)}
-                  >
+                    onClick={() => sendMessageAnswerTypeHandler(1)}>
                     {"강사"}
                   </CommonButton>
 
@@ -2112,8 +2055,7 @@ const Student = () => {
                     width={`100px`}
                     height={`32px`}
                     size="small"
-                    onClick={() => sendMessageAnswerTypeHandler(2)}
-                  >
+                    onClick={() => sendMessageAnswerTypeHandler(2)}>
                     {"수업"}
                   </CommonButton>
 
@@ -2123,8 +2065,7 @@ const Student = () => {
                     width={`100px`}
                     height={`32px`}
                     size="small"
-                    onClick={() => sendMessageAnswerTypeHandler(3)}
-                  >
+                    onClick={() => sendMessageAnswerTypeHandler(3)}>
                     {"관리자"}
                   </CommonButton>
                 </Wrapper>
@@ -2143,8 +2084,7 @@ const Student = () => {
                         required: true,
                         message: "듣고있는 강의 목록을 선택해주세요.",
                       },
-                    ]}
-                  >
+                    ]}>
                     <Select style={{ width: `100%` }}>
                       {lectureStuLectureList &&
                       lectureStuLectureList.length === 0 ? (
@@ -2168,8 +2108,7 @@ const Student = () => {
                   <Text
                     fontSize={`14px`}
                     color={Theme.grey2_C}
-                    margin={`0 0 20px`}
-                  >
+                    margin={`0 0 20px`}>
                     강사님 개인쪽지함에 쪽지가 전달됩니다.
                   </Text>
                 </>
@@ -2188,8 +2127,7 @@ const Student = () => {
                         required: true,
                         message: "듣고있는 강의 목록을 선택해주세요.",
                       },
-                    ]}
-                  >
+                    ]}>
                     <Select style={{ width: `100%` }}>
                       {lectureStuLectureList &&
                       lectureStuLectureList.length === 0 ? (
@@ -2212,8 +2150,7 @@ const Student = () => {
                   <Text
                     fontSize={`14px`}
                     color={Theme.grey2_C}
-                    margin={`0 0 20px`}
-                  >
+                    margin={`0 0 20px`}>
                     강사님에 수업 상세페이지 쪽지함에 전달 됩니다.
                   </Text>
                 </>
@@ -2227,8 +2164,7 @@ const Student = () => {
                     name="title"
                     rules={[
                       { required: true, message: "제목을 입력해주세요." },
-                    ]}
-                  >
+                    ]}>
                     <Input />
                   </Form.Item>
                   <Text fontSize={`18px`} fontWeight={`bold`}>
@@ -2238,8 +2174,7 @@ const Student = () => {
                     name="content"
                     rules={[
                       { required: true, message: "내용을 입력해주세요." },
-                    ]}
-                  >
+                    ]}>
                     <Input.TextArea style={{ height: `360px` }} />
                   </Form.Item>
                   <Wrapper dr={`row`}>
@@ -2248,15 +2183,13 @@ const Student = () => {
                       kindOf={`grey`}
                       color={Theme.darkGrey_C}
                       radius={`5px`}
-                      onClick={() => onReset()}
-                    >
+                      onClick={() => onReset()}>
                       돌아가기
                     </CommonButton>
                     <CommonButton
                       margin={`0 0 0 5px`}
                       radius={`5px`}
-                      htmlType="submit"
-                    >
+                      htmlType="submit">
                       쪽지 보내기
                     </CommonButton>
                   </Wrapper>
@@ -2270,8 +2203,7 @@ const Student = () => {
                   dr={`row`}
                   ju={`space-between`}
                   margin={`0 0 35px`}
-                  fontSize={width < 700 ? "14px" : "16px"}
-                >
+                  fontSize={width < 700 ? "14px" : "16px"}>
                   <Text margin={`0 54px 0 0`}>
                     {`작성자: ${messageDatum && messageDatum.author}`}
                   </Text>
@@ -2288,8 +2220,7 @@ const Student = () => {
                 <Wrapper
                   padding={`10px`}
                   al={`flex-start`}
-                  fontSize={width < 700 ? "14px" : "16px"}
-                >
+                  fontSize={width < 700 ? "14px" : "16px"}>
                   <Text>{messageDatum && messageDatum.title}</Text>
                 </Wrapper>
                 <Text fontSize={`18px`} fontWeight={`bold`}>
@@ -2298,8 +2229,7 @@ const Student = () => {
                 <Wrapper
                   padding={`10px`}
                   al={`flex-start`}
-                  fontSize={width < 700 ? "14px" : "16px"}
-                >
+                  fontSize={width < 700 ? "14px" : "16px"}>
                   <Text minHeight={`360px`}>
                     {messageDatum &&
                       messageDatum.content.split("\n").map((data, idx) => {
@@ -2318,15 +2248,13 @@ const Student = () => {
                     kindOf={`grey`}
                     color={Theme.darkGrey_C}
                     radius={`5px`}
-                    onClick={() => onReset()}
-                  >
+                    onClick={() => onReset()}>
                     돌아가기
                   </CommonButton>
                   <CommonButton
                     onClick={() => messageAnswerToggleHanlder(messageDatum)}
                     margin={`0 0 0 5px`}
-                    radius={`5px`}
-                  >
+                    radius={`5px`}>
                     답변하기
                   </CommonButton>
                 </Wrapper>
@@ -2338,8 +2266,7 @@ const Student = () => {
             width={`700px`}
             visible={meUpdateModal}
             footer={null}
-            onCancel={meUpdateModalToggle}
-          >
+            onCancel={meUpdateModalToggle}>
             <Text fontSize={`22px`} fontWeight={`bold`} margin={`0 0 24px`}>
               회원정보 수정
             </Text>
@@ -2382,8 +2309,7 @@ const Student = () => {
                   type="primary"
                   onClick={clickImageUpload}
                   loading={st_userProfileUploadLoading}
-                  radius={`5px`}
-                >
+                  radius={`5px`}>
                   UPLOAD
                 </CommonButton>
               </UploadWrapper>
@@ -2397,8 +2323,7 @@ const Student = () => {
                 name="mobile"
                 rules={[
                   { required: true, message: "전화번호를 입력해주세요." },
-                ]}
-              >
+                ]}>
                 <CusotmInput
                   width={`100%`}
                   placeholder="전화번호를 입력해주세요."
@@ -2410,8 +2335,7 @@ const Student = () => {
               </Text>
               <Form.Item
                 name="address"
-                rules={[{ required: true, message: "주소를 입력해주세요." }]}
-              >
+                rules={[{ required: true, message: "주소를 입력해주세요." }]}>
                 <CusotmInput width={`100%`} />
               </Form.Item>
 
@@ -2422,8 +2346,7 @@ const Student = () => {
                 name="detailAddress"
                 rules={[
                   { required: true, message: "상세주소를 입력해주세요." },
-                ]}
-              >
+                ]}>
                 <CusotmInput width={`100%`} />
               </Form.Item>
 
@@ -2434,8 +2357,7 @@ const Student = () => {
                 name="stuLanguage"
                 rules={[
                   { required: true, message: "학생 언어를 입력해주세요." },
-                ]}
-              >
+                ]}>
                 <CusotmInput
                   width={`100%`}
                   placeholder="학생 언어를 입력해주세요."
@@ -2449,8 +2371,7 @@ const Student = () => {
                 name="stuCountry"
                 rules={[
                   { required: true, message: "학생 나라를 입력해주세요." },
-                ]}
-              >
+                ]}>
                 <CusotmInput
                   width={`100%`}
                   placeholder="학생 나라를 입력해주세요."
@@ -2464,8 +2385,7 @@ const Student = () => {
                 name="stuLiveCon"
                 rules={[
                   { required: true, message: "현재 거주 나라를 입력해주세요." },
-                ]}
-              >
+                ]}>
                 <CusotmInput
                   width={`100%`}
                   placeholder="현재 거주 나라를 입력해주세요."
@@ -2477,8 +2397,7 @@ const Student = () => {
               </Text>
               <Form.Item
                 name="sns"
-                rules={[{ required: true, message: "sns를 입력해주세요." }]}
-              >
+                rules={[{ required: true, message: "sns를 입력해주세요." }]}>
                 <CusotmInput width={`100%`} placeholder="sns를 입력해주세요." />
               </Form.Item>
 
@@ -2489,8 +2408,7 @@ const Student = () => {
                 name="snsId"
                 rules={[
                   { required: true, message: "sns아이디를 입력해주세요." },
-                ]}
-              >
+                ]}>
                 <CusotmInput
                   width={`100%`}
                   placeholder="sns아이디를 입력해주세요."
@@ -2503,8 +2421,7 @@ const Student = () => {
                 name="stuJob"
                 rules={[
                   { required: true, message: "학생 직업을 입력해주세요." },
-                ]}
-              >
+                ]}>
                 <CusotmInput
                   width={`100%`}
                   placeholder="학생직업을 입력해주세요."
@@ -2517,8 +2434,7 @@ const Student = () => {
                 name="birth"
                 rules={[
                   { required: true, message: "생년월일를 입력해주세요." },
-                ]}
-              >
+                ]}>
                 <Calendar fullscreen={false} />
               </Form.Item>
 
@@ -2535,17 +2451,14 @@ const Student = () => {
             width={`1350px`}
             title="숙제 제출하기"
             footer={null}
-            closable={false}
-          >
+            closable={false}>
             <CustomForm
               ref={formRef}
               form={form}
-              onFinish={homeWorkFinishHandler}
-            >
+              onFinish={homeWorkFinishHandler}>
               <Text
                 fontSize={width < 700 ? `14px` : `18px`}
-                fontWeight={`bold`}
-              >
+                fontWeight={`bold`}>
                 파일 업로드
               </Text>
 
@@ -2567,8 +2480,7 @@ const Student = () => {
                     height: `40px`,
                     width: `150px`,
                     margin: `10px 0 0`,
-                  }}
-                >
+                  }}>
                   파일 올리기
                 </Button>
                 <Text>{`${fileName}`}</Text>
@@ -2580,15 +2492,13 @@ const Student = () => {
                   kindOf={`grey`}
                   color={Theme.darkGrey_C}
                   radius={`5px`}
-                  onClick={() => onReset()}
-                >
+                  onClick={() => onReset()}>
                   돌아가기
                 </CommonButton>
                 <CommonButton
                   margin={`0 0 0 5px`}
                   radius={`5px`}
-                  htmlType="submit"
-                >
+                  htmlType="submit">
                   작성하기
                 </CommonButton>
               </Wrapper>
@@ -2606,8 +2516,7 @@ const Student = () => {
                 : sendMessageType === 3 && "관리자에게 쪽지 보내기"
             }
             footer={null}
-            closable={false}
-          >
+            closable={false}>
             <CustomForm
               form={sendform}
               onFinish={(data) =>
@@ -2616,8 +2525,7 @@ const Student = () => {
                   : sendMessageType === 2
                   ? sendMessageLectureFinishHanlder(data, messageTeacherList)
                   : sendMessageType === 3 && sendMessageAdminFinishHandler(data)
-              }
-            >
+              }>
               <Wrapper dr={`row`} ju={`flex-end`}>
                 <CommonButton
                   margin={`0 0 0 5px`}
@@ -2625,8 +2533,7 @@ const Student = () => {
                   width={`100px`}
                   height={`32px`}
                   size="small"
-                  onClick={() => sendMessageTypeHandler(1)}
-                >
+                  onClick={() => sendMessageTypeHandler(1)}>
                   {"강사"}
                 </CommonButton>
 
@@ -2636,8 +2543,7 @@ const Student = () => {
                   width={`100px`}
                   height={`32px`}
                   size="small"
-                  onClick={() => sendMessageTypeHandler(2)}
-                >
+                  onClick={() => sendMessageTypeHandler(2)}>
                   {"수업"}
                 </CommonButton>
 
@@ -2647,8 +2553,7 @@ const Student = () => {
                   width={`100px`}
                   height={`32px`}
                   size="small"
-                  onClick={() => sendMessageTypeHandler(3)}
-                >
+                  onClick={() => sendMessageTypeHandler(3)}>
                   {"관리자"}
                 </CommonButton>
               </Wrapper>
@@ -2665,8 +2570,7 @@ const Student = () => {
                         required: true,
                         message: "듣고있는 강의 목록을 선택해주세요.",
                       },
-                    ]}
-                  >
+                    ]}>
                     <Select style={{ width: `100%` }}>
                       {lectureStuLectureList &&
                       lectureStuLectureList.length === 0 ? (
@@ -2679,8 +2583,7 @@ const Student = () => {
                           return (
                             <Option
                               key={`${data.id}${idx}`}
-                              value={`${data.id},${data.User.id},${data.User.level}`}
-                            >
+                              value={`${data.id},${data.User.id},${data.User.level}`}>
                               {data.course}
                             </Option>
                           );
@@ -2691,8 +2594,7 @@ const Student = () => {
                   <Text
                     fontSize={`14px`}
                     color={Theme.grey2_C}
-                    margin={`0 0 20px`}
-                  >
+                    margin={`0 0 20px`}>
                     강사님 개인쪽지함에 쪽지가 전달됩니다.
                   </Text>
                 </>
@@ -2711,8 +2613,7 @@ const Student = () => {
                         required: true,
                         message: "듣고있는 강의 목록을 선택해주세요.",
                       },
-                    ]}
-                  >
+                    ]}>
                     <Select style={{ width: `100%` }}>
                       {lectureStuLectureList &&
                       lectureStuLectureList.length === 0 ? (
@@ -2725,8 +2626,7 @@ const Student = () => {
                           return (
                             <Option
                               key={`${data.id}${idx}`}
-                              value={`${data.id},${data.User.id},${data.User.level}`}
-                            >
+                              value={`${data.id},${data.User.id},${data.User.level}`}>
                               {data.course}
                             </Option>
                           );
@@ -2737,8 +2637,7 @@ const Student = () => {
                   <Text
                     fontSize={`14px`}
                     color={Theme.grey2_C}
-                    margin={`0 0 20px`}
-                  >
+                    margin={`0 0 20px`}>
                     강사님에 수업 상세페이지 쪽지함에 전달 됩니다.
                   </Text>
                 </>
@@ -2749,8 +2648,7 @@ const Student = () => {
               </Text>
               <Form.Item
                 name="title"
-                rules={[{ required: true, message: "제목을 입력해주세요." }]}
-              >
+                rules={[{ required: true, message: "제목을 입력해주세요." }]}>
                 <Input />
               </Form.Item>
               <Text fontSize={`18px`} fontWeight={`bold`}>
@@ -2758,8 +2656,7 @@ const Student = () => {
               </Text>
               <Form.Item
                 name="content"
-                rules={[{ required: true, message: "내용을 입력해주세요." }]}
-              >
+                rules={[{ required: true, message: "내용을 입력해주세요." }]}>
                 <Input.TextArea style={{ height: `360px` }} />
               </Form.Item>
               <Wrapper dr={`row`}>
@@ -2768,15 +2665,13 @@ const Student = () => {
                   kindOf={`grey`}
                   color={Theme.darkGrey_C}
                   radius={`5px`}
-                  onClick={() => onReset()}
-                >
+                  onClick={() => onReset()}>
                   돌아가기
                 </CommonButton>
                 <CommonButton
                   margin={`0 0 0 5px`}
                   radius={`5px`}
-                  htmlType="submit"
-                >
+                  htmlType="submit">
                   쪽지 보내기
                 </CommonButton>
               </Wrapper>
@@ -2787,8 +2682,7 @@ const Student = () => {
             visible={bookModal}
             footer={null}
             onCancel={detailBookClose}
-            width={width < 700 ? `100%` : 700}
-          >
+            width={width < 700 ? `100%` : 700}>
             <Wrapper al={`flex-start`}>
               <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
                 교재
