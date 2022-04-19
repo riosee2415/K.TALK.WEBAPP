@@ -41,8 +41,8 @@ router.get("/user/list", isLoggedIn, async (req, res, next) => {
      INNER
       JOIN  users     B
         ON  A.senderId = B.id
-     WHERE  receiverId = ${req.user.id}
-       AND  receiveLectureId IS NULL     
+     WHERE  A.receiverId = ${req.user.id}
+       AND  A.receiveLectureId IS NULL     
     `;
 
     const selectQuery = `
@@ -62,9 +62,9 @@ router.get("/user/list", isLoggedIn, async (req, res, next) => {
      INNER
       JOIN  users     B
         ON  A.senderId = B.id
-     WHERE  receiverId = ${req.user.id} 
-       AND  receiveLectureId IS NULL    
-     ORDER  BY createdAt  DESC
+     WHERE  A.receiverId = ${req.user.id} 
+       AND  A.receiveLectureId IS NULL    
+     ORDER  BY A.createdAt  DESC
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
     `;
@@ -120,9 +120,9 @@ router.get("/all/list", isLoggedIn, async (req, res, next) => {
       JOIN  users         B
         ON  A.senderId = B.id
      WHERE  1 = 1
-    ${`AND  level IN (${req.user.level}, 3)`}
-       AND  receiveLectureId IS NULL
-       AND  receiverId IS NULL     
+    ${`AND  A.level IN (${req.user.level}, 3)`}
+       AND  A.receiveLectureId IS NULL
+       AND  A.receiverId IS NULL     
     `;
 
     const selectQuery = `
@@ -143,10 +143,10 @@ router.get("/all/list", isLoggedIn, async (req, res, next) => {
       JOIN  users         B
         ON  A.senderId = B.id
      WHERE  1 = 1
-    ${`AND  level IN (${req.user.level}, 3)`}
-       AND  receiveLectureId IS NULL
-       AND  receiverId IS NULL    
-     ORDER  BY createdAt  DESC
+    ${`AND  A.level IN (${req.user.level}, 3)`}
+       AND  A.receiveLectureId IS NULL
+       AND  A.receiverId IS NULL    
+     ORDER  BY A.createdAt  DESC
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
     `;
@@ -408,7 +408,7 @@ router.get("/detail/:messageId", async (req, res, next) => {
      INNER
       JOIN  users     B
         ON  A.senderId = B.id
-     WHERE  id = ${messageId}
+     WHERE  A.id = ${messageId}
     `;
 
     const message = await models.sequelize.query(selectQuery);
