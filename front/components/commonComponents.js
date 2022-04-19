@@ -71,6 +71,7 @@ export const ColWrapper = styled(Col)`
   opacity: ${(props) => props.opacity};
   z-index: ${(props) => props.zIndex};
   cursor: ${(props) => props.cursor};
+  word-break: ${(props) => props.wordBreak};
 `;
 
 export const WholeWrapper = styled.section`
@@ -652,11 +653,11 @@ export const ModalBtn = styled(Button)`
 `;
 
 export const GuideUl = styled.ul`
-  width: 100%;
+  width: ${(props) => props.width || `100%`};
   padding: 5px;
 `;
 export const GuideLi = styled.li`
-  width: 100%;
+  width: ${(props) => props.width || `100%`};
   margin-bottom: 5px;
-  color: ${(props) => (props.isImpo ? props.theme.red_C : "")};
+  color: ${(props) => (props.isImpo ? props.theme.red_C : props.theme.grey2_C)};
 `;

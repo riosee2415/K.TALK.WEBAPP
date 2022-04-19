@@ -53,6 +53,7 @@ import {
 import useWidth from "../../../../hooks/useWidth";
 import Theme from "../../../../components/Theme";
 import moment from "moment";
+import { PARTICIPANT_USER_LIMIT_LIST_REQUEST } from "../../../../reducers/participant";
 
 const CustomForm = styled(Form)`
   width: 100%;
@@ -140,12 +141,13 @@ const List = ({ router }) => {
   const [deleteId, setDeleteId] = useState(null);
 
   const [listType, setListType] = useState("");
-  const [answerModal, setAnswerModal] = useState(false);
 
-  const [messageCheckDatum, setMessageCheckDatum] = useState([]);
+  const [answerModal, setAnswerModal] = useState(false);
 
   const [currentChecks, setCurrentChecks] = useState([]);
   const [currentCheckDatum, setCurrentCheckDatum] = useState([]);
+
+  PARTICIPANT_USER_LIMIT_LIST_REQUEST;
 
   ////// HOOKS //////
 
@@ -180,6 +182,12 @@ const List = ({ router }) => {
     st_messageManyCreateDone,
     st_messageManyCreateError,
   } = useSelector((state) => state.message);
+
+  const {
+    partUserLimitList,
+    st_participantUserLimitListDone,
+    st_participantUserLimitListError,
+  } = useSelector((state) => state.participant);
 
   const { allLectures, st_lectureAllListDone, st_lectureAllListError } =
     useSelector((state) => state.lecture);
@@ -269,6 +277,12 @@ const List = ({ router }) => {
       return message.error(st_messageManyCreateError);
     }
   }, [st_messageManyCreateError]);
+
+  useEffect(() => {
+    if (st_participantUserLimitListError) {
+      return message.error(st_participantUserLimitListError);
+    }
+  }, [st_participantUserLimitListError]);
 
   ////// TOGGLE ///////
 
@@ -500,29 +514,29 @@ const List = ({ router }) => {
     <AdminLayout>
       <PageHeader
         breadcrumbs={["게시판 관리", "쪽지 관리"]}
-        title={`쪽지 리스트`}
+        title={`쪽지 목록`}
         subTitle={`사용자에게 제공하는 쪽지를 관리할 수 있습니다.`}
       />
 
       {/* <AdminTop createButton={true} createButtonAction={Open} /> */}
 
       <AdminContent>
-        <Wrapper margin={`0 0 10px 0`} ju={`flex-end`} dr={`row`}>
+        <Wrapper margin={`0 0 10px 0`} ju={`flex-start`} dr={`row`}>
           <Button
-            style={{ margin: "0 5px 0" }}
+            style={{ margin: "0 5px 0 0" }}
             size="small"
-            onClick={() => sendAllToggleHandler()}>
+            onClick={() => sendAllToggleHandler(1)}>
             전체 보내기
           </Button>
 
           <Button
-            style={{ margin: "0 5px 0" }}
+            style={{ margin: "0 5px 0 0" }}
             size="small"
-            onClick={() => sendManyToggleHandler()}>
+            onClick={() => sendManyToggleHandler(2)}>
             단체로 보내기
           </Button>
 
-          <Button size="small" onClick={() => lectureToggleHandler()}>
+          <Button size="small" onClick={() => lectureToggleHandler(3)}>
             강의 단위 보내기
           </Button>
         </Wrapper>
@@ -542,17 +556,32 @@ const List = ({ router }) => {
           </Wrapper>
 
           <Wrapper dr={`row`} width={`auto`}>
-            <Button onClick={() => listTypeHandler(3)} size="small">
-              전체 조회
+            <Button
+              style={{ margin: "0 5px" }}
+              type={listType === 4 && "primary"}
+              onClick={() => listTypeHandler(4)}
+              size="small">
+              일주일 이하 수업 조회
+            </Button>
+
+            <Button
+              type={listType === 3 && "primary"}
+              onClick={() => listTypeHandler(3)}
+              size="small">
+              모든 쪽지
             </Button>
             <Button
+              type={listType === 1 && "primary"}
               style={{ margin: "0 5px" }}
               onClick={() => listTypeHandler(1)}
               size="small">
-              학생 조회
+              학생에게 보낸 쪽지
             </Button>
-            <Button onClick={() => listTypeHandler(2)} size="small">
-              강사 조회
+            <Button
+              type={listType === 2 && "primary"}
+              onClick={() => listTypeHandler(2)}
+              size="small">
+              강사에게 보낸 쪽지
             </Button>
           </Wrapper>
         </Wrapper>

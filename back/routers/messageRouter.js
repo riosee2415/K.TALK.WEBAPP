@@ -214,7 +214,6 @@ router.get("/user/partList", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	Messages
      WHERE  receiveLectureId IN (${lectureIds})
-       AND  senderId IS NULL
        AND  receiverId IS NULL     
     `;
 
@@ -231,7 +230,6 @@ router.get("/user/partList", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
       FROM	Messages
      WHERE  receiveLectureId IN (${lectureIds})
-       AND  senderId IS NULL
        AND  receiverId IS NULL         
      ORDER  BY createdAt  DESC
      LIMIT  ${LIMIT}
@@ -281,23 +279,56 @@ router.post("/lecture/list", async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의입니다.");
     }
 
-    const totalMessage = await Message.findAll({
-      where: { receiveLectureId: parseInt(LectureId) },
-    });
+    const lengthQuery = `
+    SELECT	A.id,
+            A.title,
+            A.author,
+            A.receiveLectureId,
+            A.content,
+            A.level,
+            DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            B.username,
+            B.level
+      FROM	Messages        A
+     INNER
+      JOIN  users           B
+        ON  A.senderId = B.id
+     WHERE  receiveLectureId = ${LectureId}
+    `;
 
-    const messageLen = totalMessage.length;
+    const selectQuery = `
+    SELECT	A.id,
+            A.title,
+            A.author,
+            A.receiveLectureId,
+            A.content,
+            A.level,
+            DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            B.username,
+            B.level
+      FROM	Messages        A
+     INNER
+      JOIN  users           B
+        ON  A.senderId = B.id
+     WHERE  receiveLectureId = ${LectureId}    
+     ORDER  BY createdAt  DESC
+     LIMIT  ${LIMIT}
+    OFFSET  ${OFFSET}
+    `;
+
+    const length = await models.sequelize.query(lengthQuery);
+    const message = await models.sequelize.query(selectQuery);
+
+    const messagelen = length[0].length;
 
     const lastPage =
-      messageLen % LIMIT > 0 ? messageLen / LIMIT + 1 : messageLen / LIMIT;
+      messagelen % LIMIT > 0 ? messagelen / LIMIT + 1 : messagelen / LIMIT;
 
-    const messages = await Message.findAll({
-      offset: OFFSET,
-      limit: LIMIT,
-      where: { receiveLectureId: parseInt(LectureId) },
-      order: [["createdAt", "DESC"]],
-    });
-
-    return res.status(200).json({ messages, lastPage: parseInt(lastPage) });
+    return res
+      .status(200)
+      .json({ message: message[0], lastPage: parseInt(lastPage) });
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의별 쪽지 목록을 불러올 수 없습니다.");
@@ -546,7 +577,7 @@ router.post("/forAdminCreate", isLoggedIn, async (req, res, next) => {
           senderId: parseInt(req.user.id),
           receiverId: parseInt(data.id),
           content,
-          level: parseInt(req.user.level),
+          level: parseInt(4),
         });
       })
     );
@@ -673,7 +704,7 @@ router.post("/lecture/create", isAdminCheck, async (req, res, next) => {
       content,
       author,
       receiveLectureId: parseInt(LectureId),
-      senderId: null,
+      senderId: parseInt(req.user.id),
       receiverId: null,
       level: parseInt(req.user.level),
     });

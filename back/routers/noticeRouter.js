@@ -336,6 +336,7 @@ router.get("/detail/:noticeId", async (req, res, next) => {
 // level: 1 === 학생
 // level: 2 === 강사
 // level: 3 === 전체
+// level: 4 === 모든 게시판 리스트
 
 router.post("/admin/list", isAdminCheck, async (req, res, next) => {
   const { level } = req.body;
@@ -352,8 +353,8 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
 
   let _level = Number(level);
 
-  if (_level > 3 || !level) {
-    _level = 3;
+  if (_level > 4 || !level) {
+    _level = 4;
   }
 
   try {
@@ -378,7 +379,9 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
          ? `AND level = 2`
          : _level === 3
          ? `AND level = 3`
-         : `AND level = 3`
+         : _level === 4
+         ? ``
+         : ``
      }
      ORDER  BY createdAt DESC
     `;

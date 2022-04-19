@@ -144,12 +144,12 @@ const PaymentList = ({}) => {
     {
       title: "가격",
       render: (data) => {
-        return <Text>${data.price}</Text>;
+        return <Text>&#36;{data.price}</Text>;
       },
     },
 
     {
-      title: "생성일",
+      title: "결제일",
       render: (data) => {
         return <Text>{data.createdAt.slice(0, 10)}</Text>;
       },
@@ -207,8 +207,7 @@ const PaymentList = ({}) => {
         width="900px"
         onOk={() => {}}
         onCancel={() => {}}
-        title="주의사항"
-      >
+        title="주의사항">
         <GuideUl>
           <GuideLi>asdfasdf</GuideLi>
           <GuideLi isImpo={true}>asdfasdf</GuideLi>

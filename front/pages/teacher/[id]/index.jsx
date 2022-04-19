@@ -1306,11 +1306,9 @@ const Index = () => {
                 ? messageData.receiverId
                 : me.id,
             receiverId:
-              messageData && messageData.senderId
-                ? messageData.senderId
-                : messageData.userlevel,
+              messageData && messageData.senderId ? messageData.senderId : "",
             content: data.messageContent,
-            level: messageData.userlevel,
+            level: messageData.userlevel ? messageData.userlevel : 4,
           },
         });
       }
