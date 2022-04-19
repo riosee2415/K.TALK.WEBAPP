@@ -103,17 +103,22 @@ router.get("/all/list", isLoggedIn, async (req, res, next) => {
 
   try {
     const lengthQuery = `
-    SELECT	id,
-            title,
-            author,
-            senderId,
-            receiverId,
-            receiveLectureId,
-            content,
-            level,
-            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
-            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
-      FROM	Messages
+    SELECT	A.id,
+            A.title,
+            A.author,
+            A.senderId,
+            A.receiverId,
+            A.receiveLectureId,
+            A.content,
+            A.level,
+            DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            B.username,
+            B.level                                                      AS  userLevel
+      FROM	Messages      A
+     INNER
+      JOIN  users         B
+        ON  A.senderId = B.id
      WHERE  1 = 1
     ${`AND  level IN (${req.user.level}, 3)`}
        AND  receiveLectureId IS NULL
@@ -121,17 +126,22 @@ router.get("/all/list", isLoggedIn, async (req, res, next) => {
     `;
 
     const selectQuery = `
-    SELECT	id,
-            title,
-            author,
-            senderId,
-            receiverId,
-            receiveLectureId,
-            content,
-            level,
-            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
-            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
-      FROM	Messages
+    SELECT	A.id,
+            A.title,
+            A.author,
+            A.senderId,
+            A.receiverId,
+            A.receiveLectureId,
+            A.content,
+            A.level,
+            DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            B.username,
+            B.level                                                      AS  userLevel
+      FROM	Messages      A
+     INNER
+      JOIN  users         B
+        ON  A.senderId = B.id
      WHERE  1 = 1
     ${`AND  level IN (${req.user.level}, 3)`}
        AND  receiveLectureId IS NULL
@@ -322,24 +332,29 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
 
   try {
     const selectQuery = `
-    SELECT	id,
-            title,
-            author,
-            senderId,
-            receiverId,
-            receiveLectureId,
-            content,
-            level,
-            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
-            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
-      FROM	Messages
+    SELECT	A.id,
+            A.title,
+            A.author,
+            A.senderId,
+            A.receiverId,
+            A.receiveLectureId,
+            A.content,
+            A.level,
+            DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            B.username,
+            B.level                                                      AS  userLevel
+      FROM	Messages      A
+     INNER
+      JOIN  users         B
+        ON  A.senderId = B.id
      WHERE  1 = 1
-            ${_search ? `AND author LIKE '%${_search}%'` : ``}
+            ${_search ? `AND A.author LIKE '%${_search}%'` : ``}
             ${
               _listType === 1
-                ? `AND level = 1`
+                ? `AND A.level = 1`
                 : _listType === 2
-                ? `AND level = 2`
+                ? `AND A.level = 2`
                 : _listType === 3
                 ? ``
                 : ``
@@ -377,17 +392,22 @@ router.get("/detail/:messageId", async (req, res, next) => {
     }
 
     const selectQuery = `
-    SELECT	id,
-            title,
-            author,
-            senderId,
-            receiverId,
-            receiveLectureId,
-            content,
-            level,
-            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
-            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
-      FROM	Messages
+    SELECT	A.id,
+            A.title,
+            A.author,
+            A.senderId,
+            A.receiverId,
+            A.receiveLectureId,
+            A.content,
+            A.level,
+            DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            B.username,
+            B.level                                                      AS  userLevel
+      FROM	Messages  A
+     INNER
+      JOIN  users     B
+        ON  A.senderId = B.id
      WHERE  id = ${messageId}
     `;
 
