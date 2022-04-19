@@ -20,6 +20,7 @@ import {
   CommonButton,
   Text,
   TextInput,
+  SpanText,
 } from "../../components/commonComponents";
 import useInput from "../../hooks/useInput";
 import {
@@ -55,6 +56,11 @@ import { NOTICE_ADMIN_LIST_REQUEST } from "../../reducers/notice";
 
 //   Line = prevLine;
 // }
+
+const WordbreakText = styled(Text)`
+  width: 100%;
+  word-wrap: break-all;
+`;
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -124,6 +130,12 @@ const AdminHome = () => {
   const [searchStuName, setSearchStuName] = useState("");
 
   const [allLectureList, setAllLectureList] = useState([]);
+
+  const [noticeDetailData, setNoticeDetailData] = useState(null);
+  const [noticeDetailModal, setNoticeDetailModal] = useState(null);
+
+  const [messageDetailData, setMessageDetailData] = useState(null);
+  const [messageDetailModal, setMessageDetailModal] = useState(null);
 
   const [dayArr, setDayArr] = useState([]);
   const inputId = useInput("");
@@ -346,6 +358,16 @@ const AdminHome = () => {
   // };
 
   ////// HANDLER ///////
+
+  const noticeModalToggle = useCallback((data) => {
+    setNoticeDetailData(data);
+    setNoticeDetailModal((prev) => !prev);
+  }, []);
+
+  const messageModalToggle = useCallback((data) => {
+    setMessageDetailData(data);
+    setMessageDetailModal((prev) => !prev);
+  }, []);
 
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
@@ -582,18 +604,14 @@ const AdminHome = () => {
       render: (data) => <div>{data.createdAt.substring(0, 13)}</div>,
     },
     {
-      title: "UPDATE",
+      title: "상세보기",
       render: (data) => (
-        <Button type="primary" onClick={() => {}}>
-          UPDATE
-        </Button>
-      ),
-    },
-    {
-      title: "DEL",
-      render: (data) => (
-        <Button type="danger" onClick={() => {}}>
-          DEL
+        <Button
+          type="primary"
+          size="small"
+          onClick={() => noticeModalToggle(data)}
+        >
+          상세보기
         </Button>
       ),
     },
@@ -621,16 +639,12 @@ const AdminHome = () => {
     {
       title: "상세보기",
       render: (data) => (
-        <Button type="primary" size="small" onClick={() => {}}>
-          확인
-        </Button>
-      ),
-    },
-    {
-      title: "답변하기",
-      render: (data) => (
-        <Button type="primary" size="small" onClick={() => {}}>
-          답변하기
+        <Button
+          type="primary"
+          size="small"
+          onClick={() => messageModalToggle(data)}
+        >
+          상세보기
         </Button>
       ),
     },
@@ -647,11 +661,32 @@ const AdminHome = () => {
           /> */}
 
           <AdminContent>
-            <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 30px`}>
+            <Text fontSize={`24px`} fontWeight={`bold`} margin={`0 0 30px`}>
+              관리자 메인페이지
+            </Text>
+            <Wrapper
+              dr={`row`}
+              ju={`space-between`}
+              al={`flex-start`}
+              margin={`0 0 30px`}
+            >
               <Wrapper al={`flex-start`} width={`49%`}>
-                <Text margin={`0 0 10px`} fontSize={`18px`} fontWeight={`bold`}>
-                  전체 이용자 게시판
-                </Text>
+                <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
+                  <Text
+                    fontSize={`18px`}
+                    fontWeight={`bold`}
+                    margin={`0 20px 0 0`}
+                  >
+                    전체 게시판
+                  </Text>
+                  <Button
+                    size={`small`}
+                    type={`primary`}
+                    onClick={() => moveLinkHandler(`/admin/board/notice/list`)}
+                  >
+                    게시판 관리 페이지로 이동
+                  </Button>
+                </Wrapper>
 
                 <Table
                   rowKey="id"
@@ -662,9 +697,22 @@ const AdminHome = () => {
                 />
               </Wrapper>
               <Wrapper al={`flex-start`} width={`49%`}>
-                <Text margin={`0 0 10px`} fontSize={`18px`} fontWeight={`bold`}>
-                  전체 쪽지 목록
-                </Text>
+                <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
+                  <Text
+                    fontSize={`18px`}
+                    fontWeight={`bold`}
+                    margin={`0 20px 0 0`}
+                  >
+                    전체 쪽지 목록
+                  </Text>
+                  <Button
+                    size={`small`}
+                    type={`primary`}
+                    onClick={() => moveLinkHandler(`/admin/board/message/list`)}
+                  >
+                    쪽지 관리 페이지로 이동
+                  </Button>
+                </Wrapper>
 
                 <Table
                   rowKey="id"
@@ -675,7 +723,6 @@ const AdminHome = () => {
                 />
               </Wrapper>
             </Wrapper>
-
             <Wrapper al={`flex-start`} margin={`0 0 10px`}>
               <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 16px`}>
                 <Text
@@ -816,7 +863,6 @@ const AdminHome = () => {
                 </Wrapper>
               </Wrapper>
             </Wrapper>
-
             <Wrapper dr={`row`} ju={`flex-start`}>
               {allLectureList &&
                 (allLectureList.length === 0 ? (
@@ -1283,6 +1329,131 @@ const AdminHome = () => {
                 </Wrapper>
               </Wrapper>
             </Form>
+          </Modal>
+          {/* NOTICE MODAL */}
+          <Modal
+            title={`게시판 상세보기`}
+            visible={noticeDetailModal}
+            footer={null}
+            onCancel={() => noticeModalToggle(null)}
+          >
+            <Wrapper
+              dr={`row`}
+              ju={`space-between`}
+              margin={`0 0 35px`}
+              fontSize={width < 700 ? `14px` : `16px`}
+            >
+              <Text margin={`0 54px 0 0`}>
+                {`작성자: ${noticeDetailData && noticeDetailData.author}`}
+              </Text>
+              <Wrapper width={`auto`}>
+                <Text>
+                  {`작성일: ${moment(
+                    noticeDetailData && noticeDetailData.createdAt,
+                    "YYYY/MM/DD"
+                  ).format("YYYY/MM/DD")}`}
+                </Text>
+
+                <Text>
+                  {`수정일: ${moment(
+                    noticeDetailData && noticeDetailData.updatedAt,
+                    "YYYY/MM/DD"
+                  ).format("YYYY/MM/DD")}`}
+                </Text>
+              </Wrapper>
+            </Wrapper>
+
+            {noticeDetailData && noticeDetailData.file && (
+              <Wrapper dr={`row`} ju={`flex-end`}>
+                <Text margin={`0 10px 0 0`} fontSize={`15px`}>
+                  첨부파일
+                </Text>
+
+                <CommonButton
+                  size={`small`}
+                  radius={`5px`}
+                  fontSize={`14px`}
+                  onClick={() => fileDownloadHandler(noticeDetailData.file)}
+                >
+                  다운로드
+                </CommonButton>
+              </Wrapper>
+            )}
+
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              제목
+            </Text>
+            <Wrapper padding={`10px`} fontSize={width < 700 ? `14px` : `16px`}>
+              <WordbreakText>
+                {noticeDetailData && noticeDetailData.title}
+              </WordbreakText>
+            </Wrapper>
+
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              내용
+            </Text>
+            <Wrapper padding={`10px`} fontSize={width < 700 ? `14px` : `16px`}>
+              <WordbreakText
+                dangerouslySetInnerHTML={{
+                  __html: noticeDetailData && noticeDetailData.content,
+                }}
+              ></WordbreakText>
+            </Wrapper>
+          </Modal>
+          {/* MESSAGE MODAL */}
+          <Modal
+            title={`쪽지 상세보기`}
+            visible={messageDetailModal}
+            footer={null}
+            onCancel={() => messageModalToggle(null)}
+          >
+            <Wrapper
+              dr={`row`}
+              ju={`space-between`}
+              margin={`0 0 35px`}
+              fontSize={width < 700 ? `14px` : `16px`}
+            >
+              <Text margin={`0 54px 0 0`}>
+                {`작성자: ${messageDetailData && messageDetailData.author}`}
+              </Text>
+              <Wrapper width={`auto`}>
+                <Text>
+                  {`작성일: ${moment(
+                    messageDetailData && messageDetailData.createdAt,
+                    "YYYY/MM/DD"
+                  ).format("YYYY/MM/DD")}`}
+                </Text>
+              </Wrapper>
+            </Wrapper>
+
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              제목
+            </Text>
+            <Wrapper padding={`10px`} fontSize={width < 700 ? `14px` : `16px`}>
+              <WordbreakText>
+                {messageDetailData && messageDetailData.title}
+              </WordbreakText>
+            </Wrapper>
+
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              내용
+            </Text>
+            <Wrapper
+              padding={`10px`}
+              al={`flex-start`}
+              ju={`flex-start`}
+              fontSize={width < 700 ? `14px` : `16px`}
+            >
+              {messageDetailData &&
+                messageDetailData.content.split(`\n`).map((data) => {
+                  return (
+                    <SpanText>
+                      {data}
+                      <br />
+                    </SpanText>
+                  );
+                })}
+            </Wrapper>
           </Modal>
         </AdminLayout>
       ) : (
