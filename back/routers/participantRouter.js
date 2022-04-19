@@ -474,11 +474,17 @@ router.post("/user/limit/list", isAdminCheck, async (req, res, next) => {
             B.course,
             B.day,
             B.UserId 						AS TeacherId,
-            CONCAT(DATEDIFF(A.endDate, now()), "일") 			AS lastDate
+            CONCAT(DATEDIFF(A.endDate, now()), "일") 			AS lastDate,
+            C.username,
+            C.email,
+            C.mobile
       FROM	participants		A
      INNER
       JOIN	lectures 			  B	
         ON	A.LectureId = B.id
+     INNER
+      JOIN	users 			  C	
+        ON	A.UserId = C.id
      WHERE	1 = 1
        AND  A.isDelete = FALSE
        AND  A.isChange = FALSE
