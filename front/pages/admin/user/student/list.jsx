@@ -1167,6 +1167,20 @@ const UserList = ({}) => {
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
                   margin={`0 5px 0 0`}>
+                  비밀번호
+                </ColWrapper>
+                <ColWrapper>
+                  {stuDetail && stuDetail.mobile && stuDetail.mobile.slice(-4)}
+                </ColWrapper>
+              </RowWrapper>
+
+              <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                <ColWrapper
+                  width={`120px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
                   국가
                 </ColWrapper>
                 <ColWrapper>{stuDetail && stuDetail.stuCountry}</ColWrapper>

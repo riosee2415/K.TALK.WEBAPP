@@ -21,7 +21,7 @@ export default {
   // grey
   grey_C: "#D8D8D8",
   grey2_C: "#707070",
-  grey3_C: "##A8A8A8",
+  grey3_C: "#A8A8A8",
   lightGrey_C: "#FBFBFB",
   darkGrey_C: "#2D2D2D",
 };

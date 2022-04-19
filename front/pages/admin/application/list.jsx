@@ -25,6 +25,8 @@ import {
   Text,
   SpanText,
   TextInput,
+  GuideUl,
+  GuideLi,
 } from "../../../components/commonComponents";
 import {
   UPDATE_MODAL_CLOSE_REQUEST,
@@ -328,40 +330,6 @@ const List = ({ location }) => {
         return message.error("결제 여부를 선택해주세요.");
       }
 
-      console.log({
-        userId: data.userId,
-        password: data.password,
-        username: data.username,
-        mobile: data.mobile,
-        email: data.email,
-        address: data.address,
-        detailAddress: data.detailAddress,
-        stuLanguage: data.stuLanguage,
-        birth: data.birth,
-        stuCountry: data.stuCountry,
-        stuLiveCon: data.stuLiveCon,
-        sns: data.sns,
-        snsId: data.snsId,
-        stuJob: data.stuJob,
-        gender: data.gender,
-        PaymentId:
-          data && data.paymentList ? data.paymentList.split(",")[0] : null,
-        LectureId:
-          data && data.lectureList
-            ? data.lectureList
-            : data.paymentList.split(",")[1],
-        date: data.date
-          ? String(data.date * 7)
-          : parseInt(data.paymentList.split(",")[2]) * 7,
-        endDate: data.date
-          ? moment()
-              .add(parseInt(data.date) * 7, "days")
-              .format("YYYY-MM-DD")
-          : moment()
-              .add(parseInt(data.paymentList.split(",")[2]) * 7, "days")
-              .format("YYYY-MM-DD"),
-      });
-
       dispatch({
         type: USER_STU_CREATE_REQUEST,
         data: {
@@ -404,18 +372,23 @@ const List = ({ location }) => {
 
   const updateFinish = useCallback(
     (data) => {
+      console.log(data, "data");
       dispatch({
         type: APP_UPDATE_REQUEST,
         data: {
           id: updateData.id,
-          timeDiff: data.timeDiff,
-          wantStartDate: data.wantStartDate.format("YYYY-MM-DD"),
-          teacher: data.teacher,
+          timeDiff: data.timeDiff ? data.timeDiff : "",
+          wantStartDate: data.wantStartDate?.format("YYYY-MM-DD")
+            ? data.wantStartDate.format("YYYY-MM-DD")
+            : "",
+          teacher: data.teacher ? data.teacher : "",
           isDiscount: data.isDiscount,
-          meetDate: data.meetDate.format("YYYY-MM-DD"),
-          level: data.level,
-          job: data.job,
-          purpose: data.purpose,
+          meetDate: data.meetDate?.format("YYYY-MM-DD")
+            ? data.meetDate.format("YYYY-MM-DD")
+            : "",
+          level: data.level ? data.level : "",
+          job: data.job ? data.job : "",
+          purpose: data.purpose ? data.purpose : "",
         },
       });
     },
@@ -444,28 +417,26 @@ const List = ({ location }) => {
 
   const onFillApp = useCallback(
     (data) => {
-      if (data) {
-        if (data.wantStartDate) {
-          updateForm.setFieldsValue({
-            timeDiff: data.timeDiff,
-            wantStartDate: moment(data.wantStartDate),
-            teacher: data.teacher,
-            isDiscount: data.isDiscount,
-            meetDate: moment(data.meetDate),
-            level: data.level,
-            job: data.job,
-            purpose: data.purpose,
-          });
-        } else {
-          updateForm.setFieldsValue({
-            timeDiff: data.timeDiff,
-            teacher: data.teacher,
-            isDiscount: data.isDiscount,
-            level: data.level,
-            job: data.job,
-            purpose: data.purpose,
-          });
-        }
+      if (data && data.wantStartDate) {
+        updateForm.setFieldsValue({
+          timeDiff: data.timeDiff,
+          wantStartDate: moment(data.wantStartDate),
+          teacher: data.teacher,
+          isDiscount: data.isDiscount,
+          meetDate: moment(data.meetDate),
+          level: data.level,
+          job: data.job,
+          purpose: data.purpose,
+        });
+      } else {
+        updateForm.setFieldsValue({
+          timeDiff: data.timeDiff,
+          teacher: data.teacher,
+          isDiscount: data.isDiscount,
+          level: data.level,
+          job: data.job,
+          purpose: data.purpose,
+        });
       }
     },
     [updateForm]
@@ -476,6 +447,17 @@ const List = ({ location }) => {
       isDiscount: e ? 1 : 0,
     });
   }, []);
+
+  const buttonHandle = useCallback(
+    (type) => {
+      setIsPayment(type);
+
+      createForm.setFieldsValue({
+        isPayment: type,
+      });
+    },
+    [createForm]
+  );
 
   ////// DATAVIEW //////
 
@@ -515,12 +497,15 @@ const List = ({ location }) => {
 
     {
       title: "신청자",
-
+      width: "100px",
       render: (data) => (
-        <ColWrapper al={`flex-start`}>
+        <ColWrapper al={`flex-start`} width={`auto`}>
           {!Boolean(data.isComplete) && (
-            <Button size={`small`} onClick={() => createModalToggle(data)}>
-              회원 생성
+            <Button
+              style={{ width: "100%" }}
+              size={`small`}
+              onClick={() => createModalToggle(data)}>
+              신청자 생성
             </Button>
           )}
 
@@ -528,7 +513,7 @@ const List = ({ location }) => {
             type="primary"
             size={`small`}
             onClick={() => updateModalOpen(data)}>
-            정보 추가
+            상세정보 및 정보추가
           </Button>
         </ColWrapper>
       ),
@@ -545,6 +530,20 @@ const List = ({ location }) => {
       {/* <AdminTop createButton={true} createButtonAction={() => {})} /> */}
 
       <AdminContent>
+        <Wrapper
+          bgColor={Theme.lightGrey_C}
+          padding={`20px 20px 0 30px`}
+          radius={`10px`}
+          margin={`0 0 10px 0`}
+          dr={`row`}
+          shadow={`0 0 6px rgba(0,0,0,0.16)`}>
+          <GuideUl width={`auto`}>
+            <GuideLi width={`auto`}>
+              회원을 생성하면 회원 목록에서 확인 할 수 있습니다.
+            </GuideLi>
+          </GuideUl>
+        </Wrapper>
+
         <RowWrapper margin={`0 0 10px 0`} gutter={5}>
           <Col>
             <Button onClick={() => moveLinkHandler(`/admin/application/list`)}>
@@ -610,7 +609,9 @@ const List = ({ location }) => {
                   margin={`0 5px 0 0`}>
                   이름
                 </ColWrapper>
-                <ColWrapper>
+                <ColWrapper
+                  al={`flex-start`}
+                  width={`calc(100% - 120px - 10px)`}>
                   {updateData && updateData.firstName}&nbsp;
                   {updateData && updateData.lastName}
                 </ColWrapper>
@@ -625,7 +626,11 @@ const List = ({ location }) => {
                   margin={`0 5px 0 0`}>
                   생년월일
                 </ColWrapper>
-                <ColWrapper>{updateData && updateData.dateOfBirth}</ColWrapper>
+                <ColWrapper
+                  al={`flex-start`}
+                  width={`calc(100% - 120px - 10px)`}>
+                  {updateData && updateData.dateOfBirth}
+                </ColWrapper>
               </RowWrapper>
 
               <RowWrapper width={`100%`} margin={`0 0 10px`}>
@@ -637,7 +642,11 @@ const List = ({ location }) => {
                   margin={`0 5px 0 0`}>
                   이메일
                 </ColWrapper>
-                <ColWrapper>{updateData && updateData.gmailAddress}</ColWrapper>
+                <ColWrapper
+                  al={`flex-start`}
+                  width={`calc(100% - 120px - 10px)`}>
+                  {updateData && updateData.gmailAddress}
+                </ColWrapper>
               </RowWrapper>
 
               <RowWrapper width={`100%`} margin={`0 0 10px`}>
@@ -649,7 +658,11 @@ const List = ({ location }) => {
                   margin={`0 5px 0 0`}>
                   국가
                 </ColWrapper>
-                <ColWrapper>{updateData && updateData.nationality}</ColWrapper>
+                <ColWrapper
+                  al={`flex-start`}
+                  width={`calc(100% - 120px - 10px)`}>
+                  {updateData && updateData.nationality}
+                </ColWrapper>
               </RowWrapper>
 
               <RowWrapper width={`100%`} margin={`0 0 10px`}>
@@ -661,7 +674,9 @@ const List = ({ location }) => {
                   margin={`0 5px 0 0`}>
                   거주 국가
                 </ColWrapper>
-                <ColWrapper>
+                <ColWrapper
+                  al={`flex-start`}
+                  width={`calc(100% - 120px - 10px)`}>
                   {updateData && updateData.countryOfResidence}
                 </ColWrapper>
               </RowWrapper>
@@ -675,7 +690,9 @@ const List = ({ location }) => {
                   margin={`0 5px 0 0`}>
                   사용언어
                 </ColWrapper>
-                <ColWrapper>
+                <ColWrapper
+                  al={`flex-start`}
+                  width={`calc(100% - 120px - 10px)`}>
                   {updateData && updateData.languageYouUse}
                 </ColWrapper>
               </RowWrapper>
@@ -689,13 +706,15 @@ const List = ({ location }) => {
                   margin={`0 5px 0 0`}>
                   휴대폰번호
                 </ColWrapper>
-                <ColWrapper>
+                <ColWrapper
+                  al={`flex-start`}
+                  width={`calc(100% - 120px - 10px)`}>
                   {updateData && updateData.phoneNumber}
                   {updateData && updateData.phoneNumber2}
                 </ColWrapper>
               </RowWrapper>
 
-              <RowWrapper width={`100%`} margin={`0 0 10px`}>
+              <RowWrapper margin={`0 0 10px`}>
                 <ColWrapper
                   width={`120px`}
                   height={`30px`}
@@ -704,7 +723,11 @@ const List = ({ location }) => {
                   margin={`0 5px 0 0`}>
                   가능한 수업시간
                 </ColWrapper>
-                <ColWrapper>{updateData && updateData.classHour}</ColWrapper>
+                <ColWrapper
+                  al={`flex-start`}
+                  width={`calc(100% - 120px - 10px)`}>
+                  {updateData && updateData.classHour}
+                </ColWrapper>
               </RowWrapper>
             </Wrapper>
             <Wrapper width={`50%`} margin={`0 0 10px`} al={`flex-start`}>
@@ -749,9 +772,7 @@ const List = ({ location }) => {
                   시차
                 </Wrapper>
 
-                <FormItem
-                  rules={[{ required: true, message: "시차를 입력해주세요." }]}
-                  name="timeDiff">
+                <FormItem name="timeDiff">
                   <CustomInput min={1} type={`number`} width={`100%`} />
                 </FormItem>
               </Wrapper>
@@ -763,14 +784,10 @@ const List = ({ location }) => {
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
                   margin={`0 5px 0 0`}>
-                  원하는 날짜
+                  원하는 시작날짜
                 </ColWrapper>
                 <ColWrapper>
-                  <Form.Item
-                    rules={[
-                      { required: true, message: "날짜를 입력해주세요." },
-                    ]}
-                    name="wantStartDate">
+                  <Form.Item name="wantStartDate">
                     <DatePicker />
                   </Form.Item>
                 </ColWrapper>
@@ -786,11 +803,7 @@ const List = ({ location }) => {
                   담당강사
                 </ColWrapper>
                 <ColWrapper>
-                  <Form.Item
-                    rules={[
-                      { required: true, message: "날짜를 입력해주세요." },
-                    ]}
-                    name="teacher">
+                  <Form.Item name="teacher">
                     <Select
                       style={{ width: `200px` }}
                       placeholder={`강사를 선택해주세요.`}>
@@ -836,11 +849,7 @@ const List = ({ location }) => {
                   줌 미팅 날짜
                 </ColWrapper>
                 <ColWrapper>
-                  <Form.Item
-                    rules={[
-                      { required: true, message: "날짜를 입력해주세요." },
-                    ]}
-                    name="meetDate">
+                  <Form.Item name="meetDate">
                     <DatePicker />
                   </Form.Item>
                 </ColWrapper>
@@ -855,23 +864,10 @@ const List = ({ location }) => {
                   margin={`0 5px 0 0`}>
                   레벨
                 </ColWrapper>
-                <ColWrapper>
-                  <Form.Item
-                    rules={[
-                      { required: true, message: "레벨을 입력해주세요." },
-                    ]}
-                    name="level">
-                    <Select style={{ width: 176 }}>
-                      {levelData.map((data, idx) => {
-                        return (
-                          <Select.Option key={idx} value={data}>
-                            {data}
-                          </Select.Option>
-                        );
-                      })}
-                    </Select>
-                  </Form.Item>
-                </ColWrapper>
+
+                <FormItem name="level">
+                  <CustomInput width={`100%`} />
+                </FormItem>
               </RowWrapper>
 
               <RowWrapper width={`100%`} al={`flex-start`}>
@@ -884,11 +880,7 @@ const List = ({ location }) => {
                   직업
                 </ColWrapper>
                 <ColWrapper>
-                  <Form.Item
-                    rules={[
-                      { required: true, message: "직업를 입력해주세요." },
-                    ]}
-                    name="job">
+                  <Form.Item name="job">
                     <CustomInput width={`100%`} />
                   </Form.Item>
                 </ColWrapper>
@@ -904,14 +896,7 @@ const List = ({ location }) => {
                   배우는 목적
                 </ColWrapper>
                 <ColWrapper width={`80%`} al={`flex-start`}>
-                  <FormItem
-                    rules={[
-                      {
-                        required: true,
-                        message: "배우는 목적을 입력해주세요.",
-                      },
-                    ]}
-                    name="purpose">
+                  <FormItem name="purpose">
                     <TextArea height={`200px`} width={`100%`} />
                   </FormItem>
                 </ColWrapper>
@@ -969,14 +954,29 @@ const List = ({ location }) => {
           <Form.Item label="현재 거주 나라" name="stuLiveCon">
             <Input disabled />
           </Form.Item>
-          <Form.Item label="결제 여부" name="isPayment">
-            <Select
+          <Form.Item
+            label="결제 여부"
+            name="isPayment"
+            rules={[{ message: "결제 목록을 선택해주세요.", required: true }]}>
+            <Button
+              style={{ marginRight: 10 }}
+              type={isPayment === 1 && `primary`}
+              onClick={() => buttonHandle(1)}>
+              네
+            </Button>
+            <Button
+              type={isPayment === 2 && `primary`}
+              onClick={() => buttonHandle(2)}>
+              아니요
+            </Button>
+
+            {/* <Select
               showSearch
               placeholder="Select a Lecture"
               onChange={(e) => setIsPayment(e)}>
               <Select.Option value={1}>네</Select.Option>
               <Select.Option value={2}>아니요</Select.Option>
-            </Select>
+            </Select> */}
           </Form.Item>
 
           {isPayment === 1 && (
@@ -1005,12 +1005,6 @@ const List = ({ location }) => {
                     ? ""
                     : allLectures &&
                       allLectures.map((data, idx) => {
-                        if (
-                          createData &&
-                          createData.teacher !== data.User.username
-                        )
-                          return;
-
                         return (
                           <Select.Option key={data.id} value={data.id}>
                             {`${data.course} | ${data.User.username}`}
@@ -1053,22 +1047,11 @@ const List = ({ location }) => {
             name="address">
             <Input />
           </Form.Item>
-          <Form.Item
-            label="상세주소"
-            rules={[{ required: true, message: "상세주소를 입력해주세요." }]}
-            name="detailAddress">
+
+          <Form.Item label="sns" name="sns">
             <Input />
           </Form.Item>
-          <Form.Item
-            label="sns"
-            rules={[{ required: true, message: "sns를 입력해주세요." }]}
-            name="sns">
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="sns아이디"
-            rules={[{ required: true, message: "sns아이디를 입력해주세요." }]}
-            name="snsId">
+          <Form.Item label="sns아이디" name="snsId">
             <Input />
           </Form.Item>
           {/* <Wrapper dr={`row`} ju={`flex-end`}>

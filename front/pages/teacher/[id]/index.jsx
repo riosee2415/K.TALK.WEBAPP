@@ -3092,12 +3092,12 @@ const Index = () => {
                     onClick={() => onReset()}>
                     돌아가기
                   </CommonButton>
-                  {/* <CommonButton
+                  <CommonButton
                     margin={`0 0 0 5px`}
                     radius={`5px`}
                     onClick={() => messageAnswerToggleHanlder()}>
                     답변하기
-                  </CommonButton> */}
+                  </CommonButton>
                 </Wrapper>
               </>
             )}
