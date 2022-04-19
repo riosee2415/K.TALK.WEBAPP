@@ -82,6 +82,10 @@ const AdminContent = styled.div`
 `;
 
 const CustomModal = styled(Modal)`
+  & .ant-modal-body {
+    min-height: ${(props) => props.minHeight};
+  }
+
   & .ant-modal-header,
   & .ant-modal-content {
     border-radius: 5px;
@@ -126,7 +130,21 @@ const List = ({ router }) => {
   }, [st_loadMyInfoDone]);
   /////////////////////////////////////////////////////////////////////////
 
-  const [currentPage, setCurrentPage] = useState(1);
+  ////// HOOKS //////
+
+  const width = useWidth();
+  const dispatch = useDispatch();
+
+  const formRef = useRef();
+
+  const inputSearch = useInput("");
+
+  const [form] = Form.useForm();
+  const [Allform] = Form.useForm();
+  const [groupform] = Form.useForm();
+  const [lectureform] = Form.useForm();
+  const [lectureEndform] = Form.useForm();
+
   const [selectValue, setSelectValue] = useState("");
 
   const [updateData, setUpdateData] = useState(null);
@@ -147,29 +165,18 @@ const List = ({ router }) => {
   const [currentChecks, setCurrentChecks] = useState([]);
   const [currentCheckDatum, setCurrentCheckDatum] = useState([]);
 
-  PARTICIPANT_USER_LIMIT_LIST_REQUEST;
+  const [lectureEndModal, setLectureEndModal] = useState(false);
 
-  ////// HOOKS //////
-
-  const width = useWidth();
-  const dispatch = useDispatch();
-
-  const fileRef = useRef();
-  const formRef = useRef();
-
-  const inputSearch = useInput("");
-
-  const [form] = Form.useForm();
-  const [Allform] = Form.useForm();
-  const [groupform] = Form.useForm();
-  const [lectureform] = Form.useForm();
+  const [lectureEndChecks, setLectureEndChecks] = useState([]);
+  const [lectureEndCheckDatum, setLectureEndCheckDatum] = useState([]);
 
   ////// REDUX //////
   const {
+    messageAdminList,
+
     st_messageAdminListDone,
     st_messageAdminListError,
 
-    messageAdminList,
     st_messageCreateDone,
     st_messageCreateError,
 
@@ -192,18 +199,13 @@ const List = ({ router }) => {
   const { allLectures, st_lectureAllListDone, st_lectureAllListError } =
     useSelector((state) => state.lecture);
 
+  ////// USEEFFECT //////
+
   useEffect(() => {
     if (st_lectureAllListError) {
       return message.error(st_lectureAllListError);
     }
   }, [st_lectureAllListError]);
-  ////// USEEFFECT //////
-
-  useEffect(() => {
-    if (st_messageLectureCreateError) {
-      return message.error(st_messageLectureCreateError);
-    }
-  }, [st_messageLectureCreateError]);
 
   useEffect(() => {
     if (st_messageLectureCreateDone) {
@@ -268,6 +270,9 @@ const List = ({ router }) => {
       onReset();
       setCurrentCheckDatum([]);
       setCurrentChecks([]);
+
+      setLectureEndCheckDatum([]);
+      setLectureEndChecks([]);
       return message.success("쪽지를 보냈습니다.");
     }
   }, [st_messageManyCreateDone]);
@@ -283,6 +288,29 @@ const List = ({ router }) => {
       return message.error(st_participantUserLimitListError);
     }
   }, [st_participantUserLimitListError]);
+
+  useEffect(() => {
+    if (st_messageCreateError) {
+      return message.error(st_messageCreateError);
+    }
+  }, [st_messageCreateError]);
+
+  useEffect(() => {
+    if (st_messageAdminListDone) {
+    }
+  }, [st_messageAdminListDone]);
+
+  useEffect(() => {
+    if (st_participantUserLimitListDone) {
+      setLectureEndModal(true);
+    }
+  }, [st_participantUserLimitListDone]);
+
+  useEffect(() => {
+    if (st_messageLectureCreateError) {
+      return message.error(st_messageLectureCreateError);
+    }
+  }, [st_messageLectureCreateError]);
 
   ////// TOGGLE ///////
 
@@ -400,7 +428,9 @@ const List = ({ router }) => {
     Allform.resetFields();
     groupform.resetFields();
     lectureform.resetFields();
+    lectureEndform.resetFields();
 
+    setLectureEndModal(false);
     setAnswerModal(false);
     setAllSendToggle(false);
     setLectureToggle(false);
@@ -441,7 +471,6 @@ const List = ({ router }) => {
 
   const listTypeHandler = useCallback(
     (listType) => {
-      setListType(listType);
       dispatch({
         type: MESSAGE_ADMIN_LIST_REQUEST,
         data: {
@@ -449,6 +478,8 @@ const List = ({ router }) => {
           search: inputSearch.value,
         },
       });
+
+      setListType(listType);
     },
     [inputSearch.value, listType]
   );
@@ -461,10 +492,38 @@ const List = ({ router }) => {
     },
   };
 
-  // const rowSelection = {
-  //   onChange: (selectedRowKeys, selectedRowDaum) =>
-  //     onSelectChange(selectedRowDaum),
-  // };
+  const lectureEndHandler = useCallback(() => {
+    dispatch({
+      type: PARTICIPANT_USER_LIMIT_LIST_REQUEST,
+    });
+  }, []);
+
+  const rowLectureSelection = {
+    selectedRowKeys: lectureEndChecks,
+    onChange: (selectedRowKeys, selectedRowDaum) => {
+      setLectureEndChecks(selectedRowKeys);
+      setLectureEndCheckDatum(selectedRowDaum);
+    },
+  };
+
+  const lectureEndSubmit = useCallback(
+    (data) => {
+      let receiverId = lectureEndCheckDatum.map((data) => data.UserId);
+      let level = new Array(lectureEndCheckDatum.length).fill(1);
+
+      dispatch({
+        type: MESSAGE_MANY_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          author: me.username,
+          content: data.content,
+          receiverId: receiverId,
+          level: level,
+        },
+      });
+    },
+    [lectureEndCheckDatum, lectureEndChecks, me]
+  );
 
   ////// DATAVIEW //////
   const columns = [
@@ -510,6 +569,33 @@ const List = ({ router }) => {
     },
   ];
 
+  const columnsLectureEnd = [
+    {
+      title: "학생이름",
+      dataIndex: "username",
+    },
+
+    {
+      title: "이메일",
+      dataIndex: "email",
+    },
+
+    {
+      title: "핸드폰번호",
+      dataIndex: "mobile",
+    },
+
+    {
+      title: "강의이름",
+      dataIndex: "course",
+    },
+
+    {
+      title: "수업 종료날",
+      dataIndex: "lastDate",
+    },
+  ];
+
   return (
     <AdminLayout>
       <PageHeader
@@ -525,27 +611,26 @@ const List = ({ router }) => {
           <Button
             style={{ margin: "0 5px 0 0" }}
             size="small"
-            onClick={() => sendAllToggleHandler(1)}>
+            onClick={() => sendAllToggleHandler()}>
             전체 보내기
           </Button>
 
           <Button
             style={{ margin: "0 5px 0 0" }}
             size="small"
-            onClick={() => sendManyToggleHandler(2)}>
+            onClick={() => sendManyToggleHandler()}>
             단체로 보내기
           </Button>
 
-          <Button size="small" onClick={() => lectureToggleHandler(3)}>
+          <Button size="small" onClick={() => lectureToggleHandler()}>
             강의 단위 보내기
           </Button>
         </Wrapper>
-
         <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 10px 0`}>
           <Wrapper dr={`row`} width={`auto`}>
             <Input
               style={{ width: "300px" }}
-              placeholder="검색어"
+              placeholder="작성자"
               {...inputSearch}
             />
 
@@ -558,10 +643,9 @@ const List = ({ router }) => {
           <Wrapper dr={`row`} width={`auto`}>
             <Button
               style={{ margin: "0 5px" }}
-              type={listType === 4 && "primary"}
-              onClick={() => listTypeHandler(4)}
+              onClick={() => lectureEndHandler()}
               size="small">
-              일주일 이하 수업 조회
+              수업 종료 7일이하
             </Button>
 
             <Button
@@ -592,14 +676,6 @@ const List = ({ router }) => {
           columns={columns}
           dataSource={messageAdminList ? messageAdminList : []}
           size="small"
-
-          //   pagination={{
-          //     defaultCurrent: 1,
-          //     current: parseInt(currentPage),
-
-          //     total: maxPage * 10,
-          //     onChange: (page) => otherPageCall(page),
-          //   }}
         />
       </AdminContent>
 
@@ -757,9 +833,7 @@ const List = ({ router }) => {
             </Text>
             <Wrapper al={`flex-start`} margin={`15px 0`}>
               {currentCheckDatum && currentCheckDatum.length === 0 ? (
-                <Wrapper>
-                  <Empty description="단체로 선택하신 박스가 없습니다." />
-                </Wrapper>
+                <Wrapper></Wrapper>
               ) : (
                 <Wrapper dr={`row`} width={`auto`} ju={`flex-start`}>
                   {currentCheckDatum &&
@@ -960,14 +1034,99 @@ const List = ({ router }) => {
         </CustomForm>
       </CustomModal>
 
-      <Modal
-        visible={deletePopVisible}
-        onOk={deleteNoticeHandler}
-        onCancel={deletePopToggle(null)}
-        title="정말 삭제하시겠습니까?">
-        <Wrapper>삭제 된 데이터는 다시 복구할 수 없습니다.</Wrapper>
-        <Wrapper>정말 삭제하시겠습니까?</Wrapper>
-      </Modal>
+      <CustomModal
+        visible={lectureEndModal}
+        onCancel={() => setLectureEndModal(false)}
+        footer={null}
+        width={`80%`}
+        minHeight={`1000px`}
+        title="일주일 이하 수업 목록">
+        <Table
+          rowKey="id"
+          rowSelection={rowLectureSelection}
+          columns={columnsLectureEnd}
+          dataSource={partUserLimitList ? partUserLimitList : []}
+          size="small"
+        />
+
+        {lectureEndCheckDatum && lectureEndCheckDatum.length !== 0 && (
+          <Wrapper padding={`10px`}>
+            <CustomForm form={lectureEndform} onFinish={lectureEndSubmit}>
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`bold`}
+                margin={`0 0 10px`}>
+                받는 사람
+              </Text>
+              <Wrapper al={`flex-start`} margin={`15px 0`}>
+                {lectureEndCheckDatum && lectureEndCheckDatum.length === 0 ? (
+                  <Wrapper>
+                    <Empty description="단체로 선택하신 박스가 없습니다." />
+                  </Wrapper>
+                ) : (
+                  <Wrapper dr={`row`} width={`auto`} ju={`flex-start`}>
+                    {lectureEndCheckDatum &&
+                      lectureEndCheckDatum.map((data, idx) => {
+                        return (
+                          <Text
+                            key={data.id}
+                            margin={`0 5px 0`}
+                            color={Theme.basicTheme_C}>
+                            {data.username}
+                          </Text>
+                        );
+                      })}
+                  </Wrapper>
+                )}
+              </Wrapper>
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`bold`}
+                margin={`0 0 10px`}>
+                제목
+              </Text>
+              <Form.Item
+                name="title"
+                rules={[{ required: true, message: "제목을 입력해주세요." }]}>
+                <CusotmInput width={`100%`} />
+              </Form.Item>
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`bold`}
+                margin={`0 0 10px`}>
+                내용
+              </Text>
+              <Form.Item
+                name="content"
+                rules={[{ required: true, message: "내용을 입력해주세요." }]}>
+                <Input.TextArea style={{ height: `360px` }} />
+              </Form.Item>
+              <Wrapper dr={`row`}>
+                {/* <Button
+                  type="primary"
+                  onClick={() => lectureSendMessageHandler()}>
+                  쪽지 보내기
+                </Button> */}
+
+                <CommonButton
+                  margin={`0 5px 0 0`}
+                  kindOf={`grey`}
+                  color={Theme.darkGrey_C}
+                  radius={`5px`}
+                  onClick={() => onReset()}>
+                  돌아가기
+                </CommonButton>
+                <CommonButton
+                  margin={`0 0 0 5px`}
+                  radius={`5px`}
+                  htmlType="submit">
+                  쪽지 보내기
+                </CommonButton>
+              </Wrapper>
+            </CustomForm>
+          </Wrapper>
+        )}
+      </CustomModal>
     </AdminLayout>
   );
 };

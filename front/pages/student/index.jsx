@@ -387,19 +387,19 @@ const Student = () => {
       },
     },
 
-    {
-      title: "다운로드",
-      render: (data) => {
-        return (
-          <Button
-            type={`primary`}
-            size={`small`}
-            onClick={() => fileDownloadHandler(data.Book.file)}>
-            다운로드
-          </Button>
-        );
-      },
-    },
+    // {
+    //   title: "다운로드",
+    //   render: (data) => {
+    //     return (
+    //       <Button
+    //         type={`primary`}
+    //         size={`small`}
+    //         onClick={() => fileDownloadHandler(data.Book.file)}>
+    //         다운로드
+    //       </Button>
+    //     );
+    //   },
+    // },
   ];
   ////// USEEFFECT //////
 
@@ -1561,13 +1561,13 @@ const Student = () => {
                               줌 상담신청
                             </Text>
                           </Wrapper>
-                          {/* <Button
+                          <Button
                             type={`primary`}
                             size={`small`}
                             style={{ marginTop: 10 }}
                             onClick={() => detailBookOpen(data)}>
                             교재 리스트
-                          </Button> */}
+                          </Button>
                         </Wrapper>
                       </Wrapper>
                     </Wrapper>
