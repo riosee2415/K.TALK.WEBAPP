@@ -508,7 +508,7 @@ const DetailClass = () => {
 
     {
       title: "생성일",
-      render: (data) => <div>{data.createdAt.substring(0, 14)}</div>,
+      render: (data) => <div>{data.createdAt.substring(0, 10)}</div>,
     },
 
     {
@@ -901,7 +901,19 @@ const DetailClass = () => {
         onCancel={() => messageToggle(null)}
         footer={null}
         title={`쪽지 자세히 보기`}
-      ></Modal>
+      >
+        <Wrapper al={`flex-start`} ju={`flex-start`}>
+          {messageDetail &&
+            messageDetail.content.split(`\n`).map((data) => {
+              return (
+                <Text>
+                  {data}
+                  <br />
+                </Text>
+              );
+            })}
+        </Wrapper>
+      </Modal>
     </AdminLayout>
   );
 };

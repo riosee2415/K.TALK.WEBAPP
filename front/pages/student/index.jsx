@@ -2251,6 +2251,7 @@ const Student = () => {
                     onClick={() => onReset()}>
                     돌아가기
                   </CommonButton>
+                  {console.log(messageDatum)}
                   <CommonButton
                     onClick={() => messageAnswerToggleHanlder(messageDatum)}
                     margin={`0 0 0 5px`}
