@@ -42,7 +42,7 @@ module.exports = class Application extends Model {
           allowNull: true,
         },
         classHour: {
-          type: DataTypes.STRING(200),
+          type: DataTypes.STRING(500),
           allowNull: false,
         },
         comment: {
