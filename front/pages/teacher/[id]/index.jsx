@@ -1306,11 +1306,9 @@ const Index = () => {
                 ? messageData.receiverId
                 : me.id,
             receiverId:
-              messageData && messageData.senderId
-                ? messageData.senderId
-                : messageData.userlevel,
+              messageData && messageData.senderId ? messageData.senderId : "",
             content: data.messageContent,
-            level: messageData.userlevel,
+            level: messageData.userlevel ? messageData.userlevel : 4,
           },
         });
       }
@@ -3094,12 +3092,12 @@ const Index = () => {
                     onClick={() => onReset()}>
                     돌아가기
                   </CommonButton>
-                  <CommonButton
+                  {/* <CommonButton
                     margin={`0 0 0 5px`}
                     radius={`5px`}
                     onClick={() => messageAnswerToggleHanlder()}>
                     답변하기
-                  </CommonButton>
+                  </CommonButton> */}
                 </Wrapper>
               </>
             )}
