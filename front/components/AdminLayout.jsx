@@ -9,6 +9,7 @@ const AdminCol = styled(Col)`
 
   & .ant-menu-inline {
     height: 100%;
+    overflow: auto;
   }
 `;
 

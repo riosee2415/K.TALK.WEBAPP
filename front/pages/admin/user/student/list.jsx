@@ -643,6 +643,20 @@ const UserList = ({}) => {
             }>
             수업빼기
           </Button>
+        </Wrapper>
+      ),
+    },
+
+    {
+      title: "학생 강의 상세",
+      render: (data) => (
+        <Wrapper>
+          <Button
+            size="small"
+            type="primary"
+            onClick={() => detailModalOpen(data)}>
+            강의내역보기
+          </Button>
 
           <Button
             size="small"
@@ -651,21 +665,9 @@ const UserList = ({}) => {
                 ? message.error("개발사는 권한을 수정할 수 없습니다.")
                 : classPartDetailModalOpen(data)
             }>
-            학생상세
+            학생정보보기
           </Button>
         </Wrapper>
-      ),
-    },
-
-    {
-      title: "학생 강의 상세",
-      render: (data) => (
-        <Button
-          size="small"
-          type="primary"
-          onClick={() => detailModalOpen(data)}>
-          상세보기
-        </Button>
       ),
     },
 

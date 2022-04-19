@@ -61,8 +61,7 @@ const AdminMenu = () => {
         defaultOpenKeys={currentAdminMenu}
         mode="inline"
         selectedKeys={router.pathname}
-        disabled={false}
-      >
+        disabled={false}>
         <Wrapper margin={`20px 0 10px`}>
           <Image
             alt="logo"
@@ -97,16 +96,16 @@ const AdminMenu = () => {
           <MenuName>결제 클래스 관리</MenuName>
         </Menu.Item>
 
-        <Menu.Item key="/admin/user/userList">
-          <MenuName>회원 리스트</MenuName>
+        <Menu.Item key="/admin/user/student/list">
+          <MenuName>학생 관리</MenuName>
         </Menu.Item>
 
         <Menu.Item key="/admin/user/teacher/list">
           <MenuName>강사 관리</MenuName>
         </Menu.Item>
 
-        <Menu.Item key="/admin/user/student/list">
-          <MenuName>학생 관리</MenuName>
+        <Menu.Item key="/admin/user/userList">
+          <MenuName>회원 목록</MenuName>
         </Menu.Item>
 
         <Menu.Item key="/admin/payment/list">
@@ -133,13 +132,13 @@ const AdminMenu = () => {
           <MenuName>Application Form</MenuName>
         </Menu.Item>
 
-        <Menu.Item key="/admin/processApply/list">
+        {/* <Menu.Item key="/admin/processApply/list">
           <MenuName>설명회 참가신청서</MenuName>
         </Menu.Item>
 
         <Menu.Item key="/admin/processApply2/list">
           <MenuName>정규과정 등록신청서</MenuName>
-        </Menu.Item>
+        </Menu.Item> */}
 
         <Menu.Item key="/admin/logs/acceptLogs">
           <MenuName>접속자 통계</MenuName>
