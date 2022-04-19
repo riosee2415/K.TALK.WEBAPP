@@ -25,33 +25,43 @@ router.get("/user/list", isLoggedIn, async (req, res, next) => {
 
   try {
     const lengthQuery = `
-    SELECT	id,
-            title,
-            author,
-            senderId,
-            receiverId,
-            receiveLectureId,
-            content,
-            level,
-            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
-            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
-      FROM	Messages
+    SELECT	A.id,
+            A.title,
+            A.author,
+            A.senderId,
+            A.receiverId,
+            A.receiveLectureId,
+            A.content,
+            A.level,
+            DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            B.username,
+            B.level                                                      AS  userLevel
+      FROM	Messages  A
+     INNER
+      JOIN  users     B
+        ON  A.senderId = B.id
      WHERE  receiverId = ${req.user.id}
        AND  receiveLectureId IS NULL     
     `;
 
     const selectQuery = `
-    SELECT	id,
-            title,
-            author,
-            senderId,
-            receiverId,
-            receiveLectureId,
-            content,
-            level,
-            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
-            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
-      FROM	Messages
+    SELECT	A.id,
+            A.title,
+            A.author,
+            A.senderId,
+            A.receiverId,
+            A.receiveLectureId,
+            A.content,
+            A.level,
+            DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            B.username,
+            B.level                                                      AS  userLevel
+      FROM	Messages  A
+     INNER
+      JOIN  users     B
+        ON  A.senderId = B.id
      WHERE  receiverId = ${req.user.id} 
        AND  receiveLectureId IS NULL    
      ORDER  BY createdAt  DESC
