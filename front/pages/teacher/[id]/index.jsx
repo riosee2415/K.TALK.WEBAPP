@@ -1746,8 +1746,10 @@ const Index = () => {
                   color={Theme.black_2C}>
                   <Text fontWeight={`bold`}>
                     안녕하세요,&nbsp;
-                    <SpanText color={Theme.basicTheme_C}>
-                      {me && me.userId}님
+                    <SpanText
+                      color={Theme.basicTheme_C}
+                      wordBreak={`break-all`}>
+                      {me && me.username}
                     </SpanText>
                     !
                   </Text>

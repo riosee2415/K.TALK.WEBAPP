@@ -863,8 +863,10 @@ const LectureAll = () => {
                     fontWeight={`bold`}
                     padding={`0 0 0 15px`}>
                     안녕하세요,&nbsp;
-                    <SpanText color={Theme.basicTheme_C}>
-                      {me && me.userId}
+                    <SpanText
+                      color={Theme.basicTheme_C}
+                      wordBreak={`break-all`}>
+                      {me && me.username}
                     </SpanText>
                     님!
                   </Text>

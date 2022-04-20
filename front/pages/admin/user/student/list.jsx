@@ -52,8 +52,6 @@ const UserList = ({}) => {
 
   const { allLectures } = useSelector((state) => state.lecture);
 
-  console.log(allLectures, "allLectures");
-
   const {
     me,
     st_loadMyInfoDone,
@@ -211,8 +209,6 @@ const UserList = ({}) => {
   }, [st_participantCreateError]);
 
   useEffect(() => {
-    // console.log(parData.Participants, "aaaa");
-
     setOpt2(
       paymentList &&
         paymentList.map((data) => {
@@ -422,28 +418,6 @@ const UserList = ({}) => {
       //   day = paymentData[0].week * 7;
       //   saveData = moment().add(day, "days").format("YYYY-MM-DD");
       // }
-
-      console.log(data, "data");
-
-      console.log(data.paymentList);
-
-      console.log({
-        UserId: parData.id,
-        LectureId: data.lectureList
-          ? data.lectureList
-          : data.partLecture.split(",")[1],
-        date: data.date
-          ? parseInt(data.date) * 7
-          : parseInt(data.partLecture.split(",")[2]) * 7,
-        endDate: data.date
-          ? moment()
-              .add(parseInt(data.date) * 7, "days")
-              .format("YYYY-MM-DD")
-          : moment()
-              .add(parseInt(data.partLecture.split(",")[2]) * 7, "days")
-              .format("YYYY-MM-DD"),
-        PaymentId: data.partLecture ? data.partLecture.split(",")[0] : null,
-      });
 
       // let date = parseInt(data.partLecture.split(",")[2]) * 7
 

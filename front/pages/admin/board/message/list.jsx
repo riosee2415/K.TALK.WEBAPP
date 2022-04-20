@@ -196,8 +196,9 @@ const List = ({ router }) => {
     st_participantUserLimitListError,
   } = useSelector((state) => state.participant);
 
-  const { allLectures, st_lectureAllListDone, st_lectureAllListError } =
-    useSelector((state) => state.lecture);
+  const { allLectures, st_lectureAllListError } = useSelector(
+    (state) => state.lecture
+  );
 
   ////// USEEFFECT //////
 
@@ -591,7 +592,7 @@ const List = ({ router }) => {
     },
 
     {
-      title: "수업만료일",
+      title: "결제 만료일",
       render: (data) => <div>{`D-${data.lastDate}`}</div>,
     },
   ];

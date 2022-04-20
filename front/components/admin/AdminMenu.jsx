@@ -108,6 +108,10 @@ const AdminMenu = () => {
           <MenuName>회원 목록</MenuName>
         </Menu.Item>
 
+        <Menu.Item key="/admin/lectureDay/list">
+          <MenuName>수업 만료일 관리</MenuName>
+        </Menu.Item>
+
         <Menu.Item key="/admin/payment/list">
           <MenuName>입금 관리</MenuName>
         </Menu.Item>
