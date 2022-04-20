@@ -840,6 +840,13 @@ export const getServerSideProps = wrapper.getServerSideProps(
       },
     });
 
+    context.store.dispatch({
+      type: NOTICE_ADMIN_LIST_REQUEST,
+      data: {
+        level: 1,
+      },
+    });
+
     // 구현부 종료
     context.store.dispatch(END);
     console.log("🍀 SERVER SIDE PROPS END");

@@ -149,21 +149,6 @@ const UserDeliAddress = ({}) => {
   }, [st_loadMyInfoDone]);
 
   useEffect(() => {
-    dispatch({
-      type: BOOK_FOLDER_LIST_REQUEST,
-    });
-
-    dispatch({
-      type: BOOK_LIST_REQUEST,
-      data: {
-        BookFolderId: null,
-        search: "",
-        page: "",
-      },
-    });
-  }, []);
-
-  useEffect(() => {
     if (st_bookUploadThDone) {
       setImagePathTh(uploadPathTh);
     }
@@ -667,6 +652,19 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: BOOK_FOLDER_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: BOOK_LIST_REQUEST,
+      data: {
+        BookFolderId: null,
+        search: "",
+        page: "",
+      },
     });
 
     // 구현부 종료
