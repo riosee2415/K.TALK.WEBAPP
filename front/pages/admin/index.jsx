@@ -173,6 +173,7 @@ const AdminHome = () => {
     allUsers,
     teachers,
     st_loginAdminError,
+    st_loginAdminDone,
 
     userStuList,
     st_userStuListDone,
@@ -208,6 +209,49 @@ const AdminHome = () => {
   //   },
   // });
   // }, [router.query]);
+
+  useEffect(() => {
+    if (st_loginAdminDone) {
+      dispatch({
+        type: NOTICE_ADMIN_MAIN_LIST_REQUEST,
+        data: {
+          page: 1,
+        },
+      });
+
+      dispatch({
+        type: MESSAGE_ADMIN_MAIN_LIST_REQUEST,
+        data: {
+          listType: "",
+          search: "",
+        },
+      });
+
+      dispatch({
+        type: LECTURE_ALL_LIST_REQUEST,
+        data: {
+          TeacherId: "",
+          time: "",
+          startLv: "",
+          studentName: "",
+        },
+      });
+
+      dispatch({
+        type: USER_ALL_LIST_REQUEST,
+        data: {
+          type: 2,
+        },
+      });
+
+      dispatch({
+        type: USER_STU_LIST_REQUEST,
+      });
+      dispatch({
+        type: USER_TEACHER_LIST_REQUEST,
+      });
+    }
+  }, [st_loginAdminDone]);
 
   useEffect(() => {
     if (st_lectureDeleteDone) {
@@ -344,6 +388,16 @@ const AdminHome = () => {
       },
     });
   }, [currentPage2]);
+
+  // useEffect(() => {
+  //   if (me) {
+  //     moveLinkHandler(`/admin?login=true`);
+  //   } else {
+  //     moveLinkHandler(`/admin?login=false`);
+  //   }
+  // }, [me])
+
+  useEffect(() => {}, []);
 
   ////// HANDLER ///////
 
@@ -1567,11 +1621,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
     context.store.dispatch({
       type: USER_TEACHER_LIST_REQUEST,
     });
-
-    // context.store.dispatch({
-    //   type: ACCEPT_LOG_REQUEST,
-    //   data: { typeId: "1" },
-    // });
 
     // 구현부 종료
     context.store.dispatch(END);
