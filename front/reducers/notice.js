@@ -4,6 +4,8 @@ export const initailState = {
   noticeLectureList: null,
   noticeLectureLastPage: 1,
   notices: null,
+  noticeAdminMain: null,
+  noticeAdminMainMaxPage: 1,
 
   uploadPath: null,
 
@@ -37,6 +39,10 @@ export const initailState = {
   st_noticeAdminListLoading: false, //
   st_noticeAdminListDone: false,
   st_noticeAdminListError: null,
+  //
+  st_noticeAdminMainListLoading: false, //
+  st_noticeAdminMainListDone: false,
+  st_noticeAdminMainListError: null,
   //
   st_noticeCreateLoading: false,
   st_noticeCreateDone: false,
@@ -90,6 +96,10 @@ export const NOTICE_DETAIL_FAILURE = "NOTICE_DETAIL_FAILURE";
 export const NOTICE_ADMIN_LIST_REQUEST = "NOTICE_ADMIN_LIST_REQUEST";
 export const NOTICE_ADMIN_LIST_SUCCESS = "NOTICE_ADMIN_LIST_SUCCESS";
 export const NOTICE_ADMIN_LIST_FAILURE = "NOTICE_ADMIN_LIST_FAILURE";
+//
+export const NOTICE_ADMIN_MAIN_LIST_REQUEST = "NOTICE_ADMIN_MAIN_LIST_REQUEST";
+export const NOTICE_ADMIN_MAIN_LIST_SUCCESS = "NOTICE_ADMIN_MAIN_LIST_SUCCESS";
+export const NOTICE_ADMIN_MAIN_LIST_FAILURE = "NOTICE_ADMIN_MAIN_LIST_FAILURE";
 //
 export const NOTICE_CREATE_REQUEST = "NOTICE_CREATE_REQUEST";
 export const NOTICE_CREATE_SUCCESS = "NOTICE_CREATE_SUCCESS";
@@ -225,6 +235,29 @@ const reducer = (state = initailState, action) =>
         draft.st_noticeAdminListLoading = false;
         draft.st_noticeAdminListDone = false;
         draft.st_noticeAdminListError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case NOTICE_ADMIN_MAIN_LIST_REQUEST: {
+        draft.st_noticeAdminMainListLoading = true;
+        draft.st_noticeAdminMainListDone = null;
+        draft.st_noticeAdminMainListError = false;
+        break;
+      }
+      case NOTICE_ADMIN_MAIN_LIST_SUCCESS: {
+        draft.st_noticeAdminMainListLoading = false;
+        draft.st_noticeAdminMainListDone = true;
+        draft.noticeAdminMain = action.data.notices;
+        draft.noticeAdminMainMaxPage = action.data.lastPage;
+
+        break;
+      }
+      case NOTICE_ADMIN_MAIN_LIST_FAILURE: {
+        draft.st_noticeAdminMainListLoading = false;
+        draft.st_noticeAdminMainListDone = false;
+        draft.st_noticeAdminMainListError = action.error;
         break;
       }
 

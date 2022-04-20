@@ -7,6 +7,7 @@ import {
   message,
   Modal,
   notification,
+  Pagination,
   Select,
   Table,
   TimePicker,
@@ -46,8 +47,8 @@ import {
 } from "../../reducers/lecture";
 import moment from "moment";
 import { SolutionOutlined } from "@ant-design/icons";
-import { MESSAGE_ADMIN_LIST_REQUEST } from "../../reducers/message";
-import { NOTICE_ADMIN_LIST_REQUEST } from "../../reducers/notice";
+import { MESSAGE_ADMIN_MAIN_LIST_REQUEST } from "../../reducers/message";
+import { NOTICE_ADMIN_MAIN_LIST_REQUEST } from "../../reducers/notice";
 
 // let Line;
 
@@ -137,6 +138,9 @@ const AdminHome = () => {
   const [messageDetailData, setMessageDetailData] = useState(null);
   const [messageDetailModal, setMessageDetailModal] = useState(null);
 
+  const [currentPage1, setCurrentPage1] = useState(1);
+  const [currentPage2, setCurrentPage2] = useState(1);
+
   const [dayArr, setDayArr] = useState([]);
   const inputId = useInput("");
   const inputPw = useInput("");
@@ -172,8 +176,12 @@ const AdminHome = () => {
     st_userStuListError,
   } = useSelector((state) => state.user);
 
-  const { notices } = useSelector((state) => state.notice);
-  const { messageAdminList } = useSelector((state) => state.message);
+  const { noticeAdminMain, noticeAdminMainMaxPage } = useSelector(
+    (state) => state.notice
+  );
+  const { messageAdminMainList, messageAdminMainMaxPage } = useSelector(
+    (state) => state.message
+  );
 
   ////// USEEFFECT //////
 
@@ -187,15 +195,15 @@ const AdminHome = () => {
   // }, [router.query]);
 
   useEffect(() => {
-    dispatch({
-      type: LECTURE_ALL_LIST_REQUEST,
-      data: {
-        TeacherId: currentTeacher ? currentTeacher : "",
-        time: searchTime ? searchTime : "",
-        startLv: "",
-        studentName: searchStuName ? searchStuName : "",
-      },
-    });
+    // dispatch({
+    //   type: LECTURE_ALL_LIST_REQUEST,
+    //   data: {
+    //     TeacherId: currentTeacher ? currentTeacher : "",
+    //     time: searchTime ? searchTime : "",
+    //     startLv: "",
+    //     studentName: searchStuName ? searchStuName : "",
+    //   },
+    // });
   }, [router.query]);
 
   useEffect(() => {
@@ -337,9 +345,21 @@ const AdminHome = () => {
   }, [st_lectureAllListDone, router.query]);
 
   useEffect(() => {
-    if (st_lectureAllListError) {
-    }
-  }, [st_lectureAllListError]);
+    dispatch({
+      type: NOTICE_ADMIN_MAIN_LIST_REQUEST,
+      data: {
+        page: currentPage1,
+      },
+    });
+  }, [currentPage1]);
+  useEffect(() => {
+    dispatch({
+      type: MESSAGE_ADMIN_MAIN_LIST_REQUEST,
+      data: {
+        page: currentPage2,
+      },
+    });
+  }, [currentPage2]);
 
   // const config = {
   //   data: acceptList,
@@ -690,10 +710,15 @@ const AdminHome = () => {
 
                 <Table
                   rowKey="id"
-                  dataSource={notices ? notices : []}
+                  dataSource={noticeAdminMain ? noticeAdminMain : []}
                   size="small"
                   columns={noticeColumns}
                   style={{ width: `100%` }}
+                  pagination={{
+                    current: currentPage1,
+                    total: noticeAdminMainMaxPage * 10,
+                    onChange: (page) => setCurrentPage1(page),
+                  }}
                 />
               </Wrapper>
               <Wrapper al={`flex-start`} width={`49%`}>
@@ -716,10 +741,15 @@ const AdminHome = () => {
 
                 <Table
                   rowKey="id"
-                  dataSource={messageAdminList ? messageAdminList : []}
+                  dataSource={messageAdminMainList ? messageAdminMainList : []}
                   size="small"
                   columns={columns}
                   style={{ width: `100%` }}
+                  pagination={{
+                    current: currentPage2,
+                    total: messageAdminMainMaxPage * 10,
+                    onChange: (page) => setCurrentPage2(page),
+                  }}
                 />
               </Wrapper>
             </Wrapper>
@@ -1532,26 +1562,29 @@ export const getServerSideProps = wrapper.getServerSideProps(
     });
 
     context.store.dispatch({
-      type: MESSAGE_ADMIN_LIST_REQUEST,
+      type: NOTICE_ADMIN_MAIN_LIST_REQUEST,
+      data: {
+        page: 1,
+      },
+    });
+
+    context.store.dispatch({
+      type: MESSAGE_ADMIN_MAIN_LIST_REQUEST,
       data: {
         listType: "",
         search: "",
       },
     });
+
     context.store.dispatch({
-      type: NOTICE_ADMIN_LIST_REQUEST,
+      type: LECTURE_ALL_LIST_REQUEST,
       data: {
-        level: 4,
+        TeacherId: "",
+        time: "",
+        startLv: "",
+        studentName: "",
       },
     });
-
-    // context.store.dispatch({
-    //   type: LECTURE_ALL_LIST_REQUEST,
-    //   data: {
-    //     listType: 1,
-    //     TeacherId: "",
-    //   },
-    // });
 
     // context.store.dispatch({
     //   type: ACCEPT_LOG_REQUEST,

@@ -17,6 +17,10 @@ import {
   NOTICE_ADMIN_LIST_SUCCESS,
   NOTICE_ADMIN_LIST_FAILURE,
   //////////////////////////////////////,
+  NOTICE_ADMIN_MAIN_LIST_REQUEST,
+  NOTICE_ADMIN_MAIN_LIST_SUCCESS,
+  NOTICE_ADMIN_MAIN_LIST_FAILURE,
+  //////////////////////////////////////,
   NOTICE_CREATE_REQUEST,
   NOTICE_CREATE_SUCCESS,
   NOTICE_CREATE_FAILURE,
@@ -140,6 +144,32 @@ function* noticeAdminList(action) {
     console.error(err);
     yield put({
       type: NOTICE_ADMIN_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function noticeAdminMainListAPI(data) {
+  return axios.post(`/api/notice/admin/main/list`, data);
+}
+function* noticeAdminMainList(action) {
+  try {
+    const result = yield call(noticeAdminMainListAPI, action.data);
+
+    yield put({
+      type: NOTICE_ADMIN_MAIN_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: NOTICE_ADMIN_MAIN_LIST_FAILURE,
       error: err.response.data,
     });
   }
@@ -409,6 +439,10 @@ function* watchNoticeAdminList() {
   yield takeLatest(NOTICE_ADMIN_LIST_REQUEST, noticeAdminList);
 }
 
+function* watchNoticeAdminMainList() {
+  yield takeLatest(NOTICE_ADMIN_MAIN_LIST_REQUEST, noticeAdminMainList);
+}
+
 function* watchNoticeCreate() {
   yield takeLatest(NOTICE_CREATE_REQUEST, noticeCreate);
 }
@@ -452,6 +486,7 @@ export default function* noticeSaga() {
     fork(watchNoticeList),
     fork(watchNoticeDetail),
     fork(watchNoticeAdminList),
+    fork(watchNoticeAdminMainList),
     fork(watchNoticeCreate),
     fork(watchNoticeAdminCreate),
     fork(watchNoticeLectureCreate),

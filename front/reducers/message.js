@@ -4,6 +4,8 @@ export const initialState = {
   messageUserList: [],
   messageUserLastPage: 1,
   messageAdminList: [],
+  messageAdminMainList: [],
+  messageAdminMainMaxPage: 1,
   messageTeacherList: [],
   messageLectureList: [],
   messageLectureLastPage: 1,
@@ -19,6 +21,10 @@ export const initialState = {
   st_messageAdminListLoading: false,
   st_messageAdminListDone: false,
   st_messageAdminListError: null,
+  //
+  st_messageAdminMainListLoading: false,
+  st_messageAdminMainListDone: false,
+  st_messageAdminMainListError: null,
   //
   st_messageDetailLoading: false,
   st_messageDetailDone: false,
@@ -73,6 +79,13 @@ export const MESSAGE_USER_LIST_FAILURE = "MESSAGE_USER_LIST_FAILURE";
 export const MESSAGE_ADMIN_LIST_REQUEST = "MESSAGE_ADMIN_LIST_REQUEST";
 export const MESSAGE_ADMIN_LIST_SUCCESS = "MESSAGE_ADMIN_LIST_SUCCESS";
 export const MESSAGE_ADMIN_LIST_FAILURE = "MESSAGE_ADMIN_LIST_FAILURE";
+
+export const MESSAGE_ADMIN_MAIN_LIST_REQUEST =
+  "MESSAGE_ADMIN_MAIN_LIST_REQUEST";
+export const MESSAGE_ADMIN_MAIN_LIST_SUCCESS =
+  "MESSAGE_ADMIN_MAIN_LIST_SUCCESS";
+export const MESSAGE_ADMIN_MAIN_LIST_FAILURE =
+  "MESSAGE_ADMIN_MAIN_LIST_FAILURE";
 
 export const MESSAGE_DETAIL_REQUEST = "MESSAGE_DETAIL_REQUEST";
 export const MESSAGE_DETAIL_SUCCESS = "MESSAGE_DETAIL_SUCCESS";
@@ -162,6 +175,28 @@ const reducer = (state = initialState, action) =>
         draft.st_messageAdminListLoading = false;
         draft.st_messageAdminListDone = false;
         draft.st_messageAdminListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case MESSAGE_ADMIN_MAIN_LIST_REQUEST: {
+        draft.st_messageAdminMainListLoading = true;
+        draft.st_messageAdminMainListDone = null;
+        draft.st_messageAdminMainListError = false;
+        break;
+      }
+      case MESSAGE_ADMIN_MAIN_LIST_SUCCESS: {
+        draft.st_messageAdminMainListLoading = false;
+        draft.st_messageAdminMainListDone = true;
+        draft.messageAdminMainList = action.data.message;
+        draft.messageAdminMainMaxPage = action.data.lastPage;
+        break;
+      }
+      case MESSAGE_ADMIN_MAIN_LIST_FAILURE: {
+        draft.st_messageAdminMainListLoading = false;
+        draft.st_messageAdminMainListDone = false;
+        draft.st_messageAdminMainListError = action.error;
         break;
       }
 

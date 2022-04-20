@@ -10,6 +10,10 @@ import {
   MESSAGE_ADMIN_LIST_SUCCESS,
   MESSAGE_ADMIN_LIST_FAILURE,
   /////////////////////////////////
+  MESSAGE_ADMIN_MAIN_LIST_REQUEST,
+  MESSAGE_ADMIN_MAIN_LIST_SUCCESS,
+  MESSAGE_ADMIN_MAIN_LIST_FAILURE,
+  /////////////////////////////////
   MESSAGE_DETAIL_REQUEST,
   MESSAGE_DETAIL_SUCCESS,
   MESSAGE_DETAIL_FAILURE,
@@ -103,6 +107,29 @@ function* messageAdminList(action) {
     console.error(err);
     yield put({
       type: MESSAGE_ADMIN_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function messageAdminMainListAPI(data) {
+  return axios.post(`/api/message/admin/main/list`, data);
+}
+
+function* messageAdminMainList(action) {
+  try {
+    const result = yield call(messageAdminMainListAPI, action.data);
+
+    yield put({
+      type: MESSAGE_ADMIN_MAIN_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: MESSAGE_ADMIN_MAIN_LIST_FAILURE,
       error: err.response.data,
     });
   }
@@ -386,6 +413,10 @@ function* watchMessageAdminList() {
   yield takeLatest(MESSAGE_ADMIN_LIST_REQUEST, messageAdminList);
 }
 
+function* watchMessageAdminMainList() {
+  yield takeLatest(MESSAGE_ADMIN_MAIN_LIST_REQUEST, messageAdminMainList);
+}
+
 function* watchMessageDetail() {
   yield takeLatest(MESSAGE_DETAIL_REQUEST, messageDetail);
 }
@@ -435,6 +466,7 @@ export default function* messagerSaga() {
   yield all([
     fork(watchMessageUserList),
     fork(watchMessageAdminList),
+    fork(watchMessageAdminMainList),
     fork(watchMessageDetail),
     fork(watchMessageTearcherList),
     fork(watchMessageCreate),
