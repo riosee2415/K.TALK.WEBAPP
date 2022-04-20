@@ -363,7 +363,7 @@ const List = ({ router }) => {
         type: MESSAGE_CREATE_REQUEST,
         data: {
           title: value.title1,
-          author: me && me.userId,
+          author: me && me.username,
           senderId: me && me.id,
           receiverId: updateData.senderId,
           content: value.content1,
@@ -591,8 +591,8 @@ const List = ({ router }) => {
     },
 
     {
-      title: "수업 종료날",
-      dataIndex: "lastDate",
+      title: "수업만료일",
+      render: (data) => <div>{`D-${data.lastDate}`}</div>,
     },
   ];
 
@@ -1039,7 +1039,7 @@ const List = ({ router }) => {
         onCancel={() => setLectureEndModal(false)}
         footer={null}
         width={`80%`}
-        minHeight={`1000px`}
+        minHeight={`500px`}
         title="일주일 이하 수업 목록">
         <Table
           rowKey="id"

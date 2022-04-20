@@ -1041,7 +1041,7 @@ const Index = () => {
           type: MESSAGE_MANY_CREATE_REQUEST,
           data: {
             title: value.title1,
-            author: me.userId,
+            author: me.username,
             content: value.content1,
             receiverId: receiverId,
             level,
@@ -1064,7 +1064,7 @@ const Index = () => {
           data: {
             title: value.title2,
             content: noticeContent,
-            author: me.userId,
+            author: me.username,
             LectureId: router.query.id,
             file: uploadPath,
           },
@@ -1176,7 +1176,7 @@ const Index = () => {
       dispatch({
         type: LECTURE_DIARY_CREATE_REQUEST,
         data: {
-          author: me.userId,
+          author: me.username,
           process:
             value.process1 +
             "권 " +
@@ -1295,12 +1295,14 @@ const Index = () => {
 
   const answerFinishHandler = useCallback(
     (data, messageData) => {
+      console.log(data, messageData, "messageData");
+
       if (messageData) {
         dispatch({
           type: MESSAGE_CREATE_REQUEST,
           data: {
             title: data.messageTitle,
-            author: me.userId,
+            author: me.username,
             senderId:
               messageData && messageData.receiverId
                 ? messageData.receiverId
@@ -1323,7 +1325,7 @@ const Index = () => {
         type: MESSAGE_FOR_ADMIN_CREATE_REQUEST,
         data: {
           title: data.title1,
-          author: me.userId,
+          author: me.username,
           content: data.content1,
         },
       });
@@ -1865,7 +1867,7 @@ const Index = () => {
                               fontSize={width < 700 ? `14px` : `18px`}
                               width={width < 700 ? `auto` : `140px`}
                               borderRightBool={true}>
-                              {`NO.${data.id}`}
+                              {`NO.${data.number}`}
                             </CustomText2>
 
                             <Text

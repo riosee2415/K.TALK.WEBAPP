@@ -758,7 +758,7 @@ const Index = () => {
           type: MESSAGE_CREATE_REQUEST,
           data: {
             title: data.messageTitle,
-            author: me.userId,
+            author: me.username,
             senderId: me.id,
             receiverId: messageData.senderId,
             content: data.messageContent,
@@ -780,7 +780,7 @@ const Index = () => {
         type: MESSAGE_CREATE_REQUEST,
         data: {
           title: data.title,
-          author: me.userId,
+          author: me.username,
           senderId: me.id,
           receiverId: lectureId,
           content: data.content,
@@ -1119,7 +1119,7 @@ const Index = () => {
                             fontSize={width < 700 ? `12px` : `18px`}
                             width={width < 700 ? `auto` : `140px`}
                             margin={`0 10px 0 0`}>
-                            {`NO.${data.id}`}
+                            {`NO.${data.number}`}
                           </Text>
 
                           <Wrapper width={`auto`} fontWeight={`bold`}>

@@ -338,7 +338,7 @@ const reducer = (state = initialState, action) =>
       case MESSAGE_LECTURE_LIST_SUCCESS: {
         draft.st_messageLectureListLoading = false;
         draft.st_messageLectureListDone = true;
-        draft.messageLectureList = action.data.messages;
+        draft.messageLectureList = action.data.message;
         draft.messageLectureLastPage = action.data.lastPage;
         break;
       }

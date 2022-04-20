@@ -617,7 +617,7 @@ const Student = () => {
   }, [meUpdateModal]);
 
   const messageAnswerToggleHanlder = useCallback((data) => {
-    if (data.level >= 3) {
+    if (data.userLevel >= 3) {
       setSendMessageAnswerType(3);
     } else {
       setSendMessageAnswerType(1);
@@ -739,7 +739,7 @@ const Student = () => {
         type: MESSAGE_CREATE_REQUEST,
         data: {
           title: data.title,
-          author: me.userId,
+          author: me.username,
           senderId: me.id,
           receiverId: userId,
           content: data.content,
@@ -760,7 +760,7 @@ const Student = () => {
         type: MESSAGE_CREATE_REQUEST,
         data: {
           title: data.title,
-          author: me.userId,
+          author: me.username,
           senderId: me.id,
           receiverId: userId,
           receiveLectureId: receiveLectureId,
@@ -779,7 +779,7 @@ const Student = () => {
         type: MESSAGE_FOR_ADMIN_CREATE_REQUEST,
         data: {
           title: data.title,
-          author: me.userId,
+          author: me.username,
           content: data.content,
         },
       });
@@ -793,7 +793,7 @@ const Student = () => {
         type: MESSAGE_FOR_ADMIN_CREATE_REQUEST,
         data: {
           title: data.title,
-          author: me.userId,
+          author: me.username,
           content: data.content,
         },
       });
@@ -808,7 +808,7 @@ const Student = () => {
           type: MESSAGE_CREATE_REQUEST,
           data: {
             title: data.title,
-            author: me.userId,
+            author: me.username,
             senderId: me.id,
             receiverId: messageDatum.senderId,
             content: data.content,
@@ -827,7 +827,7 @@ const Student = () => {
           type: MESSAGE_CREATE_REQUEST,
           data: {
             title: data.title,
-            author: me.userId,
+            author: me.username,
             senderId: me.id,
             receiverId: messageDatum.senderId,
             receiveLectureId: data.receiveLectureId,
