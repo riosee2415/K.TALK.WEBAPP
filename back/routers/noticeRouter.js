@@ -395,6 +395,69 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
   }
 });
 
+router.post("/admin/main/list", isAdminCheck, async (req, res, next) => {
+  const { page } = req.body;
+
+  const LIMIT = 5;
+
+  const _page = page ? page : 1;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 5;
+
+  try {
+    const lengthQuery = `
+    SELECT	id,
+            title,
+            content,
+            author,
+            level,
+            LectureId,
+            file,
+            isDelete,
+            DATE_FORMAT(deletedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	deletedAt,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
+      FROM	notices
+     WHERE  isDelete = FALSE
+    `;
+
+    const selectQuery = `
+    SELECT	id,
+            title,
+            content,
+            author,
+            level,
+            LectureId,
+            file,
+            isDelete,
+            DATE_FORMAT(deletedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	deletedAt,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt
+      FROM	notices
+     WHERE  isDelete = FALSE
+     ORDER  BY createdAt DESC
+     LIMIT  ${LIMIT}
+    OFFSET  ${OFFSET}
+    `;
+
+    const length = await models.sequelize.query(lengthQuery);
+    const notices = await models.sequelize.query(selectQuery);
+
+    const noticeLen = length[0].length;
+
+    const lastPage =
+      noticeLen % LIMIT > 0 ? noticeLen / LIMIT + 1 : noticeLen / LIMIT;
+
+    return res
+      .status(200)
+      .json({ notices: notices[0], lastPage: parseInt(lastPage) });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("공지사항 목록을 불러올 수 업습니다.");
+  }
+});
+
 router.post("/file", upload.single("file"), async (req, res, next) => {
   return res.json({ path: req.file.location });
 });
