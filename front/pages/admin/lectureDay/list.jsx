@@ -144,15 +144,20 @@ const List = ({}) => {
     },
     {
       title: "결제 날짜",
-      dataIndex: "createdAt",
+      render: (data) => <div>{`${data.createdAt.slice(0, 10)}`}</div>,
     },
     {
       title: "결제 금액",
-      dataIndex: "price",
+      render: (data) => <div>{`$ ${data.price}`}</div>,
     },
     {
+      title: "남은일수",
+      render: (data) => <div>{`D-${data.limitDate}`}</div>,
+    },
+
+    {
       title: "결제 만료일",
-      render: (data) => <div>{`${data.lastDate}일`}</div>,
+      render: (data) => <div>{`${data.compareDate}`}</div>,
     },
   ];
 
@@ -204,6 +209,13 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: PARTICIPANT_LASTDATE_LIST_REQUEST,
+      data: {
+        search: "",
+      },
     });
 
     // 구현부 종료

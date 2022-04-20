@@ -414,13 +414,6 @@ const UserList = ({}) => {
 
   const onUpdateClassSubmit = useCallback(
     (data) => {
-      // if (paymentData.length !== 0) {
-      //   day = paymentData[0].week * 7;
-      //   saveData = moment().add(day, "days").format("YYYY-MM-DD");
-      // }
-
-      // let date = parseInt(data.partLecture.split(",")[2]) * 7
-
       dispatch({
         type: PARTICIPANT_CREATE_REQUEST,
         data: {
@@ -883,7 +876,12 @@ const UserList = ({}) => {
               <Input disabled value={parData && parData.username} />
             </Form.Item>
 
-            <Form.Item label="결제 여부" name="isPayment">
+            <Form.Item
+              label="결제 여부"
+              name="isPayment"
+              rules={[
+                { required: true, message: "결제 여부를 선택해주세요." },
+              ]}>
               <Select
                 showSearch
                 placeholder="Select a Lecture"
@@ -978,7 +976,12 @@ const UserList = ({}) => {
               <Input disabled value={parEndData && parEndData.username} />
             </Form.Item>
 
-            <Form.Item label={`종료할 강의`} name={`partLecture`}>
+            <Form.Item
+              label={`종료할 강의`}
+              name={`partLecture`}
+              rules={[
+                { required: true, message: "결제 여부를 선택해주세요." },
+              ]}>
               <Select
                 width={`100%`}
                 height={`32px`}

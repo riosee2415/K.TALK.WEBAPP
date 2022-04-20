@@ -708,10 +708,6 @@ const LectureAll = () => {
     []
   );
 
-  const receiveSelectHandler = useCallback((value) => {
-    setSelectValue(value);
-  }, []);
-
   const messageViewModalHandler = useCallback((data) => {
     setMessageViewModal((prev) => !prev);
 
@@ -878,7 +874,9 @@ const LectureAll = () => {
               </BackIcon>
             </Wrapper>
 
-            <Wrapper al={`flex-start`} margin={`0 0 20px`}>
+            <Wrapper
+              al={`flex-start`}
+              margin={width < 700 ? `20px 0 10px` : `0 0 20px`}>
               <Text
                 fontSize={width < 800 ? `18px` : `22px`}
                 fontWeight={`bold`}>
@@ -948,7 +946,7 @@ const LectureAll = () => {
                 관리자 강의 쪽지함
               </Text>
 
-              <Text fontSize={width < 800 ? `18px` : `14px`}>
+              <Text fontSize={width < 800 ? `14px` : `18px`}>
                 관리자에서 강의 단위로 보낸 쪽지 목록 입니다.
               </Text>
             </Wrapper>
@@ -1692,6 +1690,18 @@ const LectureAll = () => {
               </CommonButton>
             </Wrapper>
 
+            {sendMessageType === 1 && (
+              <Text fontSize={`14px`} color={Theme.grey2_C} margin={`0 0 20px`}>
+                강사님 개인쪽지함에 쪽지가 전달됩니다.
+              </Text>
+            )}
+
+            {sendMessageType === 2 && (
+              <Text fontSize={`14px`} color={Theme.grey2_C} margin={`0 0 20px`}>
+                강사님 수업 쪽지함에 쪽지가 전달됩니다.
+              </Text>
+            )}
+
             <Text fontSize={`18px`} fontWeight={`bold`}>
               제목
             </Text>
@@ -1703,6 +1713,7 @@ const LectureAll = () => {
             <Text fontSize={`18px`} fontWeight={`bold`}>
               내용
             </Text>
+
             <Form.Item
               name="content"
               rules={[{ required: true, message: "내용을 입력해주세요." }]}>
