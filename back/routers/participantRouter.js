@@ -445,7 +445,7 @@ router.post("/user/delete/list", isAdminCheck, async (req, res, next) => {
 router.post("/user/limit/list", isAdminCheck, async (req, res, next) => {
   const { UserId } = req.body;
 
-  let _UserId = UserId || null;
+  const _UserId = UserId || null;
 
   try {
     if (_UserId) {
@@ -463,34 +463,63 @@ router.post("/user/limit/list", isAdminCheck, async (req, res, next) => {
     }
 
     const selectQuery = `
-    SELECT	A.id,
-            A.date,
-            A.endDate,
-            A.updatedAt,
-            A.LectureId,
-            A.UserId,
-            A.isDelete,
-            B.time,
-            B.course,
-            B.day,
-            B.UserId 						AS TeacherId,
-            DATEDIFF(A.endDate, now()) 			AS lastDate,
-            C.username,
-            C.email,
-            C.mobile,
-            C.stuCountry
-      FROM	participants		A
-     INNER
-      JOIN	lectures 			  B	
-        ON	A.LectureId = B.id
-     INNER
-      JOIN	users 			  C	
-        ON	A.UserId = C.id
-     WHERE	1 = 1
-       AND  A.isDelete = FALSE
-       AND  A.isChange = FALSE
-      ${_UserId ? `AND	A.UserId = ${_UserId}` : ``} 
-       AND  DATE_ADD(DATE_FORMAT(now(), '%Y-%m-%d'), INTERVAL 7 DAY) >= A.endDate
+    SELECT	Z.id,
+            Z.price,
+            Z.email,
+            Z.createdAt,
+            Z.UserId,
+            Z.PayClassId,
+            Z.week,
+            Z.LectureId,
+            Z.number,
+            Z.course,
+            Z.teacherName,
+            Z.studentName,
+            Z.stuCountry,
+            Z.limitDate,
+            Z.compareDate,
+            Z.mobile
+     FROM (
+                SELECT	A.id,
+                        A.price,
+                        A.email,
+                        A.createdAt,
+                        A.UserId,
+                        A.PayClassId,
+                        B.week,
+                        B.LectureId,
+                        C.number,
+                        C.course,
+                        D.username 					AS teacherName,
+                        F.username 					AS studentName,
+                        F.stuCountry,
+                        F.mobile,
+                        (
+                          SELECT	DATEDIFF(DATE_ADD(DATE_FORMAT(B.startDate, "%Y-%m-%d"),  INTERVAL B.week WEEK), now())
+                            FROM	DUAL
+                        )	AS 	limitDate,
+                        (
+                          SELECT  DATE_ADD(DATE_FORMAT(B.startDate, "%Y-%m-%d"),  INTERVAL B.week WEEK)
+                            FROM  DUAL
+                        ) AS  compareDate
+                  FROM	payments			A
+                 INNER
+                  JOIN	payClass 			B
+                    ON	A.PayClassId = B.id
+                 INNER
+                  JOIN	lectures 			C
+                    ON	B.LectureId = C.id
+                 INNER
+                  JOIN	users				  D
+                    ON	C.UserId = D.id
+                 INNER
+                  JOIN	users				  F
+                    ON	A.UserId = F.id
+                 WHERE  1 = 1
+                   ${_UserId ? `AND A.UserId = ${_UserId}` : ``}
+   		    )	Z
+   WHERE	DATE_ADD(DATE_FORMAT(now(), '%Y-%m-%d'), INTERVAL 7 DAY) >= Z.compareDate
+   ORDER  BY limitDate ASC
     `;
 
     const list = await models.sequelize.query(selectQuery);
@@ -509,35 +538,61 @@ router.post("/lastDate/list", isAdminCheck, async (req, res, next) => {
 
   try {
     const selectQuery = `
-    SELECT	A.id,
-            A.date,
-            A.endDate,
-            A.updatedAt,
-            A.LectureId,
-            A.UserId,
-            A.isDelete,
-            B.time,
-            B.course,
-            B.day,
-            B.UserId 						            AS TeacherId,
-            DATEDIFF(A.endDate, now()) 			AS lastDate,
-            C.username,
-            C.email,
-            C.mobile,
-            C.stuCountry
-      FROM	participants		A
-     INNER
-      JOIN	lectures 			  B	
-        ON	A.LectureId = B.id
-     INNER
-      JOIN	users 			  C	
-        ON	A.UserId = C.id
-     WHERE	1 = 1
-       AND  A.isDelete = FALSE
-       AND  A.isChange = FALSE
-       AND  CONCAT(DATEDIFF(A.endDate, now()), "일") LIKE '%${_search}%'
-     ORDER  BY lastDate ASC
+    SELECT	Z.id,
+            Z.price,
+            Z.email,
+            Z.createdAt,
+            Z.UserId,
+            Z.PayClassId,
+            Z.week,
+            Z.LectureId,
+            Z.number,
+            Z.course,
+            Z.teacherName,
+            Z.studentName,
+            Z.stuCountry,
+            Z.limitDate,
+            Z.compareDate
+     FROM (
+                SELECT	A.id,
+                        A.price,
+                        A.email,
+                        A.createdAt,
+                        A.UserId,
+                        A.PayClassId,
+                        B.week,
+                        B.LectureId,
+                        C.number,
+                        C.course,
+                        D.username 					AS teacherName,
+                        F.username 					AS studentName,
+                        F.stuCountry,
+                        (
+                          SELECT	DATEDIFF(DATE_ADD(DATE_FORMAT(B.startDate, "%Y-%m-%d"),  INTERVAL B.week WEEK), now())
+                            FROM	DUAL
+                        )	AS 	limitDate,
+                        (
+                          SELECT  DATE_ADD(DATE_FORMAT(B.startDate, "%Y-%m-%d"),  INTERVAL B.week WEEK)
+                            FROM  DUAL
+                        ) AS  compareDate
+                  FROM	payments			A
+                 INNER
+                  JOIN	payClass 			B
+                    ON	A.PayClassId = B.id
+                 INNER
+                  JOIN	lectures 			C
+                    ON	B.LectureId = C.id
+                 INNER
+                  JOIN	users				D
+                    ON	C.UserId = D.id
+                 INNER
+                  JOIN	users				F
+                    ON	A.UserId = F.id
+   		    )	Z
+   WHERE	CONCAT(Z.limitDate, "일") LIKE '%${_search}%'
+   ORDER  BY limitDate ASC
     `;
+
     const list = await models.sequelize.query(selectQuery);
 
     return res.status(200).json({ list: list[0] });

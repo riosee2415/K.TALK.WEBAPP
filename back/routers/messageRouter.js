@@ -231,7 +231,7 @@ router.get("/user/partList", isLoggedIn, async (req, res, next) => {
       FROM	Messages
      WHERE  receiveLectureId IN (${lectureIds})
        AND  receiverId IS NULL         
-     ORDER  BY A.createdAt  DESC
+     ORDER  BY createdAt  DESC
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
     `;
