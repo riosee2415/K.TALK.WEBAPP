@@ -477,7 +477,8 @@ router.post("/user/limit/list", isAdminCheck, async (req, res, next) => {
             Z.studentName,
             Z.stuCountry,
             Z.limitDate,
-            Z.compareDate
+            Z.compareDate,
+            Z.mobile
      FROM (
                 SELECT	A.id,
                         A.price,
@@ -492,6 +493,7 @@ router.post("/user/limit/list", isAdminCheck, async (req, res, next) => {
                         D.username 					AS teacherName,
                         F.username 					AS studentName,
                         F.stuCountry,
+                        F.mobile,
                         (
                           SELECT	DATEDIFF(DATE_ADD(DATE_FORMAT(B.startDate, "%Y-%m-%d"),  INTERVAL B.week WEEK), now())
                             FROM	DUAL
@@ -549,7 +551,8 @@ router.post("/lastDate/list", isAdminCheck, async (req, res, next) => {
             Z.teacherName,
             Z.studentName,
             Z.stuCountry,
-            Z.limitDate
+            Z.limitDate,
+            Z.compareDate
      FROM (
                 SELECT	A.id,
                         A.price,
@@ -567,7 +570,11 @@ router.post("/lastDate/list", isAdminCheck, async (req, res, next) => {
                         (
                           SELECT	DATEDIFF(DATE_ADD(DATE_FORMAT(B.startDate, "%Y-%m-%d"),  INTERVAL B.week WEEK), now())
                             FROM	DUAL
-                        )	AS 	limitDate
+                        )	AS 	limitDate,
+                        (
+                          SELECT  DATE_ADD(DATE_FORMAT(B.startDate, "%Y-%m-%d"),  INTERVAL B.week WEEK)
+                            FROM  DUAL
+                        ) AS  compareDate
                   FROM	payments			A
                  INNER
                   JOIN	payClass 			B
