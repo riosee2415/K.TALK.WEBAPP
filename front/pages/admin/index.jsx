@@ -1613,11 +1613,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
       type: USER_TEACHER_LIST_REQUEST,
     });
 
-    context.store.dispatch({
-      type: ACCEPT_LOG_REQUEST,
-      data: { typeId: "1" },
-    });
-
     // 구현부 종료
     context.store.dispatch(END);
     console.log("🍀 SERVER SIDE PROPS END");
