@@ -231,7 +231,7 @@ router.get("/user/partList", isLoggedIn, async (req, res, next) => {
       FROM	Messages
      WHERE  receiveLectureId IN (${lectureIds})
        AND  receiverId IS NULL         
-     ORDER  BY createdAt  DESC
+     ORDER  BY A.createdAt  DESC
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
     `;
@@ -286,10 +286,11 @@ router.post("/lecture/list", async (req, res, next) => {
             A.receiveLectureId,
             A.content,
             A.level,
+            A.senderId,
             DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
             DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
             B.username,
-            B.level
+            B.level                                                      AS  userLevel
       FROM	Messages        A
      INNER
       JOIN  users           B
@@ -303,17 +304,18 @@ router.post("/lecture/list", async (req, res, next) => {
             A.author,
             A.receiveLectureId,
             A.content,
+            A.senderId,
             A.level,
             DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
             DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
             B.username,
-            B.level
+            B.level                                                      AS  userLevel
       FROM	Messages        A
      INNER
       JOIN  users           B
         ON  A.senderId = B.id
      WHERE  receiveLectureId = ${LectureId}    
-     ORDER  BY createdAt  DESC
+     ORDER  BY A.createdAt  DESC
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
     `;
@@ -390,12 +392,83 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
                 ? ``
                 : ``
             }
-    ORDER   BY createdAt DESC 
+    ORDER   BY A.createdAt DESC 
     `;
 
     const messages = await models.sequelize.query(selectQuery);
 
     return res.status(200).json({ messages: messages[0] });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("쪽지를 확인할 수 없습니다.");
+  }
+});
+
+router.post("/admin/main/list", isAdminCheck, async (req, res, next) => {
+  const { page } = req.body;
+
+  const LIMIT = 5;
+
+  const _page = page ? page : 1;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 5;
+
+  try {
+    const lengthQuery = `
+    SELECT	A.id,
+            A.title,
+            A.author,
+            A.senderId,
+            A.receiverId,
+            A.receiveLectureId,
+            A.content,
+            A.level,
+            DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            B.username,
+            B.level                                                      AS  userLevel
+      FROM	Messages      A
+     INNER
+      JOIN  users         B
+        ON  A.senderId = B.id
+     WHERE  1 = 1
+    `;
+
+    const selectQuery = `
+    SELECT	A.id,
+            A.title,
+            A.author,
+            A.senderId,
+            A.receiverId,
+            A.receiveLectureId,
+            A.content,
+            A.level,
+            DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            B.username,
+            B.level                                                      AS  userLevel
+      FROM	Messages      A
+     INNER
+      JOIN  users         B
+        ON  A.senderId = B.id
+     WHERE  1 = 1
+     ORDER  BY A.createdAt  DESC
+     LIMIT  ${LIMIT}
+    OFFSET  ${OFFSET}
+    `;
+
+    const length = await models.sequelize.query(lengthQuery);
+    const message = await models.sequelize.query(selectQuery);
+
+    const messagelen = length[0].length;
+
+    const lastPage =
+      messagelen % LIMIT > 0 ? messagelen / LIMIT + 1 : messagelen / LIMIT;
+
+    return res
+      .status(200)
+      .json({ message: message[0], lastPage: parseInt(lastPage) });
   } catch (error) {
     console.error(error);
     return res.status(401).send("쪽지를 확인할 수 없습니다.");

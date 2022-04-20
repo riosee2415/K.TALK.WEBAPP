@@ -474,10 +474,11 @@ router.post("/user/limit/list", isAdminCheck, async (req, res, next) => {
             B.course,
             B.day,
             B.UserId 						AS TeacherId,
-            CONCAT(DATEDIFF(A.endDate, now()), "일") 			AS lastDate,
+            DATEDIFF(A.endDate, now()) 			AS lastDate,
             C.username,
             C.email,
-            C.mobile
+            C.mobile,
+            C.stuCountry
       FROM	participants		A
      INNER
       JOIN	lectures 			  B	
@@ -498,6 +499,51 @@ router.post("/user/limit/list", isAdminCheck, async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("반을 옮긴 학생 목록을 불러올 수 없습니다.");
+  }
+});
+
+router.post("/lastDate/list", isAdminCheck, async (req, res, next) => {
+  const { search } = req.body;
+
+  let _search = search ? search : ``;
+
+  try {
+    const selectQuery = `
+    SELECT	A.id,
+            A.date,
+            A.endDate,
+            A.updatedAt,
+            A.LectureId,
+            A.UserId,
+            A.isDelete,
+            B.time,
+            B.course,
+            B.day,
+            B.UserId 						            AS TeacherId,
+            DATEDIFF(A.endDate, now()) 			AS lastDate,
+            C.username,
+            C.email,
+            C.mobile,
+            C.stuCountry
+      FROM	participants		A
+     INNER
+      JOIN	lectures 			  B	
+        ON	A.LectureId = B.id
+     INNER
+      JOIN	users 			  C	
+        ON	A.UserId = C.id
+     WHERE	1 = 1
+       AND  A.isDelete = FALSE
+       AND  A.isChange = FALSE
+       AND  DATEDIFF(A.endDate, now()) LIKE '${_search}'
+     ORDER  BY lastDate ASC
+    `;
+    const list = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ list: list[0] });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("목록을 불러올 수 없습니다.");
   }
 });
 
