@@ -353,42 +353,42 @@ const AdminHome = () => {
   //   }
   // }, [me]);
 
-  // useEffect(() => {
-  //   dispatch({
-  //     type: NOTICE_ADMIN_MAIN_LIST_REQUEST,
-  //     data: {
-  //       page: 1,
-  //     },
-  //   });
-  //   dispatch({
-  //     type: MESSAGE_ADMIN_MAIN_LIST_REQUEST,
-  //     data: {
-  //       listType: "",
-  //       search: "",
-  //     },
-  //   });
-  //   dispatch({
-  //     type: LECTURE_ALL_LIST_REQUEST,
-  //     data: {
-  //       TeacherId: "",
-  //       time: "",
-  //       startLv: "",
-  //       studentName: "",
-  //     },
-  //   });
-  //   dispatch({
-  //     type: USER_ALL_LIST_REQUEST,
-  //     data: {
-  //       type: 2,
-  //     },
-  //   });
-  //   dispatch({
-  //     type: USER_STU_LIST_REQUEST,
-  //   });
-  //   dispatch({
-  //     type: USER_TEACHER_LIST_REQUEST,
-  //   });
-  // }, [router.query]);
+  useEffect(() => {
+    dispatch({
+      type: NOTICE_ADMIN_MAIN_LIST_REQUEST,
+      data: {
+        page: 1,
+      },
+    });
+    dispatch({
+      type: MESSAGE_ADMIN_MAIN_LIST_REQUEST,
+      data: {
+        listType: "",
+        search: "",
+      },
+    });
+    dispatch({
+      type: LECTURE_ALL_LIST_REQUEST,
+      data: {
+        TeacherId: "",
+        time: "",
+        startLv: "",
+        studentName: "",
+      },
+    });
+    dispatch({
+      type: USER_ALL_LIST_REQUEST,
+      data: {
+        type: 2,
+      },
+    });
+    dispatch({
+      type: USER_STU_LIST_REQUEST,
+    });
+    dispatch({
+      type: USER_TEACHER_LIST_REQUEST,
+    });
+  }, [router.query]);
 
   ////// HANDLER ///////
 
