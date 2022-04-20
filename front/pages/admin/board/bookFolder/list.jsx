@@ -1,11 +1,16 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
+
+import { END } from "redux-saga";
+import axios from "axios";
+import wrapper from "../../../../store/configureStore";
+
 import AdminLayout from "../../../../components/AdminLayout";
 import AdminTop from "../../../../components/admin/AdminTop";
 import PageHeader from "../../../../components/admin/PageHeader";
 import styled from "styled-components";
 import { Button, Table, Modal, Form, Input, notification, message } from "antd";
+import { Wrapper } from "../../../../components/commonComponents";
 
-import { useDispatch, useSelector } from "react-redux";
 import {
   CREATE_MODAL_CLOSE_REQUEST,
   CREATE_MODAL_OPEN_REQUEST,
@@ -14,14 +19,10 @@ import {
   BOOK_FOLDER_DELETE_REQUEST,
   BOOK_FOLDER_LIST_REQUEST,
 } from "../../../../reducers/book";
-import { withRouter } from "next/router";
-
-import { END } from "redux-saga";
-import axios from "axios";
-
 import { LOAD_MY_INFO_REQUEST } from "../../../../reducers/user";
-import wrapper from "../../../../store/configureStore";
-import { Wrapper } from "../../../../components/commonComponents";
+
+import { useDispatch, useSelector } from "react-redux";
+import { withRouter } from "next/router";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -146,12 +147,6 @@ const BookFolderList = ({ router }) => {
       form.resetFields();
     }
   }, [createModal]);
-
-  useEffect(() => {
-    dispatch({
-      type: BOOK_FOLDER_LIST_REQUEST,
-    });
-  }, [router.query]);
 
   useEffect(() => {
     if (updateData) {
@@ -351,6 +346,9 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+    context.store.dispatch({
+      type: BOOK_FOLDER_LIST_REQUEST,
     });
 
     // 구현부 종료

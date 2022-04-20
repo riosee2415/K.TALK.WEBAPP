@@ -21,15 +21,15 @@ import {
   SpanText,
   ATag,
 } from "../../components/commonComponents";
+
 import Theme from "../../components/Theme";
 import useWidth from "../../hooks/useWidth";
+import moment from "moment";
+import { useRouter } from "next/router";
 
 import { SEO_LIST_REQUEST } from "../../reducers/seo";
 import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 import { APP_CREATE_REQUEST } from "../../reducers/application";
-import Link from "next/link";
-import moment from "moment";
-import { useRouter } from "next/router";
 
 const CustomForm = styled(Form)`
   width: 718px;

@@ -3,16 +3,7 @@ import AdminLayout from "../../../../components/AdminLayout";
 import PageHeader from "../../../../components/admin/PageHeader";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  LOAD_MY_INFO_REQUEST,
-  CHANGE_CLASS_CLOSE_REQUEST,
-  CHANGE_CLASS_OPEN_REQUEST,
-  USER_ALL_LIST_REQUEST,
-  USER_CLASS_CHANGE_REQUEST,
-  CLASS_PART_CLOSE_REQUEST,
-  CLASS_PART_OPEN_REQUEST,
-  USER_TEA_CREATE_REQUEST,
-} from "../../../../reducers/user";
+
 import {
   Table,
   Button,
@@ -23,31 +14,25 @@ import {
   Form,
   Calendar,
 } from "antd";
-import { useRouter, withRouter } from "next/router";
+import { SearchOutlined } from "@ant-design/icons";
 import wrapper from "../../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
 import {
-  Combo,
-  ComboOption,
   GuideLi,
   GuideUl,
-  SpanText,
   Text,
   Wrapper,
 } from "../../../../components/commonComponents";
-import { LECTURE_ALL_LIST_REQUEST } from "../../../../reducers/lecture";
-import { CloseCircleOutlined } from "@ant-design/icons";
+
 import {
-  PARTICIPANT_CREATE_REQUEST,
-  PARTICIPANT_DELETE_REQUEST,
-  PARTICIPANT_USER_DELETE_LIST_REQUEST,
-  PARTICIPANT_USER_MOVE_LIST_REQUEST,
-} from "../../../../reducers/participant";
+  LOAD_MY_INFO_REQUEST,
+  USER_ALL_LIST_REQUEST,
+  USER_TEA_CREATE_REQUEST,
+} from "../../../../reducers/user";
+
+import { useRouter, withRouter } from "next/router";
 import useInput from "../../../../hooks/useInput";
-import { SearchOutlined } from "@ant-design/icons";
-import Theme from "../../../../components/Theme";
-import { PAYMENT_LIST_REQUEST } from "../../../../reducers/payment";
 import moment from "moment";
 
 const AdminContent = styled.div`
@@ -97,17 +82,6 @@ const UserList = ({}) => {
   const inputEmailView = useInput("");
 
   ////// USEEFFECT //////
-
-  useEffect(() => {
-    dispatch({
-      type: USER_ALL_LIST_REQUEST,
-      data: {
-        type: 2,
-        name: "",
-        email: "",
-      },
-    });
-  }, [router.query]);
 
   useEffect(() => {
     if (st_userTeaCreateDone) {
@@ -218,7 +192,8 @@ const UserList = ({}) => {
         <Button
           size="small"
           type="primary"
-          onClick={() => detailModalToggle(data)}>
+          onClick={() => detailModalToggle(data)}
+        >
           DETAIL
         </Button>
       ),
@@ -240,7 +215,8 @@ const UserList = ({}) => {
             dr={`row`}
             ju={`flex-start`}
             margin={`0 0 10px`}
-            width={`calc(100% - 80px)`}>
+            width={`calc(100% - 80px)`}
+          >
             <Input
               size="small"
               style={{ width: "20%" }}
@@ -256,7 +232,8 @@ const UserList = ({}) => {
             <Button
               widt={`80px`}
               size="small"
-              onClick={() => onSeachTeaHandler()}>
+              onClick={() => onSeachTeaHandler()}
+            >
               <SearchOutlined />
               검색
             </Button>
@@ -278,12 +255,14 @@ const UserList = ({}) => {
         onCancel={modalToggle}
         title="강사 생성"
         footer={null}
-        width={1000}>
+        width={1000}
+      >
         <Form
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 20 }}
           form={form}
-          onFinish={onSubmitCreate}>
+          onFinish={onSubmitCreate}
+        >
           <Wrapper width={`68%`} margin={`0 16%`}>
             <GuideUl>
               <GuideLi isImpo>회원 아이디는 이메일과 같습니다.</GuideLi>
@@ -295,7 +274,8 @@ const UserList = ({}) => {
           <Form.Item
             label="이메일"
             rules={[{ required: true, message: "이메일을 입력해주세요." }]}
-            name="email">
+            name="email"
+          >
             <Input type="email" {...inputEmailView} />
           </Form.Item>
 
@@ -306,13 +286,15 @@ const UserList = ({}) => {
           <Form.Item
             label="회원이름"
             rules={[{ required: true, message: "회원이름을 입력해주세요." }]}
-            name="username">
+            name="username"
+          >
             <Input />
           </Form.Item>
           <Form.Item
             label="생년월일"
             rules={[{ required: true, message: "생년월일을 선택해주세요.." }]}
-            name="birth">
+            name="birth"
+          >
             <Calendar
               fullscreen={false}
               validRange={[moment(1970), moment()]}
@@ -321,7 +303,8 @@ const UserList = ({}) => {
           <Form.Item
             label="성별"
             rules={[{ required: true, message: "생별을 선택해주세요." }]}
-            name="gender">
+            name="gender"
+          >
             <Select>
               <Select.Option value={`남`}>남자</Select.Option>
               <Select.Option value={`여`}>여자</Select.Option>
@@ -330,20 +313,23 @@ const UserList = ({}) => {
           <Form.Item
             label="전화번호"
             rules={[{ required: true, message: "전화번호를 입력해주세요." }]}
-            name="mobile">
+            name="mobile"
+          >
             <Input type="number" />
           </Form.Item>
 
           <Form.Item
             label="주소"
             rules={[{ required: true, message: "주소를 입력해주세요." }]}
-            name="address">
+            name="address"
+          >
             <Input />
           </Form.Item>
           <Form.Item
             label="상세주소"
             rules={[{ required: true, message: "상세주소를 입력해주세요." }]}
-            name="detailAddress">
+            name="detailAddress"
+          >
             <Input />
           </Form.Item>
 
@@ -365,7 +351,8 @@ const UserList = ({}) => {
                   }
                 },
               },
-            ]}>
+            ]}
+          >
             {(fields, { add, remove }, { errors }) => {
               return (
                 <>
@@ -374,7 +361,8 @@ const UserList = ({}) => {
                       <Wrapper width={`48%`}>
                         <Form.Item
                           style={{ width: `100%`, margin: 0 }}
-                          name="firstIdentifyNum">
+                          name="firstIdentifyNum"
+                        >
                           <Input type="number" style={{ width: `100%` }} />
                         </Form.Item>
                       </Wrapper>
@@ -384,7 +372,8 @@ const UserList = ({}) => {
                       <Wrapper width={`48%`}>
                         <Form.Item
                           style={{ width: `100%`, margin: 0 }}
-                          name="endIdentifyNum">
+                          name="endIdentifyNum"
+                        >
                           <Input type="password" style={{ width: `100%` }} />
                         </Form.Item>
                       </Wrapper>
@@ -406,7 +395,8 @@ const UserList = ({}) => {
                 message: "강사가 가능한 언어를 입력해주세요.",
               },
             ]}
-            name="teaLanguage">
+            name="teaLanguage"
+          >
             <Input />
           </Form.Item>
 
@@ -423,14 +413,16 @@ const UserList = ({}) => {
           <Form.Item
             label="은행이름"
             rules={[{ required: true, message: "은행이름을 입력해주세요." }]}
-            name="bankName">
+            name="bankName"
+          >
             <Input />
           </Form.Item>
 
           <Form.Item
             label="계좌번호"
             rules={[{ required: true, message: "계좌번호를 입력해주세요." }]}
-            name="bankNo">
+            name="bankNo"
+          >
             <Input />
           </Form.Item>
 
@@ -438,7 +430,8 @@ const UserList = ({}) => {
             <Button
               size="small"
               style={{ margin: `0 10px 0 0` }}
-              onClick={modalToggle}>
+              onClick={modalToggle}
+            >
               취소
             </Button>
             <Button size="small" type="primary" htmlType="submit">
@@ -452,7 +445,8 @@ const UserList = ({}) => {
         visible={detailmodal}
         footer={null}
         onCancel={() => onCancelHandle()}
-        title={`강사 정보`}>
+        title={`강사 정보`}
+      >
         <Wrapper>
           <Wrapper dr={`row`} margin={`0 0 20px`}>
             <Text width={`80px`} fontWeight={`600`}>
@@ -571,6 +565,15 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: USER_ALL_LIST_REQUEST,
+      data: {
+        type: 2,
+        name: "",
+        email: "",
+      },
     });
 
     // 구현부 종료

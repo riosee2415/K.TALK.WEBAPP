@@ -1,3 +1,19 @@
+import React, { useCallback, useEffect, useRef, useState } from "react";
+
+import wrapper from "../../store/configureStore";
+import { END } from "redux-saga";
+import axios from "axios";
+
+import styled from "styled-components";
+import AdminLayout from "../../components/AdminLayout";
+import {
+  Wrapper,
+  Image,
+  CommonButton,
+  Text,
+  TextInput,
+  SpanText,
+} from "../../components/commonComponents";
 import {
   Button,
   DatePicker,
@@ -12,18 +28,14 @@ import {
   Table,
   TimePicker,
 } from "antd";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import AdminLayout from "../../components/AdminLayout";
-import {
-  Wrapper,
-  Image,
-  CommonButton,
-  Text,
-  TextInput,
-  SpanText,
-} from "../../components/commonComponents";
+
 import useInput from "../../hooks/useInput";
+import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
+import Theme from "../../components/Theme";
+import useWidth from "../../hooks/useWidth";
+import moment from "moment";
+
 import {
   LOAD_MY_INFO_REQUEST,
   LOGIN_ADMIN_REQUEST,
@@ -33,20 +45,11 @@ import {
   USER_STU_LIST_REQUEST,
   USER_TEACHER_LIST_REQUEST,
 } from "../../reducers/user";
-import Theme from "../../components/Theme";
-import wrapper from "../../store/configureStore";
-import { END } from "redux-saga";
-import axios from "axios";
-import useWidth from "../../hooks/useWidth";
-import { useRouter } from "next/router";
-import styled from "styled-components";
 import {
   LECTURE_ALL_LIST_REQUEST,
   LECTURE_DELETE_REQUEST,
   LECTURE_UPDATE_REQUEST,
 } from "../../reducers/lecture";
-import moment from "moment";
-import { SolutionOutlined } from "@ant-design/icons";
 import { MESSAGE_ADMIN_MAIN_LIST_REQUEST } from "../../reducers/message";
 import { NOTICE_ADMIN_MAIN_LIST_REQUEST } from "../../reducers/notice";
 
@@ -194,30 +197,17 @@ const AdminHome = () => {
   //   });
   // }, [router.query]);
 
-  useEffect(() => {
-    // dispatch({
-    //   type: LECTURE_ALL_LIST_REQUEST,
-    //   data: {
-    //     TeacherId: currentTeacher ? currentTeacher : "",
-    //     time: searchTime ? searchTime : "",
-    //     startLv: "",
-    //     studentName: searchStuName ? searchStuName : "",
-    //   },
-    // });
-  }, [router.query]);
-
-  useEffect(() => {
-    dispatch({
-      type: USER_ALL_LIST_REQUEST,
-      data: {
-        type: 2,
-      },
-    });
-
-    dispatch({
-      type: USER_STU_LIST_REQUEST,
-    });
-  }, [router.query]);
+  // useEffect(() => {
+  // dispatch({
+  //   type: LECTURE_ALL_LIST_REQUEST,
+  //   data: {
+  //     TeacherId: currentTeacher ? currentTeacher : "",
+  //     time: searchTime ? searchTime : "",
+  //     startLv: "",
+  //     studentName: searchStuName ? searchStuName : "",
+  //   },
+  // });
+  // }, [router.query]);
 
   useEffect(() => {
     if (st_lectureDeleteDone) {
@@ -291,12 +281,6 @@ const AdminHome = () => {
   }, [updateData]);
 
   useEffect(() => {
-    dispatch({
-      type: USER_TEACHER_LIST_REQUEST,
-    });
-  }, []);
-
-  useEffect(() => {
     if (st_loginAdminError) {
       return message.error(
         st_loginAdminError.reason
@@ -360,22 +344,6 @@ const AdminHome = () => {
       },
     });
   }, [currentPage2]);
-
-  // const config = {
-  //   data: acceptList,
-  //   height: 400,
-  //   xField: "date",
-  //   yField: "count",
-  //   point: {
-  //     size: 5,
-  //     shape: "diamond",
-  //   },
-  //   label: {
-  //     style: {
-  //       fill: "#aaa",
-  //     },
-  //   },
-  // };
 
   ////// HANDLER ///////
 
@@ -1584,6 +1552,20 @@ export const getServerSideProps = wrapper.getServerSideProps(
         startLv: "",
         studentName: "",
       },
+    });
+
+    context.store.dispatch({
+      type: USER_ALL_LIST_REQUEST,
+      data: {
+        type: 2,
+      },
+    });
+
+    context.store.dispatch({
+      type: USER_STU_LIST_REQUEST,
+    });
+    context.store.dispatch({
+      type: USER_TEACHER_LIST_REQUEST,
     });
 
     // context.store.dispatch({
