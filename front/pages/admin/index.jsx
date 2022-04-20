@@ -345,6 +345,51 @@ const AdminHome = () => {
     });
   }, [currentPage2]);
 
+  // useEffect(() => {
+  //   if (me) {
+  //     moveLinkHandler(`/admin?login=true`);
+  //   } else {
+  //     moveLinkHandler(`/admin?login=false`);
+  //   }
+  // }, [me]);
+
+  // useEffect(() => {
+  //   dispatch({
+  //     type: NOTICE_ADMIN_MAIN_LIST_REQUEST,
+  //     data: {
+  //       page: 1,
+  //     },
+  //   });
+  //   dispatch({
+  //     type: MESSAGE_ADMIN_MAIN_LIST_REQUEST,
+  //     data: {
+  //       listType: "",
+  //       search: "",
+  //     },
+  //   });
+  //   dispatch({
+  //     type: LECTURE_ALL_LIST_REQUEST,
+  //     data: {
+  //       TeacherId: "",
+  //       time: "",
+  //       startLv: "",
+  //       studentName: "",
+  //     },
+  //   });
+  //   dispatch({
+  //     type: USER_ALL_LIST_REQUEST,
+  //     data: {
+  //       type: 2,
+  //     },
+  //   });
+  //   dispatch({
+  //     type: USER_STU_LIST_REQUEST,
+  //   });
+  //   dispatch({
+  //     type: USER_TEACHER_LIST_REQUEST,
+  //   });
+  // }, [router.query]);
+
   ////// HANDLER ///////
 
   const noticeModalToggle = useCallback((data) => {
@@ -1529,44 +1574,44 @@ export const getServerSideProps = wrapper.getServerSideProps(
       type: LOAD_MY_INFO_REQUEST,
     });
 
-    context.store.dispatch({
-      type: NOTICE_ADMIN_MAIN_LIST_REQUEST,
-      data: {
-        page: 1,
-      },
-    });
+    // context.store.dispatch({
+    //   type: NOTICE_ADMIN_MAIN_LIST_REQUEST,
+    //   data: {
+    //     page: 1,
+    //   },
+    // });
 
-    context.store.dispatch({
-      type: MESSAGE_ADMIN_MAIN_LIST_REQUEST,
-      data: {
-        listType: "",
-        search: "",
-      },
-    });
+    // context.store.dispatch({
+    //   type: MESSAGE_ADMIN_MAIN_LIST_REQUEST,
+    //   data: {
+    //     listType: "",
+    //     search: "",
+    //   },
+    // });
 
-    context.store.dispatch({
-      type: LECTURE_ALL_LIST_REQUEST,
-      data: {
-        TeacherId: "",
-        time: "",
-        startLv: "",
-        studentName: "",
-      },
-    });
+    // context.store.dispatch({
+    //   type: LECTURE_ALL_LIST_REQUEST,
+    //   data: {
+    //     TeacherId: "",
+    //     time: "",
+    //     startLv: "",
+    //     studentName: "",
+    //   },
+    // });
 
-    context.store.dispatch({
-      type: USER_ALL_LIST_REQUEST,
-      data: {
-        type: 2,
-      },
-    });
+    // context.store.dispatch({
+    //   type: USER_ALL_LIST_REQUEST,
+    //   data: {
+    //     type: 2,
+    //   },
+    // });
 
-    context.store.dispatch({
-      type: USER_STU_LIST_REQUEST,
-    });
-    context.store.dispatch({
-      type: USER_TEACHER_LIST_REQUEST,
-    });
+    // context.store.dispatch({
+    //   type: USER_STU_LIST_REQUEST,
+    // });
+    // context.store.dispatch({
+    //   type: USER_TEACHER_LIST_REQUEST,
+    // });
 
     // context.store.dispatch({
     //   type: ACCEPT_LOG_REQUEST,
