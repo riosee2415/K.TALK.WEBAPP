@@ -1583,6 +1583,45 @@ export const getServerSideProps = wrapper.getServerSideProps(
       type: LOAD_MY_INFO_REQUEST,
     });
 
+    context.store.dispatch({
+      type: NOTICE_ADMIN_MAIN_LIST_REQUEST,
+      data: {
+        page: 1,
+      },
+    });
+
+    context.store.dispatch({
+      type: MESSAGE_ADMIN_MAIN_LIST_REQUEST,
+      data: {
+        listType: "",
+        search: "",
+      },
+    });
+
+    context.store.dispatch({
+      type: LECTURE_ALL_LIST_REQUEST,
+      data: {
+        TeacherId: "",
+        time: "",
+        startLv: "",
+        studentName: "",
+      },
+    });
+
+    context.store.dispatch({
+      type: USER_ALL_LIST_REQUEST,
+      data: {
+        type: 2,
+      },
+    });
+
+    context.store.dispatch({
+      type: USER_STU_LIST_REQUEST,
+    });
+    context.store.dispatch({
+      type: USER_TEACHER_LIST_REQUEST,
+    });
+
     // 구현부 종료
     context.store.dispatch(END);
     console.log("🍀 SERVER SIDE PROPS END");
