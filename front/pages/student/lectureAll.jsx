@@ -1010,7 +1010,7 @@ const LectureAll = () => {
               <Text
                 fontSize={width < 800 ? `18px` : `22px`}
                 fontWeight={`bold`}>
-                학생 전체 쪽지
+                전체 쪽지 및 학생
               </Text>
             </Wrapper>
 
