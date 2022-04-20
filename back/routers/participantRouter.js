@@ -535,7 +535,7 @@ router.post("/lastDate/list", isAdminCheck, async (req, res, next) => {
      WHERE	1 = 1
        AND  A.isDelete = FALSE
        AND  A.isChange = FALSE
-       AND  DATEDIFF(A.endDate, now()) LIKE '${_search}'
+       AND  CONCAT(DATEDIFF(A.endDate, now()), "일") LIKE '%${_search}%'
      ORDER  BY lastDate ASC
     `;
     const list = await models.sequelize.query(selectQuery);
