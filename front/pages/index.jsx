@@ -1,15 +1,13 @@
 import React, { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  KAKAO_LOGIN_REQUEST,
-  LOAD_MY_INFO_REQUEST,
-  LOGIN_REQUEST,
-} from "../reducers/user";
-import useInput from "../hooks/useInput";
-import ClientLayout from "../components/ClientLayout";
+
 import axios from "axios";
 import wrapper from "../store/configureStore";
 import { END } from "redux-saga";
+import Head from "next/head";
+
+import ClientLayout from "../components/ClientLayout";
+import { useSelector } from "react-redux";
+import Popup from "../components/popup/popup";
 import {
   Text,
   Image,
@@ -20,14 +18,13 @@ import {
   SpanText,
   ATag,
 } from "../components/commonComponents";
+
 import useWidth from "../hooks/useWidth";
 import Theme from "../components/Theme";
-import styled from "styled-components";
-import { SEO_LIST_REQUEST } from "../reducers/seo";
-import Head from "next/head";
-import Popup from "../components/popup/popup";
-import { useRef } from "react";
 import { useRouter } from "next/router";
+
+import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
+import { SEO_LIST_REQUEST } from "../reducers/seo";
 
 const Home = ({}) => {
   const width = useWidth();

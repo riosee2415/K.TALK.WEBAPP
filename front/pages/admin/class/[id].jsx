@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 
 import axios from "axios";
 import { END } from "redux-saga";

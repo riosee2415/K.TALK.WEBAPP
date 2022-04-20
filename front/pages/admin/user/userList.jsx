@@ -1,8 +1,27 @@
 import React, { useCallback, useEffect, useState } from "react";
+
+import wrapper from "../../../store/configureStore";
+import { END } from "redux-saga";
+import axios from "axios";
+
+import styled from "styled-components";
 import AdminLayout from "../../../components/AdminLayout";
 import PageHeader from "../../../components/admin/PageHeader";
-import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
+import {
+  Table,
+  Button,
+  message,
+  Modal,
+  Select,
+  notification,
+  Input,
+  Form,
+  Calendar,
+  // DatePicker,
+} from "antd";
+import { Wrapper } from "../../../components/commonComponents";
+import { SearchOutlined } from "@ant-design/icons";
+
 import {
   LOAD_MY_INFO_REQUEST,
   UPDATE_MODAL_CLOSE_REQUEST,
@@ -14,38 +33,16 @@ import {
   USER_TEA_CREATE_REQUEST,
   USER_ALL_LIST_REQUEST,
 } from "../../../reducers/user";
-import {
-  Table,
-  Button,
-  message,
-  Modal,
-  Select,
-  notification,
-  Input,
-  Form,
-  Calendar,
-  DatePicker,
-} from "antd";
-import useInput from "../../../hooks/useInput";
-import { CloseCircleOutlined, SearchOutlined } from "@ant-design/icons";
-import { useRouter, withRouter } from "next/router";
-import wrapper from "../../../store/configureStore";
-import { END } from "redux-saga";
-import axios from "axios";
-import { Text, Wrapper } from "../../../components/commonComponents";
-
 import { LECTURE_ALL_LIST_REQUEST } from "../../../reducers/lecture";
 import { PAYMENT_LIST_REQUEST } from "../../../reducers/payment";
+
+import useInput from "../../../hooks/useInput";
+import { useRouter, withRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 
 const AdminContent = styled.div`
   padding: 20px;
-`;
-
-const CustomFormItem = styled(Form.Item)`
-  & .ant-form-item-control-input-content {
-    display: flex;
-  }
 `;
 
 const LoadNotification = (msg, content) => {

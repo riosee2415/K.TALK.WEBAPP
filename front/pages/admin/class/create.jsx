@@ -25,24 +25,6 @@ import {
   SearchOutlined,
   MinusCircleOutlined,
 } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
-
-import {
-  LECTURE_CREATE_REQUEST,
-  LECTURE_LIST_REQUEST,
-} from "../../../reducers/lecture";
-
-import { withRouter } from "next/router";
-import useInput from "../../../hooks/useInput";
-
-import { END } from "redux-saga";
-import axios from "axios";
-import { useRouter } from "next/router";
-import {
-  LOAD_MY_INFO_REQUEST,
-  USER_ALL_LIST_REQUEST,
-} from "../../../reducers/user";
-import wrapper from "../../../store/configureStore";
 import {
   CommonButton,
   GuideLi,
@@ -55,6 +37,24 @@ import {
   Wrapper,
 } from "../../../components/commonComponents";
 import Theme from "../../../components/Theme";
+
+import {
+  LECTURE_CREATE_REQUEST,
+  LECTURE_LIST_REQUEST,
+} from "../../../reducers/lecture";
+import {
+  LOAD_MY_INFO_REQUEST,
+  USER_ALL_LIST_REQUEST,
+} from "../../../reducers/user";
+
+import { useDispatch, useSelector } from "react-redux";
+import { withRouter } from "next/router";
+import useInput from "../../../hooks/useInput";
+import { useRouter } from "next/router";
+
+import { END } from "redux-saga";
+import axios from "axios";
+import wrapper from "../../../store/configureStore";
 import moment from "moment";
 
 const AdminContent = styled.div`

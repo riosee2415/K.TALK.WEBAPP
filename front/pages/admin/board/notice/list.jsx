@@ -1,8 +1,13 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
+
+import { END } from "redux-saga";
+import axios from "axios";
+import wrapper from "../../../../store/configureStore";
+
+import styled from "styled-components";
 import AdminLayout from "../../../../components/AdminLayout";
 import AdminTop from "../../../../components/admin/AdminTop";
 import PageHeader from "../../../../components/admin/PageHeader";
-import styled from "styled-components";
 import {
   Button,
   Table,
@@ -17,16 +22,14 @@ import {
   message,
 } from "antd";
 import {
-  CloseOutlined,
-  CheckOutlined,
-  SearchOutlined,
-  CloudSyncOutlined,
-} from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
+  RowWrapper,
+  Text,
+  Wrapper,
+} from "../../../../components/commonComponents";
+
 import {
   CREATE_MODAL_CLOSE_REQUEST,
   CREATE_MODAL_OPEN_REQUEST,
-  NOTICE_CREATE_REQUEST,
   NOTICE_UPDATE_REQUEST,
   NOTICE_DELETE_REQUEST,
   NOTICE_UPLOAD_REQUEST,
@@ -36,25 +39,13 @@ import {
   NOTICE_ADMIN_LIST_REQUEST,
   NOTICE_FILE_INIT,
 } from "../../../../reducers/notice";
+import { LECTURE_ALL_LIST_REQUEST } from "../../../../reducers/lecture";
+import { LOAD_MY_INFO_REQUEST } from "../../../../reducers/user";
+
+import { useDispatch, useSelector } from "react-redux";
 import { withRouter } from "next/router";
 import useInput from "../../../../hooks/useInput";
 import useWidth from "../../../../hooks/useWidth";
-
-import { END } from "redux-saga";
-import axios from "axios";
-import { useRouter } from "next/router";
-import { LOAD_MY_INFO_REQUEST } from "../../../../reducers/user";
-import wrapper from "../../../../store/configureStore";
-import {
-  CommonButton,
-  RowWrapper,
-  Text,
-  Wrapper,
-} from "../../../../components/commonComponents";
-import {
-  LECTURE_ALL_LIST_REQUEST,
-  LECTURE_LIST_REQUEST,
-} from "../../../../reducers/lecture";
 import ToastEditorComponent3 from "../../../../components/editor/ToastEditorComponent3";
 import ToastEditorComponent4 from "../../../../components/editor/ToastEditorComponent4";
 
@@ -331,18 +322,6 @@ const NoticeList = ({ router }) => {
       });
     }
   }, [currentListType]);
-
-  useEffect(() => {
-    dispatch({
-      type: LECTURE_ALL_LIST_REQUEST,
-      data: {
-        TeacherId: "",
-        studentName: "",
-        time: "",
-        startLv: "",
-      },
-    });
-  }, [router.query]);
 
   ////// TOGGLE ///////
   const createModalOpen = useCallback(() => {
@@ -849,6 +828,16 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: LECTURE_ALL_LIST_REQUEST,
+      data: {
+        TeacherId: "",
+        studentName: "",
+        time: "",
+        startLv: "",
+      },
     });
 
     // 구현부 종료

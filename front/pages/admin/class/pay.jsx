@@ -23,8 +23,6 @@ import axios from "axios";
 import {
   Wrapper,
   AdminContent,
-  SearchForm,
-  SearchFormItem,
   ModalBtn,
   GuideUl,
   GuideLi,
@@ -125,18 +123,6 @@ const Pay = ({}) => {
   const [updateData, setUpdateData] = useState(null);
 
   ////// USEEFFECT //////
-
-  useEffect(() => {
-    dispatch({
-      type: LECTURE_ALL_LIST_REQUEST,
-      data: {
-        TeacherId: "",
-        time: "",
-        startLv: "",
-        studentName: "",
-      },
-    });
-  }, [router.query]);
 
   useEffect(() => {
     if (st_payClassListDone) {
@@ -590,6 +576,15 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: PAY_CLASS_LIST_REQUEST,
+    });
+    context.store.dispatch({
+      type: LECTURE_ALL_LIST_REQUEST,
+      data: {
+        TeacherId: "",
+        time: "",
+        startLv: "",
+        studentName: "",
+      },
     });
 
     // 구현부 종료

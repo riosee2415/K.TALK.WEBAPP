@@ -1,39 +1,26 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import AdminLayout from "../../../components/AdminLayout";
-import PageHeader from "../../../components/admin/PageHeader";
-import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  Table,
-  Button,
-  Modal,
-  Select,
-  notification,
-  message,
-  Input,
-} from "antd";
 
-import { useRouter, withRouter } from "next/router";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
+
+import styled from "styled-components";
+import AdminLayout from "../../../components/AdminLayout";
+import PageHeader from "../../../components/admin/PageHeader";
+import { Table, Button, Modal, notification, message, Input } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 import {
-  Wrapper,
   AdminContent,
-  SearchForm,
-  SearchFormItem,
-  ModalBtn,
   GuideUl,
   GuideLi,
   Text,
 } from "../../../components/commonComponents";
-import {
-  LOAD_MY_INFO_REQUEST,
-  USERLIST_REQUEST,
-  USER_FIND_EMAIL_BY_REQUEST,
-} from "../../../reducers/user";
-import { SearchOutlined } from "@ant-design/icons";
+
+import { useDispatch, useSelector } from "react-redux";
 import useInput from "../../../hooks/useInput";
+import { useRouter, withRouter } from "next/router";
+
+import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import { PAYMENT_LIST_REQUEST } from "../../../reducers/payment";
 
 const LoadNotification = (msg, content) => {
@@ -207,7 +194,8 @@ const PaymentList = ({}) => {
         width="900px"
         onOk={() => {}}
         onCancel={() => {}}
-        title="주의사항">
+        title="주의사항"
+      >
         <GuideUl>
           <GuideLi>asdfasdf</GuideLi>
           <GuideLi isImpo={true}>asdfasdf</GuideLi>
