@@ -1148,6 +1148,7 @@ router.patch("/fire/update", isAdminCheck, async (req, res, next) => {
       isFire,
       partDate: today,
       fireDate: today,
+      UserId: parseInt(id),
     });
 
     if (updateResult[0] > 0 && createResult) {
