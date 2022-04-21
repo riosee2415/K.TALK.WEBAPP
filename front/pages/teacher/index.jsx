@@ -379,7 +379,6 @@ const Index = () => {
   const [zoomLinkToggle, setZoomLinkToggle] = useState(false);
   const [messageViewToggle, setMessageViewToggle] = useState(false);
   const [messageAnswerModal, setMessageAnswerModal] = useState(false);
-  const [messageSendModal, setMessageSendModal] = useState(false);
 
   const [noticeViewModal, setNoticeViewModal] = useState(false);
   const [noticeViewDatum, setNoticeViewDatum] = useState(null);
@@ -770,26 +769,6 @@ const Index = () => {
 
     [me]
   );
-  const sendMessageTypeHandler = useCallback((num) => {
-    setSendMessageType(num);
-  }, []);
-
-  const sendMessageFinishHandler = useCallback(
-    (data) => {
-      dispatch({
-        type: MESSAGE_CREATE_REQUEST,
-        data: {
-          title: data.title,
-          author: me.username,
-          senderId: me.id,
-          receiverId: lectureId,
-          content: data.content,
-          level: me.level,
-        },
-      });
-    },
-    [me, lectureId]
-  );
 
   const fileDownloadHandler = useCallback(async (filePath) => {
     let blob = await fetch(filePath).then((r) => r.blob());
@@ -905,8 +884,8 @@ const Index = () => {
                   fontWeight={`bold`}
                   padding={`0 0 0 15px`}>
                   안녕하세요,&nbsp;
-                  <SpanText color={Theme.basicTheme_C}>
-                    {me && me.userId}
+                  <SpanText color={Theme.basicTheme_C} wordBreak={`break-all`}>
+                    {me && me.username}
                   </SpanText>
                   님!
                 </Text>
@@ -1163,7 +1142,7 @@ const Index = () => {
                 color={Theme.black_2C}
                 fontSize={width < 700 ? `18px` : `22px`}
                 fontWeight={`Bold`}>
-                강사 전체 쪽지
+               전체 쪽지 및 강사
               </Text>
             </Wrapper>
 
@@ -1698,80 +1677,6 @@ const Index = () => {
               </Wrapper>
             </>
           )}
-        </CustomModal>
-
-        <CustomModal
-          visible={messageSendModal}
-          width={`1350px`}
-          title={
-            sendMessageType === 1
-              ? "학생에게 쪽지 보내기"
-              : sendMessageType === 3 && "관리자에게 쪽지 보내기"
-          }
-          footer={null}
-          closable={false}>
-          <CustomForm
-            form={messageSendform}
-            onFinish={(data) =>
-              sendMessageType === 1
-                ? sendMessageFinishHandler(data)
-                : sendMessageType === 3 && sendMessageAdminFinishHandler(data)
-            }>
-            <Wrapper dr={`row`} ju={`flex-end`}>
-              <CommonButton
-                margin={`0 0 0 5px`}
-                radius={`5px`}
-                width={`100px`}
-                height={`32px`}
-                size="small"
-                onClick={() => sendMessageTypeHandler(1)}>
-                {"학생"}
-              </CommonButton>
-
-              <CommonButton
-                margin={`0 0 0 5px`}
-                radius={`5px`}
-                width={`100px`}
-                height={`32px`}
-                size="small"
-                onClick={() => sendMessageTypeHandler(3)}>
-                {"관리자"}
-              </CommonButton>
-            </Wrapper>
-
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              제목
-            </Text>
-            <Form.Item
-              name="title"
-              rules={[{ required: true, message: "제목을 입력해주세요." }]}>
-              <Input />
-            </Form.Item>
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              내용
-            </Text>
-            <Form.Item
-              name="content"
-              rules={[{ required: true, message: "내용을 입력해주세요." }]}>
-              <Input.TextArea style={{ height: `360px` }} />
-            </Form.Item>
-            <Wrapper dr={`row`}>
-              <CommonButton
-                margin={`0 5px 0 0`}
-                kindOf={`grey`}
-                color={Theme.darkGrey_C}
-                radius={`5px`}
-                onClick={() => onReset()}>
-                돌아가기
-              </CommonButton>
-              <CommonButton
-                margin={`0 0 0 5px`}
-                radius={`5px`}
-                htmlType="submit">
-                쪽지 보내기
-              </CommonButton>
-            </Wrapper>
-          </CustomForm>
         </CustomModal>
 
         <CustomModal

@@ -9,6 +9,7 @@ export const initialState = {
   partUserDeleteList: [],
   partUserMoveList: [],
   partUserLimitList: [],
+  partLastDateList: [],
   //
   st_participantListLoading: false,
   st_participantListDone: false,
@@ -41,6 +42,10 @@ export const initialState = {
   st_participantUserLimitListLoading: false,
   st_participantUserLimitListDone: false,
   st_participantUserLimitListError: null,
+  //
+  st_participantLastDateListLoading: false,
+  st_participantLastDateListDone: false,
+  st_participantLastDateListError: null,
 };
 
 export const PARTICIPANT_LIST_REQUEST = "PARTICIPANT_LIST_REQUEST";
@@ -86,6 +91,13 @@ export const PARTICIPANT_USER_LIMIT_LIST_SUCCESS =
   "PARTICIPANT_USER_LIMIT_LIST_SUCCESS";
 export const PARTICIPANT_USER_LIMIT_LIST_FAILURE =
   "PARTICIPANT_USER_LIMIT_LIST_FAILURE";
+
+export const PARTICIPANT_LASTDATE_LIST_REQUEST =
+  "PARTICIPANT_LASTDATE_LIST_REQUEST";
+export const PARTICIPANT_LASTDATE_LIST_SUCCESS =
+  "PARTICIPANT_LASTDATE_LIST_SUCCESS";
+export const PARTICIPANT_LASTDATE_LIST_FAILURE =
+  "PARTICIPANT_LASTDATE_LIST_FAILURE";
 
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
@@ -254,6 +266,27 @@ const reducer = (state = initialState, action) =>
         draft.st_participantUserLimitListLoading = false;
         draft.st_participantUserLimitListDone = false;
         draft.st_participantUserLimitListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case PARTICIPANT_LASTDATE_LIST_REQUEST: {
+        draft.st_participantLastDateListLoading = true;
+        draft.st_participantLastDateListDone = null;
+        draft.st_participantLastDateListError = false;
+        break;
+      }
+      case PARTICIPANT_LASTDATE_LIST_SUCCESS: {
+        draft.st_participantLastDateListDone = true;
+        draft.st_participantLastDateListLoading = false;
+        draft.partLastDateList = action.data.list;
+        break;
+      }
+      case PARTICIPANT_LASTDATE_LIST_FAILURE: {
+        draft.st_participantLastDateListLoading = false;
+        draft.st_participantLastDateListDone = false;
+        draft.st_participantLastDateListError = action.error;
         break;
       }
 

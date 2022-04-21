@@ -543,6 +543,7 @@ export const SpanText = styled.span`
   border: ${(props) => props.border};
   border-radius: ${(props) => props.radius};
   box-shadow: ${(props) => props.shadow};
+  word-break: ${(props) => props.wordBreak};
 
   ${(props) =>
     props.isEllipsis &&

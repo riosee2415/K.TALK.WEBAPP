@@ -1143,8 +1143,8 @@ const Student = () => {
                   fontWeight={`bold`}
                   padding={`0 0 0 15px`}>
                   안녕하세요,&nbsp;
-                  <SpanText color={Theme.basicTheme_C}>
-                    {me && me.userId}
+                  <SpanText color={Theme.basicTheme_C} wordBreak={`break-all`}>
+                    {me && me.username}
                   </SpanText>
                   님!
                 </Text>
@@ -1505,7 +1505,7 @@ const Student = () => {
                           display={width < 1100 && `none`}
                           width={`1px`}
                           height={`190px`}
-                          margin={`0 40px`}
+                          margin={`0 20px`}
                           borderRight={
                             width < 1100 ? `0` : `1px dashed ${Theme.grey_C}`
                           }
@@ -2097,7 +2097,7 @@ const Student = () => {
 
                           return (
                             <Option key={`${data.id}${idx}`} value={data.id}>
-                              {data.course}
+                              {`${data.course} | ${data.User.username}`}
                             </Option>
                           );
                         })
@@ -2139,7 +2139,7 @@ const Student = () => {
                           if (data.UserId !== messageDatum.senderId) return;
                           return (
                             <Option key={`${data.id}${idx}`} value={data.id}>
-                              {data.course}
+                              {`${data.course} | ${data.User.username}`}
                             </Option>
                           );
                         })
@@ -2250,7 +2250,7 @@ const Student = () => {
                     onClick={() => onReset()}>
                     돌아가기
                   </CommonButton>
-                  {console.log(messageDatum)}
+
                   <CommonButton
                     onClick={() => messageAnswerToggleHanlder(messageDatum)}
                     margin={`0 0 0 5px`}
@@ -2584,7 +2584,7 @@ const Student = () => {
                             <Option
                               key={`${data.id}${idx}`}
                               value={`${data.id},${data.User.id},${data.User.level}`}>
-                              {data.course}
+                              {`${data.course} | ${data.User.username}`}
                             </Option>
                           );
                         })
@@ -2627,7 +2627,7 @@ const Student = () => {
                             <Option
                               key={`${data.id}${idx}`}
                               value={`${data.id},${data.User.id},${data.User.level}`}>
-                              {data.course}
+                              {`${data.course} | ${data.User.username}`}
                             </Option>
                           );
                         })

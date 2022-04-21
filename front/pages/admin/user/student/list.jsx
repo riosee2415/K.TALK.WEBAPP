@@ -18,8 +18,6 @@ import wrapper from "../../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
 import {
-  Combo,
-  ComboOption,
   SpanText,
   Text,
   Wrapper,
@@ -28,7 +26,6 @@ import {
   TextInput,
 } from "../../../../components/commonComponents";
 import { LECTURE_ALL_LIST_REQUEST } from "../../../../reducers/lecture";
-import { CloseCircleOutlined } from "@ant-design/icons";
 import {
   PARTICIPANT_CREATE_REQUEST,
   PARTICIPANT_DELETE_REQUEST,
@@ -46,13 +43,11 @@ const AdminContent = styled.div`
   padding: 20px;
 `;
 
-const UserList = ({}) => {
+const List = () => {
   const { Option } = Select;
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
 
   const { allLectures } = useSelector((state) => state.lecture);
-
-  console.log(allLectures, "allLectures");
 
   const {
     me,
@@ -211,8 +206,6 @@ const UserList = ({}) => {
   }, [st_participantCreateError]);
 
   useEffect(() => {
-    // console.log(parData.Participants, "aaaa");
-
     setOpt2(
       paymentList &&
         paymentList.map((data) => {
@@ -398,8 +391,8 @@ const UserList = ({}) => {
       let LectureId = data.lecture.split(",")[0];
       let endDate = data.lecture.split(",")[2];
 
-      let Day = Math.abs(
-        parseInt(moment.duration(moment().diff(moment(endDate))).asDays())
+      let Day = Math.ceil(
+        Math.abs(moment.duration(moment().diff(moment(endDate))).asDays())
       );
 
       dispatch({
@@ -418,35 +411,6 @@ const UserList = ({}) => {
 
   const onUpdateClassSubmit = useCallback(
     (data) => {
-      // if (paymentData.length !== 0) {
-      //   day = paymentData[0].week * 7;
-      //   saveData = moment().add(day, "days").format("YYYY-MM-DD");
-      // }
-
-      console.log(data, "data");
-
-      console.log(data.paymentList);
-
-      console.log({
-        UserId: parData.id,
-        LectureId: data.lectureList
-          ? data.lectureList
-          : data.partLecture.split(",")[1],
-        date: data.date
-          ? parseInt(data.date) * 7
-          : parseInt(data.partLecture.split(",")[2]) * 7,
-        endDate: data.date
-          ? moment()
-              .add(parseInt(data.date) * 7, "days")
-              .format("YYYY-MM-DD")
-          : moment()
-              .add(parseInt(data.partLecture.split(",")[2]) * 7, "days")
-              .format("YYYY-MM-DD"),
-        PaymentId: data.partLecture ? data.partLecture.split(",")[0] : null,
-      });
-
-      // let date = parseInt(data.partLecture.split(",")[2]) * 7
-
       dispatch({
         type: PARTICIPANT_CREATE_REQUEST,
         data: {
@@ -494,29 +458,6 @@ const UserList = ({}) => {
       },
     });
   }, [inputName.value, inputEmail.value]);
-
-  const selectChangeHandler = useCallback(
-    (e) => {
-      const id = parseInt(e.split(`.`)[0]);
-      setLectureList(lectureList.filter((data) => data.id !== id));
-
-      const state = selectedList;
-      state.push(lectureList.filter((data) => data.id === id)[0]);
-      setSelectedList(state);
-    },
-    [lectureList, selectedList]
-  );
-
-  const selectCancelHandler = useCallback(
-    (cancelData) => {
-      setSelectedList(selectedList.filter((data) => data.id !== cancelData.id));
-
-      const state = lectureList;
-      state.push(cancelData);
-      setLectureList(state);
-    },
-    [lectureList, selectedList]
-  );
 
   const onSeachHandler = useCallback((LectureId, paymentData) => {
     let arr = [];
@@ -909,7 +850,12 @@ const UserList = ({}) => {
               <Input disabled value={parData && parData.username} />
             </Form.Item>
 
-            <Form.Item label="결제 여부" name="isPayment">
+            <Form.Item
+              label="결제 여부"
+              name="isPayment"
+              rules={[
+                { required: true, message: "결제 여부를 선택해주세요." },
+              ]}>
               <Select
                 showSearch
                 placeholder="Select a Lecture"
@@ -1004,7 +950,12 @@ const UserList = ({}) => {
               <Input disabled value={parEndData && parEndData.username} />
             </Form.Item>
 
-            <Form.Item label={`종료할 강의`} name={`partLecture`}>
+            <Form.Item
+              label={`종료할 강의`}
+              name={`partLecture`}
+              rules={[
+                { required: true, message: "결제 여부를 선택해주세요." },
+              ]}>
               <Select
                 width={`100%`}
                 height={`32px`}
@@ -1281,4 +1232,4 @@ export const getServerSideProps = wrapper.getServerSideProps(
   }
 );
 
-export default withRouter(UserList);
+export default withRouter(List);
