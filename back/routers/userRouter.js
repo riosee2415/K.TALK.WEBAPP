@@ -21,6 +21,7 @@ const multer = require("multer");
 const path = require("path");
 const AWS = require("aws-sdk");
 const multerS3 = require("multer-s3");
+const moment = require("moment");
 
 const router = express.Router();
 
@@ -1135,8 +1136,8 @@ router.patch("/fire/update", isAdminCheck, async (req, res, next) => {
     const updateResult = await User.update(
       {
         isFire,
-        partDate: new Date(),
-        fireDate: new Date(),
+        partDate: today,
+        fireDate: today,
       },
       {
         where: { id: parseInt(id) },
@@ -1145,8 +1146,8 @@ router.patch("/fire/update", isAdminCheck, async (req, res, next) => {
 
     const createResult = await TeacherPart.create({
       isFire,
-      partDate: new Date(),
-      fireDate: new Date(),
+      partDate: today,
+      fireDate: today,
     });
 
     if (updateResult[0] > 0 && createResult) {
