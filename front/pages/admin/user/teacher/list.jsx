@@ -13,6 +13,7 @@ import {
   Input,
   Form,
   Calendar,
+  Popconfirm,
 } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import wrapper from "../../../../store/configureStore";
@@ -76,8 +77,12 @@ const UserList = ({}) => {
   const inputEmail = useInput("");
 
   const [modal, setModal] = useState(false);
+
   const [detailmodal, setDetailModal] = useState(false);
   const [detailModalData, setDetailModalData] = useState(null);
+
+  const [logmodal, setLogModal] = useState(false);
+  const [logModalData, setLogModalData] = useState(null);
 
   const inputEmailView = useInput("");
 
@@ -137,6 +142,10 @@ const UserList = ({}) => {
     setDetailModal((prev) => !prev);
     setDetailModalData(data);
   }, []);
+  const logModalToggle = useCallback((data) => {
+    setLogModal((prev) => !prev);
+    setLogModalData(data);
+  }, []);
 
   const onSubmitCreate = useCallback((data) => {
     dispatch({
@@ -164,6 +173,7 @@ const UserList = ({}) => {
     form.resetFields();
     detailModalToggle(null);
   }, []);
+
   ////// DATAVIEW //////
 
   const column = [
@@ -193,6 +203,33 @@ const UserList = ({}) => {
           size="small"
           type="primary"
           onClick={() => detailModalToggle(data)}
+        >
+          DETAIL
+        </Button>
+      ),
+    },
+
+    {
+      title: "강사 해지/재계약",
+      render: (data) => (
+        <Popconfirm
+          onConfirm={() => {}}
+          title={`강사를 해지 / 재계약 하시겠습니까?`}
+        >
+          <Button size="small" type="primary">
+            해지 / 재계약
+          </Button>
+        </Popconfirm>
+      ),
+    },
+
+    {
+      title: "강사 해지/재계약 기록",
+      render: (data) => (
+        <Button
+          size="small"
+          type="primary"
+          onClick={() => logModalToggle(data)}
         >
           DETAIL
         </Button>
@@ -547,6 +584,15 @@ const UserList = ({}) => {
             </Text>
           </Wrapper>
         </Wrapper>
+      </Modal>
+
+      <Modal
+        visible={logmodal}
+        footer={null}
+        onCancel={() => logModalToggle(null)}
+        title={`해지 / 재계약 기록`}
+      >
+        <Wrapper></Wrapper>
       </Modal>
     </AdminLayout>
   );
