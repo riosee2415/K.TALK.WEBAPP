@@ -28,19 +28,21 @@ import {
 
 import {
   LOAD_MY_INFO_REQUEST,
-  USER_ALL_LIST_REQUEST,
+  USER_FIRE_UPDATE_REQUEST,
   USER_TEA_CREATE_REQUEST,
+  USER_TEA_LIST_REQUEST,
 } from "../../../../reducers/user";
 
 import { useRouter, withRouter } from "next/router";
 import useInput from "../../../../hooks/useInput";
 import moment from "moment";
+import { TEACHER_PARTICIPANT_LIST_REQUEST } from "../../../../reducers/participant";
 
 const AdminContent = styled.div`
   padding: 20px;
 `;
 
-const List = ({}) => {
+const UserList = ({}) => {
   const { Option } = Select;
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
 
@@ -50,10 +52,13 @@ const List = ({}) => {
     me,
     st_loadMyInfoDone,
 
-    allUsers,
+    teacherList,
     st_userTeaCreateDone,
     st_userTeaCreateError,
+    st_userFireUpdateDone,
+    st_userFireUpdateError,
   } = useSelector((state) => state.user);
+  const { teaPartList } = useSelector((state) => state.participant);
 
   const router = useRouter();
 
@@ -82,7 +87,9 @@ const List = ({}) => {
   const [detailModalData, setDetailModalData] = useState(null);
 
   const [logmodal, setLogModal] = useState(false);
-  const [logModalData, setLogModalData] = useState(null);
+  const [updateData, setUpdateData] = useState(null);
+
+  const [currentListType, setCurrentListType] = useState(null);
 
   const inputEmailView = useInput("");
 
@@ -92,9 +99,9 @@ const List = ({}) => {
     if (st_userTeaCreateDone) {
       message.success("강사가 생성되었습니다.");
       dispatch({
-        type: USER_ALL_LIST_REQUEST,
+        type: USER_TEA_LIST_REQUEST,
         data: {
-          type: 2,
+          isFire: null,
           name: "",
           email: "",
         },
@@ -119,20 +126,52 @@ const List = ({}) => {
     });
   }, [form, inputEmailView.value]);
 
+  useEffect(() => {
+    if (st_userFireUpdateDone) {
+      message.success(
+        `강사가 ${updateData ? `재계약되었습니다.` : `해지되었습니다`}`
+      );
+      dispatch({
+        type: USER_TEA_LIST_REQUEST,
+        data: {
+          isFire: currentListType,
+          name: inputName.value,
+          email: inputEmail.value,
+        },
+      });
+    }
+  }, [st_userFireUpdateDone]);
+  useEffect(() => {
+    if (st_userFireUpdateError) {
+      message.success(st_userFireUpdateError);
+    }
+  }, [st_userFireUpdateError]);
+
   ////// TOGGLE //////
 
   ////// HANDLER //////
 
   const onSeachTeaHandler = useCallback(() => {
     dispatch({
-      type: USER_ALL_LIST_REQUEST,
+      type: USER_TEA_LIST_REQUEST,
       data: {
-        type: 2,
+        isFire: currentListType,
         name: inputName.value,
         email: inputEmail.value,
       },
     });
-  }, [inputName.value, inputEmail.value]);
+  }, [inputName.value, inputEmail.value, currentListType]);
+
+  useEffect(() => {
+    dispatch({
+      type: USER_TEA_LIST_REQUEST,
+      data: {
+        isFire: currentListType,
+        name: inputName.value,
+        email: inputEmail.value,
+      },
+    });
+  }, [currentListType]);
 
   const modalToggle = useCallback(() => {
     setModal((prev) => !prev);
@@ -142,9 +181,39 @@ const List = ({}) => {
     setDetailModal((prev) => !prev);
     setDetailModalData(data);
   }, []);
+
   const logModalToggle = useCallback((data) => {
     setLogModal((prev) => !prev);
-    setLogModalData(data);
+    if (data) {
+      dispatch({
+        type: TEACHER_PARTICIPANT_LIST_REQUEST,
+        data: {
+          TeacherId: data.id,
+        },
+      });
+    }
+  }, []);
+
+  const TeacherFireUpdateHandler = useCallback((data) => {
+    if (data.isFire) {
+      dispatch({
+        type: USER_FIRE_UPDATE_REQUEST,
+        data: {
+          id: data.id,
+          isFire: false,
+        },
+      });
+      setUpdateData(false);
+    } else {
+      dispatch({
+        type: USER_FIRE_UPDATE_REQUEST,
+        data: {
+          id: data.id,
+          isFire: true,
+        },
+      });
+      setUpdateData(true);
+    }
   }, []);
 
   const onSubmitCreate = useCallback((data) => {
@@ -202,7 +271,8 @@ const List = ({}) => {
         <Button
           size="small"
           type="primary"
-          onClick={() => detailModalToggle(data)}>
+          onClick={() => detailModalToggle(data)}
+        >
           DETAIL
         </Button>
       ),
@@ -212,11 +282,11 @@ const List = ({}) => {
       title: "강사 해지/재계약",
       render: (data) => (
         <Popconfirm
-          onConfirm={() => {}}
-          title={`강사를 해지 / 재계약 하시겠습니까?`}
+          onConfirm={() => TeacherFireUpdateHandler(data)}
+          title={`강사를 ${data.isFire ? `재계약` : `해지`} 하시겠습니까?`}
         >
           <Button size="small" type="primary">
-            해지 / 재계약
+            {data.isFire ? `재계약` : `해지`}
           </Button>
         </Popconfirm>
       ),
@@ -236,6 +306,39 @@ const List = ({}) => {
     },
   ];
 
+  const logColumns = [
+    {
+      title: "번호",
+      dataIndex: "id",
+    },
+    {
+      title: "강사명",
+      dataIndex: "username",
+    },
+    {
+      title: "이메일",
+      dataIndex: "email",
+    },
+    {
+      title: "구분",
+      render: (data) => {
+        return <Text>{data.isFire ? `해지` : `계약`}</Text>;
+      },
+    },
+    {
+      title: "해지일 / 재계약일",
+      render: (data) => {
+        return (
+          <Text>
+            {data.isFire
+              ? data.updatedAt.slice(0, 13)
+              : data.createdAt.slice(0, 13)}
+          </Text>
+        );
+      },
+    },
+  ];
+
   return (
     <AdminLayout>
       <PageHeader
@@ -246,12 +349,36 @@ const List = ({}) => {
       {/* <AdminTop createButton={true} createButtonAction={() => {})} /> */}
 
       <AdminContent>
+        <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
+          <Button
+            size={`small`}
+            type={currentListType === null && "primary"}
+            onClick={() => setCurrentListType(null)}
+          >
+            전체 조회
+          </Button>
+          <Button
+            size={`small`}
+            type={currentListType === true && "primary"}
+            onClick={() => setCurrentListType(true)}
+          >
+            해지 강사 조회
+          </Button>
+          <Button
+            size={`small`}
+            type={currentListType === false && "primary"}
+            onClick={() => setCurrentListType(false)}
+          >
+            계약 강사 조회
+          </Button>
+        </Wrapper>
         <Wrapper dr={`row`} ju={`space-between`}>
           <Wrapper
             dr={`row`}
             ju={`flex-start`}
             margin={`0 0 10px`}
-            width={`calc(100% - 80px)`}>
+            width={`calc(100% - 80px)`}
+          >
             <Input
               size="small"
               style={{ width: "20%" }}
@@ -267,7 +394,8 @@ const List = ({}) => {
             <Button
               widt={`80px`}
               size="small"
-              onClick={() => onSeachTeaHandler()}>
+              onClick={() => onSeachTeaHandler()}
+            >
               <SearchOutlined />
               검색
             </Button>
@@ -280,7 +408,7 @@ const List = ({}) => {
         <Table
           rowKey="id"
           columns={column}
-          dataSource={allUsers ? allUsers : []}
+          dataSource={teacherList ? teacherList : []}
           size="small"
         />
       </AdminContent>
@@ -289,12 +417,14 @@ const List = ({}) => {
         onCancel={modalToggle}
         title="강사 생성"
         footer={null}
-        width={1000}>
+        width={1000}
+      >
         <Form
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 20 }}
           form={form}
-          onFinish={onSubmitCreate}>
+          onFinish={onSubmitCreate}
+        >
           <Wrapper width={`68%`} margin={`0 16%`}>
             <GuideUl>
               <GuideLi isImpo>회원 아이디는 이메일과 같습니다.</GuideLi>
@@ -306,7 +436,8 @@ const List = ({}) => {
           <Form.Item
             label="이메일"
             rules={[{ required: true, message: "이메일을 입력해주세요." }]}
-            name="email">
+            name="email"
+          >
             <Input type="email" {...inputEmailView} />
           </Form.Item>
 
@@ -317,13 +448,15 @@ const List = ({}) => {
           <Form.Item
             label="회원이름"
             rules={[{ required: true, message: "회원이름을 입력해주세요." }]}
-            name="username">
+            name="username"
+          >
             <Input />
           </Form.Item>
           <Form.Item
             label="생년월일"
             rules={[{ required: true, message: "생년월일을 선택해주세요.." }]}
-            name="birth">
+            name="birth"
+          >
             <Calendar
               fullscreen={false}
               validRange={[moment(1970), moment()]}
@@ -332,7 +465,8 @@ const List = ({}) => {
           <Form.Item
             label="성별"
             rules={[{ required: true, message: "생별을 선택해주세요." }]}
-            name="gender">
+            name="gender"
+          >
             <Select>
               <Select.Option value={`남`}>남자</Select.Option>
               <Select.Option value={`여`}>여자</Select.Option>
@@ -341,20 +475,23 @@ const List = ({}) => {
           <Form.Item
             label="전화번호"
             rules={[{ required: true, message: "전화번호를 입력해주세요." }]}
-            name="mobile">
+            name="mobile"
+          >
             <Input type="number" />
           </Form.Item>
 
           <Form.Item
             label="주소"
             rules={[{ required: true, message: "주소를 입력해주세요." }]}
-            name="address">
+            name="address"
+          >
             <Input />
           </Form.Item>
           <Form.Item
             label="상세주소"
             rules={[{ required: true, message: "상세주소를 입력해주세요." }]}
-            name="detailAddress">
+            name="detailAddress"
+          >
             <Input />
           </Form.Item>
 
@@ -376,7 +513,8 @@ const List = ({}) => {
                   }
                 },
               },
-            ]}>
+            ]}
+          >
             {(fields, { add, remove }, { errors }) => {
               return (
                 <>
@@ -385,7 +523,8 @@ const List = ({}) => {
                       <Wrapper width={`48%`}>
                         <Form.Item
                           style={{ width: `100%`, margin: 0 }}
-                          name="firstIdentifyNum">
+                          name="firstIdentifyNum"
+                        >
                           <Input type="number" style={{ width: `100%` }} />
                         </Form.Item>
                       </Wrapper>
@@ -395,7 +534,8 @@ const List = ({}) => {
                       <Wrapper width={`48%`}>
                         <Form.Item
                           style={{ width: `100%`, margin: 0 }}
-                          name="endIdentifyNum">
+                          name="endIdentifyNum"
+                        >
                           <Input type="password" style={{ width: `100%` }} />
                         </Form.Item>
                       </Wrapper>
@@ -417,7 +557,8 @@ const List = ({}) => {
                 message: "강사가 가능한 언어를 입력해주세요.",
               },
             ]}
-            name="teaLanguage">
+            name="teaLanguage"
+          >
             <Input />
           </Form.Item>
 
@@ -434,14 +575,16 @@ const List = ({}) => {
           <Form.Item
             label="은행이름"
             rules={[{ required: true, message: "은행이름을 입력해주세요." }]}
-            name="bankName">
+            name="bankName"
+          >
             <Input />
           </Form.Item>
 
           <Form.Item
             label="계좌번호"
             rules={[{ required: true, message: "계좌번호를 입력해주세요." }]}
-            name="bankNo">
+            name="bankNo"
+          >
             <Input />
           </Form.Item>
 
@@ -449,7 +592,8 @@ const List = ({}) => {
             <Button
               size="small"
               style={{ margin: `0 10px 0 0` }}
-              onClick={modalToggle}>
+              onClick={modalToggle}
+            >
               취소
             </Button>
             <Button size="small" type="primary" htmlType="submit">
@@ -463,7 +607,8 @@ const List = ({}) => {
         visible={detailmodal}
         footer={null}
         onCancel={() => onCancelHandle()}
-        title={`강사 정보`}>
+        title={`강사 정보`}
+      >
         <Wrapper>
           <Wrapper dr={`row`} margin={`0 0 20px`}>
             <Text width={`80px`} fontWeight={`600`}>
@@ -488,7 +633,7 @@ const List = ({}) => {
               가입일 :
             </Text>
             <Text width={`calc(100% - 80px)`}>
-              {detailModalData && detailModalData.createdAt.slice(0, 10)}
+              {detailModalData && detailModalData.createdAt.slice(0, 13)}
             </Text>
           </Wrapper>
 
@@ -571,9 +716,16 @@ const List = ({}) => {
         footer={null}
         onCancel={() => logModalToggle(null)}
         title={`해지 / 재계약 기록`}
+        width={800}
       >
-        <Wrapper></Wrapper>
+        <Wrapper>
+          <Table
+            columns={logColumns}
+            dataSource={teaPartList ? teaPartList : []}
+          />
+        </Wrapper>
       </Modal>
+      {console.log(teaPartList)}
     </AdminLayout>
   );
 };
@@ -594,9 +746,9 @@ export const getServerSideProps = wrapper.getServerSideProps(
     });
 
     context.store.dispatch({
-      type: USER_ALL_LIST_REQUEST,
+      type: USER_TEA_LIST_REQUEST,
       data: {
-        type: 2,
+        isFire: null,
         name: "",
         email: "",
       },
@@ -609,4 +761,4 @@ export const getServerSideProps = wrapper.getServerSideProps(
   }
 );
 
-export default withRouter(List);
+export default withRouter(UserList);
