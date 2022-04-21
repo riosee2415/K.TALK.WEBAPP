@@ -18,8 +18,6 @@ import wrapper from "../../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
 import {
-  Combo,
-  ComboOption,
   SpanText,
   Text,
   Wrapper,
@@ -28,7 +26,6 @@ import {
   TextInput,
 } from "../../../../components/commonComponents";
 import { LECTURE_ALL_LIST_REQUEST } from "../../../../reducers/lecture";
-import { CloseCircleOutlined } from "@ant-design/icons";
 import {
   PARTICIPANT_CREATE_REQUEST,
   PARTICIPANT_DELETE_REQUEST,
@@ -46,7 +43,7 @@ const AdminContent = styled.div`
   padding: 20px;
 `;
 
-const UserList = ({}) => {
+const List = () => {
   const { Option } = Select;
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
 
@@ -394,8 +391,8 @@ const UserList = ({}) => {
       let LectureId = data.lecture.split(",")[0];
       let endDate = data.lecture.split(",")[2];
 
-      let Day = Math.abs(
-        parseInt(moment.duration(moment().diff(moment(endDate))).asDays())
+      let Day = Math.ceil(
+        Math.abs(moment.duration(moment().diff(moment(endDate))).asDays())
       );
 
       dispatch({
@@ -461,29 +458,6 @@ const UserList = ({}) => {
       },
     });
   }, [inputName.value, inputEmail.value]);
-
-  const selectChangeHandler = useCallback(
-    (e) => {
-      const id = parseInt(e.split(`.`)[0]);
-      setLectureList(lectureList.filter((data) => data.id !== id));
-
-      const state = selectedList;
-      state.push(lectureList.filter((data) => data.id === id)[0]);
-      setSelectedList(state);
-    },
-    [lectureList, selectedList]
-  );
-
-  const selectCancelHandler = useCallback(
-    (cancelData) => {
-      setSelectedList(selectedList.filter((data) => data.id !== cancelData.id));
-
-      const state = lectureList;
-      state.push(cancelData);
-      setLectureList(state);
-    },
-    [lectureList, selectedList]
-  );
 
   const onSeachHandler = useCallback((LectureId, paymentData) => {
     let arr = [];
@@ -1258,4 +1232,4 @@ export const getServerSideProps = wrapper.getServerSideProps(
   }
 );
 
-export default withRouter(UserList);
+export default withRouter(List);
