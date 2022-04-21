@@ -1,5 +1,6 @@
 const express = require("express");
 const isAdminCheck = require("../middlewares/isAdminCheck");
+const { User } = require("../models");
 const models = require("../models");
 
 const router = express.Router();
