@@ -7,11 +7,13 @@ const {
   Lecture,
   Payment,
   Application,
+  TeacherPart,
 } = require("../models");
+const models = require("../models");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isNanCheck = require("../middlewares/isNanCheck");
 const isLoggedIn = require("../middlewares/isLoggedIn");
-const { Op, where } = require("sequelize");
+const { Op } = require("sequelize");
 const generateUUID = require("../utils/generateUUID");
 const sendSecretMail = require("../utils/mailSender");
 const fs = require("fs");
@@ -321,6 +323,56 @@ router.get(
     }
   }
 );
+
+router.post("/teacher/list", isAdminCheck, async (req, res, next) => {
+  const { email, name, isFire } = req.body;
+
+  const _email = email ? email : ``;
+  const _name = name ? name : ``;
+
+  let _isFire = isFire || null;
+
+  try {
+    const selectQuery = `
+    SELECT	id,
+            userId,
+            profileImage,
+            username,
+            mobile,
+            email,
+            status,
+            address,
+            detailAddress,
+            identifyNum,
+            teaCountry,
+            teaLanguage,
+            adminMemo,
+            bankNo,
+            bankName,
+            birth,
+            gender,
+            level,
+            DATE_FORMAT(createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt, 
+            partDate,
+            fireDate,
+            isFire
+      FROM	users
+     WHERE	1 = 1
+       AND  level = 2
+       AND  email LIKE '%${_email}%'
+       AND  username LIKE '%${_name}%'
+       ${_isFire ? `AND isFire = ${_isFire}` : ``}
+     ORDER  BY createdAt DESC
+    `;
+
+    const teachers = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ teachers: teachers[0] });
+  } catch (error) {
+    return res.status(401).send("강사 목록을 조회할 수 없습니다.");
+  }
+});
 
 router.get("/detail/:UserId", isAdminCheck, async (req, res, next) => {
   const { UserId } = req.params;
@@ -980,6 +1032,7 @@ router.post("/teacher/create", isAdminCheck, async (req, res, next) => {
     bankName,
     birth,
     gender,
+    partDate,
   } = req.body;
   try {
     const exUser = await User.findOne({
@@ -1015,6 +1068,7 @@ router.post("/teacher/create", isAdminCheck, async (req, res, next) => {
       bankName,
       birth,
       gender,
+      partDate,
       level: 2,
     });
 
@@ -1038,6 +1092,65 @@ router.post("/findUserByEmail", isAdminCheck, async (req, res, next) => {
 
     if (exUser) {
       return res.status(200).json({ result: true, UserId: exUser.id });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("잠시 후 다시 시도하여 주십시오.");
+  }
+});
+
+router.patch("/fire/update", isAdminCheck, async (req, res, next) => {
+  const { id, isFire } = req.body;
+  try {
+    const exTeacher = await User.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exTeacher) {
+      return res.status(401).send("존재하지 않는 강사입니다.");
+    }
+
+    if (exTeacher.level !== 2) {
+      return res.status(401).send("해당 사용자는 강사가 아닙니다.");
+    }
+
+    const exLecture = await Lecture.findAll({
+      where: { UserId: parseInt(id) },
+    });
+
+    const today = moment().format("YYYY-MM-DD");
+
+    const date = new Date(today);
+
+    const findEnd = await exLecture.find((data) => {
+      new Date(data.endDate) < date;
+    });
+
+    if (findEnd) {
+      return res.status(401).send("해당 강사는 진행중인 강의가 있습니다.");
+    }
+
+    const updateResult = await User.update(
+      {
+        isFire,
+        partDate: new Date(),
+        fireDate: new Date(),
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    const createResult = await TeacherPart.create({
+      isFire,
+      partDate: new Date(),
+      fireDate: new Date(),
+    });
+
+    if (updateResult[0] > 0 && createResult) {
+      return res.status(200).json({ result: true });
     } else {
       return res.status(200).json({ result: false });
     }

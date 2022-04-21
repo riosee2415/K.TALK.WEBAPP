@@ -124,6 +124,19 @@ module.exports = class User extends Model {
           type: DataTypes.STRING(5),
           allowNull: false, // 필수
         },
+        partDate: {
+          type: DataTypes.STRING(100), // 등록일
+          allowNull: true,
+        },
+        fireDate: {
+          type: DataTypes.STRING(100), // 해지일
+          allowNull: true,
+        },
+        isFire: {
+          type: DataTypes.BOOLEAN, // 강사 해지 여부
+          allowNull: true,
+          defaultValue: false,
+        },
         level: {
           // 사용자 권한 [1 : 일반학생, 2 : 강사, 3: 운영자, 4: 최고관리자, 5: 개발사]
           type: DataTypes.INTEGER,
