@@ -296,6 +296,49 @@ router.get("/detail/:LectureId", async (req, res, next) => {
   }
 });
 
+router.post("/detail/commutes", isAdminCheck, async (req, res, next) => {
+  const { lectureId, time } = req.body;
+
+  const _time = time ? time : ``;
+
+  try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(lectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의입니다.");
+    }
+
+    const selectQuery = `
+    SELECT	A.id,
+            A.time,
+            A.status,
+            A.createdAt,
+            A.updatedAt,
+            A.LectureId,
+            A.UserId,
+            B.username,
+            B.birth,
+            B.stuCountry
+      FROM	commutes		A
+     INNER
+      JOIN	users 			B
+        ON	A.UserId = B.id
+     WHERE  1 = 1
+       AND  A.LectureId = ${lectureId}
+       AND  A.time LIKE '%${_time}%'
+    `;
+
+    const list = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ list: list[0] });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("출석 목록을 불러올 수 없습니다.");
+  }
+});
+
 // 강사의 강의 불러오기 (로그인 한 강사의 모든 강의)
 router.get("/teacher/list/:TeacherId", async (req, res, next) => {
   const { TeacherId } = req.params;

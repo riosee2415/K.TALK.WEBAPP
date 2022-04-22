@@ -7,10 +7,20 @@ const models = require("../models");
 const router = express.Router();
 
 router.post("/list", isAdminCheck, async (req, res, next) => {
-  const { isComplete, isPaid } = req.body;
+  const { isComplete, isTime, time } = req.body;
 
-  const _isComplete = isComplete || ``;
-  const _isPaid = isPaid || ``;
+  const _isComplete = isComplete || null;
+  const _isTime = isTime || ``;
+
+  const _time = time ? time : ``;
+
+  let orderName = "createdAt";
+  let orderSC = "DESC";
+
+  if (_isTime) {
+    orderName = "meetDate";
+    orderSC = "DESC";
+  }
 
   try {
     const selectQuery = `
@@ -42,9 +52,9 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
                 purpose
         FROM	  applications
        WHERE    1 = 1
-         ${_isComplete ? `AND   isComplete = ${_isComplete}` : ``}
-         ${_isPaid ? `AND   isComplete = ${_isPaid}` : ``}
-       ORDER    BY  createdAt DESC
+                ${_isComplete ? `AND   isComplete = ${_isComplete}` : ``}
+                ${_time !== `` ? `AND meetDate LIKE '%${_time}%' ` : ``}
+       ORDER    BY  ${orderName} ${orderSC}
       `;
 
     const lists = await models.sequelize.query(selectQuery);
