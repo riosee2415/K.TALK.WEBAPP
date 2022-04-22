@@ -14,6 +14,10 @@ module.exports = class Homework extends Model {
           type: DataTypes.STRING(100),
           allowNull: false, // 필수
         },
+        content: {
+          type: DataTypes.TEXT,
+          allowNull: false, // 필수
+        },
         file: {
           type: DataTypes.STRING(600),
           allowNull: false, // 필수

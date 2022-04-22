@@ -81,7 +81,7 @@ module.exports = class User extends Model {
         },
         birth: {
           type: DataTypes.DATE, // 출생
-          allowNull: false, // 필수
+          allowNull: true, // 필수
         },
         stuCountry: {
           type: DataTypes.STRING(100), // 학생 나라
@@ -108,7 +108,7 @@ module.exports = class User extends Model {
           allowNull: true,
         },
         stuPayCount: {
-          type: DataTypes.INTEGER, // 학생 결제 횟수
+          type: DataTypes.INTEGER, // 회차
           allowNull: true,
           defaultValue: 0,
         },

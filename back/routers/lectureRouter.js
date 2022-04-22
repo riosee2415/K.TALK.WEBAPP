@@ -399,6 +399,7 @@ SELECT	A.id,
         B.birth,
         B.username,
         C.price,
+        C.startLv,
         B.stuCountry 
   FROM	participants		A
  INNER
@@ -1123,6 +1124,7 @@ router.post("/homework/list", async (req, res, next) => {
               title,
               date,
               file,
+              content,
               isDelete,
               LectureId
         FROM  homeworks
@@ -1134,6 +1136,7 @@ router.post("/homework/list", async (req, res, next) => {
               title,
               date,
               file,
+              content,
               isDelete,
               LectureId
         FROM  homeworks
@@ -1201,6 +1204,7 @@ router.get("/homework/student/list", isLoggedIn, async (req, res, next) => {
             A.title,
             A.date,
             A.file,
+            A.content,
             A.isDelete,
             A.createdAt,
             A.updatedAt, 
@@ -1224,6 +1228,7 @@ router.get("/homework/student/list", isLoggedIn, async (req, res, next) => {
             A.title,
             A.date,
             A.file,
+            A.content,
             A.isDelete,
             A.createdAt,
             A.updatedAt, 
@@ -1267,7 +1272,7 @@ router.post("/file", upload.single("file"), async (req, res, next) => {
 });
 
 router.post("/homework/create", async (req, res, next) => {
-  const { title, date, file, LectureId } = req.body;
+  const { title, date, file, LectureId, content } = req.body;
   try {
     const exLecture = await Lecture.findOne({
       where: { id: parseInt(LectureId) },
@@ -1281,6 +1286,7 @@ router.post("/homework/create", async (req, res, next) => {
       title,
       date,
       file,
+      content,
       LectureId: parseInt(LectureId),
     });
 
@@ -1330,6 +1336,7 @@ router.post("/submit/list", isLoggedIn, async (req, res, next) => {
             B.level,
             C.title,
             C.date,
+            C.content,
             D.number,
             D.course
       FROM	submits				A
@@ -1360,6 +1367,7 @@ router.post("/submit/list", isLoggedIn, async (req, res, next) => {
             B.level,
             C.title,
             C.date,
+            C.content,
             D.number,
             D.course
       FROM	submits				A
