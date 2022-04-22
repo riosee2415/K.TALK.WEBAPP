@@ -37,6 +37,13 @@ module.exports = () => {
               });
             }
           }
+          if (user.level === 2) {
+            if (user.isFire) {
+              return done(null, false, {
+                reason: "해지된 강사는 로그인할 수 없습니다.",
+              });
+            }
+          }
 
           const result = await bcrypt.compare(password, user.password);
 

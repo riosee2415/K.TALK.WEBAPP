@@ -2,6 +2,9 @@ import produce from "../util/produce";
 
 export const initialState = {
   partList: [],
+
+  teaPartList: [],
+
   partLectureList: [],
   partLecturePrice: null,
   partAdminList: [], // 관리자에서 보는 참여 목록
@@ -46,11 +49,22 @@ export const initialState = {
   st_participantLastDateListLoading: false,
   st_participantLastDateListDone: false,
   st_participantLastDateListError: null,
+  //
+  st_teacherParticipantListLoading: false,
+  st_teacherParticipantListDone: false,
+  st_teacherParticipantListError: null,
 };
 
 export const PARTICIPANT_LIST_REQUEST = "PARTICIPANT_LIST_REQUEST";
 export const PARTICIPANT_LIST_SUCCESS = "PARTICIPANT_LIST_SUCCESS";
 export const PARTICIPANT_LIST_FAILURE = "PARTICIPANT_LIST_FAILURE";
+
+export const TEACHER_PARTICIPANT_LIST_REQUEST =
+  "TEACHER_PARTICIPANT_LIST_REQUEST";
+export const TEACHER_PARTICIPANT_LIST_SUCCESS =
+  "TEACHER_PARTICIPANT_LIST_SUCCESS";
+export const TEACHER_PARTICIPANT_LIST_FAILURE =
+  "TEACHER_PARTICIPANT_LIST_FAILURE";
 
 export const PARTICIPANT_LECTURE_LIST_REQUEST =
   "PARTICIPANT_LECTURE_LIST_REQUEST";
@@ -119,6 +133,27 @@ const reducer = (state = initialState, action) =>
         draft.st_participantListLoading = false;
         draft.st_participantListDone = false;
         draft.st_participantListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+      case TEACHER_PARTICIPANT_LIST_REQUEST: {
+        draft.st_teacherParticipantListLoading = true;
+        draft.st_teacherParticipantListDone = null;
+        draft.st_teacherParticipantListError = false;
+        break;
+      }
+      case TEACHER_PARTICIPANT_LIST_SUCCESS: {
+        draft.st_teacherParticipantListLoading = false;
+        draft.st_teacherParticipantListDone = true;
+        draft.teaPartList = action.data.list;
+
+        break;
+      }
+      case TEACHER_PARTICIPANT_LIST_FAILURE: {
+        draft.st_teacherParticipantListLoading = false;
+        draft.st_teacherParticipantListDone = false;
+        draft.st_teacherParticipantListError = action.error;
         break;
       }
 

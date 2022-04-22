@@ -36,6 +36,10 @@ import {
   PARTICIPANT_LASTDATE_LIST_REQUEST,
   PARTICIPANT_LASTDATE_LIST_SUCCESS,
   PARTICIPANT_LASTDATE_LIST_FAILURE,
+  //////////////////////////////////////////////////////////
+  TEACHER_PARTICIPANT_LIST_REQUEST,
+  TEACHER_PARTICIPANT_LIST_SUCCESS,
+  TEACHER_PARTICIPANT_LIST_FAILURE,
 } from "../reducers/participant";
 
 // SAGA AREA ********************************************************************************************************
@@ -269,6 +273,33 @@ function* participantUserLastDateList(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function teacherParticipantListAPI(data) {
+  return axios.post(`/api/teahcer/list`, data);
+}
+
+function* teacherParticipantList(action) {
+  try {
+    const result = yield call(teacherParticipantListAPI, action.data);
+
+    yield put({
+      type: TEACHER_PARTICIPANT_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: TEACHER_PARTICIPANT_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchParticipantList() {
@@ -315,6 +346,9 @@ function* watchParticipantUserLastDateList() {
     participantUserLastDateList
   );
 }
+function* watchParticipantTeacherList() {
+  yield takeLatest(TEACHER_PARTICIPANT_LIST_REQUEST, teacherParticipantList);
+}
 
 //////////////////////////////////////////////////////////////
 export default function* participantSaga() {
@@ -328,6 +362,7 @@ export default function* participantSaga() {
     fork(watchParticipantUserMoveList),
     fork(watchParticipantUserLimitList),
     fork(watchParticipantUserLastDateList),
+    fork(watchParticipantTeacherList),
 
     //
   ]);

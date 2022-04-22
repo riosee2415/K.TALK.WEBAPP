@@ -75,6 +75,14 @@ import {
   USER_STU_LIST_REQUEST,
   USER_STU_LIST_SUCCESS,
   USER_STU_LIST_FAILURE,
+  /////////////////////////////
+  USER_FIRE_UPDATE_REQUEST,
+  USER_FIRE_UPDATE_SUCCESS,
+  USER_FIRE_UPDATE_FAILURE,
+  /////////////////////////////
+  USER_TEA_LIST_REQUEST,
+  USER_TEA_LIST_SUCCESS,
+  USER_TEA_LIST_FAILURE,
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -598,6 +606,60 @@ function* userStuList(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function userTeaListAPI(data) {
+  return axios.post(`/api/user/teacher/list`, data);
+}
+
+function* userTeaList(action) {
+  try {
+    const result = yield call(userTeaListAPI, action.data);
+
+    yield put({
+      type: USER_TEA_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_TEA_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function userFireUpdateAPI(data) {
+  return axios.patch(`/api/user/fire/update`, data);
+}
+
+function* userFireUpdate(action) {
+  try {
+    const result = yield call(userFireUpdateAPI, action.data);
+
+    yield put({
+      type: USER_FIRE_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_FIRE_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchLoadMyInfo() {
@@ -676,6 +738,14 @@ function* watchUserStuList() {
   yield takeLatest(USER_STU_LIST_REQUEST, userStuList);
 }
 
+function* watchUserFireUpdate() {
+  yield takeLatest(USER_FIRE_UPDATE_REQUEST, userFireUpdate);
+}
+
+function* watchUserTeaList() {
+  yield takeLatest(USER_TEA_LIST_REQUEST, userTeaList);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -698,6 +768,8 @@ export default function* userSaga() {
     fork(watchTeacherList),
     fork(watchFindEmailBy),
     fork(watchUserStuList),
+    fork(watchUserTeaList),
+    fork(watchUserFireUpdate),
     //
   ]);
 }

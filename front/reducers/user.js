@@ -6,6 +6,7 @@ export const initailState = {
   users: null,
   allUsers: null,
   teachers: null,
+  teacherList: null,
 
   userProfilePath: null,
   emailCheckBool: null,
@@ -98,6 +99,14 @@ export const initailState = {
   st_userStuListLoading: false,
   st_userStuListDone: false,
   st_userStuListError: null,
+  //
+  st_userTeaListLoading: false,
+  st_userTeaListDone: false,
+  st_userTeaListError: null,
+  //
+  st_userFireUpdateLoading: false,
+  st_userFireUpdateDone: false,
+  st_userFireUpdateError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -179,6 +188,14 @@ export const USER_FIND_EMAIL_BY_FAILURE = "USER_FIND_EMAIL_BY_FAILURE";
 export const USER_STU_LIST_REQUEST = "USER_STU_LIST_REQUEST";
 export const USER_STU_LIST_SUCCESS = "USER_STU_LIST_SUCCESS";
 export const USER_STU_LIST_FAILURE = "USER_STU_LIST_FAILURE";
+
+export const USER_TEA_LIST_REQUEST = "USER_TEA_LIST_REQUEST";
+export const USER_TEA_LIST_SUCCESS = "USER_TEA_LIST_SUCCESS";
+export const USER_TEA_LIST_FAILURE = "USER_TEA_LIST_FAILURE";
+
+export const USER_FIRE_UPDATE_REQUEST = "USER_FIRE_UPDATE_REQUEST";
+export const USER_FIRE_UPDATE_SUCCESS = "USER_FIRE_UPDATE_SUCCESS";
+export const USER_FIRE_UPDATE_FAILURE = "USER_FIRE_UPDATE_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -598,6 +615,47 @@ const reducer = (state = initailState, action) =>
         draft.st_userStuListLoading = false;
         draft.st_userStuListDone = false;
         draft.st_userStuListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case USER_FIRE_UPDATE_REQUEST: {
+        draft.st_userFireUpdateLoading = true;
+        draft.st_userFireUpdateDone = null;
+        draft.st_userFireUpdateError = false;
+        break;
+      }
+      case USER_FIRE_UPDATE_SUCCESS: {
+        draft.st_userFireUpdateLoading = false;
+        draft.st_userFireUpdateDone = true;
+        break;
+      }
+      case USER_FIRE_UPDATE_FAILURE: {
+        draft.st_userFireUpdateLoading = false;
+        draft.st_userFireUpdateDone = false;
+        draft.st_userFireUpdateError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case USER_TEA_LIST_REQUEST: {
+        draft.st_userTeaListLoading = true;
+        draft.st_userTeaListDone = null;
+        draft.st_userTeaListError = false;
+        break;
+      }
+      case USER_TEA_LIST_SUCCESS: {
+        draft.st_userTeaListLoading = false;
+        draft.st_userTeaListDone = true;
+        draft.teacherList = action.data.teachers;
+        break;
+      }
+      case USER_TEA_LIST_FAILURE: {
+        draft.st_userTeaListLoading = false;
+        draft.st_userTeaListDone = false;
+        draft.st_userTeaListError = action.error;
         break;
       }
 

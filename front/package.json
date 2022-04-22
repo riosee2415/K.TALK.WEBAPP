@@ -16,6 +16,7 @@
     "@ant-design/charts": "^1.2.10",
     "@ant-design/icons": "^4.6.3",
     "@next/bundle-analyzer": "^11.1.0",
+    "@paypal/react-paypal-js": "^7.6.0",
     "@toast-ui/editor": "^3.1.2",
     "@toast-ui/react-editor": "^3.1.2",
     "antd": "^4.16.10",
