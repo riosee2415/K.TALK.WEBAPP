@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import wrapper from "../../store/configureStore";
+import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
 
 import styled from "styled-components";
-import AdminLayout from "../../components/AdminLayout";
+import AdminLayout from "../../../components/AdminLayout";
 import {
   Wrapper,
   Image,
@@ -13,7 +13,7 @@ import {
   Text,
   TextInput,
   SpanText,
-} from "../../components/commonComponents";
+} from "../../../components/commonComponents";
 import {
   Button,
   DatePicker,
@@ -23,17 +23,15 @@ import {
   message,
   Modal,
   notification,
-  Pagination,
   Select,
-  Table,
   TimePicker,
 } from "antd";
 
-import useInput from "../../hooks/useInput";
+import useInput from "../../../hooks/useInput";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
-import Theme from "../../components/Theme";
-import useWidth from "../../hooks/useWidth";
+import Theme from "../../../components/Theme";
+import useWidth from "../../../hooks/useWidth";
 import moment from "moment";
 
 import {
@@ -44,22 +42,14 @@ import {
   USER_ALL_LIST_REQUEST,
   USER_STU_LIST_REQUEST,
   USER_TEACHER_LIST_REQUEST,
-} from "../../reducers/user";
+} from "../../../reducers/user";
 import {
   LECTURE_ALL_LIST_REQUEST,
   LECTURE_DELETE_REQUEST,
   LECTURE_UPDATE_REQUEST,
-} from "../../reducers/lecture";
-import { MESSAGE_ADMIN_MAIN_LIST_REQUEST } from "../../reducers/message";
-import { NOTICE_ADMIN_MAIN_LIST_REQUEST } from "../../reducers/notice";
-
-// let Line;
-
-// if (typeof window !== "undefined") {
-//   const { Line: prevLine } = require("@ant-design/charts");
-
-//   Line = prevLine;
-// }
+} from "../../../reducers/lecture";
+import { MESSAGE_ADMIN_MAIN_LIST_REQUEST } from "../../../reducers/message";
+import { NOTICE_ADMIN_MAIN_LIST_REQUEST } from "../../../reducers/notice";
 
 const WordbreakText = styled(Text)`
   width: 100%;
@@ -701,75 +691,6 @@ const AdminHome = () => {
           /> */}
 
           <AdminContent>
-            <Text fontSize={`24px`} fontWeight={`bold`} margin={`0 0 30px`}>
-              관리자 메인페이지
-            </Text>
-            <Wrapper
-              dr={`row`}
-              ju={`space-between`}
-              al={`flex-start`}
-              margin={`0 0 30px`}>
-              <Wrapper al={`flex-start`} width={`49%`}>
-                <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
-                  <Text
-                    fontSize={`18px`}
-                    fontWeight={`bold`}
-                    margin={`0 20px 0 0`}>
-                    전체 게시판
-                  </Text>
-                  <Button
-                    size={`small`}
-                    type={`primary`}
-                    onClick={() => moveLinkHandler(`/admin/board/notice/list`)}>
-                    게시판 관리 페이지로 이동
-                  </Button>
-                </Wrapper>
-
-                <Table
-                  rowKey="id"
-                  dataSource={noticeAdminMain ? noticeAdminMain : []}
-                  size="small"
-                  columns={noticeColumns}
-                  style={{ width: `100%` }}
-                  pagination={{
-                    current: currentPage1,
-                    total: noticeAdminMainMaxPage * 10,
-                    onChange: (page) => setCurrentPage1(page),
-                  }}
-                />
-              </Wrapper>
-              <Wrapper al={`flex-start`} width={`49%`}>
-                <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
-                  <Text
-                    fontSize={`18px`}
-                    fontWeight={`bold`}
-                    margin={`0 20px 0 0`}>
-                    전체 쪽지 목록
-                  </Text>
-                  <Button
-                    size={`small`}
-                    type={`primary`}
-                    onClick={() =>
-                      moveLinkHandler(`/admin/board/message/list`)
-                    }>
-                    쪽지 관리 페이지로 이동
-                  </Button>
-                </Wrapper>
-
-                <Table
-                  rowKey="id"
-                  dataSource={messageAdminMainList ? messageAdminMainList : []}
-                  size="small"
-                  columns={columns}
-                  style={{ width: `100%` }}
-                  pagination={{
-                    current: currentPage2,
-                    total: messageAdminMainMaxPage * 10,
-                    onChange: (page) => setCurrentPage2(page),
-                  }}
-                />
-              </Wrapper>
-            </Wrapper>
             <Wrapper al={`flex-start`} margin={`0 0 10px`}>
               <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 16px`}>
                 <Text
@@ -819,7 +740,7 @@ const AdminHome = () => {
                     <Select.Option value={""}>선택안함</Select.Option>
 
                     {userStuList && userStuList.length === 0 ? (
-                      <Wrapper>
+                      <Wrapper margin={`50px 0`}>
                         <Empty description="조회된 사용자 데이터가 없습니다." />
                       </Wrapper>
                     ) : (
@@ -906,7 +827,7 @@ const AdminHome = () => {
             <Wrapper dr={`row`} ju={`flex-start`}>
               {allLectureList &&
                 (allLectureList.length === 0 ? (
-                  <Wrapper>
+                  <Wrapper margin={`50px 0`}>
                     <Empty description={`조회된 강의가 없습니다.`} />
                   </Wrapper>
                 ) : (

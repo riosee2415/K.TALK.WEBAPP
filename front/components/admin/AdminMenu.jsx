@@ -88,6 +88,10 @@ const AdminMenu = () => {
           <MenuName>관리자 메인 (클래스 관리)</MenuName>
         </Menu.Item>
 
+        <Menu.Item key="/admin/class/list">
+          <MenuName>클래스 관리</MenuName>
+        </Menu.Item>
+
         <Menu.Item key="/admin/class/create">
           <MenuName>클래스 추가</MenuName>
         </Menu.Item>
