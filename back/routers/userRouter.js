@@ -1162,4 +1162,54 @@ router.patch("/fire/update", isAdminCheck, async (req, res, next) => {
   }
 });
 
+router.patch("/admin/user/update", isAdminCheck, async (req, res, next) => {
+  const {
+    id,
+    birth,
+    stuCountry,
+    stuLiveCon,
+    stuLanguage,
+    sns,
+    snsId,
+    stuPayCount,
+  } = req.body;
+  try {
+    const exUser = await User.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exUser) {
+      return res.status(401).send("존재하지 않는 사용자입니다.");
+    }
+
+    if (exUser.level !== 1) {
+      return res.status(401).send("해당 사용자는 학생이 아닙니다.");
+    }
+
+    const updateResult = await User.update(
+      {
+        birth,
+        stuCountry,
+        stuLiveCon,
+        stuLanguage,
+        sns,
+        snsId,
+        stuPayCount,
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(401).send("사용자 정보를 수정할 수 없습니다.");
+  }
+});
+
 module.exports = router;
