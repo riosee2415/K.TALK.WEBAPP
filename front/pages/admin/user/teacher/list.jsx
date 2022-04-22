@@ -133,7 +133,7 @@ const UserList = ({}) => {
   useEffect(() => {
     if (st_userFireUpdateDone) {
       message.success(
-        `강사가 ${updateData ? `재계약되었습니다.` : `해지되었습니다`}`
+        `강사가 ${updateData ? `해지되었습니다.` : `재계약되었습니다.`}`
       );
       dispatch({
         type: USER_TEA_LIST_REQUEST,
@@ -170,7 +170,12 @@ const UserList = ({}) => {
     dispatch({
       type: USER_TEA_LIST_REQUEST,
       data: {
-        isFire: 0,
+        isFire:
+          currentListType === null
+            ? currentListType
+            : currentListType
+            ? "1"
+            : "0",
         name: inputName.value,
         email: inputEmail.value,
       },
