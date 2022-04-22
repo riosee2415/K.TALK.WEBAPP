@@ -42,6 +42,10 @@ const AdminContent = styled.div`
   padding: 20px;
 `;
 
+const CustomTable = styled(Table)`
+  width: 100%;
+`;
+
 const UserList = ({}) => {
   const { Option } = Select;
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
@@ -166,7 +170,7 @@ const UserList = ({}) => {
     dispatch({
       type: USER_TEA_LIST_REQUEST,
       data: {
-        isFire: currentListType,
+        isFire: 0,
         name: inputName.value,
         email: inputEmail.value,
       },
@@ -719,13 +723,12 @@ const UserList = ({}) => {
         width={800}
       >
         <Wrapper>
-          <Table
+          <CustomTable
             columns={logColumns}
             dataSource={teaPartList ? teaPartList : []}
           />
         </Wrapper>
       </Modal>
-      {console.log(teaPartList)}
     </AdminLayout>
   );
 };
