@@ -151,7 +151,7 @@ const List = ({}) => {
       render: (data) => <div>{`$ ${data.price}`}</div>,
     },
     {
-      title: "남은일수",
+      title: "남은 일수",
       render: (data) => <div>{`D-${data.limitDate}`}</div>,
     },
 

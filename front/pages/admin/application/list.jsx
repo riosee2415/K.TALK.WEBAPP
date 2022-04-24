@@ -20,6 +20,8 @@ import {
   Select,
   Switch,
   DatePicker,
+  TimePicker,
+  Calendar,
 } from "antd";
 import {
   Wrapper,
@@ -140,6 +142,8 @@ const List = ({ location }) => {
   const [paymentOpt, setPaymentOpt] = useState(null);
 
   const [isPayment, setIsPayment] = useState(0);
+  const [isTime, setIsTime] = useState(false);
+  const [time, setTime] = useState(false);
 
   const { paymentList, st_paymentListDone, st_paymentListError } = useSelector(
     (state) => state.payment
@@ -166,9 +170,13 @@ const List = ({ location }) => {
 
     dispatch({
       type: APP_LIST_REQUEST,
-      data: { isComplete: qs.type ? qs.type : null },
+      data: {
+        isComplete: qs.type ? qs.type : null,
+        isTime,
+        time,
+      },
     });
-  }, [router.query]);
+  }, [router.query, isTime, time]);
 
   useEffect(() => {
     if (st_appUpdateDone) {
@@ -178,7 +186,11 @@ const List = ({ location }) => {
 
       dispatch({
         type: APP_LIST_REQUEST,
-        data: { isComplete: qs.type ? qs.type : null },
+        data: {
+          isComplete: qs.type ? qs.type : null,
+          isTime: false,
+          time: "",
+        },
       });
 
       return message.success("신청서 정보를 추가했습니다.");
@@ -236,7 +248,11 @@ const List = ({ location }) => {
 
       dispatch({
         type: APP_LIST_REQUEST,
-        data: { isComplete: qs.type ? qs.type : null },
+        data: {
+          isComplete: qs.type ? qs.type : null,
+          isTime: false,
+          time: "",
+        },
       });
 
       return message.success("회원을 생성 했습니다.");
@@ -367,6 +383,14 @@ const List = ({ location }) => {
 
   const updateFinish = useCallback(
     (data) => {
+      let meetDate = "";
+      if (data.meetDate) {
+        meetDate += data.meetDate.format("YYYY-MM-DD");
+      }
+      if (data.meetTime) {
+        meetDate += " " + data.meetTime.format("HH:mm");
+      }
+
       dispatch({
         type: APP_UPDATE_REQUEST,
         data: {
@@ -478,6 +502,14 @@ const List = ({ location }) => {
     },
     ,
     {
+      title: "줌 미팅일",
+      render: (data) => {
+        return (
+          <div>{data.meetDate ? data.meetDate.substring(0, 10) : "-"}</div>
+        );
+      },
+    },
+    {
       title: "등록일",
       render: (data) => {
         return <div>{data.createdAt.substring(0, 10)}</div>;
@@ -544,12 +576,16 @@ const List = ({ location }) => {
 
         <RowWrapper margin={`0 0 10px 0`} gutter={5}>
           <Col>
-            <Button onClick={() => moveLinkHandler(`/admin/application/list`)}>
+            <Button
+              type={!router.query.type && `primary`}
+              onClick={() => moveLinkHandler(`/admin/application/list`)}
+            >
               전체
             </Button>
           </Col>
           <Col>
             <Button
+              type={router.query.type === "true" && `primary`}
               onClick={() =>
                 moveLinkHandler(`/admin/application/list?type=true`)
               }
@@ -559,12 +595,30 @@ const List = ({ location }) => {
           </Col>
           <Col>
             <Button
+              type={router.query.type === "false" && `primary`}
               onClick={() =>
                 moveLinkHandler(`/admin/application/list?type=false`)
               }
             >
               미처리
             </Button>
+          </Col>
+          <Col>
+            <Select
+              defaultValue={false}
+              style={{ width: `200px` }}
+              onChange={(e) => setIsTime(e)}
+            >
+              <Select.Option value={false}>신청일로 정렬</Select.Option>
+              <Select.Option value={true}>줌미팅 일자로 정렬</Select.Option>
+            </Select>
+          </Col>
+          <Col>
+            <DatePicker
+              style={{ width: `200px` }}
+              onChange={(e) => setTime(e?.format(`YYYY-MM-DD`))}
+              format={`YYYY-MM-DD`}
+            />
           </Col>
         </RowWrapper>
         <Table
@@ -822,7 +876,7 @@ const List = ({ location }) => {
                   color={Theme.white_C}
                   margin={`0 5px 0 0`}
                 >
-                  담당강사
+                  무료수업 담당 강사
                 </ColWrapper>
                 <ColWrapper>
                   <Form.Item name="teacher">
@@ -871,11 +925,14 @@ const List = ({ location }) => {
                   color={Theme.white_C}
                   margin={`0 5px 0 0`}
                 >
-                  줌 미팅 날짜
+                  줌 미팅 시간
                 </ColWrapper>
                 <ColWrapper>
                   <Form.Item name="meetDate">
-                    <DatePicker />
+                    <DatePicker
+                      showTime={{ format: "HH:mm" }}
+                      format="YYYY-MM-DD HH:mm"
+                    />
                   </Form.Item>
                 </ColWrapper>
               </RowWrapper>
@@ -925,7 +982,11 @@ const List = ({ location }) => {
                 </ColWrapper>
                 <ColWrapper width={`80%`} al={`flex-start`}>
                   <FormItem name="purpose">
-                    <TextArea height={`200px`} width={`100%`} />
+                    <TextArea
+                      height={`200px`}
+                      width={`100%`}
+                      border={`1px solid ${Theme.grey_C} !important`}
+                    />
                   </FormItem>
                 </ColWrapper>
               </RowWrapper>

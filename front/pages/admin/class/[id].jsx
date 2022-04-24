@@ -9,7 +9,7 @@ import { END } from "redux-saga";
 import AdminLayout from "../../../components/AdminLayout";
 import PageHeader from "../../../components/admin/PageHeader";
 
-import { Button, Form, Modal, Slider, Table } from "antd";
+import { Button, DatePicker, Form, Modal, Slider, Table } from "antd";
 import styled from "styled-components";
 import {
   Text,
@@ -25,6 +25,7 @@ import Theme from "../../../components/Theme";
 import wrapper from "../../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import {
+  LECTURE_COMUTE_REQUEST,
   LECTURE_DETAIL_REQUEST,
   LECTURE_DIARY_ADMIN_LIST_REQUEST,
   LECTURE_DIARY_LIST_REQUEST,
@@ -92,6 +93,7 @@ const DetailClass = () => {
     lectureMemoStuList,
     lectureDiaryAdminList,
     noticeLectureLastPage,
+    lectureCommuteList,
   } = useSelector((state) => state.lecture);
   const { partAdminList } = useSelector((state) => state.participant);
   const { bookLecture } = useSelector((state) => state.book);
@@ -124,6 +126,8 @@ const DetailClass = () => {
 
   const [messageModal, setMessageModal] = useState(false);
   const [messageDetail, setMessageDetail] = useState(null);
+
+  const [time, setTime] = useState(null);
 
   // console.log(lectureStudentList);
 
@@ -158,6 +162,16 @@ const DetailClass = () => {
       });
     }
   }, [router.query]);
+
+  useEffect(() => {
+    dispatch({
+      type: LECTURE_COMUTE_REQUEST,
+      data: {
+        lectureId: router.query.id,
+        time: time ? time.format("YYYY-MM-DD") : moment().format(`YYYY-MM-DD`),
+      },
+    });
+  }, [router.query, time]);
 
   useEffect(() => {
     dispatch({
@@ -380,6 +394,29 @@ const DetailClass = () => {
     },
   ];
 
+  const lectureCommuteColumns = [
+    {
+      title: "번호",
+      dataIndex: "id",
+    },
+    {
+      title: "학생이름(생년월일)",
+      dataIndex: "birth",
+    },
+    {
+      title: "국적",
+      dataIndex: "stuCountry",
+    },
+    {
+      title: "출석일",
+      render: (data) => data.time.slice(0, 10),
+    },
+    {
+      title: "출석 여부",
+      dataIndex: "status",
+    },
+  ];
+
   const bookColumns = [
     {
       title: "번호",
@@ -592,31 +629,37 @@ const DetailClass = () => {
           padding={`40px 30px 35px`}
           dr={`row`}
           ju={`flex-start`}
+          al={`flex-start`}
           bgColor={Theme.white_C}
           radius={`10px`}
           shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
           margin={`0 0 32px`}
         >
-          <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
-            <Wrapper width={`auto`} margin={`0 10px 0 0`} padding={`8px`}>
-              <Image
-                width={`18px`}
-                src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_b.png"
-                alt="clender_icon"
-              />
+          <Wrapper width={`auto`} al={`flex-start`}>
+            <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
+              <Wrapper width={`auto`} margin={`0 10px 0 0`} padding={`8px`}>
+                <Image
+                  width={`18px`}
+                  src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_b.png"
+                  alt="clender_icon"
+                />
+              </Wrapper>
+              <Text fontSize={`18px`}>
+                {lectureDetail && lectureDetail[0].startDate.slice(0, 10)}~
+                {lectureDetail && lectureDetail[0].endDate.slice(0, 10)}
+                <SpanText
+                  fontWeight={`bold`}
+                  color={Theme.red_C}
+                  margin={`0 0 0 15px`}
+                >
+                  {lectureDetail &&
+                    stepEnd(lectureDetail[0].endDate, lectureDetail[0].day)}
+                  회
+                </SpanText>
+              </Text>
             </Wrapper>
-            <Text fontSize={`18px`}>
-              {lectureDetail && lectureDetail[0].startDate.slice(0, 10)}~
-              {lectureDetail && lectureDetail[0].endDate.slice(0, 10)}
-              <SpanText
-                fontWeight={`bold`}
-                color={Theme.red_C}
-                margin={`0 0 0 15px`}
-              >
-                {lectureDetail &&
-                  stepEnd(lectureDetail[0].endDate, lectureDetail[0].day)}
-                회
-              </SpanText>
+            <Text padding={`0 0 0 44px`}>
+              {lectureDetail && lectureDetail[0].startLv}
             </Text>
           </Wrapper>
           <Wrapper
@@ -654,13 +697,12 @@ const DetailClass = () => {
           </Wrapper>
 
           <Wrapper
-            width={`1px`}
-            height={`48px`}
-            borderLeft={`1px dashed ${Theme.grey_C}`}
-            margin={`0 50px 0 130px`}
-          />
-
-          <Wrapper width={`auto`} al={`flex-start`} fontSize={`16px`}>
+            width={`100%`}
+            al={`flex-start`}
+            fontSize={`16px`}
+            margin={`10px 0 0`}
+            padding={`0 0 0 44px`}
+          >
             <Wrapper dr={`row`} ju={`flex-start`}>
               <Text
                 fontWeight={`bold`}
@@ -693,6 +735,21 @@ const DetailClass = () => {
             추가하기
           </CommonButton>
         </Wrapper> */}
+        <Wrapper dr={`row`} ju={`flex-start`}>
+          <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 10px 0 0`}>
+            일별 학생 출석 목록
+          </Text>
+          <DatePicker
+            style={{ width: `200px` }}
+            onChange={(e) => setTime(e)}
+            format={`YYYY-MM-DD`}
+          />
+        </Wrapper>
+        <Table
+          size={`small`}
+          columns={lectureCommuteColumns}
+          dataSource={lectureCommuteList}
+        />
 
         <Text fontSize={`18px`} fontWeight={`bold`}>
           강의 일지
@@ -703,6 +760,7 @@ const DetailClass = () => {
           columns={lectureColumns}
           dataSource={lectureDiaryAdminList}
         />
+
         <Wrapper
           dr={`row`}
           ju={`space-between`}

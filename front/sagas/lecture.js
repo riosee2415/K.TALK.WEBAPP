@@ -100,6 +100,14 @@ import {
   LECTURE_ALL_LEVEL_REQUEST,
   LECTURE_ALL_LEVEL_SUCCESS,
   LECTURE_ALL_LEVEL_FAILURE,
+  //
+  LECTURE_COMUTE_REQUEST,
+  LECTURE_COMUTE_SUCCESS,
+  LECTURE_COMUTE_FAILURE,
+  //
+  LECTURE_STU_LIMIT_LIST_REQUEST,
+  LECTURE_STU_LIMIT_LIST_SUCCESS,
+  LECTURE_STU_LIMIT_LIST_FAILURE,
 } from "../reducers/lecture";
 
 // SAGA AREA ********************************************************************************************************
@@ -734,6 +742,60 @@ function* lectureAllLevelList(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureCommuteListAPI(data) {
+  return axios.post(`/api/lecture/detail/commutes`, data);
+}
+
+function* lectureCommuteList(action) {
+  try {
+    const result = yield call(lectureCommuteListAPI, action.data);
+
+    yield put({
+      type: LECTURE_COMUTE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_COMUTE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureStuLimitListAPI(data) {
+  return axios.get(`/api/lecture/student/limit/list`, data);
+}
+
+function* lectureStuLimitList(action) {
+  try {
+    const result = yield call(lectureStuLimitListAPI, action.data);
+
+    yield put({
+      type: LECTURE_STU_LIMIT_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_STU_LIMIT_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchLectureList() {
   yield takeLatest(LECTURE_LIST_REQUEST, lectureList);
@@ -834,6 +896,12 @@ function* watchLectureAllTimeList() {
 function* watchLectureAllLevelList() {
   yield takeLatest(LECTURE_ALL_LEVEL_REQUEST, lectureAllLevelList);
 }
+function* watchLectureCommuteList() {
+  yield takeLatest(LECTURE_COMUTE_REQUEST, lectureCommuteList);
+}
+function* watchLectureStuLimitList() {
+  yield takeLatest(LECTURE_STU_LIMIT_LIST_REQUEST, lectureStuLimitList);
+}
 
 //////////////////////////////////////////////////////////////
 export default function* lectureSaga() {
@@ -863,6 +931,8 @@ export default function* lectureSaga() {
     fork(watchLectureHomeworkStuList),
     fork(watchLectureAllTimeList),
     fork(watchLectureAllLevelList),
+    fork(watchLectureCommuteList),
+    fork(watchLectureStuLimitList),
     //
   ]);
 }

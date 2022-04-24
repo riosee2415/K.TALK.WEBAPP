@@ -241,7 +241,7 @@ const UserList = ({}) => {
         teaLanguage: data.teaLanguage,
         bankNo: data.bankNo,
         bankName: data.bankName,
-        birth: data.birth,
+        // birth: data.birth,
         gender: data.gender,
       },
     });
@@ -461,7 +461,7 @@ const UserList = ({}) => {
           >
             <Input />
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             label="생년월일"
             rules={[{ required: true, message: "생년월일을 선택해주세요.." }]}
             name="birth"
@@ -470,7 +470,7 @@ const UserList = ({}) => {
               fullscreen={false}
               validRange={[moment(1970), moment()]}
             />
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item
             label="성별"
             rules={[{ required: true, message: "생별을 선택해주세요." }]}
@@ -486,7 +486,7 @@ const UserList = ({}) => {
             rules={[{ required: true, message: "전화번호를 입력해주세요." }]}
             name="mobile"
           >
-            <Input type="number" />
+            <Input type="number" placeholder={`'-'없이 숫자만 입력해주세요.`} />
           </Form.Item>
 
           <Form.Item
@@ -498,7 +498,7 @@ const UserList = ({}) => {
           </Form.Item>
           <Form.Item
             label="상세주소"
-            rules={[{ required: true, message: "상세주소를 입력해주세요." }]}
+            // rules={[{ required: true, message: "상세주소를 입력해주세요." }]}
             name="detailAddress"
           >
             <Input />
@@ -663,6 +663,14 @@ const UserList = ({}) => {
               {detailModalData && detailModalData.userId}
             </Text>
           </Wrapper>
+          <Wrapper dr={`row`} margin={`0 0 20px`}>
+            <Text width={`80px`} fontWeight={`600`}>
+              연락처 :
+            </Text>
+            <Text width={`calc(100% - 80px)`}>
+              {detailModalData && detailModalData.mobile}
+            </Text>
+          </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
             <Text width={`80px`} fontWeight={`600`}>
@@ -691,14 +699,14 @@ const UserList = ({}) => {
             </Text>
           </Wrapper>
 
-          <Wrapper dr={`row`} margin={`0 0 20px`}>
+          {/* <Wrapper dr={`row`} margin={`0 0 20px`}>
             <Text width={`80px`} fontWeight={`600`}>
               생년월일 :
             </Text>
             <Text width={`calc(100% - 80px)`}>
               {detailModalData && detailModalData.birth.slice(0, 10)}
             </Text>
-          </Wrapper>
+          </Wrapper> */}
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
             <Text width={`80px`} fontWeight={`600`}>
@@ -714,7 +722,9 @@ const UserList = ({}) => {
               상세주소 :
             </Text>
             <Text width={`calc(100% - 80px)`}>
-              {detailModalData && detailModalData.detailAddress}
+              {detailModalData && detailModalData.detailAddress
+                ? detailModalData.detailAddress
+                : "-"}
             </Text>
           </Wrapper>
         </Wrapper>
