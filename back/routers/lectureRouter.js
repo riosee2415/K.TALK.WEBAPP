@@ -484,12 +484,6 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("강의에 참여하고 있지 않습니다.");
     }
 
-    //    let lectureIds = [];
-
-    // for (let i = 0; i < lectures.length; i++) {
-    //   lectureIds.push(lectures[i].LectureId);
-    // }
-
     let lectures = [];
 
     await Promise.all(
@@ -514,6 +508,97 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의 목록을 불러올 수 없습니다.");
+  }
+});
+
+router.get("/student/limit/list", isLoggedIn, async (req, res, next) => {
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
+  try {
+    const exPart = await Participant.findAll({
+      where: {
+        UserId: parseInt(req.user.id),
+        isChange: false,
+        isDelete: false,
+      },
+    });
+
+    if (exPart.length === 0) {
+      return res.status(401).send("참여중인 강의가 없습니다.");
+    }
+
+    let lectureIds = [];
+
+    for (let i = 0; i < exPart.length; i++) {
+      lectureIds.push(exPart[i].LectureId);
+    }
+
+    if (lectureIds.length === 0) {
+      return res.status(401).send("참여중인 강의가 없습니다.");
+    }
+
+    const selectQuery = `
+    SELECT	Z.id,
+            Z.price,
+            Z.email,
+            Z.createdAt,
+            Z.UserId,
+            Z.PayClassId,
+            Z.week,
+            Z.LectureId,
+            Z.number,
+            Z.course,
+            Z.teacherName,
+            Z.studentName,
+            Z.stuCountry,
+            Z.limitDate,
+            Z.mobile
+     FROM (
+                SELECT	A.id,
+                        A.price,
+                        A.email,
+                        A.createdAt,
+                        A.UserId,
+                        A.PayClassId,
+                        B.week,
+                        B.LectureId,
+                        C.number,
+                        C.course,
+                        D.username 					AS teacherName,
+                        F.username 					AS studentName,
+                        F.stuCountry,
+                        F.mobile,
+                        (
+                          SELECT	DATEDIFF(DATE_ADD(DATE_FORMAT(B.startDate, "%Y-%m-%d"),  INTERVAL B.week WEEK), now())
+                            FROM	DUAL
+                        )	AS 	limitDate
+                  FROM	payments			A
+                 INNER
+                  JOIN	payClass 			B
+                    ON	A.PayClassId = B.id
+                 INNER
+                  JOIN	lectures 			C
+                    ON	B.LectureId = C.id
+                 INNER
+                  JOIN	users				  D
+                    ON	C.UserId = D.id
+                 INNER
+                  JOIN	users				  F
+                    ON	A.UserId = F.id
+                 WHERE  1 = 1
+                   AND  A.UserId = ${req.user.id}
+                   AND  C.id IN (${lectureIds})
+   		    )	Z
+   ORDER  BY limitDate ASC
+    `;
+    const list = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ list: list[0] });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("참여중인 강의 목록을 불러올 수 없습니다.");
   }
 });
 
