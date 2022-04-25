@@ -1342,8 +1342,7 @@ const LectureAll = () => {
                                   <Text
                                     fontSize={width < 800 ? `14px` : `16px`}
                                     lineHeight={`1.22`}>
-                                    {data.day}&nbsp;&nbsp;|&nbsp;&nbsp;
-                                    {data.time}
+                                    {divideLecture(data.day, data.time)}
                                   </Text>
                                 </Wrapper>
                               </Wrapper>

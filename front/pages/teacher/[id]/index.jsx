@@ -1908,7 +1908,7 @@ const Index = () => {
                               {`${data.number}`}
                             </CustomText2>
 
-                            <Text
+                            {/* <Text
                               width={`180px`}
                               color={Theme.black_2C}
                               fontSize={width < 700 ? `14px` : `18px`}
@@ -1921,7 +1921,7 @@ const Index = () => {
                                 data.lecDate,
                                 data.day
                               )}회`}</SpanText>
-                            </Text>
+                            </Text> */}
                           </Wrapper>
 
                           {/* {width < 700 && (

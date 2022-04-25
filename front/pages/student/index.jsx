@@ -1,7 +1,6 @@
 import React, { useEffect, useCallback, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import DaumPostCode from "react-daum-postcode";
 import moment from "moment";
 
 import Head from "next/head";
@@ -14,7 +13,6 @@ import { SEO_LIST_REQUEST } from "../../reducers/seo";
 import {
   LOAD_MY_INFO_REQUEST,
   ME_UPDATE_MODAL_TOGGLE,
-  POSTCODE_MODAL_TOGGLE,
   USER_PROFILE_IMAGE_PATH,
   USER_PROFILE_UPLOAD_REQUEST,
   USER_UPDATE_REQUEST,
@@ -22,7 +20,6 @@ import {
 
 import {
   Button,
-  Calendar,
   Empty,
   Form,
   Input,
@@ -31,7 +28,6 @@ import {
   Pagination,
   Select,
   Slider,
-  Switch,
   Table,
 } from "antd";
 import styled from "styled-components";
@@ -56,8 +52,6 @@ import {
 } from "../../reducers/message";
 
 import {
-  NOTICE_LECTURE_LIST_REQUEST,
-  NOTICE_LIST_FAILURE,
   NOTICE_LIST_REQUEST,
   NOTICE_MY_LECTURE_LIST_REQUEST,
 } from "../../reducers/notice";
@@ -67,14 +61,8 @@ import {
   LECTURE_STU_LECTURE_LIST_REQUEST,
   LECTURE_SUBMIT_CREATE_REQUEST,
 } from "../../reducers/lecture";
-import {
-  CalendarOutlined,
-  UploadOutlined,
-  FilePdfOutlined,
-} from "@ant-design/icons";
+import { UploadOutlined } from "@ant-design/icons";
 import { saveAs } from "file-saver";
-import { COMMUTE_LIST_REQUEST } from "../../reducers/commute";
-import { FileDoneOutlined } from "@ant-design/icons";
 import { BOOK_LECTURE_LIST_REQUEST } from "../../reducers/book";
 
 const PROFILE_WIDTH = `184`;
@@ -1301,9 +1289,11 @@ const Student = () => {
                       <Text fontSize={width < 700 ? `14px` : `18px`}>
                         {`${moment(data.startDate, "YYYY/MM/DD").format(
                           "YYYY/MM/DD"
-                        )} ~ ${moment(data.endDate, "YYYY/MM/DD").format(
-                          "YYYY/MM/DD"
                         )}`}
+
+                        {/* ~ ${moment(data.endDate, "YYYY/MM/DD").format(
+                          "YYYY/MM/DD"
+                        )} */}
                         <SpanText
                           fontWeight={`bold`}
                           color={Theme.red_C}
@@ -2451,10 +2441,7 @@ const Student = () => {
               margin={`0 0 10px`}>
               제목
             </Text>
-            <Text
-              fontSize={width < 700 ? `14px` : `18px`}
-             
-              margin={`0 0 10px`}>
+            <Text fontSize={width < 700 ? `14px` : `18px`} margin={`0 0 10px`}>
               {homeWorkData && homeWorkData.title}
             </Text>
 
