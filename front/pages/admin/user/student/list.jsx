@@ -445,7 +445,6 @@ const List = () => {
 
   const onStuFill = useCallback((data) => {
     if (data) {
-      console.log(data, "datagtata");
       updateStuForm.setFieldsValue({
         sns: data.sns,
         snsId: data.snsId,
@@ -1509,7 +1508,7 @@ const List = () => {
 
                   <ColWrapper dr={`row`}>
                     <FormItem name="birth">
-                      <CustomInput />
+                      <CustomInput disabled />
                     </FormItem>
 
                     <CalendarOutlined onClick={calenderToggle} />
