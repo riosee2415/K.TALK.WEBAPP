@@ -688,6 +688,8 @@ const Student = () => {
   const homeworkSubmitHanlder = useCallback((data) => {
     setHomeWorkData(data);
     setHomeWorkModalToggle(true);
+
+    console.log(data, "data");
   }, []);
 
   ////// HANDLER //////
@@ -2443,6 +2445,30 @@ const Student = () => {
             title="숙제 제출하기"
             footer={null}
             closable={false}>
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+              fontWeight={`bold`}
+              margin={`0 0 10px`}>
+              제목
+            </Text>
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+             
+              margin={`0 0 10px`}>
+              {homeWorkData && homeWorkData.title}
+            </Text>
+
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+              fontWeight={`bold`}
+              margin={`0 0 10px`}>
+              내용
+            </Text>
+
+            <Text fontSize={width < 700 ? `14px` : `18px`} margin={`0 0 10px`}>
+              {homeWorkData && homeWorkData.content}
+            </Text>
+
             <CustomForm
               ref={formRef}
               form={form}

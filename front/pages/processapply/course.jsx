@@ -146,6 +146,10 @@ const Course = () => {
     }
   }, [st_processApplyCreateError]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   ////// DATAVIEW //////
 
   const firstPhoneArr = [

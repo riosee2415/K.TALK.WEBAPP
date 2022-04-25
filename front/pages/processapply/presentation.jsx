@@ -154,6 +154,10 @@ const Presentation = () => {
     }
   }, [st_processCreateError]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   ////// DATAVIEW //////
 
   const firstPhoneArr = [

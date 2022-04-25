@@ -100,6 +100,10 @@ const BackIcon = styled(Wrapper)`
 
 const CustomTable = styled(Table)`
   width: 100%;
+
+  & .ant-table {
+    font-size: 12px;
+  }
 `;
 
 const CustomSlide = styled(Slider)`
@@ -195,6 +199,10 @@ const CustomModal = styled(Modal)`
   & .ant-modal-title {
     font-size: 20px;
     font-weight: bold;
+  }
+
+  & .ant-modal-body {
+    padding: 12px;
   }
 `;
 
@@ -854,11 +862,8 @@ const LectureAll = () => {
   ];
   const limitColumnsM = [
     {
-      title: "번호",
-      dataIndex: "id",
-    },
-    {
       title: "강의명 / 강사명",
+      width: 110,
       render: (data) => (
         <Wrapper al={`flex-start`}>
           <Text>{data.course} /&nbsp;</Text>
@@ -871,12 +876,12 @@ const LectureAll = () => {
       dataIndex: "price",
     },
     {
-      title: "강의 참가일",
+      title: "참가일",
       render: (data) => data.createdAt.slice(0, 10),
     },
 
     {
-      title: "남은 일수",
+      title: "일수",
       render: (data) => <div>D-{data.limitDate}</div>,
     },
   ];
@@ -1780,6 +1785,9 @@ const LectureAll = () => {
           visible={limitModal}>
           <Wrapper>
             <CustomTable
+              pagination={{
+                size: "small",
+              }}
               dataSource={lectureStuLimitList ? lectureStuLimitList : []}
               columns={width < 800 ? limitColumnsM : limitColumns}
             />

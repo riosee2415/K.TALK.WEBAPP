@@ -1162,6 +1162,7 @@ const Index = () => {
 
   const onChangeHomeWorkPage = useCallback((page) => {
     setCurrentPage4(page);
+
     dispatch({
       type: LECTURE_HOMEWORK_LIST_REQUEST,
       data: {
@@ -2261,6 +2262,7 @@ const Index = () => {
                     ) : (
                       partLectureList &&
                       partLectureList.map((data, idx) => {
+                        console.log(data, "data");
                         return (
                           <Wrapper
                             key={data.id}
@@ -2301,7 +2303,7 @@ const Index = () => {
                               {`$${
                                 partLecturePrice.find(
                                   (value) => value.UserId === data.UserId
-                                )?.price || ""
+                                )?.price || "-"
                               }`}
                             </Text>
                             <Text
@@ -3353,7 +3355,7 @@ const Index = () => {
         <CustomModal
           visible={homeWorkModalToggle}
           title="숙제 업로드"
-          width={`800px`}
+          width={`80%`}
           footer={null}
           closable={false}>
           <CustomForm
@@ -3396,7 +3398,7 @@ const Index = () => {
               <Wrapper dr={`row`} ju={`flex-start`}>
                 <CusotmInput
                   placeholder="날짜를 선택해주세요."
-                  width={`90%`}
+                  width={`50%`}
                   value={inputDate.value}
                   style={{
                     height: `40px`,
@@ -3422,8 +3424,7 @@ const Index = () => {
                   border={`1px solid ${Theme.grey_C}`}
                   margin={`0 0 20px`}>
                   <Calendar
-                    defaultValue={null}
-                    style={{ width: width < 1350 ? `100%` : `300px` }}
+                    style={{ width: width < 1350 ? `100%` : `250px` }}
                     fullscreen={false}
                     onChange={dateChagneHandler}
                   />

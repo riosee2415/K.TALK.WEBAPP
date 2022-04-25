@@ -223,8 +223,8 @@ const List = ({ location }) => {
             <Select.Option
               key={data.id}
               value={`${data.id},${data.LetureId},${data.week},${data.email}`}>
-              {data.createdAt.slice(0, 10)} | {data.course} | &#36;{data.price}{" "}
-              | &nbsp;{data.email}
+              {data.createdAt.slice(0, 10)} | {data.course} | &#36;{data.price}|
+              &nbsp;{data.email}
             </Select.Option>
           );
         });
