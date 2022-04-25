@@ -472,39 +472,68 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
     return res.status(403).send("로그인 후 이용 가능합니다.");
   }
   try {
-    const exParts = await Participant.findAll({
-      where: {
-        UserId: parseInt(req.user.id),
-        isDelete: false,
-        isChange: false,
-      },
-    });
+    const selectQuery = `
+    SELECT	A.id,
+            A.isDelete,
+            A.isChange,
+            A.date,
+            A.endDate,
+            A.createdAt,
+            A.updatedAt,
+            A.UserId,
+            A.LectureId,
+            B.day,
+            B.startDate,
+            B.count,
+            B.course,
+            B.time,
+            B.number,
+            B.lecDate,
+            B.startLv,
+            B.zoomLink,
+            B.UserId					AS TeacherId,
+            B.createdAt,
+            C.username,
+            C.profileImage,
+            C.level
+      FROM	participants		A
+     INNER
+      JOIN	lectures 			B
+        ON	A.LectureId = B.id
+     INNER
+      JOIN	users				C
+        ON	B.UserId = C.id 
+     WHERE	1 = 1
+       AND	A.UserId = ${req.user.id}
+       AND	B.isDelete  = FALSE
+    `;
 
-    if (exParts.length === 0) {
-      return res.status(401).send("강의에 참여하고 있지 않습니다.");
+    let lectureIds = [];
+
+    const partList = await models.sequelize.query(selectQuery);
+
+    for (let i = 0; i < partList[0].length; i++) {
+      lectureIds.push(partList[0][i].LectureId);
     }
 
-    let lectures = [];
+    const commuteQuery = `
+    SELECT	id,
+            time,
+            status,
+            createdAt,
+            updatedAt,
+            LectureId,
+            UserId 
+      FROM	commutes
+     WHERE	UserId = ${req.user.id}
+       AND  LectureId IN (${lectureIds})
+    `;
 
-    await Promise.all(
-      exParts.map(async (data) => {
-        lectures.push(
-          await Lecture.findOne({
-            where: { id: parseInt(data.LectureId) },
-            include: [
-              {
-                model: User,
-              },
-              {
-                model: Commute,
-              },
-            ],
-          })
-        );
-      })
-    );
+    const commutes = await models.sequelize.query(commuteQuery);
 
-    return res.status(200).json({ lectures });
+    return res
+      .status(200)
+      .json({ partList: partList[0], commutes: commutes[0] });
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의 목록을 불러올 수 없습니다.");
