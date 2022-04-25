@@ -1162,6 +1162,47 @@ router.patch("/fire/update", isAdminCheck, async (req, res, next) => {
   }
 });
 
+router.patch("/admin/teacher/update", isAdminCheck, async (req, res, next) => {
+  const { id, gender, bankNo, bankName, address, detailAddress, teaLanguage } =
+    req.body;
+  try {
+    const exUser = await User.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exUser) {
+      return res.status(401).send("존재하지 않는 사용자입니다.");
+    }
+
+    if (exUser.level !== 2) {
+      return res.status(401).send("해당 사용자는 강사가 아닙니다.");
+    }
+
+    const updateResult = await User.update(
+      {
+        gender,
+        bankNo,
+        bankName,
+        address,
+        detailAddress,
+        teaLanguage,
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(401).send("강사 정보를 수정할 수 없습니다.");
+  }
+});
+
 router.patch("/admin/user/update", isAdminCheck, async (req, res, next) => {
   const {
     id,
