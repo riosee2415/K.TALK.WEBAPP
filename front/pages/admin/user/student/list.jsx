@@ -1308,7 +1308,7 @@ const List = () => {
       <Modal
         visible={classPartEndModal}
         width={`400px`}
-        title={`학생 수업 변경`}
+        title={`학생 수업 종료`}
         onCancel={classPartEndModalClose}
         onOk={onSubmitEnd}>
         <Wrapper padding={`10px`} al={`flex-start`}>

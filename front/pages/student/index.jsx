@@ -1309,6 +1309,7 @@ const Student = () => {
                         </SpanText>
                       </Text>
                     </Wrapper>
+
                     <Wrapper
                       width={width < 1280 ? `100%` : `38%`}
                       dr={`row`}

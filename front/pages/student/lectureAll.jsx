@@ -1302,10 +1302,12 @@ const LectureAll = () => {
                                     {`${moment(
                                       data.startDate,
                                       "YYYY/MM/DD"
-                                    ).format("YYYY/MM/DD")} ~ ${moment(
+                                    ).format("YYYY/MM/DD")}`}
+
+                                    {/* ~ ${moment(
                                       data.endDate,
                                       "YYYY/MM/DD"
-                                    ).format("YYYY/MM/DD")}`}
+                                    ).format("YYYY/MM/DD")} */}
 
                                     <SpanText
                                       fontWeight={`bold`}

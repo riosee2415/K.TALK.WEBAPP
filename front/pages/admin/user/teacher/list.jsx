@@ -518,7 +518,12 @@ const UserList = ({}) => {
 
           <Form.Item
             label="회원이름"
-            rules={[{ required: true, message: "회원이름을 입력해주세요." }]}
+            rules={[
+              {
+                message: "회원이름을 입력해주세요.",
+                required: true,
+              },
+            ]}
             name="username">
             <Input />
           </Form.Item>
