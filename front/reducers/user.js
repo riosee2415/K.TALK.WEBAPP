@@ -111,6 +111,15 @@ export const initailState = {
   st_userAdminUpdateLoading: false,
   st_userAdminUpdateDone: false,
   st_userAdminUpdateError: null,
+  //
+  st_userAdminUpdateLoading: false,
+  st_userAdminUpdateDone: false,
+  st_userAdminUpdateError: null,
+
+  //
+  st_userAdminTeacherUpdateLoading: false,
+  st_userAdminTeacherUpdateDone: false,
+  st_userAdminTeacherUpdateError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -204,6 +213,13 @@ export const USER_FIRE_UPDATE_FAILURE = "USER_FIRE_UPDATE_FAILURE";
 export const USER_ADMIN_UPDATE_REQUEST = "USER_ADMIN_UPDATE_REQUEST";
 export const USER_ADMIN_UPDATE_SUCCESS = "USER_ADMIN_UPDATE_SUCCESS";
 export const USER_ADMIN_UPDATE_FAILURE = "USER_ADMIN_UPDATE_FAILURE";
+
+export const USER_ADMIN_TEACHER_UPDATE_REQUEST =
+  "USER_ADMIN_TEACHER_UPDATE_REQUEST";
+export const USER_ADMIN_TEACHER_UPDATE_SUCCESS =
+  "USER_ADMIN_TEACHER_UPDATE_SUCCESS";
+export const USER_ADMIN_TEACHER_UPDATE_FAILURE =
+  "USER_ADMIN_TEACHER_UPDATE_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -669,23 +685,25 @@ const reducer = (state = initailState, action) =>
 
       //////////////////////////////////////////////
 
-      case USER_ADMIN_UPDATE_REQUEST: {
-        draft.st_userAdminUpdateLoading = true;
-        draft.st_userAdminUpdateDone = null;
-        draft.st_userAdminUpdateError = false;
+      case USER_ADMIN_TEACHER_UPDATE_REQUEST: {
+        draft.st_userAdminTeacherUpdateLoading = true;
+        draft.st_userAdminTeacherUpdateDone = null;
+        draft.st_userAdminTeacherUpdateError = false;
         break;
       }
-      case USER_ADMIN_UPDATE_SUCCESS: {
-        draft.st_userAdminUpdateLoading = false;
-        draft.st_userAdminUpdateDone = true;
+      case USER_ADMIN_TEACHER_UPDATE_SUCCESS: {
+        draft.st_userAdminTeacherUpdateLoading = false;
+        draft.st_userAdminTeacherUpdateDone = true;
         break;
       }
-      case USER_ADMIN_UPDATE_FAILURE: {
-        draft.st_userAdminUpdateLoading = false;
-        draft.st_userAdminUpdateDone = false;
-        draft.st_userAdminUpdateError = action.error;
+      case USER_ADMIN_TEACHER_UPDATE_FAILURE: {
+        draft.st_userAdminTeacherUpdateLoading = false;
+        draft.st_userAdminTeacherUpdateDone = false;
+        draft.st_userAdminTeacherUpdateError = action.error;
         break;
       }
+
+      //////////////////////////////////////////////
 
       //////////////////////////////////////////////
 

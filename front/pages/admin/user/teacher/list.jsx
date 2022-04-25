@@ -12,7 +12,6 @@ import {
   Select,
   Input,
   Form,
-  Calendar,
   Popconfirm,
 } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
@@ -28,6 +27,7 @@ import {
 
 import {
   LOAD_MY_INFO_REQUEST,
+  USER_ADMIN_TEACHER_UPDATE_REQUEST,
   USER_FIRE_UPDATE_REQUEST,
   USER_TEA_CREATE_REQUEST,
   USER_TEA_LIST_REQUEST,
@@ -35,8 +35,8 @@ import {
 
 import { useRouter, withRouter } from "next/router";
 import useInput from "../../../../hooks/useInput";
-import moment from "moment";
 import { TEACHER_PARTICIPANT_LIST_REQUEST } from "../../../../reducers/participant";
+import Theme from "../../../../components/Theme";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -47,10 +47,7 @@ const CustomTable = styled(Table)`
 `;
 
 const UserList = ({}) => {
-  const { Option } = Select;
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
-
-  const { allLectures } = useSelector((state) => state.lecture);
 
   const {
     me,
@@ -61,6 +58,9 @@ const UserList = ({}) => {
     st_userTeaCreateError,
     st_userFireUpdateDone,
     st_userFireUpdateError,
+
+    st_userAdminTeacherUpdateDone,
+    st_userAdminTeacherUpdateError,
   } = useSelector((state) => state.user);
   const { teaPartList } = useSelector((state) => state.participant);
 
@@ -92,6 +92,8 @@ const UserList = ({}) => {
 
   const [logmodal, setLogModal] = useState(false);
   const [updateData, setUpdateData] = useState(null);
+
+  const [updateTeacherForm] = Form.useForm();
 
   const [currentListType, setCurrentListType] = useState(null);
 
@@ -151,6 +153,35 @@ const UserList = ({}) => {
     }
   }, [st_userFireUpdateError]);
 
+  useEffect(() => {
+    if (st_userAdminTeacherUpdateDone) {
+      setDetailModalData(null);
+      setDetailModal(false);
+
+      dispatch({
+        type: USER_TEA_LIST_REQUEST,
+        data: {
+          isFire:
+            currentListType === null
+              ? currentListType
+              : currentListType
+              ? "1"
+              : "0",
+          name: inputName.value,
+          email: inputEmail.value,
+        },
+      });
+
+      return message.success("강사 정보를 수정 했습니다.");
+    }
+  }, [st_userAdminTeacherUpdateDone]);
+
+  useEffect(() => {
+    if (st_userAdminTeacherUpdateError) {
+      return message.error(st_userAdminTeacherUpdateError);
+    }
+  }, [st_userAdminTeacherUpdateError]);
+
   ////// TOGGLE //////
 
   ////// HANDLER //////
@@ -189,7 +220,30 @@ const UserList = ({}) => {
   const detailModalToggle = useCallback((data) => {
     setDetailModal((prev) => !prev);
     setDetailModalData(data);
+
+    onFillTeacher(data);
   }, []);
+
+  const onFillTeacher = useCallback(
+    (data) => {
+      if (data) {
+        updateTeacherForm.setFieldsValue({
+          username: data.username,
+          userId: data.userId,
+          email: data.email,
+          bankNo: data.bankNo,
+          gender: data.gender,
+          teaLanguage: data.teaLanguage,
+          createdAt: data.createdAt.slice(0, 13),
+          mobile: data.mobile,
+          bankName: data.bankName,
+          detailAddress: data.detailAddress,
+          address: data.address,
+        });
+      }
+    },
+    [updateTeacherForm]
+  );
 
   const logModalToggle = useCallback((data) => {
     setLogModal((prev) => !prev);
@@ -252,6 +306,25 @@ const UserList = ({}) => {
     detailModalToggle(null);
   }, []);
 
+  const updateTeacherFinish = useCallback(
+    (data) => {
+      console.log(data, "data");
+      dispatch({
+        type: USER_ADMIN_TEACHER_UPDATE_REQUEST,
+        data: {
+          id: detailModalData.id,
+          gender: data.gender,
+          bankNo: data.bankNo,
+          bankName: data.bankName,
+          address: data.address,
+          detailAddress: data.detailAddress,
+          teaLanguage: data.teaLanguage,
+        },
+      });
+    },
+    [detailModalData]
+  );
+
   ////// DATAVIEW //////
 
   const column = [
@@ -275,25 +348,23 @@ const UserList = ({}) => {
     },
 
     {
-      title: "강사 디테일",
+      title: "강사 상세보기",
       render: (data) => (
         <Button
           size="small"
           type="primary"
-          onClick={() => detailModalToggle(data)}
-        >
-          DETAIL
+          onClick={() => detailModalToggle(data)}>
+          상세보기
         </Button>
       ),
     },
 
     {
-      title: "강사 해지/재계약",
+      title: "해지/재계약",
       render: (data) => (
         <Popconfirm
           onConfirm={() => TeacherFireUpdateHandler(data)}
-          title={`강사를 ${data.isFire ? `재계약` : `해지`} 하시겠습니까?`}
-        >
+          title={`강사를 ${data.isFire ? `재계약` : `해지`} 하시겠습니까?`}>
           <Button size="small" type="primary">
             {data.isFire ? `재계약` : `해지`}
           </Button>
@@ -302,13 +373,12 @@ const UserList = ({}) => {
     },
 
     {
-      title: "강사 해지/재계약 기록",
+      title: "해지/재계약 기록",
       render: (data) => (
         <Button
           size="small"
           type="primary"
-          onClick={() => logModalToggle(data)}
-        >
+          onClick={() => logModalToggle(data)}>
           DETAIL
         </Button>
       ),
@@ -362,22 +432,19 @@ const UserList = ({}) => {
           <Button
             size={`small`}
             type={currentListType === null && "primary"}
-            onClick={() => setCurrentListType(null)}
-          >
+            onClick={() => setCurrentListType(null)}>
             전체 조회
           </Button>
           <Button
             size={`small`}
             type={currentListType === true && "primary"}
-            onClick={() => setCurrentListType(true)}
-          >
+            onClick={() => setCurrentListType(true)}>
             해지 강사 조회
           </Button>
           <Button
             size={`small`}
             type={currentListType === false && "primary"}
-            onClick={() => setCurrentListType(false)}
-          >
+            onClick={() => setCurrentListType(false)}>
             계약 강사 조회
           </Button>
         </Wrapper>
@@ -386,8 +453,7 @@ const UserList = ({}) => {
             dr={`row`}
             ju={`flex-start`}
             margin={`0 0 10px`}
-            width={`calc(100% - 80px)`}
-          >
+            width={`calc(100% - 80px)`}>
             <Input
               size="small"
               style={{ width: "20%" }}
@@ -403,8 +469,7 @@ const UserList = ({}) => {
             <Button
               widt={`80px`}
               size="small"
-              onClick={() => onSeachTeaHandler()}
-            >
+              onClick={() => onSeachTeaHandler()}>
               <SearchOutlined />
               검색
             </Button>
@@ -426,14 +491,12 @@ const UserList = ({}) => {
         onCancel={modalToggle}
         title="강사 생성"
         footer={null}
-        width={1000}
-      >
+        width={1000}>
         <Form
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 20 }}
           form={form}
-          onFinish={onSubmitCreate}
-        >
+          onFinish={onSubmitCreate}>
           <Wrapper width={`68%`} margin={`0 16%`}>
             <GuideUl>
               <GuideLi isImpo>회원 아이디는 이메일과 같습니다.</GuideLi>
@@ -445,8 +508,7 @@ const UserList = ({}) => {
           <Form.Item
             label="이메일"
             rules={[{ required: true, message: "이메일을 입력해주세요." }]}
-            name="email"
-          >
+            name="email">
             <Input type="email" {...inputEmailView} />
           </Form.Item>
 
@@ -457,10 +519,10 @@ const UserList = ({}) => {
           <Form.Item
             label="회원이름"
             rules={[{ required: true, message: "회원이름을 입력해주세요." }]}
-            name="username"
-          >
+            name="username">
             <Input />
           </Form.Item>
+
           {/* <Form.Item
             label="생년월일"
             rules={[{ required: true, message: "생년월일을 선택해주세요.." }]}
@@ -474,8 +536,7 @@ const UserList = ({}) => {
           <Form.Item
             label="성별"
             rules={[{ required: true, message: "생별을 선택해주세요." }]}
-            name="gender"
-          >
+            name="gender">
             <Select>
               <Select.Option value={`남`}>남자</Select.Option>
               <Select.Option value={`여`}>여자</Select.Option>
@@ -484,23 +545,20 @@ const UserList = ({}) => {
           <Form.Item
             label="전화번호"
             rules={[{ required: true, message: "전화번호를 입력해주세요." }]}
-            name="mobile"
-          >
+            name="mobile">
             <Input type="number" placeholder={`'-'없이 숫자만 입력해주세요.`} />
           </Form.Item>
 
           <Form.Item
             label="주소"
             rules={[{ required: true, message: "주소를 입력해주세요." }]}
-            name="address"
-          >
+            name="address">
             <Input />
           </Form.Item>
           <Form.Item
             label="상세주소"
             // rules={[{ required: true, message: "상세주소를 입력해주세요." }]}
-            name="detailAddress"
-          >
+            name="detailAddress">
             <Input />
           </Form.Item>
 
@@ -522,8 +580,7 @@ const UserList = ({}) => {
                   }
                 },
               },
-            ]}
-          >
+            ]}>
             {(fields, { add, remove }, { errors }) => {
               return (
                 <>
@@ -532,8 +589,7 @@ const UserList = ({}) => {
                       <Wrapper width={`48%`}>
                         <Form.Item
                           style={{ width: `100%`, margin: 0 }}
-                          name="firstIdentifyNum"
-                        >
+                          name="firstIdentifyNum">
                           <Input type="number" style={{ width: `100%` }} />
                         </Form.Item>
                       </Wrapper>
@@ -543,8 +599,7 @@ const UserList = ({}) => {
                       <Wrapper width={`48%`}>
                         <Form.Item
                           style={{ width: `100%`, margin: 0 }}
-                          name="endIdentifyNum"
-                        >
+                          name="endIdentifyNum">
                           <Input type="password" style={{ width: `100%` }} />
                         </Form.Item>
                       </Wrapper>
@@ -566,8 +621,7 @@ const UserList = ({}) => {
                 message: "강사가 가능한 언어를 입력해주세요.",
               },
             ]}
-            name="teaLanguage"
-          >
+            name="teaLanguage">
             <Input />
           </Form.Item>
 
@@ -584,16 +638,14 @@ const UserList = ({}) => {
           <Form.Item
             label="은행이름"
             rules={[{ required: true, message: "은행이름을 입력해주세요." }]}
-            name="bankName"
-          >
+            name="bankName">
             <Input />
           </Form.Item>
 
           <Form.Item
             label="계좌번호"
             rules={[{ required: true, message: "계좌번호를 입력해주세요." }]}
-            name="bankNo"
-          >
+            name="bankNo">
             <Input />
           </Form.Item>
 
@@ -601,8 +653,7 @@ const UserList = ({}) => {
             <Button
               size="small"
               style={{ margin: `0 10px 0 0` }}
-              onClick={modalToggle}
-            >
+              onClick={modalToggle}>
               취소
             </Button>
             <Button size="small" type="primary" htmlType="submit">
@@ -616,90 +667,116 @@ const UserList = ({}) => {
         visible={detailmodal}
         footer={null}
         onCancel={() => onCancelHandle()}
-        title={`강사 정보`}
-      >
-        <Wrapper>
-          <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`} fontWeight={`600`}>
-              이름 :
-            </Text>
-            <Text width={`calc(100% - 80px)`}>
-              {detailModalData && detailModalData.username}
-            </Text>
-          </Wrapper>
+        title={`강사 정보`}>
+        <Form form={updateTeacherForm} onFinish={updateTeacherFinish}>
+          <Wrapper>
+            <Form.Item
+              label={`이름`}
+              name={`username`}
+              labelCol={{ span: 4 }}
+              labelWrap={{ span: 20 }}
+              style={{ width: `100%` }}>
+              <Input disabled></Input>
+            </Form.Item>
 
-          <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`} fontWeight={`600`}>
-              성별 :
-            </Text>
-            <Text width={`calc(100% - 80px)`}>
-              {detailModalData && detailModalData.gender}
-            </Text>
-          </Wrapper>
+            <Form.Item
+              label={`성별`}
+              name="gender"
+              labelCol={{ span: 4 }}
+              labelWrap={{ span: 20 }}
+              style={{ width: `100%` }}>
+              <Select style={{ width: "100%", height: 32 }}>
+                <Select.Option value={`남`}>남자</Select.Option>
+                <Select.Option value={`여`}>여자</Select.Option>
+              </Select>
+            </Form.Item>
 
-          <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`} fontWeight={`600`}>
-              가입일 :
-            </Text>
-            <Text width={`calc(100% - 80px)`}>
-              {detailModalData && detailModalData.createdAt.slice(0, 13)}
-            </Text>
-          </Wrapper>
+            <Form.Item
+              label={`가입일`}
+              name={`createdAt`}
+              labelCol={{ span: 4 }}
+              labelWrap={{ span: 20 }}
+              style={{ width: `100%` }}>
+              <Input disabled></Input>
+            </Form.Item>
 
-          <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`} fontWeight={`600`}>
-              이메일 :
-            </Text>
-            <Text width={`calc(100% - 80px)`}>
-              {detailModalData && detailModalData.email}
-            </Text>
-          </Wrapper>
+            <Form.Item
+              label={`이메일`}
+              name={`email`}
+              labelCol={{ span: 4 }}
+              labelWrap={{ span: 20 }}
+              style={{ width: `100%` }}>
+              <Input disabled></Input>
+            </Form.Item>
 
-          <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`} fontWeight={`600`}>
-              아이디 :
-            </Text>
-            <Text width={`calc(100% - 80px)`}>
-              {detailModalData && detailModalData.userId}
-            </Text>
-          </Wrapper>
-          <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`} fontWeight={`600`}>
-              연락처 :
-            </Text>
-            <Text width={`calc(100% - 80px)`}>
-              {detailModalData && detailModalData.mobile}
-            </Text>
-          </Wrapper>
+            <Form.Item
+              label={`아이디`}
+              name={`userId`}
+              labelCol={{ span: 4 }}
+              labelWrap={{ span: 20 }}
+              style={{ width: `100%` }}>
+              <Input disabled></Input>
+            </Form.Item>
 
-          <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`} fontWeight={`600`}>
-              가능 언어 :
-            </Text>
-            <Text width={`calc(100% - 80px)`}>
-              {detailModalData && detailModalData.teaLanguage}
-            </Text>
-          </Wrapper>
+            <Form.Item
+              label={`연락처`}
+              name={`mobile`}
+              labelCol={{ span: 4 }}
+              labelWrap={{ span: 20 }}
+              style={{ width: `100%` }}>
+              <Input disabled></Input>
+            </Form.Item>
 
-          <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`} fontWeight={`600`}>
-              은행 :
-            </Text>
-            <Text width={`calc(100% - 80px)`}>
-              {detailModalData && detailModalData.bankName}
-            </Text>
-          </Wrapper>
+            <Form.Item
+              label={`가능언어`}
+              name={`teaLanguage`}
+              labelCol={{ span: 4 }}
+              labelWrap={{ span: 20 }}
+              style={{ width: `100%` }}>
+              <Input></Input>
+            </Form.Item>
 
-          <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`} fontWeight={`600`}>
-              계좌번호 :
-            </Text>
-            <Text width={`calc(100% - 80px)`}>
-              {detailModalData && detailModalData.bankNo}
-            </Text>
-          </Wrapper>
+            <Form.Item
+              label={`은행`}
+              name={`bankName`}
+              labelCol={{ span: 4 }}
+              labelWrap={{ span: 20 }}
+              style={{ width: `100%` }}>
+              <Input></Input>
+            </Form.Item>
 
-          {/* <Wrapper dr={`row`} margin={`0 0 20px`}>
+            <Form.Item
+              label={`계좌번호`}
+              name={`bankNo`}
+              labelCol={{ span: 4 }}
+              labelWrap={{ span: 20 }}
+              style={{ width: `100%` }}>
+              <Input></Input>
+            </Form.Item>
+
+            <Form.Item
+              label={`주소`}
+              name={`address`}
+              labelCol={{ span: 4 }}
+              labelWrap={{ span: 20 }}
+              style={{ width: `100%` }}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label={`상세주소`}
+              name={`detailAddress`}
+              labelCol={{ span: 4 }}
+              labelWrap={{ span: 20 }}
+              style={{ width: `100%` }}>
+              <Input />
+            </Form.Item>
+
+            <Text color={Theme.red_C}>
+              * 이메일 수정 하고싶으면 개발사로 문의해주세요.
+            </Text>
+
+            {/* <Wrapper dr={`row`} margin={`0 0 20px`}>
             <Text width={`80px`} fontWeight={`600`}>
               생년월일 :
             </Text>
@@ -707,27 +784,14 @@ const UserList = ({}) => {
               {detailModalData && detailModalData.birth.slice(0, 10)}
             </Text>
           </Wrapper> */}
-
-          <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`} fontWeight={`600`}>
-              주소 :
-            </Text>
-            <Text width={`calc(100% - 80px)`}>
-              {detailModalData && detailModalData.address}
-            </Text>
           </Wrapper>
 
-          <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`80px`} fontWeight={`600`}>
-              상세주소 :
-            </Text>
-            <Text width={`calc(100% - 80px)`}>
-              {detailModalData && detailModalData.detailAddress
-                ? detailModalData.detailAddress
-                : "-"}
-            </Text>
+          <Wrapper al={`flex-end`}>
+            <Button size={`small`} type="primary" htmlType="submit">
+              수정
+            </Button>
           </Wrapper>
-        </Wrapper>
+        </Form>
       </Modal>
 
       <Modal
@@ -735,8 +799,7 @@ const UserList = ({}) => {
         footer={null}
         onCancel={() => logModalToggle(null)}
         title={`해지 / 재계약 기록`}
-        width={800}
-      >
+        width={800}>
         <Wrapper>
           <CustomTable
             columns={logColumns}

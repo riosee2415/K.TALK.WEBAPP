@@ -87,6 +87,10 @@ import {
   USER_ADMIN_UPDATE_REQUEST,
   USER_ADMIN_UPDATE_SUCCESS,
   USER_ADMIN_UPDATE_FAILURE,
+  /////////////////////////////
+  USER_ADMIN_TEACHER_UPDATE_REQUEST,
+  USER_ADMIN_TEACHER_UPDATE_SUCCESS,
+  USER_ADMIN_TEACHER_UPDATE_FAILURE,
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -694,6 +698,33 @@ function* userUpdate(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function userTeacherUpdateAPI(data) {
+  return axios.patch(`/api/user/admin/teacher/update`, data);
+}
+
+function* userTeacherUpdate(action) {
+  try {
+    const result = yield call(userTeacherUpdateAPI, action.data);
+
+    yield put({
+      type: USER_ADMIN_TEACHER_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_ADMIN_TEACHER_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchLoadMyInfo() {
@@ -784,6 +815,10 @@ function* watchUserUpdate() {
   yield takeLatest(USER_ADMIN_UPDATE_REQUEST, userUpdate);
 }
 
+function* watchUserTeacherUpdate() {
+  yield takeLatest(USER_ADMIN_TEACHER_UPDATE_REQUEST, userTeacherUpdate);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -809,6 +844,7 @@ export default function* userSaga() {
     fork(watchUserTeaList),
     fork(watchUserFireUpdate),
     fork(watchUserUpdate),
+    fork(watchUserTeacherUpdate),
     //
   ]);
 }
