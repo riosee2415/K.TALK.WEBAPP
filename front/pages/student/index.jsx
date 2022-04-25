@@ -2074,13 +2074,6 @@ const Student = () => {
                     "YYYY/MM/DD"
                   ).format("YYYY/MM/DD")}`}
                 </Text>
-
-                <Text>
-                  {`수정일: ${moment(
-                    noticeViewDatum && noticeViewDatum.updatedAt,
-                    "YYYY/MM/DD"
-                  ).format("YYYY/MM/DD")}`}
-                </Text>
               </Wrapper>
             </Wrapper>
 

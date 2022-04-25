@@ -13,7 +13,16 @@ import {
   CLASS_PART_OPEN_REQUEST,
   USER_ADMIN_UPDATE_REQUEST,
 } from "../../../../reducers/user";
-import { Table, Button, message, Modal, Select, Input, Form } from "antd";
+import {
+  Table,
+  Button,
+  message,
+  Modal,
+  Select,
+  Input,
+  Form,
+  Calendar,
+} from "antd";
 import { useRouter, withRouter } from "next/router";
 import wrapper from "../../../../store/configureStore";
 import { END } from "redux-saga";
@@ -35,29 +44,52 @@ import {
   PARTICIPANT_USER_LIMIT_LIST_REQUEST,
 } from "../../../../reducers/participant";
 import useInput from "../../../../hooks//useInput";
-import { SearchOutlined } from "@ant-design/icons";
+import { CalendarOutlined, SearchOutlined } from "@ant-design/icons";
 import Theme from "../../../../components/Theme";
 import { PAYMENT_LIST_REQUEST } from "../../../../reducers/payment";
 import moment from "moment";
+import useWidth from "../../../../hooks/useWidth";
 
 const AdminContent = styled.div`
   padding: 20px;
 `;
 
 const CustomInput = styled(Input)`
-  width: ${(props) => props.width};
+  width: ${(props) => props.width || `250px`};
 `;
 
 const FormItem = styled(Form.Item)`
-  width: 100%;
-
   @media (max-width: 700px) {
     width: 100%;
   }
+
+  margin: 0px;
 `;
 
 const CustomForm = styled(Form)`
   width: 100%;
+`;
+
+const CustomSelect = styled(Select)`
+  margin: ${(props) => props.margin};
+
+  &:not(.ant-select-customize-input) .ant-select-selector {
+    border-radius: 5px;
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.16);
+  }
+
+  & .ant-select-selector {
+    width: 250px !important;
+    padding: 0 5px !important;
+  }
+
+  & .ant-select-arrow span svg {
+    color: ${Theme.black_C};
+  }
+
+  & .ant-select-selection-placeholder {
+    color: ${Theme.grey2_C};
+  }
 `;
 
 const List = () => {
@@ -100,6 +132,8 @@ const List = () => {
 
   ////// HOOKS //////
   const dispatch = useDispatch();
+
+  const width = useWidth();
 
   const {
     st_participantCreateDone,
@@ -152,6 +186,8 @@ const List = () => {
   const inputEmail = useInput("");
 
   const [isPayment, setIsPayment] = useState(0);
+
+  const [isCalendar, setIsCalendar] = useState(false);
 
   ////// USEEFFECT //////
 
@@ -311,6 +347,7 @@ const List = () => {
   useEffect(() => {
     if (st_userAdminUpdateDone) {
       setStuDetailModal(false);
+      setIsCalendar(false);
       updateStuForm.resetFields();
 
       dispatch({
@@ -321,6 +358,8 @@ const List = () => {
           email: "",
         },
       });
+
+      return message.success("학생정보가 수정되었습니다.");
     }
   }, [st_userAdminUpdateDone]);
 
@@ -406,6 +445,7 @@ const List = () => {
 
   const onStuFill = useCallback((data) => {
     if (data) {
+      console.log(data, "datagtata");
       updateStuForm.setFieldsValue({
         sns: data.sns,
         snsId: data.snsId,
@@ -570,8 +610,6 @@ const List = () => {
 
   const updateStuFinish = useCallback(
     (data) => {
-      console.log(data, "data");
-      console.log(stuDetail, "stuDetail");
       dispatch({
         type: USER_ADMIN_UPDATE_REQUEST,
         data: {
@@ -588,6 +626,17 @@ const List = () => {
     },
     [stuDetail]
   );
+
+  const calenderToggle = useCallback(() => {
+    setIsCalendar(!isCalendar);
+  }, [isCalendar]);
+
+  const dateChagneHandler = useCallback((data) => {
+    const birth = data.format("YYYY-MM-DD");
+    updateStuForm.setFieldsValue({
+      birth: birth,
+    });
+  }, []);
 
   ////// DATAVIEW //////
 
@@ -821,6 +870,248 @@ const List = () => {
         <div style={{ color: Theme.red_C }}>{`${data.lastDate}`}</div>
       ),
     },
+  ];
+
+  const country = [
+    "Australia",
+    "Canada",
+    "China",
+    "Finland",
+    "France",
+    "Germany",
+    "Ireland",
+    "Italy",
+    "Japan",
+    "Malaysia",
+    "Netherland",
+    "Poland",
+    "S. Africa",
+    "S. Korea",
+    "Singapore",
+    "Spain",
+    "Sweden",
+    "Switzland",
+    "Taiwan",
+    "U.K.",
+    "USA",
+
+    //
+    "Afghanistan",
+    "Albania",
+    "Algeria",
+    "Andorra",
+    "Angola",
+    "Anguilla",
+    "Antigua and Barbuda",
+    "Argentina",
+    "Armenia",
+    "Aruba",
+    "Austria",
+    "Azerbaijan",
+    "Bahamas",
+    "Bahrain",
+    "Bailiwick of Guernsey",
+    "Bailiwick of Jersey",
+    "Bangladesh",
+    "Barbados",
+    "Belarus",
+    "Belgium",
+    "Belize",
+    "Benin",
+    "Bermuda",
+    "Bhutan",
+    "Bolivia",
+    "Bosnia-Herzegovina",
+    "Botswana",
+    "Brazil",
+    "British Antarctic Territory",
+    "British Indian Ocean Territory",
+    "British Virgin Islands",
+    "Brunei",
+    "Bulgaria",
+    "Burkina Faso",
+    "Burundi",
+    "C.te D'Ivoire",
+    "Cambodia",
+    "Cameroon",
+    "Cape Verde",
+    "Cayman Islands",
+    "Central African Republic",
+    "Chad",
+    "Chile",
+    "Colombia",
+    "Comoros",
+    "Congo",
+    "Cook Islands",
+    "Costa Rica",
+    "Croatia",
+    "Cuba",
+    "Cyprus",
+    "Czech",
+    "Democratic Republic of Congo",
+    "Denmark",
+    "Djibouti",
+    "Dominica",
+    "Dominican Republic",
+    "Ecuador",
+    "Egypt",
+    "El Salvador",
+    "Equatorial Guinea",
+    "Eritrea",
+    "Estonia",
+    "Eswatini",
+    "Ethiopia",
+    "Federated States of Micronesia",
+    "Fiji",
+
+    "French Guiana",
+    "French Polynesia",
+    "Gabon",
+    "Gambia",
+    "Georgia",
+    "Ghana",
+    "Gibraltar",
+    "Greece",
+    "Greenland",
+    "Grenada",
+    "Guadeloupe",
+    "Guam",
+    "Guatemala",
+    "Guinea",
+    "Guinea-Bissau",
+    "Guyana",
+    "Haiti",
+    "Honduras",
+    "Hongkong",
+    "Hungary",
+    "Iceland",
+    "India",
+    "Indonesia",
+    "Iran",
+    "Iraq",
+    "Isle of Man",
+    "Israel",
+    "Jamaica",
+    "Jordan",
+    "Kazakhstan",
+    "Kenya",
+    "Kiribati",
+    "Kosovo",
+    "Kuwait",
+    "Kyrgyz",
+    "Laos",
+    "Latvia",
+    "Lebanon",
+    "Lesotho",
+    "Liberia",
+    "Libya",
+    "Liechtenstein",
+    "Lithuania",
+    "Luxembourg",
+    "Macao",
+    "Madagascar",
+    "Malawi",
+    "Maldives",
+    "Mali",
+    "Malta",
+    "Marshall Islands",
+    "Martinique",
+    "Mauritania",
+    "Mauritius",
+    "Mayotte",
+    "Mazambique",
+    "Mexico",
+    "Moldova",
+    "Monaco",
+    "Mongolia",
+    "Montenegro",
+    "Montserrat",
+    "Morocco",
+    "Myanmar",
+    "Namibia",
+    "Nauru",
+    "Nepal",
+    "Netherlands Antilles",
+    "New Caledonia",
+    "New Zealand",
+    "Nicaragua",
+    "Niger",
+    "Nigeria",
+    "Niue",
+    "North Macedonia",
+    "Northern Mariana Islands",
+    "Norway",
+    "Oman",
+    "Pakistan",
+    "Palau",
+    "Palestine",
+    "Panama",
+    "Papua New Guinea :PNG",
+    "Paraguay",
+    "Peru",
+    "Philippines",
+    "Pitcairn Islands",
+
+    "Portugal",
+    "Puerto Rico",
+    "Qatar",
+    "R.union",
+    "Romania",
+    "Russia",
+    "Rwanda",
+    "S.o Tom. & Principe",
+    "Sahara Arab Democratic Republic",
+    "Samoa",
+    "San Marino",
+    "Saudi Arabia",
+    "Senegal",
+    "Serbia",
+    "Seychelles",
+    "Sierra Leone",
+    "Slovakia",
+    "Slovenia",
+    "Solomon Islands",
+    "Somalia",
+    "South Sudan",
+
+    "Sri Lanka",
+    "St Helena",
+    "St. Kitts-Nevis",
+    "St. Lucia",
+    "St. Pierre and Miquelon",
+    "St. Vincent & the Grenadines",
+    "Sudan",
+    "Suriname",
+
+    "Swiss",
+    "Syria",
+
+    "Tajikistan",
+    "Tanzania",
+    "Thailand",
+    "Timor-Leste",
+    "Togo",
+    "Tonga",
+    "Trinidad & Tobago",
+    "Tunisia",
+    "Turkey",
+    "Turkmenistan",
+    "Turks and Caicos Islands",
+    "Tuvalu",
+    "Uganda",
+    "Ukraine",
+    "United Arab Emirates : UAE",
+
+    "Uruguay",
+    "Uzbekistan",
+    "Vanuatu",
+    "Vatican",
+    "Venezuela",
+    "Vietnam",
+    "Wallis and Futuna",
+    "Yemen",
+    "Zambia",
+    "Zimbabwe",
   ];
 
   return (
@@ -1216,11 +1507,29 @@ const List = () => {
                     생년월일
                   </ColWrapper>
 
-                  <ColWrapper>
+                  <ColWrapper dr={`row`}>
                     <FormItem name="birth">
-                      <CustomInput width={`100%`} />
+                      <CustomInput />
                     </FormItem>
+
+                    <CalendarOutlined onClick={calenderToggle} />
                   </ColWrapper>
+
+                  <Wrapper
+                    display={isCalendar ? "flex" : "none"}
+                    width={`auto`}
+                    position={width < 1350 ? `static` : `absolute`}
+                    top={`40px`}
+                    right={`-310px`}
+                    border={`1px solid ${Theme.grey_C}`}
+                    margin={`0 0 20px`}>
+                    <Calendar
+                      style={{ width: width < 1350 ? `100%` : `300px` }}
+                      fullscreen={false}
+                      validRange={[moment(1970), moment()]}
+                      onChange={dateChagneHandler}
+                    />
+                  </Wrapper>
                 </RowWrapper>
 
                 <RowWrapper width={`100%`} margin={`0 0 10px`}>
@@ -1235,7 +1544,16 @@ const List = () => {
 
                   <ColWrapper>
                     <FormItem name="stuCountry">
-                      <CustomInput width={`100%`} />
+                      <CustomSelect>
+                        {country &&
+                          country.map((data, idx) => {
+                            return (
+                              <Select.Option key={idx} value={data}>
+                                {data}
+                              </Select.Option>
+                            );
+                          })}
+                      </CustomSelect>
                     </FormItem>
                   </ColWrapper>
                 </RowWrapper>
@@ -1252,7 +1570,16 @@ const List = () => {
 
                   <ColWrapper>
                     <FormItem name="stuLiveCon">
-                      <CustomInput width={`100%`} />
+                      <CustomSelect>
+                        {country &&
+                          country.map((data, idx) => {
+                            return (
+                              <Select.Option key={idx} value={data}>
+                                {data}
+                              </Select.Option>
+                            );
+                          })}
+                      </CustomSelect>
                     </FormItem>
                   </ColWrapper>
                 </RowWrapper>
@@ -1269,7 +1596,7 @@ const List = () => {
 
                   <ColWrapper>
                     <FormItem name="stuLanguage">
-                      <CustomInput width={`100%`} />
+                      <CustomInput />
                     </FormItem>
                   </ColWrapper>
                 </RowWrapper>
@@ -1286,7 +1613,7 @@ const List = () => {
 
                   <ColWrapper>
                     <FormItem name="sns">
-                      <CustomInput width={`100%`} />
+                      <CustomInput />
                     </FormItem>
                   </ColWrapper>
                 </RowWrapper>
@@ -1303,7 +1630,7 @@ const List = () => {
 
                   <ColWrapper>
                     <FormItem name="snsId">
-                      <CustomInput width={`100%`} />
+                      <CustomInput />
                     </FormItem>
                   </ColWrapper>
                 </RowWrapper>
@@ -1320,12 +1647,16 @@ const List = () => {
 
                   <ColWrapper>
                     <FormItem name="stuPayCount">
-                      <CustomInput width={`100%`} />
+                      <CustomInput />
                     </FormItem>
                   </ColWrapper>
                 </RowWrapper>
               </Wrapper>
             </Wrapper>
+
+            <Text color={Theme.red_C}>
+              * 이메일 수정 하고싶으면 개발사로 문의해주세요.
+            </Text>
           </Wrapper>
 
           <ColWrapper width={`100%`}>
