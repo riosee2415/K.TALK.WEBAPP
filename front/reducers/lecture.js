@@ -32,6 +32,8 @@ export const initailState = {
 
   lectureAllTime: null,
   lectureAllLevel: null,
+  lectureCommuteList: null,
+  lectureStuLimitList: null,
 
   createModal: false,
   detailModal: false,
@@ -135,6 +137,14 @@ export const initailState = {
   st_lectureAllLevelLoading: false,
   st_lectureAllLevelDone: false,
   st_lectureAllLevelError: null,
+  //
+  st_lectureCommuteLoading: false,
+  st_lectureCommuteDone: false,
+  st_lectureCommuteError: null,
+  //
+  st_lectureStuLimitListLoading: false,
+  st_lectureStuLimitListDone: false,
+  st_lectureStuLimitListError: null,
 };
 
 export const LECTURE_LIST_REQUEST = "LECTURE_LIST_REQUEST";
@@ -261,6 +271,14 @@ export const LECTURE_ALL_TIME_FAILURE = "LECTURE_ALL_TIME_FAILURE";
 export const LECTURE_ALL_LEVEL_REQUEST = "LECTURE_ALL_LEVEL_REQUEST";
 export const LECTURE_ALL_LEVEL_SUCCESS = "LECTURE_ALL_LEVEL_SUCCESS";
 export const LECTURE_ALL_LEVEL_FAILURE = "LECTURE_ALL_LEVEL_FAILURE";
+//
+export const LECTURE_COMUTE_REQUEST = "LECTURE_COMUTE_REQUEST";
+export const LECTURE_COMUTE_SUCCESS = "LECTURE_COMUTE_SUCCESS";
+export const LECTURE_COMUTE_FAILURE = "LECTURE_COMUTE_FAILURE";
+//
+export const LECTURE_STU_LIMIT_LIST_REQUEST = "LECTURE_STU_LIMIT_LIST_REQUEST";
+export const LECTURE_STU_LIMIT_LIST_SUCCESS = "LECTURE_STU_LIMIT_LIST_SUCCESS";
+export const LECTURE_STU_LIMIT_LIST_FAILURE = "LECTURE_STU_LIMIT_LIST_FAILURE";
 //
 
 export const CREATE_MODAL_OPEN_REQUEST = "CREATE_MODAL_OPEN_REQUEST";
@@ -788,6 +806,53 @@ const reducer = (state = initailState, action) =>
         draft.st_lectureAllTimeLoading = false;
         draft.st_lectureAllTimeDone = false;
         draft.st_lectureAllTimeError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+
+      case LECTURE_COMUTE_REQUEST: {
+        draft.st_lectureCommuteLoading = true;
+        draft.st_lectureCommuteDone = null;
+        draft.st_lectureCommuteError = false;
+        break;
+      }
+      case LECTURE_COMUTE_SUCCESS: {
+        draft.st_lectureCommuteLoading = false;
+        draft.st_lectureCommuteDone = true;
+        draft.lectureCommuteList = action.data.list;
+
+        break;
+      }
+      case LECTURE_COMUTE_FAILURE: {
+        draft.st_lectureCommuteLoading = false;
+        draft.st_lectureCommuteDone = false;
+        draft.st_lectureCommuteError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+
+      case LECTURE_STU_LIMIT_LIST_REQUEST: {
+        draft.st_lectureStuLimitListLoading = true;
+        draft.st_lectureStuLimitListDone = null;
+        draft.st_lectureStuLimitListError = false;
+        break;
+      }
+      case LECTURE_STU_LIMIT_LIST_SUCCESS: {
+        draft.st_lectureStuLimitListLoading = false;
+        draft.st_lectureStuLimitListDone = true;
+        draft.lectureStuLimitList = action.data.list;
+
+        break;
+      }
+      case LECTURE_STU_LIMIT_LIST_FAILURE: {
+        draft.st_lectureStuLimitListLoading = false;
+        draft.st_lectureStuLimitListDone = false;
+        draft.st_lectureStuLimitListError = action.error;
         break;
       }
 
