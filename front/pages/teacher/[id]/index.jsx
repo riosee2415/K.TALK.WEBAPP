@@ -134,6 +134,22 @@ const CusotmInput = styled(TextInput)`
   }
 `;
 
+const CusotmTextArea = styled(TextArea)`
+  width: 100%;
+  min-height: 200px;
+  border: none;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.16);
+  border-radius: 5px;
+
+  &::placeholder {
+    color: ${Theme.grey2_C};
+  }
+
+  &:focus {
+    border: 1px solid ${Theme.basicTheme_C};
+  }
+`;
+
 const WordbreakText = styled(Text)`
   width: 100%;
   word-wrap: break-all;
@@ -159,10 +175,6 @@ const CustomModal = styled(Modal)`
 
 const CustomForm = styled(Form)`
   width: 100%;
-
-  & .ant-form-item {
-    width: 100%;
-  }
 `;
 
 const CustomWrapper = styled(Wrapper)`
@@ -644,6 +656,10 @@ const Index = () => {
   }, [me, router.query]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     if (st_messageListError) {
       return message.error(st_messageListError);
     }
@@ -736,7 +752,6 @@ const Index = () => {
           LectureId: router.query.id,
         },
       });
-
       return message.success("공지사항이 작성 되었습니다.");
     }
   }, [st_noticeCreateDone]);
@@ -1103,6 +1118,7 @@ const Index = () => {
           type: LECTURE_HOMEWORK_CREATE_REQUEST,
           data: {
             title: value.title3,
+            content: value.content3,
             date: value.date,
             file: filePath,
             LectureId: router.query.id,
@@ -1155,21 +1171,29 @@ const Index = () => {
     });
   }, []);
 
-  const onChangeImages = useCallback((e) => {
-    const formData = new FormData();
+  const onChangeFiles = useCallback(
+    (e) => {
+      const formData = new FormData();
 
-    [].forEach.call(e.target.files, (file) => {
-      formData.append("file", file);
-    });
+      [].forEach.call(e.target.files, (file) => {
+        formData.append("file", file);
+      });
 
-    dispatch({
-      type: LECTURE_FILE_REQUEST,
-      data: formData,
-    });
+      if (e.target.files[0].size > 5242880) {
+        message.error("파일 용량 제한 (최대 5MB)");
+        imageInput.current.value = "";
+        return;
+      }
 
-    setFileName(e.target.files[0] && e.target.files[0].name);
-    e.target.value == "";
-  }, []);
+      dispatch({
+        type: LECTURE_FILE_REQUEST,
+        data: formData,
+      });
+
+      setFileName(e.target.files[0] && e.target.files[0].name);
+    },
+    [imageInput]
+  );
 
   const diaryFinishHandler = useCallback(
     (value) => {
@@ -1751,7 +1775,7 @@ const Index = () => {
                       wordBreak={`break-all`}>
                       {me && me.username}
                     </SpanText>
-                    !
+                    님!
                   </Text>
                 </Wrapper>
               </Wrapper>
@@ -1869,7 +1893,7 @@ const Index = () => {
                               fontSize={width < 700 ? `14px` : `18px`}
                               width={width < 700 ? `auto` : `140px`}
                               borderRightBool={true}>
-                              {`NO.${data.number}`}
+                              {`${data.number}`}
                             </CustomText2>
 
                             <Text
@@ -3333,8 +3357,8 @@ const Index = () => {
 
         <CustomModal
           visible={homeWorkModalToggle}
-          width={`1350px`}
           title="숙제 업로드"
+          width={`800px`}
           footer={null}
           closable={false}>
           <CustomForm
@@ -3350,8 +3374,21 @@ const Index = () => {
             <Form.Item
               name="title3"
               rules={[{ required: true, message: "제목을 입력해주세요." }]}>
-              <CusotmInput width={`50%`} placeholder="제목을 입력해주세요." />
+              <CusotmInput width={`100%`} placeholder="제목을 입력해주세요." />
             </Form.Item>
+
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+              fontWeight={`bold`}
+              margin={`0 0 10px`}>
+              내용
+            </Text>
+            <Form.Item
+              name="content3"
+              rules={[{ required: true, message: "내용을 입력해주세요." }]}>
+              <CusotmTextArea placeholder="내용을 입력해주세요." />
+            </Form.Item>
+
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
@@ -3364,7 +3401,7 @@ const Index = () => {
               <Wrapper dr={`row`} ju={`flex-start`}>
                 <CusotmInput
                   placeholder="날짜를 선택해주세요."
-                  width={`50%`}
+                  width={`90%`}
                   value={inputDate.value}
                   style={{
                     height: `40px`,
@@ -3390,6 +3427,7 @@ const Index = () => {
                   border={`1px solid ${Theme.grey_C}`}
                   margin={`0 0 20px`}>
                   <Calendar
+                    defaultValue={null}
                     style={{ width: width < 1350 ? `100%` : `300px` }}
                     fullscreen={false}
                     onChange={dateChagneHandler}
@@ -3402,7 +3440,7 @@ const Index = () => {
               파일 업로드
             </Text>
 
-            <Wrapper al={`flex-start`}>
+            <Wrapper al={`flex-start`} margin={`10px 0 0`}>
               <input
                 type="file"
                 name="file"
@@ -3410,7 +3448,7 @@ const Index = () => {
                 // multiple
                 hidden
                 ref={imageInput}
-                onChange={onChangeImages}
+                onChange={onChangeFiles}
               />
               <Button
                 icon={<UploadOutlined />}
@@ -3419,14 +3457,13 @@ const Index = () => {
                 style={{
                   height: `40px`,
                   width: `150px`,
-                  margin: `10px 0 0`,
                 }}>
                 파일 올리기
               </Button>
               <Text>{`${fileName}`}</Text>
             </Wrapper>
 
-            <Wrapper dr={`row`}>
+            <Wrapper dr={`row`} margin={`20px 0 0`}>
               <CommonButton
                 margin={`0 5px 0 0`}
                 kindOf={`grey`}

@@ -107,6 +107,10 @@ export const initailState = {
   st_userFireUpdateLoading: false,
   st_userFireUpdateDone: false,
   st_userFireUpdateError: null,
+  //
+  st_userAdminUpdateLoading: false,
+  st_userAdminUpdateDone: false,
+  st_userAdminUpdateError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -196,6 +200,10 @@ export const USER_TEA_LIST_FAILURE = "USER_TEA_LIST_FAILURE";
 export const USER_FIRE_UPDATE_REQUEST = "USER_FIRE_UPDATE_REQUEST";
 export const USER_FIRE_UPDATE_SUCCESS = "USER_FIRE_UPDATE_SUCCESS";
 export const USER_FIRE_UPDATE_FAILURE = "USER_FIRE_UPDATE_FAILURE";
+
+export const USER_ADMIN_UPDATE_REQUEST = "USER_ADMIN_UPDATE_REQUEST";
+export const USER_ADMIN_UPDATE_SUCCESS = "USER_ADMIN_UPDATE_SUCCESS";
+export const USER_ADMIN_UPDATE_FAILURE = "USER_ADMIN_UPDATE_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -656,6 +664,26 @@ const reducer = (state = initailState, action) =>
         draft.st_userTeaListLoading = false;
         draft.st_userTeaListDone = false;
         draft.st_userTeaListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case USER_ADMIN_UPDATE_REQUEST: {
+        draft.st_userAdminUpdateLoading = true;
+        draft.st_userAdminUpdateDone = null;
+        draft.st_userAdminUpdateError = false;
+        break;
+      }
+      case USER_ADMIN_UPDATE_SUCCESS: {
+        draft.st_userAdminUpdateLoading = false;
+        draft.st_userAdminUpdateDone = true;
+        break;
+      }
+      case USER_ADMIN_UPDATE_FAILURE: {
+        draft.st_userAdminUpdateLoading = false;
+        draft.st_userAdminUpdateDone = false;
+        draft.st_userAdminUpdateError = action.error;
         break;
       }
 

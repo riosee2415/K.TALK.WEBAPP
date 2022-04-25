@@ -734,6 +734,7 @@ const AdminHome = () => {
 
                 <Wrapper width={`auto`} margin={`0 10px 0 0`}>
                   <Select
+                    style={{ width: `200px`, marginRight: 10 }}
                     placeholder={`학생을 선택해주세요.`}
                     onChange={(e) => setSearchStuName(e)}
                     allowClear>

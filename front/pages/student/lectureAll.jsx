@@ -67,6 +67,17 @@ import { FileDoneOutlined, RollbackOutlined } from "@ant-design/icons";
 import { saveAs } from "file-saver";
 import { BOOK_LECTURE_LIST_REQUEST } from "../../reducers/book";
 
+const CustomButton = styled(Button)`
+  font-size: 16px;
+  height: 26px;
+
+  @media (max-width: 700px) {
+    font-size: 14px;
+
+    height: 24px;
+  }
+`;
+
 const BackIcon = styled(Wrapper)`
   cursor: pointer;
   transition: 0.5s;
@@ -329,6 +340,10 @@ const LectureAll = () => {
   ];
 
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     dispatch({
@@ -779,6 +794,23 @@ const LectureAll = () => {
     router.back();
   }, []);
 
+  const divideLecture = useCallback((day, time) => {
+    let saveDay = day.split(" ");
+    let saveTime = time.split(" ");
+
+    let textSave = "";
+
+    saveDay.map((data, idx) => {
+      if (idx === saveDay.length - 1) {
+        textSave += `${data} ${saveTime[idx]}`;
+      } else {
+        textSave += `${data} ${saveTime[idx]} | `;
+      }
+    });
+
+    return textSave;
+  }, []);
+
   ////// DATAVIEW //////
 
   return (
@@ -935,7 +967,7 @@ const LectureAll = () => {
             <CustomPage
               size="small"
               current={currentPage2}
-              tota={noticeMyLectureLastPage * 10}
+              total={noticeMyLectureLastPage * 10}
               onChange={(page) => noticeChangePage(page)}
             />
 
@@ -1001,7 +1033,7 @@ const LectureAll = () => {
               <CustomPage
                 size="small"
                 current={currentPage3}
-                tota={messagePartLastPage * 10}
+                total={messagePartLastPage * 10}
                 onChange={(page) => messageChangePage(page)}
               />
             </Wrapper>
@@ -1064,7 +1096,7 @@ const LectureAll = () => {
               <CustomPage
                 size="small"
                 current={currentPage4}
-                tota={messageAllLastPage * 10}
+                total={messageAllLastPage * 10}
                 onChange={(page) => allmessageChangePage(page)}
               />
             </Wrapper>
@@ -1139,7 +1171,7 @@ const LectureAll = () => {
                                 dr={`row`}
                                 ju={`flex-start`}
                                 color={Theme.grey2_C}
-                                fontSize={width < 800 ? `12px` : `16px`}>
+                                fontSize={width < 800 ? `14px` : `16px`}>
                                 <Text lineHeight={`1.19`}>
                                   {data.User.username}
                                 </Text>
@@ -1172,11 +1204,11 @@ const LectureAll = () => {
                                 dr={`row`}
                                 ju={`flex-start`}
                                 color={Theme.grey2_C}
-                                margin={width < 800 && `5px 0`}>
+                                margin={width < 800 ? `5px 0 0 0` : `5px 0`}>
                                 <Wrapper
                                   width={`auto`}
                                   dr={`row`}
-                                  margin={`0 10px 0 0`}>
+                                  margin={width < 700 ? `0` : `0 10px 0 0`}>
                                   <Image
                                     width={`18px`}
                                     height={`18px`}
@@ -1230,55 +1262,49 @@ const LectureAll = () => {
                                   <Text
                                     fontSize={width < 800 ? `14px` : `16px`}
                                     lineHeight={`1.22`}>
-                                    {data.day}&nbsp;&nbsp;|&nbsp;&nbsp;
-                                    {data.time}
+                                    {divideLecture(data.day, data.time)}
                                   </Text>
-                                  <Wrapper
-                                    display={
-                                      width < 1280
-                                        ? `flex`
-                                        : (idx + 1) % 3 === 0 && `none`
-                                    }
-                                    width={`1px`}
-                                    height={width < 800 ? `20px` : `34px`}
-                                    borderLeft={`1px dashed ${Theme.grey_C}`}
-                                    margin={
-                                      width < 1350
-                                        ? width < 800
-                                          ? `0 4px`
-                                          : `0 10px`
-                                        : `0 20px`
-                                    }
-                                  />
                                 </Wrapper>
+                              </Wrapper>
 
+                              <Wrapper
+                                ju={`flex-start`}
+                                margin={width < 700 ? `10px 0 0` : `5px 0 0`}
+                                color={Theme.grey2_C}>
                                 <Wrapper
-                                  dr={`row`}
-                                  ju={`space-between`}
-                                  margin={`5px 0 0 0`}>
-                                  <Wrapper dr={`row`} width={`auto`}>
-                                    <Image
-                                      margin={`0 5px 0 0`}
-                                      width={`18px`}
-                                      height={`18px`}
-                                      src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name.png"
-                                      alt="clender_icon"
-                                    />
-                                    <Text
-                                      fontSize={width < 700 ? `14px` : `18px`}>
-                                      {data.User.username}
-                                    </Text>
-                                  </Wrapper>
+                                  al={`flex-start`}
+                                  fontSize={width < 800 ? `14px` : `16px`}
+                                  lineHeight={`1.22`}>
+                                  {data.startLv}
+                                </Wrapper>
+                              </Wrapper>
 
+                              <Wrapper
+                                dr={`row`}
+                                ju={`space-between`}
+                                margin={`5px 0 0`}>
+                                <Wrapper dr={`row`} width={`auto`}>
+                                  <Image
+                                    margin={`0 5px 0 0`}
+                                    width={`18px`}
+                                    height={`auto`}
+                                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name.png"
+                                    alt="clender_icon"
+                                  />
                                   <Text
-                                    cursor={`pointer`}
-                                    color={Theme.basicTheme_C}
-                                    onClick={() =>
-                                      window.open(`${data.zoomLink}`, "_blank")
-                                    }>
-                                    강의 이동
+                                    fontSize={width < 700 ? `14px` : `18px`}>
+                                    {data.User.username}
                                   </Text>
                                 </Wrapper>
+
+                                <CustomButton
+                                  type={`primary`}
+                                  size={`small`}
+                                  onClick={() =>
+                                    window.open(`${data.zoomLink}`, "_blank")
+                                  }>
+                                  강의 이동
+                                </CustomButton>
                               </Wrapper>
                             </Wrapper>
                             <Wrapper
@@ -1315,66 +1341,6 @@ const LectureAll = () => {
                                   )}%)`}
                                 </Text>
                               </Wrapper>
-
-                              {/* <Wrapper
-                                dr={`row`}
-                                ju={`flex-start`}
-                                margin={`10px 0`}>
-                                <Text width={width < 800 ? `100%` : `15%`}>
-                                  <SpanText color={Theme.basicTheme_C}>
-                                    ●
-                                  </SpanText>
-                                  &nbsp; 수업 진도
-                                </Text>
-                                <Wrapper width={width < 800 ? `80%` : `75%`}>
-                                  <CustomSlide
-                                    value={stepHanlder(
-                                      data.startDate,
-                                      data.endDate,
-                                      data.count,
-                                      data.lecDate,
-                                      data.day
-                                    )}
-                                    disabled={true}
-                                    draggableTrack={true}
-                                    bgColor={Theme.basicTheme_C}
-                                  />
-                                </Wrapper>
-                                <Text
-                                  width={`10%`}
-                                  color={Theme.grey2_C}
-                                  padding={`0 0 0 10px`}>
-                                  {`( ${stepHanlder(
-                                    data.startDate,
-                                    data.endDate,
-                                    data.count,
-                                    data.lecDate,
-                                    data.day
-                                  )}%)`}
-                                </Text>
-                              </Wrapper> */}
-                              {/* <Wrapper dr={`row`} ju={`flex-start`}>
-                                <Text width={width < 800 ? `100%` : `15%`}>
-                                  <SpanText color={Theme.subTheme6_C}>
-                                    ●
-                                  </SpanText>
-                                  &nbsp; 성취도
-                                </Text>
-                                <Wrapper width={width < 800 ? `80%` : `75%`}>
-                                  <CustomSlide
-                                    defaultValue={100}
-                                    disabled={true}
-                                    draggableTrack={true}
-                                    bgColor={Theme.subTheme6_C}
-                                  />
-                                </Wrapper>
-                                <Text
-                                  width={`10%`}
-                                  color={Theme.grey2_C}
-                                  padding={`0 0 0 10px`}>
-                                  (100%)
-                                </Text>
-                              </Wrapper> */}
                             </Wrapper>
                           </Wrapper>
                         </Wrapper>
@@ -1443,13 +1409,13 @@ const LectureAll = () => {
                             dr={`row`}
                             ju={`space-between`}
                             al={`center`}>
-                            {/* <Button
+                            <Button
                               type={`primary`}
                               size={`small`}
                               style={{ marginTop: 10 }}
                               onClick={() => detailBookOpen(data)}>
                               교재 리스트
-                            </Button> */}
+                            </Button>
 
                             <Text
                               margin={`10px 0 0 0`}
@@ -1554,7 +1520,7 @@ const LectureAll = () => {
           width={width < 700 ? `80%` : 700}>
           <Wrapper al={`flex-start`}>
             <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
-              교재
+              교재 목록
             </Text>
             <Wrapper al={`flex-start`} ju={`flex-start`}>
               <Table

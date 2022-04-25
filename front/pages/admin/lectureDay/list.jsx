@@ -1,47 +1,19 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import AdminLayout from "../../../components/AdminLayout";
 import PageHeader from "../../../components/admin/PageHeader";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  LOAD_MY_INFO_REQUEST,
-  CHANGE_CLASS_CLOSE_REQUEST,
-  CHANGE_CLASS_OPEN_REQUEST,
-  USER_ALL_LIST_REQUEST,
-  USER_CLASS_CHANGE_REQUEST,
-  CLASS_PART_CLOSE_REQUEST,
-  CLASS_PART_OPEN_REQUEST,
-} from "../../../reducers/user";
-import { Table, Button, message, Modal, Select, Input, Form } from "antd";
+import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
+import { Table, Button, message, Input } from "antd";
 import { useRouter, withRouter } from "next/router";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
-import {
-  Combo,
-  ComboOption,
-  SpanText,
-  Text,
-  Wrapper,
-  RowWrapper,
-  ColWrapper,
-  TextInput,
-} from "../../../components/commonComponents";
-import { LECTURE_ALL_LIST_REQUEST } from "../../../reducers/lecture";
-import { CloseCircleOutlined } from "@ant-design/icons";
-import {
-  PARTICIPANT_CREATE_REQUEST,
-  PARTICIPANT_DELETE_REQUEST,
-  PARTICIPANT_USER_DELETE_LIST_REQUEST,
-  PARTICIPANT_USER_MOVE_LIST_REQUEST,
-  PARTICIPANT_USER_LIMIT_LIST_REQUEST,
-  PARTICIPANT_LASTDATE_LIST_REQUEST,
-} from "../../../reducers/participant";
+import { Wrapper } from "../../../components/commonComponents";
+
+import { PARTICIPANT_LASTDATE_LIST_REQUEST } from "../../../reducers/participant";
 import useInput from "../../../hooks//useInput";
 import { SearchOutlined } from "@ant-design/icons";
-import Theme from "../../../components/Theme";
-import { PAYMENT_LIST_REQUEST } from "../../../reducers/payment";
-import moment from "moment";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -75,8 +47,6 @@ const List = ({}) => {
 
   ////// HOOKS //////
   const dispatch = useDispatch();
-
-  const [form] = Form.useForm();
 
   const inputSearch = useInput("");
 
@@ -124,7 +94,7 @@ const List = ({}) => {
     },
     {
       title: "이름",
-      dataIndex: "username",
+      dataIndex: "studentName",
     },
     {
       title: "이메일",
@@ -138,6 +108,7 @@ const List = ({}) => {
       title: "강사명",
       dataIndex: "id",
     },
+
     {
       title: "강의 번호",
       dataIndex: "number",

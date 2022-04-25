@@ -56,8 +56,10 @@ import {
 } from "../../reducers/message";
 
 import {
+  NOTICE_LECTURE_LIST_REQUEST,
   NOTICE_LIST_FAILURE,
   NOTICE_LIST_REQUEST,
+  NOTICE_MY_LECTURE_LIST_REQUEST,
 } from "../../reducers/notice";
 import {
   LECTURE_FILE_REQUEST,
@@ -78,10 +80,18 @@ import { BOOK_LECTURE_LIST_REQUEST } from "../../reducers/book";
 const PROFILE_WIDTH = `184`;
 const PROFILE_HEIGHT = `190`;
 
+const CustomButton2 = styled(Button)`
+  font-size: 16px;
+  height: 26px;
+
+  @media (max-width: 700px) {
+    font-size: 14px;
+  }
+`;
+
 const CustomButton = styled(Button)`
   border: none;
   font-weight: "boled";
-
   color: ${(props) => props.color};
 `;
 
@@ -292,8 +302,18 @@ const Student = () => {
     st_messageUserListError,
   } = useSelector((state) => state.message);
 
-  const { noticeList, noticeLastPage, st_noticeListDone, st_noticeListError } =
-    useSelector((state) => state.notice);
+  const {
+    noticeList,
+    noticeLastPage,
+
+    noticeMyLectureList,
+    noticeMyLectureLastPage,
+    st_noticeMyLectureListDone,
+    st_noticeMyLectureListError,
+
+    st_noticeListDone,
+    st_noticeListError,
+  } = useSelector((state) => state.notice);
 
   const {
     lecturePath,
@@ -365,6 +385,8 @@ const Student = () => {
   const [currentPage2, setCurrentPage2] = useState(1);
   const [currentPage3, setCurrentPage3] = useState(1);
 
+  const [currentPage4, setCurrentPage4] = useState(1);
+
   const bookColumns = [
     {
       title: "No",
@@ -387,19 +409,19 @@ const Student = () => {
       },
     },
 
-    // {
-    //   title: "다운로드",
-    //   render: (data) => {
-    //     return (
-    //       <Button
-    //         type={`primary`}
-    //         size={`small`}
-    //         onClick={() => fileDownloadHandler(data.Book.file)}>
-    //         다운로드
-    //       </Button>
-    //     );
-    //   },
-    // },
+    {
+      title: "다운로드",
+      render: (data) => {
+        return (
+          <Button
+            type={`primary`}
+            size={`small`}
+            onClick={() => fileDownloadHandler(data.Book.file)}>
+            다운로드
+          </Button>
+        );
+      },
+    },
   ];
   ////// USEEFFECT //////
 
@@ -437,7 +459,18 @@ const Student = () => {
         search: "",
       },
     });
+
+    dispatch({
+      type: NOTICE_MY_LECTURE_LIST_REQUEST,
+      data: {
+        page: 1,
+      },
+    });
   }, [router.query]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     if (!me) {
@@ -714,16 +747,6 @@ const Student = () => {
         type: USER_UPDATE_REQUEST,
         data: {
           profileImage: userProfilePath,
-          mobile: data.mobile,
-          detailAddress: data.detailAddress,
-          address: data.address,
-          stuLanguage: data.stuLanguage,
-          stuCountry: data.stuCountry,
-          stuLiveCon: data.stuLiveCon,
-          sns: data.sns,
-          snsId: data.snsId,
-          stuJob: data.stuJob,
-          birth: data.birth.format("YYYY-MM-DD"),
         },
       });
     },
@@ -879,6 +902,17 @@ const Student = () => {
 
     dispatch({
       type: NOTICE_LIST_REQUEST,
+      data: {
+        page,
+      },
+    });
+  }, []);
+
+  const noticeLectureChangePage = useCallback((page) => {
+    setCurrentPage4(page);
+
+    dispatch({
+      type: NOTICE_MY_LECTURE_LIST_REQUEST,
       data: {
         page,
       },
@@ -1068,6 +1102,23 @@ const Student = () => {
     [bookLecture]
   );
 
+  const divideLecture = useCallback((day, time) => {
+    let saveDay = day.split(" ");
+    let saveTime = time.split(" ");
+
+    let textSave = "";
+
+    saveDay.map((data, idx) => {
+      if (idx === saveDay.length - 1) {
+        textSave += `${data} ${saveTime[idx]}`;
+      } else {
+        textSave += `${data} ${saveTime[idx]} | `;
+      }
+    });
+
+    return textSave;
+  }, []);
+
   ////// DATAVIEW //////
 
   return (
@@ -1208,8 +1259,7 @@ const Student = () => {
                           fontSize={width < 800 ? `14px` : `18px`}
                           fontWeight={`bold`}
                           lineHeight={`1.22`}>
-                          {data.day}&nbsp;&nbsp;|&nbsp;&nbsp;
-                          {data.time}
+                          {divideLecture(data.day, data.time)}
                         </Text>
                         <Wrapper
                           display={
@@ -1289,14 +1339,14 @@ const Student = () => {
                         </Text>
                       </Wrapper>
 
-                      <Text
-                        cursor={`pointer`}
-                        color={Theme.basicTheme_C}
+                      <CustomButton2
+                        type={`primary`}
+                        size={`small`}
                         onClick={() =>
                           window.open(`${data.zoomLink}`, "_blank")
                         }>
                         강의 이동
-                      </Text>
+                      </CustomButton2>
                     </Wrapper>
                   </Wrapper>
                 );
@@ -1330,17 +1380,14 @@ const Student = () => {
                     margin={`0 0 86px`}
                     al={width < 1100 && `flex-start`}>
                     <Wrapper
-                      width={width < 800 ? `calc(100%)` : `calc(100%)`}
-                      position={`relative`}>
+
+                    // position={`relative`}
+                    >
                       <Wrapper dr={`row`}>
                         <Wrapper
                           width={width < 1100 ? `100%` : `calc(70% - 1px)`}>
-                          <Wrapper
-                            width={`100%`}
-                            dr={`row`}
-                            al={width < 800 && `flex-start`}>
+                          <Wrapper width={`100%`} dr={`row`} al={`flex-start`}>
                             <Image
-                              position={`absolute`}
                               top={`0`}
                               left={`0`}
                               width={width < 800 ? `80px` : `184px`}
@@ -1354,10 +1401,16 @@ const Student = () => {
                               alt="student_thumbnail"
                             />
                             <Wrapper
-                              margin={
-                                width < 800 ? `0 0 0 100px` : `0 0 0 204px`
+                              padding={`0 0 0 30px`}
+                              width={
+                                width < 800
+                                  ? `calc(100% - 80px)`
+                                  : `calc(100% - 184px)`
                               }>
-                              <Wrapper dr={`row`} ju={`flex-start`}>
+                              <Wrapper
+                                dr={`row`}
+                                ju={`flex-start`}
+                                margin={`10px 0 0 0`}>
                                 <Text
                                   margin={`0 10px 0 0`}
                                   fontSize={width < 800 ? `16px` : `18px`}
@@ -1369,14 +1422,11 @@ const Student = () => {
                               <Wrapper
                                 dr={`row`}
                                 ju={`flex-start`}
+                                margin={`10px 0 0 0`}
                                 color={Theme.grey2_C}
                                 fontSize={width < 800 ? `12px` : `16px`}>
                                 <Text lineHeight={`1.19`}>
                                   {data.User.username}
-                                </Text>
-
-                                <Text lineHeight={`1.19`}>
-                                  {"교재 다운로드"}
                                 </Text>
 
                                 <Text
@@ -1393,52 +1443,51 @@ const Student = () => {
                                     data.day
                                   )} / ${data.lecDate * data.count}`}
                                 </Text>
-                                {/* <Text
-                                  lineHeight={`1.19`}
-                                  margin={width < 800 ? `5px` : `0 10px`}>
-                                  |
-                                </Text>
-                                <Text lineHeight={`1.19`}>
-                                  등록상황 : 수료중
-                                </Text> */}
                               </Wrapper>
-                            </Wrapper>
-                            <Wrapper
-                              margin={
-                                width < 800 ? `40px 0 0` : `35px 0 0  204px`
-                              }>
-                              <Wrapper dr={`row`} ju={`flex-start`}>
-                                <Text width={width < 800 ? `100%` : `15%`}>
-                                  <SpanText color={Theme.subTheme2_C}>
-                                    ●
-                                  </SpanText>
-                                  &nbsp; 출석 상황
-                                </Text>
-                                <Wrapper width={width < 800 ? `80%` : `75%`}>
-                                  <CustomSlide
-                                    value={
-                                      data.Commutes &&
-                                      (data.Commutes.length * 100) /
-                                        (data.lecDate * data.count)
-                                    }
-                                    disabled={true}
-                                    draggableTrack={true}
-                                    bgColor={Theme.subTheme2_C}
-                                  />
-                                </Wrapper>
 
-                                <Text
-                                  width={`10%`}
-                                  color={Theme.grey2_C}
-                                  padding={`0 0 0 10px`}>
-                                  {`(${parseInt(
-                                    data.Commutes &&
-                                      (data.Commutes.length * 100) /
-                                        (data.lecDate * data.count)
-                                  )}%)`}
-                                </Text>
-                              </Wrapper>
-                              {/* <Wrapper
+                              <Wrapper
+                                margin={`10px 0 0 0`}
+                                al={`flex-start`}
+                                color={Theme.grey2_C}
+                                fontSize={width < 800 ? `12px` : `16px`}
+                                lineHeight={`1.19`}>{`${data.startLv}`}</Wrapper>
+
+                              <Wrapper>
+                                <Wrapper
+                                  dr={`row`}
+                                  ju={`flex-start`}
+                                  margin={`10px 0 0 0`}>
+                                  <Text width={width < 800 ? `100%` : `20%`}>
+                                    <SpanText color={Theme.subTheme2_C}>
+                                      ●
+                                    </SpanText>
+                                    &nbsp; 출석 상황
+                                  </Text>
+                                  <Wrapper width={width < 800 ? `80%` : `70%`}>
+                                    <CustomSlide
+                                      value={
+                                        data.Commutes &&
+                                        (data.Commutes.length * 100) /
+                                          (data.lecDate * data.count)
+                                      }
+                                      disabled={true}
+                                      draggableTrack={true}
+                                      bgColor={Theme.subTheme2_C}
+                                    />
+                                  </Wrapper>
+
+                                  <Text
+                                    width={`10%`}
+                                    color={Theme.grey2_C}
+                                    padding={`0 0 0 10px`}>
+                                    {`(${parseInt(
+                                      data.Commutes &&
+                                        (data.Commutes.length * 100) /
+                                          (data.lecDate * data.count)
+                                    )}%)`}
+                                  </Text>
+                                </Wrapper>
+                                {/* <Wrapper
                                 dr={`row`}
                                 ju={`flex-start`}
                                 margin={`10px 0`}>
@@ -1475,7 +1524,7 @@ const Student = () => {
                                   )}%)`}
                                 </Text>
                               </Wrapper> */}
-                              {/* <Wrapper dr={`row`} ju={`flex-start`}>
+                                {/* <Wrapper dr={`row`} ju={`flex-start`}>
                                 <Text width={width < 800 ? `100%` : `15%`}>
                                   <SpanText color={Theme.subTheme6_C}>
                                     ●
@@ -1497,6 +1546,7 @@ const Student = () => {
                                   (100%)
                                 </Text>
                               </Wrapper> */}
+                              </Wrapper>
                             </Wrapper>
                           </Wrapper>
                         </Wrapper>
@@ -1794,8 +1844,77 @@ const Student = () => {
             <CustomPage
               size="small"
               current={currentPage1}
-              tota={noticeLastPage * 10}
+              total={noticeLastPage * 10}
               onChange={(page) => noticeChangePage(page)}
+            />
+
+            <Wrapper
+              dr={width < 700 ? ` column` : `row`}
+              ju={width < 700 ? `center` : `space-between`}
+              al={`flex-start`}
+              margin={`0 0 20px 0`}>
+              <Text
+                color={Theme.black_2C}
+                fontSize={width < 700 ? `18px` : `22px`}
+                fontWeight={`Bold`}
+                margin={width < 700 && `0 0 10px 0`}>
+                강의 공지사항
+              </Text>
+            </Wrapper>
+
+            <Wrapper
+              radius={`10px`}
+              shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}
+              margin={`0 0 60px`}>
+              <Wrapper
+                dr={`row`}
+                fontWeight={`bold`}
+                padding={`20px 0`}
+                fontSize={width < 800 ? `14px` : `18px`}>
+                <Wrapper width={width < 800 ? `15%` : `10%`}>번호</Wrapper>
+                <Wrapper width={width < 800 ? `45%` : `70%`}>제목</Wrapper>
+                <Wrapper width={width < 800 ? `15%` : `10%`}>작성자</Wrapper>
+                <Wrapper width={width < 800 ? `25%` : `10%`}>날짜</Wrapper>
+              </Wrapper>
+              {noticeMyLectureList &&
+                (noticeMyLectureList.length === 0 ? (
+                  <Wrapper margin={`50px 0`}>
+                    <Empty description="공지사항이 없습니다." />
+                  </Wrapper>
+                ) : (
+                  noticeMyLectureList.map((data, idx) => {
+                    return (
+                      <CustomTableHoverWrapper
+                        onClick={() => onClickNoticeHandler(data)}
+                        key={data.id}
+                        bgColor={idx % 2 === 0}>
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.id}
+                        </Wrapper>
+                        <Wrapper
+                          width={width < 800 ? `45%` : `70%`}
+                          al={`flex-start`}
+                          padding={`0 0 0 10px`}>
+                          {data.title}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.author}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `25%` : `10%`}>
+                          {moment(data.createdAt, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )}
+                        </Wrapper>
+                      </CustomTableHoverWrapper>
+                    );
+                  })
+                ))}
+            </Wrapper>
+            <CustomPage
+              size="small"
+              current={currentPage4}
+              total={noticeMyLectureLastPage * 10}
+              onChange={(page) => noticeLectureChangePage(page)}
             />
 
             <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
@@ -2307,6 +2426,7 @@ const Student = () => {
                 />
                 <CommonButton
                   type="primary"
+                  width={`100%`}
                   onClick={clickImageUpload}
                   loading={st_userProfileUploadLoading}
                   radius={`5px`}>
@@ -2316,130 +2436,8 @@ const Student = () => {
             </ProfileWrapper>
 
             <CustomForm form={updateForm} onFinish={meUpdateHandler}>
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                전화번호
-              </Text>
-              <Form.Item
-                name="mobile"
-                rules={[
-                  { required: true, message: "전화번호를 입력해주세요." },
-                ]}>
-                <CusotmInput
-                  width={`100%`}
-                  placeholder="전화번호를 입력해주세요."
-                />
-              </Form.Item>
-
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                주소
-              </Text>
-              <Form.Item
-                name="address"
-                rules={[{ required: true, message: "주소를 입력해주세요." }]}>
-                <CusotmInput width={`100%`} />
-              </Form.Item>
-
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                상세 주소
-              </Text>
-              <Form.Item
-                name="detailAddress"
-                rules={[
-                  { required: true, message: "상세주소를 입력해주세요." },
-                ]}>
-                <CusotmInput width={`100%`} />
-              </Form.Item>
-
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                학생 언어
-              </Text>
-              <Form.Item
-                name="stuLanguage"
-                rules={[
-                  { required: true, message: "학생 언어를 입력해주세요." },
-                ]}>
-                <CusotmInput
-                  width={`100%`}
-                  placeholder="학생 언어를 입력해주세요."
-                />
-              </Form.Item>
-
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                학생 나라
-              </Text>
-              <Form.Item
-                name="stuCountry"
-                rules={[
-                  { required: true, message: "학생 나라를 입력해주세요." },
-                ]}>
-                <CusotmInput
-                  width={`100%`}
-                  placeholder="학생 나라를 입력해주세요."
-                />
-              </Form.Item>
-
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                현재 거주 나라
-              </Text>
-              <Form.Item
-                name="stuLiveCon"
-                rules={[
-                  { required: true, message: "현재 거주 나라를 입력해주세요." },
-                ]}>
-                <CusotmInput
-                  width={`100%`}
-                  placeholder="현재 거주 나라를 입력해주세요."
-                />
-              </Form.Item>
-
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                sns
-              </Text>
-              <Form.Item
-                name="sns"
-                rules={[{ required: true, message: "sns를 입력해주세요." }]}>
-                <CusotmInput width={`100%`} placeholder="sns를 입력해주세요." />
-              </Form.Item>
-
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                sns아이디
-              </Text>
-              <Form.Item
-                name="snsId"
-                rules={[
-                  { required: true, message: "sns아이디를 입력해주세요." },
-                ]}>
-                <CusotmInput
-                  width={`100%`}
-                  placeholder="sns아이디를 입력해주세요."
-                />
-              </Form.Item>
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                학생직업
-              </Text>
-              <Form.Item
-                name="stuJob"
-                rules={[
-                  { required: true, message: "학생 직업을 입력해주세요." },
-                ]}>
-                <CusotmInput
-                  width={`100%`}
-                  placeholder="학생직업을 입력해주세요."
-                />
-              </Form.Item>
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                생년월일
-              </Text>
-              <Form.Item
-                name="birth"
-                rules={[
-                  { required: true, message: "생년월일를 입력해주세요." },
-                ]}>
-                <Calendar fullscreen={false} />
-              </Form.Item>
-
-              <Wrapper>
-                <CommonButton height={`40px`} radius={`5px`} htmlType="submit">
+              <Wrapper al={`flex-end`}>
+                <CommonButton height={`32px`} radius={`5px`} htmlType="submit">
                   회원정보 수정
                 </CommonButton>
               </Wrapper>
@@ -2685,7 +2683,7 @@ const Student = () => {
             width={width < 700 ? `100%` : 700}>
             <Wrapper al={`flex-start`}>
               <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
-                교재
+                교재 목록
               </Text>
               <Wrapper al={`flex-start`} ju={`flex-start`}>
                 <Table

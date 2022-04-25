@@ -11,6 +11,7 @@ import {
   USER_CLASS_CHANGE_REQUEST,
   CLASS_PART_CLOSE_REQUEST,
   CLASS_PART_OPEN_REQUEST,
+  USER_ADMIN_UPDATE_REQUEST,
 } from "../../../../reducers/user";
 import { Table, Button, message, Modal, Select, Input, Form } from "antd";
 import { useRouter, withRouter } from "next/router";
@@ -43,6 +44,22 @@ const AdminContent = styled.div`
   padding: 20px;
 `;
 
+const CustomInput = styled(Input)`
+  width: ${(props) => props.width};
+`;
+
+const FormItem = styled(Form.Item)`
+  width: 100%;
+
+  @media (max-width: 700px) {
+    width: 100%;
+  }
+`;
+
+const CustomForm = styled(Form)`
+  width: 100%;
+`;
+
 const List = () => {
   const { Option } = Select;
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
@@ -61,6 +78,9 @@ const List = () => {
     //
     st_userChangeDone,
     st_userChangeError,
+
+    st_userAdminUpdateDone,
+    st_userAdminUpdateError,
   } = useSelector((state) => state.user);
 
   const router = useRouter();
@@ -126,6 +146,7 @@ const List = () => {
   const [form] = Form.useForm();
   const [updateClassform] = Form.useForm();
   const [updateEndClassform] = Form.useForm();
+  const [updateStuForm] = Form.useForm();
 
   const inputName = useInput("");
   const inputEmail = useInput("");
@@ -287,6 +308,28 @@ const List = () => {
     }
   }, [st_participantUserMoveListDone]);
 
+  useEffect(() => {
+    if (st_userAdminUpdateDone) {
+      setStuDetailModal(false);
+      updateStuForm.resetFields();
+
+      dispatch({
+        type: USER_ALL_LIST_REQUEST,
+        data: {
+          type: 1,
+          name: "",
+          email: "",
+        },
+      });
+    }
+  }, [st_userAdminUpdateDone]);
+
+  useEffect(() => {
+    if (st_userAdminUpdateError) {
+      return message.error(st_userAdminUpdateError);
+    }
+  }, [st_userAdminUpdateError]);
+
   ////// TOGGLE //////
   const classChangeModalOpen = useCallback(
     (data) => {
@@ -357,6 +400,22 @@ const List = () => {
   const classPartDetailModalOpen = useCallback((data) => {
     setStuDetail(data);
     setStuDetailModal(true);
+
+    onStuFill(data);
+  }, []);
+
+  const onStuFill = useCallback((data) => {
+    if (data) {
+      updateStuForm.setFieldsValue({
+        sns: data.sns,
+        snsId: data.snsId,
+        birth: data.birth,
+        stuLiveCon: data.stuLiveCon,
+        stuCountry: data.stuCountry,
+        stuLanguage: data.stuLanguage,
+        stuPayCount: data.stuPayCount,
+      });
+    }
   }, []);
 
   const onFillEnd = useCallback((data) => {
@@ -508,6 +567,27 @@ const List = () => {
 
     setDetailToggle(true);
   }, []);
+
+  const updateStuFinish = useCallback(
+    (data) => {
+      console.log(data, "data");
+      console.log(stuDetail, "stuDetail");
+      dispatch({
+        type: USER_ADMIN_UPDATE_REQUEST,
+        data: {
+          id: stuDetail.id,
+          birth: data.birth,
+          stuCountry: data.stuCountry,
+          stuLiveCon: data.stuLiveCon,
+          stuLanguage: data.stuLanguage,
+          sns: data.sns,
+          snsId: data.snsId,
+          stuPayCount: data.stuPayCount,
+        },
+      });
+    },
+    [stuDetail]
+  );
 
   ////// DATAVIEW //////
 
@@ -1064,147 +1144,205 @@ const List = () => {
         title={`신청서`}
         onCancel={() => setStuDetailModal(false)}
         footer={null}>
-        <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 50px`}>
-          <Text fontSize={`16px`} fontWeight={`700`} margin={`0 0 10px`}>
-            사용자가 정보 양식
-          </Text>
-          <Wrapper dr={`row`} al={`flex-start`}>
-            <Wrapper width={`100%`} al={`flex-start`} margin={`0 0 20px`}>
-              <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                <ColWrapper
-                  width={`120px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  이름
-                </ColWrapper>
-                <ColWrapper>
-                  {stuDetail && stuDetail.username}&nbsp;
-                  {stuDetail && stuDetail.lastName}
-                </ColWrapper>
-              </RowWrapper>
+        <CustomForm form={updateStuForm} onFinish={updateStuFinish}>
+          <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 50px`}>
+            <Text fontSize={`16px`} fontWeight={`700`} margin={`0 0 10px`}>
+              사용자가 정보 양식
+            </Text>
+            <Wrapper dr={`row`} al={`flex-start`}>
+              <Wrapper width={`100%`} al={`flex-start`} margin={`0 0 20px`}>
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}>
+                    이름
+                  </ColWrapper>
+                  <ColWrapper>
+                    {stuDetail && stuDetail.username}&nbsp;
+                    {stuDetail && stuDetail.lastName}
+                  </ColWrapper>
+                </RowWrapper>
 
-              <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                <ColWrapper
-                  width={`120px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  생년월일
-                </ColWrapper>
-                <ColWrapper>
-                  {stuDetail && stuDetail.birth && stuDetail.birth.slice(0, 10)}
-                </ColWrapper>
-              </RowWrapper>
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}>
+                    이메일
+                  </ColWrapper>
+                  <ColWrapper>{stuDetail && stuDetail.email}</ColWrapper>
+                </RowWrapper>
 
-              <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                <ColWrapper
-                  width={`120px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  이메일
-                </ColWrapper>
-                <ColWrapper>{stuDetail && stuDetail.email}</ColWrapper>
-              </RowWrapper>
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}>
+                    비밀번호
+                  </ColWrapper>
+                  <ColWrapper>
+                    {stuDetail &&
+                      stuDetail.mobile &&
+                      stuDetail.mobile.slice(-4)}
+                  </ColWrapper>
+                </RowWrapper>
 
-              <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                <ColWrapper
-                  width={`120px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  비밀번호
-                </ColWrapper>
-                <ColWrapper>
-                  {stuDetail && stuDetail.mobile && stuDetail.mobile.slice(-4)}
-                </ColWrapper>
-              </RowWrapper>
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}>
+                    휴대폰번호
+                  </ColWrapper>
+                  <ColWrapper>{stuDetail && stuDetail.mobile}</ColWrapper>
+                </RowWrapper>
 
-              <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                <ColWrapper
-                  width={`120px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  국가
-                </ColWrapper>
-                <ColWrapper>{stuDetail && stuDetail.stuCountry}</ColWrapper>
-              </RowWrapper>
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}>
+                    생년월일
+                  </ColWrapper>
 
-              <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                <ColWrapper
-                  width={`120px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  거주 국가
-                </ColWrapper>
-                <ColWrapper>{stuDetail && stuDetail.stuLiveCon}</ColWrapper>
-              </RowWrapper>
+                  <ColWrapper>
+                    <FormItem name="birth">
+                      <CustomInput width={`100%`} />
+                    </FormItem>
+                  </ColWrapper>
+                </RowWrapper>
 
-              <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                <ColWrapper
-                  width={`120px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  사용언어
-                </ColWrapper>
-                <ColWrapper>{stuDetail && stuDetail.stuLanguage}</ColWrapper>
-              </RowWrapper>
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}>
+                    국가
+                  </ColWrapper>
 
-              <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                <ColWrapper
-                  width={`120px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  휴대폰번호
-                </ColWrapper>
-                <ColWrapper>{stuDetail && stuDetail.mobile}</ColWrapper>
-              </RowWrapper>
+                  <ColWrapper>
+                    <FormItem name="stuCountry">
+                      <CustomInput width={`100%`} />
+                    </FormItem>
+                  </ColWrapper>
+                </RowWrapper>
 
-              <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                <ColWrapper
-                  width={`120px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  SNS
-                </ColWrapper>
-                <ColWrapper>{stuDetail && stuDetail.sns}</ColWrapper>
-              </RowWrapper>
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}>
+                    거주 국가
+                  </ColWrapper>
 
-              <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                <ColWrapper
-                  width={`120px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  SNS Id
-                </ColWrapper>
-                <ColWrapper>{stuDetail && stuDetail.snsId}</ColWrapper>
-              </RowWrapper>
+                  <ColWrapper>
+                    <FormItem name="stuLiveCon">
+                      <CustomInput width={`100%`} />
+                    </FormItem>
+                  </ColWrapper>
+                </RowWrapper>
+
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}>
+                    사용언어
+                  </ColWrapper>
+
+                  <ColWrapper>
+                    <FormItem name="stuLanguage">
+                      <CustomInput width={`100%`} />
+                    </FormItem>
+                  </ColWrapper>
+                </RowWrapper>
+
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}>
+                    SNS
+                  </ColWrapper>
+
+                  <ColWrapper>
+                    <FormItem name="sns">
+                      <CustomInput width={`100%`} />
+                    </FormItem>
+                  </ColWrapper>
+                </RowWrapper>
+
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}>
+                    SNS Id
+                  </ColWrapper>
+
+                  <ColWrapper>
+                    <FormItem name="snsId">
+                      <CustomInput width={`100%`} />
+                    </FormItem>
+                  </ColWrapper>
+                </RowWrapper>
+
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}>
+                    회차
+                  </ColWrapper>
+
+                  <ColWrapper>
+                    <FormItem name="stuPayCount">
+                      <CustomInput width={`100%`} />
+                    </FormItem>
+                  </ColWrapper>
+                </RowWrapper>
+              </Wrapper>
             </Wrapper>
           </Wrapper>
-        </Wrapper>
 
-        <Wrapper al={`flex-end`}>
-          <Button size={`small`} onClick={() => setStuDetailModal(false)}>
-            취소
-          </Button>
-        </Wrapper>
+          <ColWrapper width={`100%`}>
+            <Wrapper dr={`row`} ju={`flex-end`}>
+              <Button
+                size={`small`}
+                onClick={() => setStuDetailModal(false)}
+                style={{ marginRight: 10 }}>
+                취소
+              </Button>
+
+              <Button size={`small`} type="primary" htmlType="submit">
+                수정
+              </Button>
+            </Wrapper>
+          </ColWrapper>
+        </CustomForm>
       </Modal>
     </AdminLayout>
   );

@@ -210,8 +210,7 @@ const List = ({ location }) => {
           return (
             <Select.Option
               key={data.id}
-              value={`${data.id},${data.LetureId},${data.week},${data.email}`}
-            >
+              value={`${data.id},${data.LetureId},${data.week},${data.email}`}>
               {data.createdAt.slice(0, 10)} | {data.course} | &#36;{data.price}{" "}
               | &nbsp;{data.email}
             </Select.Option>
@@ -498,8 +497,7 @@ const List = ({ location }) => {
             <Button
               style={{ width: "100%" }}
               size={`small`}
-              onClick={() => createModalToggle(data)}
-            >
+              onClick={() => createModalToggle(data)}>
               학생 등록
             </Button>
           )}
@@ -507,8 +505,7 @@ const List = ({ location }) => {
           <Button
             type="primary"
             size={`small`}
-            onClick={() => updateModalOpen(data)}
-          >
+            onClick={() => updateModalOpen(data)}>
             상세정보 및 정보추가
           </Button>
         </ColWrapper>
@@ -533,8 +530,7 @@ const List = ({ location }) => {
           margin={`0 0 10px 0`}
           dr={`row`}
           ju={`flex-start `}
-          shadow={`0 0 6px rgba(0,0,0,0.16)`}
-        >
+          shadow={`0 0 6px rgba(0,0,0,0.16)`}>
           <GuideUl width={`auto`}>
             <GuideLi width={`auto`}>
               회원을 생성하면 학생 관리에서 확인할 수 있습니다.
@@ -552,8 +548,7 @@ const List = ({ location }) => {
             <Button
               onClick={() =>
                 moveLinkHandler(`/admin/application/list?type=true`)
-              }
-            >
+              }>
               처리완료
             </Button>
           </Col>
@@ -561,8 +556,7 @@ const List = ({ location }) => {
             <Button
               onClick={() =>
                 moveLinkHandler(`/admin/application/list?type=false`)
-              }
-            >
+              }>
               미처리
             </Button>
           </Col>
@@ -582,8 +576,7 @@ const List = ({ location }) => {
         onCancel={() => onReset()}
         onOk={() => updateClick()}
         okText="추가"
-        cancelText="취소"
-      >
+        cancelText="취소">
         <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
           <Text fontSize={`16px`} fontWeight={`700`} margin={`0 20px 0 0`}>
             신청일 |&nbsp;{updateData && updateData.createdAt.slice(0, 10)}
@@ -607,14 +600,12 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   이름
                 </ColWrapper>
                 <ColWrapper
                   al={`flex-start`}
-                  width={`calc(100% - 120px - 10px)`}
-                >
+                  width={`calc(100% - 120px - 10px)`}>
                   {updateData && updateData.firstName}&nbsp;
                   {updateData && updateData.lastName}
                 </ColWrapper>
@@ -626,14 +617,12 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   생년월일
                 </ColWrapper>
                 <ColWrapper
                   al={`flex-start`}
-                  width={`calc(100% - 120px - 10px)`}
-                >
+                  width={`calc(100% - 120px - 10px)`}>
                   {updateData && updateData.dateOfBirth}
                 </ColWrapper>
               </RowWrapper>
@@ -644,14 +633,12 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   이메일
                 </ColWrapper>
                 <ColWrapper
                   al={`flex-start`}
-                  width={`calc(100% - 120px - 10px)`}
-                >
+                  width={`calc(100% - 120px - 10px)`}>
                   {updateData && updateData.gmailAddress}
                 </ColWrapper>
               </RowWrapper>
@@ -662,14 +649,12 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   국가
                 </ColWrapper>
                 <ColWrapper
                   al={`flex-start`}
-                  width={`calc(100% - 120px - 10px)`}
-                >
+                  width={`calc(100% - 120px - 10px)`}>
                   {updateData && updateData.nationality}
                 </ColWrapper>
               </RowWrapper>
@@ -680,14 +665,12 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   거주 국가
                 </ColWrapper>
                 <ColWrapper
                   al={`flex-start`}
-                  width={`calc(100% - 120px - 10px)`}
-                >
+                  width={`calc(100% - 120px - 10px)`}>
                   {updateData && updateData.countryOfResidence}
                 </ColWrapper>
               </RowWrapper>
@@ -698,14 +681,12 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   사용언어
                 </ColWrapper>
                 <ColWrapper
                   al={`flex-start`}
-                  width={`calc(100% - 120px - 10px)`}
-                >
+                  width={`calc(100% - 120px - 10px)`}>
                   {updateData && updateData.languageYouUse}
                 </ColWrapper>
               </RowWrapper>
@@ -716,14 +697,12 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   휴대폰번호
                 </ColWrapper>
                 <ColWrapper
                   al={`flex-start`}
-                  width={`calc(100% - 120px - 10px)`}
-                >
+                  width={`calc(100% - 120px - 10px)`}>
                   {updateData && updateData.phoneNumber}
                   {updateData && updateData.phoneNumber2}
                 </ColWrapper>
@@ -735,14 +714,12 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   가능한 수업시간
                 </ColWrapper>
                 <ColWrapper
                   al={`flex-start`}
-                  width={`calc(100% - 120px - 10px)`}
-                >
+                  width={`calc(100% - 120px - 10px)`}>
                   {updateData && updateData.classHour}
                 </ColWrapper>
               </RowWrapper>
@@ -753,8 +730,7 @@ const List = ({ location }) => {
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
                 color={Theme.white_C}
-                margin={`0 5px 0 0`}
-              >
+                margin={`0 5px 0 0`}>
                 내용
               </ColWrapper>
               <ColWrapper width={`100%`} al={`flex-start`}>
@@ -778,8 +754,7 @@ const List = ({ location }) => {
             form={updateForm}
             onFinish={updateFinish}
             labelCol={{ span: 4 }}
-            wrapperCol={{ span: 24 }}
-          >
+            wrapperCol={{ span: 24 }}>
             <Wrapper>
               <Wrapper dr={`row`} ju={`flex-start`} al={`flex-start`}>
                 <Wrapper
@@ -787,8 +762,7 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   시차
                 </Wrapper>
 
@@ -803,8 +777,7 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   원하는 시작날짜
                 </ColWrapper>
                 <ColWrapper>
@@ -820,16 +793,14 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   담당강사
                 </ColWrapper>
                 <ColWrapper>
                   <Form.Item name="teacher">
                     <Select
                       style={{ width: `200px` }}
-                      placeholder={`강사를 선택해주세요.`}
-                    >
+                      placeholder={`강사를 선택해주세요.`}>
                       {teachers &&
                         teachers.map((data, idx) => {
                           return (
@@ -849,8 +820,7 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   할인 여부
                 </ColWrapper>
                 <ColWrapper>
@@ -869,8 +839,7 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   줌 미팅 날짜
                 </ColWrapper>
                 <ColWrapper>
@@ -886,8 +855,7 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   레벨
                 </ColWrapper>
 
@@ -902,8 +870,7 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   직업
                 </ColWrapper>
                 <ColWrapper>
@@ -919,8 +886,7 @@ const List = ({ location }) => {
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
+                  margin={`0 5px 0 0`}>
                   배우는 목적
                 </ColWrapper>
                 <ColWrapper width={`80%`} al={`flex-start`}>
@@ -943,14 +909,12 @@ const List = ({ location }) => {
         onCancel={() => onReset()}
         onOk={() => createClick()}
         okText="생성"
-        cancelText="취소"
-      >
+        cancelText="취소">
         <CustomForm
           form={createForm}
           onFinish={createFinish}
           labelCol={{ span: 4 }}
-          wrapperCol={{ span: 20 }}
-        >
+          wrapperCol={{ span: 20 }}>
           <Form.Item label="이메일" name="email">
             <Input disabled type="email" />
           </Form.Item>
@@ -987,19 +951,16 @@ const List = ({ location }) => {
           <Form.Item
             label="결제 여부"
             name="isPayment"
-            rules={[{ message: "결제 목록을 선택해주세요.", required: true }]}
-          >
+            rules={[{ message: "결제 목록을 선택해주세요.", required: true }]}>
             <Button
               style={{ marginRight: 10 }}
               type={isPayment === 1 && `primary`}
-              onClick={() => buttonHandle(1)}
-            >
+              onClick={() => buttonHandle(1)}>
               네
             </Button>
             <Button
               type={isPayment === 2 && `primary`}
-              onClick={() => buttonHandle(2)}
-            >
+              onClick={() => buttonHandle(2)}>
               아니요
             </Button>
 
@@ -1016,8 +977,9 @@ const List = ({ location }) => {
             <Form.Item
               label="결제 목록"
               name="paymentList"
-              rules={[{ message: "결제 목록을 선택해주세요.", required: true }]}
-            >
+              rules={[
+                { message: "결제 목록을 선택해주세요.", required: true },
+              ]}>
               <Select showSearch placeholder="Select a Lecture">
                 {paymentOpt}
               </Select>
@@ -1031,8 +993,7 @@ const List = ({ location }) => {
                 name="lectureList"
                 rules={[
                   { message: "강의목록을 선택해주세요.", required: true },
-                ]}
-              >
+                ]}>
                 <Select showSearch placeholder="Select a Lecture">
                   {allLectures && allLectures.length === 0
                     ? ""
@@ -1050,8 +1011,7 @@ const List = ({ location }) => {
               <Form.Item
                 label="강의 기간"
                 name="date"
-                rules={[{ message: "강의기간 입력해주세요.", required: true }]}
-              >
+                rules={[{ message: "강의기간 입력해주세요.", required: true }]}>
                 <Wrapper dr={`row`}>
                   <TextInput
                     width={`calc(100% - 30px)`}
@@ -1069,8 +1029,7 @@ const List = ({ location }) => {
           <Form.Item
             label="성별"
             rules={[{ required: true, message: "생별을 선택해주세요." }]}
-            name="gender"
-          >
+            name="gender">
             <Select>
               <Select.Option value={`남`}>남자</Select.Option>
               <Select.Option value={`여`}>여자</Select.Option>
@@ -1079,8 +1038,7 @@ const List = ({ location }) => {
           <Form.Item
             label="주소"
             rules={[{ required: true, message: "주소를 입력해주세요." }]}
-            name="address"
-          >
+            name="address">
             <Input />
           </Form.Item>
 

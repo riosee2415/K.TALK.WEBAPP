@@ -83,6 +83,10 @@ import {
   USER_TEA_LIST_REQUEST,
   USER_TEA_LIST_SUCCESS,
   USER_TEA_LIST_FAILURE,
+  /////////////////////////////
+  USER_ADMIN_UPDATE_REQUEST,
+  USER_ADMIN_UPDATE_SUCCESS,
+  USER_ADMIN_UPDATE_FAILURE,
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -660,6 +664,36 @@ function* userFireUpdate(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function userUpdateAPI(data) {
+  return axios.patch(`/api/user/admin/user/update`, data);
+}
+
+function* userUpdate(action) {
+  try {
+    const result = yield call(userUpdateAPI, action.data);
+
+    yield put({
+      type: USER_ADMIN_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_ADMIN_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchLoadMyInfo() {
@@ -746,6 +780,10 @@ function* watchUserTeaList() {
   yield takeLatest(USER_TEA_LIST_REQUEST, userTeaList);
 }
 
+function* watchUserUpdate() {
+  yield takeLatest(USER_ADMIN_UPDATE_REQUEST, userUpdate);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -770,6 +808,7 @@ export default function* userSaga() {
     fork(watchUserStuList),
     fork(watchUserTeaList),
     fork(watchUserFireUpdate),
+    fork(watchUserUpdate),
     //
   ]);
 }

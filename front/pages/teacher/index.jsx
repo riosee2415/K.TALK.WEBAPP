@@ -52,7 +52,10 @@ import {
   CommonButton,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
-import { NOTICE_LIST_REQUEST } from "../../reducers/notice";
+import {
+  NOTICE_LECTURE_LIST_REQUEST,
+  NOTICE_LIST_REQUEST,
+} from "../../reducers/notice";
 import {
   MESSAGE_ALL_LIST_REQUEST,
   MESSAGE_CREATE_REQUEST,
@@ -329,12 +332,27 @@ const Index = () => {
     st_lectureTeacherListDone,
     st_lectureTeacherListError,
 
+    noticeMyLectureList,
+    noticeMyLectureLastPage,
+
+    st_noticeMyLectureListDone,
+    st_noticeMyLectureListError,
+
     st_lectureLinkUpdateDone,
     st_lectureLinkUpdateError,
   } = useSelector((state) => state.lecture);
 
-  const { noticeList, noticeLastPage, st_noticeListDone, st_noticeListError } =
-    useSelector((state) => state.notice);
+  const {
+    noticeList,
+    noticeLastPage,
+    st_noticeListDone,
+    st_noticeListError,
+
+    noticeLectureList,
+    noticeLectureLastPage,
+    st_noticeLectureListDone,
+    st_noticeLectureListError,
+  } = useSelector((state) => state.notice);
 
   const {
     messageUserList,
@@ -368,13 +386,15 @@ const Index = () => {
   const [updateForm] = Form.useForm();
   const [zoomLinkForm] = Form.useForm();
   const [answerform] = Form.useForm();
-  const [messageSendform] = Form.useForm();
+
   const [textBookUploadform] = Form.useForm();
 
   const [currentPage1, setCurrentPage1] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
   const [currentPage3, setCurrentPage3] = useState(1);
   const [currentPage4, setCurrentPage4] = useState(1);
+
+  const [currentPage5, setCurrentPage5] = useState(1);
 
   const [zoomLinkToggle, setZoomLinkToggle] = useState(false);
   const [messageViewToggle, setMessageViewToggle] = useState(false);
@@ -387,10 +407,9 @@ const Index = () => {
   const [textbookData, setTextbookData] = useState("");
 
   const [selectValue, setSelectValue] = useState("");
+  const [selectLectureValue, setSelectLectureValue] = useState("");
 
   const [thumbnail, setThumbnail] = useState("");
-
-  const [sendMessageType, setSendMessageType] = useState(1);
 
   const [lectureId, setLectureId] = useState("");
 
@@ -404,6 +423,10 @@ const Index = () => {
   }, []);
   ////// REDUX //////
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     dispatch({
@@ -609,6 +632,19 @@ const Index = () => {
   }, []);
 
   ////// HANDLER //////
+  const lectureReceiveHandler = useCallback((data) => {
+    let change = JSON.parse(data);
+
+    dispatch({
+      type: NOTICE_LECTURE_LIST_REQUEST,
+      data: {
+        page: 1,
+        LectureId: change.id,
+      },
+    });
+
+    setSelectLectureValue(change);
+  }, []);
 
   const receiveSelectHandler = useCallback(async (value, bookData) => {
     let thumbnail = await bookData.filter((data, idx) => {
@@ -670,14 +706,6 @@ const Index = () => {
         type: USER_UPDATE_REQUEST,
         data: {
           profileImage: userProfilePath,
-          mobile: data.mobile,
-          detailAddress: data.detailAddress,
-          address: data.address,
-          teaLanguage: data.teaLanguage,
-          teaCountry: data.teaCountry,
-          bankNo: data.bankNo,
-          bankName: data.bankName,
-          birth: data.birth.format("YYYY-MM-DD"),
         },
       });
     },
@@ -698,6 +726,21 @@ const Index = () => {
       },
     });
   }, []);
+
+  const onChangeNoticeLecturePage = useCallback(
+    (page) => {
+      setCurrentPage5(page);
+
+      dispatch({
+        type: NOTICE_LECTURE_LIST_REQUEST,
+        data: {
+          page,
+          LectureId: id,
+        },
+      });
+    },
+    [selectLectureValue]
+  );
 
   const onChangeLecturePage = useCallback((page) => {
     setCurrentPage2(page);
@@ -806,6 +849,23 @@ const Index = () => {
         page,
       },
     });
+  }, []);
+
+  const divideLecture = useCallback((day, time) => {
+    let saveDay = day.split(" ");
+    let saveTime = time.split(" ");
+
+    let textSave = "";
+
+    saveDay.map((data, idx) => {
+      if (idx === saveDay.length - 1) {
+        textSave += `${data} ${saveTime[idx]}`;
+      } else {
+        textSave += `${data} ${saveTime[idx]} | `;
+      }
+    });
+
+    return textSave;
   }, []);
 
   ////// DATAVIEW //////
@@ -990,6 +1050,115 @@ const Index = () => {
               </Wrapper>
             </Wrapper>
 
+            <Wrapper
+              dr={width < 700 ? ` column` : `row`}
+              ju={width < 700 ? `center` : `space-between`}
+              al={`flex-start`}
+              margin={`0 0 20px 0`}>
+              <Text
+                color={Theme.black_2C}
+                fontSize={width < 700 ? `18px` : `22px`}
+                fontWeight={`Bold`}
+                margin={width < 700 && `0 0 10px 0`}>
+                수업 공지사항
+              </Text>
+
+              <Select
+                style={{ width: width < 700 ? `100%` : `300px` }}
+                onChange={(data) => lectureReceiveHandler(data)}
+                placeholder="강의를 선택해주세요.">
+                {lectureTeacherList && lectureTeacherList.length === 0 ? (
+                  <Select.Option value="강의가 없습니다." disabled>
+                    수업이 없습니다.
+                  </Select.Option>
+                ) : (
+                  lectureTeacherList &&
+                  lectureTeacherList.map((data, idx) => {
+                    return (
+                      <Select.Option
+                        key={`${data.id}${idx}`}
+                        value={JSON.stringify(data)}>
+                        {data.course}
+                      </Select.Option>
+                    );
+                  })
+                )}
+              </Select>
+            </Wrapper>
+
+            <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
+              <Wrapper dr={`row`} textAlign={`center`} padding={`20px 0`}>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={`15%`}>
+                  글번호
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={`60%`}>
+                  제목
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={`25%`}>
+                  날짜
+                </Text>
+              </Wrapper>
+
+              {(noticeLectureList && noticeLectureList.length === 0) ||
+              noticeLectureList === null ? (
+                <Wrapper margin={`50px 0`}>
+                  <Empty description="조회된 데이터가 없습니다." />
+                </Wrapper>
+              ) : (
+                noticeLectureList &&
+                noticeLectureList.map((data, idx) => {
+                  return (
+                    <Wrapper
+                      key={data.id}
+                      onClick={() => onClickNoticeHandler(data)}
+                      dr={`row`}
+                      textAlign={`center`}
+                      ju={`flex-start`}
+                      padding={`25px 0 20px`}
+                      cursor={`pointer`}
+                      bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={`15%`}
+                        wordBreak={`break-word`}>
+                        {data.id}
+                      </Text>
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={`60%`}
+                        textAlign={`left`}>
+                        {data.title}
+                      </Text>
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={`25%`}>
+                        {moment(data.createdAt, "YYYY/MM/DD").format(
+                          "YYYY/MM/DD"
+                        )}
+                      </Text>
+                    </Wrapper>
+                  );
+                })
+              )}
+            </Wrapper>
+
+            <Wrapper margin={`65px 0 85px`}>
+              <CustomPage
+                total={noticeLectureLastPage * 10}
+                current={currentPage5}
+                onChange={(page) => onChangeNoticeLecturePage(page)}
+              />
+            </Wrapper>
+
             <Wrapper al={`flex-start`}>
               <Text
                 color={Theme.black_2C}
@@ -1045,9 +1214,7 @@ const Index = () => {
                             fontSize={width < 700 ? `14px` : `18px`}
                             fontWeight={`bold`}
                             lineHeight={`1.22`}>
-                            {data.day}
-                            &nbsp;&nbsp;|&nbsp;&nbsp;
-                            {data.time}
+                            {divideLecture(data && data.day, data && data.time)}
                           </Text>
                           <Wrapper
                             width={`1px`}
@@ -1098,7 +1265,7 @@ const Index = () => {
                             fontSize={width < 700 ? `12px` : `18px`}
                             width={width < 700 ? `auto` : `140px`}
                             margin={`0 10px 0 0`}>
-                            {`NO.${data.number}`}
+                            {`${data.number}`}
                           </Text>
 
                           <Wrapper width={`auto`} fontWeight={`bold`}>
@@ -1142,7 +1309,7 @@ const Index = () => {
                 color={Theme.black_2C}
                 fontSize={width < 700 ? `18px` : `22px`}
                 fontWeight={`Bold`}>
-               전체 쪽지 및 강사
+                전체 쪽지 및 강사
               </Text>
             </Wrapper>
 
@@ -1226,7 +1393,7 @@ const Index = () => {
               <CustomPage
                 size="small"
                 current={currentPage4}
-                tota={messageAllLastPage * 10}
+                total={messageAllLastPage * 10}
                 onChange={(page) => allmessageChangePage(page)}
               />
             </Wrapper>
@@ -1382,6 +1549,7 @@ const Index = () => {
                 />
                 <CommonButton
                   type="primary"
+                  width={`100%`}
                   onClick={clickImageUpload}
                   loading={st_userProfileUploadLoading}
                   radius={`5px`}>
@@ -1391,108 +1559,7 @@ const Index = () => {
             </ProfileWrapper>
 
             <CustomForm form={updateForm} onFinish={meUpdateHandler}>
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                전화번호
-              </Text>
-              <Form.Item
-                name="mobile"
-                rules={[
-                  { required: true, message: "전화번호를 입력해주세요." },
-                ]}>
-                <CusotmInput
-                  width={`100%`}
-                  placeholder="전화번호를 입력해주세요."
-                />
-              </Form.Item>
-
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                주소
-              </Text>
-              <Form.Item
-                name="address"
-                rules={[{ required: true, message: "주소를 입력해주세요." }]}>
-                <CusotmInput width={`100%`} />
-              </Form.Item>
-
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                상세 주소
-              </Text>
-              <Form.Item
-                name="detailAddress"
-                rules={[
-                  { required: true, message: "상세주소를 입력해주세요." },
-                ]}>
-                <CusotmInput width={`100%`} />
-              </Form.Item>
-
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                강사 언어
-              </Text>
-              <Form.Item
-                name="teaLanguage"
-                rules={[
-                  { required: true, message: "강사 언어를 입력해주세요." },
-                ]}>
-                <CusotmInput
-                  width={`100%`}
-                  placeholder="강사 언어를 입력해주세요."
-                />
-              </Form.Item>
-
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                강사 나라
-              </Text>
-              <Form.Item
-                name="teaCountry"
-                rules={[
-                  { required: true, message: "강사 나라를 입력해주세요." },
-                ]}>
-                <CusotmInput
-                  width={`100%`}
-                  placeholder="강사 나라를 입력해주세요."
-                />
-              </Form.Item>
-
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                은행이름
-              </Text>
-              <Form.Item
-                name="bankName"
-                rules={[
-                  { required: true, message: "은행이름을 입력해주세요." },
-                ]}>
-                <CusotmInput
-                  width={`100%`}
-                  placeholder="은행이름을 입력해주세요."
-                />
-              </Form.Item>
-
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                계좌번호
-              </Text>
-              <Form.Item
-                name="bankNo"
-                rules={[
-                  { required: true, message: "계좌번호를 입력해주세요." },
-                ]}>
-                <CusotmInput
-                  width={`100%`}
-                  placeholder="계좌번호를 입력해주세요."
-                />
-              </Form.Item>
-
-              <Text fontSize={`18px`} fontWeight={`bold`}>
-                생년월일
-              </Text>
-              <Form.Item
-                name="birth"
-                rules={[
-                  { required: true, message: "생년월일를 입력해주세요." },
-                ]}>
-                <Calendar fullscreen={false} />
-              </Form.Item>
-
-              <Wrapper>
+              <Wrapper al={`flex-end`} margin={`10px 0 0 0`}>
                 <CommonButton height={`40px`} radius={`5px`} htmlType="submit">
                   회원정보 수정
                 </CommonButton>
