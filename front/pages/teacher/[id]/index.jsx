@@ -1682,9 +1682,22 @@ const Index = () => {
     router.back();
   }, []);
 
-  const disabledDate = () => {
-    return current && current < moment().endOf("day");
-  };
+  const divideLecture = useCallback((day, time) => {
+    let saveDay = day.split(" ");
+    let saveTime = time.split(" ");
+
+    let textSave = "";
+
+    saveDay.map((data, idx) => {
+      if (idx === saveDay.length - 1) {
+        textSave += `${data} ${saveTime[idx]}`;
+      } else {
+        textSave += `${data} ${saveTime[idx]} | `;
+      }
+    });
+
+    return textSave;
+  }, []);
 
   ////// DATAVIEW //////
 
@@ -1830,9 +1843,7 @@ const Index = () => {
                               fontSize={width < 700 ? `14px` : `18px`}
                               fontWeight={`bold`}
                               lineHeight={`1.22`}>
-                              {data.day}
-                              &nbsp;&nbsp;|&nbsp;&nbsp;
-                              {data.time}
+                              {divideLecture(data.day, data.time)}
                             </Text>
                             <Wrapper
                               display={
@@ -1893,7 +1904,7 @@ const Index = () => {
                               fontSize={width < 700 ? `14px` : `18px`}
                               width={width < 700 ? `auto` : `140px`}
                               borderRightBool={true}>
-                              {`NO.${data.number}`}
+                              {`${data.number}`}
                             </CustomText2>
 
                             <Text
