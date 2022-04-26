@@ -35,17 +35,17 @@ import {
 } from "../../../../reducers/user";
 import {
   BOOK_CREATE_REQUEST,
-  BOOK_DELETE_REQUEST,
+  BOOK_ADMIN_DELETE_REQUEST,
   BOOK_FILE_INIT,
-  BOOK_FOLDER_LIST_REQUEST,
   BOOK_LIST_REQUEST,
-  BOOK_UPDATE_REQUEST,
+  BOOK_ADMIN_UPDATE_REQUEST,
   BOOK_UPLOAD_REQUEST,
   BOOK_UPLOAD_TH_REQUEST,
 } from "../../../../reducers/book";
 import { saveAs } from "file-saver";
 import { SearchOutlined, SolutionOutlined } from "@ant-design/icons";
 import useInput from "../../../../hooks/useInput";
+import { LECTURE_ALL_LIST_REQUEST } from "../../../../reducers/lecture";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -63,21 +63,20 @@ const UserDeliAddress = ({}) => {
   const { st_loadMyInfoDone, me } = useSelector((state) => state.user);
 
   const {
-    bookFolderList,
     bookList,
     bookMaxLength,
     uploadPath,
     uploadPathTh,
     st_bookCreateDone,
     st_bookCreateError,
-    st_bookUpdateDone,
-    st_bookUpdateError,
-    st_bookDeleteDone,
-    st_bookDeleteError,
-    st_bookFolderListDone,
-    st_bookFolderListError,
+    st_bookAdminUpdateDone,
+    st_bookAdminUpdateError,
+    st_bookAdminDeleteDone,
+    st_bookAdminDeleteError,
     st_bookUploadThDone,
   } = useSelector((state) => state.book);
+
+  const { allLectures } = useSelector((state) => state.lecture);
 
   const inputBookName = useInput("");
   const filename = useInput("");
@@ -115,7 +114,7 @@ const UserDeliAddress = ({}) => {
       );
     }
     dispatch({
-      type: BOOK_DELETE_REQUEST,
+      type: BOOK_ADMIN_DELETE_REQUEST,
       data: { bookId: deleteId },
     });
 
@@ -133,7 +132,7 @@ const UserDeliAddress = ({}) => {
     dispatch({
       type: BOOK_LIST_REQUEST,
       data: {
-        BookFolderId: data.id,
+        LectureId: data.id,
         search: "",
         page: "",
       },
@@ -163,7 +162,7 @@ const UserDeliAddress = ({}) => {
       dispatch({
         type: BOOK_LIST_REQUEST,
         data: {
-          BookFolderId: bookMenuId,
+          LectureId: bookMenuId,
           search: "",
           page: "",
         },
@@ -179,37 +178,37 @@ const UserDeliAddress = ({}) => {
   }, [st_bookCreateError]);
 
   useEffect(() => {
-    if (st_bookDeleteDone) {
+    if (st_bookAdminDeleteDone) {
       dispatch({
         type: BOOK_LIST_REQUEST,
         data: {
-          BookFolderId: bookMenuId,
+          LectureId: bookMenuId,
           search: "",
           page: "",
         },
       });
     }
-  }, [st_bookDeleteDone, bookMenuId]);
+  }, [st_bookAdminDeleteDone, bookMenuId]);
 
   useEffect(() => {
-    if (st_bookDeleteError) {
-      return message.error(st_bookDeleteError);
+    if (st_bookAdminDeleteError) {
+      return message.error(st_bookAdminDeleteError);
     }
-  }, [st_bookDeleteError]);
+  }, [st_bookAdminDeleteError]);
 
   useEffect(() => {
-    if (st_bookUpdateDone) {
+    if (st_bookAdminUpdateDone) {
       setCreateModal(false);
       setUpdateData(null);
       return message.success("교재가 수정 되었습니다.");
     }
-  }, [st_bookUpdateDone]);
+  }, [st_bookAdminUpdateDone]);
 
   useEffect(() => {
-    if (st_bookUpdateError) {
-      return message.error(st_bookUpdateError);
+    if (st_bookAdminUpdateError) {
+      return message.error(st_bookAdminUpdateError);
     }
-  }, [st_bookUpdateError]);
+  }, [st_bookAdminUpdateError]);
 
   /////////////////////////////////////////////////////////////////////////
 
@@ -223,7 +222,7 @@ const UserDeliAddress = ({}) => {
   const onFillBookData = useCallback((data) => {
     form.setFieldsValue({
       title: data.title,
-      folder: data.BookFolderId,
+      folder: data.LectureId,
     });
 
     setImagePathTh(data.thumbnail);
@@ -287,7 +286,7 @@ const UserDeliAddress = ({}) => {
     dispatch({
       type: BOOK_LIST_REQUEST,
       data: {
-        BookFolderId: bookMenuId,
+        LectureId: bookMenuId,
         search: inputBookName.value,
       },
     });
@@ -309,7 +308,7 @@ const UserDeliAddress = ({}) => {
           thumbnail: uploadPathTh,
           title: data.title,
           file: uploadPath,
-          BookFolderId: data.folder,
+          LectureId: data.folder,
         },
       });
     },
@@ -319,13 +318,13 @@ const UserDeliAddress = ({}) => {
   const updateSubmit = useCallback(
     (data) => {
       dispatch({
-        type: BOOK_UPDATE_REQUEST,
+        type: BOOK_ADMIN_UPDATE_REQUEST,
         data: {
           id: updateData.id,
           thumbnail: uploadPathTh ? uploadPathTh : updateData.thumbnail,
           title: data.title,
           file: uploadPath ? uploadPath : updateData.file,
-          BookFolderId: data.folder,
+          LectureId: data.folder,
         },
       });
     },
@@ -343,6 +342,7 @@ const UserDeliAddress = ({}) => {
     form.resetFields();
     setCreateModal(false);
     setImagePathTh("");
+    filename.setValue(``);
   }, []);
 
   const updateModalClose = useCallback(
@@ -367,7 +367,7 @@ const UserDeliAddress = ({}) => {
       dispatch({
         type: BOOK_LIST_REQUEST,
         data: {
-          BookFolderId: bookMenuId,
+          LectureId: bookMenuId,
           search: inputBookName.value,
           page,
         },
@@ -388,8 +388,8 @@ const UserDeliAddress = ({}) => {
     },
 
     {
-      title: "폴더 이름",
-      render: (data) => <Text>{data.value}</Text>,
+      title: "강의 이름",
+      render: (data) => <Text>{data.course}</Text>,
     },
 
     {
@@ -502,19 +502,29 @@ const UserDeliAddress = ({}) => {
           </Wrapper>
 
           <Wrapper dr={`row`} ju={`flex-start`}>
-            {bookFolderList &&
-              bookFolderList.map((data, idx) => {
-                return (
-                  <ModalBtn
-                    key={data.id}
-                    type="primary"
-                    size="small"
-                    onClick={() => onClickBookFolder(data)}
-                  >
-                    {data.value}
-                  </ModalBtn>
-                );
-              })}
+            <Select
+              style={{ width: `200px` }}
+              onChange={(e) => onClickBookFolder(e)}
+              defaultValue={null}
+            >
+              <Select.Option value={null} type="primary" size="small">
+                전체
+              </Select.Option>
+              {allLectures &&
+                allLectures.map((data, idx) => {
+                  return (
+                    <Select.Option
+                      value={data.id}
+                      key={data.id}
+                      type="primary"
+                      size="small"
+                      onClick={() => onClickBookFolder(data)}
+                    >
+                      {data.course}
+                    </Select.Option>
+                  );
+                })}
+            </Select>
           </Wrapper>
         </Wrapper>
 
@@ -562,23 +572,23 @@ const UserDeliAddress = ({}) => {
               <TextInput height={`30px`} />
             </Form.Item>
             <Form.Item
-              rules={[{ required: true, message: "폴더를 선택해주세요." }]}
-              label={`폴더 선택`}
+              rules={[{ required: true, message: "강의를 선택해주세요." }]}
+              label={`강의 선택`}
               name={`folder`}
             >
               <Select
-                placeholder="Select a Folder"
+                placeholder="Select a Lecture"
                 optionFilterProp="children"
                 filterOption={(input, option) =>
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
                 }
               >
-                {bookFolderList &&
-                  bookFolderList.map((data) => {
+                {allLectures &&
+                  allLectures.map((data) => {
                     return (
                       <Select.Option key={data.id} value={data.id}>
-                        {data.value}
+                        {data.course}
                       </Select.Option>
                     );
                   })}
@@ -587,7 +597,7 @@ const UserDeliAddress = ({}) => {
           </Form>
         </Wrapper>
         <Wrapper dr={`row`} ju={`space-between`} al={`flex-end`}>
-          <Wrapper width={`auto`} margin={`20px 0 0`}>
+          <Wrapper width={`40%`} margin={`20px 0 0`}>
             <input
               type="file"
               name="file"
@@ -613,12 +623,7 @@ const UserDeliAddress = ({}) => {
             </Button>
           </Wrapper>
 
-          <Wrapper
-            width={`auto`}
-            margin={`20px 0 0`}
-            dr={`row`}
-            ju={`flex-end`}
-          >
+          <Wrapper width={`60%`} margin={`20px 0 0`} dr={`row`} ju={`flex-end`}>
             <input
               type="file"
               name="file"
@@ -626,7 +631,7 @@ const UserDeliAddress = ({}) => {
               ref={fileRef}
               onChange={fileChangeHandler}
             />
-            <Text margin={`0 5px 0 0`}>
+            <Text margin={`0 5px 0 0`} width={`calc(100% - 130px - 5px)`}>
               {filename.value ? filename.value : `파일을 선택해주세요.`}
             </Text>
             <Button type="primary" onClick={fileUploadClick}>
@@ -655,15 +660,20 @@ export const getServerSideProps = wrapper.getServerSideProps(
     });
 
     context.store.dispatch({
-      type: BOOK_FOLDER_LIST_REQUEST,
-    });
-
-    context.store.dispatch({
       type: BOOK_LIST_REQUEST,
       data: {
-        BookFolderId: null,
+        LectureId: null,
         search: "",
         page: "",
+      },
+    });
+    context.store.dispatch({
+      type: LECTURE_ALL_LIST_REQUEST,
+      data: {
+        TeacherId: "",
+        time: "",
+        startLv: "",
+        studentName: "",
       },
     });
 

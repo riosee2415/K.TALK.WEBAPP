@@ -70,6 +70,14 @@ export const initailState = {
   st_bookDeleteDone: false,
   st_bookDeleteError: null,
   //
+  st_bookAdminUpdateLoading: false,
+  st_bookAdminUpdateDone: false,
+  st_bookAdminUpdateError: null,
+  //
+  st_bookAdminDeleteLoading: false,
+  st_bookAdminDeleteDone: false,
+  st_bookAdminDeleteError: null,
+  //
   st_bookAllListLoading: false,
   st_bookAllListDone: false,
   st_bookAllListError: null,
@@ -124,6 +132,14 @@ export const BOOK_UPDATE_FAILURE = "BOOK_UPDATE_FAILURE";
 export const BOOK_DELETE_REQUEST = "BOOK_DELETE_REQUEST";
 export const BOOK_DELETE_SUCCESS = "BOOK_DELETE_SUCCESS";
 export const BOOK_DELETE_FAILURE = "BOOK_DELETE_FAILURE";
+//
+export const BOOK_ADMIN_UPDATE_REQUEST = "BOOK_ADMIN_UPDATE_REQUEST";
+export const BOOK_ADMIN_UPDATE_SUCCESS = "BOOK_ADMIN_UPDATE_SUCCESS";
+export const BOOK_ADMIN_UPDATE_FAILURE = "BOOK_ADMIN_UPDATE_FAILURE";
+//
+export const BOOK_ADMIN_DELETE_REQUEST = "BOOK_ADMIN_DELETE_REQUEST";
+export const BOOK_ADMIN_DELETE_SUCCESS = "BOOK_ADMIN_DELETE_SUCCESS";
+export const BOOK_ADMIN_DELETE_FAILURE = "BOOK_ADMIN_DELETE_FAILURE";
 //
 
 export const BOOK_LECTURE_LIST_REQUEST = "BOOK_LECTURE_LIST_REQUEST";
@@ -363,6 +379,45 @@ const reducer = (state = initailState, action) =>
         draft.st_bookDeleteLoading = false;
         draft.st_bookDeleteDone = false;
         draft.st_bookDeleteError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+
+      case BOOK_ADMIN_UPDATE_REQUEST: {
+        draft.st_bookAdminUpdateLoading = true;
+        draft.st_bookAdminUpdateDone = null;
+        draft.st_bookAdminUpdateError = false;
+        break;
+      }
+      case BOOK_ADMIN_UPDATE_SUCCESS: {
+        draft.st_bookAdminUpdateLoading = false;
+        draft.st_bookAdminUpdateDone = true;
+
+        break;
+      }
+      case BOOK_ADMIN_UPDATE_FAILURE: {
+        draft.st_bookAdminUpdateLoading = false;
+        draft.st_bookAdminUpdateDone = false;
+        draft.st_bookAdminUpdateError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+
+      case BOOK_ADMIN_DELETE_REQUEST: {
+        draft.st_bookAdminDeleteLoading = true;
+        draft.st_bookAdminDeleteDone = null;
+        draft.st_bookAdminDeleteError = false;
+        break;
+      }
+      case BOOK_ADMIN_DELETE_SUCCESS: {
+        draft.st_bookAdminDeleteLoading = false;
+        draft.st_bookAdminDeleteDone = true;
+        break;
+      }
+      case BOOK_ADMIN_DELETE_FAILURE: {
+        draft.st_bookAdminDeleteLoading = false;
+        draft.st_bookAdminDeleteDone = false;
+        draft.st_bookAdminDeleteError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////

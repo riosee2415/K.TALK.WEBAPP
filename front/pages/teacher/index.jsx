@@ -34,6 +34,7 @@ import {
   Empty,
   Input,
   Select,
+  Button,
 } from "antd";
 
 import { CloseOutlined } from "@ant-design/icons";
@@ -64,9 +65,13 @@ import {
 import { saveAs } from "file-saver";
 import {
   BOOK_ALL_LIST_REQUEST,
+  BOOK_CREATE_REQUEST,
   BOOK_LECTURE_CREATE_REQUEST,
   BOOK_LECTURE_LIST_REQUEST,
+  BOOK_UPLOAD_REQUEST,
+  BOOK_UPLOAD_TH_REQUEST,
 } from "../../reducers/book";
+import useInput from "../../hooks/useInput";
 
 const PROFILE_WIDTH = `184`;
 const PROFILE_HEIGHT = `190`;
@@ -126,7 +131,7 @@ const CustomPage = styled(Pagination)`
   }
 `;
 
-const Button = styled.button`
+const CustomButton = styled.button`
   width: calc(100% / 4 - 30px);
   color: ${Theme.black_3C};
   font-size: 18px;
@@ -370,7 +375,8 @@ const Index = () => {
   } = useSelector((state) => state.message);
 
   const {
-    bookAllList,
+    uploadPath,
+    uploadPathTh,
     st_bookAllListDone,
     st_bookAllListError,
     st_bookLectureCreateDone,
@@ -414,13 +420,19 @@ const Index = () => {
   const [lectureId, setLectureId] = useState("");
 
   const imageInput = useRef();
+  const fileRef = useRef();
+  const fileRef2 = useRef();
 
   const [messageDatum, setMessageDatum] = useState();
 
   const textbookModalHandler = useCallback((data) => {
-    settextbookToggle(true);
+    settextbookToggle((prev) => !prev);
     setTextbookData(data);
   }, []);
+
+  const [form] = Form.useForm();
+
+  const filename = useInput();
   ////// REDUX //////
   ////// USEEFFECT //////
 
@@ -867,6 +879,60 @@ const Index = () => {
 
     return textSave;
   }, []);
+
+  const fileChangeHandler = useCallback((e) => {
+    const formData = new FormData();
+    filename.setValue(e.target.files[0].name);
+
+    [].forEach.call(e.target.files, (file) => {
+      formData.append("image", file);
+    });
+
+    dispatch({
+      type: BOOK_UPLOAD_REQUEST,
+      data: formData,
+    });
+  }, []);
+
+  const fileUploadClick = useCallback(() => {
+    fileRef.current.click();
+  }, [fileRef.current]);
+
+  const fileChangeHandler2 = useCallback((e) => {
+    const formData = new FormData();
+
+    [].forEach.call(e.target.files, (file) => {
+      formData.append("image", file);
+    });
+
+    dispatch({
+      type: BOOK_UPLOAD_TH_REQUEST,
+      data: formData,
+    });
+  }, []);
+
+  const fileUploadClick2 = useCallback(() => {
+    fileRef2.current.click();
+  }, [fileRef2.current]);
+
+  const onSubmit = useCallback(
+    (data) => {
+      dispatch({
+        type: BOOK_CREATE_REQUEST,
+        data: {
+          thumbnail: uploadPathTh,
+          title: data.title,
+          file: uploadPath,
+          LectureId: textbookData.id,
+        },
+      });
+    },
+    [uploadPathTh, uploadPath, router.query, textbookData]
+  );
+
+  const modalOk = useCallback(() => {
+    form.submit();
+  }, [form]);
 
   ////// DATAVIEW //////
 
@@ -1326,13 +1392,13 @@ const Index = () => {
                           </CustomText3>
                         </Wrapper>
 
-                        {/* <Button
+                        {/* <CustomButton
                           type="primary"
                           onClick={() => moveLinkHandler(`/teacher/${data.id}`)}
                           color={Theme.black_2C}
                           cursor={`pointer`}>
                           상세 수업 보러가기
-                        </Button> */}
+                        </CustomButton> */}
                       </Wrapper>
                     </Wrapper>
                   );
@@ -1561,12 +1627,12 @@ const Index = () => {
               margin={`100px 0`}
               ju={width < 700 ? `flex-start` : "center"}
             >
-              <Button onClick={() => moveLinkHandler(`/textbook`)}>
+              <CustomButton onClick={() => moveLinkHandler(`/textbook`)}>
                 교재 찾기 / 올리기
-              </Button>
-              <Button>복무 규정</Button>
-              <Button>강사 계약서</Button>
-              <Button>강의 산정료</Button>
+              </CustomButton>
+              <CustomButton>복무 규정</CustomButton>
+              <CustomButton>강사 계약서</CustomButton>
+              <CustomButton>강의 산정료</CustomButton>
             </Wrapper>
           </RsWrapper>
 
@@ -1906,126 +1972,93 @@ const Index = () => {
 
         <CustomModal
           visible={textbookToggle}
-          width={`1350px`}
           title="교재 등록"
-          footer={null}
-          closable={false}
+          onCancel={() => textbookModalHandler(null)}
+          onOk={modalOk}
         >
-          <CustomForm
-            form={textBookUploadform}
-            onFinish={textBookFinishHandler}
-          >
-            <Text
-              fontSize={width < 700 ? `14px` : `18px`}
-              fontWeight={`bold`}
-              margin={`0 0 10px`}
-            >
-              교재 이미지
-            </Text>
-
-            <Wrapper>
-              {thumbnail ? (
-                <Image
-                  width={`auto`}
-                  height={`250px`}
-                  src={thumbnail}
-                  alt={`menu_icon`}
-                />
-              ) : (
-                <Image
-                  width={`auto`}
-                  height={`250px`}
-                  src={`https://via.placeholder.com/200x250`}
-                />
-              )}
-            </Wrapper>
-
-            <Text
-              fontSize={width < 700 ? `14px` : `18px`}
-              fontWeight={`bold`}
-              margin={`0 0 10px`}
-            >
-              교재 이름
-            </Text>
-
-            <Form.Item
-              name="bookId"
-              rules={[
-                {
-                  required: true,
-                  message: "교재를 선택해주세요.",
-                },
-              ]}
-            >
-              <Select
-                value={selectValue}
-                style={{ width: `100%` }}
-                onChange={(id) => receiveSelectHandler(id, bookAllList)}
+          <Wrapper al={`flex-start`}>
+            <Form form={form} onFinish={onSubmit}>
+              <Form.Item
+                rules={[
+                  { required: true, message: "교재 제목을 입력해주세요." },
+                ]}
+                label={`교재 제목`}
+                name={`title`}
               >
-                {bookAllList && bookAllList.length === 0 ? (
-                  <Select.Option value="참여 중인 강의가 없습니다." disabled>
-                    교재가 없습니다.
-                  </Select.Option>
-                ) : (
-                  bookAllList &&
-                  bookAllList.map((data, idx) => {
-                    return (
-                      <Select.Option key={`${data.id}${idx}`} value={data.id}>
-                        {data.title}
-                      </Select.Option>
-                    );
-                  })
-                )}
-              </Select>
-            </Form.Item>
-
-            {/* 
-            <Text fontSize={width < 700 ? `14px` : `18px`} fontWeight={`bold`}>
-              파일 업로드
-            </Text>
-
-            <Wrapper al={`flex-start`}>
+                <TextInput height={`30px`} />
+              </Form.Item>
+              <Form.Item
+                rules={[{ required: true, message: "강의를 선택해주세요." }]}
+                label={`강의 선택`}
+                name={`folder`}
+              >
+                <Select
+                  placeholder="Select a Lecture"
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {lectureTeacherList &&
+                    lectureTeacherList.map((data) => {
+                      return (
+                        <Select.Option value={data.id}>
+                          {data.course}
+                        </Select.Option>
+                      );
+                    })}
+                </Select>
+              </Form.Item>
+            </Form>
+          </Wrapper>
+          <Wrapper dr={`row`} ju={`space-between`} al={`flex-end`}>
+            <Wrapper width={`auto`} margin={`20px 0 0`}>
               <input
                 type="file"
                 name="file"
-                accept=".pdf"
-                // multiple
+                accept=".png, .jpg"
                 hidden
-                ref={imageInput}
-                onChange={onChangeImages}
+                ref={fileRef2}
+                onChange={fileChangeHandler2}
               />
-              <Button
-                icon={<UploadOutlined />}
-                onClick={clickImageUpload}
-                style={{
-                  height: `40px`,
-                  width: `150px`,
-                  margin: `10px 0 0`,
-                }}>
-                파일 올리기
+              <Wrapper width={`150px`} margin={`0 0 10px`}>
+                <Image
+                  src={
+                    uploadPathTh
+                      ? uploadPathTh
+                      : `https://via.placeholder.com/${`80`}x${`100`}`
+                  }
+                  alt={`thumbnail`}
+                />
+              </Wrapper>
+              <Button type="primary" onClick={fileUploadClick2}>
+                썸네일 이미지 업로드
               </Button>
-              <Text>{`${fileName}`}</Text>
-            </Wrapper> */}
-
-            <Wrapper dr={`row`}>
-              <CommonButton
-                margin={`0 5px 0 0`}
-                kindOf={`grey`}
-                color={Theme.darkGrey_C}
-                radius={`5px`}
-                onClick={() => onReset()}
-              >
-                돌아가기
-              </CommonButton>
-              <CommonButton
-                margin={`0 0 0 5px`}
-                radius={`5px`}
-                htmlType="submit"
-              >
-                등록
-              </CommonButton>
             </Wrapper>
-          </CustomForm>
+
+            <Wrapper
+              width={`auto`}
+              margin={`20px 0 0`}
+              dr={`row`}
+              ju={`flex-end`}
+            >
+              <input
+                type="file"
+                name="file"
+                hidden
+                ref={fileRef}
+                onChange={fileChangeHandler}
+              />
+              <Text margin={`0 5px 0 0`}>
+                {filename.value ? filename.value : `파일을 선택해주세요.`}
+              </Text>
+              <Button type="primary" onClick={fileUploadClick}>
+                교재 파일 업로드
+              </Button>
+            </Wrapper>
+          </Wrapper>
         </CustomModal>
       </ClientLayout>
     </>

@@ -221,7 +221,7 @@ const Index = () => {
           thumbnail: updateData.thumbnail,
           file: updateData.file,
           title: updateData.title,
-          // folder: updateData.LectureId,
+          folder: updateData.LectureId,
         });
       }, 500);
     }
@@ -587,6 +587,7 @@ const Index = () => {
               <Select
                 style={{ width: `400px` }}
                 onChange={(e) => setCurrentTab(e)}
+                defaultValue={null}
               >
                 <Select.Option value={null}>전체</Select.Option>
                 {allLectures &&
@@ -777,7 +778,7 @@ const Index = () => {
                   name={`folder`}
                 >
                   <Select
-                    placeholder="Select a Folder"
+                    placeholder="Select a Lecture"
                     optionFilterProp="children"
                     filterOption={(input, option) =>
                       option.children

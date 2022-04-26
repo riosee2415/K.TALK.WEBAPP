@@ -61,6 +61,14 @@ import {
   BOOK_DELETE_SUCCESS,
   BOOK_DELETE_FAILURE,
   /////////////////////////////////
+  BOOK_ADMIN_UPDATE_REQUEST,
+  BOOK_ADMIN_UPDATE_SUCCESS,
+  BOOK_ADMIN_UPDATE_FAILURE,
+  /////////////////////////////////
+  BOOK_ADMIN_DELETE_REQUEST,
+  BOOK_ADMIN_DELETE_SUCCESS,
+  BOOK_ADMIN_DELETE_FAILURE,
+  /////////////////////////////////
   BOOK_ALL_LIST_REQUEST,
   BOOK_ALL_LIST_SUCCESS,
   BOOK_ALL_LIST_FAILURE,
@@ -403,6 +411,51 @@ function* bookDelete(action) {
     });
   }
 }
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+function bookAdminUpdateAPI(data) {
+  return axios.patch(`/api/book//admin/update`, data);
+}
+
+function* bookAdminUpdate(action) {
+  try {
+    const result = yield call(bookAdminUpdateAPI, action.data);
+
+    yield put({
+      type: BOOK_ADMIN_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: BOOK_ADMIN_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+function bookAdminDeleteAPI(data) {
+  return axios.delete(`/api/book//admin/delete/${data.bookId}`, data);
+}
+
+function* bookAdminDelete(action) {
+  try {
+    const result = yield call(bookAdminDeleteAPI, action.data);
+
+    yield put({
+      type: BOOK_ADMIN_DELETE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: BOOK_ADMIN_DELETE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
 
 //////////////////////////////////////////////////////////////
 function bookAllListAPI(data) {
@@ -473,6 +526,12 @@ function* watchBookUpdate() {
 function* watchBookDelete() {
   yield takeLatest(BOOK_DELETE_REQUEST, bookDelete);
 }
+function* watchBookAdminUpdate() {
+  yield takeLatest(BOOK_ADMIN_UPDATE_REQUEST, bookAdminUpdate);
+}
+function* watchBookAdminDelete() {
+  yield takeLatest(BOOK_ADMIN_DELETE_REQUEST, bookAdminDelete);
+}
 function* watchBookAllList() {
   yield takeLatest(BOOK_ALL_LIST_REQUEST, bookAllList);
 }
@@ -495,6 +554,8 @@ export default function* bookSaga() {
     fork(watchBookCreate),
     fork(watchBookUpdate),
     fork(watchBookDelete),
+    fork(watchBookAdminUpdate),
+    fork(watchBookAdminDelete),
     fork(watchBookAllList),
     //
   ]);
