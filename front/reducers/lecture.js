@@ -22,6 +22,7 @@ export const initailState = {
 
   lectureStuMemoDetail: null,
   lectureStuLectureList: null,
+  lectureStuCommute: null,
 
   lectureMemoStuList: null,
   lectureMemoStuCommute: null,
@@ -690,7 +691,8 @@ const reducer = (state = initailState, action) =>
       case LECTURE_STU_LECTURE_LIST_SUCCESS: {
         draft.st_lectureStuLectureListLoading = false;
         draft.st_lectureStuLectureListDone = true;
-        draft.lectureStuLectureList = action.data.lectures;
+        draft.lectureStuLectureList = action.data.partList;
+        draft.lectureStuCommute = action.data.commutes;
         break;
       }
       case LECTURE_STU_LECTURE_LIST_FAILURE: {

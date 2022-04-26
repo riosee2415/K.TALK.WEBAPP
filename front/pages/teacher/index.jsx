@@ -1325,6 +1325,14 @@ const Index = () => {
                             상세 수업 보러가기
                           </CustomText3>
                         </Wrapper>
+
+                        {/* <Button
+                          type="primary"
+                          onClick={() => moveLinkHandler(`/teacher/${data.id}`)}
+                          color={Theme.black_2C}
+                          cursor={`pointer`}>
+                          상세 수업 보러가기
+                        </Button> */}
                       </Wrapper>
                     </Wrapper>
                   );
@@ -1915,7 +1923,7 @@ const Index = () => {
               교재 이미지
             </Text>
 
-            <Wrapper margin={`0 20px 0 0`}>
+            <Wrapper>
               {thumbnail ? (
                 <Image
                   width={`auto`}
@@ -1924,7 +1932,11 @@ const Index = () => {
                   alt={`menu_icon`}
                 />
               ) : (
-                <Close />
+                <Image
+                  width={`auto`}
+                  height={`250px`}
+                  src={`https://via.placeholder.com/200x250`}
+                />
               )}
             </Wrapper>
 
