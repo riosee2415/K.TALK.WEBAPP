@@ -11,26 +11,16 @@ import axios from "axios";
 import { END } from "redux-saga";
 import wrapper from "../../store/configureStore";
 import { SEO_LIST_REQUEST } from "../../reducers/seo";
-import {
-  LOAD_MY_INFO_REQUEST,
-  ME_UPDATE_MODAL_TOGGLE,
-  POSTCODE_MODAL_TOGGLE,
-  USER_PROFILE_IMAGE_PATH,
-  USER_PROFILE_UPLOAD_REQUEST,
-  USER_UPDATE_REQUEST,
-} from "../../reducers/user";
+import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 
 import {
-  Calendar,
   Empty,
   Form,
   Input,
   message,
   Modal,
   Pagination,
-  Select,
   Slider,
-  Badge,
   Table,
   Button,
 } from "antd";
@@ -46,7 +36,6 @@ import {
   WholeWrapper,
   Wrapper,
   TextInput,
-  ATag,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
 import {
@@ -58,15 +47,12 @@ import {
   MESSAGE_USER_LIST_REQUEST,
 } from "../../reducers/message";
 
-import {
-  NOTICE_LIST_REQUEST,
-  NOTICE_MY_LECTURE_LIST_REQUEST,
-} from "../../reducers/notice";
+import { NOTICE_MY_LECTURE_LIST_REQUEST } from "../../reducers/notice";
 import {
   LECTURE_STU_LECTURE_LIST_REQUEST,
   LECTURE_STU_LIMIT_LIST_REQUEST,
 } from "../../reducers/lecture";
-import { FileDoneOutlined, RollbackOutlined } from "@ant-design/icons";
+import { RollbackOutlined } from "@ant-design/icons";
 import { saveAs } from "file-saver";
 import { BOOK_LECTURE_LIST_REQUEST } from "../../reducers/book";
 
@@ -214,20 +200,6 @@ const CustomForm = styled(Form)`
   }
 `;
 
-const CusotmInput = styled(TextInput)`
-  border: none;
-  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.16);
-  border-radius: 5px;
-
-  &::placeholder {
-    color: ${Theme.grey2_C};
-  }
-
-  &:focus {
-    border: 1px solid ${Theme.basicTheme_C};
-  }
-`;
-
 const WordbreakText = styled(Text)`
   width: 100%;
   word-wrap: break-all;
@@ -268,6 +240,7 @@ const LectureAll = () => {
 
   const {
     lectureStuLectureList,
+    lectureStuCommute,
     st_lectureStuLectureListDone,
     st_lectureStuLectureListError,
     lectureStuLimitList,
@@ -592,7 +565,7 @@ const LectureAll = () => {
 
     if (startDay < 0 && endDay < 0) {
       return 0;
-    } else if (startDay > 0) {
+    } else {
       const arr = ["일", "월", "화", "수", "목", "금", "토"];
       let add = 0;
 
@@ -609,58 +582,7 @@ const LectureAll = () => {
       }
 
       return add;
-    } else {
-      const arr = ["일", "월", "화", "수", "목", "금", "토"];
-      let add = 0;
-
-      for (let i = 0; i < endDay; i++) {
-        let saveDay = moment(startDate)
-          .add(i + 1, "days")
-          .day();
-
-        const saveResult = day.includes(arr[saveDay]);
-
-        if (saveResult) {
-          add += 1;
-        }
-      }
-
-      return add;
     }
-
-    // const save = Math.abs(
-    //   moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays() -
-    //     1
-    // );
-
-    // let check = parseInt(
-    //   moment
-    //     .duration(moment(endDate).diff(moment(startDate, "YYYY-MM-DD")))
-    //     .asDays() + 1
-    // );
-
-    // if (save >= check) {
-    //   dir = check;
-    // } else {
-    //   dir = save;
-    // }
-
-    // const arr = ["일", "월", "화", "수", "목", "금", "토"];
-    // let add = 0;
-
-    // for (let i = 0; i < dir; i++) {
-    //   let saveDay = moment(startDate)
-    //     .add(i + 1, "days")
-    //     .day();
-
-    //   const saveResult = day.includes(arr[saveDay]);
-
-    //   if (saveResult) {
-    //     add += 1;
-    //   }
-    // }
-
-    // return add;
   }, []);
 
   const stepHanlder = useCallback((startDate, endDate, count, lecDate, day) => {
@@ -829,6 +751,16 @@ const LectureAll = () => {
     });
 
     return textSave;
+  }, []);
+
+  const slideValue = useCallback((lectureStuCommute, data) => {
+    const tempArr =
+      lectureStuCommute &&
+      lectureStuCommute.filter((commute, idx) => {
+        return commute.LectureId === data.LectureId;
+      });
+
+    return (tempArr.length * 100) / ((data.date / 7) * data.count);
   }, []);
 
   ////// DATAVIEW //////
@@ -1227,8 +1159,8 @@ const LectureAll = () => {
                               height={width < 800 ? `80px` : `190px`}
                               radius={`5px`}
                               src={
-                                data.User.profileImage
-                                  ? data.User.profileImage
+                                data.profileImage
+                                  ? data.profileImage
                                   : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile_big.png"
                               }
                               alt="student_thumbnail"
@@ -1252,9 +1184,7 @@ const LectureAll = () => {
                                 ju={`flex-start`}
                                 color={Theme.grey2_C}
                                 fontSize={width < 800 ? `12px` : `16px`}>
-                                <Text lineHeight={`1.19`}>
-                                  {data.User.username}
-                                </Text>
+                                <Text lineHeight={`1.19`}>{data.username}</Text>
                                 <Text
                                   lineHeight={`1.19`}
                                   margin={width < 800 ? `5px` : `0 10px`}>
@@ -1262,12 +1192,12 @@ const LectureAll = () => {
                                 </Text>
                                 <Text lineHeight={`1.19`}>
                                   {`강의 수 : ${stepHanlder2(
-                                    data.startDate,
+                                    moment(data.createdAt).format("YYYY-MM-DD"),
                                     data.endDate,
                                     data.count,
-                                    data.lecDate,
+                                    data.date / 7,
                                     data.day
-                                  )} / ${data.lecDate * data.count}`}
+                                  )} / ${(data.date / 7) * data.count}`}
                                 </Text>
 
                                 {/* <Text
@@ -1313,14 +1243,26 @@ const LectureAll = () => {
                                       fontWeight={`bold`}
                                       color={Theme.red_C}
                                       margin={`0 0 0 15px`}>
-                                      {/* D-{DDay(data.startDate, data.endDate)} */}
-                                      {DDay(
-                                        data.startDate,
-                                        data.endDate,
-                                        data.count,
-                                        data.lecDate,
-                                        data.day
-                                      )}
+                                      {`${
+                                        DDay(
+                                          moment(data.createdAt).format(
+                                            "YYYY-MM-DD"
+                                          ),
+                                          data.endDate,
+                                          data.count,
+                                          data.date / 7,
+                                          data.day
+                                        ) -
+                                        stepHanlder2(
+                                          moment(data.createdAt).format(
+                                            "YYYY-MM-DD"
+                                          ),
+                                          data.endDate,
+                                          data.count,
+                                          data.date / 7,
+                                          data.day
+                                        )
+                                      } `}
                                       회
                                     </SpanText>
                                   </Text>
@@ -1375,7 +1317,7 @@ const LectureAll = () => {
                                   />
                                   <Text
                                     fontSize={width < 700 ? `14px` : `18px`}>
-                                    {data.User.username}
+                                    {data.username}
                                   </Text>
                                 </Wrapper>
 
@@ -1402,11 +1344,7 @@ const LectureAll = () => {
                                 </Text>
                                 <Wrapper width={width < 800 ? `80%` : `75%`}>
                                   <CustomSlide
-                                    value={
-                                      data.Commutes &&
-                                      (data.Commutes.length * 100) /
-                                        (data.lecDate * data.count)
-                                    }
+                                    value={slideValue(lectureStuCommute, data)}
                                     disabled={true}
                                     draggableTrack={true}
                                     bgColor={Theme.subTheme2_C}
@@ -1417,9 +1355,7 @@ const LectureAll = () => {
                                   color={Theme.grey2_C}
                                   padding={`0 0 0 10px`}>
                                   {`(${parseInt(
-                                    data.Commutes &&
-                                      (data.Commutes.length * 100) /
-                                        (data.lecDate * data.count)
+                                    slideValue(lectureStuCommute, data)
                                   )}%)`}
                                 </Text>
                               </Wrapper>

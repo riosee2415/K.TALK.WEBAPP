@@ -314,6 +314,7 @@ const Student = () => {
     st_lectureSubmitCreateError,
 
     lectureStuLectureList,
+    lectureStuCommute,
     st_lectureStuLectureListDone,
     st_lectureStuLectureListError,
 
@@ -676,8 +677,6 @@ const Student = () => {
   const homeworkSubmitHanlder = useCallback((data) => {
     setHomeWorkData(data);
     setHomeWorkModalToggle(true);
-
-    console.log(data, "data");
   }, []);
 
   ////// HANDLER //////
@@ -1109,6 +1108,16 @@ const Student = () => {
     return textSave;
   }, []);
 
+  const slideValue = useCallback((lectureStuCommute, data) => {
+    const tempArr =
+      lectureStuCommute &&
+      lectureStuCommute.filter((commute, idx) => {
+        return commute.LectureId === data.LectureId;
+      });
+
+    return (tempArr.length * 100) / ((data.date / 7) * data.count);
+  }, []);
+
   ////// DATAVIEW //////
 
   return (
@@ -1272,74 +1281,67 @@ const Student = () => {
                     </Wrapper>
 
                     <Wrapper
-                      width={
-                        width < 1280 ? (width < 800 ? `100%` : `40%`) : `25%`
-                      }
                       dr={`row`}
-                      ju={`flex-start`}
-                      margin={width < 800 && `5px 0`}>
-                      <Wrapper width={`auto`} margin={`0 10px 0 0`}>
+                      ju={`space-between`}
+                      width={width < 1400 ? `100%` : `62%`}
+                      margin={width < 700 ? `10px 0 0 0` : `0`}>
+                      <Wrapper dr={`row`} width={`auto`}>
                         <Image
                           width={`22px`}
                           height={`22px`}
                           src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
-                          alt="clender_icon"
+                          alt="calender_icon"
+                          margin={`0 5px 0 0`}
                         />
-                      </Wrapper>
-                      <Text fontSize={width < 700 ? `14px` : `18px`}>
-                        {`${moment(data.startDate, "YYYY/MM/DD").format(
-                          "YYYY/MM/DD"
-                        )}`}
-
-                        {/* ~ ${moment(data.endDate, "YYYY/MM/DD").format(
-                          "YYYY/MM/DD"
-                        )} */}
-                        <SpanText
-                          fontWeight={`bold`}
-                          color={Theme.red_C}
-                          margin={`0 0 0 15px`}>
-                          {DDay(
-                            data.startDate,
-                            data.endDate,
-                            data.count,
-                            data.lecDate,
-                            data.day
+                        <Text
+                          color={Theme.black_2C}
+                          fontSize={width < 700 ? `12px` : `18px`}
+                          width={width < 700 ? `auto` : `140px`}
+                          margin={width < 700 && `0 10px 0 0`}>
+                          {moment(data.startDate, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
                           )}
-                          회
-                        </SpanText>
-                      </Text>
-                    </Wrapper>
+                        </Text>
 
-                    <Wrapper
-                      width={width < 1280 ? `100%` : `38%`}
-                      dr={`row`}
-                      ju={`space-between`}
-                      al={`flex-start`}>
-                      <Wrapper
-                        width={`25%`}
-                        dr={`row`}
-                        ju={`flex-start`}
-                        margin={`0 20px 0 0`}>
                         <Image
-                          margin={`0 10px 0 0`}
                           width={`22px`}
                           height={`22px`}
-                          src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name.png"
-                          alt="clender_icon"
+                          src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_number.png"
+                          alt="calender_icon"
+                          margin={`0 5px 0 0`}
                         />
-                        <Text fontSize={width < 700 ? `14px` : `18px`}>
-                          {data.User.username}
+                        <Text
+                          color={Theme.black_2C}
+                          fontSize={width < 700 ? `12px` : `18px`}
+                          width={width < 700 ? `auto` : `140px`}
+                          margin={width < 700 && `0 10px 0 0`}>
+                          {`${data.number}`}
                         </Text>
+
+                        <Wrapper dr={`row`} width={`auto`}>
+                          <Image
+                            margin={`0 10px 0 0`}
+                            width={`22px`}
+                            height={`22px`}
+                            src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name.png"
+                            alt="clender_icon"
+                          />
+                          <Text fontSize={width < 700 ? `14px` : `18px`}>
+                            {data.username}
+                          </Text>
+                        </Wrapper>
                       </Wrapper>
 
-                      <CustomButton2
-                        type={`primary`}
-                        size={`small`}
-                        onClick={() =>
-                          window.open(`${data.zoomLink}`, "_blank")
-                        }>
-                        강의 이동
-                      </CustomButton2>
+                      <Wrapper width={`auto`}>
+                        <CustomButton2
+                          type={`primary`}
+                          size={`small`}
+                          onClick={() =>
+                            window.open(`${data.zoomLink}`, "_blank")
+                          }>
+                          강의 이동
+                        </CustomButton2>
+                      </Wrapper>
                     </Wrapper>
                   </Wrapper>
                 );
@@ -1387,8 +1389,8 @@ const Student = () => {
                               height={width < 800 ? `80px` : `190px`}
                               radius={`5px`}
                               src={
-                                data.User.profileImage
-                                  ? data.User.profileImage
+                                data.profileImage
+                                  ? data.profileImage
                                   : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile_big.png"
                               }
                               alt="student_thumbnail"
@@ -1418,23 +1420,22 @@ const Student = () => {
                                 margin={`10px 0 0 0`}
                                 color={Theme.grey2_C}
                                 fontSize={width < 800 ? `12px` : `16px`}>
-                                <Text lineHeight={`1.19`}>
-                                  {data.User.username}
-                                </Text>
+                                <Text lineHeight={`1.19`}>{data.username}</Text>
 
                                 <Text
                                   lineHeight={`1.19`}
                                   margin={width < 800 ? `5px` : `0 10px`}>
                                   |
                                 </Text>
+
                                 <Text lineHeight={`1.19`}>
                                   {`강의 수 : ${stepHanlder2(
-                                    data.startDate,
+                                    moment(data.createdAt).format("YYYY-MM-DD"),
                                     data.endDate,
                                     data.count,
-                                    data.lecDate,
+                                    data.date / 7,
                                     data.day
-                                  )} / ${data.lecDate * data.count}`}
+                                  )} / ${(data.date / 7) * data.count}`}
                                 </Text>
                               </Wrapper>
 
@@ -1458,11 +1459,10 @@ const Student = () => {
                                   </Text>
                                   <Wrapper width={width < 800 ? `80%` : `70%`}>
                                     <CustomSlide
-                                      value={
-                                        data.Commutes &&
-                                        (data.Commutes.length * 100) /
-                                          (data.lecDate * data.count)
-                                      }
+                                      value={slideValue(
+                                        lectureStuCommute,
+                                        data
+                                      )}
                                       disabled={true}
                                       draggableTrack={true}
                                       bgColor={Theme.subTheme2_C}
@@ -1474,9 +1474,7 @@ const Student = () => {
                                     color={Theme.grey2_C}
                                     padding={`0 0 0 10px`}>
                                     {`(${parseInt(
-                                      data.Commutes &&
-                                        (data.Commutes.length * 100) /
-                                          (data.lecDate * data.count)
+                                      slideValue(lectureStuCommute, data)
                                     )}%)`}
                                   </Text>
                                 </Wrapper>
@@ -1614,7 +1612,6 @@ const Student = () => {
                         </Wrapper>
                       </Wrapper>
                     </Wrapper>
-                    {/** */}
                   </Wrapper>
                 );
               })
@@ -2588,8 +2585,8 @@ const Student = () => {
                           return (
                             <Option
                               key={`${data.id}${idx}`}
-                              value={`${data.id},${data.User.id},${data.User.level}`}>
-                              {`${data.course} | ${data.User.username}`}
+                              value={`${data.id},${data.id},${data.level}`}>
+                              {`${data.course} | ${data.username}`}
                             </Option>
                           );
                         })
