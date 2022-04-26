@@ -1,12 +1,8 @@
 import React, { useEffect, useCallback, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-import DaumPostCode from "react-daum-postcode";
 import moment from "moment";
-
 import Head from "next/head";
 import { useRouter } from "next/router";
-
 import axios from "axios";
 import { END } from "redux-saga";
 import wrapper from "../../store/configureStore";
@@ -14,19 +10,15 @@ import { SEO_LIST_REQUEST } from "../../reducers/seo";
 import {
   LOAD_MY_INFO_REQUEST,
   ME_UPDATE_MODAL_TOGGLE,
-  POSTCODE_MODAL_TOGGLE,
   USER_PROFILE_IMAGE_PATH,
   USER_PROFILE_UPLOAD_REQUEST,
   USER_UPDATE_REQUEST,
 } from "../../reducers/user";
-
 import {
   LECTURE_TEACHER_LIST_REQUEST,
   LECTURE_LINK_UPDATE_REQUEST,
 } from "../../reducers/lecture";
-
 import {
-  Calendar,
   message,
   Pagination,
   Modal,
@@ -36,8 +28,6 @@ import {
   Select,
   Button,
 } from "antd";
-
-import { CloseOutlined } from "@ant-design/icons";
 
 import styled from "styled-components";
 import useWidth from "../../hooks/useWidth";
@@ -66,8 +56,6 @@ import { saveAs } from "file-saver";
 import {
   BOOK_ALL_LIST_REQUEST,
   BOOK_CREATE_REQUEST,
-  BOOK_LECTURE_CREATE_REQUEST,
-  BOOK_LECTURE_LIST_REQUEST,
   BOOK_UPLOAD_REQUEST,
   BOOK_UPLOAD_TH_REQUEST,
 } from "../../reducers/book";
@@ -75,13 +63,6 @@ import useInput from "../../hooks/useInput";
 
 const PROFILE_WIDTH = `184`;
 const PROFILE_HEIGHT = `190`;
-
-const Close = styled(CloseOutlined)`
-  & svg {
-    width: 200px;
-    height: 250px;
-  }
-`;
 
 const CustomPage = styled(Pagination)`
   & .ant-pagination-next > button {
@@ -153,27 +134,6 @@ const CustomButton = styled.button`
     font-size: 14px;
     width: calc(100% / 2 - 10px);
     margin: 10px 10px 0 0;
-  }
-`;
-
-const CustomText = styled(Text)`
-  font-size: 18px;
-  font-weight: Bold;
-  color: ${Theme.black_2C};
-
-  &::after {
-    content: "|";
-    padding: 0 10px;
-    color: ${Theme.grey_C};
-  }
-
-  @media (max-width: 700px) {
-    font-size: 14px;
-    &::after {
-      content: "|";
-      padding: 0 5px;
-      color: ${Theme.grey_C};
-    }
   }
 `;
 
@@ -330,21 +290,12 @@ const Index = () => {
     //
     st_userUserUpdateDone,
     st_userUserUpdateError,
-    //
-    st_bookCreateDone,
-    st_bookCreateError,
   } = useSelector((state) => state.user);
 
   const {
     lectureTeacherList,
-    st_lectureTeacherListDone,
+
     st_lectureTeacherListError,
-
-    noticeMyLectureList,
-    noticeMyLectureLastPage,
-
-    st_noticeMyLectureListDone,
-    st_noticeMyLectureListError,
 
     st_lectureLinkUpdateDone,
     st_lectureLinkUpdateError,
@@ -358,14 +309,13 @@ const Index = () => {
 
     noticeLectureList,
     noticeLectureLastPage,
-    st_noticeLectureListDone,
     st_noticeLectureListError,
   } = useSelector((state) => state.notice);
 
   const {
     messageUserList,
     messageUserLastPage,
-    st_messageUserListDone,
+
     st_messageUserListError,
 
     st_messageCreateDone,
@@ -373,7 +323,7 @@ const Index = () => {
 
     messageAllList,
     messageAllLastPage,
-    st_messageAllListDone,
+
     st_messageAllListError,
   } = useSelector((state) => state.message);
 
@@ -382,9 +332,22 @@ const Index = () => {
     uploadPathTh,
     st_bookAllListDone,
     st_bookAllListError,
-    st_bookLectureCreateDone,
-    st_bookLectureCreateError,
+
+    st_bookCreateDone,
+    st_bookCreateError,
+
+    st_bookUploadDone,
+    st_bookUploadError,
+
+    st_bookUploadThDone,
+    st_bookUploadThError,
   } = useSelector((state) => state.book);
+
+  useEffect(() => {
+    if (st_bookUploadDone) {
+      return message.success("파일을 업로드 했습니다.");
+    }
+  }, [st_bookUploadDone]);
 
   ////// HOOKS //////
 
@@ -395,14 +358,13 @@ const Index = () => {
   const [updateForm] = Form.useForm();
   const [zoomLinkForm] = Form.useForm();
   const [answerform] = Form.useForm();
-
   const [textBookUploadform] = Form.useForm();
+  const [form] = Form.useForm();
 
   const [currentPage1, setCurrentPage1] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
   const [currentPage3, setCurrentPage3] = useState(1);
   const [currentPage4, setCurrentPage4] = useState(1);
-
   const [currentPage5, setCurrentPage5] = useState(1);
 
   const [zoomLinkToggle, setZoomLinkToggle] = useState(false);
@@ -412,15 +374,16 @@ const Index = () => {
   const [noticeViewModal, setNoticeViewModal] = useState(false);
   const [noticeViewDatum, setNoticeViewDatum] = useState(null);
 
-  const [textbookToggle, settextbookToggle] = useState(false);
+  const [textbookToggle, setTextbookToggle] = useState(false);
   const [textbookData, setTextbookData] = useState("");
 
-  const [selectValue, setSelectValue] = useState("");
   const [selectLectureValue, setSelectLectureValue] = useState("");
+
+  const [lectureId, setLectureId] = useState("");
 
   const [thumbnail, setThumbnail] = useState("");
 
-  const [lectureId, setLectureId] = useState("");
+  const filename = useInput("");
 
   const imageInput = useRef();
   const fileRef = useRef();
@@ -429,13 +392,10 @@ const Index = () => {
   const [messageDatum, setMessageDatum] = useState();
 
   const textbookModalHandler = useCallback((data) => {
-    settextbookToggle((prev) => !prev);
+    setTextbookToggle((prev) => !prev);
     setTextbookData(data);
   }, []);
 
-  const [form] = Form.useForm();
-
-  const filename = useInput();
   ////// REDUX //////
   ////// USEEFFECT //////
 
@@ -625,6 +585,38 @@ const Index = () => {
     }
   }, [st_messageCreateDone]);
 
+  useEffect(() => {
+    if (st_noticeLectureListError) {
+      return message.error(st_noticeLectureListError);
+    }
+  }, [st_noticeLectureListError]);
+
+  useEffect(() => {
+    if (st_messageAllListError) {
+      return message.error(st_messageAllListError);
+    }
+  }, [st_messageAllListError]);
+
+  useEffect(() => {
+    if (st_bookUploadError) {
+      return message.error(st_bookUploadError);
+    }
+  }, [st_bookUploadError]);
+
+  useEffect(() => {
+    if (st_bookUploadThDone) {
+      setThumbnail(uploadPathTh);
+
+      return message.success("이미지를 업로드 했습니다.");
+    }
+  }, [st_bookUploadThDone]);
+
+  useEffect(() => {
+    if (st_bookUploadThError) {
+      return message.error(st_bookUploadThError);
+    }
+  }, [st_bookUploadThError]);
+
   ////// TOGGLE //////
 
   const meUpdateModalToggle = useCallback(() => {
@@ -662,19 +654,6 @@ const Index = () => {
     setSelectLectureValue(change);
   }, []);
 
-  const receiveSelectHandler = useCallback(async (value, bookData) => {
-    let thumbnail = await bookData.filter((data, idx) => {
-      if (value === data.id) {
-        return true;
-      }
-    });
-
-    let save = await thumbnail.map((data) => data.thumbnail);
-
-    setThumbnail(save);
-    setSelectValue(value);
-  }, []);
-
   const onClickNoticeHandler = useCallback((data) => {
     setNoticeViewDatum(data);
     setNoticeViewModal(true);
@@ -683,14 +662,17 @@ const Index = () => {
   const onReset = useCallback(() => {
     answerform.resetFields();
     textBookUploadform.resetFields();
-    settextbookToggle(false);
+
+    filename.setValue("");
+    setThumbnail("");
+
+    setTextbookToggle(false);
 
     setMessageAnswerModal(false);
     setMessageViewToggle(false);
 
     setNoticeViewModal(false);
 
-    setThumbnail("");
     setNoticeViewDatum("");
     setTextbookData("");
   }, []);
@@ -844,21 +826,8 @@ const Index = () => {
     saveAs(file, originName);
   }, []);
 
-  const textBookFinishHandler = useCallback(
-    (value) => {
-      dispatch({
-        type: BOOK_LECTURE_CREATE_REQUEST,
-        data: {
-          BookId: value.bookId,
-          LectureId: textbookData.id,
-        },
-      });
-    },
-
-    [textbookData]
-  );
-
   const allmessageChangePage = useCallback((page) => {
+    setCurrentPage4(page);
     dispatch({
       type: MESSAGE_ALL_LIST_REQUEST,
       data: {
@@ -931,11 +900,11 @@ const Index = () => {
         },
       });
     },
-    [uploadPathTh, uploadPath, router.query, textbookData]
+    [uploadPathTh, uploadPath, textbookData, router.query]
   );
 
   const modalOk = useCallback(() => {
-    form.submit();
+    textBookUploadform.submit();
   }, [form]);
 
   ////// DATAVIEW //////
@@ -1395,14 +1364,6 @@ const Index = () => {
                             상세 수업 보러가기
                           </CustomText3>
                         </Wrapper>
-
-                        {/* <CustomButton
-                          type="primary"
-                          onClick={() => moveLinkHandler(`/teacher/${data.id}`)}
-                          color={Theme.black_2C}
-                          cursor={`pointer`}>
-                          상세 수업 보러가기
-                        </CustomButton> */}
                       </Wrapper>
                     </Wrapper>
                   );
@@ -1977,11 +1938,13 @@ const Index = () => {
         <CustomModal
           visible={textbookToggle}
           title="교재 등록"
-          onCancel={() => textbookModalHandler(null)}
+          okText="등록"
+          cancelText="취소"
+          onCancel={() => onReset()}
           onOk={modalOk}
         >
           <Wrapper al={`flex-start`}>
-            <Form form={form} onFinish={onSubmit}>
+            <Form form={textBookUploadform} onFinish={onSubmit}>
               <Form.Item
                 rules={[
                   { required: true, message: "교재 제목을 입력해주세요." },
@@ -2003,11 +1966,12 @@ const Index = () => {
                 ref={fileRef2}
                 onChange={fileChangeHandler2}
               />
+
               <Wrapper width={`150px`} margin={`0 0 10px`}>
                 <Image
                   src={
-                    uploadPathTh
-                      ? uploadPathTh
+                    thumbnail
+                      ? thumbnail
                       : `https://via.placeholder.com/${`80`}x${`100`}`
                   }
                   alt={`thumbnail`}
@@ -2025,6 +1989,7 @@ const Index = () => {
               ju={`flex-end`}
             >
               <input
+                accept=".pdf"
                 type="file"
                 name="file"
                 hidden

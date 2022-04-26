@@ -1,47 +1,13 @@
 import produce from "../util/produce";
 
 export const initailState = {
-  bookFolderList: null,
   bookList: null,
   bookDetail: null,
-  bookLecture: null,
 
   bookMaxLength: 1,
 
   bookAllList: null,
 
-  st_bookFolderListLoading: false,
-  st_bookFolderListDone: false,
-  st_bookFolderListError: null,
-  //
-  st_bookFolderCreateLoading: false,
-  st_bookFolderCreateDone: false,
-  st_bookFolderCreateError: null,
-  //
-  st_bookFolderUpdateLoading: false,
-  st_bookFolderUpdateDone: false,
-  st_bookFolderUpdateError: null,
-  //
-  st_bookFolderDeleteLoading: false,
-  st_bookFolderDeleteDone: false,
-  st_bookFolderDeleteError: null,
-  //
-  st_bookLectureListLoading: false,
-  st_bookLectureListDone: false,
-  st_bookLectureListError: null,
-  //
-  st_bookLectureCreateLoading: false,
-  st_bookLectureCreateDone: false,
-  st_bookLectureCreateError: null,
-  //
-  st_bookLectureUpdateLoading: false,
-  st_bookLectureUpdateDone: false,
-  st_bookLectureUpdateError: null,
-  //
-  st_bookLectureDeleteLoading: false,
-  st_bookLectureDeleteDone: false,
-  st_bookLectureDeleteError: null,
-  //
   st_bookListLoading: false,
   st_bookListDone: false,
   st_bookListError: null,
@@ -89,22 +55,6 @@ export const initailState = {
   //
 };
 
-export const BOOK_FOLDER_LIST_REQUEST = "BOOK_FOLDER_LIST_REQUEST";
-export const BOOK_FOLDER_LIST_SUCCESS = "BOOK_FOLDER_LIST_SUCCESS";
-export const BOOK_FOLDER_LIST_FAILURE = "BOOK_FOLDER_LIST_FAILURE";
-//
-export const BOOK_FOLDER_CREATE_REQUEST = "BOOK_FOLDER_CREATE_REQUEST";
-export const BOOK_FOLDER_CREATE_SUCCESS = "BOOK_FOLDER_CREATE_SUCCESS";
-export const BOOK_FOLDER_CREATE_FAILURE = "BOOK_FOLDER_CREATE_FAILURE";
-//
-export const BOOK_FOLDER_UPDATE_REQUEST = "BOOK_FOLDER_UPDATE_REQUEST";
-export const BOOK_FOLDER_UPDATE_SUCCESS = "BOOK_FOLDER_UPDATE_SUCCESS";
-export const BOOK_FOLDER_UPDATE_FAILURE = "BOOK_FOLDER_UPDATE_FAILURE";
-//
-export const BOOK_FOLDER_DELETE_REQUEST = "BOOK_FOLDER_DELETE_REQUEST";
-export const BOOK_FOLDER_DELETE_SUCCESS = "BOOK_FOLDER_DELETE_SUCCESS";
-export const BOOK_FOLDER_DELETE_FAILURE = "BOOK_FOLDER_DELETE_FAILURE";
-//
 export const BOOK_LIST_REQUEST = "BOOK_LIST_REQUEST";
 export const BOOK_LIST_SUCCESS = "BOOK_LIST_SUCCESS";
 export const BOOK_LIST_FAILURE = "BOOK_LIST_FAILURE";
@@ -142,22 +92,6 @@ export const BOOK_ADMIN_DELETE_SUCCESS = "BOOK_ADMIN_DELETE_SUCCESS";
 export const BOOK_ADMIN_DELETE_FAILURE = "BOOK_ADMIN_DELETE_FAILURE";
 //
 
-export const BOOK_LECTURE_LIST_REQUEST = "BOOK_LECTURE_LIST_REQUEST";
-export const BOOK_LECTURE_LIST_SUCCESS = "BOOK_LECTURE_LIST_SUCCESS";
-export const BOOK_LECTURE_LIST_FAILURE = "BOOK_LECTURE_LIST_FAILURE";
-//
-export const BOOK_LECTURE_CREATE_REQUEST = "BOOK_LECTURE_CREATE_REQUEST";
-export const BOOK_LECTURE_CREATE_SUCCESS = "BOOK_LECTURE_CREATE_SUCCESS";
-export const BOOK_LECTURE_CREATE_FAILURE = "BOOK_LECTURE_CREATE_FAILURE";
-//
-export const BOOK_LECTURE_UPDATE_REQUEST = "BOOK_LECTURE_UPDATE_REQUEST";
-export const BOOK_LECTURE_UPDATE_SUCCESS = "BOOK_LECTURE_UPDATE_SUCCESS";
-export const BOOK_LECTURE_UPDATE_FAILURE = "BOOK_LECTURE_UPDATE_FAILURE";
-//
-export const BOOK_LECTURE_DELETE_REQUEST = "BOOK_LECTURE_DELETE_REQUEST";
-export const BOOK_LECTURE_DELETE_SUCCESS = "BOOK_LECTURE_DELETE_SUCCESS";
-export const BOOK_LECTURE_DELETE_FAILURE = "BOOK_LECTURE_DELETE_FAILURE";
-//
 export const BOOK_ALL_LIST_REQUEST = "BOOK_ALL_LIST_REQUEST";
 export const BOOK_ALL_LIST_SUCCESS = "BOOK_ALL_LIST_SUCCESS";
 export const BOOK_ALL_LIST_FAILURE = "BOOK_ALL_LIST_FAILURE";
@@ -170,84 +104,6 @@ export const BOOK_FILE_INIT = "BOOK_FILE_INIT";
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
-      case BOOK_FOLDER_LIST_REQUEST: {
-        draft.st_bookFolderListLoading = true;
-        draft.st_bookFolderListDone = null;
-        draft.st_bookFolderListError = false;
-        break;
-      }
-      case BOOK_FOLDER_LIST_SUCCESS: {
-        draft.st_bookFolderListLoading = false;
-        draft.st_bookFolderListDone = true;
-        draft.bookFolderList = action.data;
-        break;
-      }
-      case BOOK_FOLDER_LIST_FAILURE: {
-        draft.st_bookFolderListLoading = false;
-        draft.st_bookFolderListDone = false;
-        draft.st_bookFolderListError = action.error;
-        break;
-      }
-      ///////////////////////////////////////////////////////
-
-      case BOOK_FOLDER_CREATE_REQUEST: {
-        draft.st_bookFolderCreateLoading = true;
-        draft.st_bookFolderCreateDone = null;
-        draft.st_bookFolderCreateError = false;
-        break;
-      }
-      case BOOK_FOLDER_CREATE_SUCCESS: {
-        draft.st_bookFolderCreateLoading = false;
-        draft.st_bookFolderCreateDone = true;
-
-        break;
-      }
-      case BOOK_FOLDER_CREATE_FAILURE: {
-        draft.st_bookFolderCreateLoading = false;
-        draft.st_bookFolderCreateDone = false;
-        draft.st_bookFolderCreateError = action.error;
-        break;
-      }
-      ///////////////////////////////////////////////////////
-
-      case BOOK_FOLDER_UPDATE_REQUEST: {
-        draft.st_bookFolderUpdateLoading = true;
-        draft.st_bookFolderUpdateDone = null;
-        draft.st_bookFolderUpdateError = false;
-        break;
-      }
-      case BOOK_FOLDER_UPDATE_SUCCESS: {
-        draft.st_bookFolderUpdateLoading = false;
-        draft.st_bookFolderUpdateDone = true;
-
-        break;
-      }
-      case BOOK_FOLDER_UPDATE_FAILURE: {
-        draft.st_bookFolderUpdateLoading = false;
-        draft.st_bookFolderUpdateDone = false;
-        draft.st_bookFolderUpdateError = action.error;
-        break;
-      }
-      ///////////////////////////////////////////////////////
-
-      case BOOK_FOLDER_DELETE_REQUEST: {
-        draft.st_bookFolderDeleteLoading = true;
-        draft.st_bookFolderDeleteDone = null;
-        draft.st_bookFolderDeleteError = false;
-        break;
-      }
-      case BOOK_FOLDER_DELETE_SUCCESS: {
-        draft.st_bookFolderDeleteLoading = false;
-        draft.st_bookFolderDeleteDone = true;
-        break;
-      }
-      case BOOK_FOLDER_DELETE_FAILURE: {
-        draft.st_bookFolderDeleteLoading = false;
-        draft.st_bookFolderDeleteDone = false;
-        draft.st_bookFolderDeleteError = action.error;
-        break;
-      }
-      ///////////////////////////////////////////////////////
       case BOOK_LIST_REQUEST: {
         draft.st_bookListLoading = true;
         draft.st_bookListDone = null;
@@ -418,84 +274,6 @@ const reducer = (state = initailState, action) =>
         draft.st_bookAdminDeleteLoading = false;
         draft.st_bookAdminDeleteDone = false;
         draft.st_bookAdminDeleteError = action.error;
-        break;
-      }
-      ///////////////////////////////////////////////////////
-
-      case BOOK_LECTURE_LIST_REQUEST: {
-        draft.st_bookLectureListLoading = true;
-        draft.st_bookLectureListDone = null;
-        draft.st_bookLectureListError = false;
-        break;
-      }
-      case BOOK_LECTURE_LIST_SUCCESS: {
-        draft.st_bookLectureListLoading = false;
-        draft.st_bookLectureListDone = true;
-        draft.bookLecture = action.data;
-        break;
-      }
-      case BOOK_LECTURE_LIST_FAILURE: {
-        draft.st_bookLectureListLoading = false;
-        draft.st_bookLectureListDone = false;
-        draft.st_bookLectureListError = action.error;
-        break;
-      }
-      ///////////////////////////////////////////////////////
-
-      case BOOK_LECTURE_CREATE_REQUEST: {
-        draft.st_bookLectureCreateLoading = true;
-        draft.st_bookLectureCreateDone = null;
-        draft.st_bookLectureCreateError = false;
-        break;
-      }
-      case BOOK_LECTURE_CREATE_SUCCESS: {
-        draft.st_bookLectureCreateLoading = false;
-        draft.st_bookLectureCreateDone = true;
-        break;
-      }
-      case BOOK_LECTURE_CREATE_FAILURE: {
-        draft.st_bookLectureCreateLoading = false;
-        draft.st_bookLectureCreateDone = false;
-        draft.st_bookLectureCreateError = action.error;
-        break;
-      }
-      ///////////////////////////////////////////////////////
-
-      case BOOK_LECTURE_UPDATE_REQUEST: {
-        draft.st_bookLectureUpdateLoading = true;
-        draft.st_bookLectureUpdateDone = null;
-        draft.st_bookLectureUpdateError = false;
-        break;
-      }
-      case BOOK_LECTURE_UPDATE_SUCCESS: {
-        draft.st_bookLectureUpdateLoading = false;
-        draft.st_bookLectureUpdateDone = true;
-
-        break;
-      }
-      case BOOK_LECTURE_UPDATE_FAILURE: {
-        draft.st_bookLectureUpdateLoading = false;
-        draft.st_bookLectureUpdateDone = false;
-        draft.st_bookLectureUpdateError = action.error;
-        break;
-      }
-      ///////////////////////////////////////////////////////
-
-      case BOOK_LECTURE_DELETE_REQUEST: {
-        draft.st_bookLectureDeleteLoading = true;
-        draft.st_bookLectureDeleteDone = null;
-        draft.st_bookLectureDeleteError = false;
-        break;
-      }
-      case BOOK_LECTURE_DELETE_SUCCESS: {
-        draft.st_bookLectureDeleteLoading = false;
-        draft.st_bookLectureDeleteDone = true;
-        break;
-      }
-      case BOOK_LECTURE_DELETE_FAILURE: {
-        draft.st_bookLectureDeleteLoading = false;
-        draft.st_bookLectureDeleteDone = false;
-        draft.st_bookLectureDeleteError = action.error;
         break;
       }
 
