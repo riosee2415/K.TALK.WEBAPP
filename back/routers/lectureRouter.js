@@ -478,7 +478,7 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
             A.isChange,
             A.date,
             A.endDate,
-            A.createdAt,
+            A.createdAt       AS PartCreatedAt,
             A.updatedAt,
             A.UserId,
             A.LectureId,
@@ -492,7 +492,7 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
             B.startLv,
             B.zoomLink,
             B.UserId					AS TeacherId,
-            B.createdAt,
+            B.createdAt       AS LectureCreatedAt,
             C.username,
             C.profileImage,
             C.level

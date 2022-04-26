@@ -159,8 +159,6 @@ const Application = () => {
   const [agreeCheck, setAgreeCheck] = useState(false);
   const [isCalendar, setIsCalendar] = useState(false);
 
-  const [selectState, setSelectState] = useState(null);
-
   const [form] = Form.useForm();
 
   ////// REDUX //////
@@ -243,6 +241,9 @@ const Application = () => {
       if (!agreeCheck) {
         return message.error("Please agree to the terms and conditions.");
       }
+
+      let saveTotal = JSON.parse(data.phoneNumber);
+
       let classHour = "";
       timeSelect.map((data) => (classHour += `${data}  `));
 
@@ -255,12 +256,12 @@ const Application = () => {
           dateOfBirth: `${data.year}-${data.month}-${data.date}`,
           gmailAddress: `${data.firstEmail}${data.lastEmail}`,
           nationality: data.nationality,
-          countryOfResidence: data.countryOfResidence,
+          countryOfResidence: saveTotal.Afghanistan,
           languageYouUse: data.languageYouUse,
           phoneNumber:
             data.phoneNumber === "직접입력"
               ? data.phoneNumberInput
-              : data.phoneNumber,
+              : saveTotal.number,
           phoneNumber2: data.phoneNumber2,
           classHour: classHour,
           terms: agreeCheck,
@@ -307,250 +308,6 @@ const Application = () => {
     "13:00 - 13:50 KST",
     "21:00 - 21:50 KST",
     "05:00 - 05:50 KST",
-  ];
-
-  const firstPhoneArr = [
-    "+93",
-    "+355",
-    "+213",
-    "+1",
-    "+376",
-    "+244",
-
-    "+64",
-    "+672",
-
-    "+54",
-    "+374",
-    "+297",
-    "+247",
-    "+61",
-    "+43",
-    "+994",
-
-    "+973",
-    "+880",
-
-    "+375",
-    "+32",
-    "+501",
-    "+229",
-
-    "+975",
-    "+591",
-    "+387",
-    "+267",
-    "+55",
-
-    "+673",
-    "+359",
-    "+226",
-    "+95",
-    "+257",
-    "+855",
-    "+237",
-    "+1",
-    "+238",
-
-    "+236",
-    "+235",
-    "+56",
-    "+86",
-    "+57",
-    "+269",
-    "+242",
-    "+682",
-    "+506",
-    "+385",
-    "+53",
-    "+357",
-    "+420",
-    "+243",
-    "+45",
-    "+246",
-    "+253",
-
-    "+593",
-    "+20",
-    "+503",
-    "+240",
-    "+291",
-    "+372",
-    "+251",
-    "+500",
-    "+298",
-    "+679",
-    "+358",
-    "+33",
-    "+594",
-    "+689",
-    "+241",
-    "+220",
-    "+995",
-    "+49",
-    "+233",
-    "+350",
-    "+30",
-    "+299",
-
-    "+590",
-
-    "+502",
-    "+224",
-    "+245",
-    "+592",
-    "+509",
-    "+39",
-    "+504",
-    "+852",
-    "+36",
-    "+354",
-    "+91",
-    "+62",
-    "+98",
-    "+964",
-    "+353",
-    "+44",
-    "+972",
-    "+39",
-    "+225",
-
-    "+81",
-    "+44",
-    "+962",
-    "+7",
-    "+254",
-    "+686",
-    "+965",
-    "+996",
-    "+856",
-    "+371",
-    "+961",
-    "+266",
-    "+231",
-    "+218",
-    "+423",
-    "+370",
-    "+352",
-    "+853",
-    "+389",
-    "+261",
-    "+265",
-    "+60",
-    "+960",
-    "+223",
-    "+356",
-    "+692",
-    "+596",
-    "+222",
-    "+230",
-    "+262",
-    "+52",
-    "+691",
-    "+373",
-    "+377",
-    "+976",
-    "+382",
-
-    "+212",
-    "+258",
-    "+264",
-    "+674",
-    "+977",
-    "+31",
-    "+599",
-    "+687",
-    "+64",
-    "+505",
-    "+227",
-    "+234",
-    "+683",
-    "+672",
-    "+850",
-
-    "+47",
-    "+968",
-    "+92",
-    "+680",
-    "+970",
-    "+507",
-    "+675",
-    "+595",
-    "+51",
-    "+63",
-    "+870",
-    "+48",
-    "+351",
-
-    "+974",
-    "+242",
-    "+262",
-    "+40",
-    "+7",
-    "+250",
-    "+590",
-    "+290",
-
-    "+590",
-    "+508",
-
-    "+685",
-    "+378",
-    "+239",
-    "+966",
-    "+221",
-    "+381",
-    "+248",
-    "+232",
-    "+65",
-
-    "+421",
-    "+386",
-    "+677",
-    "+252",
-    "+27",
-    "+82",
-    "+211",
-    "+34",
-    "+94",
-    "+249",
-    "+597",
-    "+47",
-    "+268",
-    "+46",
-    "+41",
-    "+963",
-    "+886",
-    "+992",
-    "+255",
-    "+66",
-    "+670",
-    "+228",
-    "+690",
-    "+676",
-
-    "+216",
-    "+90",
-    "+993",
-
-    "+688",
-    "+256",
-    "+380",
-    "+971",
-    "+44",
-    "+1",
-    "+598",
-
-    "+998",
-    "+678",
-    "+58",
-    "+84",
-    "+681",
-    "+212",
-    "+967",
-    "+260",
-    "+263",
-    "+82",
   ];
 
   const country = [
@@ -793,6 +550,1027 @@ const Application = () => {
     "Yemen",
     "Zambia",
     "Zimbabwe",
+  ];
+
+  // "Australia",
+  // "Canada",
+  // "China",
+  // "Finland",
+  // "France",
+  // "Germany",
+  // "Ireland",
+  // "Italy",
+  // "Japan",
+  // "Malaysia",
+  // "Netherland",
+  // "Poland",
+  // "S. Africa",
+  // "S. Korea",
+  // "Singapore",
+  // "Spain",
+  // "Sweden",
+  // "Switzland",
+  // "Taiwan",
+  // "U.K.",
+  // "USA",
+
+  let total = [
+    {
+      Afghanistan: "Australia",
+      number: "+61",
+    },
+    {
+      Afghanistan: "Canada",
+      number: "+1",
+    },
+    {
+      Afghanistan: "China",
+      number: "+86",
+    },
+    {
+      Afghanistan: "Finland",
+      number: "+358",
+    },
+    {
+      Afghanistan: "France",
+      number: "+33",
+    },
+    {
+      Afghanistan: "Germany",
+      number: "+49",
+    },
+    {
+      Afghanistan: "Ireland",
+      number: "+353",
+    },
+    {
+      Afghanistan: "Italy",
+      number: "+39",
+    },
+    {
+      Afghanistan: "Japan",
+      number: "+81",
+    },
+    {
+      Afghanistan: "Malaysia",
+      number: "+60",
+    },
+    {
+      Afghanistan: "Netherlands",
+      number: "+31",
+    },
+    {
+      Afghanistan: "Poland",
+      number: "+48",
+    },
+    {
+      Afghanistan: "South Africa",
+      number: "+27",
+    },
+    {
+      Afghanistan: "South Korea",
+      number: "+82",
+    },
+    {
+      Afghanistan: "Singapore",
+      number: "+65",
+    },
+    {
+      Afghanistan: "Spain",
+      number: "+34",
+    },
+    {
+      Afghanistan: "Sweden",
+      number: "+46",
+    },
+    {
+      Afghanistan: "Switzerland",
+      number: "+41",
+    },
+    {
+      Afghanistan: "Taiwan",
+      number: "+886",
+    },
+    {
+      Afghanistan: "United Kingdom",
+      number: "+44",
+    },
+    {
+      Afghanistan: "United States",
+      number: "+1",
+    },
+    {
+      Afghanistan: "Albania",
+      number: "+355",
+    },
+    {
+      Afghanistan: "Algeria",
+      number: "+213",
+    },
+    {
+      Afghanistan: "American Samoa",
+      number: "+1 684",
+    },
+    {
+      Afghanistan: "Andorra",
+      number: "+376",
+    },
+    {
+      Afghanistan: "Angola",
+      number: "+244",
+    },
+    {
+      Afghanistan: "Anguilla",
+      number: "+1 264",
+    },
+    {
+      Afghanistan: "Antarctica",
+      number: "+64",
+    },
+    {
+      Afghanistan: "Antarctica",
+      number: "+672",
+    },
+    {
+      Afghanistan: "Antigua and Barbuda",
+      number: "+1 268",
+    },
+    {
+      Afghanistan: "Argentina",
+      number: "+54",
+    },
+    {
+      Afghanistan: "Armenia",
+      number: "+374",
+    },
+    {
+      Afghanistan: "Aruba",
+      number: "+297",
+    },
+    {
+      Afghanistan: "Ascension Island",
+      number: "+247",
+    },
+
+    {
+      Afghanistan: "Austria",
+      number: "+43",
+    },
+    {
+      Afghanistan: "Azerbaijan",
+      number: "+994",
+    },
+    {
+      Afghanistan: "Bahamas",
+      number: "+1 242",
+    },
+    {
+      Afghanistan: "Bahrain",
+      number: "+973",
+    },
+    {
+      Afghanistan: "Bangladesh",
+      number: "+880",
+    },
+    {
+      Afghanistan: "Barbados",
+      number: "+1 246",
+    },
+    {
+      Afghanistan: "Belarus",
+      number: "+375",
+    },
+    {
+      Afghanistan: "Belgium",
+      number: "+32",
+    },
+    {
+      Afghanistan: "Belize",
+      number: "+501",
+    },
+    {
+      Afghanistan: "Benin",
+      number: "+229",
+    },
+    {
+      Afghanistan: "Bermuda",
+      number: "+1 441",
+    },
+    {
+      Afghanistan: "Bhutan",
+      number: "+975",
+    },
+    {
+      Afghanistan: "Bolivia",
+      number: "+591",
+    },
+    {
+      Afghanistan: "Bosnia and Herzegovina",
+      number: "+387",
+    },
+    {
+      Afghanistan: "Botswana",
+      number: "+267",
+    },
+    {
+      Afghanistan: "Brazil",
+      number: "+55",
+    },
+    {
+      Afghanistan: "British Virgin Islands",
+      number: "+1 284",
+    },
+    {
+      Afghanistan: "Brunei",
+      number: "+673",
+    },
+    {
+      Afghanistan: "Bulgaria",
+      number: "+359",
+    },
+    {
+      Afghanistan: "Burkina Faso",
+      number: "+226",
+    },
+    {
+      Afghanistan: "Burma (Myanmar)",
+      number: "+95",
+    },
+    {
+      Afghanistan: "Burundi",
+      number: "+257",
+    },
+    {
+      Afghanistan: "Cambodia",
+      number: "+855",
+    },
+    {
+      Afghanistan: "Cameroon",
+      number: "+237",
+    },
+
+    {
+      Afghanistan: "Cape Verde",
+      number: "+238",
+    },
+    {
+      Afghanistan: "Cayman Islands",
+      number: "+1 345",
+    },
+    {
+      Afghanistan: "Central African Republic",
+      number: "+236",
+    },
+    {
+      Afghanistan: "Chad",
+      number: "+235",
+    },
+    {
+      Afghanistan: "Chile",
+      number: "+56",
+    },
+
+    {
+      Afghanistan: "Christmas Island",
+      number: "+61",
+    },
+    {
+      Afghanistan: "Cocos (Keeling) Islands",
+      number: "+61",
+    },
+    {
+      Afghanistan: "Colombia",
+      number: "+57",
+    },
+    {
+      Afghanistan: "Comoros",
+      number: "+269",
+    },
+    {
+      Afghanistan: "Congo",
+      number: "+242",
+    },
+    {
+      Afghanistan: "Cook Islands",
+      number: "+682",
+    },
+    {
+      Afghanistan: "Costa Rica",
+      number: "+506",
+    },
+    {
+      Afghanistan: "Croatia",
+      number: "+385",
+    },
+    {
+      Afghanistan: "Cuba",
+      number: "+53",
+    },
+    {
+      Afghanistan: "Cyprus",
+      number: "+357",
+    },
+    {
+      Afghanistan: "Czech Republic",
+      number: "+420",
+    },
+    {
+      Afghanistan: "Democratic Republic of the Congo",
+      number: "+243",
+    },
+    {
+      Afghanistan: "Denmark",
+      number: "+45",
+    },
+    {
+      Afghanistan: "Diego Garcia",
+      number: "+246",
+    },
+    {
+      Afghanistan: "Djibouti",
+      number: "+253",
+    },
+    {
+      Afghanistan: "Dominica",
+      number: "+1 767",
+    },
+    {
+      Afghanistan: "Dominican Republic",
+      number: "+1 809",
+    },
+    {
+      Afghanistan: "Dominican Republic",
+      number: "+1 829",
+    },
+    {
+      Afghanistan: "Dominican Republic",
+      number: "+1 849",
+    },
+    {
+      Afghanistan: "Ecuador",
+      number: "+593",
+    },
+    {
+      Afghanistan: "Egypt",
+      number: "+20",
+    },
+    {
+      Afghanistan: "El Salvador",
+      number: "+503",
+    },
+    {
+      Afghanistan: "Equatorial Guinea",
+      number: "+240",
+    },
+    {
+      Afghanistan: "Eritrea",
+      number: "+291",
+    },
+    {
+      Afghanistan: "Estonia",
+      number: "+372",
+    },
+    {
+      Afghanistan: "Ethiopia",
+      number: "+251",
+    },
+    {
+      Afghanistan: "Falkland Islands",
+      number: "+500",
+    },
+    {
+      Afghanistan: "Faroe Islands",
+      number: "+298",
+    },
+    {
+      Afghanistan: "Fiji",
+      number: "+679",
+    },
+
+    {
+      Afghanistan: "French Guiana",
+      number: "+594",
+    },
+    {
+      Afghanistan: "French Polynesia",
+      number: "+689",
+    },
+    {
+      Afghanistan: "Gabon",
+      number: "+241",
+    },
+    {
+      Afghanistan: "Gambia",
+      number: "+220",
+    },
+    {
+      Afghanistan: "Georgia",
+      number: "+995",
+    },
+
+    {
+      Afghanistan: "Ghana",
+      number: "+233",
+    },
+    {
+      Afghanistan: "Gibraltar",
+      number: "+350",
+    },
+    {
+      Afghanistan: "Greece",
+      number: "+30",
+    },
+    {
+      Afghanistan: "Greenland",
+      number: "+299",
+    },
+    {
+      Afghanistan: "Grenada",
+      number: "+1 473",
+    },
+    {
+      Afghanistan: "Guadeloupe",
+      number: "+590",
+    },
+    {
+      Afghanistan: "Guam",
+      number: "+1 671",
+    },
+    {
+      Afghanistan: "Guatemala",
+      number: "+502",
+    },
+    {
+      Afghanistan: "Guinea",
+      number: "+224",
+    },
+    {
+      Afghanistan: "Guinea-Bissau",
+      number: "+245",
+    },
+    {
+      Afghanistan: "Guyana",
+      number: "+592",
+    },
+    {
+      Afghanistan: "Haiti",
+      number: "+509",
+    },
+    {
+      Afghanistan: "Holy See (Vatican City)",
+      number: "+39",
+    },
+    {
+      Afghanistan: "Honduras",
+      number: "+504",
+    },
+    {
+      Afghanistan: "Hong Kong",
+      number: "+852",
+    },
+    {
+      Afghanistan: "Hungary",
+      number: "+36",
+    },
+    {
+      Afghanistan: "Iceland",
+      number: "+354",
+    },
+    {
+      Afghanistan: "India",
+      number: "+91",
+    },
+    {
+      Afghanistan: "Indonesia",
+      number: "+62",
+    },
+    {
+      Afghanistan: "Iran",
+      number: "+98",
+    },
+    {
+      Afghanistan: "Iraq",
+      number: "+964",
+    },
+
+    {
+      Afghanistan: "Isle of Man",
+      number: "+44",
+    },
+    {
+      Afghanistan: "Israel",
+      number: "+972",
+    },
+
+    {
+      Afghanistan: "Ivory Coast (Côte d'Ivoire)",
+      number: "+225",
+    },
+    {
+      Afghanistan: "Jamaica",
+      number: "+1 876",
+    },
+
+    {
+      Afghanistan: "Jersey",
+      number: "+44",
+    },
+    {
+      Afghanistan: "Jordan",
+      number: "+962",
+    },
+    {
+      Afghanistan: "Kazakhstan",
+      number: "+7",
+    },
+    {
+      Afghanistan: "Kenya",
+      number: "+254",
+    },
+    {
+      Afghanistan: "Kiribati",
+      number: "+686",
+    },
+    {
+      Afghanistan: "Kuwait",
+      number: "+965",
+    },
+    {
+      Afghanistan: "Kyrgyzstan",
+      number: "+996",
+    },
+    {
+      Afghanistan: "Laos",
+      number: "+856",
+    },
+    {
+      Afghanistan: "Latvia",
+      number: "+371",
+    },
+    {
+      Afghanistan: "Lebanon",
+      number: "+961",
+    },
+    {
+      Afghanistan: "Lesotho",
+      number: "+266",
+    },
+    {
+      Afghanistan: "Liberia",
+      number: "+231",
+    },
+    {
+      Afghanistan: "Libya",
+      number: "+218",
+    },
+    {
+      Afghanistan: "Liechtenstein",
+      number: "+423",
+    },
+    {
+      Afghanistan: "Lithuania",
+      number: "+370",
+    },
+    {
+      Afghanistan: "Luxembourg",
+      number: "+352",
+    },
+    {
+      Afghanistan: "Macau",
+      number: "+853",
+    },
+    {
+      Afghanistan: "Macedonia",
+      number: "+389",
+    },
+    {
+      Afghanistan: "Madagascar",
+      number: "+261",
+    },
+    {
+      Afghanistan: "Malawi",
+      number: "+265",
+    },
+
+    {
+      Afghanistan: "Maldives",
+      number: "+960",
+    },
+    {
+      Afghanistan: "Mali",
+      number: "+223",
+    },
+    {
+      Afghanistan: "Malta",
+      number: "+356",
+    },
+    {
+      Afghanistan: "Marshall Islands",
+      number: "+692",
+    },
+    {
+      Afghanistan: "Martinique",
+      number: "+596",
+    },
+    {
+      Afghanistan: "Mauritania",
+      number: "+222",
+    },
+    {
+      Afghanistan: "Mauritius",
+      number: "+230",
+    },
+    {
+      Afghanistan: "Mayotte",
+      number: "+262",
+    },
+    {
+      Afghanistan: "Mexico",
+      number: "+52",
+    },
+    {
+      Afghanistan: "Micronesia",
+      number: "+691",
+    },
+    {
+      Afghanistan: "Moldova",
+      number: "+373",
+    },
+    {
+      Afghanistan: "Monaco",
+      number: "+377",
+    },
+    {
+      Afghanistan: "Mongolia",
+      number: "+976",
+    },
+    {
+      Afghanistan: "Montenegro",
+      number: "+382",
+    },
+    {
+      Afghanistan: "Montserrat",
+      number: "+1 664",
+    },
+    {
+      Afghanistan: "Morocco",
+      number: "+212",
+    },
+    {
+      Afghanistan: "Mozambique",
+      number: "+258",
+    },
+    {
+      Afghanistan: "Namibia",
+      number: "+264",
+    },
+    {
+      Afghanistan: "Nauru",
+      number: "+674",
+    },
+    {
+      Afghanistan: "Nepal",
+      number: "+977",
+    },
+    {
+      Afghanistan: "Netherlands Antilles",
+      number: "+599",
+    },
+    {
+      Afghanistan: "New Caledonia",
+      number: "+687",
+    },
+    {
+      Afghanistan: "New Zealand",
+      number: "+64",
+    },
+    {
+      Afghanistan: "Nicaragua",
+      number: "+505",
+    },
+    {
+      Afghanistan: "Niger",
+      number: "+227",
+    },
+    {
+      Afghanistan: "Nigeria",
+      number: "+234",
+    },
+    {
+      Afghanistan: "Niue",
+      number: "+683",
+    },
+    {
+      Afghanistan: "Norfolk Island",
+      number: "+672",
+    },
+    {
+      Afghanistan: "North Korea",
+      number: "+850",
+    },
+    {
+      Afghanistan: "Northern Mariana Islands",
+      number: "+1 670",
+    },
+    {
+      Afghanistan: "Norway",
+      number: "+47",
+    },
+    {
+      Afghanistan: "Oman",
+      number: "+968",
+    },
+    {
+      Afghanistan: "Pakistan",
+      number: "+92",
+    },
+    {
+      Afghanistan: "Palau",
+      number: "+680",
+    },
+    {
+      Afghanistan: "Palestine",
+      number: "+970",
+    },
+    {
+      Afghanistan: "Panama",
+      number: "+507",
+    },
+    {
+      Afghanistan: "Papua New Guinea",
+      number: "+675",
+    },
+    {
+      Afghanistan: "Paraguay",
+      number: "+595",
+    },
+    {
+      Afghanistan: "Peru",
+      number: "+51",
+    },
+    {
+      Afghanistan: "Philippines",
+      number: "+63",
+    },
+    {
+      Afghanistan: "Pitcairn Islands",
+      number: "+870",
+    },
+
+    {
+      Afghanistan: "Portugal",
+      number: "+351",
+    },
+    {
+      Afghanistan: "Puerto Rico",
+      number: "+1 939",
+    },
+    {
+      Afghanistan: "Puerto Rico",
+      number: "+1 787",
+    },
+    {
+      Afghanistan: "Qatar",
+      number: "+974",
+    },
+    {
+      Afghanistan: "Republic of the Congo",
+      number: "+242",
+    },
+    {
+      Afghanistan: "Reunion Island",
+      number: "+262",
+    },
+    {
+      Afghanistan: "Romania",
+      number: "+40",
+    },
+    {
+      Afghanistan: "Russia",
+      number: "+7",
+    },
+    {
+      Afghanistan: "Rwanda",
+      number: "+250",
+    },
+    {
+      Afghanistan: "Saint Barthelemy",
+      number: "+590",
+    },
+    {
+      Afghanistan: "Saint Helena",
+      number: "+290",
+    },
+    {
+      Afghanistan: "Saint Kitts and Nevis",
+      number: "+1 869",
+    },
+    {
+      Afghanistan: "Saint Lucia",
+      number: "+1 758",
+    },
+    {
+      Afghanistan: "Saint Martin",
+      number: "+590",
+    },
+    {
+      Afghanistan: "Saint Pierre and Miquelon",
+      number: "+508",
+    },
+    {
+      Afghanistan: "Saint Vincent and the Grenadines",
+      number: "+1 784",
+    },
+    {
+      Afghanistan: "Samoa",
+      number: "+685",
+    },
+    {
+      Afghanistan: "San Marino",
+      number: "+378",
+    },
+    {
+      Afghanistan: "Sao Tome and Principe",
+      number: "+239",
+    },
+    {
+      Afghanistan: "Saudi Arabia",
+      number: "+966",
+    },
+    {
+      Afghanistan: "Senegal",
+      number: "+221",
+    },
+    {
+      Afghanistan: "Serbia",
+      number: "+381",
+    },
+    {
+      Afghanistan: "Seychelles",
+      number: "+248",
+    },
+    {
+      Afghanistan: "Sierra Leone",
+      number: "+232",
+    },
+
+    {
+      Afghanistan: "Sint Maarten",
+      number: "+1 721",
+    },
+    {
+      Afghanistan: "Slovakia",
+      number: "+421",
+    },
+    {
+      Afghanistan: "Slovenia",
+      number: "+386",
+    },
+    {
+      Afghanistan: "Solomon Islands",
+      number: "+677",
+    },
+    {
+      Afghanistan: "Somalia",
+      number: "+252",
+    },
+    {
+      Afghanistan: "South Sudan",
+      number: "+211",
+    },
+
+    {
+      Afghanistan: "Sri Lanka",
+      number: "+94",
+    },
+    {
+      Afghanistan: "Sudan",
+      number: "+249",
+    },
+    {
+      Afghanistan: "Suriname",
+      number: "+597",
+    },
+    {
+      Afghanistan: "Svalbard",
+      number: "+47",
+    },
+    {
+      Afghanistan: "Swaziland",
+      number: "+268",
+    },
+    {
+      Afghanistan: "Syria",
+      number: "+963",
+    },
+    {
+      Afghanistan: "Tajikistan",
+      number: "+992",
+    },
+    {
+      Afghanistan: "Tanzania",
+      number: "+255",
+    },
+    {
+      Afghanistan: "Thailand",
+      number: "+66",
+    },
+    {
+      Afghanistan: "Timor-Leste (East Timor)",
+      number: "+670",
+    },
+    {
+      Afghanistan: "Togo",
+      number: "+228",
+    },
+    {
+      Afghanistan: "Tokelau",
+      number: "+690",
+    },
+    {
+      Afghanistan: "Tonga Islands",
+      number: "+676",
+    },
+    {
+      Afghanistan: "Trinidad and Tobago",
+      number: "+1 868",
+    },
+    {
+      Afghanistan: "Tunisia",
+      number: "+216",
+    },
+    {
+      Afghanistan: "Turkey",
+      number: "+90",
+    },
+    {
+      Afghanistan: "Turkmenistan",
+      number: "+993",
+    },
+    {
+      Afghanistan: "Turks and Caicos Islands",
+      number: "+1 649",
+    },
+    {
+      Afghanistan: "Tuvalu",
+      number: "+688",
+    },
+    {
+      Afghanistan: "Uganda",
+      number: "+256",
+    },
+    {
+      Afghanistan: "Ukraine",
+      number: "+380",
+    },
+    {
+      Afghanistan: "United Arab Emirates",
+      number: "+971",
+    },
+    {
+      Afghanistan: "Uruguay",
+      number: "+598",
+    },
+    {
+      Afghanistan: "US Virgin Islands",
+      number: "+1 340",
+    },
+    {
+      Afghanistan: "Uzbekistan",
+      number: "+998",
+    },
+    {
+      Afghanistan: "Vanuatu",
+      number: "+678",
+    },
+    {
+      Afghanistan: "Venezuela",
+      number: "+58",
+    },
+    {
+      Afghanistan: "Vietnam",
+      number: "+84",
+    },
+    {
+      Afghanistan: "Wallis and Futuna",
+      number: "+681",
+    },
+    {
+      Afghanistan: "Western Sahara",
+      number: "+212",
+    },
+    {
+      Afghanistan: "Yemen",
+      number: "+967",
+    },
+    {
+      Afghanistan: "Zambia",
+      number: "+260",
+    },
+    {
+      Afghanistan: "Zimbabwe",
+      number: "+263",
+    },
   ];
 
   return (
@@ -1068,7 +1846,7 @@ const Application = () => {
                   </Form.Item>
                 </Wrapper>
               </Wrapper>
-              <Wrapper al={`flex-start`}>
+              {/* <Wrapper al={`flex-start`}>
                 <Text
                   fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
@@ -1092,7 +1870,7 @@ const Application = () => {
                     </CustomSelect>
                   </Form.Item>
                 </Wrapper>
-              </Wrapper>
+              </Wrapper> */}
               <Wrapper al={`flex-start`}>
                 <Text
                   fontSize={width < 700 ? `16px` : `18px`}
@@ -1120,39 +1898,27 @@ const Application = () => {
                   Phone number
                 </Text>
                 <Wrapper dr={`row`} al={`flex-start`}>
-                  <Wrapper width={`20%`} padding={`0 8px 0 0`}>
+                  <Wrapper
+                    width={width < 700 ? `60%` : `60%`}
+                    padding={`0 8px 0 0`}>
                     <Form.Item name="phoneNumber" rules={[{ required: true }]}>
                       <CustomSelect
-                        onChange={(e) => setSelectState(e)}
                         suffixIcon={() => {
                           return <CaretDownOutlined />;
                         }}>
-                        <Select.Option value={`직접입력`}>
-                          직접입력
-                        </Select.Option>
-                        {firstPhoneArr &&
-                          firstPhoneArr.map((data, idx) => {
+                        {total &&
+                          total.map((data, idx) => {
                             return (
-                              <Select.Option key={idx} value={data}>
-                                {data}
+                              <Select.Option value={JSON.stringify(data)}>
+                                {`${data.number} ${data.Afghanistan}`}
                               </Select.Option>
                             );
                           })}
                       </CustomSelect>
                     </Form.Item>
-                    {console.log(selectState)}
                   </Wrapper>
-                  {selectState === "직접입력" && (
-                    <Wrapper width={`20%`} padding={`0 8px 0 0`}>
-                      <Form.Item
-                        name={`phoneNumberInput`}
-                        style={{ width: `auto` }}>
-                        <CusotmInput width={`100%`} />
-                      </Form.Item>
-                    </Wrapper>
-                  )}
 
-                  <Wrapper width={selectState === `직접입력` ? `60%` : `80%`}>
+                  <Wrapper width={width < 700 ? `50%` : `40%`}>
                     <Form.Item name="phoneNumber2" rules={[{ required: true }]}>
                       <CustomInputNumber type="number" />
                     </Form.Item>

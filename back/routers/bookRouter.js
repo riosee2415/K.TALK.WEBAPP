@@ -231,6 +231,12 @@ router.patch("/update", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의입니다.");
     }
 
+    if (exLecture.UserId !== req.user.id) {
+      return res
+        .status(401)
+        .send("자신의 강의에 등록된 교재만 수정할 수 있습니다.");
+    }
+
     const updateResult = await Book.update(
       {
         thumbnail,
@@ -268,6 +274,107 @@ router.delete("/delete/:bookId", isAdminCheck, async (req, res, next) => {
 
     if (!exBook) {
       return res.status(401).send("존재하지 않는 교재입니다.");
+    }
+
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(exBook.LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의입니다.");
+    }
+
+    if (exLecture.UserId !== req.user.id) {
+      return res
+        .status(401)
+        .send("자신의 강의에 등록된 교재만 삭제할 수 있습니다.");
+    }
+
+    const deleteResult = await Book.update(
+      {
+        isDelete: true,
+      },
+      {
+        where: { id: parseInt(bookId) },
+      }
+    );
+
+    if (deleteResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("교재를 삭제할 수 없습니다.");
+  }
+});
+
+router.patch("/admin/update", isAdminCheck, async (req, res, next) => {
+  const { id, thumbnail, title, file, LectureId } = req.body;
+
+  try {
+    const exBook = await Book.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    if (!exBook) {
+      return res.status(401).send("존재하지 않는 교재입니다.");
+    }
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의입니다.");
+    }
+
+    const updateResult = await Book.update(
+      {
+        thumbnail,
+        title,
+        file,
+        LectureId: parseInt(LectureId),
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("교재를 수정할 수 없습니다.");
+  }
+});
+
+router.delete("/admin/delete/:bookId", isAdminCheck, async (req, res, next) => {
+  const { bookId } = req.params;
+
+  if (isNanCheck(bookId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+
+  try {
+    const exBook = await Book.findOne({
+      where: { id: parseInt(bookId) },
+    });
+
+    if (!exBook) {
+      return res.status(401).send("존재하지 않는 교재입니다.");
+    }
+
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(exBook.LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의입니다.");
     }
 
     const deleteResult = await Book.update(

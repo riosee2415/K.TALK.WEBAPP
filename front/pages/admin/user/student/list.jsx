@@ -521,10 +521,10 @@ const List = () => {
             : parseInt(data.partLecture.split(",")[2]) * 7,
           endDate: data.date
             ? moment()
-                .add(parseInt(data.date) * 7, "days")
+                .add(parseInt(data.date * 7 - 1), "days")
                 .format("YYYY-MM-DD")
             : moment()
-                .add(parseInt(data.partLecture.split(",")[2]) * 7, "days")
+                .add(parseInt(data.partLecture.split(",")[2] * 7 - 1), "days")
                 .format("YYYY-MM-DD"),
           PaymentId: data.partLecture ? data.partLecture.split(",")[0] : null,
         },
