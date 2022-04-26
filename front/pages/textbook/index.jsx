@@ -749,7 +749,7 @@ const Index = () => {
             <CustomPage
               size="small"
               current={currentPage}
-              total={bookMaxLength * 10}
+              total={bookMaxLength * 12}
               onChange={(page) => setCurrentPage(page)}
             />
           </RsWrapper>

@@ -17,8 +17,6 @@ import {
   Image,
   SpanText,
   CommonButton,
-  TextInput,
-  TextArea,
 } from "../../../components/commonComponents";
 import Theme from "../../../components/Theme";
 
@@ -28,15 +26,10 @@ import {
   LECTURE_COMUTE_REQUEST,
   LECTURE_DETAIL_REQUEST,
   LECTURE_DIARY_ADMIN_LIST_REQUEST,
-  LECTURE_DIARY_LIST_REQUEST,
   LECTURE_MEMO_STU_LIST_REQUEST,
-  LECTURE_STUDENT_LIST_REQUEST,
 } from "../../../reducers/lecture";
 import moment from "moment";
-import {
-  BOOK_LECTURE_LIST_REQUEST,
-  BOOK_LIST_REQUEST,
-} from "../../../reducers/book";
+import { BOOK_LIST_REQUEST } from "../../../reducers/book";
 import { saveAs } from "file-saver";
 import useWidth from "../../../hooks/useWidth";
 import { PARTICIPANT_ADMIN_LIST_REQUEST } from "../../../reducers/participant";
@@ -96,7 +89,7 @@ const DetailClass = () => {
     lectureCommuteList,
   } = useSelector((state) => state.lecture);
   const { partAdminList } = useSelector((state) => state.participant);
-  const { bookLecture } = useSelector((state) => state.book);
+  const { bookList, bookMaxLength } = useSelector((state) => state.book);
   const { noticeLectureList } = useSelector((state) => state.notice);
   const { messageLectureList, messageLectureLastPage } = useSelector(
     (state) => state.message
@@ -104,6 +97,7 @@ const DetailClass = () => {
   const dispatch = useDispatch();
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentBookPage, setCurrentBookPage] = useState(1);
 
   const [memoModal, setMemoModal] = useState(false);
   const [currentStudentId, setCurrentStudentId] = useState(null);
@@ -205,6 +199,17 @@ const DetailClass = () => {
     });
   }, [router.query, currentMessagePage]);
 
+  useEffect(() => {
+    dispatch({
+      type: BOOK_LIST_REQUEST,
+      data: {
+        LectureId: router.query.id,
+        search: "",
+        page: currentBookPage,
+      },
+    });
+  }, [currentBookPage]);
+
   ////// HANDLER //////
 
   const fileDownloadHandler = useCallback(async (filePath) => {
@@ -250,11 +255,9 @@ const DetailClass = () => {
   }, []);
 
   const detailBookOpen = useCallback(() => {
-    setDetailBook(bookLecture);
+    setDetailBook(bookList);
     setBookModal(true);
-  }, [bookLecture]);
-
-  // console.log(bookLecture);
+  }, [bookList]);
 
   const detailBookClose = useCallback(() => {
     setDetailBook(null);
@@ -341,7 +344,8 @@ const DetailClass = () => {
         <Button
           size={`small`}
           type={`primary`}
-          onClick={() => detailCommutesOpen(data)}>
+          onClick={() => detailCommutesOpen(data)}
+        >
           상세보기
         </Button>
       ),
@@ -352,7 +356,8 @@ const DetailClass = () => {
         <Button
           size={`small`}
           type={`primary`}
-          onClick={() => detailMemoOpen(data)}>
+          onClick={() => detailMemoOpen(data)}
+        >
           메모 보기
         </Button>
       ),
@@ -384,7 +389,8 @@ const DetailClass = () => {
         <Button
           size={`small`}
           type={`primary`}
-          onClick={() => lecMemoOpen(data)}>
+          onClick={() => lecMemoOpen(data)}
+        >
           메모 보기
         </Button>
       ),
@@ -424,7 +430,7 @@ const DetailClass = () => {
       render: (data) => {
         return (
           <Wrapper width={`100px`}>
-            <Image src={data.Book.thumbnail} alt={`thumbnail`} />
+            <Image src={data.thumbnail} alt={`thumbnail`} />
           </Wrapper>
         );
       },
@@ -432,7 +438,7 @@ const DetailClass = () => {
     {
       title: "제목",
       render: (data) => {
-        return <Text>{data.Book.title}</Text>;
+        return <Text>{data.title}</Text>;
       },
     },
     {
@@ -442,7 +448,8 @@ const DetailClass = () => {
           <Button
             type={`primary`}
             size={`small`}
-            onClick={() => fileDownloadHandler(data.Book.file)}>
+            onClick={() => fileDownloadHandler(data.file)}
+          >
             다운로드
           </Button>
         );
@@ -466,7 +473,8 @@ const DetailClass = () => {
           <Button
             type={`primary`}
             size={`small`}
-            onClick={() => detailMemoContentOpen(data)}>
+            onClick={() => detailMemoContentOpen(data)}
+          >
             내용 보기
           </Button>
         );
@@ -515,7 +523,8 @@ const DetailClass = () => {
         <Button
           type="primary"
           size={`small`}
-          onClick={() => noticeToggle(data)}>
+          onClick={() => noticeToggle(data)}
+        >
           상세보기
         </Button>
       ),
@@ -579,7 +588,8 @@ const DetailClass = () => {
               <Text
                 fontSize={`16px`}
                 color={Theme.grey2_C}
-                margin={`0 0 0 15px`}>
+                margin={`0 0 0 15px`}
+              >
                 NO.{lectureDetail && lectureDetail[0].number}
               </Text>
             </Wrapper>
@@ -591,7 +601,8 @@ const DetailClass = () => {
               margin={`0 6px`}
               kindOf={`white`}
               padding={`0`}
-              onClick={() => moveLinkHandler(`/admin`)}>
+              onClick={() => moveLinkHandler(`/admin`)}
+            >
               강의 목록
             </CommonButton>
             <CommonButton
@@ -600,7 +611,8 @@ const DetailClass = () => {
               margin={`0 6px`}
               kindOf={`white`}
               padding={`0`}
-              onClick={() => moveLinkHandler(`/admin/board/notice/list`)}>
+              onClick={() => moveLinkHandler(`/admin/board/notice/list`)}
+            >
               게시판
             </CommonButton>
             <CommonButton
@@ -609,7 +621,8 @@ const DetailClass = () => {
               margin={`0 6px`}
               kindOf={`white`}
               padding={`0`}
-              onClick={() => moveLinkHandler(`/admin/board/message/list`)}>
+              onClick={() => moveLinkHandler(`/admin/board/message/list`)}
+            >
               쪽지
             </CommonButton>
           </Wrapper>
@@ -623,7 +636,8 @@ const DetailClass = () => {
           bgColor={Theme.white_C}
           radius={`10px`}
           shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
-          margin={`0 0 32px`}>
+          margin={`0 0 32px`}
+        >
           <Wrapper width={`auto`} al={`flex-start`}>
             <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
               <Wrapper width={`auto`} margin={`0 10px 0 0`} padding={`8px`}>
@@ -639,7 +653,8 @@ const DetailClass = () => {
                 <SpanText
                   fontWeight={`bold`}
                   color={Theme.red_C}
-                  margin={`0 0 0 15px`}>
+                  margin={`0 0 0 15px`}
+                >
                   {lectureDetail &&
                     stepEnd(lectureDetail[0].endDate, lectureDetail[0].day)}
                   회
@@ -654,7 +669,8 @@ const DetailClass = () => {
             width={`auto`}
             dr={`row`}
             ju={`flex-start`}
-            margin={`0 100px 0 72px`}>
+            margin={`0 100px 0 72px`}
+          >
             <Wrapper width={`auto`} margin={`0 10px 0 0`} padding={`8px`}>
               <Image
                 width={`18px`}
@@ -688,13 +704,15 @@ const DetailClass = () => {
             al={`flex-start`}
             fontSize={`16px`}
             margin={`10px 0 0`}
-            padding={`0 0 0 44px`}>
+            padding={`0 0 0 44px`}
+          >
             <Wrapper dr={`row`} ju={`flex-start`}>
               <Text
                 fontWeight={`bold`}
                 width={`90px`}
                 margin={`0 20px 0 0`}
-                color={Theme.black_C}>
+                color={Theme.black_C}
+              >
                 ZOOM LINK
               </Text>
               {lectureDetail && lectureDetail[0].zoomLink
@@ -750,7 +768,8 @@ const DetailClass = () => {
           dr={`row`}
           ju={`space-between`}
           al={`flex-start`}
-          margin={`30px 0 0`}>
+          margin={`30px 0 0`}
+        >
           <Wrapper width={`49%`} al={`flex-start`}>
             <Text fontSize={`18px`} fontWeight={`bold`}>
               게시판
@@ -815,7 +834,8 @@ const DetailClass = () => {
       <Modal
         visible={commutesModal}
         footer={null}
-        onCancel={detailCommutesClose}>
+        onCancel={detailCommutesClose}
+      >
         <Wrapper al={`flex-start`}>
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
             출석 기록
@@ -841,7 +861,8 @@ const DetailClass = () => {
         footer={null}
         onCancel={detailMemoContentClose}
         width={800}
-        title={`메모 내용`}>
+        title={`메모 내용`}
+      >
         <Wrapper al={`flex-start`}>
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
             {detailMemo && detailMemo.username} &nbsp;| &nbsp;
@@ -864,7 +885,8 @@ const DetailClass = () => {
         footer={null}
         onCancel={lecMemoClose}
         width={600}
-        title={`메모 내용`}>
+        title={`메모 내용`}
+      >
         <Wrapper al={`flex-start`}>
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
             {lecMemoData && lecMemoData.createdAt.slice(0, 10)}
@@ -885,7 +907,8 @@ const DetailClass = () => {
         visible={bookModal}
         footer={null}
         onCancel={detailBookClose}
-        width={width < 700 ? `80%` : 700}>
+        width={width < 700 ? `80%` : 700}
+      >
         <Wrapper al={`flex-start`}>
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
             교재
@@ -895,7 +918,13 @@ const DetailClass = () => {
               style={{ width: `100%` }}
               size={`small`}
               columns={bookColumns}
-              dataSource={bookLecture}
+              dataSource={bookList}
+              pagination={{
+                pageSize: 12,
+                total: bookMaxLength * 12,
+                onChange: (page) => setCurrentBookPage(page),
+                pageSize: 12,
+              }}
             />
           </Wrapper>
         </Wrapper>
@@ -905,34 +934,32 @@ const DetailClass = () => {
         visible={noticeModal}
         onCancel={() => noticeToggle(null)}
         footer={null}
-        title={`게시글 자세히 보기`}>
-        <Wrapper>
-          <Wrapper dr={`row`}>
-            <Text>작성일 : </Text>
+        title={`게시글 자세히 보기`}
+      >
+        <Wrapper al={`flex-start`}>
+          <Wrapper dr={`row`} ju={`flex-start`}>
+            <Text fontWeight={`700`}>작성일 : </Text>
             <Text>{noticeDetail && noticeDetail.createdAt.slice(0, 13)}</Text>
           </Wrapper>
 
-          <Wrapper dr={`row`}>
-            <Text>제목 : </Text>
+          <Wrapper dr={`row`} ju={`flex-start`}>
+            <Text fontWeight={`700`}>제목 : </Text>
             <Text>{noticeDetail && noticeDetail.title}</Text>
           </Wrapper>
 
-          <Wrapper dr={`row`}>
-            <Text>작성자 : </Text>
+          <Wrapper dr={`row`} ju={`flex-start`}>
+            <Text fontWeight={`700`}>작성자 : </Text>
             <Text>{noticeDetail && noticeDetail.author}</Text>
           </Wrapper>
 
-          <Wrapper dr={`row`}>
-            <Text>내용 : </Text>
+          <Wrapper dr={`row`} ju={`flex-start`}>
+            <Text fontWeight={`700`}>내용</Text>
             <Wrapper al={`flex-start`} ju={`flex-start`}>
-              {noticeDetail &&
-                noticeDetail.content.split(`\n`).map((data) => {
-                  return (
-                    <SpanText>
-                      {data} <br />
-                    </SpanText>
-                  );
-                })}
+              <Text
+                dangerouslySetInnerHTML={{
+                  __html: noticeDetail && noticeDetail.content,
+                }}
+              ></Text>
             </Wrapper>
           </Wrapper>
         </Wrapper>
@@ -942,17 +969,34 @@ const DetailClass = () => {
         visible={messageModal}
         onCancel={() => messageToggle(null)}
         footer={null}
-        title={`쪽지 자세히 보기`}>
-        <Wrapper al={`flex-start`} ju={`flex-start`}>
-          {messageDetail &&
-            messageDetail.content.split(`\n`).map((data) => {
-              return (
-                <Text>
-                  {data}
-                  <br />
-                </Text>
-              );
-            })}
+        title={`쪽지 자세히 보기`}
+      >
+        <Wrapper al={`flex-start`}>
+          <Wrapper dr={`row`} ju={`flex-start`}>
+            <Text fontWeight={`700`}>작성일 : </Text>
+            <Text>{messageDetail && messageDetail.createdAt.slice(0, 13)}</Text>
+          </Wrapper>
+
+          <Wrapper dr={`row`} ju={`flex-start`}>
+            <Text fontWeight={`700`}>제목 : </Text>
+            <Text>{messageDetail && messageDetail.title}</Text>
+          </Wrapper>
+
+          <Wrapper dr={`row`} ju={`flex-start`}>
+            <Text fontWeight={`700`}>작성자 : </Text>
+            <Text>{messageDetail && messageDetail.author}</Text>
+          </Wrapper>
+
+          <Wrapper dr={`row`} ju={`flex-start`}>
+            <Text fontWeight={`700`}>내용</Text>
+            <Wrapper al={`flex-start`} ju={`flex-start`}>
+              <Text
+                dangerouslySetInnerHTML={{
+                  __html: messageDetail && messageDetail.content,
+                }}
+              ></Text>
+            </Wrapper>
+          </Wrapper>
         </Wrapper>
       </Modal>
     </AdminLayout>
