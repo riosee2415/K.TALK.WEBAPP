@@ -64,10 +64,10 @@ router.post("/list", async (req, res, next) => {
             A.title,
             A.LectureId,
             A.file,
-            B.value
+            B.course
       FROM	books					    A
      INNER
-      JOIN	bookFolders 			B
+      JOIN	lectures 			    B
         ON	A.LectureId = B.id
      WHERE	1 = 1
        AND	A.isDelete = FALSE
@@ -82,10 +82,10 @@ router.post("/list", async (req, res, next) => {
             A.title,
             A.LectureId,
             A.file,
-            B.value
+            B.course
       FROM	books					    A
      INNER
-      JOIN	bookFolders 			B
+      JOIN	lectures 			    B
         ON	A.LectureId = B.id
      WHERE	1 = 1
        AND	A.isDelete = FALSE
@@ -149,11 +149,11 @@ router.get("/detail/:bookId", async (req, res, next) => {
             A.title,
             A.LectureId,
             A.file,
-            B.value
+            B.course
       FROM	books					    A
      INNER
       JOIN	lectures 			    B
-        ON	A.BookFolderId = B.id
+        ON	A.LectureId = B.id
      WHERE	1 = 1
        AND	A.isDelete = FALSE
        AND	B.isDelete = FALSE
