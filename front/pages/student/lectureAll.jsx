@@ -551,6 +551,10 @@ const LectureAll = () => {
   const DDay = useCallback((startDate, endDate, count, lecDate, day) => {
     let dir = 0;
 
+    console.log(startDate, "start");
+    console.log(endDate);
+    console.log(day);
+
     let startDay = moment
       .duration(moment(startDate).diff(moment().format("YYYY-MM-DD")))
       .asDays();
@@ -627,14 +631,10 @@ const LectureAll = () => {
     (startDate, endDate, count, lecDate, day) => {
       let dir = 0;
 
-      console.log(startDate, "start");
-      console.log(endDate);
-      console.log(day);
-
       const save = Math.abs(
         moment
-          .duration(moment().diff(moment(startDate, "YYYY-MM-DD")))
-          .asDays() - 1
+          .duration(moment("2022-05-10").diff(moment(startDate, "YYYY-MM-DD")))
+          .asDays()
       );
 
       let check = parseInt(
@@ -652,10 +652,8 @@ const LectureAll = () => {
       const arr = ["일", "월", "화", "수", "목", "금", "토"];
       let add = 0;
 
-      for (let i = 0; i < dir; i++) {
-        let saveDay = moment(startDate)
-          .add(i + 1, "days")
-          .day();
+      for (let i = 0; i <= dir; i++) {
+        let saveDay = moment(startDate).add(i, "days").day();
 
         const saveResult = day.includes(arr[saveDay]);
 
@@ -1195,10 +1193,11 @@ const LectureAll = () => {
                                   |
                                 </Text>
 
-                                {console.log(data, "data!@!")}
                                 <Text lineHeight={`1.19`}>
                                   {`강의 수 : ${stepHanlder2(
-                                    moment(data.createdAt).format("YYYY-MM-DD"),
+                                    moment(data.PartCreatedAt).format(
+                                      "YYYY-MM-DD"
+                                    ),
                                     data.endDate,
                                     data.count,
                                     data.date / 7,
@@ -1249,9 +1248,19 @@ const LectureAll = () => {
                                       fontWeight={`bold`}
                                       color={Theme.red_C}
                                       margin={`0 0 0 15px`}>
-                                      {`${
-                                        DDay(
-                                          moment(data.createdAt).format(
+                                      {stepHanlder2(
+                                        moment(data.PartCreatedAt).format(
+                                          "YYYY-MM-DD"
+                                        ),
+                                        data.endDate,
+                                        data.count,
+                                        data.date / 7,
+                                        data.day
+                                      ) -
+                                        (data.date / 7) * data.count}
+                                      {/* {Math.abs(
+                                        stepHanlder2(
+                                          moment(data.PartCreatedAt).format(
                                             "YYYY-MM-DD"
                                           ),
                                           data.endDate,
@@ -1259,16 +1268,8 @@ const LectureAll = () => {
                                           data.date / 7,
                                           data.day
                                         ) -
-                                        stepHanlder2(
-                                          moment(data.createdAt).format(
-                                            "YYYY-MM-DD"
-                                          ),
-                                          data.endDate,
-                                          data.count,
-                                          data.date / 7,
-                                          data.day
-                                        )
-                                      } `}
+                                          (data.date / 7) * data.count
+                                      )} */}
                                       회
                                     </SpanText>
                                   </Text>
