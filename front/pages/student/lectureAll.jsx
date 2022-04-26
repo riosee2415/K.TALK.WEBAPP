@@ -627,6 +627,10 @@ const LectureAll = () => {
     (startDate, endDate, count, lecDate, day) => {
       let dir = 0;
 
+      console.log(startDate, "start");
+      console.log(endDate);
+      console.log(day);
+
       const save = Math.abs(
         moment
           .duration(moment().diff(moment(startDate, "YYYY-MM-DD")))
@@ -1190,6 +1194,8 @@ const LectureAll = () => {
                                   margin={width < 800 ? `5px` : `0 10px`}>
                                   |
                                 </Text>
+
+                                {console.log(data, "data!@!")}
                                 <Text lineHeight={`1.19`}>
                                   {`강의 수 : ${stepHanlder2(
                                     moment(data.createdAt).format("YYYY-MM-DD"),
