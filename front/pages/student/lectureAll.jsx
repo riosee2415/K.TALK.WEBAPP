@@ -1,18 +1,13 @@
 import React, { useEffect, useCallback, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-import DaumPostCode from "react-daum-postcode";
 import moment from "moment";
-
 import Head from "next/head";
 import { useRouter } from "next/router";
-
 import axios from "axios";
 import { END } from "redux-saga";
 import wrapper from "../../store/configureStore";
 import { SEO_LIST_REQUEST } from "../../reducers/seo";
 import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
-
 import {
   Empty,
   Form,
@@ -35,7 +30,6 @@ import {
   Text,
   WholeWrapper,
   Wrapper,
-  TextInput,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
 import {
@@ -46,7 +40,6 @@ import {
   MESSAGE_TEACHER_LIST_REQUEST,
   MESSAGE_USER_LIST_REQUEST,
 } from "../../reducers/message";
-
 import { NOTICE_MY_LECTURE_LIST_REQUEST } from "../../reducers/notice";
 import {
   LECTURE_STU_LECTURE_LIST_REQUEST,
@@ -54,7 +47,7 @@ import {
 } from "../../reducers/lecture";
 import { RollbackOutlined } from "@ant-design/icons";
 import { saveAs } from "file-saver";
-import { BOOK_LECTURE_LIST_REQUEST } from "../../reducers/book";
+import { BOOK_LIST_REQUEST } from "../../reducers/book";
 
 const CustomButton = styled(Button)`
   font-size: 16px;
@@ -218,7 +211,7 @@ const LectureAll = () => {
 
   const {
     messageTeacherList,
-    st_messageTeacherListDone,
+
     st_messageTeacherListError,
 
     st_messageCreateDone,
@@ -229,19 +222,19 @@ const LectureAll = () => {
 
     messagePartList,
     messagePartLastPage,
-    st_messagePartListDone,
+
     st_messagePartListError,
 
     messageAllList,
     messageAllLastPage,
-    st_messageAllListDone,
+
     st_messageAllListError,
   } = useSelector((state) => state.message);
 
   const {
     lectureStuLectureList,
     lectureStuCommute,
-    st_lectureStuLectureListDone,
+
     st_lectureStuLectureListError,
     lectureStuLimitList,
   } = useSelector((state) => state.lecture);
@@ -250,12 +243,10 @@ const LectureAll = () => {
     noticeMyLectureList,
     noticeMyLectureLastPage,
 
-    st_noticeMyLectureListDone,
     st_noticeMyLectureListError,
   } = useSelector((state) => state.notice);
 
-  const { bookLecture, st_bookLectureListDone, st_bookLectureListError } =
-    useSelector((state) => state.book);
+  const { bookList, st_bookListError } = useSelector((state) => state.book);
 
   ////// HOOKS //////
   const width = useWidth();
@@ -279,17 +270,12 @@ const LectureAll = () => {
   const [noticeViewModal, setNoticeViewModal] = useState(false);
   const [noticeViewDatum, setNoticeViewDatum] = useState(null);
 
-  const [currentPage1, setCurrentPage1] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
   const [currentPage3, setCurrentPage3] = useState(1);
   const [currentPage4, setCurrentPage4] = useState(1);
 
-  const [detailBook, setDetailBook] = useState(null);
   const [bookModal, setBookModal] = useState(false);
 
-  const [lectureId, setLectureId] = useState("");
-
-  const [selectValue, setSelectValue] = useState("");
   const [limitModal, setLimitModal] = useState(false);
 
   const bookColumns = [
@@ -302,7 +288,7 @@ const LectureAll = () => {
       render: (data) => {
         return (
           <Wrapper width={`100px`}>
-            <Image src={data.Book.thumbnail} alt={`thumbnail`} />
+            <Image src={data.thumbnail} alt={`thumbnail`} />
           </Wrapper>
         );
       },
@@ -310,23 +296,23 @@ const LectureAll = () => {
     {
       title: "제목",
       render: (data) => {
-        return <Text>{data.Book.title}</Text>;
+        return <Text>{data.title}</Text>;
       },
     },
 
-    {
-      title: "다운로드",
-      render: (data) => {
-        return (
-          <Button
-            type={`primary`}
-            size={`small`}
-            onClick={() => fileDownloadHandler(data.Book.file)}>
-            다운로드
-          </Button>
-        );
-      },
-    },
+    // {
+    //   title: "다운로드",
+    //   render: (data) => {
+    //     return (
+    //       <Button
+    //         type={`primary`}
+    //         size={`small`}
+    //         onClick={() => fileDownloadHandler(data.file)}>
+    //         다운로드
+    //       </Button>
+    //     );
+    //   },
+    // },
   ];
 
   ////// USEEFFECT //////
@@ -361,17 +347,10 @@ const LectureAll = () => {
   }, [st_messageCreateError]);
 
   useEffect(() => {
-    if (st_bookLectureListDone) {
-      setDetailBook(bookLecture);
-      setBookModal(true);
+    if (st_bookListError) {
+      return message.error(st_bookListError);
     }
-  }, [st_bookLectureListDone]);
-
-  useEffect(() => {
-    if (st_bookLectureListError) {
-      return message.error(st_bookLectureListError);
-    }
-  }, [st_bookLectureListError]);
+  }, [st_bookListError]);
 
   useEffect(() => {
     dispatch({
@@ -486,10 +465,6 @@ const LectureAll = () => {
 
   ////// HANDLER //////
 
-  const receiveLectureIdtHandler = useCallback((value) => {
-    setLectureId(value);
-  }, []);
-
   const onClickNoticeHandler = useCallback((data) => {
     setNoticeViewDatum(data);
     setNoticeViewModal(true);
@@ -548,53 +523,11 @@ const LectureAll = () => {
     setSendMessageType(num);
   }, []);
 
-  const DDay = useCallback((startDate, endDate, count, lecDate, day) => {
-    let dir = 0;
-
-    console.log(startDate, "start");
-    console.log(endDate);
-    console.log(day);
-
-    let startDay = moment
-      .duration(moment(startDate).diff(moment().format("YYYY-MM-DD")))
-      .asDays();
-
-    let endDay = moment
-      .duration(moment(endDate).diff(moment().format("YYYY-MM-DD")))
-      .asDays();
-
-    let diff = moment
-      .duration(moment(endDate).diff(moment(startDate)))
-      .asDays();
-
-    if (startDay < 0 && endDay < 0) {
-      return 0;
-    } else {
-      const arr = ["일", "월", "화", "수", "목", "금", "토"];
-      let add = 0;
-
-      for (let i = 0; i < diff; i++) {
-        let saveDay = moment(startDate)
-          .add(i + 1, "days")
-          .day();
-
-        const saveResult = day.includes(arr[saveDay]);
-
-        if (saveResult) {
-          add += 1;
-        }
-      }
-
-      return add;
-    }
-  }, []);
-
-  const stepHanlder = useCallback((startDate, endDate, count, lecDate, day) => {
+  const stepHanlder2 = useCallback((startDate, endDate, day) => {
     let dir = 0;
 
     const save = Math.abs(
-      moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays() -
-        1
+      moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays()
     );
 
     let check = parseInt(
@@ -612,10 +545,8 @@ const LectureAll = () => {
     const arr = ["일", "월", "화", "수", "목", "금", "토"];
     let add = 0;
 
-    for (let i = 0; i < dir; i++) {
-      let saveDay = moment(startDate)
-        .add(i + 1, "days")
-        .day();
+    for (let i = 0; i <= dir; i++) {
+      let saveDay = moment(startDate).add(i, "days").day();
 
       const saveResult = day.includes(arr[saveDay]);
 
@@ -624,48 +555,8 @@ const LectureAll = () => {
       }
     }
 
-    return parseInt((add / (count * lecDate)) * 100);
+    return add;
   }, []);
-
-  const stepHanlder2 = useCallback(
-    (startDate, endDate, count, lecDate, day) => {
-      let dir = 0;
-
-      const save = Math.abs(
-        moment
-          .duration(moment("2022-05-10").diff(moment(startDate, "YYYY-MM-DD")))
-          .asDays()
-      );
-
-      let check = parseInt(
-        moment
-          .duration(moment(endDate).diff(moment(startDate, "YYYY-MM-DD")))
-          .asDays() + 1
-      );
-
-      if (save >= check) {
-        dir = check;
-      } else {
-        dir = save;
-      }
-
-      const arr = ["일", "월", "화", "수", "목", "금", "토"];
-      let add = 0;
-
-      for (let i = 0; i <= dir; i++) {
-        let saveDay = moment(startDate).add(i, "days").day();
-
-        const saveResult = day.includes(arr[saveDay]);
-
-        if (saveResult) {
-          add += 1;
-        }
-      }
-
-      return add;
-    },
-    []
-  );
 
   const messageViewModalHandler = useCallback((data) => {
     setMessageViewModal((prev) => !prev);
@@ -685,6 +576,7 @@ const LectureAll = () => {
   }, []);
 
   const messageChangePage = useCallback((page) => {
+    setCurrentPage3(page);
     dispatch({
       type: MESSAGE_PART_LIST_REQUEST,
       data: {
@@ -694,6 +586,7 @@ const LectureAll = () => {
   }, []);
 
   const allmessageChangePage = useCallback((page) => {
+    setCurrentPage4(page);
     dispatch({
       type: MESSAGE_ALL_LIST_REQUEST,
       data: {
@@ -702,22 +595,20 @@ const LectureAll = () => {
     });
   }, []);
 
-  const detailBookClose = useCallback(() => {
-    setDetailBook(null);
-    setBookModal(false);
+  const detailBookOpen = useCallback((data) => {
+    setBookModal(true);
+
+    dispatch({
+      type: BOOK_LIST_REQUEST,
+      data: {
+        LectureId: data.id,
+      },
+    });
   }, []);
 
-  const detailBookOpen = useCallback(
-    (data) => {
-      dispatch({
-        type: BOOK_LECTURE_LIST_REQUEST,
-        data: {
-          LectureId: data.id,
-        },
-      });
-    },
-    [bookLecture]
-  );
+  const detailBookClose = useCallback(() => {
+    setBookModal(false);
+  }, []);
 
   const fileDownloadHandler = useCallback(async (filePath) => {
     let blob = await fetch(filePath).then((r) => r.blob());
@@ -1193,17 +1084,25 @@ const LectureAll = () => {
                                   |
                                 </Text>
 
-                                <Text lineHeight={`1.19`}>
-                                  {`강의 수 : ${stepHanlder2(
-                                    moment(data.PartCreatedAt).format(
-                                      "YYYY-MM-DD"
-                                    ),
-                                    data.endDate,
-                                    data.count,
-                                    data.date / 7,
-                                    data.day
-                                  )} / ${(data.date / 7) * data.count}`}
-                                </Text>
+                                {stepHanlder2(
+                                  moment(data.PartCreatedAt).format(
+                                    "YYYY-MM-DD"
+                                  ),
+                                  data.endDate,
+                                  data.day
+                                ) -
+                                  (data.date / 7) * data.count <=
+                                  0 && (
+                                  <Text lineHeight={`1.19`}>
+                                    {`강의 수 : ${stepHanlder2(
+                                      moment(data.PartCreatedAt).format(
+                                        "YYYY-MM-DD"
+                                      ),
+                                      data.endDate,
+                                      data.day
+                                    )} / ${(data.date / 7) * data.count}`}
+                                  </Text>
+                                )}
 
                                 {/* <Text
                                   lineHeight={`1.19`}
@@ -1239,39 +1138,67 @@ const LectureAll = () => {
                                       "YYYY/MM/DD"
                                     ).format("YYYY/MM/DD")}`}
 
-                                    {/* ~ ${moment(
+                                    {stepHanlder2(
+                                      moment(data.PartCreatedAt).format(
+                                        "YYYY-MM-DD"
+                                      ),
                                       data.endDate,
-                                      "YYYY/MM/DD"
-                                    ).format("YYYY/MM/DD")} */}
+                                      data.day
+                                    ) -
+                                      (data.date / 7) * data.count <=
+                                      0 && (
+                                      <SpanText
+                                        fontWeight={`bold`}
+                                        color={Theme.red_C}
+                                        margin={`0 0 0 15px`}>
+                                        {Math.abs(
+                                          stepHanlder2(
+                                            moment(data.PartCreatedAt).format(
+                                              "YYYY-MM-DD"
+                                            ),
+                                            data.endDate,
+                                            data.day
+                                          ) -
+                                            (data.date / 7) * data.count
+                                        )}
+                                        회
+                                      </SpanText>
+                                    )}
 
-                                    <SpanText
-                                      fontWeight={`bold`}
-                                      color={Theme.red_C}
-                                      margin={`0 0 0 15px`}>
-                                      {stepHanlder2(
-                                        moment(data.PartCreatedAt).format(
-                                          "YYYY-MM-DD"
-                                        ),
-                                        data.endDate,
-                                        data.count,
-                                        data.date / 7,
-                                        data.day
-                                      ) -
-                                        (data.date / 7) * data.count}
-                                      {/* {Math.abs(
-                                        stepHanlder2(
+                                    {/* {stepHanlder2(
+                                      moment(data.PartCreatedAt).format(
+                                        "YYYY-MM-DD"
+                                      ),
+                                      data.endDate,
+                                      data.day
+                                    ) -
+                                      (data.date / 7) * data.count <
+                                      1 && (
+                                      <SpanText
+                                        fontWeight={`bold`}
+                                        color={Theme.red_C}
+                                        margin={`0 0 0 15px`}>
+                                        {stepHanlder2(
                                           moment(data.PartCreatedAt).format(
                                             "YYYY-MM-DD"
                                           ),
                                           data.endDate,
-                                          data.count,
-                                          data.date / 7,
                                           data.day
                                         ) -
-                                          (data.date / 7) * data.count
-                                      )} */}
-                                      회
-                                    </SpanText>
+                                          (data.date / 7) * data.count}
+                                        {Math.abs(
+                                          stepHanlder2(
+                                            moment(data.PartCreatedAt).format(
+                                              "YYYY-MM-DD"
+                                            ),
+                                            data.endDate,
+                                            data.day
+                                          ) -
+                                            (data.date / 7) * data.count
+                                        )}
+                                        회
+                                      </SpanText>
+                                    )} */}
                                   </Text>
                                 </Wrapper>
 
@@ -1545,7 +1472,7 @@ const LectureAll = () => {
                 style={{ width: `100%` }}
                 size={`small`}
                 columns={bookColumns}
-                dataSource={bookLecture}
+                dataSource={bookList}
               />
             </Wrapper>
           </Wrapper>

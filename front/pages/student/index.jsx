@@ -1,11 +1,8 @@
 import React, { useEffect, useCallback, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
 import moment from "moment";
-
 import Head from "next/head";
 import { useRouter } from "next/router";
-
 import axios from "axios";
 import { END } from "redux-saga";
 import wrapper from "../../store/configureStore";
@@ -17,7 +14,6 @@ import {
   USER_PROFILE_UPLOAD_REQUEST,
   USER_UPDATE_REQUEST,
 } from "../../reducers/user";
-
 import {
   Button,
   Empty,
@@ -41,7 +37,6 @@ import {
   Text,
   WholeWrapper,
   Wrapper,
-  TextInput,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
 import {
@@ -63,7 +58,7 @@ import {
 } from "../../reducers/lecture";
 import { UploadOutlined } from "@ant-design/icons";
 import { saveAs } from "file-saver";
-import { BOOK_LECTURE_LIST_REQUEST } from "../../reducers/book";
+import { BOOK_LIST_REQUEST } from "../../reducers/book";
 
 const PROFILE_WIDTH = `184`;
 const PROFILE_HEIGHT = `190`;
@@ -237,20 +232,6 @@ const CustomForm = styled(Form)`
   }
 `;
 
-const CusotmInput = styled(TextInput)`
-  border: none;
-  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.16);
-  border-radius: 5px;
-
-  &::placeholder {
-    color: ${Theme.grey2_C};
-  }
-
-  &:focus {
-    border: 1px solid ${Theme.basicTheme_C};
-  }
-`;
-
 const Student = () => {
   ////// GLOBAL STATE //////
 
@@ -262,7 +243,6 @@ const Student = () => {
   const {
     me,
     meUpdateModal,
-    postCodeModal,
     userProfilePath,
     //
     st_userProfileUploadLoading,
@@ -275,7 +255,7 @@ const Student = () => {
 
   const {
     messageTeacherList,
-    st_messageTeacherListDone,
+
     st_messageTeacherListError,
 
     st_messageCreateDone,
@@ -286,7 +266,7 @@ const Student = () => {
 
     messageUserList,
     messageUserLastPage,
-    st_messageUserListDone,
+
     st_messageUserListError,
   } = useSelector((state) => state.message);
 
@@ -296,10 +276,9 @@ const Student = () => {
 
     noticeMyLectureList,
     noticeMyLectureLastPage,
-    st_noticeMyLectureListDone,
+
     st_noticeMyLectureListError,
 
-    st_noticeListDone,
     st_noticeListError,
   } = useSelector((state) => state.notice);
 
@@ -315,16 +294,16 @@ const Student = () => {
 
     lectureStuLectureList,
     lectureStuCommute,
-    st_lectureStuLectureListDone,
+
     st_lectureStuLectureListError,
 
     lectureHomeworkStuList,
     lectureHomeworkStuLastPage,
-    st_lectureHomeworkStuListDone,
+
     st_lectureHomeworkStuListError,
   } = useSelector((state) => state.lecture);
 
-  const { bookLecture, st_bookLectureListDone, st_bookLectureListError } =
+  const { bookList, st_bookLectureListDone, st_bookLectureListError } =
     useSelector((state) => state.book);
 
   ////// HOOKS //////
@@ -338,10 +317,8 @@ const Student = () => {
 
   const [form] = Form.useForm();
   const [answerform] = Form.useForm();
-  const [answerAdminform] = Form.useForm();
-  const [sendform] = Form.useForm();
 
-  const [isCalendar, setIsCalendar] = useState(false);
+  const [sendform] = Form.useForm();
 
   const imageInput = useRef();
   const fileInput = useRef();
@@ -362,12 +339,6 @@ const Student = () => {
   const [homeWorkModalToggle, setHomeWorkModalToggle] = useState(false);
   const [homeWorkData, setHomeWorkData] = useState("");
 
-  const [selectValue, setSelectValue] = useState("");
-
-  const [lectureId, setLectureId] = useState("");
-  const [lectureUserId, setLectureUserId] = useState([]);
-
-  const [detailBook, setDetailBook] = useState(null);
   const [bookModal, setBookModal] = useState(false);
 
   const [currentPage1, setCurrentPage1] = useState(1);
@@ -386,7 +357,7 @@ const Student = () => {
       render: (data) => {
         return (
           <Wrapper width={`100px`}>
-            <Image src={data.Book.thumbnail} alt={`thumbnail`} />
+            <Image src={data.thumbnail} alt={`thumbnail`} />
           </Wrapper>
         );
       },
@@ -394,23 +365,23 @@ const Student = () => {
     {
       title: "제목",
       render: (data) => {
-        return <Text>{data.Book.title}</Text>;
+        return <Text>{data.title}</Text>;
       },
     },
 
-    {
-      title: "다운로드",
-      render: (data) => {
-        return (
-          <Button
-            type={`primary`}
-            size={`small`}
-            onClick={() => fileDownloadHandler(data.Book.file)}>
-            다운로드
-          </Button>
-        );
-      },
-    },
+    // {
+    //   title: "다운로드",
+    //   render: (data) => {
+    //     return (
+    //       <Button
+    //         type={`primary`}
+    //         size={`small`}
+    //         onClick={() => fileDownloadHandler(data.file)}>
+    //         다운로드
+    //       </Button>
+    //     );
+    //   },
+    // },
   ];
   ////// USEEFFECT //////
 
@@ -473,7 +444,6 @@ const Student = () => {
 
   useEffect(() => {
     if (st_bookLectureListDone) {
-      setDetailBook(bookLecture);
       setBookModal(true);
     }
   }, [st_bookLectureListDone]);
@@ -554,10 +524,15 @@ const Student = () => {
   useEffect(() => {
     if (st_messageCreateDone) {
       onReset();
-
       return message.success("해당 강사님에게 쪽지를 보냈습니다.");
     }
   }, [st_messageCreateDone]);
+
+  useEffect(() => {
+    if (st_messageCreateError) {
+      return message.error(st_messageCreateError);
+    }
+  }, [st_messageCreateError]);
 
   useEffect(() => {
     if (st_messageForAdminCreateError) {
@@ -583,6 +558,12 @@ const Student = () => {
       setFilePath(lecturePath);
     }
   }, [st_lectureFileDone]);
+
+  useEffect(() => {
+    if (st_lectureFileError) {
+      return message.error(st_lectureFileError);
+    }
+  }, [st_lectureFileError]);
 
   useEffect(() => {
     if (st_lectureHomeworkStuListError) {
@@ -614,6 +595,18 @@ const Student = () => {
       return message.error(st_messageUserListError);
     }
   }, [st_messageUserListError]);
+
+  useEffect(() => {
+    if (st_noticeListError) {
+      return message.error(st_noticeListError);
+    }
+  }, [st_noticeListError]);
+
+  useEffect(() => {
+    if (st_noticeMyLectureListError) {
+      return message.error(st_noticeMyLectureListError);
+    }
+  }, [st_noticeMyLectureListError]);
 
   const onReset = useCallback(() => {
     form.resetFields();
@@ -940,156 +933,55 @@ const Student = () => {
     router.push(link);
   }, []);
 
-  const DDay = useCallback((startDate, endDate, count, lecDate, day) => {
+  const stepHanlder2 = useCallback((startDate, endDate, day) => {
     let dir = 0;
 
-    let startDay = moment
-      .duration(moment(startDate).diff(moment().format("YYYY-MM-DD")))
-      .asDays();
+    const save = Math.abs(
+      moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays()
+    );
 
-    let endDay = moment
-      .duration(moment(endDate).diff(moment().format("YYYY-MM-DD")))
-      .asDays();
+    let check = parseInt(
+      moment
+        .duration(moment(endDate).diff(moment(startDate, "YYYY-MM-DD")))
+        .asDays() + 1
+    );
 
-    let diff = moment
-      .duration(moment(endDate).diff(moment(startDate)))
-      .asDays();
-
-    if (startDay < 0 && endDay < 0) {
-      return 0;
-    } else if (startDay > 0) {
-      const arr = ["일", "월", "화", "수", "목", "금", "토"];
-      let add = 0;
-
-      for (let i = 0; i < diff; i++) {
-        let saveDay = moment(startDate)
-          .add(i + 1, "days")
-          .day();
-
-        const saveResult = day.includes(arr[saveDay]);
-
-        if (saveResult) {
-          add += 1;
-        }
-      }
-
-      return add;
+    if (save >= check) {
+      dir = check;
     } else {
-      const arr = ["일", "월", "화", "수", "목", "금", "토"];
-      let add = 0;
-
-      for (let i = 0; i < endDay; i++) {
-        let saveDay = moment(startDate)
-          .add(i + 1, "days")
-          .day();
-
-        const saveResult = day.includes(arr[saveDay]);
-
-        if (saveResult) {
-          add += 1;
-        }
-      }
-
-      return add;
+      dir = save;
     }
+
+    const arr = ["일", "월", "화", "수", "목", "금", "토"];
+    let add = 0;
+
+    for (let i = 0; i <= dir; i++) {
+      let saveDay = moment(startDate).add(i, "days").day();
+
+      const saveResult = day.includes(arr[saveDay]);
+
+      if (saveResult) {
+        add += 1;
+      }
+    }
+
+    return add;
   }, []);
 
-  // const stepHanlder = useCallback((startDate, endDate, count, lecDate, day) => {
-  //   let dir = 0;
+  const detailBookOpen = useCallback((data) => {
+    setBookModal(true);
 
-  //   const save = Math.abs(
-  //     moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays() -
-  //       1
-  //   );
-
-  //   let check = parseInt(
-  //     moment
-  //       .duration(moment(endDate).diff(moment(startDate, "YYYY-MM-DD")))
-  //       .asDays() + 1
-  //   );
-
-  //   if (save >= check) {
-  //     dir = check;
-  //   } else {
-  //     dir = save;
-  //   }
-
-  //   const arr = ["일", "월", "화", "수", "목", "금", "토"];
-  //   let add = 0;
-
-  //   for (let i = 0; i < dir; i++) {
-  //     let saveDay = moment(startDate)
-  //       .add(i + 1, "days")
-  //       .day();
-
-  //     const saveResult = day.includes(arr[saveDay]);
-
-  //     if (saveResult) {
-  //       add += 1;
-  //     }
-  //   }
-
-  //   return parseInt((add / (count * lecDate)) * 100);
-  // }, []);
-
-  const stepHanlder2 = useCallback(
-    (startDate, endDate, count, lecDate, day) => {
-      let dir = 0;
-
-      const save = Math.abs(
-        moment
-          .duration(moment().diff(moment(startDate, "YYYY-MM-DD")))
-          .asDays() - 1
-      );
-
-      let check = parseInt(
-        moment
-          .duration(moment(endDate).diff(moment(startDate, "YYYY-MM-DD")))
-          .asDays() + 1
-      );
-
-      if (save >= check) {
-        dir = check;
-      } else {
-        dir = save;
-      }
-
-      const arr = ["일", "월", "화", "수", "목", "금", "토"];
-      let add = 0;
-
-      for (let i = 0; i < dir; i++) {
-        let saveDay = moment(startDate)
-          .add(i + 1, "days")
-          .day();
-
-        const saveResult = day.includes(arr[saveDay]);
-
-        if (saveResult) {
-          add += 1;
-        }
-      }
-
-      return add;
-    },
-    []
-  );
+    dispatch({
+      type: BOOK_LIST_REQUEST,
+      data: {
+        LectureId: data.id,
+      },
+    });
+  }, []);
 
   const detailBookClose = useCallback(() => {
-    setDetailBook(null);
     setBookModal(false);
   }, []);
-
-  const detailBookOpen = useCallback(
-    (data) => {
-      dispatch({
-        type: BOOK_LECTURE_LIST_REQUEST,
-        data: {
-          LectureId: data.id,
-        },
-      });
-    },
-    [bookLecture]
-  );
 
   const divideLecture = useCallback((day, time) => {
     let saveDay = day.split(" ");
@@ -1430,10 +1322,10 @@ const Student = () => {
 
                                 <Text lineHeight={`1.19`}>
                                   {`강의 수 : ${stepHanlder2(
-                                    moment(data.createdAt).format("YYYY-MM-DD"),
+                                    moment(data.PartCreatedAt).format(
+                                      "YYYY-MM-DD"
+                                    ),
                                     data.endDate,
-                                    data.count,
-                                    data.date / 7,
                                     data.day
                                   )} / ${(data.date / 7) * data.count}`}
                                 </Text>
@@ -2694,7 +2586,7 @@ const Student = () => {
                   style={{ width: `100%` }}
                   size={`small`}
                   columns={bookColumns}
-                  dataSource={bookLecture}
+                  dataSource={bookList}
                 />
               </Wrapper>
             </Wrapper>

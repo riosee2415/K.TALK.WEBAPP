@@ -1,7 +1,6 @@
 import React, { useEffect, useCallback, useRef, useState } from "react";
 import ClientLayout from "../../../components/ClientLayout";
 import { useDispatch, useSelector } from "react-redux";
-
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
 import useWidth from "../../../hooks/useWidth";
@@ -10,12 +9,10 @@ import Theme from "../../../components/Theme";
 import styled from "styled-components";
 import axios from "axios";
 import moment from "moment";
-
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import { SEO_LIST_REQUEST } from "../../../reducers/seo";
 import ToastEditorComponent2 from "../../../components/editor/ToastEditorComponent2";
 import ToastEditorComponent from "../../../components/editor/ToastEditorComponent";
-
 import Head from "next/head";
 import {
   RsWrapper,
@@ -35,7 +32,6 @@ import {
   UploadOutlined,
   RollbackOutlined,
 } from "@ant-design/icons";
-
 import {
   Progress,
   Checkbox,
@@ -47,14 +43,9 @@ import {
   Calendar,
   message,
   Empty,
-  Upload,
-  Select,
-  Popconfirm,
-  Tabs,
 } from "antd";
 import {
   MESSAGE_CREATE_REQUEST,
-  MESSAGE_DETAIL_REQUEST,
   MESSAGE_MANY_CREATE_REQUEST,
   MESSAGE_LECTURE_LIST_REQUEST,
   MESSAGE_FOR_ADMIN_CREATE_REQUEST,
@@ -70,14 +61,10 @@ import {
   LECTURE_MEMO_STU_CREATE_REQUEST,
   LECTURE_MEMO_STU_LIST_REQUEST,
   LECTURE_MEMO_STU_UPDATE_REQUEST,
-  LECTURE_STUDENT_LIST_REQUEST,
   LECTURE_SUBMIT_LIST_REQUEST,
   LECTURE_TEACHER_LIST_REQUEST,
 } from "../../../reducers/lecture";
-import {
-  PARTICIPANT_LECTURE_LIST_REQUEST,
-  PARTICIPANT_LIST_REQUEST,
-} from "../../../reducers/participant";
+import { PARTICIPANT_LECTURE_LIST_REQUEST } from "../../../reducers/participant";
 import {
   NOTICE_CREATE_REQUEST,
   NOTICE_LECTURE_LIST_REQUEST,
@@ -93,6 +80,20 @@ import {
 } from "../../../reducers/commute";
 import { saveAs } from "file-saver";
 
+const CusotmInput = styled(TextInput)`
+  border: none;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.16);
+  border-radius: 5px;
+
+  &::placeholder {
+    color: ${Theme.grey2_C};
+  }
+
+  &:focus {
+    border: 1px solid ${Theme.basicTheme_C};
+  }
+`;
+
 const BackIcon = styled(Wrapper)`
   cursor: pointer;
   transition: 0.5s;
@@ -107,30 +108,6 @@ const BackIcon = styled(Wrapper)`
       color: ${Theme.grey2_C};
     }
     color: ${Theme.grey2_C};
-  }
-`;
-
-const CustomButton = styled(Button)`
-  width: ${(props) => props.width};
-
-  border: none;
-  font-weight: "boled";
-  box-shadow: none;
-  background-color: ${(props) => props.bgColor};
-  color: ${(props) => props.color};
-`;
-
-const CusotmInput = styled(TextInput)`
-  border: none;
-  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.16);
-  border-radius: 5px;
-
-  &::placeholder {
-    color: ${Theme.grey2_C};
-  }
-
-  &:focus {
-    border: 1px solid ${Theme.basicTheme_C};
   }
 `;
 
@@ -285,26 +262,6 @@ const CustomPage = styled(Pagination)`
   }
 `;
 
-const CustomText = styled(Text)`
-  font-size: 18px;
-  font-weight: Bold;
-  color: ${Theme.black_2C};
-
-  &::after {
-    content: "|";
-    padding: 0 10px;
-    color: ${Theme.grey_C};
-  }
-
-  @media (max-width: 700px) {
-    font-size: 14px;
-
-    &::after {
-      padding: 0 8px;
-    }
-  }
-`;
-
 const CustomText2 = styled(Text)`
   font-size: 18px;
   font-weight: ${(props) => props.fontWeight || `Bold`};
@@ -371,7 +328,6 @@ const Index = () => {
 
     messageLectureList,
     messageLectureLastPage,
-    messageUserLastPage,
 
     st_messageLectureListDone,
     st_messageLectureListError,
