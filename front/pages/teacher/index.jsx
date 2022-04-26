@@ -330,6 +330,9 @@ const Index = () => {
     //
     st_userUserUpdateDone,
     st_userUserUpdateError,
+    //
+    st_bookCreateDone,
+    st_bookCreateError,
   } = useSelector((state) => state.user);
 
   const {
@@ -458,17 +461,18 @@ const Index = () => {
   }, [st_bookAllListError]);
 
   useEffect(() => {
-    if (st_bookLectureCreateError) {
-      return message.error(st_bookLectureCreateError);
+    if (st_bookCreateError) {
+      return message.error(st_bookCreateError);
     }
-  }, [st_bookLectureCreateError]);
+  }, [st_bookCreateError]);
 
   useEffect(() => {
-    if (st_bookLectureCreateDone) {
+    if (st_bookCreateDone) {
       onReset();
+      textbookModalHandler(null);
       return message.success("교재 등록이 완료되었습니다.");
     }
-  }, [st_bookLectureCreateDone]);
+  }, [st_bookCreateDone]);
 
   useEffect(() => {
     dispatch({
@@ -1986,30 +1990,6 @@ const Index = () => {
                 name={`title`}
               >
                 <TextInput height={`30px`} />
-              </Form.Item>
-              <Form.Item
-                rules={[{ required: true, message: "강의를 선택해주세요." }]}
-                label={`강의 선택`}
-                name={`folder`}
-              >
-                <Select
-                  placeholder="Select a Lecture"
-                  optionFilterProp="children"
-                  filterOption={(input, option) =>
-                    option.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
-                >
-                  {lectureTeacherList &&
-                    lectureTeacherList.map((data) => {
-                      return (
-                        <Select.Option value={data.id}>
-                          {data.course}
-                        </Select.Option>
-                      );
-                    })}
-                </Select>
               </Form.Item>
             </Form>
           </Wrapper>
