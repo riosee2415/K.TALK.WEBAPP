@@ -9,7 +9,10 @@ import Theme from "../../components/Theme";
 import styled from "styled-components";
 import axios from "axios";
 
-import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
+import {
+  LOAD_MY_INFO_REQUEST,
+  USER_ALL_LIST_REQUEST,
+} from "../../reducers/user";
 import { SEO_LIST_REQUEST } from "../../reducers/seo";
 
 import Head from "next/head";
@@ -32,7 +35,6 @@ import {
   BOOK_CREATE_REQUEST,
   BOOK_DELETE_REQUEST,
   BOOK_FILE_INIT,
-  BOOK_FOLDER_LIST_REQUEST,
   BOOK_LIST_REQUEST,
   BOOK_UPDATE_REQUEST,
   BOOK_UPLOAD_REQUEST,
@@ -51,6 +53,10 @@ import {
 import { useRouter } from "next/router";
 import useInput from "../../hooks/useInput";
 import { saveAs } from "file-saver";
+import {
+  LECTURE_TEACHER_LIST_REQUEST,
+  LECTURE_ALL_LIST_REQUEST,
+} from "../../reducers/lecture";
 
 const CustomPage = styled(Pagination)`
   & .ant-pagination-next > button {
@@ -204,6 +210,9 @@ const Index = () => {
     st_bookDeleteError,
   } = useSelector((state) => state.book);
   const { me } = useSelector((state) => state.user);
+  const { allLectures, lectureTeacherList } = useSelector(
+    (state) => state.lecture
+  );
   ////// USEEFFECT //////
   useEffect(() => {
     if (updateData) {
@@ -212,24 +221,48 @@ const Index = () => {
           thumbnail: updateData.thumbnail,
           file: updateData.file,
           title: updateData.title,
-          folder: updateData.BookFolderId,
+          // folder: updateData.LectureId,
         });
       }, 500);
     }
   }, [updateData]);
 
   useEffect(() => {
-    dispatch({
-      type: BOOK_FOLDER_LIST_REQUEST,
-    });
+    if (me) {
+      dispatch({
+        type: LECTURE_TEACHER_LIST_REQUEST,
+        data: {
+          TeacherId: me.id,
+        },
+      });
+    }
+
     dispatch({
       type: BOOK_LIST_REQUEST,
       data: {
-        BookFolderId: currentTab,
+        LectureId: currentTab,
       },
     });
     searchInput.setValue(``);
   }, [router.query, currentTab]);
+
+  useEffect(() => {
+    dispatch({
+      type: USER_ALL_LIST_REQUEST,
+      data: {
+        type: 2,
+      },
+    });
+    dispatch({
+      type: LECTURE_ALL_LIST_REQUEST,
+      data: {
+        TeacherId: "",
+        time: "",
+        startLv: "",
+        studentName: "",
+      },
+    });
+  }, [router.query]);
 
   useEffect(() => {
     if (st_bookCreateDone) {
@@ -237,7 +270,7 @@ const Index = () => {
       dispatch({
         type: BOOK_LIST_REQUEST,
         data: {
-          BookFolderId: currentTab,
+          LectureId: currentTab,
         },
       });
       updateModalClose();
@@ -250,7 +283,7 @@ const Index = () => {
       dispatch({
         type: BOOK_LIST_REQUEST,
         data: {
-          BookFolderId: currentTab,
+          LectureId: currentTab,
         },
       });
     }
@@ -261,7 +294,7 @@ const Index = () => {
       dispatch({
         type: BOOK_LIST_REQUEST,
         data: {
-          BookFolderId: currentTab,
+          LectureId: currentTab,
         },
       });
       message.success("교재가 생성되었습니다.");
@@ -280,7 +313,7 @@ const Index = () => {
       dispatch({
         type: BOOK_LIST_REQUEST,
         data: {
-          BookFolderId: currentTab,
+          LectureId: currentTab,
         },
       });
       message.success("교재가 삭제되었습니다.");
@@ -298,7 +331,7 @@ const Index = () => {
     dispatch({
       type: BOOK_LIST_REQUEST,
       data: {
-        BookFolderId: currentTab,
+        LectureId: currentTab,
         page: currentPage,
       },
     });
@@ -368,7 +401,7 @@ const Index = () => {
           thumbnail: uploadPathTh,
           title: data.title,
           file: uploadPath,
-          BookFolderId: data.folder,
+          LectureId: data.folder,
         },
       });
     },
@@ -385,7 +418,7 @@ const Index = () => {
           title: data.title,
           file: uploadPath ? uploadPath : updateData.file,
 
-          BookFolderId: data.folder,
+          LectureId: data.folder,
         },
       });
     },
@@ -450,7 +483,7 @@ const Index = () => {
       dispatch({
         type: BOOK_LIST_REQUEST,
         data: {
-          BookFolderId: currentTab,
+          LectureId: currentTab,
           search: searchInput.value,
         },
       });
@@ -550,61 +583,22 @@ const Index = () => {
                 자료 올리기
               </CommonButton>
             </Wrapper>
-            <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px 0`}>
-              <TabWrapper
-                onClick={() => setCurrentTab(null)}
-                className={currentTab === null && `current`}
+            <Wrapper al={`flex-start`}>
+              <Select
+                style={{ width: `400px` }}
+                onChange={(e) => setCurrentTab(e)}
               >
-                <Wrapper
-                  width={`17px`}
-                  margin={width < 800 ? `0 5px 0 0` : `0 20px 0 0`}
-                >
-                  <FolderOpenFilled
-                    style={{ color: Theme.grey2_C, fontSize: `17px` }}
-                  />
-                </Wrapper>
-                <Text
-                  maxWidth={
-                    width < 800
-                      ? `calc(100% - 17px - 5px)`
-                      : `calc(100% - 17px - 20px)`
-                  }
-                  fontSize={width < 800 ? `10px` : `16px`}
-                >
-                  전체
-                </Text>
-              </TabWrapper>
-              {bookFolderList &&
-                bookFolderList.map((data) => {
-                  return (
-                    <TabWrapper
-                      onClick={() => setCurrentTab(data.id)}
-                      className={currentTab === data.id && `current`}
-                    >
-                      <Wrapper
-                        width={`17px`}
-                        margin={width < 800 ? `0 5px 0 0` : `0 20px 0 0`}
-                      >
-                        <Image
-                          src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_folder.png`}
-                          alt={`file_icon`}
-                        />
-                      </Wrapper>
-                      <Text
-                        maxWidth={
-                          width < 800
-                            ? `calc(100% - 17px - 5px)`
-                            : `calc(100% - 17px - 20px)`
-                        }
-                        fontSize={width < 800 ? `10px` : `16px`}
-                      >
-                        {data.value}
-                      </Text>
-                    </TabWrapper>
-                  );
-                })}
+                <Select.Option value={null}>전체</Select.Option>
+                {allLectures &&
+                  allLectures.map((data) => {
+                    return (
+                      <Select.Option value={data.id}>
+                        {data.course}
+                      </Select.Option>
+                    );
+                  })}
+              </Select>
             </Wrapper>
-
             <Wrapper
               dr={`row`}
               al={`flex-start`}
@@ -778,8 +772,8 @@ const Index = () => {
                   <TextInput height={`30px`} />
                 </Form.Item>
                 <Form.Item
-                  rules={[{ required: true, message: "폴더를 선택해주세요." }]}
-                  label={`폴더 선택`}
+                  rules={[{ required: true, message: "강의를 선택해주세요." }]}
+                  label={`강의 선택`}
                   name={`folder`}
                 >
                   <Select
@@ -791,11 +785,11 @@ const Index = () => {
                         .indexOf(input.toLowerCase()) >= 0
                     }
                   >
-                    {bookFolderList &&
-                      bookFolderList.map((data) => {
+                    {lectureTeacherList &&
+                      lectureTeacherList.map((data) => {
                         return (
                           <Select.Option value={data.id}>
-                            {data.value}
+                            {data.course}
                           </Select.Option>
                         );
                       })}

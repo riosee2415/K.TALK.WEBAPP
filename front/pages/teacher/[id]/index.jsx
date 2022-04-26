@@ -2370,7 +2370,6 @@ const Index = () => {
                               <Button
                                 type={`primary`}
                                 size={`small`}
-                                style={{ margin: `0 0 0 10px` }}
                                 onClick={() => detailStuToggleHandler(data)}
                                 fontSize={width < 700 ? `14px` : `16px`}
                                 disabled={
@@ -2393,7 +2392,7 @@ const Index = () => {
                               <Button
                                 type={`primary`}
                                 size={`small`}
-                                style={{ margin: `0 0 0 10px` }}
+                                style={{ margin: `0 0 5px` }}
                                 bgColor={idx % 2 === 0 && Theme.lightGrey_C}
                                 onClick={() => onCommuteHandler(data, "출석")}
                                 cursor={`pointer`}
@@ -2421,7 +2420,7 @@ const Index = () => {
                               <Button
                                 type={`primary`}
                                 size={`small`}
-                                style={{ margin: `0 0 0 10px` }}
+                                style={{ margin: `0 0 5px` }}
                                 bgColor={idx % 2 === 0 && Theme.lightGrey_C}
                                 onClick={() => onCommuteHandler(data, "결석")}
                                 cursor={`pointer`}
@@ -2449,7 +2448,6 @@ const Index = () => {
                               <Button
                                 type={`primary`}
                                 size={`small`}
-                                style={{ margin: `0 0 0 10px` }}
                                 bgColor={idx % 2 === 0 && Theme.lightGrey_C}
                                 onClick={() => onCommuteHandler(data, "지각")}
                                 cursor={`pointer`}
