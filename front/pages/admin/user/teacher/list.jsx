@@ -353,7 +353,8 @@ const UserList = ({}) => {
         <Button
           size="small"
           type="primary"
-          onClick={() => detailModalToggle(data)}>
+          onClick={() => detailModalToggle(data)}
+        >
           상세보기
         </Button>
       ),
@@ -364,8 +365,9 @@ const UserList = ({}) => {
       render: (data) => (
         <Popconfirm
           onConfirm={() => TeacherFireUpdateHandler(data)}
-          title={`강사를 ${data.isFire ? `재계약` : `해지`} 하시겠습니까?`}>
-          <Button size="small" type="primary">
+          title={`강사를 ${data.isFire ? `재계약` : `해지`} 하시겠습니까?`}
+        >
+          <Button size="small" type={data.isFire ? `primary` : `danger`}>
             {data.isFire ? `재계약` : `해지`}
           </Button>
         </Popconfirm>
@@ -378,7 +380,8 @@ const UserList = ({}) => {
         <Button
           size="small"
           type="primary"
-          onClick={() => logModalToggle(data)}>
+          onClick={() => logModalToggle(data)}
+        >
           DETAIL
         </Button>
       ),
@@ -401,7 +404,11 @@ const UserList = ({}) => {
     {
       title: "구분",
       render: (data) => {
-        return <Text>{data.isFire ? `해지` : `계약`}</Text>;
+        return (
+          <Text color={data.isFire ? Theme.red_C : Theme.basicTheme_C}>
+            {data.isFire ? `해지` : `계약`}
+          </Text>
+        );
       },
     },
     {
@@ -432,19 +439,22 @@ const UserList = ({}) => {
           <Button
             size={`small`}
             type={currentListType === null && "primary"}
-            onClick={() => setCurrentListType(null)}>
+            onClick={() => setCurrentListType(null)}
+          >
             전체 조회
           </Button>
           <Button
             size={`small`}
             type={currentListType === true && "primary"}
-            onClick={() => setCurrentListType(true)}>
+            onClick={() => setCurrentListType(true)}
+          >
             해지 강사 조회
           </Button>
           <Button
             size={`small`}
             type={currentListType === false && "primary"}
-            onClick={() => setCurrentListType(false)}>
+            onClick={() => setCurrentListType(false)}
+          >
             계약 강사 조회
           </Button>
         </Wrapper>
@@ -453,7 +463,8 @@ const UserList = ({}) => {
             dr={`row`}
             ju={`flex-start`}
             margin={`0 0 10px`}
-            width={`calc(100% - 80px)`}>
+            width={`calc(100% - 80px)`}
+          >
             <Input
               size="small"
               style={{ width: "20%" }}
@@ -469,7 +480,8 @@ const UserList = ({}) => {
             <Button
               widt={`80px`}
               size="small"
-              onClick={() => onSeachTeaHandler()}>
+              onClick={() => onSeachTeaHandler()}
+            >
               <SearchOutlined />
               검색
             </Button>
@@ -491,12 +503,14 @@ const UserList = ({}) => {
         onCancel={modalToggle}
         title="강사 생성"
         footer={null}
-        width={1000}>
+        width={1000}
+      >
         <Form
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 20 }}
           form={form}
-          onFinish={onSubmitCreate}>
+          onFinish={onSubmitCreate}
+        >
           <Wrapper width={`68%`} margin={`0 16%`}>
             <GuideUl>
               <GuideLi isImpo>회원 아이디는 이메일과 같습니다.</GuideLi>
@@ -508,7 +522,8 @@ const UserList = ({}) => {
           <Form.Item
             label="이메일"
             rules={[{ required: true, message: "이메일을 입력해주세요." }]}
-            name="email">
+            name="email"
+          >
             <Input type="email" {...inputEmailView} />
           </Form.Item>
 
@@ -524,7 +539,8 @@ const UserList = ({}) => {
                 required: true,
               },
             ]}
-            name="username">
+            name="username"
+          >
             <Input />
           </Form.Item>
 
@@ -541,7 +557,8 @@ const UserList = ({}) => {
           <Form.Item
             label="성별"
             rules={[{ required: true, message: "생별을 선택해주세요." }]}
-            name="gender">
+            name="gender"
+          >
             <Select>
               <Select.Option value={`남`}>남자</Select.Option>
               <Select.Option value={`여`}>여자</Select.Option>
@@ -550,20 +567,23 @@ const UserList = ({}) => {
           <Form.Item
             label="전화번호"
             rules={[{ required: true, message: "전화번호를 입력해주세요." }]}
-            name="mobile">
+            name="mobile"
+          >
             <Input type="number" placeholder={`'-'없이 숫자만 입력해주세요.`} />
           </Form.Item>
 
           <Form.Item
             label="주소"
             rules={[{ required: true, message: "주소를 입력해주세요." }]}
-            name="address">
+            name="address"
+          >
             <Input />
           </Form.Item>
           <Form.Item
             label="상세주소"
             // rules={[{ required: true, message: "상세주소를 입력해주세요." }]}
-            name="detailAddress">
+            name="detailAddress"
+          >
             <Input />
           </Form.Item>
 
@@ -585,7 +605,8 @@ const UserList = ({}) => {
                   }
                 },
               },
-            ]}>
+            ]}
+          >
             {(fields, { add, remove }, { errors }) => {
               return (
                 <>
@@ -594,7 +615,8 @@ const UserList = ({}) => {
                       <Wrapper width={`48%`}>
                         <Form.Item
                           style={{ width: `100%`, margin: 0 }}
-                          name="firstIdentifyNum">
+                          name="firstIdentifyNum"
+                        >
                           <Input type="number" style={{ width: `100%` }} />
                         </Form.Item>
                       </Wrapper>
@@ -604,7 +626,8 @@ const UserList = ({}) => {
                       <Wrapper width={`48%`}>
                         <Form.Item
                           style={{ width: `100%`, margin: 0 }}
-                          name="endIdentifyNum">
+                          name="endIdentifyNum"
+                        >
                           <Input type="password" style={{ width: `100%` }} />
                         </Form.Item>
                       </Wrapper>
@@ -626,7 +649,8 @@ const UserList = ({}) => {
                 message: "강사가 가능한 언어를 입력해주세요.",
               },
             ]}
-            name="teaLanguage">
+            name="teaLanguage"
+          >
             <Input />
           </Form.Item>
 
@@ -643,14 +667,16 @@ const UserList = ({}) => {
           <Form.Item
             label="은행이름"
             rules={[{ required: true, message: "은행이름을 입력해주세요." }]}
-            name="bankName">
+            name="bankName"
+          >
             <Input />
           </Form.Item>
 
           <Form.Item
             label="계좌번호"
             rules={[{ required: true, message: "계좌번호를 입력해주세요." }]}
-            name="bankNo">
+            name="bankNo"
+          >
             <Input />
           </Form.Item>
 
@@ -658,7 +684,8 @@ const UserList = ({}) => {
             <Button
               size="small"
               style={{ margin: `0 10px 0 0` }}
-              onClick={modalToggle}>
+              onClick={modalToggle}
+            >
               취소
             </Button>
             <Button size="small" type="primary" htmlType="submit">
@@ -672,7 +699,8 @@ const UserList = ({}) => {
         visible={detailmodal}
         footer={null}
         onCancel={() => onCancelHandle()}
-        title={`강사 정보`}>
+        title={`강사 정보`}
+      >
         <Form form={updateTeacherForm} onFinish={updateTeacherFinish}>
           <Wrapper>
             <Form.Item
@@ -680,7 +708,8 @@ const UserList = ({}) => {
               name={`username`}
               labelCol={{ span: 4 }}
               labelWrap={{ span: 20 }}
-              style={{ width: `100%` }}>
+              style={{ width: `100%` }}
+            >
               <Input disabled></Input>
             </Form.Item>
 
@@ -689,7 +718,8 @@ const UserList = ({}) => {
               name="gender"
               labelCol={{ span: 4 }}
               labelWrap={{ span: 20 }}
-              style={{ width: `100%` }}>
+              style={{ width: `100%` }}
+            >
               <Select style={{ width: "100%", height: 32 }}>
                 <Select.Option value={`남`}>남자</Select.Option>
                 <Select.Option value={`여`}>여자</Select.Option>
@@ -701,7 +731,8 @@ const UserList = ({}) => {
               name={`createdAt`}
               labelCol={{ span: 4 }}
               labelWrap={{ span: 20 }}
-              style={{ width: `100%` }}>
+              style={{ width: `100%` }}
+            >
               <Input disabled></Input>
             </Form.Item>
 
@@ -710,7 +741,8 @@ const UserList = ({}) => {
               name={`email`}
               labelCol={{ span: 4 }}
               labelWrap={{ span: 20 }}
-              style={{ width: `100%` }}>
+              style={{ width: `100%` }}
+            >
               <Input disabled></Input>
             </Form.Item>
 
@@ -719,7 +751,8 @@ const UserList = ({}) => {
               name={`userId`}
               labelCol={{ span: 4 }}
               labelWrap={{ span: 20 }}
-              style={{ width: `100%` }}>
+              style={{ width: `100%` }}
+            >
               <Input disabled></Input>
             </Form.Item>
 
@@ -728,7 +761,8 @@ const UserList = ({}) => {
               name={`mobile`}
               labelCol={{ span: 4 }}
               labelWrap={{ span: 20 }}
-              style={{ width: `100%` }}>
+              style={{ width: `100%` }}
+            >
               <Input disabled></Input>
             </Form.Item>
 
@@ -737,7 +771,8 @@ const UserList = ({}) => {
               name={`teaLanguage`}
               labelCol={{ span: 4 }}
               labelWrap={{ span: 20 }}
-              style={{ width: `100%` }}>
+              style={{ width: `100%` }}
+            >
               <Input></Input>
             </Form.Item>
 
@@ -746,7 +781,8 @@ const UserList = ({}) => {
               name={`bankName`}
               labelCol={{ span: 4 }}
               labelWrap={{ span: 20 }}
-              style={{ width: `100%` }}>
+              style={{ width: `100%` }}
+            >
               <Input></Input>
             </Form.Item>
 
@@ -755,7 +791,8 @@ const UserList = ({}) => {
               name={`bankNo`}
               labelCol={{ span: 4 }}
               labelWrap={{ span: 20 }}
-              style={{ width: `100%` }}>
+              style={{ width: `100%` }}
+            >
               <Input></Input>
             </Form.Item>
 
@@ -764,7 +801,8 @@ const UserList = ({}) => {
               name={`address`}
               labelCol={{ span: 4 }}
               labelWrap={{ span: 20 }}
-              style={{ width: `100%` }}>
+              style={{ width: `100%` }}
+            >
               <Input />
             </Form.Item>
 
@@ -773,7 +811,8 @@ const UserList = ({}) => {
               name={`detailAddress`}
               labelCol={{ span: 4 }}
               labelWrap={{ span: 20 }}
-              style={{ width: `100%` }}>
+              style={{ width: `100%` }}
+            >
               <Input />
             </Form.Item>
 
@@ -804,7 +843,8 @@ const UserList = ({}) => {
         footer={null}
         onCancel={() => logModalToggle(null)}
         title={`해지 / 재계약 기록`}
-        width={800}>
+        width={800}
+      >
         <Wrapper>
           <CustomTable
             columns={logColumns}

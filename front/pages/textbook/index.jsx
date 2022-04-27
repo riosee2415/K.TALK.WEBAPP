@@ -247,24 +247,6 @@ const Index = () => {
   }, [router.query, currentTab]);
 
   useEffect(() => {
-    dispatch({
-      type: USER_ALL_LIST_REQUEST,
-      data: {
-        type: 2,
-      },
-    });
-    dispatch({
-      type: LECTURE_ALL_LIST_REQUEST,
-      data: {
-        TeacherId: "",
-        time: "",
-        startLv: "",
-        studentName: "",
-      },
-    });
-  }, [router.query]);
-
-  useEffect(() => {
     if (st_bookCreateDone) {
       message.success("교재가 생성되었습니다.");
       dispatch({
@@ -751,6 +733,7 @@ const Index = () => {
               current={currentPage}
               total={bookMaxLength * 12}
               onChange={(page) => setCurrentPage(page)}
+              pageSize={12}
             />
           </RsWrapper>
 
@@ -880,6 +863,16 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: SEO_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: LECTURE_ALL_LIST_REQUEST,
+      data: {
+        TeacherId: "",
+        time: "",
+        startLv: "",
+        studentName: "",
+      },
     });
 
     // 구현부 종료
