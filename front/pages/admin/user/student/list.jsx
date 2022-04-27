@@ -270,9 +270,11 @@ const List = () => {
           return (
             <Option
               key={data.id}
-              value={`${data.id},${data.LetureId},${data.week}`}>
-              {data.createdAt.slice(0, 10)} | {data.course} | &#36;
-              {data.price} | &nbsp;{data.email}
+              value={JSON.stringify(data)}
+              // value={`${data.id},${data.LetureId},${data.week}`}
+            >
+              {`결제일: ${data.createdAt.slice(0, 10)} | ${data.course} | `}
+              {`결제한 가격: $${data.price} |  ${data.email}`}
             </Option>
           );
         })
@@ -509,24 +511,39 @@ const List = () => {
 
   const onUpdateClassSubmit = useCallback(
     (data) => {
+      let partLecture = data.partLecture && JSON.parse(data.partLecture);
+      let lectureList = data.lectureList && JSON.parse(data.lectureList);
+
+      if (lectureList) {
+        if (moment() < moment(lectureList.startDate)) {
+          return message.error(
+            "수업 참여일이 수업 시작 날짜보다 과거일 수 없습니다."
+          );
+        }
+      } else if (partLecture) {
+        if (moment() < moment(partLecture.startDate.slice(0, 10))) {
+          return message.error(
+            "수업 참여일이 수업 시작 날짜보다 과거일 수 없습니다."
+          );
+        }
+      }
+
       dispatch({
         type: PARTICIPANT_CREATE_REQUEST,
         data: {
           UserId: parData.id,
-          LectureId: data.lectureList
-            ? data.lectureList
-            : data.partLecture.split(",")[1],
-          date: data.date
+          LectureId: lectureList ? lectureList.id : partLecture.LetureId,
+          date: lectureList
             ? parseInt(data.date) * 7
-            : parseInt(data.partLecture.split(",")[2]) * 7,
-          endDate: data.date
+            : parseInt(partLecture.week) * 7,
+          endDate: lectureList
             ? moment()
                 .add(parseInt(data.date * 7 - 1), "days")
                 .format("YYYY-MM-DD")
             : moment()
-                .add(parseInt(data.partLecture.split(",")[2] * 7 - 1), "days")
+                .add(parseInt(partLecture.week * 7 - 1), "days")
                 .format("YYYY-MM-DD"),
-          PaymentId: data.partLecture ? data.partLecture.split(",")[0] : null,
+          PaymentId: lectureList ? null : partLecture.id,
         },
       });
     },
@@ -636,6 +653,17 @@ const List = () => {
       birth: birth,
     });
   }, []);
+
+  const buttonHandle = useCallback(
+    (type) => {
+      setIsPayment(type);
+
+      updateClassform.setFieldsValue({
+        isPayment: type,
+      });
+    },
+    [updateClassform]
+  );
 
   ////// DATAVIEW //////
 
@@ -1226,13 +1254,17 @@ const List = () => {
               rules={[
                 { required: true, message: "결제 여부를 선택해주세요." },
               ]}>
-              <Select
-                showSearch
-                placeholder="Select a Lecture"
-                onChange={(e) => setIsPayment(e)}>
-                <Select.Option value={1}>네</Select.Option>
-                <Select.Option value={2}>아니요</Select.Option>
-              </Select>
+              <Button
+                style={{ marginRight: 10 }}
+                type={isPayment === 1 && `primary`}
+                onClick={() => buttonHandle(1)}>
+                네
+              </Button>
+              <Button
+                type={isPayment === 2 && `primary`}
+                onClick={() => buttonHandle(2)}>
+                아니요
+              </Button>
             </Form.Item>
 
             {isPayment === 1 && (
@@ -1274,7 +1306,9 @@ const List = () => {
                       : allLectures &&
                         allLectures.map((data, idx) => {
                           return (
-                            <Select.Option key={data.id} value={data.id}>
+                            <Select.Option
+                              key={data.id}
+                              value={JSON.stringify(data)}>
                               {`${data.course} | ${data.User.username}`}
                             </Select.Option>
                           );
@@ -1291,6 +1325,7 @@ const List = () => {
                   <Wrapper dr={`row`}>
                     <TextInput
                       width={`calc(100% - 30px)`}
+                      height={"32px"}
                       type={`number`}
                       min={1}
                     />

@@ -30,7 +30,7 @@ import {
   TextInput,
   TextArea,
 } from "../../../components/commonComponents";
-import { LOAD_MY_INFO_REQUEST, USERLIST_REQUEST } from "../../../reducers/user";
+import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import {
   CREATE_MODAL_CLOSE_REQUEST,
   CREATE_MODAL_OPEN_REQUEST,
@@ -99,8 +99,12 @@ const Pay = ({}) => {
     st_payClassListDone,
     st_payClassListError,
   } = useSelector((state) => state.payClass);
-  const { allLectures, st_lectureDetailDone, st_lectureDetailError } =
-    useSelector((state) => state.lecture);
+  const {
+    allLectures,
+    st_lectureDetailDone,
+    st_lectureDetailError,
+    lectureDetail,
+  } = useSelector((state) => state.lecture);
 
   const router = useRouter();
 
@@ -167,27 +171,42 @@ const Pay = ({}) => {
     }
   }, [st_payClassDeleteError]);
 
+  useEffect(() => {
+    if (st_lectureDetailError) {
+      return message.error(st_lectureDetailError);
+    }
+  }, [st_lectureDetailError]);
+
   ////// HANDLER //////
 
   const modalOk = useCallback(() => {
     cForm.submit();
   }, [cForm]);
 
-  const onSubmit = useCallback((data) => {
-    dispatch({
-      type: PAY_CLASS_CREATE_REQUEST,
-      data: {
-        name: data.course,
-        price: data.price,
-        discount: data.discount,
-        memo: data.memo,
-        startDate: data.startDate,
-        week: data.week,
-        LectureId: data.lecture,
-        domain: "https://pinterleaf.com/payment",
-      },
-    });
-  }, []);
+  const onSubmit = useCallback(
+    (data) => {
+      if (
+        data.startDate < moment(lectureDetail && lectureDetail[0].startDate)
+      ) {
+        return message.error("수업 시작 날짜보다 과거일 수 없습니다.");
+      }
+
+      dispatch({
+        type: PAY_CLASS_CREATE_REQUEST,
+        data: {
+          name: data.course,
+          price: data.price,
+          discount: data.discount,
+          memo: data.memo,
+          startDate: data.startDate,
+          week: data.week,
+          LectureId: data.lecture,
+          domain: "https://pinterleaf.com/payment",
+        },
+      });
+    },
+    [lectureDetail]
+  );
   const onSubmitDelete = useCallback((data) => {
     dispatch({
       type: PAY_CLASS_DELETE_REQUEST,
@@ -243,7 +262,9 @@ const Pay = ({}) => {
   const onChangeDetail = useCallback((data) => {
     dispatch({
       type: LECTURE_DETAIL_REQUEST,
-      data: {},
+      data: {
+        LectureId: data,
+      },
     });
   }, []);
 
@@ -319,8 +340,7 @@ const Pay = ({}) => {
           <Button
             type={`primary`}
             size={`small`}
-            onClick={() => updateModalOpen(data)}
-          >
+            onClick={() => updateModalOpen(data)}>
             DETAIL
           </Button>
         );
@@ -335,8 +355,7 @@ const Pay = ({}) => {
             title={"삭제하시겠습니까?"}
             onConfirm={() => onSubmitDelete(data)}
             okText="Yes"
-            cancelText="No"
-          >
+            cancelText="No">
             <Button type={`danger`} size={`small`}>
               DELETE
             </Button>
@@ -374,16 +393,14 @@ const Pay = ({}) => {
         width="900px"
         onOk={updateData ? updateModalClose : modalOk}
         onCancel={updateData ? updateModalClose : modalClose}
-        title={updateData ? "상세보기" : "결제 클래스 생성"}
-      >
+        title={updateData ? "상세보기" : "결제 클래스 생성"}>
         <Wrapper>
           <FormTag form={cForm} onFinish={onSubmit}>
             <Wrapper dr={`row`} margin={`0 0 20px`}>
               <Text width={`80px`}>제목</Text>
               <FormItem
                 rules={[{ required: true, message: "강의명을 입력해주세요." }]}
-                name={`course`}
-              >
+                name={`course`}>
                 <CusotmInput disabled={updateData ? true : false} />
               </FormItem>
             </Wrapper>
@@ -392,13 +409,11 @@ const Pay = ({}) => {
               <Text width={`80px`}>강의</Text>
               <FormItem
                 rules={[{ required: true, message: "강사를 선택해주세요." }]}
-                name={`lecture`}
-              >
+                name={`lecture`}>
                 <Select
                   size={`large`}
                   disabled={updateData ? true : false}
-                  onChange={(e) => onChangeDetail(e)}
-                >
+                  onChange={(e) => onChangeDetail(e)}>
                   {allLectures &&
                     allLectures.map((data) => {
                       return (
@@ -421,8 +436,7 @@ const Pay = ({}) => {
                   { required: true, message: "강의 기간을 입력해주세요." },
                 ]}
                 name={`price`}
-                width={`calc(100% - 110px)`}
-              >
+                width={`calc(100% - 110px)`}>
                 <CusotmInput
                   disabled={updateData ? true : false}
                   type={`number`}
@@ -435,8 +449,7 @@ const Pay = ({}) => {
               <FormItem
                 rules={[{ required: true, message: "할인률을 입력해주세요." }]}
                 name={`discount`}
-                width={`calc(100% - 110px)`}
-              >
+                width={`calc(100% - 110px)`}>
                 <CusotmInput
                   disabled={updateData ? true : false}
                   type={`number`}
@@ -454,9 +467,9 @@ const Pay = ({}) => {
                   { required: true, message: "시작 날짜를 입력해주세요." },
                 ]}
                 name={`startDate`}
-              >
+                onChange={(e) => console.log(e, "e")}>
                 <DateInput
-                  disabled={updateData ? true : false}
+                  disabled={st_lectureDetailDone ? false : true}
                   format={`YYYY-MM-DD`}
                   size={`large`}
                 />
@@ -470,8 +483,7 @@ const Pay = ({}) => {
                   { required: true, message: "강의 기간을 입력해주세요." },
                 ]}
                 name={`week`}
-                width={`calc(100% - 110px)`}
-              >
+                width={`calc(100% - 110px)`}>
                 <CusotmInput
                   disabled={updateData ? true : false}
                   type={`number`}
@@ -488,8 +500,7 @@ const Pay = ({}) => {
               </Text>
               <FormItem
                 rules={[{ required: true, message: "메모를 작성해주세요." }]}
-                name={`memo`}
-              >
+                name={`memo`}>
                 <CustomArea disabled={updateData ? true : false} />
               </FormItem>
             </Wrapper>
@@ -501,16 +512,14 @@ const Pay = ({}) => {
                 <Wrapper
                   dr={`row`}
                   width={`calc(100% - 80px)`}
-                  al={`flex-start`}
-                >
+                  al={`flex-start`}>
                   <Wrapper width={`calc(100% - 100px)`}>
                     <Form.Item
                       style={{ width: `100%` }}
                       rules={[
                         { required: true, message: "메모를 작성해주세요." },
                       ]}
-                      name={`link`}
-                    >
+                      name={`link`}>
                       <CusotmInput
                         id="copyInput"
                         height={`48px`}
@@ -523,16 +532,14 @@ const Pay = ({}) => {
                       size="small"
                       type="primary"
                       style={{ width: `100px`, borderRadius: `0` }}
-                      onClick={copyTextHandler}
-                    >
+                      onClick={copyTextHandler}>
                       복사하기
                     </Button>
                     <Button
                       size="small"
                       type="primary"
                       style={{ width: `100px`, borderRadius: `0` }}
-                      onClick={() => openLinkHandler(updateData.link)}
-                    >
+                      onClick={() => openLinkHandler(updateData.link)}>
                       이동하기
                     </Button>
                   </Wrapper>
@@ -548,8 +555,7 @@ const Pay = ({}) => {
         width="900px"
         onOk={() => {}}
         onCancel={() => {}}
-        title="주의사항"
-      >
+        title="주의사항">
         <GuideUl>
           <GuideLi>asdfasdf</GuideLi>
           <GuideLi isImpo={true}>asdfasdf</GuideLi>

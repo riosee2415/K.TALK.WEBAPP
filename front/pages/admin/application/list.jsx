@@ -219,13 +219,10 @@ const List = ({ location }) => {
       const payOpt =
         paymentList &&
         paymentList.map((data) => {
-          console.log(data, "data");
           return (
-            <Select.Option
-              key={data.id}
-              value={`${data.id},${data.LetureId},${data.week},${data.email}`}>
-              {data.createdAt.slice(0, 10)} | {data.course} | &#36;{data.price}|
-              &nbsp;{data.email}
+            <Select.Option key={data.id} value={JSON.stringify(data)}>
+              {`결제일: ${data.createdAt.slice(0, 10)} | ${data.course} | `}
+              {`결제한 가격: $${data.price} |  ${data.email}`}
             </Select.Option>
           );
         });
@@ -341,11 +338,29 @@ const List = ({ location }) => {
         return message.error("결제 여부를 선택해주세요.");
       }
 
+      let partLecture = data.paymentList && JSON.parse(data.paymentList);
+      let lectureList = data.lectureList && JSON.parse(data.lectureList);
+
+      if (lectureList) {
+        if (moment() < moment(lectureList.startDate)) {
+          return message.error(
+            "수업 참여일이 수업 시작 날짜보다 과거일 수 없습니다."
+          );
+        }
+      } else if (partLecture) {
+        if (moment() < moment(partLecture.startDate.slice(0, 10))) {
+          console.log(partLecture.startDate);
+          return message.error(
+            "수업 참여일이 수업 시작 날짜보다 과거일 수 없습니다."
+          );
+        }
+      }
+
       dispatch({
         type: USER_STU_CREATE_REQUEST,
         data: {
           userId: data.userId,
-          password: data.password,
+          password: data.mobile.slice(-4),
           username: data.username,
           mobile: data.mobile,
           email: data.email,
@@ -359,21 +374,17 @@ const List = ({ location }) => {
           snsId: data.snsId,
           stuJob: data.stuJob,
           gender: data.gender,
-          PaymentId:
-            data && data.paymentList ? data.paymentList.split(",")[0] : null,
-          LectureId:
-            data && data.lectureList
-              ? data.lectureList
-              : data.paymentList.split(",")[1],
-          date: data.date
-            ? String(data.date * 7)
-            : parseInt(data.paymentList.split(",")[2]) * 7,
-          endDate: data.date
+          PaymentId: lectureList ? null : partLecture.id,
+          LectureId: lectureList ? lectureList.id : partLecture.LetureId,
+          date: lectureList
+            ? parseInt(data.date) * 7
+            : parseInt(partLecture.week) * 7,
+          endDate: lectureList
             ? moment()
                 .add(parseInt(data.date * 7 - 1), "days")
                 .format("YYYY-MM-DD")
             : moment()
-                .add(parseInt(data.paymentList.split(",")[2] * 7 - 1), "days")
+                .add(parseInt(partLecture.week * 7 - 1), "days")
                 .format("YYYY-MM-DD"),
         },
       });
@@ -478,8 +489,6 @@ const List = ({ location }) => {
   );
 
   ////// DATAVIEW //////
-
-  const levelData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   // Table
   const columns = [
@@ -975,38 +984,39 @@ const List = ({ location }) => {
           onFinish={createFinish}
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 20 }}>
-          <Form.Item label="이메일" name="email">
-            <Input disabled type="email" />
+          <Form.Item
+            label="이메일"
+            name="email"
+            onChange={(e) =>
+              createForm.setFieldsValue({
+                userId: e.target.value,
+              })
+            }>
+            <Input type="email" />
           </Form.Item>
           <Form.Item label="회원아이디" name="userId">
             <Input disabled />
           </Form.Item>
           <Form.Item label="회원이름" name="username">
-            <Input disabled />
+            <Input />
           </Form.Item>
           <Form.Item label="생년월일" name="birth">
-            <Input disabled />
+            <Input />
           </Form.Item>
           <Form.Item label="전화번호" name="mobile">
-            <Input disabled />
-          </Form.Item>
-          <Form.Item label="비밀번호" name="password">
-            <Input type="password" disabled />
-          </Form.Item>
-          <Form.Item label="비밀번호 재입력" name="repassword">
-            <Input type="password" disabled />
+            <Input />
           </Form.Item>
           <Form.Item label="학생 직업" name="stuJob">
-            <Input disabled />
+            <Input />
           </Form.Item>
           <Form.Item label="학생 언어" name="stuLanguage">
-            <Input disabled />
+            <Input />
           </Form.Item>
           <Form.Item label="학생 나라" name="stuCountry">
-            <Input disabled />
+            <Input />
           </Form.Item>
           <Form.Item label="현재 거주 나라" name="stuLiveCon">
-            <Input disabled />
+            <Input />
           </Form.Item>
           <Form.Item
             label="결제 여부"
@@ -1060,7 +1070,9 @@ const List = ({ location }) => {
                     : allLectures &&
                       allLectures.map((data, idx) => {
                         return (
-                          <Select.Option key={data.id} value={data.id}>
+                          <Select.Option
+                            key={data.id}
+                            value={JSON.stringify(data)}>
                             {`${data.course} | ${data.User.username}`}
                           </Select.Option>
                         );
