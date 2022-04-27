@@ -206,8 +206,13 @@ const UserDeliAddress = ({}) => {
           page: "",
         },
       });
+      form.resetFields();
+      setImagePathTh("");
+      setCreateModal(false);
+      filename.setValue("");
       setCreateModal(false);
       setUpdateData(null);
+
       return message.success("교재가 수정 되었습니다.");
     }
   }, [st_bookAdminUpdateDone]);
