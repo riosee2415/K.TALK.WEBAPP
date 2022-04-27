@@ -1345,10 +1345,42 @@ const Student = () => {
 
                               <Wrapper
                                 margin={`10px 0 0 0`}
-                                al={`flex-start`}
+                                dr={`row`}
+                                ju={`flex-start`}
                                 color={Theme.grey2_C}
                                 fontSize={width < 800 ? `12px` : `16px`}
-                                lineHeight={`1.19`}>{`${data.startLv}`}</Wrapper>
+                                lineHeight={`1.19`}>
+                                {`${data.startLv}`}
+
+                                <Text fontSize={width < 700 ? `14px` : `16px`}>
+                                  {stepHanlder2(
+                                    moment(data.PartCreatedAt).format(
+                                      "YYYY-MM-DD"
+                                    ),
+                                    data.endDate,
+                                    data.day
+                                  ) -
+                                    (data.date / 7) * data.count <=
+                                    0 && (
+                                    <SpanText
+                                      fontWeight={`bold`}
+                                      color={Theme.red_C}
+                                      margin={`0 0 0 15px`}>
+                                      {Math.abs(
+                                        stepHanlder2(
+                                          moment(data.PartCreatedAt).format(
+                                            "YYYY-MM-DD"
+                                          ),
+                                          data.endDate,
+                                          data.day
+                                        ) -
+                                          (data.date / 7) * data.count
+                                      )}
+                                      회
+                                    </SpanText>
+                                  )}
+                                </Text>
+                              </Wrapper>
 
                               <Wrapper>
                                 <Wrapper
