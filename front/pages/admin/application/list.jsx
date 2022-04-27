@@ -219,6 +219,7 @@ const List = ({ location }) => {
       const payOpt =
         paymentList &&
         paymentList.map((data) => {
+          console.log(data, "data");
           return (
             <Select.Option
               key={data.id}
@@ -340,7 +341,7 @@ const List = ({ location }) => {
         return message.error("결제 여부를 선택해주세요.");
       }
 
-      console.log({
+      dispatch({
         type: USER_STU_CREATE_REQUEST,
         data: {
           userId: data.userId,
@@ -376,43 +377,6 @@ const List = ({ location }) => {
                 .format("YYYY-MM-DD"),
         },
       });
-
-      // dispatch({
-      //   type: USER_STU_CREATE_REQUEST,
-      //   data: {
-      //     userId: data.userId,
-      //     password: data.password,
-      //     username: data.username,
-      //     mobile: data.mobile,
-      //     email: data.email,
-      //     address: data.address,
-      //     detailAddress: data.detailAddress,
-      //     stuLanguage: data.stuLanguage,
-      //     birth: data.birth,
-      //     stuCountry: data.stuCountry,
-      //     stuLiveCon: data.stuLiveCon,
-      //     sns: data.sns,
-      //     snsId: data.snsId,
-      //     stuJob: data.stuJob,
-      //     gender: data.gender,
-      //     PaymentId:
-      //       data && data.paymentList ? data.paymentList.split(",")[0] : null,
-      //     LectureId:
-      //       data && data.lectureList
-      //         ? data.lectureList
-      //         : data.paymentList.split(",")[1],
-      //     date: data.date
-      //       ? String(data.date * 7)
-      //       : parseInt(data.paymentList.split(",")[2]) * 7,
-      //     endDate: data.date
-      //       ? moment()
-      //           .add(parseInt(data.date) * 7, "days")
-      //           .format("YYYY-MM-DD")
-      //       : moment()
-      //           .add(parseInt(data.paymentList.split(",")[2]) * 7, "days")
-      //           .format("YYYY-MM-DD"),
-      //   },
-      // });
     },
     [isPayment]
   );

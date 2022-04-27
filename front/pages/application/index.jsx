@@ -252,16 +252,12 @@ const Application = () => {
         data: {
           firstName: data.firstName,
           lastName: data.lastName,
-          title: "-",
           dateOfBirth: `${data.year}-${data.month}-${data.date}`,
           gmailAddress: `${data.firstEmail}${data.lastEmail}`,
           nationality: data.nationality,
           countryOfResidence: saveTotal.Afghanistan,
           languageYouUse: data.languageYouUse,
-          phoneNumber:
-            data.phoneNumber === "직접입력"
-              ? data.phoneNumberInput
-              : saveTotal.number,
+          phoneNumber: saveTotal.number,
           phoneNumber2: data.phoneNumber2,
           classHour: classHour,
           terms: agreeCheck,
@@ -1846,31 +1842,7 @@ const Application = () => {
                   </Form.Item>
                 </Wrapper>
               </Wrapper>
-              {/* <Wrapper al={`flex-start`}>
-                <Text
-                  fontSize={width < 700 ? `16px` : `18px`}
-                  fontWeight={`bold`}
-                  margin={`0 0 10px`}
-                  lineHeight={`1.22`}>
-                  Country of Residence
-                </Text>
-                <Wrapper dr={`row`} ju={`flex-start`}>
-                  <Form.Item
-                    name="countryOfResidence"
-                    rules={[{ required: true }]}>
-                    <CustomSelect>
-                      {country &&
-                        country.map((data, idx) => {
-                          return (
-                            <Select.Option key={idx} value={data}>
-                              {data}
-                            </Select.Option>
-                          );
-                        })}
-                    </CustomSelect>
-                  </Form.Item>
-                </Wrapper>
-              </Wrapper> */}
+
               <Wrapper al={`flex-start`}>
                 <Text
                   fontSize={width < 700 ? `16px` : `18px`}
@@ -1909,7 +1881,9 @@ const Application = () => {
                         {total &&
                           total.map((data, idx) => {
                             return (
-                              <Select.Option value={JSON.stringify(data)}>
+                              <Select.Option
+                                key={idx}
+                                value={JSON.stringify(data)}>
                                 {`${data.number} ${data.Afghanistan}`}
                               </Select.Option>
                             );
@@ -1947,6 +1921,7 @@ const Application = () => {
                   timeArr.map((data, idx) => {
                     return (
                       <Wrapper
+                        key={idx}
                         width={
                           width < 700 ? `calc(100% / 2)` : `calc(100% / 3)`
                         }

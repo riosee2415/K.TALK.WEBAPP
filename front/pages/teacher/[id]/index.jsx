@@ -80,7 +80,9 @@ import {
 } from "../../../reducers/commute";
 import { saveAs } from "file-saver";
 
-const CusotmInput = styled(TextInput)`
+const CustomInput = styled(TextInput)`
+  width: ${(props) => props.width || `100%`};
+
   border: none;
   box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.16);
   border-radius: 5px;
@@ -195,25 +197,6 @@ const CustomCheckBox = styled(Checkbox)`
   }
 `;
 
-const CustomProgress = styled(Progress)`
-  width: calc(100% - 50px - 13px - 140px - 140px - 22px - 22px - 20px - 20px);
-
-  & .ant-progress-text {
-    ::before {
-      content: "(";
-    }
-
-    ::after {
-      content: ")";
-      color: ${Theme.grey2_C};
-    }
-  }
-
-  @media (max-width: 700px) {
-    width: calc(100% - 50px - 13px);
-  }
-`;
-
 const CustomPage = styled(Pagination)`
   & .ant-pagination-next > button {
     border: none;
@@ -311,10 +294,8 @@ const Index = () => {
   );
 
   const {
-    messageList,
     messageDetail,
 
-    st_messageListDone,
     st_messageListError,
 
     st_messageDetailDone,
@@ -329,7 +310,6 @@ const Index = () => {
     messageLectureList,
     messageLectureLastPage,
 
-    st_messageLectureListDone,
     st_messageLectureListError,
 
     st_messageCreateDone,
@@ -342,7 +322,6 @@ const Index = () => {
     lectureDiaryList,
     lectureDiaryLastPage,
 
-    st_lectureDiaryListDone,
     st_lectureDiaryListError,
 
     st_lectureDiaryCreateDone,
@@ -355,7 +334,7 @@ const Index = () => {
 
     lectureHomeworkList,
     lectureHomeworkLastPage,
-    st_lectureHomeWorkDone,
+
     st_lectureHomeWorkError,
 
     st_lectureHomeWorkCreateDone,
@@ -364,7 +343,6 @@ const Index = () => {
     lectureSubmitList,
     lectureSubmitLastPage,
 
-    st_lectureSubmitListDone,
     st_lectureSubmitListError,
 
     lectureDetail,
@@ -396,7 +374,7 @@ const Index = () => {
   const {
     noticeLectureList,
     noticeLectureLastPage,
-    st_noticeLectureListDone,
+
     st_noticeLectureListError,
 
     st_noticeCreateDone,
@@ -420,7 +398,6 @@ const Index = () => {
     commuteList,
     commuteLastPage,
 
-    st_commuteListDone,
     st_commuteListError,
 
     st_commuteCreateDone,
@@ -628,6 +605,12 @@ const Index = () => {
   }, [st_messageDetailDone]);
 
   useEffect(() => {
+    if (st_messageDetailError) {
+      return message.error(st_messageDetailError);
+    }
+  }, [st_messageDetailError]);
+
+  useEffect(() => {
     if (st_messageCreateDone) {
       onReset();
       return message.success("답변을 완료 했습니다.");
@@ -690,6 +673,12 @@ const Index = () => {
       setFilePath(lecturePath);
     }
   }, [st_lectureFileDone]);
+
+  useEffect(() => {
+    if (st_lectureFileError) {
+      return message.error(st_lectureFileError);
+    }
+  }, [st_lectureFileError]);
 
   useEffect(() => {
     if (st_noticeDetailDone) {
@@ -891,7 +880,8 @@ const Index = () => {
 
   useEffect(() => {
     if (st_lectureDiaryListError) {
-      return message.error(st_lectureDiaryListError);
+      message.error(st_lectureDiaryListError);
+      return router.back();
     }
   }, [st_lectureDiaryListError]);
 
@@ -926,10 +916,6 @@ const Index = () => {
         page: 1,
       },
     });
-  }, []);
-
-  const adminSendMessageToggleHandler = useCallback(() => {
-    setAdminSendMessageToggle((prev) => !prev);
   }, []);
 
   const detailStuToggleHandler = useCallback((data) => {
@@ -1483,110 +1469,27 @@ const Index = () => {
     saveAs(file, originName);
   }, []);
 
-  // const stepHanlder = useCallback((startDate, endDate, count, lecDate, day) => {
-  //   let dir = 0;
-
-  //   const save = Math.abs(
-  //     moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays() -
-  //       1
-  //   );
-
-  //   let check = parseInt(
-  //     moment
-  //       .duration(moment(endDate).diff(moment(startDate, "YYYY-MM-DD")))
-  //       .asDays() + 1
-  //   );
-
-  //   if (save >= check) {
-  //     dir = check;
-  //   } else {
-  //     dir = save;
-  //   }
-
-  //   const arr = ["일", "월", "화", "수", "목", "금", "토"];
-  //   let add = 0;
-
-  //   for (let i = 1; i < dir; i++) {
-  //     let saveDay = moment(startDate).add(i, "days").day();
-
-  //     const saveResult = day.includes(arr[saveDay]);
-
-  //     if (saveResult) {
-  //       add += 1;
-  //     }
-  //   }
-
-  //   return add;
-  // }, []);
-
-  const stepHanlder = useCallback((startDate, endDate, count, lecDate, day) => {
-    let dir = 0;
-
-    let startDay = moment
-      .duration(moment(startDate).diff(moment().format("YYYY-MM-DD")))
-      .asDays();
-
-    let endDay = moment
-      .duration(moment(endDate).diff(moment().format("YYYY-MM-DD")))
-      .asDays();
-
-    let diff = moment
-      .duration(moment(endDate).diff(moment(startDate)))
-      .asDays();
-
-    if (startDay < 0 && endDay < 0) {
-      return 0;
-    } else if (startDay > 0) {
-      const arr = ["일", "월", "화", "수", "목", "금", "토"];
-      let add = 0;
-
-      for (let i = 0; i < diff; i++) {
-        let saveDay = moment(startDate)
-          .add(i + 1, "days")
-          .day();
-
-        const saveResult = day.includes(arr[saveDay]);
-
-        if (saveResult) {
-          add += 1;
-        }
-      }
-
-      return add;
-    } else {
-      const arr = ["일", "월", "화", "수", "목", "금", "토"];
-      let add = 0;
-
-      for (let i = 0; i < endDay; i++) {
-        let saveDay = moment(startDate)
-          .add(i + 1, "days")
-          .day();
-
-        const saveResult = day.includes(arr[saveDay]);
-
-        if (saveResult) {
-          add += 1;
-        }
-      }
-
-      return add;
-    }
-  }, []);
-
   const stepEnd = useCallback((endDate, day) => {
-    let endDay = moment
-      .duration(moment(endDate).diff(moment().format("YYYY-MM-DD")))
-      .asDays();
+ 
+
+    let endDay =
+      moment
+        .duration(
+          moment(endDate).diff(moment("2022-04-28").format("YYYY-MM-DD"))
+        )
+        .asDays() + 1;
+
+
 
     const arr = ["일", "월", "화", "수", "목", "금", "토"];
     let add = 0;
 
     for (let i = 0; i < endDay; i++) {
-      let saveDay = moment()
-        .add(i + 1, "days")
-        .day();
+      let saveDay = moment().add(i, "days").day();
+
 
       const saveResult = day.includes(arr[saveDay]);
+
 
       if (saveResult) {
         add += 1;
@@ -2290,6 +2193,7 @@ const Index = () => {
                                 {`(${stepEnd(data.endDate, data.day)}회)`}
                               </SpanText>
                             </Text>
+
                             <Wrapper width={`10%`}>
                               <Button
                                 type={`primary`}
@@ -2915,7 +2819,7 @@ const Index = () => {
               <Form.Item
                 name="noticeTitle"
                 rules={[{ required: true, message: "제목을 입력해주세요." }]}>
-                <CusotmInput width={`100%`}></CusotmInput>
+                <CustomInput width={`100%`}></CustomInput>
               </Form.Item>
 
               <Text fontSize={`18px`} fontWeight={`bold`}>
@@ -3118,31 +3022,25 @@ const Index = () => {
                   <Text>{messageDatum && messageDatum.author}</Text>
                 </Wrapper>
 
-                <Text fontSize={`18px`} fontWeight={`bold`}>
+                <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
                   제목
                 </Text>
-                <Wrapper padding={`10px`}>
-                  <Form.Item
-                    name="messageTitle"
-                    rules={[
-                      { required: true, message: "제목을 입력해주세요." },
-                    ]}>
-                    <CusotmInput width={`100%`} />
-                  </Form.Item>
-                </Wrapper>
 
-                <Text fontSize={`18px`} fontWeight={`bold`}>
+                <Form.Item
+                  name="messageTitle"
+                  rules={[{ required: true, message: "제목을 입력해주세요." }]}>
+                  <CustomInput width={`100%`} />
+                </Form.Item>
+
+                <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 0 10px`}>
                   내용
                 </Text>
-                <Wrapper padding={`10px`}>
-                  <Form.Item
-                    name="messageContent"
-                    rules={[
-                      { required: true, message: "내용을 입력해주세요." },
-                    ]}>
-                    <Input.TextArea style={{ height: `360px` }} />
-                  </Form.Item>
-                </Wrapper>
+
+                <Form.Item
+                  name="messageContent"
+                  rules={[{ required: true, message: "내용을 입력해주세요." }]}>
+                  <Input.TextArea style={{ height: `360px` }} />
+                </Form.Item>
 
                 <Wrapper dr={`row`}>
                   <CommonButton
@@ -3223,7 +3121,7 @@ const Index = () => {
             <Form.Item
               name="title1"
               rules={[{ required: true, message: "제목을 입력해주세요." }]}>
-              <CusotmInput width={`100%`} />
+              <CustomInput width={`100%`} />
             </Form.Item>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
@@ -3271,8 +3169,9 @@ const Index = () => {
             <Form.Item
               name="title2"
               rules={[{ required: true, message: "제목을 입력해주세요." }]}>
-              <CusotmInput width={`100%`} placeholder="제목을 입력해주세요." />
+              <CustomInput width={`100%`} placeholder="제목을 입력해주세요." />
             </Form.Item>
+
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`bold`}
@@ -3349,7 +3248,7 @@ const Index = () => {
             <Form.Item
               name="title3"
               rules={[{ required: true, message: "제목을 입력해주세요." }]}>
-              <CusotmInput width={`50%`} placeholder="제목을 입력해주세요." />
+              <CustomInput width={`50%`} placeholder="제목을 입력해주세요." />
             </Form.Item>
 
             <Text
@@ -3374,7 +3273,7 @@ const Index = () => {
               name="date"
               rules={[{ required: true, message: "날짜를 선택해주세요." }]}>
               <Wrapper dr={`row`} ju={`flex-start`}>
-                <CusotmInput
+                <CustomInput
                   placeholder="날짜를 선택해주세요."
                   width={`50%`}
                   value={inputDate.value}
@@ -3478,7 +3377,7 @@ const Index = () => {
                 }}
                 name="process1"
                 rules={[{ required: true, message: "진도를 입력해주세요." }]}>
-                <CusotmInput type={`number`} width={`100%`} />
+                <CustomInput type={`number`} width={`100%`} />
               </Form.Item>
               <Text margin={`0 15px 0 0`} width={`50px`}>
                 &nbsp; 권
@@ -3490,7 +3389,7 @@ const Index = () => {
                 }}
                 name="process2"
                 rules={[{ required: true, message: "진도를 입력해주세요." }]}>
-                <CusotmInput type={`number`} width={`100%`} />
+                <CustomInput type={`number`} width={`100%`} />
               </Form.Item>
               <Text margin={`0 15px 0 0`} width={`50px`}>
                 &nbsp; 단원
@@ -3499,7 +3398,7 @@ const Index = () => {
                 style={{ width: `calc(100% / 3 - 10px - 100px)`, margin: `0` }}
                 name="process3"
                 rules={[{ required: true, message: "진도를 입력해주세요." }]}>
-                <CusotmInput type={`number`} width={`100%`} />
+                <CustomInput type={`number`} width={`100%`} />
               </Form.Item>
               <Text width={`100px`}>&nbsp; 페이지</Text>
             </Wrapper>
@@ -3779,7 +3678,7 @@ const Index = () => {
                     rules={[
                       { required: true, message: "학생메모를 입력해주세요." },
                     ]}>
-                    <CusotmInput width={`100%`} disabled></CusotmInput>
+                    <CustomInput width={`100%`} disabled></CustomInput>
                   </Form.Item>
 
                   <Text
