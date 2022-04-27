@@ -303,7 +303,7 @@ const Student = () => {
     st_lectureHomeworkStuListError,
   } = useSelector((state) => state.lecture);
 
-  const { bookList, st_bookLectureListDone, st_bookLectureListError } =
+  const { bookList, bookMaxLength, st_bookListDone, st_bookListError } =
     useSelector((state) => state.book);
 
   ////// HOOKS //////
@@ -340,12 +340,13 @@ const Student = () => {
   const [homeWorkData, setHomeWorkData] = useState("");
 
   const [bookModal, setBookModal] = useState(false);
+  const [bookDetail, setBookDetail] = useState("");
 
   const [currentPage1, setCurrentPage1] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
   const [currentPage3, setCurrentPage3] = useState(1);
-
   const [currentPage4, setCurrentPage4] = useState(1);
+  const [currentPage5, setCurrentPage5] = useState(1);
 
   const bookColumns = [
     {
@@ -443,16 +444,16 @@ const Student = () => {
   }, [me]);
 
   useEffect(() => {
-    if (st_bookLectureListDone) {
+    if (st_bookListDone) {
       setBookModal(true);
     }
-  }, [st_bookLectureListDone]);
+  }, [st_bookListDone]);
 
   useEffect(() => {
-    if (st_bookLectureListError) {
-      return message.error(st_bookLectureListError);
+    if (st_bookListError) {
+      return message.error(st_bookListError);
     }
-  }, [st_bookLectureListError]);
+  }, [st_bookListError]);
 
   useEffect(() => {
     if (st_userProfileUploadDone) {
@@ -618,7 +619,6 @@ const Student = () => {
     setMessageViewModal(false);
     setHomeWorkModalToggle(false);
     setFileName("");
-    setLectureId("");
     setSendMessageType(1);
     setSendMessageAnswerType(0);
   }, [fileInput]);
@@ -645,8 +645,6 @@ const Student = () => {
     if (num === 1) {
       setSendMessageType(3);
     }
-
-    setLectureId(data);
   }, []);
 
   const messageViewModalHandler = useCallback((data) => {
@@ -737,7 +735,7 @@ const Student = () => {
 
   const sendMessageFinishHandler = useCallback(
     (data) => {
-      let userId = data.receiveLectureId.split(",")[1];
+      let TeacherId = data.receiveLectureId.split(",")[1];
       let level = data.receiveLectureId.split(",")[2];
 
       dispatch({
@@ -746,7 +744,7 @@ const Student = () => {
           title: data.title,
           author: me.username,
           senderId: me.id,
-          receiverId: userId,
+          receiverId: TeacherId,
           content: data.content,
           level: level,
         },
@@ -969,12 +967,12 @@ const Student = () => {
   }, []);
 
   const detailBookOpen = useCallback((data) => {
-    setBookModal(true);
+    setBookDetail(data);
 
     dispatch({
       type: BOOK_LIST_REQUEST,
       data: {
-        LectureId: data.id,
+        LectureId: data.LectureId,
       },
     });
   }, []);
@@ -1009,6 +1007,20 @@ const Student = () => {
 
     return (tempArr.length * 100) / ((data.date / 7) * data.count);
   }, []);
+
+  const onChangeBookPage = useCallback(
+    (page) => {
+      setCurrentPage5(page);
+      dispatch({
+        type: BOOK_LIST_REQUEST,
+        data: {
+          LectureId: bookDetail.LectureId,
+          page,
+        },
+      });
+    },
+    [bookDetail]
+  );
 
   ////// DATAVIEW //////
 
@@ -2087,11 +2099,9 @@ const Student = () => {
                       ) : (
                         lectureStuLectureList &&
                         lectureStuLectureList.map((data, idx) => {
-                          if (data.UserId !== messageDatum.senderId) return;
-
                           return (
                             <Option key={`${data.id}${idx}`} value={data.id}>
-                              {`${data.course} | ${data.User.username}`}
+                              {`${data.course} | ${data.username}`}
                             </Option>
                           );
                         })
@@ -2130,7 +2140,6 @@ const Student = () => {
                       ) : (
                         lectureStuLectureList &&
                         lectureStuLectureList.map((data, idx) => {
-                          if (data.UserId !== messageDatum.senderId) return;
                           return (
                             <Option key={`${data.id}${idx}`} value={data.id}>
                               {`${data.course} | ${data.User.username}`}
@@ -2477,7 +2486,7 @@ const Student = () => {
                           return (
                             <Option
                               key={`${data.id}${idx}`}
-                              value={`${data.id},${data.id},${data.level}`}>
+                              value={`${data.id},${data.TeacherId},${data.level}`}>
                               {`${data.course} | ${data.username}`}
                             </Option>
                           );
@@ -2587,6 +2596,12 @@ const Student = () => {
                   size={`small`}
                   columns={bookColumns}
                   dataSource={bookList}
+                  pagination={{
+                    pageSize: 12,
+                    current: currentPage5,
+                    total: bookMaxLength * 12,
+                    onChange: (page) => onChangeBookPage(page),
+                  }}
                 />
               </Wrapper>
             </Wrapper>

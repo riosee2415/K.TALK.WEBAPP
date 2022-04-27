@@ -246,7 +246,8 @@ const LectureAll = () => {
     st_noticeMyLectureListError,
   } = useSelector((state) => state.notice);
 
-  const { bookList, st_bookListError } = useSelector((state) => state.book);
+  const { bookList, bookMaxLength, st_bookListDone, st_bookListError } =
+    useSelector((state) => state.book);
 
   ////// HOOKS //////
   const width = useWidth();
@@ -273,8 +274,10 @@ const LectureAll = () => {
   const [currentPage2, setCurrentPage2] = useState(1);
   const [currentPage3, setCurrentPage3] = useState(1);
   const [currentPage4, setCurrentPage4] = useState(1);
+  const [currentPage5, setCurrentPage5] = useState(1);
 
   const [bookModal, setBookModal] = useState(false);
+  const [bookDetail, setBookDetail] = useState("");
 
   const [limitModal, setLimitModal] = useState(false);
 
@@ -436,6 +439,12 @@ const LectureAll = () => {
     }
   }, [st_messageAllListError]);
 
+  useEffect(() => {
+    if (st_bookListDone) {
+      setBookModal(true);
+    }
+  }, [st_bookListDone]);
+
   const onReset = useCallback(() => {
     form.resetFields();
     answerform.resetFields();
@@ -596,12 +605,12 @@ const LectureAll = () => {
   }, []);
 
   const detailBookOpen = useCallback((data) => {
-    setBookModal(true);
+    setBookDetail(data);
 
     dispatch({
       type: BOOK_LIST_REQUEST,
       data: {
-        LectureId: data.id,
+        LectureId: data.LectureId,
       },
     });
   }, []);
@@ -655,6 +664,21 @@ const LectureAll = () => {
 
     return (tempArr.length * 100) / ((data.date / 7) * data.count);
   }, []);
+
+  const onChangeBookPage = useCallback(
+    (page) => {
+      setCurrentPage5(page);
+
+      dispatch({
+        type: BOOK_LIST_REQUEST,
+        data: {
+          LectureId: bookDetail.LectureId,
+          page,
+        },
+      });
+    },
+    [bookDetail]
+  );
 
   ////// DATAVIEW //////
 
@@ -1473,6 +1497,12 @@ const LectureAll = () => {
                 size={`small`}
                 columns={bookColumns}
                 dataSource={bookList}
+                pagination={{
+                  pageSize: 12,
+                  current: currentPage5,
+                  total: bookMaxLength * 12,
+                  onChange: (page) => onChangeBookPage(page),
+                }}
               />
             </Wrapper>
           </Wrapper>

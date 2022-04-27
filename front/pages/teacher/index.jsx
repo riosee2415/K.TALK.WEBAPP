@@ -208,7 +208,7 @@ const CustomForm = styled(Form)`
   }
 `;
 
-const CusotmInput = styled(TextInput)`
+const CustomInput = styled(TextInput)`
   border: none;
   box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.16);
   border-radius: 5px;
@@ -1622,7 +1622,7 @@ const Index = () => {
                 label="줌 링크"
                 name={"zoomLink"}
                 rules={[{ required: true, message: "줌링크를 입력해주세요." }]}>
-                <CusotmInput width={`100%`} />
+                <CustomInput width={`100%`} />
               </Form.Item>
 
               <Form.Item
@@ -1631,7 +1631,7 @@ const Index = () => {
                 rules={[
                   { required: true, message: "줌 비밀번호를 입력해주세요." },
                 ]}>
-                <CusotmInput width={`100%`} />
+                <CustomInput width={`100%`} />
               </Form.Item>
 
               <Wrapper>
@@ -1674,7 +1674,7 @@ const Index = () => {
                     rules={[
                       { required: true, message: "제목을 입력해주세요." },
                     ]}>
-                    <CusotmInput
+                    <CustomInput
                       width={`100%`}
                       placeholder="제목을 입력해주세요."
                     />
