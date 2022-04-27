@@ -334,7 +334,7 @@ const DetailClass = () => {
     },
     {
       title: "만기일",
-      render: () => lectureDetail && lectureDetail[0].endDate.slice(0, 10),
+      render: "",
     },
     {
       title: "출석 기록",
@@ -342,7 +342,8 @@ const DetailClass = () => {
         <Button
           size={`small`}
           type={`primary`}
-          onClick={() => detailCommutesOpen(data)}>
+          onClick={() => detailCommutesOpen(data)}
+        >
           상세보기
         </Button>
       ),
@@ -353,7 +354,8 @@ const DetailClass = () => {
         <Button
           size={`small`}
           type={`primary`}
-          onClick={() => detailMemoOpen(data)}>
+          onClick={() => detailMemoOpen(data)}
+        >
           메모 보기
         </Button>
       ),
@@ -385,7 +387,8 @@ const DetailClass = () => {
         <Button
           size={`small`}
           type={`primary`}
-          onClick={() => lecMemoOpen(data)}>
+          onClick={() => lecMemoOpen(data)}
+        >
           메모 보기
         </Button>
       ),
@@ -443,7 +446,8 @@ const DetailClass = () => {
           <Button
             type={`primary`}
             size={`small`}
-            onClick={() => fileDownloadHandler(data.file)}>
+            onClick={() => fileDownloadHandler(data.file)}
+          >
             다운로드
           </Button>
         );
@@ -467,7 +471,8 @@ const DetailClass = () => {
           <Button
             type={`primary`}
             size={`small`}
-            onClick={() => detailMemoContentOpen(data)}>
+            onClick={() => detailMemoContentOpen(data)}
+          >
             내용 보기
           </Button>
         );
@@ -516,7 +521,8 @@ const DetailClass = () => {
         <Button
           type="primary"
           size={`small`}
-          onClick={() => noticeToggle(data)}>
+          onClick={() => noticeToggle(data)}
+        >
           상세보기
         </Button>
       ),
@@ -580,7 +586,8 @@ const DetailClass = () => {
               <Text
                 fontSize={`16px`}
                 color={Theme.grey2_C}
-                margin={`0 0 0 15px`}>
+                margin={`0 0 0 15px`}
+              >
                 NO.{lectureDetail && lectureDetail[0].number}
               </Text>
             </Wrapper>
@@ -592,7 +599,8 @@ const DetailClass = () => {
               margin={`0 6px`}
               kindOf={`white`}
               padding={`0`}
-              onClick={() => moveLinkHandler(`/admin`)}>
+              onClick={() => moveLinkHandler(`/admin`)}
+            >
               강의 목록
             </CommonButton>
             <CommonButton
@@ -601,7 +609,8 @@ const DetailClass = () => {
               margin={`0 6px`}
               kindOf={`white`}
               padding={`0`}
-              onClick={() => moveLinkHandler(`/admin/board/notice/list`)}>
+              onClick={() => moveLinkHandler(`/admin/board/notice/list`)}
+            >
               게시판
             </CommonButton>
             <CommonButton
@@ -610,7 +619,8 @@ const DetailClass = () => {
               margin={`0 6px`}
               kindOf={`white`}
               padding={`0`}
-              onClick={() => moveLinkHandler(`/admin/board/message/list`)}>
+              onClick={() => moveLinkHandler(`/admin/board/message/list`)}
+            >
               쪽지
             </CommonButton>
           </Wrapper>
@@ -624,7 +634,8 @@ const DetailClass = () => {
           bgColor={Theme.white_C}
           radius={`10px`}
           shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
-          margin={`0 0 32px`}>
+          margin={`0 0 32px`}
+        >
           <Wrapper width={`auto`} al={`flex-start`}>
             <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
               <Wrapper width={`auto`} margin={`0 10px 0 0`} padding={`8px`}>
@@ -635,16 +646,7 @@ const DetailClass = () => {
                 />
               </Wrapper>
               <Text fontSize={`18px`}>
-                {lectureDetail && lectureDetail[0].startDate.slice(0, 10)}~
-                {lectureDetail && lectureDetail[0].endDate.slice(0, 10)}
-                <SpanText
-                  fontWeight={`bold`}
-                  color={Theme.red_C}
-                  margin={`0 0 0 15px`}>
-                  {lectureDetail &&
-                    stepEnd(lectureDetail[0].endDate, lectureDetail[0].day)}
-                  회
-                </SpanText>
+                {lectureDetail && lectureDetail[0].startDate.slice(0, 10)}
               </Text>
             </Wrapper>
             <Text padding={`0 0 0 44px`}>
@@ -655,7 +657,8 @@ const DetailClass = () => {
             width={`auto`}
             dr={`row`}
             ju={`flex-start`}
-            margin={`0 100px 0 72px`}>
+            margin={`0 100px 0 72px`}
+          >
             <Wrapper width={`auto`} margin={`0 10px 0 0`} padding={`8px`}>
               <Image
                 width={`18px`}
@@ -689,13 +692,15 @@ const DetailClass = () => {
             al={`flex-start`}
             fontSize={`16px`}
             margin={`10px 0 0`}
-            padding={`0 0 0 44px`}>
+            padding={`0 0 0 44px`}
+          >
             <Wrapper dr={`row`} ju={`flex-start`}>
               <Text
                 fontWeight={`bold`}
                 width={`90px`}
                 margin={`0 20px 0 0`}
-                color={Theme.black_C}>
+                color={Theme.black_C}
+              >
                 ZOOM LINK
               </Text>
               {lectureDetail && lectureDetail[0].zoomLink
@@ -751,7 +756,8 @@ const DetailClass = () => {
           dr={`row`}
           ju={`space-between`}
           al={`flex-start`}
-          margin={`30px 0 0`}>
+          margin={`30px 0 0`}
+        >
           <Wrapper width={`49%`} al={`flex-start`}>
             <Text fontSize={`18px`} fontWeight={`bold`}>
               게시판
@@ -815,7 +821,8 @@ const DetailClass = () => {
       <Modal
         visible={commutesModal}
         footer={null}
-        onCancel={detailCommutesClose}>
+        onCancel={detailCommutesClose}
+      >
         <Wrapper al={`flex-start`}>
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
             출석 기록
@@ -841,7 +848,8 @@ const DetailClass = () => {
         footer={null}
         onCancel={detailMemoContentClose}
         width={800}
-        title={`메모 내용`}>
+        title={`메모 내용`}
+      >
         <Wrapper al={`flex-start`}>
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
             {detailMemo && detailMemo.username} &nbsp;| &nbsp;
@@ -864,7 +872,8 @@ const DetailClass = () => {
         footer={null}
         onCancel={lecMemoClose}
         width={600}
-        title={`메모 내용`}>
+        title={`메모 내용`}
+      >
         <Wrapper al={`flex-start`}>
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
             {lecMemoData && lecMemoData.createdAt.slice(0, 10)}
@@ -885,7 +894,8 @@ const DetailClass = () => {
         visible={bookModal}
         footer={null}
         onCancel={detailBookClose}
-        width={width < 700 ? `80%` : 700}>
+        width={width < 700 ? `80%` : 700}
+      >
         <Wrapper al={`flex-start`}>
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
             교재
@@ -911,7 +921,8 @@ const DetailClass = () => {
         visible={noticeModal}
         onCancel={() => noticeToggle(null)}
         footer={null}
-        title={`게시글 자세히 보기`}>
+        title={`게시글 자세히 보기`}
+      >
         <Wrapper al={`flex-start`}>
           <Wrapper dr={`row`} ju={`flex-start`}>
             <Text fontWeight={`700`}>작성일 : </Text>
@@ -934,7 +945,8 @@ const DetailClass = () => {
               <Text
                 dangerouslySetInnerHTML={{
                   __html: noticeDetail && noticeDetail.content,
-                }}></Text>
+                }}
+              ></Text>
             </Wrapper>
           </Wrapper>
         </Wrapper>
@@ -944,7 +956,8 @@ const DetailClass = () => {
         visible={messageModal}
         onCancel={() => messageToggle(null)}
         footer={null}
-        title={`쪽지 자세히 보기`}>
+        title={`쪽지 자세히 보기`}
+      >
         <Wrapper al={`flex-start`}>
           <Wrapper dr={`row`} ju={`flex-start`}>
             <Text fontWeight={`700`}>작성일 : </Text>
@@ -967,7 +980,8 @@ const DetailClass = () => {
               <Text
                 dangerouslySetInnerHTML={{
                   __html: messageDetail && messageDetail.content,
-                }}></Text>
+                }}
+              ></Text>
             </Wrapper>
           </Wrapper>
         </Wrapper>
