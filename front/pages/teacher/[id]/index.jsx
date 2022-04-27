@@ -1470,16 +1470,10 @@ const Index = () => {
   }, []);
 
   const stepEnd = useCallback((endDate, day) => {
- 
-
     let endDay =
       moment
-        .duration(
-          moment(endDate).diff(moment("2022-04-28").format("YYYY-MM-DD"))
-        )
+        .duration(moment(endDate).diff(moment().format("YYYY-MM-DD")))
         .asDays() + 1;
-
-
 
     const arr = ["일", "월", "화", "수", "목", "금", "토"];
     let add = 0;
@@ -1487,9 +1481,7 @@ const Index = () => {
     for (let i = 0; i < endDay; i++) {
       let saveDay = moment().add(i, "days").day();
 
-
       const saveResult = day.includes(arr[saveDay]);
-
 
       if (saveResult) {
         add += 1;
