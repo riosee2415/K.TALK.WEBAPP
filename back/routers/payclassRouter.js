@@ -75,10 +75,6 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의입니다.");
     }
 
-    if (new Date(exLecture.endDate) < new Date(startDate)) {
-      return res.status(401).send("해당 결제 클래스의 강의 날짜가 지났습니다.");
-    }
-
     const createResult = await PayClass.create({
       name,
       price,

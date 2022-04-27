@@ -7,6 +7,11 @@ const models = require("../models");
 const router = express.Router();
 
 // 참여목록
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
 router.get("/list", isLoggedIn, async (req, res, next) => {
   const { page } = req.query;
   if (!req.user) {
@@ -35,8 +40,7 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
               C.course,
               C.lecDate,
               C.startLv,
-              C.startDate,
-              C.endDate
+              C.startDate
         FROM	participants				A
        INNER
         JOIN	users						B
@@ -63,8 +67,7 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
                 C.course,
                 C.lecDate,
                 C.startLv,
-                C.startDate,
-                C.endDate
+                C.startDate
         FROM	  participants				A
        INNER 
         JOIN  	users					      B
@@ -97,6 +100,11 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
 });
 
 // 강의별 참여 목록
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
 router.post("/lecture/list", isLoggedIn, async (req, res, next) => {
   const { LectureId } = req.body;
 
@@ -120,7 +128,6 @@ router.post("/lecture/list", isLoggedIn, async (req, res, next) => {
               C.lecDate,
               C.startLv,
               C.startDate             AS LectureStartDate,
-              C.endDate               AS LectureEndDate,
               C.day,
               C.count
         FROM	participants				A
@@ -168,6 +175,11 @@ router.post("/lecture/list", isLoggedIn, async (req, res, next) => {
 });
 
 // 관리자에서 보는 참여 목록
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
 router.post("/admin/list", isAdminCheck, async (req, res, next) => {
   const { UserId, LectureId } = req.body;
 
@@ -192,7 +204,6 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
               C.lecDate,
               C.startLv,
               C.startDate             AS LectureStartDate,
-              C.endDate               AS LectureEndDate,
               C.day,
               C.count
         FROM	participants				A

@@ -38,10 +38,6 @@ module.exports = class Lecture extends Model {
           type: DataTypes.STRING(100),
           allowNull: false,
         },
-        endDate: {
-          type: DataTypes.STRING(100),
-          allowNull: false,
-        },
         zoomLink: {
           type: DataTypes.STRING(300),
           allowNull: true,

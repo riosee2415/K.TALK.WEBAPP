@@ -951,20 +951,12 @@ router.patch("/class/update", isAdminCheck, async (req, res, next) => {
       where: { id: parseInt(UserId) },
     });
 
-    const exLecture2 = await Lecture.findOne({
-      where: { id: parseInt(ChangeLectureId) },
-    });
-
     if (parseInt(LectureId) === parseInt(ChangeLectureId)) {
       return res.status(401).send("동일한 강의를 선택하였습니다");
     }
 
     if (!exLecture) {
       return res.status(401).send("존재하지 않는 강의입니다.");
-    }
-
-    if (!exLecture2) {
-      return res.status(401).send("존재하지 않는 사용자입니다.");
     }
 
     if (!exUser) {
@@ -982,14 +974,6 @@ router.patch("/class/update", isAdminCheck, async (req, res, next) => {
 
     if (exPart) {
       return res.status(401).send("이미 해당 강의에 참여하고 있습니다.");
-    }
-
-    if (new Date(exLecture.endDate) > new Date(exLecture2)) {
-      return res
-        .status(401)
-        .send(
-          "옮길 강의의 종료일이 원래 참여하고 있던 강의의 종료일보다 큽니다."
-        );
     }
 
     const createResult = await Participant.create({
@@ -1117,19 +1101,11 @@ router.patch("/fire/update", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("해당 사용자는 강사가 아닙니다.");
     }
 
-    const exLecture = await Lecture.findAll({
-      where: { UserId: parseInt(id) },
+    const teacherLectures = await Lecture.findAll({
+      where: { UserId: parseInt(id), isDelete: false },
     });
 
-    const today = moment().format("YYYY-MM-DD");
-
-    const date = new Date(today);
-
-    const findEnd = await exLecture.find((data) => {
-      new Date(data.endDate) < date;
-    });
-
-    if (findEnd) {
+    if (teacherLectures.length !== 0) {
       return res.status(401).send("해당 강사는 진행중인 강의가 있습니다.");
     }
 

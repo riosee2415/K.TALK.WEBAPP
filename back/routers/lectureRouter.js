@@ -55,6 +55,11 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
 });
 
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
 router.get(["/list", "/list/:sort"], async (req, res, next) => {
   // if (!req.user) {
   //   return res.status(403).send("로그인 후 이용 가능합니다.");
@@ -88,7 +93,6 @@ router.get(["/list", "/list/:sort"], async (req, res, next) => {
               X.lecDate,
               X.startLv,
               X.startDate,
-              X.endDate,
               X.viewDate,
               X.zoomLink,
               X.createdAt,
@@ -106,8 +110,6 @@ router.get(["/list", "/list/:sort"], async (req, res, next) => {
                               A.lecDate,
                               A.startLv,
                               A.startDate,
-                              A.endDate,
-                              CONCAT(A.startDate, " ~ ", A.endDate)			                 AS viewDate,
                               A.zoomLink,
                               DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일")		AS createdAt,
                               CONCAT(COUNT(B.id) OVER(PARTITION BY B.LectureId), "명")   AS parti,
@@ -235,6 +237,12 @@ router.get(
   }
 );
 
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+
 router.get("/detail/:LectureId", async (req, res, next) => {
   const { LectureId } = req.params;
 
@@ -253,8 +261,6 @@ router.get("/detail/:LectureId", async (req, res, next) => {
               A.lecDate,
               A.startLv,
               A.startDate,
-              A.endDate,
-              CONCAT(A.startDate, " ~ ", A.endDate)			               AS viewDate,
               A.zoomLink,
               DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일")		            AS createdAt,
               CONCAT(COUNT(B.id) OVER(PARTITION BY B.LectureId), "명") AS parti,
@@ -340,6 +346,11 @@ router.post("/detail/commutes", isAdminCheck, async (req, res, next) => {
 });
 
 // 강사의 강의 불러오기 (로그인 한 강사의 모든 강의)
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
 router.get("/teacher/list/:TeacherId", async (req, res, next) => {
   const { TeacherId } = req.params;
 
@@ -366,8 +377,6 @@ router.get("/teacher/list/:TeacherId", async (req, res, next) => {
              A.lecDate,
              A.startLv,
              A.startDate,
-             A.endDate,
-             CONCAT(A.startDate, " ~ ", A.endDate)			               AS viewDate,
              A.zoomLink,
              DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일")		              AS createdAt,
              CONCAT(COUNT(B.id) OVER(PARTITION BY B.LectureId), "명")  AS parti,
@@ -641,7 +650,6 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
     lecDate,
     startLv,
     startDate,
-    endDate,
     zoomLink,
     UserId,
   } = req.body;
@@ -663,7 +671,6 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
       lecDate,
       startLv,
       startDate,
-      endDate,
       zoomLink,
       UserId: parseInt(UserId),
     });
@@ -690,7 +697,6 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
     lecDate,
     startLv,
     startDate,
-    endDate,
     zoomLink,
     UserId,
   } = req.body;
@@ -721,7 +727,6 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
         lecDate,
         startLv,
         startDate,
-        endDate,
         zoomLink,
         UserId: parseInt(UserId),
       },
@@ -1161,6 +1166,11 @@ router.post("/diary/list", isLoggedIn, async (req, res, next) => {
   }
 });
 
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
+// END DATE 빠짐 ////////////////////////////////////////////
 router.post("/diary/admin/list", isAdminCheck, async (req, res, next) => {
   const { LectureId } = req.body;
 
@@ -1180,7 +1190,6 @@ router.post("/diary/admin/list", isAdminCheck, async (req, res, next) => {
             B.lecDate,
             B.startLv,
             B.startDate,
-            B.endDate,
             C.username,
             C.level,
             C.teaCountry,
