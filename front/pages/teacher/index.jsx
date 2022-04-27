@@ -429,6 +429,7 @@ const Index = () => {
   useEffect(() => {
     if (st_bookCreateDone) {
       onReset();
+      textbookModalHandler(null);
       return message.success("교재 등록이 완료되었습니다.");
     }
   }, [st_bookCreateDone]);
@@ -1871,28 +1872,6 @@ const Index = () => {
                 label={`교재 제목`}
                 name={`title`}>
                 <TextInput height={`30px`} />
-              </Form.Item>
-              <Form.Item
-                rules={[{ required: true, message: "강의를 선택해주세요." }]}
-                label={`강의 선택`}
-                name={`folder`}>
-                <Select
-                  placeholder="Select a Lecture"
-                  optionFilterProp="children"
-                  filterOption={(input, option) =>
-                    option.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }>
-                  {lectureTeacherList &&
-                    lectureTeacherList.map((data) => {
-                      return (
-                        <Select.Option value={data.id}>
-                          {data.course}
-                        </Select.Option>
-                      );
-                    })}
-                </Select>
               </Form.Item>
             </Form>
           </Wrapper>

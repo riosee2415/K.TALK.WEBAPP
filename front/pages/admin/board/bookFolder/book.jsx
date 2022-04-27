@@ -536,7 +536,7 @@ const UserDeliAddress = ({}) => {
           render={12}
           pagination={{
             current: parseInt(currentPage),
-            total: bookMaxLength * 10,
+            total: bookMaxLength * 12,
             onChange: (page) => onChangeBookPage(page),
             pageSize: 12,
           }}
