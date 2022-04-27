@@ -300,6 +300,9 @@ const AdminHome = () => {
       ).format("YYYY-MM-DD");
       formRef.current.setFieldsValue({
         endDate: endDateData,
+        allCnt:
+          formRef.current.getFieldsValue().cnt *
+          formRef.current.getFieldsValue().lecDate,
       });
 
       setEndDate(endDateData);
@@ -542,6 +545,7 @@ const AdminHome = () => {
         time_7: moment(data.time.split(" ")[6], "HH:mm"),
       });
 
+      console.log(form, "formformformformformformform");
       // inputStartDate, setValue(data.startDate);
     },
     [inputStartDate, inputPeriod, allUsers, inputPeriod]
@@ -1122,9 +1126,10 @@ const AdminHome = () => {
                       onChange={startDateChangeHandler}
                       type={`number`}
                       {...inputPeriod}
-                      min={updateData && updateData.lecDate}
+                      min={updateData && parseInt(updateData.lecDate)}
                     />
                   </FormItem>
+              
                   <Text margin={`0 0 0 10px`}>주</Text>
                 </Wrapper>
 
