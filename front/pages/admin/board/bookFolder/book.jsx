@@ -127,12 +127,12 @@ const UserDeliAddress = ({}) => {
   }, []);
 
   const onClickBookFolder = useCallback((data) => {
-    setBookMenuId(data.id);
+    setBookMenuId(data);
     setCurrentPage(1);
     dispatch({
       type: BOOK_LIST_REQUEST,
       data: {
-        LectureId: data.id,
+        LectureId: data,
         search: "",
         page: "",
       },
@@ -198,8 +198,21 @@ const UserDeliAddress = ({}) => {
 
   useEffect(() => {
     if (st_bookAdminUpdateDone) {
+      dispatch({
+        type: BOOK_LIST_REQUEST,
+        data: {
+          LectureId: bookMenuId,
+          search: "",
+          page: "",
+        },
+      });
+      form.resetFields();
+      setImagePathTh("");
+      setCreateModal(false);
+      filename.setValue("");
       setCreateModal(false);
       setUpdateData(null);
+
       return message.success("교재가 수정 되었습니다.");
     }
   }, [st_bookAdminUpdateDone]);
@@ -518,7 +531,6 @@ const UserDeliAddress = ({}) => {
                       key={data.id}
                       type="primary"
                       size="small"
-                      onClick={() => onClickBookFolder(data)}
                     >
                       {data.course}
                     </Select.Option>
