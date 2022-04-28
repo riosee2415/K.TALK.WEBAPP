@@ -144,7 +144,6 @@ router.get(["/list", "/list/:sort"], async (req, res, next) => {
 // 관리자에서 확인하는 모든 강의
 router.get(
   ["/allLectures", "/allLectures/:listType"],
-  isAdminCheck,
   async (req, res, next) => {
     const { TeacherId, studentName, time, startLv } = req.query;
     const { listType } = req.params;
