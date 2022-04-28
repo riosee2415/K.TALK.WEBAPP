@@ -59,8 +59,6 @@ const Index = () => {
 
   const [toggle, setToggle] = useState(false);
   const [successData, setSuccessData] = useState("");
-  const [payClassDate, setPayClassDate] = useState("");
-  const [classDate, setClassDate] = useState("");
 
   useEffect(() => {
     if (st_paymentCreateDone) {
@@ -80,11 +78,11 @@ const Index = () => {
     }
   }, [st_payClassDetailError]);
 
-  // useEffect(() => {
-  //   if (st_paymentListError) {
-  //     return message.error(st_paymentListError);
-  //   }
-  // }, [st_paymentListError]);
+  useEffect(() => {
+    if (st_paymentListError) {
+      return message.error(st_paymentListError);
+    }
+  }, [st_paymentListError]);
 
   ////// HOOKS //////
   ////// REDUX //////
@@ -169,19 +167,11 @@ const Index = () => {
         .add(payClassDetail.week * 7, "days")
         .format("YYYY-MM-DD");
 
-      let result = saveData < payClassDetail.Lecture.endDate;
-
       let diff = moment
         .duration(moment(payClassDetail.Lecture.endDate).diff(moment(saveData)))
         .asDays();
 
       diff = Math.abs(diff);
-
-      if (!result) {
-        return message.error(`해당 강의에 종료일을 초과합니다.  ${diff}일`);
-      }
-
-      setToggle(result);
     }
   }, [st_payClassDetailDone]);
 
@@ -244,7 +234,7 @@ const Index = () => {
                 ju={`flex-start`}>
                 <Wrapper
                   dr={`row`}
-                  width={`auto`}
+                  width={width < 700 ? `100%` : `auto`}
                   ju={`flex-start`}
                   padding={`15px 20px`}
                   margin={`80px 0 0 0`}

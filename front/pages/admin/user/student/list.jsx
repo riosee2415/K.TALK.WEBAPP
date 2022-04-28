@@ -450,7 +450,7 @@ const List = () => {
       updateStuForm.setFieldsValue({
         sns: data.sns,
         snsId: data.snsId,
-        birth: data.birth,
+        birth: data.birth.slice(0, 10),
         stuLiveCon: data.stuLiveCon,
         stuCountry: data.stuCountry,
         stuLanguage: data.stuLanguage,
@@ -1548,13 +1548,12 @@ const List = () => {
 
                     <CalendarOutlined onClick={calenderToggle} />
                   </ColWrapper>
+                </RowWrapper>
 
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
                   <Wrapper
                     display={isCalendar ? "flex" : "none"}
                     width={`auto`}
-                    position={width < 1350 ? `static` : `absolute`}
-                    top={`40px`}
-                    right={`-310px`}
                     border={`1px solid ${Theme.grey_C}`}
                     margin={`0 0 20px`}>
                     <Calendar

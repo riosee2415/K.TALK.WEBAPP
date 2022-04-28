@@ -133,11 +133,11 @@ const AppHeader = ({ width }) => {
       left={`0`}
       zIndex={`100`}>
       <RsWrapper>
-        <Wrapper dr={`row`} ju={width < 900 ? `center` : `space-between`}>
+        <Wrapper dr={`row`} ju={`space-between`}>
           <Image
             alt="logo"
             width={width < 800 ? `130px` : `250px`}
-            margin={width < 900 && `0 0 10px`}
+            margin={width < 900 ? `` : `0 0 10px`}
             src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/logo/logo.png`}
             cursor={`pointer`}
             onClick={() => moveLinkHandler(`/`)}
