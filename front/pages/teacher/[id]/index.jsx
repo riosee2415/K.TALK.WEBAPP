@@ -3240,7 +3240,7 @@ const Index = () => {
             <Form.Item
               name="title3"
               rules={[{ required: true, message: "제목을 입력해주세요." }]}>
-              <CustomInput width={`50%`} placeholder="제목을 입력해주세요." />
+              <CustomInput width={`100%`} placeholder="제목을 입력해주세요." />
             </Form.Item>
 
             <Text
@@ -3267,7 +3267,7 @@ const Index = () => {
               <Wrapper dr={`row`} ju={`flex-start`}>
                 <CustomInput
                   placeholder="날짜를 선택해주세요."
-                  width={`50%`}
+                  width={`90%`}
                   value={inputDate.value}
                   style={{
                     height: `40px`,
@@ -3287,13 +3287,10 @@ const Index = () => {
 
                 <Wrapper
                   display={isCalendar ? "flex" : "none"}
-                  width={`auto`}
-                  position={width < 1350 ? `static` : `absolute`}
-                  right={`0`}
                   border={`1px solid ${Theme.grey_C}`}
-                  margin={`0 0 20px`}>
+                  margin={`20px 0 20px`}>
                   <Calendar
-                    style={{ width: width < 1350 ? `100%` : `250px` }}
+                    style={{ width: width < 1350 ? `100%` : `250` }}
                     fullscreen={false}
                     onChange={dateChagneHandler}
                   />
