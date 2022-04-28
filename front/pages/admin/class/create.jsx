@@ -255,7 +255,7 @@ const List = () => {
         day: data.day.join(" "), //
         count: data.cnt, //
         course: data.course, //
-
+        lecDate: "-",
         startLv: data.lv1 + "권 " + data.lv2 + "단원 " + data.lv3 + "페이지", //
         startDate: data.startDate.format(`YYYY-MM-DD`), //
 
@@ -291,10 +291,6 @@ const List = () => {
           <GuideUl>
             <GuideLi color={Theme.red_C} margin={`0 0 5px`} isImpo>
               강의시간을 선택하려면 강의를 진행하는 요일부터 선택해야 합니다.
-            </GuideLi>
-            <GuideLi color={Theme.red_C} isImpo>
-              일주일별 횟수는 일주일에 강의를 몇 번 진행할지를 의미합니다.
-              횟수와 진행 요일을 선택하면 총 횟수가 자동으로 계산됩니다.
             </GuideLi>
           </GuideUl>
         </Wrapper>
@@ -472,16 +468,6 @@ const List = () => {
               </Wrapper>
             </Wrapper>
           )}
-
-          <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`90px`}>총 횟수</Text>
-            <FormItem name={`allCnt`} width={`calc(100% - 120px)`}>
-              <CusotmInput type={`number`} readOnly={true} />
-            </FormItem>
-            <Text width={`30px`} padding={`0 0 0 10px`}>
-              회
-            </Text>
-          </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
             <Text width={`90px`}>시작 날짜</Text>
