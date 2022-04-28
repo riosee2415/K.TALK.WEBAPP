@@ -228,6 +228,18 @@ const Index = () => {
   }, [updateData]);
 
   useEffect(() => {
+    dispatch({
+      type: LECTURE_ALL_LIST_REQUEST,
+      data: {
+        TeacherId: "",
+        time: "",
+        startLv: "",
+        studentName: "",
+      },
+    });
+  }, []);
+
+  useEffect(() => {
     if (me) {
       dispatch({
         type: LECTURE_TEACHER_LIST_REQUEST,
