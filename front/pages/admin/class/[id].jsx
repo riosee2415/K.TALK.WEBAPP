@@ -334,7 +334,9 @@ const DetailClass = () => {
     },
     {
       title: "만기일",
-      render: "",
+      render: (data) => {
+        return <Text>{data.endDate}</Text>;
+      },
     },
     {
       title: "출석 기록",
