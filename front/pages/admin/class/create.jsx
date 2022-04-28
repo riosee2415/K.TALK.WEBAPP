@@ -178,7 +178,6 @@ const List = () => {
       form.resetFields();
       form.setFieldsValue({
         allCnt: null,
-        endDate: null,
       });
       router.push(`/admin`);
     }
@@ -256,10 +255,10 @@ const List = () => {
         day: data.day.join(" "), //
         count: data.cnt, //
         course: data.course, //
-        lecDate: data.lecDate, //
+
         startLv: data.lv1 + "권 " + data.lv2 + "단원 " + data.lv3 + "페이지", //
         startDate: data.startDate.format(`YYYY-MM-DD`), //
-        endDate: data.endDate, //
+
         UserId: data.UserId, //
         zoomLink: data.zoomLink,
         number: data.number,
@@ -409,25 +408,6 @@ const List = () => {
           </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`90px`}>강의 기간</Text>
-            <FormItem
-              rules={[{ required: true, message: "강의 기간을 입력해주세요." }]}
-              name={`lecDate`}
-              width={`calc(100% - 120px)`}
-            >
-              <CusotmInput
-                onChange={startDateChangeHandler}
-                type={`number`}
-                min={1}
-                {...inputPeriod}
-              />
-            </FormItem>
-            <Text width={`30px`} padding={`0 0 0 10px`}>
-              주
-            </Text>
-          </Wrapper>
-
-          <Wrapper dr={`row`} margin={`0 0 20px`}>
             <Text width={`90px`}>일주일별 횟수</Text>
             <FormItem
               rules={[
@@ -518,25 +498,7 @@ const List = () => {
           </Wrapper>
 
           <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`90px`} onClick={() => setEndDate(null)}>
-              종료 날짜
-            </Text>
-            <FormItem
-              rules={[{ required: true, message: "종료 날짜를 입력해주세요." }]}
-              name={`endDate`}
-            >
-              <CusotmInput
-                format={`YYYY-MM-DD`}
-                size={`large`}
-                readOnly={true}
-              />
-            </FormItem>
-          </Wrapper>
-
-          <Wrapper dr={`row`} margin={`0 0 20px`}>
-            <Text width={`90px`} onClick={() => setEndDate(null)}>
-              줌 링크
-            </Text>
+            <Text width={`90px`}>줌 링크</Text>
             <FormItem
               rules={[
                 { required: true, message: "줌링크를 입력해주세요." },

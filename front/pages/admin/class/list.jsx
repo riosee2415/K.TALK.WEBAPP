@@ -48,13 +48,6 @@ import {
   LECTURE_DELETE_REQUEST,
   LECTURE_UPDATE_REQUEST,
 } from "../../../reducers/lecture";
-import { MESSAGE_ADMIN_MAIN_LIST_REQUEST } from "../../../reducers/message";
-import { NOTICE_ADMIN_MAIN_LIST_REQUEST } from "../../../reducers/notice";
-
-const WordbreakText = styled(Text)`
-  width: 100%;
-  word-wrap: break-all;
-`;
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -113,9 +106,6 @@ const AdminHome = () => {
   const formRef = useRef();
   const [form] = Form.useForm();
 
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-
   const [currentTeacher, setCurrentTeacher] = useState(null);
   const [searchLevel, setSearchLevel] = useState("");
   const [searchPage, setSearchPage] = useState("");
@@ -130,9 +120,6 @@ const AdminHome = () => {
 
   const [messageDetailData, setMessageDetailData] = useState(null);
   const [messageDetailModal, setMessageDetailModal] = useState(null);
-
-  const [currentPage1, setCurrentPage1] = useState(1);
-  const [currentPage2, setCurrentPage2] = useState(1);
 
   const [dayArr, setDayArr] = useState([]);
   const inputId = useInput("");
@@ -170,13 +157,6 @@ const AdminHome = () => {
     st_userStuListError,
   } = useSelector((state) => state.user);
 
-  const { noticeAdminMain, noticeAdminMainMaxPage } = useSelector(
-    (state) => state.notice
-  );
-  const { messageAdminMainList, messageAdminMainMaxPage } = useSelector(
-    (state) => state.message
-  );
-
   ////// USEEFFECT //////
 
   // useEffect(() => {
@@ -202,21 +182,6 @@ const AdminHome = () => {
 
   useEffect(() => {
     if (st_loginAdminDone) {
-      dispatch({
-        type: NOTICE_ADMIN_MAIN_LIST_REQUEST,
-        data: {
-          page: 1,
-        },
-      });
-
-      dispatch({
-        type: MESSAGE_ADMIN_MAIN_LIST_REQUEST,
-        data: {
-          listType: "",
-          search: "",
-        },
-      });
-
       dispatch({
         type: LECTURE_ALL_LIST_REQUEST,
         data: {
@@ -289,27 +254,6 @@ const AdminHome = () => {
   }, [st_lectureUpdateError]);
 
   useEffect(() => {
-    if (startDate && inputPeriod.value && formRef.current) {
-      const startDateData = new Date(startDate);
-      const endDateData = moment(
-        new Date(
-          startDateData.getFullYear(),
-          startDateData.getMonth(),
-          startDateData.getDate() + 7 * inputPeriod.value
-        )
-      ).format("YYYY-MM-DD");
-      formRef.current.setFieldsValue({
-        endDate: endDateData,
-        allCnt:
-          formRef.current.getFieldsValue().cnt *
-          formRef.current.getFieldsValue().lecDate,
-      });
-
-      setEndDate(endDateData);
-    }
-  }, [startDate, inputPeriod, formRef]);
-
-  useEffect(() => {
     if (updateData) {
       setTimeout(() => {
         onFill(updateData);
@@ -326,14 +270,6 @@ const AdminHome = () => {
       );
     }
   }, [st_loginAdminError]);
-
-  useEffect(() => {
-    if (inputCnt.value && inputPeriod.value && form) {
-      form.setFieldsValue({
-        allCnt: inputPeriod.value * inputCnt.value,
-      });
-    }
-  }, [inputCnt, inputPeriod, form]);
 
   useEffect(() => {
     if (st_userStuListError) {
@@ -365,44 +301,7 @@ const AdminHome = () => {
     }
   }, [st_lectureAllListDone, router.query]);
 
-  useEffect(() => {
-    dispatch({
-      type: NOTICE_ADMIN_MAIN_LIST_REQUEST,
-      data: {
-        page: currentPage1,
-      },
-    });
-  }, [currentPage1]);
-  useEffect(() => {
-    dispatch({
-      type: MESSAGE_ADMIN_MAIN_LIST_REQUEST,
-      data: {
-        page: currentPage2,
-      },
-    });
-  }, [currentPage2]);
-
-  // useEffect(() => {
-  //   if (me) {
-  //     moveLinkHandler(`/admin?login=true`);
-  //   } else {
-  //     moveLinkHandler(`/admin?login=false`);
-  //   }
-  // }, [me])
-
-  useEffect(() => {}, []);
-
   ////// HANDLER ///////
-
-  const noticeModalToggle = useCallback((data) => {
-    setNoticeDetailData(data);
-    setNoticeDetailModal((prev) => !prev);
-  }, []);
-
-  const messageModalToggle = useCallback((data) => {
-    setMessageDetailData(data);
-    setMessageDetailModal((prev) => !prev);
-  }, []);
 
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
@@ -414,12 +313,6 @@ const AdminHome = () => {
       data: { userId: inputId.value, password: inputPw.value },
     });
   };
-
-  const startDateChangeHandler = useCallback((e) => {
-    const startDateData = new Date(e.format("YYYY-MM-DD"));
-
-    setStartDate(startDateData);
-  }, []);
 
   const onSubmitUpdate = useCallback(
     (data) => {
@@ -454,7 +347,7 @@ const AdminHome = () => {
           day: data.day.join(" "),
           count: data.cnt,
           course: data.course,
-          lecDate: parseInt(data.lecDate),
+
           startLv: data.lv1 + "권 " + data.lv2 + "단원 " + data.lv3 + "페이지",
           startDate: moment(data.startDate, "YYYY-MM-DD").format("YYYY-MM-DD"),
           zoomLink: data.zoomLink,
@@ -495,9 +388,6 @@ const AdminHome = () => {
     (data) => {
       setDayArr(data.day.split(" "));
 
-      inputPeriod.setValue(parseInt(data.lecDate.replace("주", "")));
-      setStartDate(data.startDate);
-
       let day = "";
       if (data.time_1) {
         day += data.time_1.format(`HH:mm`) + " ";
@@ -525,10 +415,10 @@ const AdminHome = () => {
         time: moment(data.time, "HH:mm"),
         day: data.day.split(" "),
         cnt: data.count,
-        allCnt: data.count * parseInt(data.lecDate.replace("주", "")),
+
         course: data.course,
         number: data.number,
-        lecDate: parseInt(data.lecDate.replace("주", "")),
+
         lv1: parseInt(data.startLv.split(` `)[0].replace("권", "")),
         lv2: parseInt(data.startLv.split(` `)[1].replace("단원", "")),
         lv3: parseInt(data.startLv.split(` `)[2].replace("페이지", "")),
@@ -621,68 +511,6 @@ const AdminHome = () => {
     searchStuName,
   ]);
 
-  const noticeColumns = [
-    {
-      title: "No",
-      dataIndex: "id",
-    },
-    {
-      title: "Title",
-      dataIndex: "title",
-    },
-    {
-      title: "Author",
-      dataIndex: "author",
-    },
-    {
-      title: "CreatedAt",
-      render: (data) => <div>{data.createdAt.substring(0, 13)}</div>,
-    },
-    {
-      title: "상세보기",
-      render: (data) => (
-        <Button
-          type="primary"
-          size="small"
-          onClick={() => noticeModalToggle(data)}>
-          상세보기
-        </Button>
-      ),
-    },
-  ];
-
-  const columns = [
-    {
-      title: "번호",
-      dataIndex: "id",
-    },
-    {
-      title: "제목",
-      dataIndex: "title",
-    },
-
-    {
-      title: "작성자",
-      dataIndex: "author",
-    },
-
-    {
-      title: "생성일",
-      render: (data) => <div>{data.createdAt.substring(0, 14)}</div>,
-    },
-    {
-      title: "상세보기",
-      render: (data) => (
-        <Button
-          type="primary"
-          size="small"
-          onClick={() => messageModalToggle(data)}>
-          상세보기
-        </Button>
-      ),
-    },
-  ];
-
   return (
     <>
       {me && me.level >= 3 ? (
@@ -699,13 +527,15 @@ const AdminHome = () => {
                 <Text
                   fontSize={`18px`}
                   fontWeight={`bold`}
-                  margin={`0 20px 0 0`}>
+                  margin={`0 20px 0 0`}
+                >
                   클래스 목록
                 </Text>
                 <Button
                   size="small"
                   type="primary"
-                  onClick={() => moveLinkHandler(`/admin/class/create`)}>
+                  onClick={() => moveLinkHandler(`/admin/class/create`)}
+                >
                   새 클래스 추가
                 </Button>
               </Wrapper>
@@ -714,7 +544,8 @@ const AdminHome = () => {
                   style={{ width: `200px`, marginRight: 10 }}
                   placeholder={`강사를 선택해주세요.`}
                   onChange={(e) => setCurrentTeacher(e)}
-                  allowClear>
+                  allowClear
+                >
                   <Select.Option value={null}>전체</Select.Option>
                   {teachers &&
                     teachers.map((data) => {
@@ -740,7 +571,8 @@ const AdminHome = () => {
                     style={{ width: `200px`, marginRight: 10 }}
                     placeholder={`학생을 선택해주세요.`}
                     onChange={(e) => setSearchStuName(e)}
-                    allowClear>
+                    allowClear
+                  >
                     <Select.Option value={""}>선택안함</Select.Option>
 
                     {userStuList && userStuList.length === 0 ? (
@@ -765,7 +597,8 @@ const AdminHome = () => {
                     width={`auto`}
                     dr={`row`}
                     ju={`flex-start`}
-                    margin={`0 10px 0 0`}>
+                    margin={`0 10px 0 0`}
+                  >
                     <FormItem width={`70px`}>
                       <Select onChange={(e) => setSearchLevel(e)} allowClear>
                         <Select.Option value={`1`}>1</Select.Option>
@@ -789,7 +622,8 @@ const AdminHome = () => {
                     width={`auto`}
                     dr={`row`}
                     ju={`flex-start`}
-                    margin={`0 10px 0 0`}>
+                    margin={`0 10px 0 0`}
+                  >
                     <FormItem width={`70px`}>
                       <Select onChange={(e) => setSearchStep(e)} allowClear>
                         <Select.Option value={`1`}>1</Select.Option>
@@ -822,7 +656,8 @@ const AdminHome = () => {
 
                   <Button
                     type="primary"
-                    onClick={() => onClickSearchLevelHandle()}>
+                    onClick={() => onClickSearchLevelHandle()}
+                  >
                     검색
                   </Button>
                 </Wrapper>
@@ -848,24 +683,28 @@ const AdminHome = () => {
                           (idx + 1) % 3 === 0 ? `0 0 30px 0` : `0 10px 30px 0`
                         }
                         padding={`20px 10px`}
-                        ju={`space-between`}>
+                        ju={`space-between`}
+                      >
                         <Wrapper>
                           <Wrapper
                             dr={`row`}
                             ju={`space-between`}
                             al={`flex-start`}
                             padding={`0 0 20px`}
-                            borderBottom={`1px solid ${Theme.grey2_C}`}>
+                            borderBottom={`1px solid ${Theme.grey2_C}`}
+                          >
                             <Wrapper width={`auto`}>
                               <Wrapper
                                 dr={`row`}
                                 ju={`flex-start`}
                                 al={`flex-start`}
-                                margin={`0 0 15px`}>
+                                margin={`0 0 15px`}
+                              >
                                 <Wrapper
                                   width={`34px`}
                                   padding={`0 5px`}
-                                  margin={`0 10px 0 0`}>
+                                  margin={`0 10px 0 0`}
+                                >
                                   <Image
                                     src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png`}
                                     alt={`icon_lecture`}
@@ -873,7 +712,8 @@ const AdminHome = () => {
                                 </Wrapper>
                                 <Wrapper
                                   width={`calc(100% - 44px)`}
-                                  al={`flex-start`}>
+                                  al={`flex-start`}
+                                >
                                   <Text fontSize={`16px`} fontWeight={`700`}>
                                     {data.day}
                                   </Text>
@@ -886,11 +726,13 @@ const AdminHome = () => {
                               <Wrapper
                                 dr={`row`}
                                 ju={`flex-start`}
-                                margin={`0 0 15px`}>
+                                margin={`0 0 15px`}
+                              >
                                 <Wrapper
                                   width={`34px`}
                                   padding={`0 5px`}
-                                  margin={`0 10px 0 0`}>
+                                  margin={`0 10px 0 0`}
+                                >
                                   <Image
                                     src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name_yellow.png`}
                                     alt={`icon_lecture`}
@@ -906,7 +748,8 @@ const AdminHome = () => {
                                 <Wrapper
                                   width={`34px`}
                                   padding={`0 5px`}
-                                  margin={`0 10px 0 0`}>
+                                  margin={`0 10px 0 0`}
+                                >
                                   <Image
                                     src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_number.png`}
                                     alt={`icon_lecture`}
@@ -922,7 +765,8 @@ const AdminHome = () => {
                               fontSize={`15px`}
                               color={Theme.grey2_C}
                               al={width < 1350 ? `flex-start` : `flex-end`}
-                              margin={width < 1350 ? `20px 0 0` : `0`}>
+                              margin={width < 1350 ? `20px 0 0` : `0`}
+                            >
                               <Text fontSize={`14px`} fontWeight={`bold`}>
                                 {data.startLv}
                               </Text>
@@ -937,7 +781,8 @@ const AdminHome = () => {
                           <Wrapper
                             margin={`20px 0 0`}
                             dr={`row`}
-                            ju={`flex-start`}>
+                            ju={`flex-start`}
+                          >
                             {data.Participants &&
                               data.Participants.map((data) => {
                                 return (
@@ -958,7 +803,8 @@ const AdminHome = () => {
                             fontSize={`14px`}
                             onClick={() =>
                               moveLinkHandler(`/admin/class/${data.id}`)
-                            }>
+                            }
+                          >
                             자세히 보기
                           </CommonButton>
                           <CommonButton
@@ -968,12 +814,14 @@ const AdminHome = () => {
                             radius={`5px`}
                             margin={`0 10px 0 0`}
                             fontSize={`14px`}
-                            onClick={() => updateModalOpen(data)}>
+                            onClick={() => updateModalOpen(data)}
+                          >
                             수정
                           </CommonButton>
                           <CustomButton
                             type={`danger`}
-                            onClick={() => deletePopToggle(data.id)}>
+                            onClick={() => deletePopToggle(data.id)}
+                          >
                             삭제
                           </CustomButton>
                         </Wrapper>
@@ -989,7 +837,8 @@ const AdminHome = () => {
             visible={deletePopVisible}
             onOk={deleteClassHandler}
             onCancel={() => deletePopToggle(null)}
-            title="정말 삭제하시겠습니까?">
+            title="정말 삭제하시겠습니까?"
+          >
             <Wrapper>삭제 된 데이터는 다시 복구할 수 없습니다.</Wrapper>
             <Wrapper>정말 삭제하시겠습니까?</Wrapper>
           </Modal>
@@ -999,7 +848,8 @@ const AdminHome = () => {
             width={`1100px`}
             title={`클래스 수정`}
             onOk={updateModalOk}
-            onCancel={updateModalClose}>
+            onCancel={updateModalClose}
+          >
             <Form form={form} ref={formRef} onFinish={onSubmitUpdate}>
               <Wrapper padding={`0 50px`}>
                 <Wrapper dr={`row`} margin={`0 0 20px`}>
@@ -1008,7 +858,8 @@ const AdminHome = () => {
                     rules={[
                       { required: true, message: "강의명을 입력해주세요." },
                     ]}
-                    name={`course`}>
+                    name={`course`}
+                  >
                     <CusotmInput />
                   </FormItem>
                 </Wrapper>
@@ -1019,7 +870,8 @@ const AdminHome = () => {
                     rules={[
                       { required: true, message: "강의 번호을 입력해주세요." },
                     ]}
-                    name={`number`}>
+                    name={`number`}
+                  >
                     <CusotmInput />
                   </FormItem>
                 </Wrapper>
@@ -1030,7 +882,8 @@ const AdminHome = () => {
                     rules={[
                       { required: true, message: "강사를 선택해주세요." },
                     ]}
-                    name={`UserId`}>
+                    name={`UserId`}
+                  >
                     <Select size={`large`}>
                       {allUsers &&
                         allUsers.map((data) => {
@@ -1060,7 +913,8 @@ const AdminHome = () => {
                     <Wrapper
                       width={`calc(100% / 3)`}
                       dr={`row`}
-                      ju={`flex-start`}>
+                      ju={`flex-start`}
+                    >
                       <FormItem name={`lv1`} width={`calc(100% - 50px)`}>
                         <Select>
                           <Select.Option value={`1`}>1</Select.Option>
@@ -1083,7 +937,8 @@ const AdminHome = () => {
                     <Wrapper
                       width={`calc(100% / 3)`}
                       dr={`row`}
-                      ju={`flex-start`}>
+                      ju={`flex-start`}
+                    >
                       <FormItem name={`lv2`} width={`calc(100% - 50px)`}>
                         <Select>
                           <Select.Option value={`1`}>1</Select.Option>
@@ -1100,7 +955,8 @@ const AdminHome = () => {
                     <Wrapper
                       width={`calc(100% / 3)`}
                       dr={`row`}
-                      ju={`flex-start`}>
+                      ju={`flex-start`}
+                    >
                       <FormItem name={`lv3`} width={`calc(100% - 50px)`}>
                         <Input type={`number`} min={`0`} />
                       </FormItem>
@@ -1114,32 +970,14 @@ const AdminHome = () => {
                 </Wrapper>
 
                 <Wrapper dr={`row`} margin={`0 0 20px`}>
-                  <Text width={`100px`}>강의 기간</Text>
-                  <FormItem
-                    rules={[
-                      { required: true, message: "강의 기간을 입력해주세요." },
-                    ]}
-                    name={`lecDate`}
-                    width={`calc(100% - 130px)`}>
-                    <CusotmInput
-                      onChange={startDateChangeHandler}
-                      type={`number`}
-                      {...inputPeriod}
-                      min={updateData && parseInt(updateData.lecDate)}
-                    />
-                  </FormItem>
-
-                  <Text margin={`0 0 0 10px`}>주</Text>
-                </Wrapper>
-
-                <Wrapper dr={`row`} margin={`0 0 20px`}>
                   <Text width={`100px`}>횟수</Text>
                   <FormItem
                     rules={[
                       { required: true, message: "횟수를 입력해주세요." },
                     ]}
                     name={`cnt`}
-                    width={`calc(100% - 130px)`}>
+                    width={`calc(100% - 130px)`}
+                  >
                     <CusotmInput type={`number`} {...inputCnt} disabled />
                   </FormItem>
                   <Text width={`30px`} padding={`0 0 0 10px`}>
@@ -1153,14 +991,16 @@ const AdminHome = () => {
                     rules={[
                       { required: true, message: "요일을 입력해주세요." },
                     ]}
-                    name={`day`}>
+                    name={`day`}
+                  >
                     <Select
                       mode="multiple"
                       size={`large`}
                       onChange={(e) => {
                         setDayArr(e);
                       }}
-                      disabled>
+                      disabled
+                    >
                       <Select.Option value={`월`}>월</Select.Option>
                       <Select.Option value={`화`}>화</Select.Option>
                       <Select.Option value={`수`}>수</Select.Option>
@@ -1178,7 +1018,8 @@ const AdminHome = () => {
                     <Wrapper
                       dr={`row`}
                       ju={`flex-start`}
-                      width={`calc(100% - 100px)`}>
+                      width={`calc(100% - 100px)`}
+                    >
                       {dayArr.map((data, idx) => {
                         return (
                           <FormItem
@@ -1192,7 +1033,8 @@ const AdminHome = () => {
                                 required: true,
                                 message: `${data}요일의 수업시간을 입력해주세요.`,
                               },
-                            ]}>
+                            ]}
+                          >
                             <TimeInput format={`HH:mm`} />
                           </FormItem>
                         );
@@ -1200,55 +1042,6 @@ const AdminHome = () => {
                     </Wrapper>
                   </Wrapper>
                 )}
-
-                <Wrapper dr={`row`} margin={`0 0 20px`}>
-                  <Text width={`100px`}>총 횟수</Text>
-                  <FormItem
-                    // rules={[{ required: true, message: "횟수를 입력해주세요." }]}
-                    name={`allCnt`}
-                    width={`calc(100% - 130px)`}>
-                    <CusotmInput type={`number`} disabled />
-                  </FormItem>
-                  <Text width={`30px`} padding={`0 0 0 10px`}>
-                    회
-                  </Text>
-                </Wrapper>
-
-                <Wrapper dr={`row`} margin={`0 0 20px`}>
-                  <Text width={`100px`}>시작 날짜</Text>
-                  <FormItem
-                    rules={[
-                      { required: true, message: "시작 날짜를 입력해주세요." },
-                    ]}
-                    name={`startDate`}>
-                    <DateInput
-                      format={`YYYY-MM-DD`}
-                      size={`large`}
-                      onChange={startDateChangeHandler}
-                      // {...inputStartDate}
-                      disabled
-                      value={
-                        updateData && moment(updateData.startDate, "YYYY-MM-DD")
-                      }
-                    />
-                  </FormItem>
-                </Wrapper>
-
-                <Wrapper dr={`row`} margin={`0 0 20px`}>
-                  <Text width={`100px`}>종료 날짜</Text>
-                  <FormItem
-                    rules={[
-                      { required: true, message: "종료 날짜를 입력해주세요." },
-                    ]}
-                    name={`endDate`}>
-                    <CusotmInput
-                      format={`YYYY-MM-DD`}
-                      size={`large`}
-                      disabled
-                      value={endDate && endDate}
-                    />
-                  </FormItem>
-                </Wrapper>
 
                 <Wrapper dr={`row`} margin={`0 0 20px`} al={`flex-start`}>
                   <Text width={`100px`} margin={`8px 0 0`}>
@@ -1258,130 +1051,13 @@ const AdminHome = () => {
                     rules={[
                       { required: true, message: "줌링크를 작성해주세요." },
                     ]}
-                    name={`zoomLink`}>
+                    name={`zoomLink`}
+                  >
                     <CusotmInput type={`url`} />
                   </FormItem>
                 </Wrapper>
               </Wrapper>
             </Form>
-          </Modal>
-          {/* NOTICE MODAL */}
-          <Modal
-            title={`게시판 상세보기`}
-            visible={noticeDetailModal}
-            footer={null}
-            onCancel={() => noticeModalToggle(null)}>
-            <Wrapper
-              dr={`row`}
-              ju={`space-between`}
-              margin={`0 0 35px`}
-              fontSize={width < 700 ? `14px` : `16px`}>
-              <Text margin={`0 54px 0 0`}>
-                {`작성자: ${noticeDetailData && noticeDetailData.author}`}
-              </Text>
-              <Wrapper width={`auto`}>
-                <Text>
-                  {`작성일: ${moment(
-                    noticeDetailData && noticeDetailData.createdAt,
-                    "YYYY/MM/DD"
-                  ).format("YYYY/MM/DD")}`}
-                </Text>
-
-                <Text>
-                  {`수정일: ${moment(
-                    noticeDetailData && noticeDetailData.updatedAt,
-                    "YYYY/MM/DD"
-                  ).format("YYYY/MM/DD")}`}
-                </Text>
-              </Wrapper>
-            </Wrapper>
-
-            {noticeDetailData && noticeDetailData.file && (
-              <Wrapper dr={`row`} ju={`flex-end`}>
-                <Text margin={`0 10px 0 0`} fontSize={`15px`}>
-                  첨부파일
-                </Text>
-
-                <CommonButton
-                  size={`small`}
-                  radius={`5px`}
-                  fontSize={`14px`}
-                  onClick={() => fileDownloadHandler(noticeDetailData.file)}>
-                  다운로드
-                </CommonButton>
-              </Wrapper>
-            )}
-
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              제목
-            </Text>
-            <Wrapper padding={`10px`} fontSize={width < 700 ? `14px` : `16px`}>
-              <WordbreakText>
-                {noticeDetailData && noticeDetailData.title}
-              </WordbreakText>
-            </Wrapper>
-
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              내용
-            </Text>
-            <Wrapper padding={`10px`} fontSize={width < 700 ? `14px` : `16px`}>
-              <WordbreakText
-                dangerouslySetInnerHTML={{
-                  __html: noticeDetailData && noticeDetailData.content,
-                }}></WordbreakText>
-            </Wrapper>
-          </Modal>
-          {/* MESSAGE MODAL */}
-          <Modal
-            title={`쪽지 상세보기`}
-            visible={messageDetailModal}
-            footer={null}
-            onCancel={() => messageModalToggle(null)}>
-            <Wrapper
-              dr={`row`}
-              ju={`space-between`}
-              margin={`0 0 35px`}
-              fontSize={width < 700 ? `14px` : `16px`}>
-              <Text margin={`0 54px 0 0`}>
-                {`작성자: ${messageDetailData && messageDetailData.author}`}
-              </Text>
-              <Wrapper width={`auto`}>
-                <Text>
-                  {`작성일: ${moment(
-                    messageDetailData && messageDetailData.createdAt,
-                    "YYYY/MM/DD"
-                  ).format("YYYY/MM/DD")}`}
-                </Text>
-              </Wrapper>
-            </Wrapper>
-
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              제목
-            </Text>
-            <Wrapper padding={`10px`} fontSize={width < 700 ? `14px` : `16px`}>
-              <WordbreakText>
-                {messageDetailData && messageDetailData.title}
-              </WordbreakText>
-            </Wrapper>
-
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              내용
-            </Text>
-            <Wrapper
-              padding={`10px`}
-              al={`flex-start`}
-              ju={`flex-start`}
-              fontSize={width < 700 ? `14px` : `16px`}>
-              {messageDetailData &&
-                messageDetailData.content.split(`\n`).map((data) => {
-                  return (
-                    <SpanText>
-                      {data}
-                      <br />
-                    </SpanText>
-                  );
-                })}
-            </Wrapper>
           </Modal>
         </AdminLayout>
       ) : (
@@ -1390,7 +1066,8 @@ const AdminHome = () => {
             <Wrapper
               width={`50%`}
               height={`100%`}
-              bgImg={`url("https://firebasestorage.googleapis.com/v0/b/storage-4leaf.appspot.com/o/4leaf%2F5137894.jpg?alt=media&token=99858357-4602-44aa-b32a-e6c9867788ff")`}>
+              bgImg={`url("https://firebasestorage.googleapis.com/v0/b/storage-4leaf.appspot.com/o/4leaf%2F5137894.jpg?alt=media&token=99858357-4602-44aa-b32a-e6c9867788ff")`}
+            >
               <Image
                 width={`300px`}
                 alt="logo"
@@ -1399,7 +1076,8 @@ const AdminHome = () => {
               <Wrapper
                 color={Theme.white_C}
                 margin={`15px 0 0`}
-                fontSize={`1.1rem`}>
+                fontSize={`1.1rem`}
+              >
                 관리자페이지에 오신걸 환영합니다.
               </Wrapper>
             </Wrapper>
@@ -1409,7 +1087,8 @@ const AdminHome = () => {
                   fontSize={`2rem`}
                   fontWeight={`bold`}
                   margin={`0 0 30px`}
-                  al={`flex-start`}>
+                  al={`flex-start`}
+                >
                   Log in
                 </Wrapper>
                 <Wrapper al={`flex-start`}>아이디</Wrapper>
@@ -1454,21 +1133,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
-    });
-
-    context.store.dispatch({
-      type: NOTICE_ADMIN_MAIN_LIST_REQUEST,
-      data: {
-        page: 1,
-      },
-    });
-
-    context.store.dispatch({
-      type: MESSAGE_ADMIN_MAIN_LIST_REQUEST,
-      data: {
-        listType: "",
-        search: "",
-      },
     });
 
     context.store.dispatch({

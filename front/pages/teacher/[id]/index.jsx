@@ -1491,37 +1491,34 @@ const Index = () => {
     return add;
   }, []);
 
-  const stepHanlder2 = useCallback(
-    (startDate, endDate, count, lecDate, day) => {
-      let saveStart = moment(startDate).format("YYYY-MM-DD");
+  const stepHanlder2 = useCallback((startDate, endDate, count, day) => {
+    let saveStart = moment(startDate).format("YYYY-MM-DD");
 
-      const save = moment
-        .duration(moment(saveStart).diff(moment().format("YYYY-MM-DD")))
-        .asDays();
+    const save = moment
+      .duration(moment(saveStart).diff(moment().format("YYYY-MM-DD")))
+      .asDays();
 
-      const saveEnd = moment
-        .duration(
-          moment(endDate, "YYYY-MM-DD").diff(moment().format("YYYY-MM-DD"))
-        )
-        .asDays();
+    const saveEnd = moment
+      .duration(
+        moment(endDate, "YYYY-MM-DD").diff(moment().format("YYYY-MM-DD"))
+      )
+      .asDays();
 
-      if (save < 0) {
-        return true;
-      }
+    if (save < 0) {
+      return true;
+    }
 
-      if (saveEnd < 0) {
-        return false;
-      }
+    if (saveEnd < 0) {
+      return false;
+    }
 
-      const arr = ["일", "월", "화", "수", "목", "금", "토"];
+    const arr = ["일", "월", "화", "수", "목", "금", "토"];
 
-      let toDay = moment().add("days").day();
-      let toDayCheck = day.includes(arr[toDay]);
+    let toDay = moment().add("days").day();
+    let toDayCheck = day.includes(arr[toDay]);
 
-      return toDayCheck;
-    },
-    []
-  );
+    return toDayCheck;
+  }, []);
 
   const diaryViewClickHandler = useCallback((data) => {
     setDiaryViewModalToggle(true);
@@ -1970,7 +1967,7 @@ const Index = () => {
                                     data.startDate,
                                     data.endDate,
                                     data.count,
-                                    data.lecDate,
+
                                     data.day
                                   )
                                     ? false
@@ -1994,7 +1991,7 @@ const Index = () => {
                                     data.startDate,
                                     data.endDate,
                                     data.count,
-                                    data.lecDate,
+
                                     data.day
                                   )
                                     ? false
@@ -2020,7 +2017,7 @@ const Index = () => {
                                     data.startDate,
                                     data.endDate,
                                     data.count,
-                                    data.lecDate,
+
                                     data.day
                                   )
                                     ? false
@@ -2047,7 +2044,7 @@ const Index = () => {
                                     data.startDate,
                                     data.endDate,
                                     data.count,
-                                    data.lecDate,
+
                                     data.day
                                   )
                                     ? false
@@ -2197,7 +2194,7 @@ const Index = () => {
                                     data.startDate,
                                     data.endDate,
                                     data.count,
-                                    data.lecDate,
+
                                     data.day
                                   )
                                     ? false
@@ -2221,7 +2218,7 @@ const Index = () => {
                                     data.startDate,
                                     data.endDate,
                                     data.count,
-                                    data.lecDate,
+
                                     data.day
                                   )
                                     ? false
@@ -2247,7 +2244,7 @@ const Index = () => {
                                     data.startDate,
                                     data.endDate,
                                     data.count,
-                                    data.lecDate,
+
                                     data.day
                                   )
                                     ? false
@@ -2273,7 +2270,7 @@ const Index = () => {
                                     data.startDate,
                                     data.endDate,
                                     data.count,
-                                    data.lecDate,
+
                                     data.day
                                   )
                                     ? false
