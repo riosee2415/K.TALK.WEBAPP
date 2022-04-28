@@ -349,7 +349,6 @@ const List = ({ location }) => {
         }
       } else if (partLecture) {
         if (moment() < moment(partLecture.startDate.slice(0, 10))) {
-          console.log(partLecture.startDate);
           return message.error(
             "수업 참여일이 수업 시작 날짜보다 과거일 수 없습니다."
           );

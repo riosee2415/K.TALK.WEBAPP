@@ -112,8 +112,7 @@ const Home = ({}) => {
                 }
                 color={Theme.basicTheme_C}
                 fontWeight={`bold`}
-                margin={`0 0 20px`}
-              >
+                margin={`0 0 20px`}>
                 <Text>
                   <SpanText color={Theme.subTheme6_C}>K-TALK LIVE</SpanText>
                   &nbsp;RUNS&nbsp;
@@ -135,35 +134,35 @@ const Home = ({}) => {
                   width={width < 1000 ? `100%` : `49%`}
                   padding={width < 900 ? `20px 10px` : `35px 30px`}
                   dr={`row`}
-                  ju={`space-between`}
-                >
+                  ju={`space-between`}>
                   <Wrapper
                     width={`auto`}
                     fontSize={
                       width < 900 ? (width < 700 ? `13px` : `15px`) : `20px`
                     }
-                    al={`flex-start`}
-                  >
+                    al={`flex-start`}>
                     <Text fontWeight={`bold`}>For absolute beginners</Text>
                     <Text fontWeight={`300`}>
                       three 50-minute sessions a week
                     </Text>
                   </Wrapper>
                   <Wrapper width={`auto`}>
-                    <CommonButton
-                      height={`40px`}
-                      kindOf={`white`}
-                      padding={`5px 5px 5px 8px`}
-                      onClick={() => moveLinkHandler(`/application`)}
-                    >
-                      apply here
-                      <Image
-                        alt="icon"
-                        margin={`0 0 0 15px`}
-                        width={width < 900 ? `25px` : `30px`}
-                        src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/blue-btn.png`}
-                      />
-                    </CommonButton>
+                    <ATag
+                      href={`https://forms.gle/M4hQxCN8itnWkM3x7`}
+                      target={`_blank`}>
+                      <CommonButton
+                        height={`40px`}
+                        kindOf={`white`}
+                        padding={`5px 5px 5px 8px`}>
+                        apply here
+                        <Image
+                          alt="icon"
+                          margin={`0 0 0 15px`}
+                          width={width < 900 ? `25px` : `30px`}
+                          src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/blue-btn.png`}
+                        />
+                      </CommonButton>
+                    </ATag>
                   </Wrapper>
                 </Wrapper>
                 <Wrapper
@@ -171,35 +170,36 @@ const Home = ({}) => {
                   width={width < 1000 ? `100%` : `49%`}
                   padding={width < 900 ? `20px 10px` : `35px 30px`}
                   dr={`row`}
-                  ju={`space-between`}
-                >
+                  ju={`space-between`}>
                   <Wrapper
                     width={`auto`}
                     fontSize={
                       width < 900 ? (width < 700 ? `13px` : `15px`) : `20px`
                     }
-                    al={`flex-start`}
-                  >
+                    al={`flex-start`}>
                     <Text fontWeight={`bold`}>
                       For pre-intermediate learners
                     </Text>
                     <Text fontWeight={`300`}>2 sessions a week</Text>
                   </Wrapper>
                   <Wrapper width={`auto`}>
-                    <CommonButton
-                      height={`40px`}
-                      kindOf={`white`}
-                      padding={`5px 5px 5px 8px`}
-                      onClick={() => moveLinkHandler(`/application`)}
-                    >
-                      apply here
-                      <Image
-                        alt="icon"
-                        margin={`0 0 0 15px`}
-                        width={width < 900 ? `25px` : `30px`}
-                        src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/blue-btn.png`}
-                      />
-                    </CommonButton>
+                    <ATag
+                      href={`https://forms.gle/nsqiuEsEQqMj9qUj7 `}
+                      target={`_blank`}>
+                      <CommonButton
+                        height={`40px`}
+                        kindOf={`white`}
+                        padding={`5px 5px 5px 8px`}
+                        onClick={() => moveLinkHandler(`/application`)}>
+                        apply here
+                        <Image
+                          alt="icon"
+                          margin={`0 0 0 15px`}
+                          width={width < 900 ? `25px` : `30px`}
+                          src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/blue-btn.png`}
+                        />
+                      </CommonButton>
+                    </ATag>
                   </Wrapper>
                 </Wrapper>
               </Wrapper>
@@ -210,8 +210,7 @@ const Home = ({}) => {
                 }
                 color={Theme.subTheme2_C}
                 fontWeight={`bold`}
-                margin={`0 0 20px`}
-              >
+                margin={`0 0 20px`}>
                 K-talk Live regular paid lessons
               </Wrapper>
 
@@ -219,8 +218,7 @@ const Home = ({}) => {
                 shadow={`0 5px 15px rgba(0, 0, 0, 0.05)`}
                 padding={width < 900 ? `20px 10px` : `35px 30px`}
                 dr={`row`}
-                ju={width < 900 ? `center` : `space-between`}
-              >
+                ju={width < 900 ? `center` : `space-between`}>
                 <Wrapper
                   width={`auto`}
                   al={`flex-start`}
@@ -228,21 +226,18 @@ const Home = ({}) => {
                   fontSize={
                     width < 900 ? (width < 700 ? `12px` : `14px`) : `18px`
                   }
-                  fontWeight={`300`}
-                >
+                  fontWeight={`300`}>
                   <Text>
                     Starts every Monday
                     <SpanText
                       fontSize={width < 800 ? `12px` : `15px`}
-                      margin={`0 10px`}
-                    >
+                      margin={`0 10px`}>
                       |
                     </SpanText>
                     Suitable for beginner to advanced
                     <SpanText
                       fontSize={width < 800 ? `12px` : `15px`}
-                      margin={`0 10px`}
-                    >
+                      margin={`0 10px`}>
                       |
                     </SpanText>
                     Live online group class taught by native Korean teachers
@@ -251,15 +246,13 @@ const Home = ({}) => {
                     3 sessions a week (1 session = 50 minutes)
                     <SpanText
                       fontSize={width < 800 ? `12px` : `15px`}
-                      margin={`0 10px`}
-                    >
+                      margin={`0 10px`}>
                       |
                     </SpanText>
                     US $162 for 4 weeks (12 sessions over 4 weeks)
                     <SpanText
                       fontSize={width < 800 ? `12px` : `15px`}
-                      margin={`0 10px`}
-                    >
+                      margin={`0 10px`}>
                       |
                     </SpanText>
                     Lessons through Zoom
@@ -268,39 +261,32 @@ const Home = ({}) => {
                     Payment through Paypal
                     <SpanText
                       fontSize={width < 800 ? `12px` : `15px`}
-                      margin={`0 10px`}
-                    >
+                      margin={`0 10px`}>
                       |
                     </SpanText>
                     Money-back guarantee for all lesson
                     <SpanText
                       fontSize={width < 800 ? `12px` : `15px`}
-                      margin={`0 10px`}
-                    >
+                      margin={`0 10px`}>
                       |
                     </SpanText>
                     Not more than 7 learners in a class
                   </Text>
                 </Wrapper>
                 <Wrapper width={`auto`} margin={width < 900 && `15px 0 0`}>
-                  <ATag
-                    href={`https://forms.gle/M8cD1TVUBT5r6DiA7`}
-                    target={`_blank`}
-                  >
-                    <CommonButton
-                      height={`40px`}
-                      kindOf={`subTheme`}
-                      padding={`5px 5px 5px 8px`}
-                    >
-                      apply here
-                      <Image
-                        alt="icon"
-                        margin={`0 0 0 15px`}
-                        width={width < 900 ? `25px` : `30px`}
-                        src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/red-btn.png`}
-                      />
-                    </CommonButton>
-                  </ATag>
+                  <CommonButton
+                    height={`40px`}
+                    kindOf={`subTheme`}
+                    padding={`5px 5px 5px 8px`}
+                    onClick={() => moveLinkHandler("/application")}>
+                    apply here
+                    <Image
+                      alt="icon"
+                      margin={`0 0 0 15px`}
+                      width={width < 900 ? `25px` : `30px`}
+                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/red-btn.png`}
+                    />
+                  </CommonButton>
                 </Wrapper>
               </Wrapper>
               <Wrapper dr={`row`} margin={`60px 0 0`} ju={`space-between`}>
@@ -308,19 +294,16 @@ const Home = ({}) => {
                   shadow={`0 5px 15px rgba(0, 0, 0, 0.05)`}
                   padding={`20px 30px`}
                   dr={`row`}
-                  width={width < 1000 ? `100%` : `35%`}
-                >
+                  width={width < 1000 ? `100%` : `35%`}>
                   <ATag
                     width={`auto`}
                     dr={`row`}
-                    href={`mailto:jklc.ktalk@gmail.com`}
-                  >
+                    href={`mailto:jklc.ktalk@gmail.com`}>
                     <Text
                       fontSize={
                         width < 900 ? (width < 700 ? `13px` : `14px`) : `18px`
                       }
-                      fontWeight={`bold`}
-                    >
+                      fontWeight={`bold`}>
                       More infomation
                     </Text>
                     <Image
@@ -338,15 +321,13 @@ const Home = ({}) => {
                   shadow={`0 5px 15px rgba(0, 0, 0, 0.05)`}
                   padding={`20px 30px`}
                   dr={`row`}
-                  width={width < 1000 ? `100%` : `63%`}
-                >
+                  width={width < 1000 ? `100%` : `63%`}>
                   <ATag
                     width={`auto`}
                     dr={`row`}
                     href={`https://www.instagram.com/ktalk_live/`}
                     target={`_blank`}
-                    margin={width < 900 && `0 0 15px`}
-                  >
+                    margin={width < 900 && `0 0 15px`}>
                     <Image
                       alt="icon"
                       margin={`0 5px 0 0px`}
@@ -368,8 +349,7 @@ const Home = ({}) => {
                     width={`auto`}
                     dr={`row`}
                     href={`https://www.facebook.com/KtalkLive`}
-                    target={`_blank`}
-                  >
+                    target={`_blank`}>
                     <Image
                       alt="icon"
                       margin={`0 5px 0 0px`}
