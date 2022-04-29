@@ -1241,6 +1241,20 @@ router.post("/diary/create", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("자신의 강의가 아닙니다.");
     }
 
+    const exDiary = `
+    SELECT	id,
+            author
+      FROM	lectureDiarys
+     WHERE	DATE_FORMAT(createdAt, '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d')
+       AND  LectureId = ${LectureId}
+    `;
+
+    const queryResult = await models.sequelize.query(exDiary);
+
+    if (queryResult[0].length > 0) {
+      return res.status(401).send("이미 오늘의 강의일지를 작성하였습니다.");
+    }
+
     const createResult = await LectureDiary.create({
       author,
       process,
