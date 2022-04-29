@@ -12,6 +12,7 @@ const {
   LectureMessage,
   LectureStuMemo,
   Commute,
+  TeacherPay,
 } = require("../models");
 const models = require("../models");
 const fs = require("fs");
@@ -1255,6 +1256,13 @@ router.post("/diary/create", isLoggedIn, async (req, res, next) => {
         where: { id: parseInt(LectureId) },
       }
     );
+
+    await TeacherPay.create({
+      price: 30000,
+      type: "기본수당",
+      UserId: parseInt(req.user.id),
+      LectureId: parseInt(LectureId),
+    });
 
     if (!createResult) {
       return res.status(401).send("처리중 문제가 발생하였습니다.");

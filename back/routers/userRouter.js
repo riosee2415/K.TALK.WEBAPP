@@ -8,6 +8,7 @@ const {
   Payment,
   Application,
   TeacherPart,
+  TeacherPay,
 } = require("../models");
 const models = require("../models");
 const isAdminCheck = require("../middlewares/isAdminCheck");
@@ -905,6 +906,13 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
       endDate,
     });
 
+    await TeacherPay.create({
+      type: "등록수당",
+      price: 30000,
+      LectureId: parseInt(LectureId),
+      UserId: parseInt(exLecture.UserId),
+    });
+
     const exApp = await Application.findOne({
       where: { gmailAddress: email },
     });
@@ -973,6 +981,14 @@ router.patch("/class/update", isAdminCheck, async (req, res, next) => {
       endDate,
       date,
     });
+
+    // 반 옮기기 등록수당
+    // await TeacherPay.create({
+    //   type: "등록수당",
+    //   price: 30000,
+    //   LectureId: parseInt(LectureId),
+    //   UserId: parseInt(exLecture.UserId),
+    // });
 
     if (!createResult) {
       return res.status(400).send("처리중 문제가 발생하였습니다.");
