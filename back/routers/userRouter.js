@@ -1197,11 +1197,7 @@ router.patch("/admin/user/update", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("해당 사용자는 학생이 아닙니다.");
     }
 
-    let hashedPassword = "";
-
-    if (password) {
-      hashedPassword = await bcrypt.hash(password, 12);
-    }
+    const hashedPassword = await bcrypt.hash(password, 12);
 
     const updateResult = await User.update(
       {
@@ -1210,7 +1206,7 @@ router.patch("/admin/user/update", isAdminCheck, async (req, res, next) => {
         stuLiveCon,
         stuLanguage,
         mobile,
-        password: password ? hashedPassword : exUser.password,
+        password: hashedPassword,
         adminMemo,
         sns,
         snsId,
