@@ -1146,8 +1146,20 @@ router.patch("/fire/update", isAdminCheck, async (req, res, next) => {
 });
 
 router.patch("/admin/teacher/update", isAdminCheck, async (req, res, next) => {
-  const { id, gender, bankNo, bankName, address, detailAddress, teaLanguage } =
-    req.body;
+  const {
+    id,
+    email,
+    username,
+    userId,
+    mobile,
+    password,
+    gender,
+    bankNo,
+    bankName,
+    address,
+    detailAddress,
+    teaLanguage,
+  } = req.body;
   try {
     const exUser = await User.findOne({
       where: { id: parseInt(id) },
@@ -1161,8 +1173,31 @@ router.patch("/admin/teacher/update", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("해당 사용자는 강사가 아닙니다.");
     }
 
+    const exUser2 = await User.findOne({
+      where: { userId },
+    });
+
+    if (exUser2) {
+      return res.status(401).send("이미 사용중인 아이디입니다.");
+    }
+
+    const exUser3 = await User.findOne({
+      where: { email },
+    });
+
+    if (exUser3) {
+      return res.status(401).send("이미 사용중인 이메일입니다.");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+
     const updateResult = await User.update(
       {
+        email,
+        username,
+        userId,
+        mobile,
+        password: hashedPassword,
         gender,
         bankNo,
         bankName,
