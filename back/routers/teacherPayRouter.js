@@ -218,7 +218,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
 });
 
 // 회의 수당
-router.post("/creaete", isLoggedIn, async (req, res, next) => {
+router.post("/create", isLoggedIn, async (req, res, next) => {
   const { price, LectureId } = req.body;
 
   if (!req.user) {
