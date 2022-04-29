@@ -1159,6 +1159,7 @@ router.patch("/admin/teacher/update", isAdminCheck, async (req, res, next) => {
     address,
     detailAddress,
     teaLanguage,
+    adminMemo,
   } = req.body;
   try {
     const exUser = await User.findOne({
@@ -1204,6 +1205,7 @@ router.patch("/admin/teacher/update", isAdminCheck, async (req, res, next) => {
         address,
         detailAddress,
         teaLanguage,
+        adminMemo,
       },
       {
         where: { id: parseInt(id) },
