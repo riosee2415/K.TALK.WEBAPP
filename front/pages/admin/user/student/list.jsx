@@ -293,7 +293,7 @@ const List = () => {
         allLectures.map((data) => {
           return (
             <Option key={data.id} value={data.id}>
-              {data.course}
+              {data.number} | {data.course}
             </Option>
           );
         })
@@ -1223,7 +1223,7 @@ const List = () => {
                       <Option
                         key={data.id}
                         value={`${data.LectureId},${data.date},${data.endDate}`}>
-                        {data.Lecture?.course}
+                        {data.Lecture?.number} | {data.Lecture?.course}
                       </Option>
                     );
                   })}
@@ -1321,7 +1321,7 @@ const List = () => {
                             <Select.Option
                               key={data.id}
                               value={JSON.stringify(data)}>
-                              {`${data.course} | ${data.User.username}`}
+                              {`${data.number} | ${data.course} | ${data.User.username}`}
                             </Select.Option>
                           );
                         })}
@@ -1371,7 +1371,7 @@ const List = () => {
               label={`종료할 강의`}
               name={`partLecture`}
               rules={[
-                { required: true, message: "결제 여부를 선택해주세요." },
+                { required: true, message: "종료할 강의를 선택해주세요." },
               ]}>
               <Select
                 width={`100%`}
@@ -1388,7 +1388,7 @@ const List = () => {
 
                     return (
                       <Option key={data.id} value={data.LectureId}>
-                        {data.Lecture?.course}
+                        {data.Lecture?.number} | {data.Lecture?.course}
                       </Option>
                     );
                   })}

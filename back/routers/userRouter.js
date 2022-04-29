@@ -261,9 +261,6 @@ router.get(
                 [Op.like]: `%${searchEmail}%`,
               },
             },
-            attributes: {
-              exclude: ["password"],
-            },
             include: [
               {
                 model: Participant,
@@ -289,9 +286,6 @@ router.get(
                 [Op.like]: `%${searchEmail}%`,
               },
             },
-            attributes: {
-              exclude: ["password"],
-            },
             order: [["createdAt", "DESC"]],
           });
           break;
@@ -305,9 +299,6 @@ router.get(
               email: {
                 [Op.like]: `%${searchEmail}%`,
               },
-            },
-            attributes: {
-              exclude: ["password"],
             },
             order: [["createdAt", "DESC"]],
           });
@@ -1186,6 +1177,9 @@ router.patch("/admin/user/update", isAdminCheck, async (req, res, next) => {
     stuCountry,
     stuLiveCon,
     stuLanguage,
+    mobile,
+    password,
+    adminMemo,
     sns,
     snsId,
     stuPayCount,
@@ -1203,12 +1197,21 @@ router.patch("/admin/user/update", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("해당 사용자는 학생이 아닙니다.");
     }
 
+    let hashedPassword = "";
+
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 12);
+    }
+
     const updateResult = await User.update(
       {
         birth,
         stuCountry,
         stuLiveCon,
         stuLanguage,
+        mobile,
+        password: password ? hashedPassword : exUser.password,
+        adminMemo,
         sns,
         snsId,
         stuPayCount,
