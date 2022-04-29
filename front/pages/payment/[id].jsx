@@ -140,6 +140,7 @@ const Index = () => {
 
   // 결제 성공
   const onSuccess = (payment) => {
+    console.log(payment, "payment");
     setSuccessData(payment);
     // console.log(payment);
   };

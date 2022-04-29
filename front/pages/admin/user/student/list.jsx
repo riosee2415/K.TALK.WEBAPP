@@ -34,6 +34,7 @@ import {
   RowWrapper,
   ColWrapper,
   TextInput,
+  Image,
 } from "../../../../components/commonComponents";
 import { LECTURE_ALL_LIST_REQUEST } from "../../../../reducers/lecture";
 import {
@@ -59,6 +60,8 @@ const CustomInput = styled(Input)`
 `;
 
 const FormItem = styled(Form.Item)`
+  width: ${(props) => props.width};
+
   @media (max-width: 700px) {
     width: 100%;
   }
@@ -94,6 +97,9 @@ const CustomSelect = styled(Select)`
 
 const List = () => {
   const { Option } = Select;
+
+  const { TextArea } = Input;
+
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
 
   const { allLectures } = useSelector((state) => state.lecture);
@@ -451,10 +457,13 @@ const List = () => {
         sns: data.sns,
         snsId: data.snsId,
         birth: data.birth.slice(0, 10),
+        mobile: data.mobile,
+        password: data.mobile.slice(-4),
         stuLiveCon: data.stuLiveCon,
         stuCountry: data.stuCountry,
         stuLanguage: data.stuLanguage,
         stuPayCount: data.stuPayCount,
+        adminMemo: data.adminMemo,
       });
     }
   }, []);
@@ -626,17 +635,20 @@ const List = () => {
 
   const updateStuFinish = useCallback(
     (data) => {
+      console.log(data, "data");
       dispatch({
         type: USER_ADMIN_UPDATE_REQUEST,
         data: {
           id: stuDetail.id,
           birth: data.birth,
+          mobile: data.mobile,
           stuCountry: data.stuCountry,
           stuLiveCon: data.stuLiveCon,
           stuLanguage: data.stuLanguage,
           sns: data.sns,
           snsId: data.snsId,
           stuPayCount: data.stuPayCount,
+          adminMemo: data.adminMemo,
         },
       });
     },
@@ -670,7 +682,7 @@ const List = () => {
   const column = [
     {
       title: "번호",
-      dataIndex: "id",
+      dataIndex: "stuNo",
     },
 
     {
@@ -1463,10 +1475,12 @@ const List = () => {
         />
       </Modal>
 
+      {console.log(stuDetail, "onStuFill")}
+
       <Modal
         visible={stuDetailModal}
         width={`1000px`}
-        title={`신청서`}
+        title={`학생 관리`}
         onCancel={() => setStuDetailModal(false)}
         footer={null}>
         <CustomForm form={updateStuForm} onFinish={updateStuFinish}>
@@ -1475,7 +1489,29 @@ const List = () => {
               사용자가 정보 양식
             </Text>
             <Wrapper dr={`row`} al={`flex-start`}>
-              <Wrapper width={`100%`} al={`flex-start`} margin={`0 0 20px`}>
+              <Wrapper width={`50%`} margin={`0 0 20px`}>
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}>
+                    프로필 이미지
+                  </ColWrapper>
+                  <ColWrapper>
+                    <Image
+                      width={`184px`}
+                      height={`190px`}
+                      src={
+                        stuDetail
+                          ? `${stuDetail && stuDetail.profileImage}`
+                          : `https://via.placeholder.com/184x190`
+                      }
+                    />
+                  </ColWrapper>
+                </RowWrapper>
+
                 <RowWrapper width={`100%`} margin={`0 0 10px`}>
                   <ColWrapper
                     width={`120px`}
@@ -1498,6 +1534,18 @@ const List = () => {
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
                     margin={`0 5px 0 0`}>
+                    아이디
+                  </ColWrapper>
+                  <ColWrapper>{stuDetail && stuDetail.userId}</ColWrapper>
+                </RowWrapper>
+
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}>
                     이메일
                   </ColWrapper>
                   <ColWrapper>{stuDetail && stuDetail.email}</ColWrapper>
@@ -1510,12 +1558,18 @@ const List = () => {
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
                     margin={`0 5px 0 0`}>
-                    비밀번호
+                    휴대폰 번호
                   </ColWrapper>
                   <ColWrapper>
-                    {stuDetail &&
-                      stuDetail.mobile &&
-                      stuDetail.mobile.slice(-4)}
+                    <FormItem name="mobile">
+                      <CustomInput
+                        onChange={(e) =>
+                          updateStuForm.setFieldsValue({
+                            password: e.target.value.slice(-4),
+                          })
+                        }
+                      />
+                    </FormItem>
                   </ColWrapper>
                 </RowWrapper>
 
@@ -1526,9 +1580,14 @@ const List = () => {
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
                     margin={`0 5px 0 0`}>
-                    휴대폰번호
+                    비밀번호
                   </ColWrapper>
-                  <ColWrapper>{stuDetail && stuDetail.mobile}</ColWrapper>
+
+                  <ColWrapper>
+                    <FormItem name="password">
+                      <CustomInput disabled />
+                    </FormItem>
+                  </ColWrapper>
                 </RowWrapper>
 
                 <RowWrapper width={`100%`} margin={`0 0 10px`}>
@@ -1681,6 +1740,26 @@ const List = () => {
                   <ColWrapper>
                     <FormItem name="stuPayCount">
                       <CustomInput />
+                    </FormItem>
+                  </ColWrapper>
+                </RowWrapper>
+              </Wrapper>
+
+              <Wrapper width={`50%`} margin={`0 0 20px`} al={`flex-start`}>
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}>
+                    메모
+                  </ColWrapper>
+                  <ColWrapper width={`calc(100% - 125px)`}>
+                    <FormItem name="adminMemo" width={`100%`}>
+                      <TextArea
+                        width={`100%`}
+                        autoSize={{ minRows: 6 }}></TextArea>
                     </FormItem>
                   </ColWrapper>
                 </RowWrapper>
