@@ -112,11 +112,6 @@ export const initailState = {
   st_userAdminUpdateDone: false,
   st_userAdminUpdateError: null,
   //
-  st_userAdminUpdateLoading: false,
-  st_userAdminUpdateDone: false,
-  st_userAdminUpdateError: null,
-
-  //
   st_userAdminTeacherUpdateLoading: false,
   st_userAdminTeacherUpdateDone: false,
   st_userAdminTeacherUpdateError: null,
@@ -700,6 +695,26 @@ const reducer = (state = initailState, action) =>
         draft.st_userAdminTeacherUpdateLoading = false;
         draft.st_userAdminTeacherUpdateDone = false;
         draft.st_userAdminTeacherUpdateError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case USER_ADMIN_UPDATE_REQUEST: {
+        draft.st_userAdminUpdateLoading = true;
+        draft.st_userAdminUpdateDone = null;
+        draft.st_userAdminUpdateError = false;
+        break;
+      }
+      case USER_ADMIN_UPDATE_SUCCESS: {
+        draft.st_userAdminUpdateLoading = false;
+        draft.st_userAdminUpdateDone = true;
+        break;
+      }
+      case USER_ADMIN_UPDATE_FAILURE: {
+        draft.st_userAdminUpdateLoading = false;
+        draft.st_userAdminUpdateDone = false;
+        draft.st_userAdminUpdateError = action.error;
         break;
       }
 

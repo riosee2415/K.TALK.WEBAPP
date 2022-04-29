@@ -635,13 +635,13 @@ const List = () => {
 
   const updateStuFinish = useCallback(
     (data) => {
-      console.log(data, "data");
       dispatch({
         type: USER_ADMIN_UPDATE_REQUEST,
         data: {
           id: stuDetail.id,
           birth: data.birth,
           mobile: data.mobile,
+          password: data.password,
           stuCountry: data.stuCountry,
           stuLiveCon: data.stuLiveCon,
           stuLanguage: data.stuLanguage,

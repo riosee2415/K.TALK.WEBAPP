@@ -673,13 +673,13 @@ function* userFireUpdate(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function userUpdateAPI(data) {
+function userAdminUpdateAPI(data) {
   return axios.patch(`/api/user/admin/user/update`, data);
 }
 
-function* userUpdate(action) {
+function* userAdminUpdate(action) {
   try {
-    const result = yield call(userUpdateAPI, action.data);
+    const result = yield call(userAdminUpdateAPI, action.data);
 
     yield put({
       type: USER_ADMIN_UPDATE_SUCCESS,
@@ -811,8 +811,8 @@ function* watchUserTeaList() {
   yield takeLatest(USER_TEA_LIST_REQUEST, userTeaList);
 }
 
-function* watchUserUpdate() {
-  yield takeLatest(USER_ADMIN_UPDATE_REQUEST, userUpdate);
+function* watchUserAdminUpdate() {
+  yield takeLatest(USER_ADMIN_UPDATE_REQUEST, userAdminUpdate);
 }
 
 function* watchUserTeacherUpdate() {
@@ -843,7 +843,7 @@ export default function* userSaga() {
     fork(watchUserStuList),
     fork(watchUserTeaList),
     fork(watchUserFireUpdate),
-    fork(watchUserUpdate),
+    fork(watchUserAdminUpdate),
     fork(watchUserTeacherUpdate),
     //
   ]);
