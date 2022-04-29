@@ -61,7 +61,8 @@ const AdminMenu = () => {
         defaultOpenKeys={currentAdminMenu}
         mode="inline"
         selectedKeys={router.pathname}
-        disabled={false}>
+        disabled={false}
+      >
         <Wrapper margin={`20px 0 10px`}>
           <Image
             alt="logo"
@@ -98,6 +99,10 @@ const AdminMenu = () => {
 
         <Menu.Item key="/admin/user/teacher/list">
           <MenuName>강사 관리</MenuName>
+        </Menu.Item>
+
+        <Menu.Item key="/admin/user/teacher/pay/list">
+          <MenuName>강사료 산정 관리</MenuName>
         </Menu.Item>
 
         <Menu.Item key="/admin/user/userList">

@@ -21,7 +21,9 @@ import axios from "axios";
 import {
   GuideLi,
   GuideUl,
+  Image,
   Text,
+  TextArea,
   Wrapper,
 } from "../../../../components/commonComponents";
 
@@ -308,19 +310,47 @@ const UserList = ({}) => {
 
   const updateTeacherFinish = useCallback(
     (data) => {
-      console.log(data, "data");
-      dispatch({
-        type: USER_ADMIN_TEACHER_UPDATE_REQUEST,
-        data: {
-          id: detailModalData.id,
-          gender: data.gender,
-          bankNo: data.bankNo,
-          bankName: data.bankName,
-          address: data.address,
-          detailAddress: data.detailAddress,
-          teaLanguage: data.teaLanguage,
-        },
-      });
+      console.log(detailModalData.userId);
+      console.log(data.email);
+      if (detailModalData.email === data.email) {
+        console.log(1);
+        dispatch({
+          type: USER_ADMIN_TEACHER_UPDATE_REQUEST,
+          data: {
+            id: detailModalData.id,
+            username: data.username,
+            mobile: data.mobile,
+            password: data.mobile.slice(-4),
+            gender: data.gender,
+            bankNo: data.bankNo,
+            bankName: data.bankName,
+            address: data.address,
+            detailAddress: data.detailAddress,
+            teaLanguage: data.teaLanguage,
+            adminMemo: data.adminMemo,
+          },
+        });
+      } else {
+        console.log(2);
+        dispatch({
+          type: USER_ADMIN_TEACHER_UPDATE_REQUEST,
+          data: {
+            id: detailModalData.id,
+            username: data.username,
+            email: data.email,
+            userId: data.email,
+            mobile: data.mobile,
+            password: data.mobile.slice(-4),
+            gender: data.gender,
+            bankNo: data.bankNo,
+            bankName: data.bankName,
+            address: data.address,
+            detailAddress: data.detailAddress,
+            teaLanguage: data.teaLanguage,
+            adminMemo: data.adminMemo,
+          },
+        });
+      }
     },
     [detailModalData]
   );
@@ -345,6 +375,19 @@ const UserList = ({}) => {
     {
       title: "전화번호",
       render: (data) => <div>{data.mobile}</div>,
+    },
+
+    {
+      title: "강의 보기",
+      render: (data) => (
+        <Button
+          size="small"
+          type="primary"
+          onClick={() => moveLinkHandler(`/admin?teacher=${data.id}`)}
+        >
+          강의보기
+        </Button>
+      ),
     },
 
     {
@@ -703,6 +746,22 @@ const UserList = ({}) => {
       >
         <Form form={updateTeacherForm} onFinish={updateTeacherFinish}>
           <Wrapper>
+            <Wrapper
+              width={`100px`}
+              height={`100px`}
+              margin={`0 0 10px`}
+              radius={`50%`}
+            >
+              <Image
+                radius={`50%`}
+                src={
+                  detailModalData && detailModalData.profileImage
+                    ? detailModalData.profileImage
+                    : `https://via.placeholder.com/100x100`
+                }
+              />
+            </Wrapper>
+
             <Form.Item
               label={`이름`}
               name={`username`}
@@ -710,7 +769,7 @@ const UserList = ({}) => {
               labelWrap={{ span: 20 }}
               style={{ width: `100%` }}
             >
-              <Input disabled></Input>
+              <Input />
             </Form.Item>
 
             <Form.Item
@@ -733,7 +792,7 @@ const UserList = ({}) => {
               labelWrap={{ span: 20 }}
               style={{ width: `100%` }}
             >
-              <Input disabled></Input>
+              <Input disabled />
             </Form.Item>
 
             <Form.Item
@@ -743,17 +802,17 @@ const UserList = ({}) => {
               labelWrap={{ span: 20 }}
               style={{ width: `100%` }}
             >
-              <Input disabled></Input>
+              <Input />
             </Form.Item>
 
             <Form.Item
               label={`아이디`}
-              name={`userId`}
+              name={`email`}
               labelCol={{ span: 4 }}
               labelWrap={{ span: 20 }}
               style={{ width: `100%` }}
             >
-              <Input disabled></Input>
+              <Input disabled />
             </Form.Item>
 
             <Form.Item
@@ -763,7 +822,7 @@ const UserList = ({}) => {
               labelWrap={{ span: 20 }}
               style={{ width: `100%` }}
             >
-              <Input disabled></Input>
+              <Input />
             </Form.Item>
 
             <Form.Item
@@ -773,7 +832,7 @@ const UserList = ({}) => {
               labelWrap={{ span: 20 }}
               style={{ width: `100%` }}
             >
-              <Input></Input>
+              <Input />
             </Form.Item>
 
             <Form.Item
@@ -783,7 +842,7 @@ const UserList = ({}) => {
               labelWrap={{ span: 20 }}
               style={{ width: `100%` }}
             >
-              <Input></Input>
+              <Input />
             </Form.Item>
 
             <Form.Item
@@ -793,7 +852,7 @@ const UserList = ({}) => {
               labelWrap={{ span: 20 }}
               style={{ width: `100%` }}
             >
-              <Input></Input>
+              <Input />
             </Form.Item>
 
             <Form.Item
@@ -815,10 +874,27 @@ const UserList = ({}) => {
             >
               <Input />
             </Form.Item>
-
-            <Text color={Theme.red_C}>
-              * 이메일 수정 하고싶으면 개발사로 문의해주세요.
-            </Text>
+            <Form.Item
+              label={`상세주소`}
+              name={`detailAddress`}
+              labelCol={{ span: 4 }}
+              labelWrap={{ span: 20 }}
+              style={{ width: `100%` }}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label={`메모`}
+              name={`adminMemo`}
+              labelCol={{ span: 4 }}
+              labelWrap={{ span: 20 }}
+              style={{ width: `100%` }}
+            >
+              <TextArea
+                width={`100%`}
+                border={`1px solid ${Theme.grey_C} !important`}
+              />
+            </Form.Item>
 
             {/* <Wrapper dr={`row`} margin={`0 0 20px`}>
             <Text width={`80px`} fontWeight={`600`}>

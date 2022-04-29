@@ -125,7 +125,7 @@ const AdminHome = () => {
 
   const [currentTeacher, setCurrentTeacher] = useState(null);
   const [searchLevel, setSearchLevel] = useState("");
-  const [searchPage, setSearchPage] = useState("");
+
   const [searchStep, setSearchStep] = useState("");
   const [searchTime, setSearchTime] = useState("");
   const [searchStuName, setSearchStuName] = useState("");
@@ -367,6 +367,23 @@ const AdminHome = () => {
   //   }
   // }, [me])
 
+  useEffect(() => {
+    setCurrentTeacher(router.query.teacher);
+  }, [router.query]);
+
+  useEffect(() => {
+    dispatch({
+      type: LECTURE_ALL_LIST_REQUEST,
+      data: {
+        TeacherId: router.query.teacher ? router.query.teacher : "",
+        time: "",
+        startLv: "",
+        studentName: "",
+      },
+    });
+    setCurrentTeacher(router.query.teacher);
+  }, [router.query]);
+
   ////// HANDLER ///////
 
   const noticeModalToggle = useCallback((data) => {
@@ -577,14 +594,7 @@ const AdminHome = () => {
         studentName: searchStuName ? searchStuName : "",
       },
     });
-  }, [
-    currentTeacher,
-    searchLevel,
-    searchPage,
-    searchStep,
-    searchTime,
-    searchStuName,
-  ]);
+  }, [currentTeacher, searchLevel, searchStep, searchTime, searchStuName]);
 
   const noticeColumns = [
     {
@@ -756,6 +766,7 @@ const AdminHome = () => {
                   placeholder={`강사를 선택해주세요.`}
                   onChange={(e) => setCurrentTeacher(e)}
                   allowClear
+                  value={currentTeacher}
                 >
                   <Select.Option value={null}>전체</Select.Option>
                   {teachers &&
@@ -1502,16 +1513,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
       data: {
         listType: "",
         search: "",
-      },
-    });
-
-    context.store.dispatch({
-      type: LECTURE_ALL_LIST_REQUEST,
-      data: {
-        TeacherId: "",
-        time: "",
-        startLv: "",
-        studentName: "",
       },
     });
 
