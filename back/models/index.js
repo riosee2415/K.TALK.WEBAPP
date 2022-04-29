@@ -26,6 +26,7 @@ const lecturestumemo = require("./lecturestumemo");
 const payclass = require("./payclass");
 const payment = require("./payment");
 const teacherpart = require("./teacherpart");
+const teacherpay = require("./teacherpay");
 
 const env = process.env.NODE_ENV || "development";
 const config = require("../config/config")[env];
@@ -64,6 +65,7 @@ db.LectureStuMemo = lecturestumemo;
 db.PayClass = payclass;
 db.Payment = payment;
 db.TeacherPart = teacherpart;
+db.TeacherPay = teacherpay;
 
 Object.keys(db).forEach((modelName) => {
   db[modelName].init(sequelize);

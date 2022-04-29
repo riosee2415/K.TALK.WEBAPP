@@ -1,7 +1,14 @@
 const express = require("express");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isLoggedIn = require("../middlewares/isLoggedIn");
-const { Lecture, User, Participant, Payment, PayClass } = require("../models");
+const {
+  Lecture,
+  User,
+  Participant,
+  Payment,
+  PayClass,
+  TeacherPay,
+} = require("../models");
 const models = require("../models");
 
 const router = express.Router();
@@ -332,7 +339,16 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
           where: { id: parseInt(PaymentId) },
         }
       );
+
+      return res.status(201).json({ result: true });
     }
+
+    await TeacherPay.create({
+      type: "등록수당",
+      price: 30000,
+      LectureId: parseInt(LectureId),
+      UserId: parseInt(exLecture.UserId),
+    });
 
     return res.status(201).json({ result: true });
   } catch (error) {
@@ -340,6 +356,15 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
     return res.status(401).send("강의에 참여시킬 수 없습니다.");
   }
 });
+
+// 연장수당 (학생 수업연장 update 및 강사 연장 수당. 기존 part에서 endDate, date 변경 및 teacherPay 데이터 생성)
+// router.patch("/termUpgrade", isAdminCheck, async(req,res,next) => {
+//   try {
+
+//   } catch (error) {
+//     console.error(error)
+//   }
+// })
 
 // 학생 강의에서 빼기
 router.post("/delete", isAdminCheck, async (req, res, next) => {

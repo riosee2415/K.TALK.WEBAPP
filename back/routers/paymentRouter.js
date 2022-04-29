@@ -1,7 +1,7 @@
 const express = require("express");
 const { Op } = require("sequelize");
 const isAdminCheck = require("../middlewares/isAdminCheck");
-const { PayClass, Payment, User } = require("../models");
+const { PayClass, Payment, User, Lecture } = require("../models");
 const models = require("../models");
 
 const router = express.Router();
