@@ -873,15 +873,7 @@ const UserList = ({}) => {
             >
               <Input />
             </Form.Item>
-            <Form.Item
-              label={`상세주소`}
-              name={`detailAddress`}
-              labelCol={{ span: 4 }}
-              labelWrap={{ span: 20 }}
-              style={{ width: `100%` }}
-            >
-              <Input />
-            </Form.Item>
+
             <Form.Item
               label={`메모`}
               name={`adminMemo`}
