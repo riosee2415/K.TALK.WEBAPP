@@ -241,6 +241,7 @@ const UserList = ({}) => {
           bankName: data.bankName,
           detailAddress: data.detailAddress,
           address: data.address,
+          adminMemo: data.adminMemo,
         });
       }
     },
@@ -313,7 +314,6 @@ const UserList = ({}) => {
       console.log(detailModalData.userId);
       console.log(data.email);
       if (detailModalData.email === data.email) {
-        console.log(1);
         dispatch({
           type: USER_ADMIN_TEACHER_UPDATE_REQUEST,
           data: {
@@ -331,7 +331,6 @@ const UserList = ({}) => {
           },
         });
       } else {
-        console.log(2);
         dispatch({
           type: USER_ADMIN_TEACHER_UPDATE_REQUEST,
           data: {
