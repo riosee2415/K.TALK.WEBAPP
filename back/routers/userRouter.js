@@ -1174,29 +1174,33 @@ router.patch("/admin/teacher/update", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("해당 사용자는 강사가 아닙니다.");
     }
 
-    const exUser2 = await User.findOne({
-      where: { userId },
-    });
+    if (userId) {
+      const exUser2 = await User.findOne({
+        where: { userId },
+      });
 
-    if (exUser2) {
-      return res.status(401).send("이미 사용중인 아이디입니다.");
+      if (exUser2) {
+        return res.status(401).send("이미 사용중인 아이디입니다.");
+      }
     }
 
-    const exUser3 = await User.findOne({
-      where: { email },
-    });
+    if (email) {
+      const exUser3 = await User.findOne({
+        where: { email },
+      });
 
-    if (exUser3) {
-      return res.status(401).send("이미 사용중인 이메일입니다.");
+      if (exUser3) {
+        return res.status(401).send("이미 사용중인 이메일입니다.");
+      }
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const updateResult = await User.update(
       {
-        email,
+        email: email ? email : exUser.email,
         username,
-        userId,
+        userId: userId ? userId : exUser.userId,
         mobile,
         password: hashedPassword,
         gender,
