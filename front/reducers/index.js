@@ -19,7 +19,7 @@ import processApply from "./processApply";
 import payment from "./payment";
 import book from "./book";
 import payClass from "./payClass";
-import teacherpay from "./teacherpay";
+import teacherpay from "./teacherPay";
 
 const rootReducer = (state, action) => {
   switch (action.type) {

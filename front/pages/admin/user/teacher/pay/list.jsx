@@ -42,7 +42,7 @@ import useInput from "../../../../../hooks/useInput";
 import { TEACHER_PARTICIPANT_LIST_REQUEST } from "../../../../../reducers/participant";
 import Theme from "../../../../../components/Theme";
 import { LECTURE_ALL_LIST_REQUEST } from "../../../../../reducers/lecture";
-import { TEACHER_ADMIN_PAY_LIST_REQUEST } from "../../../../../reducers/teacherpay";
+import { TEACHER_ADMIN_PAY_LIST_REQUEST } from "../../../../../reducers/teacherPay";
 
 const AdminContent = styled.div`
   padding: 20px;
