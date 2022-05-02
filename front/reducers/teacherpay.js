@@ -4,9 +4,10 @@ export const initialState = {
   teacherPayList: [],
   teacherPayLastPage: [],
 
-  teacherPayAdminList: [],
+  teacherAdminPayListList: [],
   teacherPayAdminPrice: 0,
   //
+
   st_teacherPayListLoading: false,
   st_teacherPayListDone: false,
   st_teacherPayListError: null,
@@ -36,64 +37,64 @@ const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
       case TEACHER_PAY_LIST_REQUEST: {
-        draft.teacherPayListLoading = true;
-        draft.teacherPayListDone = null;
-        draft.teacherPayListError = false;
+        draft.st_teacherPayListLoading = true;
+        draft.st_teacherPayListDone = null;
+        draft.st_teacherPayListError = false;
         break;
       }
       case TEACHER_PAY_LIST_SUCCESS: {
-        draft.teacherPayListLoading = false;
-        draft.teacherPayListDone = true;
+        draft.st_teacherPayListLoading = false;
+        draft.st_teacherPayListDone = true;
         draft.teacherPayList = action.data.teacherPay;
         draft.teacherPayLastPage = action.data.lastPage;
         break;
       }
       case TEACHER_PAY_LIST_FAILURE: {
-        draft.teacherPayListLoading = false;
-        draft.teacherPayListDone = false;
-        draft.teacherPayListError = action.error;
+        draft.st_teacherPayListLoading = false;
+        draft.st_teacherPayListDone = false;
+        draft.st_teacherPayListError = action.error;
         break;
       }
 
       //////////////////////////////////////////////
 
       case TEACHER_ADMIN_PAY_LIST_REQUEST: {
-        draft.teacherAdminPayListLoading = true;
-        draft.teacherAdminPayListDone = null;
-        draft.teacherAdminPayListError = false;
+        draft.st_teacherAdminPayListLoading = true;
+        draft.st_teacherAdminPayListDone = null;
+        draft.st_teacherAdminPayListError = false;
         break;
       }
       case TEACHER_ADMIN_PAY_LIST_SUCCESS: {
-        draft.teacherAdminPayListLoading = false;
-        draft.teacherAdminPayListDone = true;
+        draft.st_teacherAdminPayListLoading = false;
+        draft.st_teacherAdminPayListDone = true;
         draft.teacherAdminPayListList = action.data.teacherPay;
         draft.teacherPayAdminPrice = action.data.price;
         break;
       }
       case TEACHER_ADMIN_PAY_LIST_FAILURE: {
-        draft.teacherAdminPayListLoading = false;
-        draft.teacherAdminPayListDone = false;
-        draft.teacherAdminPayListError = action.error;
+        draft.st_teacherAdminPayListLoading = false;
+        draft.st_teacherAdminPayListDone = false;
+        draft.st_teacherAdminPayListError = action.error;
         break;
       }
 
       //////////////////////////////////////////////
 
       case TEACHER_PAY_CREATE_REQUEST: {
-        draft.teacherCreateLoading = true;
-        draft.teacherCreateDone = null;
-        draft.teacherCreateError = false;
+        draft.st_teacherCreateLoading = true;
+        draft.st_teacherCreateDone = null;
+        draft.st_teacherCreateError = false;
         break;
       }
       case TEACHER_PAY_CREATE_SUCCESS: {
-        draft.teacherCreateLoading = false;
-        draft.teacherCreateDone = true;
+        draft.st_teacherCreateLoading = false;
+        draft.st_teacherCreateDone = true;
         break;
       }
       case TEACHER_PAY_CREATE_FAILURE: {
-        draft.teacherCreateLoading = false;
-        draft.teacherCreateDone = false;
-        draft.teacherCreateError = action.error;
+        draft.st_teacherCreateLoading = false;
+        draft.st_teacherCreateDone = false;
+        draft.st_teacherCreateError = action.error;
         break;
       }
 
