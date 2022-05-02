@@ -12,7 +12,7 @@ import {
   TEACHER_PAY_CREATE_REQUEST,
   TEACHER_PAY_CREATE_SUCCESS,
   TEACHER_PAY_CREATE_FAILURE,
-} from "../reducers/teacherPay";
+} from "../reducers/teacherpay";
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
