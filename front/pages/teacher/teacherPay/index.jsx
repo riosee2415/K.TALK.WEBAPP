@@ -511,6 +511,7 @@ const Index = () => {
                   placeholder="강의를 선택해주세요">
                   {lectureTeacherList &&
                     lectureTeacherList.map((data, idx) => {
+                      console.log(data, "data");
                       return (
                         <Option key={data.id} value={data.id}>
                           {data.course}
