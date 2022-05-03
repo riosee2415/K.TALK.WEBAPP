@@ -106,7 +106,7 @@ const List = ({}) => {
     },
     {
       title: "강사명",
-      dataIndex: "id",
+      dataIndex: "teacherName",
     },
 
     {
