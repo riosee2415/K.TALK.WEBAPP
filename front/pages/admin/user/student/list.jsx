@@ -12,6 +12,7 @@ import {
   CLASS_PART_CLOSE_REQUEST,
   CLASS_PART_OPEN_REQUEST,
   USER_ADMIN_UPDATE_REQUEST,
+  USER_TEACHER_LIST_REQUEST,
 } from "../../../../reducers/user";
 import {
   Table,
@@ -22,6 +23,9 @@ import {
   Input,
   Form,
   Calendar,
+  DatePicker,
+  Switch,
+  Empty,
 } from "antd";
 import { useRouter, withRouter } from "next/router";
 import wrapper from "../../../../store/configureStore";
@@ -44,12 +48,22 @@ import {
   PARTICIPANT_USER_MOVE_LIST_REQUEST,
   PARTICIPANT_USER_LIMIT_LIST_REQUEST,
 } from "../../../../reducers/participant";
+import { APP_DETAIL_REQUEST } from "../../../../reducers/application";
 import useInput from "../../../../hooks//useInput";
 import { CalendarOutlined, SearchOutlined } from "@ant-design/icons";
 import Theme from "../../../../components/Theme";
 import { PAYMENT_LIST_REQUEST } from "../../../../reducers/payment";
 import moment from "moment";
 import useWidth from "../../../../hooks/useWidth";
+import { COMMUTE_ADMIN_LIST_REQUEST } from "../../../../reducers/commute";
+
+const CustomTextArea = styled(Input.TextArea)`
+  width: ${(props) => props.width || `250px`};
+`;
+
+const CustomDatePicker = styled(DatePicker)`
+  width: ${(props) => props.width || `250px`};
+`;
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -98,48 +112,9 @@ const CustomSelect = styled(Select)`
 const List = () => {
   const { Option } = Select;
 
-  const { TextArea } = Input;
-
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
 
   const { allLectures } = useSelector((state) => state.lecture);
-
-  const {
-    me,
-    st_loadMyInfoDone,
-
-    allUsers,
-    classChangeModal,
-    classPartModal,
-    //
-    st_userListError,
-    //
-    st_userChangeDone,
-    st_userChangeError,
-
-    st_userAdminUpdateDone,
-    st_userAdminUpdateError,
-  } = useSelector((state) => state.user);
-
-  const router = useRouter();
-
-  const moveLinkHandler = useCallback((link) => {
-    router.push(link);
-  }, []);
-
-  useEffect(() => {
-    if (st_loadMyInfoDone) {
-      if (!me || parseInt(me.level) < 3) {
-        moveLinkHandler(`/admin`);
-      }
-    }
-  }, [st_loadMyInfoDone]);
-  /////////////////////////////////////////////////////////////////////////
-
-  ////// HOOKS //////
-  const dispatch = useDispatch();
-
-  const width = useWidth();
 
   const {
     st_participantCreateDone,
@@ -165,11 +140,58 @@ const List = () => {
     (state) => state.payment
   );
 
-  const [paymentData, setPaymentData] = useState([]);
-  const [updateData, setUpdateData] = useState(null);
-  const [lectureList, setLectureList] = useState(null);
-  const [selectedList, setSelectedList] = useState([]);
+  const { applicationDetail, st_appDetailDone, st_appDetailError } =
+    useSelector((state) => state.app);
 
+  const { commuteAdminList, st_commuteCreateDone, st_commuteCreateError } =
+    useSelector((state) => state.commute);
+
+  console.log(commuteAdminList[0], "commuteAdminList");
+
+  let test = Object.entries(commuteAdminList[0]);
+
+  console.log(test, "test");
+
+  const {
+    me,
+    st_loadMyInfoDone,
+
+    allUsers,
+    classChangeModal,
+    classPartModal,
+    //
+    st_userListError,
+    //
+    st_userChangeDone,
+    st_userChangeError,
+
+    st_userAdminUpdateDone,
+    st_userAdminUpdateError,
+
+    teachers,
+  } = useSelector((state) => state.user);
+
+  const router = useRouter();
+
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
+  }, []);
+
+  useEffect(() => {
+    if (st_loadMyInfoDone) {
+      if (!me || parseInt(me.level) < 3) {
+        moveLinkHandler(`/admin`);
+      }
+    }
+  }, [st_loadMyInfoDone]);
+  /////////////////////////////////////////////////////////////////////////
+
+  ////// HOOKS //////
+  const dispatch = useDispatch();
+
+  const width = useWidth();
+
+  const [updateData, setUpdateData] = useState(null);
   const [detailDatum, setDetailDatum] = useState([]);
 
   const [opt2, setOpt2] = useState(null);
@@ -192,8 +214,12 @@ const List = () => {
   const inputEmail = useInput("");
 
   const [isPayment, setIsPayment] = useState(0);
-
   const [isCalendar, setIsCalendar] = useState(false);
+
+  const [stuCommuteModal, setStuCommuteModal] = useState(false);
+  const [stuCommuteDetail, setStuCommuteDetail] = useState("");
+
+  const [stuSelect, setStuSelect] = useState("");
 
   ////// USEEFFECT //////
 
@@ -377,6 +403,37 @@ const List = () => {
     }
   }, [st_userAdminUpdateError]);
 
+  useEffect(() => {
+    if (st_appDetailDone) {
+      updateStuForm.setFieldsValue({
+        classHour: applicationDetail[0].classHour,
+        timeDiff: applicationDetail[0].timeDiff,
+        wantStartDate: applicationDetail[0].wantStartDate
+          ? moment(applicationDetail[0].wantStartDate)
+          : "",
+        teacher: applicationDetail[0].teacher,
+        meetDate: applicationDetail[0].wantStartDate
+          ? moment(applicationDetail[0].meetDate)
+          : "",
+        level: applicationDetail[0].level,
+        purpose: applicationDetail[0].purpose,
+        freeTeacher: applicationDetail[0].freeTeacher,
+      });
+    }
+  }, [updateStuForm, st_appDetailDone]);
+
+  useEffect(() => {
+    if (st_commuteCreateError) {
+      return message.error(st_commuteCreateError);
+    }
+  }, [st_commuteCreateError]);
+
+  useEffect(() => {
+    if (st_appDetailError) {
+      return message.error(st_appDetailError);
+    }
+  }, [st_appDetailError]);
+
   ////// TOGGLE //////
   const classChangeModalOpen = useCallback(
     (data) => {
@@ -444,12 +501,32 @@ const List = () => {
     setParEndData(null);
   }, []);
 
-  const classPartDetailModalOpen = useCallback((data) => {
-    setStuDetail(data);
-    setStuDetailModal(true);
+  const classPartDetailModalOpen = useCallback(
+    (data) => {
+      setStuDetail(data);
 
-    onStuFill(data);
-  }, []);
+      dispatch({
+        type: APP_DETAIL_REQUEST,
+        data: {
+          email: data.email,
+        },
+      });
+
+      onStuFill(data);
+      setStuDetailModal(true);
+    },
+
+    []
+  );
+
+  const classStuModalOpen = useCallback(
+    (data) => {
+      setStuCommuteModal(true);
+      setStuCommuteDetail(data);
+    },
+
+    []
+  );
 
   const onStuFill = useCallback((data) => {
     if (data) {
@@ -463,7 +540,6 @@ const List = () => {
         stuCountry: data.stuCountry,
         stuLanguage: data.stuLanguage,
         stuPayCount: data.stuPayCount,
-        adminMemo: data.adminMemo,
       });
     }
   }, []);
@@ -515,7 +591,7 @@ const List = () => {
         },
       });
     },
-    [selectedList, updateData, paymentList]
+    [updateData, paymentList]
   );
 
   const onUpdateClassSubmit = useCallback(
@@ -594,8 +670,6 @@ const List = () => {
         });
       }
     });
-
-    setPaymentData(arr);
   }, []);
 
   const detailModalOpen = useCallback((data) => {
@@ -648,7 +722,14 @@ const List = () => {
           sns: data.sns,
           snsId: data.snsId,
           stuPayCount: data.stuPayCount,
-          adminMemo: data.adminMemo,
+          classHour: data.classHour,
+          timeDiff: data.timeDiff,
+          wantStartDate: data.wantStartDate.format("YYYY-MM-DD"),
+          teacher: data.teacher,
+          freeTeacher: data.freeTeacher,
+          meetDate: data.meetDate.format("YYYY-MM-DD hh:mm"),
+          level: data.level,
+          purpose: data.purpose,
         },
       });
     },
@@ -676,6 +757,21 @@ const List = () => {
     },
     [updateClassform]
   );
+
+  const onClickCommuteHandler = useCallback(() => {
+    dispatch({
+      type: COMMUTE_ADMIN_LIST_REQUEST,
+      data: {
+        LectureId: stuSelect,
+        UserId: stuCommuteDetail.id,
+      },
+    });
+  }, [stuSelect, stuCommuteDetail]);
+
+  const stuCancelHandler = useCallback(() => {
+    setStuCommuteModal(false);
+    setStuSelect("");
+  }, []);
 
   ////// DATAVIEW //////
 
@@ -775,6 +871,17 @@ const List = () => {
                 : classPartDetailModalOpen(data)
             }>
             학생정보보기
+          </Button>
+
+          <Button
+            size="small"
+            type="primary"
+            onClick={() =>
+              data.level === 5
+                ? message.error("개발사는 권한을 수정할 수 없습니다.")
+                : classStuModalOpen(data)
+            }>
+            학생출석보기
           </Button>
         </Wrapper>
       ),
@@ -906,8 +1013,35 @@ const List = () => {
     {
       title: "수업 남은 날",
       render: (data) => (
-        <div style={{ color: Theme.red_C }}>{`${data.lastDate}`}</div>
+        <div style={{ color: Theme.red_C }}>{`${data.limitDate}일`}</div>
       ),
+    },
+  ];
+
+  const columnCommute = [
+    {
+      title: "수업 이름",
+      render: (data) => <div>{data.course}</div>,
+    },
+
+    {
+      title: "요일",
+      render: (data) => <div>{data.LectureDay}</div>,
+    },
+
+    {
+      title: "시간",
+      render: (data) => <div>{data.LectureTime}</div>,
+    },
+
+    {
+      title: "출석상태",
+      render: (data) => <div>{`${data.status}`}</div>,
+    },
+
+    {
+      title: "출석일",
+      render: (data) => <div>{`${data.createdAt.slice(0, 13)}`}</div>,
     },
   ];
 
@@ -1475,8 +1609,6 @@ const List = () => {
         />
       </Modal>
 
-      {console.log(stuDetail, "onStuFill")}
-
       <Modal
         visible={stuDetailModal}
         width={`1000px`}
@@ -1500,15 +1632,20 @@ const List = () => {
                     프로필 이미지
                   </ColWrapper>
                   <ColWrapper>
-                    <Image
-                      width={`184px`}
-                      height={`190px`}
-                      src={
-                        stuDetail
-                          ? `${stuDetail && stuDetail.profileImage}`
-                          : `https://via.placeholder.com/184x190`
-                      }
-                    />
+                    <Wrapper
+                      width={`100px`}
+                      height={`100px`}
+                      margin={`0 0 10px`}
+                      radius={`50%`}>
+                      <Image
+                        radius={`50%`}
+                        src={
+                          stuDetail
+                            ? `${stuDetail && stuDetail.profileImage}`
+                            : `https://via.placeholder.com/100x100`
+                        }
+                      />
+                    </Wrapper>
                   </ColWrapper>
                 </RowWrapper>
 
@@ -1746,23 +1883,217 @@ const List = () => {
               </Wrapper>
 
               <Wrapper width={`50%`} margin={`0 0 20px`} al={`flex-start`}>
-                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                <Wrapper>
+                  <RowWrapper
+                    dr={`row`}
+                    margin={`0 0 10px 0`}
+                    ju={`flex-start`}
+                    al={`flex-start`}>
+                    <ColWrapper
+                      width={`140px`}
+                      height={`30px`}
+                      bgColor={Theme.basicTheme_C}
+                      color={Theme.white_C}
+                      margin={`0 5px 0 0`}>
+                      시차
+                    </ColWrapper>
+
+                    <FormItem name="timeDiff">
+                      <CustomInput min={1} type={`number`} width={`250px`} />
+                    </FormItem>
+                  </RowWrapper>
+
+                  <RowWrapper
+                    width={`100%`}
+                    al={`flex-start`}
+                    margin={`0 0 10px 0`}>
+                    <ColWrapper
+                      width={`140px`}
+                      height={`30px`}
+                      bgColor={Theme.basicTheme_C}
+                      color={Theme.white_C}
+                      margin={`0 5px 0 0`}>
+                      원하는 시작 날짜
+                    </ColWrapper>
+                    <ColWrapper>
+                      <FormItem name="wantStartDate">
+                        <CustomDatePicker />
+                      </FormItem>
+                    </ColWrapper>
+                  </RowWrapper>
+
+                  <RowWrapper
+                    width={`100%`}
+                    al={`flex-start`}
+                    margin={`0 0 10px 0`}>
+                    <ColWrapper
+                      width={`140px`}
+                      height={`30px`}
+                      bgColor={Theme.basicTheme_C}
+                      color={Theme.white_C}
+                      margin={`0 5px 0 0`}>
+                      무료수업 담당 강사
+                    </ColWrapper>
+                    <ColWrapper>
+                      <FormItem name="freeTeacher">
+                        <Select
+                          style={{ width: `250px` }}
+                          placeholder={`강사를 선택해주세요.`}>
+                          {teachers &&
+                            teachers.map((data, idx) => {
+                              return (
+                                <Select.Option
+                                  key={data.id}
+                                  value={data.username}>
+                                  {data.username}
+                                </Select.Option>
+                              );
+                            })}
+                        </Select>
+                      </FormItem>
+                    </ColWrapper>
+                  </RowWrapper>
+
+                  <RowWrapper
+                    width={`100%`}
+                    al={`flex-start`}
+                    margin={`0 0 10px 0`}>
+                    <ColWrapper
+                      width={`140px`}
+                      height={`30px`}
+                      bgColor={Theme.basicTheme_C}
+                      color={Theme.white_C}
+                      margin={`0 5px 0 0`}>
+                      담당 강사
+                    </ColWrapper>
+                    <ColWrapper>
+                      <FormItem name="teacher">
+                        <Select
+                          style={{ width: `250px` }}
+                          placeholder={`강사를 선택해주세요.`}>
+                          {teachers &&
+                            teachers.map((data, idx) => {
+                              return (
+                                <Select.Option
+                                  key={data.id}
+                                  value={data.username}>
+                                  {data.username}
+                                </Select.Option>
+                              );
+                            })}
+                        </Select>
+                      </FormItem>
+                    </ColWrapper>
+                  </RowWrapper>
+
+                  {/* <RowWrapper width={`100%`} al={`flex-start`}>
+                    <ColWrapper
+                      width={`140px`}
+                      height={`30px`}
+                      bgColor={Theme.basicTheme_C}
+                      color={Theme.white_C}
+                      margin={`0 5px 0 0`}>
+                      할인 여부
+                    </ColWrapper>
+                    <ColWrapper>
+                      <FormItem name="isDiscount"></FormItem>
+                    </ColWrapper>
+                  </RowWrapper> */}
+
+                  <RowWrapper
+                    width={`100%`}
+                    al={`flex-start`}
+                    margin={`0 0 10px 0`}>
+                    <ColWrapper
+                      width={`140px`}
+                      height={`30px`}
+                      bgColor={Theme.basicTheme_C}
+                      color={Theme.white_C}
+                      margin={`0 5px 0 0`}>
+                      줌 미팅 시간
+                    </ColWrapper>
+                    <ColWrapper>
+                      <FormItem name="meetDate">
+                        <CustomDatePicker
+                          showTime={{ format: "HH:mm", minuteStep: 10 }}
+                          format="YYYY-MM-DD HH:mm"
+                        />
+                      </FormItem>
+                    </ColWrapper>
+                  </RowWrapper>
+
+                  <RowWrapper
+                    width={`100%`}
+                    al={`flex-start`}
+                    margin={`0 0 10px 0`}>
+                    <ColWrapper
+                      width={`140px`}
+                      height={`30px`}
+                      bgColor={Theme.basicTheme_C}
+                      color={Theme.white_C}
+                      margin={`0 5px 0 0`}>
+                      레벨
+                    </ColWrapper>
+
+                    <FormItem name="level">
+                      <CustomInput />
+                    </FormItem>
+                  </RowWrapper>
+
+                  <RowWrapper
+                    width={`100%`}
+                    al={`flex-start`}
+                    margin={`0 0 10px 0`}>
+                    <ColWrapper
+                      width={`140px`}
+                      height={`30px`}
+                      bgColor={Theme.basicTheme_C}
+                      color={Theme.white_C}
+                      margin={`0 5px 0 0`}>
+                      가능한 수업시간
+                    </ColWrapper>
+
+                    <FormItem name="classHour">
+                      <CustomTextArea rows={4} />
+                    </FormItem>
+                  </RowWrapper>
+
+                  <RowWrapper al={`flex-start`}>
+                    <ColWrapper
+                      width={`140px`}
+                      height={`30px`}
+                      bgColor={Theme.basicTheme_C}
+                      color={Theme.white_C}
+                      margin={`0 5px 0 0`}>
+                      메모
+                    </ColWrapper>
+                    <ColWrapper al={`flex-start`}>
+                      <FormItem name="purpose">
+                        <CustomTextArea
+                          rows={6}
+                          border={`1px solid ${Theme.grey_C} !important`}
+                        />
+                      </FormItem>
+                    </ColWrapper>
+                  </RowWrapper>
+                </Wrapper>
+
+                {/* <RowWrapper width={`100%`} margin={`0 0 10px`}>
                   <ColWrapper
                     width={`120px`}
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
                     margin={`0 5px 0 0`}>
-                    메모
+                    회차
                   </ColWrapper>
-                  <ColWrapper width={`calc(100% - 125px)`}>
-                    <FormItem name="adminMemo" width={`100%`}>
-                      <TextArea
-                        width={`100%`}
-                        autoSize={{ minRows: 6 }}></TextArea>
+
+                  <ColWrapper>
+                    <FormItem name="stuPayCount">
+                      <CustomInput />
                     </FormItem>
                   </ColWrapper>
-                </RowWrapper>
+                </RowWrapper> */}
               </Wrapper>
             </Wrapper>
 
@@ -1787,6 +2118,43 @@ const List = () => {
           </ColWrapper>
         </CustomForm>
       </Modal>
+
+      <Modal
+        visible={stuCommuteModal}
+        width={`100%`}
+        title={`학생 출석 목록`}
+        footer={null}
+        onCancel={() => stuCancelHandler()}
+        onOk={onModalOk}>
+        <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px 0`}>
+          <Select
+            style={{ width: 200 }}
+            onChange={(e) => setStuSelect(e)}
+            value={stuSelect}>
+            {stuCommuteDetail && stuCommuteDetail.Participants.length === 0 ? (
+              <Select>{"참여중인 수업이 없습니다."}</Select>
+            ) : (
+              stuCommuteDetail.Participants &&
+              stuCommuteDetail.Participants.map((data, idx) => {
+                return (
+                  <Select.Option key={data.id} value={data.Lecture.id}>
+                    {data.Lecture.course}
+                  </Select.Option>
+                );
+              })
+            )}
+          </Select>
+
+          <Button onClick={() => onClickCommuteHandler()}>검색</Button>
+        </Wrapper>
+
+        <Table
+          rowKey="id"
+          columns={columnCommute}
+          dataSource={commuteAdminList ? commuteAdminList : []}
+          size="small"
+        />
+      </Modal>
     </AdminLayout>
   );
 };
@@ -1804,6 +2172,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: USER_TEACHER_LIST_REQUEST,
     });
 
     // 구현부 종료
