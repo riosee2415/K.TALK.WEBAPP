@@ -67,7 +67,7 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
   }
 });
 
-router.get("/detail", isAdminCheck, async (req, res, next) => {
+router.post("/detail", isAdminCheck, async (req, res, next) => {
   const { email } = req.body;
 
   try {
@@ -109,7 +109,7 @@ router.get("/detail", isAdminCheck, async (req, res, next) => {
                 purpose
       FROM	    applications
      WHERE      1 = 1
-       AND      gmailAddress = ${email}
+       AND      gmailAddress = "${email}"
     `;
 
     const lists = await models.sequelize.query(selectQuery);
