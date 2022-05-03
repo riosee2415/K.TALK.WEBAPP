@@ -98,6 +98,63 @@ router.post("/list", async (req, res, next) => {
   }
 });
 
+//관리자에서 특정학생의 출석 확인
+router.post("/admin/list", async (req, res, next) => {
+  const { LectureId, UserId } = req.body;
+
+  try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("출석부 목록을 불러올 수 없습니다.");
+    }
+
+    const exUser = await User.findOne({
+      where: { id: parseInt(UserId) },
+    });
+
+    if (!exUser) {
+      return res.status(401).send("존재하자ㅣ");
+    }
+
+    const selectQuery = `
+    SELECT	A.id,
+            A.time,
+            DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            A.LectureId,
+            A.UserId,
+            A.status,
+            B.course,
+            B.time															                         AS	 LectureTime,
+            B.day															                           AS	 LectureDay,
+            C.userId,
+            C.level,
+            C.username
+      FROM	commutes		A
+     INNER
+      JOIN	lectures 		B
+        ON	A.LectureId = B.id
+     INNER
+      JOIN	users			C
+        ON	A.UserId = C.id
+     WHERE  1 = 1
+       AND  A.LectureId = ${LectureId}
+       AND  A.UserId = ${UserId}
+     ORDER  BY A.createdAt DESC
+    `;
+
+    const commute = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ commute: commute[0] });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("출석 목록을 불러올 수 없습니다.");
+  }
+});
+
 // 출석 create
 router.post("/create", async (req, res, next) => {
   const { time, LectureId, UserId, status } = req.body;

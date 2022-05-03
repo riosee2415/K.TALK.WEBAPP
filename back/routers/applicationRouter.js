@@ -67,15 +67,12 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
   }
 });
 
-router.get("/detail/:applicationId", isAdminCheck, async (req, res, next) => {
-  const { applicationId } = req.params;
+router.get("/detail", isAdminCheck, async (req, res, next) => {
+  const { email } = req.body;
 
-  if (isNanCheck(applicationId)) {
-    return res.status(401).send("잘못된 요청입니다.");
-  }
   try {
     const exApp = await Application.findOne({
-      where: { id: parseInt(applicationId) },
+      where: { gmailAddress: email },
     });
 
     if (!exApp) {
@@ -112,7 +109,7 @@ router.get("/detail/:applicationId", isAdminCheck, async (req, res, next) => {
                 purpose
       FROM	    applications
      WHERE      1 = 1
-       AND      id = ${applicationId}
+       AND      gmailAddress = ${email}
     `;
 
     const lists = await models.sequelize.query(selectQuery);
