@@ -11,6 +11,7 @@ export const initialState = {
   partLastPage: 1,
   partUserDeleteList: [],
   partUserMoveList: [],
+  partUserCurrentList: [],
   partUserLimitList: [],
   partLastDateList: [],
   //
@@ -41,6 +42,10 @@ export const initialState = {
   st_participantUserMoveListLoading: false,
   st_participantUserMoveListDone: false,
   st_participantUserMoveListError: null,
+  //
+  st_participantUserCurrentListLoading: false,
+  st_participantUserCurrentListDone: false,
+  st_participantUserCurrentListError: null,
   //
   st_participantUserLimitListLoading: false,
   st_participantUserLimitListDone: false,
@@ -98,6 +103,13 @@ export const PARTICIPANT_USER_MOVE_LIST_SUCCESS =
   "PARTICIPANT_USER_MOVE_LIST_SUCCESS";
 export const PARTICIPANT_USER_MOVE_LIST_FAILURE =
   "PARTICIPANT_USER_MOVE_LIST_FAILURE";
+
+export const PARTICIPANT_USER_CURRENT_LIST_REQUEST =
+  "PARTICIPANT_USER_CURRENT_LIST_REQUEST";
+export const PARTICIPANT_USER_CURRENT_LIST_SUCCESS =
+  "PARTICIPANT_USER_CURRENT_LIST_SUCCESS";
+export const PARTICIPANT_USER_CURRENT_LIST_FAILURE =
+  "PARTICIPANT_USER_CURRENT_LIST_FAILURE";
 
 export const PARTICIPANT_USER_LIMIT_LIST_REQUEST =
   "PARTICIPANT_USER_LIMIT_LIST_REQUEST";
@@ -280,6 +292,27 @@ const reducer = (state = initialState, action) =>
         draft.st_participantUserMoveListLoading = false;
         draft.st_participantUserMoveListDone = false;
         draft.st_participantUserMoveListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case PARTICIPANT_USER_CURRENT_LIST_REQUEST: {
+        draft.st_participantUserCurrentListLoading = true;
+        draft.st_participantUserCurrentListDone = null;
+        draft.st_participantUserCurrentListError = false;
+        break;
+      }
+      case PARTICIPANT_USER_CURRENT_LIST_SUCCESS: {
+        draft.st_participantUserCurrentListLoading = true;
+        draft.st_participantUserCurrentListDone = false;
+        draft.partUserCurrentList = action.data.list;
+        break;
+      }
+      case PARTICIPANT_USER_CURRENT_LIST_FAILURE: {
+        draft.st_participantUserCurrentListLoading = false;
+        draft.st_participantUserCurrentListDone = false;
+        draft.st_participantUserCurrentListError = action.error;
         break;
       }
 

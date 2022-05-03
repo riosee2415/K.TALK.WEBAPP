@@ -9,7 +9,18 @@ import { END } from "redux-saga";
 import AdminLayout from "../../../components/AdminLayout";
 import PageHeader from "../../../components/admin/PageHeader";
 
-import { Button, DatePicker, Form, Modal, Slider, Table } from "antd";
+import {
+  Button,
+  Calendar,
+  DatePicker,
+  Form,
+  Input,
+  message,
+  Modal,
+  Select,
+  Slider,
+  Table,
+} from "antd";
 import styled from "styled-components";
 import {
   Text,
@@ -17,11 +28,17 @@ import {
   Image,
   SpanText,
   CommonButton,
+  RowWrapper,
+  ColWrapper,
+  TextArea,
 } from "../../../components/commonComponents";
 import Theme from "../../../components/Theme";
 
 import wrapper from "../../../store/configureStore";
-import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
+import {
+  LOAD_MY_INFO_REQUEST,
+  USER_ADMIN_UPDATE_REQUEST,
+} from "../../../reducers/user";
 import {
   LECTURE_COMUTE_REQUEST,
   LECTURE_DETAIL_REQUEST,
@@ -32,28 +49,57 @@ import moment from "moment";
 import { BOOK_LIST_REQUEST } from "../../../reducers/book";
 import { saveAs } from "file-saver";
 import useWidth from "../../../hooks/useWidth";
-import { PARTICIPANT_ADMIN_LIST_REQUEST } from "../../../reducers/participant";
+import {
+  PARTICIPANT_ADMIN_LIST_REQUEST,
+  PARTICIPANT_USER_CURRENT_LIST_REQUEST,
+  PARTICIPANT_USER_DELETE_LIST_REQUEST,
+  PARTICIPANT_USER_LIMIT_LIST_REQUEST,
+  PARTICIPANT_USER_MOVE_LIST_REQUEST,
+} from "../../../reducers/participant";
 import { NOTICE_LECTURE_LIST_REQUEST } from "../../../reducers/notice";
 import { MESSAGE_LECTURE_LIST_REQUEST } from "../../../reducers/message";
+import { CalendarOutlined } from "@ant-design/icons";
 const AdminContent = styled.div`
   padding: 20px;
 `;
 
-const CustomSlide = styled(Slider)`
-  width: 488px;
-  margin: 0 0 8px;
-  & .ant-slider-track,
-  & .ant-slider-rail {
-    height: 12px;
-    border-radius: 10px;
+const CustomForm = styled(Form)`
+  width: 100%;
+`;
+
+const FormItem = styled(Form.Item)`
+  width: ${(props) => props.width};
+
+  @media (max-width: 700px) {
+    width: 100%;
   }
 
-  & .ant-slider-track {
-    background-color: ${Theme.basicTheme_C} !important;
+  margin: 0px;
+`;
+
+const CustomInput = styled(Input)`
+  width: ${(props) => props.width || `250px`};
+`;
+
+const CustomSelect = styled(Select)`
+  margin: ${(props) => props.margin};
+
+  &:not(.ant-select-customize-input) .ant-select-selector {
+    border-radius: 5px;
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.16);
   }
 
-  & .ant-slider-handle {
-    display: none;
+  & .ant-select-selector {
+    width: 250px !important;
+    padding: 0 5px !important;
+  }
+
+  & .ant-select-arrow span svg {
+    color: ${Theme.black_C};
+  }
+
+  & .ant-select-selection-placeholder {
+    color: ${Theme.grey2_C};
   }
 `;
 
@@ -88,7 +134,27 @@ const DetailClass = () => {
     noticeLectureLastPage,
     lectureCommuteList,
   } = useSelector((state) => state.lecture);
-  const { partAdminList } = useSelector((state) => state.participant);
+  const {
+    partAdminList,
+
+    st_participantCreateDone,
+    st_participantCreateError,
+    st_participantDeleteDone,
+    st_participantDeleteError,
+
+    partUserDeleteList,
+    st_participantUserDeleteListDone,
+    st_participantUserDeleteListError,
+
+    partUserMoveList,
+    st_participantUserMoveListDone,
+    st_participantUserMoveListError,
+    partUserCurrentList,
+    partUserLimitList,
+
+    st_participantUserLimitListDone,
+    st_participantUserLimitListError,
+  } = useSelector((state) => state.participant);
   const { bookList, bookMaxLength } = useSelector((state) => state.book);
   const { noticeLectureList } = useSelector((state) => state.notice);
   const { messageLectureList, messageLectureLastPage } = useSelector(
@@ -122,6 +188,14 @@ const DetailClass = () => {
   const [messageDetail, setMessageDetail] = useState(null);
 
   const [time, setTime] = useState(null);
+
+  const [detailToggle, setDetailToggle] = useState(false);
+  const [stuDetailModal, setStuDetailModal] = useState(false);
+  const [detailDatum, setDetailDatum] = useState([]);
+  const [updateStuForm] = Form.useForm();
+  const [stuDetail, setStuDetail] = useState([]);
+
+  const [isCalendar, setIsCalendar] = useState(false);
 
   ////// REDUX //////
   ////// USEEFFECT //////
@@ -207,6 +281,28 @@ const DetailClass = () => {
       },
     });
   }, [currentBookPage]);
+
+  const updateStuFinish = useCallback(
+    (data) => {
+      dispatch({
+        type: USER_ADMIN_UPDATE_REQUEST,
+        data: {
+          id: stuDetail.id,
+          birth: data.birth,
+          mobile: data.mobile,
+          password: data.password,
+          stuCountry: data.stuCountry,
+          stuLiveCon: data.stuLiveCon,
+          stuLanguage: data.stuLanguage,
+          sns: data.sns,
+          snsId: data.snsId,
+          stuPayCount: data.stuPayCount,
+          adminMemo: data.adminMemo,
+        },
+      });
+    },
+    [stuDetail]
+  );
 
   ////// HANDLER //////
 
@@ -295,6 +391,31 @@ const DetailClass = () => {
     return add;
   }, []);
 
+  const dateChagneHandler = useCallback((data) => {
+    const birth = data.format("YYYY-MM-DD");
+    updateStuForm.setFieldsValue({
+      birth: birth,
+    });
+  }, []);
+
+  const onStuFill = useCallback((data) => {
+    if (data) {
+      console.log(data);
+      updateStuForm.setFieldsValue({
+        sns: data.sns,
+        snsId: data.snsId,
+        birth: data.birth.slice(0, 10),
+        mobile: data.mobile,
+        password: data.mobile,
+        stuLiveCon: data.stuLiveCon,
+        stuCountry: data.stuCountry,
+        stuLanguage: data.stuLanguage,
+        stuPayCount: data.stuPayCount,
+        adminMemo: data.adminMemo,
+      });
+    }
+  }, []);
+
   ////// TOGGLE //////
 
   const noticeToggle = useCallback((data) => {
@@ -305,6 +426,62 @@ const DetailClass = () => {
   const messageToggle = useCallback((data) => {
     setMessageModal((prev) => !prev);
     setMessageDetail(data);
+  }, []);
+
+  const detailModalOpen = useCallback((data) => {
+    dispatch({
+      type: PARTICIPANT_USER_DELETE_LIST_REQUEST,
+      data: {
+        UserId: data.UserId,
+        isDelete: true,
+        isChange: false,
+      },
+    });
+
+    dispatch({
+      type: PARTICIPANT_USER_MOVE_LIST_REQUEST,
+      data: {
+        UserId: data.UserId,
+        isDelete: false,
+        isChange: true,
+      },
+    });
+    dispatch({
+      type: PARTICIPANT_USER_CURRENT_LIST_REQUEST,
+      data: {
+        UserId: data.UserId,
+        isDelete: false,
+        isChange: false,
+      },
+    });
+
+    dispatch({
+      type: PARTICIPANT_USER_LIMIT_LIST_REQUEST,
+      data: {
+        UserId: data.UserId,
+      },
+    });
+
+    console.log(data);
+
+    // let save = data.Participants.filter((Datum, idx) => {
+    //   return !Datum.isChange && !Datum.isDelete;
+    // });
+
+    // setDetailDatum(save);
+
+    setDetailToggle(true);
+  }, []);
+
+  const calenderToggle = useCallback(() => {
+    setIsCalendar(!isCalendar);
+  }, [isCalendar]);
+
+  const classPartDetailModalOpen = useCallback((data) => {
+    setStuDetail(data);
+    setStuDetailModal(true);
+
+    onStuFill(data);
   }, []);
 
   ////// DATAVIEW //////
@@ -362,10 +539,36 @@ const DetailClass = () => {
         </Button>
       ),
     },
+    {
+      title: "학생 정보 보기",
+      render: (data) => (
+        <Button
+          size={`small`}
+          type={`primary`}
+          onClick={() =>
+            data.level === 5
+              ? message.error("개발사는 권한을 수정할 수 없습니다.")
+              : classPartDetailModalOpen(data)
+          }
+        >
+          정보 보기
+        </Button>
+      ),
+    },
+    {
+      title: "강의 내역 보기",
+      render: (data) => (
+        <Button
+          size={`small`}
+          type={`primary`}
+          onClick={() => detailModalOpen(data)}
+        >
+          내역 보기
+        </Button>
+      ),
+    },
   ];
-  // console.log(
-  //   lectureDetail && lectureDetail[0].count * lectureDetail[0].lecDate
-  // );
+
   const lectureColumns = [
     {
       title: "번호",
@@ -561,6 +764,374 @@ const DetailClass = () => {
     },
   ];
 
+  // // // // //
+  const columnsList = [
+    {
+      title: "No",
+      dataIndex: "id",
+    },
+
+    {
+      title: "수업 이름",
+      render: (data) => <div>{data.course}</div>,
+    },
+
+    {
+      title: "요일",
+      render: (data) => <div>{data.day}</div>,
+    },
+
+    {
+      title: "시간",
+      render: (data) => <div>{data.time}</div>,
+    },
+
+    {
+      title: "수업 참여일",
+      render: (data) => (
+        <div>
+          {console.log(data)}
+          {data.createdAt}
+        </div>
+      ),
+    },
+  ];
+
+  const columnsMove = [
+    {
+      title: "No",
+      dataIndex: "id",
+    },
+
+    {
+      title: "수업 이름",
+      render: (data) => <div>{data.course}</div>,
+    },
+
+    {
+      title: "요일",
+      render: (data) => <div>{data.day}</div>,
+    },
+
+    {
+      title: "시간",
+      render: (data) => <div>{data.time}</div>,
+    },
+
+    {
+      title: "수업 참여일",
+      render: (data) => (
+        <div>
+          {moment(data.endDate)
+            .add(parseInt(-data.date), "days")
+            .format("YYYY-MM-DD")}
+        </div>
+      ),
+    },
+
+    {
+      title: "수업 변경일",
+      render: (data) => <div>{data.updatedAt.slice(0, 10)}</div>,
+    },
+  ];
+
+  const columnsEnd = [
+    {
+      title: "No",
+      dataIndex: "id",
+    },
+
+    {
+      title: "수업 이름",
+      render: (data) => <div>{data.course}</div>,
+    },
+
+    {
+      title: "요일",
+      render: (data) => <div>{data.day}</div>,
+    },
+
+    {
+      title: "시간",
+      render: (data) => <div>{data.time}</div>,
+    },
+
+    {
+      title: "수업 종료일",
+      render: (data) => <div>{data.updatedAt.slice(0, 10)}</div>,
+    },
+  ];
+
+  const columns7End = [
+    {
+      title: "No",
+      dataIndex: "id",
+    },
+
+    {
+      title: "수업 이름",
+      render: (data) => <div>{data.course}</div>,
+    },
+
+    {
+      title: "요일",
+      render: (data) => <div>{data.day}</div>,
+    },
+
+    {
+      title: "시간",
+      render: (data) => <div>{data.time}</div>,
+    },
+
+    {
+      title: "수업 남은 날",
+      render: (data) => (
+        <div style={{ color: Theme.red_C }}>{`D-${data.limitDate}`}</div>
+      ),
+    },
+  ];
+
+  const country = [
+    "Australia",
+    "Canada",
+    "China",
+    "Finland",
+    "France",
+    "Germany",
+    "Ireland",
+    "Italy",
+    "Japan",
+    "Malaysia",
+    "Netherland",
+    "Poland",
+    "S. Africa",
+    "S. Korea",
+    "Singapore",
+    "Spain",
+    "Sweden",
+    "Switzland",
+    "Taiwan",
+    "U.K.",
+    "USA",
+
+    //
+    "Afghanistan",
+    "Albania",
+    "Algeria",
+    "Andorra",
+    "Angola",
+    "Anguilla",
+    "Antigua and Barbuda",
+    "Argentina",
+    "Armenia",
+    "Aruba",
+    "Austria",
+    "Azerbaijan",
+    "Bahamas",
+    "Bahrain",
+    "Bailiwick of Guernsey",
+    "Bailiwick of Jersey",
+    "Bangladesh",
+    "Barbados",
+    "Belarus",
+    "Belgium",
+    "Belize",
+    "Benin",
+    "Bermuda",
+    "Bhutan",
+    "Bolivia",
+    "Bosnia-Herzegovina",
+    "Botswana",
+    "Brazil",
+    "British Antarctic Territory",
+    "British Indian Ocean Territory",
+    "British Virgin Islands",
+    "Brunei",
+    "Bulgaria",
+    "Burkina Faso",
+    "Burundi",
+    "C.te D'Ivoire",
+    "Cambodia",
+    "Cameroon",
+    "Cape Verde",
+    "Cayman Islands",
+    "Central African Republic",
+    "Chad",
+    "Chile",
+    "Colombia",
+    "Comoros",
+    "Congo",
+    "Cook Islands",
+    "Costa Rica",
+    "Croatia",
+    "Cuba",
+    "Cyprus",
+    "Czech",
+    "Democratic Republic of Congo",
+    "Denmark",
+    "Djibouti",
+    "Dominica",
+    "Dominican Republic",
+    "Ecuador",
+    "Egypt",
+    "El Salvador",
+    "Equatorial Guinea",
+    "Eritrea",
+    "Estonia",
+    "Eswatini",
+    "Ethiopia",
+    "Federated States of Micronesia",
+    "Fiji",
+
+    "French Guiana",
+    "French Polynesia",
+    "Gabon",
+    "Gambia",
+    "Georgia",
+    "Ghana",
+    "Gibraltar",
+    "Greece",
+    "Greenland",
+    "Grenada",
+    "Guadeloupe",
+    "Guam",
+    "Guatemala",
+    "Guinea",
+    "Guinea-Bissau",
+    "Guyana",
+    "Haiti",
+    "Honduras",
+    "Hongkong",
+    "Hungary",
+    "Iceland",
+    "India",
+    "Indonesia",
+    "Iran",
+    "Iraq",
+    "Isle of Man",
+    "Israel",
+    "Jamaica",
+    "Jordan",
+    "Kazakhstan",
+    "Kenya",
+    "Kiribati",
+    "Kosovo",
+    "Kuwait",
+    "Kyrgyz",
+    "Laos",
+    "Latvia",
+    "Lebanon",
+    "Lesotho",
+    "Liberia",
+    "Libya",
+    "Liechtenstein",
+    "Lithuania",
+    "Luxembourg",
+    "Macao",
+    "Madagascar",
+    "Malawi",
+    "Maldives",
+    "Mali",
+    "Malta",
+    "Marshall Islands",
+    "Martinique",
+    "Mauritania",
+    "Mauritius",
+    "Mayotte",
+    "Mazambique",
+    "Mexico",
+    "Moldova",
+    "Monaco",
+    "Mongolia",
+    "Montenegro",
+    "Montserrat",
+    "Morocco",
+    "Myanmar",
+    "Namibia",
+    "Nauru",
+    "Nepal",
+    "Netherlands Antilles",
+    "New Caledonia",
+    "New Zealand",
+    "Nicaragua",
+    "Niger",
+    "Nigeria",
+    "Niue",
+    "North Macedonia",
+    "Northern Mariana Islands",
+    "Norway",
+    "Oman",
+    "Pakistan",
+    "Palau",
+    "Palestine",
+    "Panama",
+    "Papua New Guinea :PNG",
+    "Paraguay",
+    "Peru",
+    "Philippines",
+    "Pitcairn Islands",
+
+    "Portugal",
+    "Puerto Rico",
+    "Qatar",
+    "R.union",
+    "Romania",
+    "Russia",
+    "Rwanda",
+    "S.o Tom. & Principe",
+    "Sahara Arab Democratic Republic",
+    "Samoa",
+    "San Marino",
+    "Saudi Arabia",
+    "Senegal",
+    "Serbia",
+    "Seychelles",
+    "Sierra Leone",
+    "Slovakia",
+    "Slovenia",
+    "Solomon Islands",
+    "Somalia",
+    "South Sudan",
+
+    "Sri Lanka",
+    "St Helena",
+    "St. Kitts-Nevis",
+    "St. Lucia",
+    "St. Pierre and Miquelon",
+    "St. Vincent & the Grenadines",
+    "Sudan",
+    "Suriname",
+
+    "Swiss",
+    "Syria",
+
+    "Tajikistan",
+    "Tanzania",
+    "Thailand",
+    "Timor-Leste",
+    "Togo",
+    "Tonga",
+    "Trinidad & Tobago",
+    "Tunisia",
+    "Turkey",
+    "Turkmenistan",
+    "Turks and Caicos Islands",
+    "Tuvalu",
+    "Uganda",
+    "Ukraine",
+    "United Arab Emirates : UAE",
+
+    "Uruguay",
+    "Uzbekistan",
+    "Vanuatu",
+    "Vatican",
+    "Venezuela",
+    "Vietnam",
+    "Wallis and Futuna",
+    "Yemen",
+    "Zambia",
+    "Zimbabwe",
+  ];
   return (
     <AdminLayout>
       <PageHeader
@@ -581,7 +1152,6 @@ const DetailClass = () => {
             </Wrapper>
             <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
               <Text fontSize={`24px`} fontWeight={`bold`}>
-                {/* {console.log(lectureDetail && lectureDetail[0].day)} */}
                 {lectureDetail && lectureDetail[0].day}&nbsp;/&nbsp;
                 {lectureDetail && lectureDetail[0].time}
               </Text>
@@ -987,6 +1557,419 @@ const DetailClass = () => {
             </Wrapper>
           </Wrapper>
         </Wrapper>
+      </Modal>
+      {/* 강의 내역 */}
+      {console.log(partUserCurrentList)}
+      <Modal
+        visible={detailToggle}
+        width={`80%`}
+        title={`학생 강의 목록`}
+        footer={null}
+        onCancel={() => setDetailToggle(false)}
+      >
+        <Text
+          padding={`16px 0px`}
+          color={Theme.black_2C}
+          fontSize={`16px`}
+          fontWeight={`500`}
+        >
+          참여하고 있는 강의
+          <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
+            *수업 참여일:관리자가 학생의 수업을 참여시킨 날짜
+          </SpanText>
+        </Text>
+        <Table
+          rowKey="id"
+          columns={columnsList}
+          dataSource={partUserCurrentList}
+          size="small"
+        />
+
+        <Text
+          padding={`16px 0px`}
+          color={Theme.black_2C}
+          fontSize={`16px`}
+          fontWeight={`500`}
+        >
+          반 이동 내역
+          <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
+            *수업 변경일:관리자가 학생의 수업을 변경시킨 날짜
+          </SpanText>
+        </Text>
+
+        <Table
+          rowKey="id"
+          columns={columnsMove}
+          dataSource={st_participantUserMoveListDone ? partUserMoveList : []}
+          size="small"
+        />
+        <Text
+          padding={`16px 0px`}
+          color={Theme.black_2C}
+          fontSize={`16px`}
+          fontWeight={`500`}
+        >
+          종료된 강의 내역
+          <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
+            *수업 종료일:관리자가 학생의 수업을 종료시킨 날짜
+          </SpanText>
+        </Text>
+        <Table
+          rowKey="id"
+          columns={columnsEnd}
+          dataSource={
+            st_participantUserDeleteListDone ? partUserDeleteList : []
+          }
+          size="small"
+        />
+
+        <Text
+          padding={`16px 0px`}
+          color={Theme.black_2C}
+          fontSize={`16px`}
+          fontWeight={`500`}
+        >
+          일주일 이하로 남은 강의
+          <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
+            *수업 7일 이하:학생의 수업 7일 이하 남은 강의
+          </SpanText>
+        </Text>
+        <Table
+          rowKey="id"
+          columns={columns7End}
+          dataSource={st_participantUserLimitListDone ? partUserLimitList : []}
+          size="small"
+        />
+      </Modal>
+      {console.log(partUserLimitList)}
+      {/* 학생 정보 */}
+      <Modal
+        visible={stuDetailModal}
+        width={`1000px`}
+        title={`학생 관리`}
+        onCancel={() => setStuDetailModal(false)}
+        footer={null}
+      >
+        <CustomForm form={updateStuForm} onFinish={updateStuFinish}>
+          <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 50px`}>
+            <Text fontSize={`16px`} fontWeight={`700`} margin={`0 0 10px`}>
+              사용자가 정보 양식
+            </Text>
+            <Wrapper dr={`row`} al={`flex-start`}>
+              <Wrapper width={`50%`} margin={`0 0 20px`}>
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}
+                  >
+                    프로필 이미지
+                  </ColWrapper>
+                  <ColWrapper>
+                    <Image
+                      width={`184px`}
+                      height={`190px`}
+                      src={
+                        stuDetail
+                          ? `${stuDetail && stuDetail.profileImage}`
+                          : `https://via.placeholder.com/184x190`
+                      }
+                    />
+                  </ColWrapper>
+                </RowWrapper>
+
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}
+                  >
+                    이름
+                  </ColWrapper>
+                  <ColWrapper>
+                    {stuDetail && stuDetail.username}&nbsp;
+                    {stuDetail && stuDetail.lastName}
+                  </ColWrapper>
+                </RowWrapper>
+
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}
+                  >
+                    아이디
+                  </ColWrapper>
+                  <ColWrapper>{stuDetail && stuDetail.userId}</ColWrapper>
+                </RowWrapper>
+
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}
+                  >
+                    이메일
+                  </ColWrapper>
+                  <ColWrapper>{stuDetail && stuDetail.userId}</ColWrapper>
+                </RowWrapper>
+
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}
+                  >
+                    휴대폰 번호
+                  </ColWrapper>
+                  <ColWrapper>
+                    <FormItem name="mobile">
+                      <CustomInput
+                        onChange={(e) =>
+                          updateStuForm.setFieldsValue({
+                            password: e.target.value.slice(-4),
+                          })
+                        }
+                      />
+                    </FormItem>
+                  </ColWrapper>
+                </RowWrapper>
+
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}
+                  >
+                    비밀번호
+                  </ColWrapper>
+
+                  <ColWrapper>
+                    <FormItem name="password">
+                      <CustomInput disabled />
+                    </FormItem>
+                  </ColWrapper>
+                </RowWrapper>
+
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}
+                  >
+                    생년월일
+                  </ColWrapper>
+
+                  <ColWrapper dr={`row`}>
+                    <FormItem name="birth">
+                      <CustomInput disabled />
+                    </FormItem>
+
+                    <CalendarOutlined onClick={calenderToggle} />
+                  </ColWrapper>
+                </RowWrapper>
+
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <Wrapper
+                    display={isCalendar ? "flex" : "none"}
+                    width={`auto`}
+                    border={`1px solid ${Theme.grey_C}`}
+                    margin={`0 0 20px`}
+                  >
+                    <Calendar
+                      style={{ width: width < 1350 ? `100%` : `300px` }}
+                      fullscreen={false}
+                      validRange={[moment(1970), moment()]}
+                      onChange={dateChagneHandler}
+                    />
+                  </Wrapper>
+                </RowWrapper>
+
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}
+                  >
+                    국가
+                  </ColWrapper>
+
+                  <ColWrapper>
+                    <FormItem name="stuCountry">
+                      <CustomSelect>
+                        {country &&
+                          country.map((data, idx) => {
+                            return (
+                              <Select.Option key={idx} value={data}>
+                                {data}
+                              </Select.Option>
+                            );
+                          })}
+                      </CustomSelect>
+                    </FormItem>
+                  </ColWrapper>
+                </RowWrapper>
+
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}
+                  >
+                    거주 국가
+                  </ColWrapper>
+
+                  <ColWrapper>
+                    <FormItem name="stuLiveCon">
+                      <CustomSelect>
+                        {country &&
+                          country.map((data, idx) => {
+                            return (
+                              <Select.Option key={idx} value={data}>
+                                {data}
+                              </Select.Option>
+                            );
+                          })}
+                      </CustomSelect>
+                    </FormItem>
+                  </ColWrapper>
+                </RowWrapper>
+
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}
+                  >
+                    사용언어
+                  </ColWrapper>
+
+                  <ColWrapper>
+                    <FormItem name="stuLanguage">
+                      <CustomInput />
+                    </FormItem>
+                  </ColWrapper>
+                </RowWrapper>
+
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}
+                  >
+                    SNS
+                  </ColWrapper>
+
+                  <ColWrapper>
+                    <FormItem name="sns">
+                      <CustomInput />
+                    </FormItem>
+                  </ColWrapper>
+                </RowWrapper>
+
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}
+                  >
+                    SNS Id
+                  </ColWrapper>
+
+                  <ColWrapper>
+                    <FormItem name="snsId">
+                      <CustomInput />
+                    </FormItem>
+                  </ColWrapper>
+                </RowWrapper>
+
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}
+                  >
+                    회차
+                  </ColWrapper>
+
+                  <ColWrapper>
+                    <FormItem name="stuPayCount">
+                      <CustomInput />
+                    </FormItem>
+                  </ColWrapper>
+                </RowWrapper>
+              </Wrapper>
+
+              <Wrapper width={`50%`} margin={`0 0 20px`} al={`flex-start`}>
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}
+                  >
+                    메모
+                  </ColWrapper>
+                  <ColWrapper width={`calc(100% - 125px)`}>
+                    <FormItem name="adminMemo" width={`100%`}>
+                      <TextArea
+                        width={`100%`}
+                        autoSize={{ minRows: 6 }}
+                      ></TextArea>
+                    </FormItem>
+                  </ColWrapper>
+                </RowWrapper>
+              </Wrapper>
+            </Wrapper>
+
+            <Text color={Theme.red_C}>
+              * 이메일 수정 하고싶으면 개발사로 문의해주세요.
+            </Text>
+          </Wrapper>
+
+          <ColWrapper width={`100%`}>
+            <Wrapper dr={`row`} ju={`flex-end`}>
+              <Button
+                size={`small`}
+                onClick={() => setStuDetailModal(false)}
+                style={{ marginRight: 10 }}
+              >
+                취소
+              </Button>
+
+              <Button size={`small`} type="primary" htmlType="submit">
+                수정
+              </Button>
+            </Wrapper>
+          </ColWrapper>
+        </CustomForm>
       </Modal>
     </AdminLayout>
   );

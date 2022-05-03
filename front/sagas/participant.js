@@ -33,6 +33,10 @@ import {
   PARTICIPANT_USER_LIMIT_LIST_SUCCESS,
   PARTICIPANT_USER_LIMIT_LIST_FAILURE,
   //////////////////////////////////////////////////////////
+  PARTICIPANT_USER_CURRENT_LIST_REQUEST,
+  PARTICIPANT_USER_CURRENT_LIST_SUCCESS,
+  PARTICIPANT_USER_CURRENT_LIST_FAILURE,
+  //////////////////////////////////////////////////////////
   PARTICIPANT_LASTDATE_LIST_REQUEST,
   PARTICIPANT_LASTDATE_LIST_SUCCESS,
   PARTICIPANT_LASTDATE_LIST_FAILURE,
@@ -248,6 +252,33 @@ function* participantUserLimitList(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
+function participantUserCurrentListAPI(data) {
+  return axios.post(`/api/part/user/delete/list`, data);
+}
+
+function* participantUserCurrentList(action) {
+  try {
+    const result = yield call(participantUserCurrentListAPI, action.data);
+
+    yield put({
+      type: PARTICIPANT_USER_CURRENT_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: PARTICIPANT_USER_CURRENT_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
 function participantUserLastDateListAPI(data) {
   return axios.post(`/api/part/lastDate/list`, data);
 }
@@ -350,6 +381,13 @@ function* watchParticipantTeacherList() {
   yield takeLatest(TEACHER_PARTICIPANT_LIST_REQUEST, teacherParticipantList);
 }
 
+function* watchParticipantUserCurrentList() {
+  yield takeLatest(
+    PARTICIPANT_USER_CURRENT_LIST_REQUEST,
+    participantUserCurrentList
+  );
+}
+
 //////////////////////////////////////////////////////////////
 export default function* participantSaga() {
   yield all([
@@ -361,6 +399,7 @@ export default function* participantSaga() {
     fork(watchParticipantUserDeleteList),
     fork(watchParticipantUserMoveList),
     fork(watchParticipantUserLimitList),
+    fork(watchParticipantUserCurrentList),
     fork(watchParticipantUserLastDateList),
     fork(watchParticipantTeacherList),
 
