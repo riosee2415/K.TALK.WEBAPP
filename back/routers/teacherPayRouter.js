@@ -1,8 +1,8 @@
 const express = require("express");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isLoggedIn = require("../middlewares/isLoggedIn");
-const { TeacherPay } = require("../models");
-const models = require("../models/teacherpay");
+const { TeacherPay, Lecture } = require("../models");
+const models = require("../models");
 
 const router = express.Router();
 
@@ -63,12 +63,12 @@ router.post("/teacher/list", isLoggedIn, async (req, res, next) => {
      AND    A.type LIKE '%${_type}%'
      ${
        _searchDate !== ``
-         ? `AND DATE_FORMAT(createdAt, '%Y-%m-%d') >= DATE_FORMAT('${_searchDate}', '%Y-%m-%d') `
+         ? `AND DATE_FORMAT(A.createdAt, '%Y-%m-%d') >= DATE_FORMAT('${_searchDate}', '%Y-%m-%d') `
          : ``
      }
       ${
         _endDate !== ``
-          ? `AND DATE_FORMAT(createdAt, '%Y-%m-%d') <= DATE_FORMAT('${_endDate}', '%Y-%m-%d') `
+          ? `AND DATE_FORMAT(A.createdAt, '%Y-%m-%d') <= DATE_FORMAT('${_endDate}', '%Y-%m-%d') `
           : ``
       }
      ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
@@ -100,15 +100,15 @@ router.post("/teacher/list", isLoggedIn, async (req, res, next) => {
    WHERE	1 = 1
      AND	B.isFire = FALSE
      AND	C.isDelete = FALSE
-     AND    A.type LIKE '%${_type}%'
+     AND  A.type LIKE '%${_type}%'
      ${
        _searchDate !== ``
-         ? `AND DATE_FORMAT(createdAt, '%Y-%m-%d') >= DATE_FORMAT('${_searchDate}', '%Y-%m-%d') `
+         ? `AND DATE_FORMAT(A.createdAt, '%Y-%m-%d') >= DATE_FORMAT('${_searchDate}', '%Y-%m-%d') `
          : ``
      }
       ${
         _endDate !== ``
-          ? `AND DATE_FORMAT(createdAt, '%Y-%m-%d') <= DATE_FORMAT('${_endDate}', '%Y-%m-%d') `
+          ? `AND DATE_FORMAT(A.createdAt, '%Y-%m-%d') <= DATE_FORMAT('${_endDate}', '%Y-%m-%d') `
           : ``
       }
      ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
@@ -135,9 +135,11 @@ router.post("/teacher/list", isLoggedIn, async (req, res, next) => {
         ? teacherPaylen / LIMIT + 1
         : teacherPaylen / LIMIT;
 
-    return res
-      .status(200)
-      .json({ teacherPay: teacherPay[0], lastPage: parseInt(lastPage), price });
+    return res.status(200).json({
+      teacherPay: teacherPay[0],
+      lastPage: parseInt(lastPage),
+      newprice,
+    });
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의료 산정 목록을 불러올 수 없습니다.");
@@ -210,7 +212,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
       })
     );
 
-    return res.status(200).json({ teacherPay: teacherPay[0], price });
+    return res.status(200).json({ teacherPay: teacherPay[0], newprice });
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의료 산정 목록을 불러올 수 없습니다.");
