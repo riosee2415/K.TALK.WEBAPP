@@ -3,9 +3,8 @@ import produce from "../util/produce";
 export const initialState = {
   teacherPayList: [],
   teacherPayLastPage: [],
-  teacherPayPrice: 0,
 
-  teacherAdminPayList: [],
+  teacherAdminPayListList: [],
   teacherPayAdminPrice: 0,
   //
 
@@ -48,7 +47,6 @@ const reducer = (state = initialState, action) =>
         draft.st_teacherPayListDone = true;
         draft.teacherPayList = action.data.teacherPay;
         draft.teacherPayLastPage = action.data.lastPage;
-        draft.teacherPayPrice = action.data.newprice;
         break;
       }
       case TEACHER_PAY_LIST_FAILURE: {
@@ -69,7 +67,7 @@ const reducer = (state = initialState, action) =>
       case TEACHER_ADMIN_PAY_LIST_SUCCESS: {
         draft.st_teacherAdminPayListLoading = false;
         draft.st_teacherAdminPayListDone = true;
-        draft.teacherAdminPayList = action.data.teacherPay;
+        draft.teacherAdminPayListList = action.data.teacherPay;
         draft.teacherPayAdminPrice = action.data.price;
         break;
       }
