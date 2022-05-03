@@ -1240,6 +1240,14 @@ router.patch("/admin/user/update", isAdminCheck, async (req, res, next) => {
     sns,
     snsId,
     stuPayCount,
+    ////////////
+    classHour,
+    timeDiff,
+    wantStartDate,
+    teacher,
+    meetDate,
+    level,
+    purpose,
   } = req.body;
   try {
     const exUser = await User.findOne({
@@ -1271,6 +1279,21 @@ router.patch("/admin/user/update", isAdminCheck, async (req, res, next) => {
       },
       {
         where: { id: parseInt(id) },
+      }
+    );
+
+    await Application.update(
+      {
+        classHour,
+        timeDiff,
+        wantStartDate,
+        teacher,
+        meetDate,
+        level,
+        purpose,
+      },
+      {
+        where: { gmailAddress: exUser.email },
       }
     );
 

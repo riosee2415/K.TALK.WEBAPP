@@ -73,8 +73,8 @@ const UserList = ({}) => {
 
   const { allLectures } = useSelector((state) => state.lecture);
 
-  const { teacherAdminPayListList, teacherPayAdminPrice } = useSelector(
-    (state) => state.teacherpay
+  const { teacherAdminPayList, teacherPayAdminPrice } = useSelector(
+    (state) => state.teacherPay
   );
 
   const router = useRouter();
@@ -130,7 +130,7 @@ const UserList = ({}) => {
     },
     {
       title: "강사 이메일",
-      render: (data) => <div>{data.userId}</div>,
+      render: (data) => <div>{data.email}</div>,
     },
 
     {
@@ -144,8 +144,7 @@ const UserList = ({}) => {
         <Button
           size="small"
           type="primary"
-          onClick={() => moveLinkHandler(`/admin?teacher=${data.id}`)}
-        >
+          onClick={() => moveLinkHandler(`/admin?teacher=${data.id}`)}>
           강의보기
         </Button>
       ),
@@ -157,8 +156,7 @@ const UserList = ({}) => {
         <Button
           size="small"
           type="primary"
-          onClick={() => detailModalToggle(data)}
-        >
+          onClick={() => detailModalToggle(data)}>
           상세보기
         </Button>
       ),
@@ -169,8 +167,7 @@ const UserList = ({}) => {
       render: (data) => (
         <Popconfirm
           onConfirm={() => TeacherFireUpdateHandler(data)}
-          title={`강사를 ${data.isFire ? `재계약` : `해지`} 하시겠습니까?`}
-        >
+          title={`강사를 ${data.isFire ? `재계약` : `해지`} 하시겠습니까?`}>
           <Button size="small" type={data.isFire ? `primary` : `danger`}>
             {data.isFire ? `재계약` : `해지`}
           </Button>
@@ -184,8 +181,7 @@ const UserList = ({}) => {
         <Button
           size="small"
           type="primary"
-          onClick={() => logModalToggle(data)}
-        >
+          onClick={() => logModalToggle(data)}>
           DETAIL
         </Button>
       ),
@@ -207,8 +203,7 @@ const UserList = ({}) => {
             dr={`row`}
             ju={`flex-start`}
             margin={`0 0 10px`}
-            width={`calc(100% - 80px)`}
-          >
+            width={`calc(100% - 80px)`}>
             <FormTag form={form} onFinish={searchHandler}>
               <Row>
                 <FormItem name={`TeacherId`}>
@@ -273,7 +268,7 @@ const UserList = ({}) => {
         <Table
           rowKey="id"
           columns={column}
-          dataSource={teacherAdminPayListList ? teacherAdminPayListList : []}
+          dataSource={teacherAdminPayList ? teacherAdminPayList : []}
           size="small"
         />
       </AdminContent>

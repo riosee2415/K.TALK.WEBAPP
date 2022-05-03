@@ -75,6 +75,10 @@ module.exports = class Application extends Model {
           type: DataTypes.STRING(100),
           allowNull: true,
         },
+        freeTeacher: {
+          type: DataTypes.STRING(100),
+          allowNull: true,
+        },
         isDiscount: {
           type: DataTypes.BOOLEAN,
           allowNull: true,
