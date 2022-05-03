@@ -68,7 +68,7 @@ const reducer = (state = initialState, action) =>
         draft.st_teacherAdminPayListLoading = false;
         draft.st_teacherAdminPayListDone = true;
         draft.teacherAdminPayListList = action.data.teacherPay;
-        draft.teacherPayAdminPrice = action.data.price;
+        draft.teacherPayAdminPrice = action.data.newprice;
         break;
       }
       case TEACHER_ADMIN_PAY_LIST_FAILURE: {
