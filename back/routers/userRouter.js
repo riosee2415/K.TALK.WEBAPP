@@ -1267,7 +1267,7 @@ router.patch("/admin/user/update", isAdminCheck, async (req, res, next) => {
         where: { email: email },
       });
 
-      if (!exUser2) {
+      if (exUser2) {
         return res.status(401).send("이미 존재하는 이메일입니다.");
       }
     }
@@ -1277,7 +1277,7 @@ router.patch("/admin/user/update", isAdminCheck, async (req, res, next) => {
         where: { userId: userId },
       });
 
-      if (!exUser3) {
+      if (exUser3) {
         return res.status(401).send("이미 존재하는 이메일입니다.");
       }
     }
