@@ -6,6 +6,7 @@ export const initailState = {
   maxPage: 1,
   lectureLastPage: 1,
   lectureTeacherList: null,
+  lectureTeacherStudents: null,
   lectureStudentList: null,
   lectureDetail: null,
   lectureMemo: null,
@@ -399,6 +400,7 @@ const reducer = (state = initailState, action) =>
         draft.st_lectureTeacherListLoading = false;
         draft.st_lectureTeacherListDone = true;
         draft.lectureTeacherList = action.data.list;
+        draft.lectureTeacherStudents = action.data.students;
         break;
       }
       case LECTURE_TEACHER_LIST_FAILURE: {
