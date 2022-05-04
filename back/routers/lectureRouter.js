@@ -1272,7 +1272,7 @@ router.post("/diary/create", isLoggedIn, async (req, res, next) => {
     );
 
     await TeacherPay.create({
-      price: 30000,
+      price: 20000,
       type: "기본수당",
       UserId: parseInt(req.user.id),
       LectureId: parseInt(LectureId),
