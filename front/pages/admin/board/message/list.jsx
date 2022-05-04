@@ -572,6 +572,8 @@ const List = ({ router }) => {
         <div>
           {data.limitDate < 0
             ? `D+${Math.abs(data.limitDate)}`
+            : data.limitDate === 0
+            ? `D-day`
             : `D-${data.limitDate}`}
         </div>
       ),

@@ -1323,11 +1323,13 @@ const Index = () => {
                               </Text>
                             </Wrapper>
                           </Wrapper>
+
                           <Text
                             color={Theme.black_2C}
                             fontSize={width < 700 ? `12px` : `18px`}>
                             {data.course}
                           </Text>
+
                           <Wrapper width={`auto`}>
                             <CustomText3
                               onClick={() =>
