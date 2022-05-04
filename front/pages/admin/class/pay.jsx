@@ -466,8 +466,7 @@ const Pay = ({}) => {
                 rules={[
                   { required: true, message: "시작 날짜를 입력해주세요." },
                 ]}
-                name={`startDate`}
-                onChange={(e) => console.log(e, "e")}>
+                name={`startDate`}>
                 <DateInput
                   disabled={st_lectureDetailDone ? false : true}
                   format={`YYYY-MM-DD`}

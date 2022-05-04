@@ -3,6 +3,7 @@ import produce from "../util/produce";
 export const initialState = {
   teacherPayList: [],
   teacherPayLastPage: [],
+  teacherPayPrice: 0,
 
   teacherAdminPayList: [],
   teacherPayAdminPrice: 0,
@@ -47,6 +48,7 @@ const reducer = (state = initialState, action) =>
         draft.st_teacherPayListDone = true;
         draft.teacherPayList = action.data.teacherPay;
         draft.teacherPayLastPage = action.data.lastPage;
+        draft.teacherPayPrice = action.data.newprice;
         break;
       }
       case TEACHER_PAY_LIST_FAILURE: {
@@ -100,7 +102,6 @@ const reducer = (state = initialState, action) =>
 
       //////////////////////////////////////////////
 
-      
       default:
         break;
     }
