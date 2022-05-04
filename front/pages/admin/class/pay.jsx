@@ -412,7 +412,7 @@ const Pay = ({}) => {
             <Wrapper dr={`row`} margin={`0 0 20px`}>
               <Text width={`80px`}>강의</Text>
               <FormItem
-                rules={[{ required: true, message: "강사를 선택해주세요." }]}
+                rules={[{ required: true, message: "강의를 선택해주세요." }]}
                 name={`lecture`}
               >
                 <Select
@@ -439,7 +439,7 @@ const Pay = ({}) => {
               </Text>
               <FormItem
                 rules={[
-                  { required: true, message: "강의 기간을 입력해주세요." },
+                  { required: true, message: "강의 가격을 입력해주세요." },
                 ]}
                 name={`price`}
                 width={`calc(100% - 110px)`}

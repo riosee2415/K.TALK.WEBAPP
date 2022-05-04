@@ -598,19 +598,19 @@ const AdminHome = () => {
 
   const noticeColumns = [
     {
-      title: "No",
+      title: "번호",
       dataIndex: "id",
     },
     {
-      title: "Title",
+      title: "제목",
       dataIndex: "title",
     },
     {
-      title: "Author",
+      title: "작성자",
       dataIndex: "author",
     },
     {
-      title: "CreatedAt",
+      title: "생성일",
       render: (data) => <div>{data.createdAt.substring(0, 13)}</div>,
     },
     {
@@ -1058,10 +1058,10 @@ const AdminHome = () => {
             visible={deletePopVisible}
             onOk={deleteClassHandler}
             onCancel={() => deletePopToggle(null)}
-            title="정말 삭제하시겠습니까?"
+            title="강의를 종료하시겠습니까?"
           >
-            <Wrapper>삭제 된 데이터는 다시 복구할 수 없습니다.</Wrapper>
-            <Wrapper>정말 삭제하시겠습니까?</Wrapper>
+            <Wrapper>종료된 데이터는 다시 복구할 수 있습니다.</Wrapper>
+            <Wrapper>강의를 종료하시겠습니까?</Wrapper>
           </Modal>
           {/* UPDATE MODAL */}
           <Modal
