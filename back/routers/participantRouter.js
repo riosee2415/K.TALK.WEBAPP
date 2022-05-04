@@ -127,6 +127,7 @@ router.post("/lecture/list", isLoggedIn, async (req, res, next) => {
               A.endDate,
               DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
               B.userId,
+              B.email,
               B.username,
               B.level,
               B.birth,
