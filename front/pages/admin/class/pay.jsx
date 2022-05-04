@@ -420,12 +420,11 @@ const Pay = ({}) => {
                   disabled={updateData ? true : false}
                   onChange={(e) => onChangeDetail(e)}
                 >
-                  {console.log(allLectures)}
                   {allLectures &&
                     allLectures.map((data) => {
                       return (
                         <Select.Option key={data.id} value={data.id}>
-                          {data.course}
+                          {data.number} | {data.course}
                         </Select.Option>
                       );
                     })}
@@ -476,7 +475,6 @@ const Pay = ({}) => {
                   { required: true, message: "시작 날짜를 입력해주세요." },
                 ]}
                 name={`startDate`}
-                onChange={(e) => console.log(e, "e")}
               >
                 <DateInput
                   disabled={st_lectureDetailDone ? false : true}

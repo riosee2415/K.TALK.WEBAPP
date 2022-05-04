@@ -12,7 +12,8 @@ import Head from "next/head";
 import {
   TEACHER_PAY_CREATE_REQUEST,
   TEACHER_PAY_LIST_REQUEST,
-} from "../../../reducers/teacherPay";
+} from "../../../reducers/teacherpay";
+
 import {
   message,
   DatePicker,
@@ -511,7 +512,6 @@ const Index = () => {
                   placeholder="강의를 선택해주세요">
                   {lectureTeacherList &&
                     lectureTeacherList.map((data, idx) => {
-                      console.log(data, "data");
                       return (
                         <Option key={data.id} value={data.id}>
                           {data.course}

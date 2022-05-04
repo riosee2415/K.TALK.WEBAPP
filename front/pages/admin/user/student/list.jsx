@@ -146,12 +146,6 @@ const List = () => {
   const { commuteAdminList, st_commuteCreateDone, st_commuteCreateError } =
     useSelector((state) => state.commute);
 
-  console.log(commuteAdminList[0], "commuteAdminList");
-
-  let test = Object.entries(commuteAdminList[0]);
-
-  console.log(test, "test");
-
   const {
     me,
     st_loadMyInfoDone,
@@ -473,19 +467,16 @@ const List = () => {
     [classPartModal]
   );
 
-  const classPartModalClose = useCallback(
-    (data) => {
-      dispatch({
-        type: CLASS_PART_CLOSE_REQUEST,
-      });
+  const classPartModalClose = useCallback(() => {
+    dispatch({
+      type: CLASS_PART_CLOSE_REQUEST,
+    });
 
-      updateClassform.resetFields();
+    updateClassform.resetFields();
 
-      setIsPayment(0);
-      setParData(null);
-    },
-    [classPartModal, updateClassform]
-  );
+    setIsPayment(0);
+    setParData(null);
+  }, [classPartModal, updateClassform]);
 
   const classPartEndModalOpen = useCallback((data) => {
     setClassPartEndModal(true);
@@ -724,10 +715,14 @@ const List = () => {
           stuPayCount: data.stuPayCount,
           classHour: data.classHour,
           timeDiff: data.timeDiff,
-          wantStartDate: data.wantStartDate.format("YYYY-MM-DD"),
+          wantStartDate: data.wantStartDate
+            ? data.wantStartDate.format("YYYY-MM-DD")
+            : "",
           teacher: data.teacher,
           freeTeacher: data.freeTeacher,
-          meetDate: data.meetDate.format("YYYY-MM-DD hh:mm"),
+          meetDate: data.meetDate
+            ? data.meetDate.format("YYYY-MM-DD hh:mm")
+            : "",
           level: data.level,
           purpose: data.purpose,
         },
@@ -1618,7 +1613,7 @@ const List = () => {
         <CustomForm form={updateStuForm} onFinish={updateStuFinish}>
           <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 50px`}>
             <Text fontSize={`16px`} fontWeight={`700`} margin={`0 0 10px`}>
-              사용자가 정보 양식
+              사용자 정보
             </Text>
             <Wrapper dr={`row`} al={`flex-start`}>
               <Wrapper width={`50%`} margin={`0 0 20px`}>
@@ -2145,7 +2140,11 @@ const List = () => {
             )}
           </Select>
 
-          <Button onClick={() => onClickCommuteHandler()}>검색</Button>
+          <Button
+            style={{ marginLeft: 10 }}
+            onClick={() => onClickCommuteHandler()}>
+            검색
+          </Button>
         </Wrapper>
 
         <Table

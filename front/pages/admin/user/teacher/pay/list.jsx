@@ -55,7 +55,7 @@ const UserList = () => {
   const { allLectures } = useSelector((state) => state.lecture);
 
   const { teacherAdminPayList, teacherPayAdminPrice } = useSelector(
-    (state) => state.teacherPay
+    (state) => state.teacherpay
   );
 
   const router = useRouter();
@@ -230,7 +230,13 @@ const UserList = () => {
           size="small"
         />
 
-        {console.log(teacherAdminPayList, "teacherAdminPayList")}
+        <Wrapper
+          margin={`10px 0 0`}
+          al={`flex-end`}
+          fontSize={`16px`}>{`총 가격: ${String(teacherPayAdminPrice).replace(
+          /\B(?=(\d{3})+(?!\d))/g,
+          ","
+        )}원`}</Wrapper>
       </AdminContent>
     </AdminLayout>
   );
