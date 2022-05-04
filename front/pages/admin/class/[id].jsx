@@ -863,7 +863,7 @@ const DetailClass = () => {
 
     {
       title: "수업 참여일",
-      render: (data) => <div>{data.createdAt}</div>,
+      render: (data) => <div>{data.createdAt.slice(0, 10)}</div>,
     },
   ];
 
@@ -1689,7 +1689,7 @@ const DetailClass = () => {
       <Modal
         visible={stuDetailModal}
         width={`1000px`}
-        title={`학생 관리`}
+        title={`학생 정보`}
         onCancel={() => setStuDetailModal(false)}
         footer={null}>
         <CustomForm form={updateStuForm} onFinish={updateStuFinish}>

@@ -219,12 +219,18 @@ const UserList = ({}) => {
     setModal((prev) => !prev);
   }, []);
 
-  const detailModalToggle = useCallback((data) => {
-    setDetailModal((prev) => !prev);
-    setDetailModalData(data);
-
-    onFillTeacher(data);
-  }, []);
+  const detailModalToggle = useCallback(
+    (data) => {
+      setDetailModal((prev) => !prev);
+      if (data) {
+        onFillTeacher(data);
+      } else {
+        updateTeacherForm.resetFields();
+      }
+      setDetailModalData(data);
+    },
+    [updateTeacherForm]
+  );
 
   const onFillTeacher = useCallback(
     (data) => {
