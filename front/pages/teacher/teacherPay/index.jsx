@@ -12,7 +12,8 @@ import Head from "next/head";
 import {
   TEACHER_PAY_CREATE_REQUEST,
   TEACHER_PAY_LIST_REQUEST,
-} from "../../../reducers/teacherPay";
+} from "../../../reducers/teacherpay";
+
 import {
   message,
   DatePicker,

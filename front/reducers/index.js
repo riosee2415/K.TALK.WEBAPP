@@ -19,7 +19,7 @@ import processApply from "./processApply";
 import payment from "./payment";
 import book from "./book";
 import payClass from "./payClass";
-import teacherPay from "./teacherpay";
+import teacherpay from "./teacherpay";
 
 const rootReducer = (state, action) => {
   switch (action.type) {
@@ -47,7 +47,7 @@ const rootReducer = (state, action) => {
         book,
         payment,
         payClass,
-        teacherPay,
+        teacherpay,
       });
       return combinedReducer(state, action);
     }
