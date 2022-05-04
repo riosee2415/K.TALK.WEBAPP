@@ -336,7 +336,7 @@ const List = ({ router }) => {
           senderId: me && me.id,
           receiverId: updateData.senderId,
           content: value.content1,
-          level: updateData.level,
+          level: updateData.userLevel,
         },
       });
     },
@@ -375,7 +375,7 @@ const List = ({ router }) => {
 
   const onManySubmit = useCallback(
     (value) => {
-      let level = currentCheckDatum.map((data) => data.level);
+      let level = currentCheckDatum.map((data) => data.userLevel);
       let receiverId = currentCheckDatum.map((data) => data.senderId);
 
       dispatch({
@@ -568,7 +568,13 @@ const List = ({ router }) => {
 
     {
       title: "남은 일수",
-      render: (data) => <div>{`D-${data.limitDate}`}</div>,
+      render: (data) => (
+        <div>
+          {data.limitDate < 0
+            ? `D+${Math.abs(data.limitDate)}`
+            : `D-${data.limitDate}`}
+        </div>
+      ),
     },
 
     {

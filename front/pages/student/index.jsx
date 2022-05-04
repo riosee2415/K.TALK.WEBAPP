@@ -735,8 +735,7 @@ const Student = () => {
 
   const sendMessageFinishHandler = useCallback(
     (data) => {
-      let TeacherId = data.receiveLectureId.split(",")[1];
-      let level = data.receiveLectureId.split(",")[2];
+      let lectureStuLectureData = JSON.parse(data.lectureStuLectureList);
 
       dispatch({
         type: MESSAGE_CREATE_REQUEST,
@@ -744,9 +743,9 @@ const Student = () => {
           title: data.title,
           author: me.username,
           senderId: me.id,
-          receiverId: TeacherId,
+          receiverId: lectureStuLectureData.TeacherId,
           content: data.content,
-          level: level,
+          level: lectureStuLectureData.level,
         },
       });
     },
@@ -755,9 +754,7 @@ const Student = () => {
 
   const sendMessageLectureFinishHanlder = useCallback(
     (data) => {
-      let receiveLectureId = data.receiveLectureId.split(",")[0];
-      let userId = data.receiveLectureId.split(",")[1];
-      let level = data.receiveLectureId.split(",")[2];
+      let lectureStuLectureData = JSON.parse(data.lectureStuLectureList);
 
       dispatch({
         type: MESSAGE_CREATE_REQUEST,
@@ -765,10 +762,10 @@ const Student = () => {
           title: data.title,
           author: me.username,
           senderId: me.id,
-          receiverId: userId,
-          receiveLectureId: receiveLectureId,
+          receiverId: lectureStuLectureData.TeacherId,
+          receiveLectureId: lectureStuLectureData.LectureId,
           content: data.content,
-          level: level,
+          level: lectureStuLectureData.level,
         },
       });
     },
@@ -805,40 +802,40 @@ const Student = () => {
   );
 
   const answerFinishHandler = useCallback(
-    async (data) => {
-      if (messageDatum) {
-        dispatch({
-          type: MESSAGE_CREATE_REQUEST,
-          data: {
-            title: data.title,
-            author: me.username,
-            senderId: me.id,
-            receiverId: messageDatum.senderId,
-            content: data.content,
-            level: messageDatum.userLevel,
-          },
-        });
-      }
+    (data) => {
+      let lectureStuLectureData = JSON.parse(data.lectureStuLectureList);
+
+      dispatch({
+        type: MESSAGE_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          author: me.username,
+          senderId: me.id,
+          receiverId: lectureStuLectureData.TeacherId,
+          content: data.content,
+          level: lectureStuLectureData.level,
+        },
+      });
     },
-    [me, messageDatum]
+    [me]
   );
 
   const answerLectureFinishHanlder = useCallback(
     (data) => {
-      if (messageDatum) {
-        dispatch({
-          type: MESSAGE_CREATE_REQUEST,
-          data: {
-            title: data.title,
-            author: me.username,
-            senderId: me.id,
-            receiverId: messageDatum.senderId,
-            receiveLectureId: data.receiveLectureId,
-            content: data.content,
-            level: messageDatum.level,
-          },
-        });
-      }
+      let lectureStuLectureData = JSON.parse(data.lectureStuLectureList);
+
+      dispatch({
+        type: MESSAGE_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          author: me.username,
+          senderId: me.id,
+          receiverId: lectureStuLectureData.TeacherId,
+          receiveLectureId: lectureStuLectureData.LectureId,
+          content: data.content,
+          level: lectureStuLectureData.level,
+        },
+      });
     },
 
     [me, messageDatum]
@@ -2115,7 +2112,7 @@ const Student = () => {
                   </Text>
 
                   <Form.Item
-                    name="receiveLectureId"
+                    name="lectureStuLectureList"
                     rules={[
                       {
                         required: true,
@@ -2132,7 +2129,9 @@ const Student = () => {
                         lectureStuLectureList &&
                         lectureStuLectureList.map((data, idx) => {
                           return (
-                            <Option key={`${data.id}${idx}`} value={data.id}>
+                            <Option
+                              key={`${data.id}${idx}`}
+                              value={JSON.stringify(data)}>
                               {`${data.course} | ${data.username}`}
                             </Option>
                           );
@@ -2156,7 +2155,7 @@ const Student = () => {
                   </Text>
 
                   <Form.Item
-                    name="receiveLectureId"
+                    name="lectureStuLectureList"
                     rules={[
                       {
                         required: true,
@@ -2173,8 +2172,10 @@ const Student = () => {
                         lectureStuLectureList &&
                         lectureStuLectureList.map((data, idx) => {
                           return (
-                            <Option key={`${data.id}${idx}`} value={data.id}>
-                              {`${data.course} | ${data.User.username}`}
+                            <Option
+                              key={`${data.id}${idx}`}
+                              value={JSON.stringify(data)}>
+                              {`${data.course} | ${data.username}`}
                             </Option>
                           );
                         })
@@ -2458,7 +2459,7 @@ const Student = () => {
                 sendMessageType === 1
                   ? sendMessageFinishHandler(data)
                   : sendMessageType === 2
-                  ? sendMessageLectureFinishHanlder(data, messageTeacherList)
+                  ? sendMessageLectureFinishHanlder(data)
                   : sendMessageType === 3 && sendMessageAdminFinishHandler(data)
               }>
               <Wrapper dr={`row`} ju={`flex-end`}>
@@ -2499,7 +2500,7 @@ const Student = () => {
                   </Text>
 
                   <Form.Item
-                    name="receiveLectureId"
+                    name="lectureStuLectureList"
                     rules={[
                       {
                         required: true,
@@ -2518,7 +2519,7 @@ const Student = () => {
                           return (
                             <Option
                               key={`${data.id}${idx}`}
-                              value={`${data.id},${data.TeacherId},${data.level}`}>
+                              value={JSON.stringify(data)}>
                               {`${data.course} | ${data.username}`}
                             </Option>
                           );
@@ -2542,7 +2543,7 @@ const Student = () => {
                   </Text>
 
                   <Form.Item
-                    name="receiveLectureId"
+                    name="lectureStuLectureList"
                     rules={[
                       {
                         required: true,
@@ -2561,8 +2562,8 @@ const Student = () => {
                           return (
                             <Option
                               key={`${data.id}${idx}`}
-                              value={`${data.id},${data.User.id},${data.User.level}`}>
-                              {`${data.course} | ${data.User.username}`}
+                              value={JSON.stringify(data)}>
+                              {`${data.course} | ${data.username}`}
                             </Option>
                           );
                         })

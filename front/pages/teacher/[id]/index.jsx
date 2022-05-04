@@ -993,6 +993,8 @@ const Index = () => {
       let receiverId = await checkList.map((data) => data.UserId);
       let level = await checkList.map((data) => data.level);
 
+      console.log(checkList, "checkList");
+
       if (receiverId) {
         dispatch({
           type: MESSAGE_MANY_CREATE_REQUEST,
@@ -2392,7 +2394,7 @@ const Index = () => {
                   lectureDiaryList.map((data, idx) => {
                     return (
                       <Wrapper
-                        key={data.idx}
+                        key={data.id}
                         dr={`row`}
                         textAlign={`center`}
                         padding={`25px 0 20px`}

@@ -18,6 +18,7 @@ import {
   Slider,
   Table,
   Button,
+  Select,
 } from "antd";
 import styled from "styled-components";
 import useWidth from "../../hooks/useWidth";
@@ -481,37 +482,42 @@ const LectureAll = () => {
 
   const sendMessageFinishHandler = useCallback(
     (data) => {
+      let lectureStuLectureData = JSON.parse(data.lectureStuLectureList);
+
       dispatch({
         type: MESSAGE_CREATE_REQUEST,
         data: {
           title: data.title,
           author: me.username,
           senderId: me.id,
-          receiverId: messageDatum.UserId,
+          receiverId: lectureStuLectureData.TeacherId,
           content: data.content,
-          level: 2,
+          level: lectureStuLectureData.level,
         },
       });
     },
-    [me, messageDatum]
+    [me]
   );
 
   const sendMessageLectureFinishHanlder = useCallback(
     (data) => {
+      let lectureStuLectureData = JSON.parse(data.lectureStuLectureList);
+
       dispatch({
         type: MESSAGE_CREATE_REQUEST,
         data: {
           title: data.title,
           author: me.username,
           senderId: me.id,
-          receiverId: messageDatum.UserId,
-          receiveLectureId: messageDatum.id,
+          receiverId: lectureStuLectureData.TeacherId,
+          receiveLectureId: lectureStuLectureData.LectureId,
           content: data.content,
-          level: 2,
+          level: lectureStuLectureData.level,
         },
       });
     },
-    [messageDatum, me]
+
+    [me]
   );
 
   const sendMessageAdminFinishHandler = useCallback(
@@ -1632,15 +1638,89 @@ const LectureAll = () => {
             </Wrapper>
 
             {sendMessageType === 1 && (
-              <Text fontSize={`14px`} color={Theme.grey2_C} margin={`0 0 20px`}>
-                강사님 개인쪽지함에 쪽지가 전달됩니다.
-              </Text>
+              <>
+                <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
+                  듣고 있는 강의 목록
+                </Text>
+
+                <Form.Item
+                  name="lectureStuLectureList"
+                  rules={[
+                    {
+                      required: true,
+                      message: "듣고있는 강의 목록을 선택해주세요.",
+                    },
+                  ]}>
+                  <Select style={{ width: `100%` }}>
+                    {lectureStuLectureList &&
+                    lectureStuLectureList.length === 0 ? (
+                      <Option value="참여 중인 강의가 없습니다.">
+                        참여 중인 강의가 없습니다.
+                      </Option>
+                    ) : (
+                      lectureStuLectureList &&
+                      lectureStuLectureList.map((data, idx) => {
+                        return (
+                          <Option
+                            key={`${data.id}${idx}`}
+                            value={JSON.stringify(data)}>
+                            {`${data.course} | ${data.username}`}
+                          </Option>
+                        );
+                      })
+                    )}
+                  </Select>
+                </Form.Item>
+                <Text
+                  fontSize={`14px`}
+                  color={Theme.grey2_C}
+                  margin={`0 0 20px`}>
+                  강사님 개인쪽지함에 쪽지가 전달됩니다.
+                </Text>
+              </>
             )}
 
             {sendMessageType === 2 && (
-              <Text fontSize={`14px`} color={Theme.grey2_C} margin={`0 0 20px`}>
-                강사님 수업 쪽지함에 쪽지가 전달됩니다.
-              </Text>
+              <>
+                <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
+                  듣고 있는 강의 목록
+                </Text>
+
+                <Form.Item
+                  name="lectureStuLectureList"
+                  rules={[
+                    {
+                      required: true,
+                      message: "듣고있는 강의 목록을 선택해주세요.",
+                    },
+                  ]}>
+                  <Select style={{ width: `100%` }}>
+                    {lectureStuLectureList &&
+                    lectureStuLectureList.length === 0 ? (
+                      <Option value="참여 중인 강의가 없습니다.">
+                        참여 중인 강의가 없습니다.
+                      </Option>
+                    ) : (
+                      lectureStuLectureList &&
+                      lectureStuLectureList.map((data, idx) => {
+                        return (
+                          <Option
+                            key={`${data.id}${idx}`}
+                            value={JSON.stringify(data)}>
+                            {`${data.course} | ${data.username}`}
+                          </Option>
+                        );
+                      })
+                    )}
+                  </Select>
+                </Form.Item>
+                <Text
+                  fontSize={`14px`}
+                  color={Theme.grey2_C}
+                  margin={`0 0 20px`}>
+                  강사님에 수업 상세페이지 쪽지함에 전달 됩니다.
+                </Text>
+              </>
             )}
 
             <Text fontSize={`18px`} fontWeight={`bold`}>
