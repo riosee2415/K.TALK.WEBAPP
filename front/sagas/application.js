@@ -12,9 +12,12 @@ import {
   APP_UPDATE_REQUEST,
   APP_UPDATE_SUCCESS,
   APP_UPDATE_FAILURE,
+  //
+  APP_DETAIL_REQUEST,
+  APP_DETAIL_SUCCESS,
+  APP_DETAIL_FAILURE,
   /////////////////////////////
 } from "../reducers/application";
-import { NodeCollapseOutlined } from "@ant-design/icons";
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
@@ -73,6 +76,7 @@ function* appList(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function appUpdateAPI(data) {
+  console.log(data, "data");
   return axios.patch(`/api/app/update`, data);
 }
 
@@ -97,22 +101,62 @@ function* appUpdate(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function appDetailAPI(data) {
+  console.log(data, "data");
+  return axios.post(`/api/app/detail`, data);
+}
+
+function* appDetail(action) {
+  try {
+    const result = yield call(appDetailAPI, action.data);
+
+    yield put({
+      type: APP_DETAIL_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: APP_DETAIL_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchAppCreate() {
   yield takeLatest(APP_CREATE_REQUEST, appCreate);
 }
+
 function* watchAppList() {
   yield takeLatest(APP_LIST_REQUEST, appList);
 }
+
 function* watchAppUpdate() {
   yield takeLatest(APP_UPDATE_REQUEST, appUpdate);
 }
+
+function* watchAppDetail() {
+  yield takeLatest(APP_DETAIL_REQUEST, appDetail);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* appSaga() {
   yield all([
     fork(watchAppCreate),
     fork(watchAppList),
     fork(watchAppUpdate),
+    fork(watchAppDetail),
     //
   ]);
 }

@@ -2,6 +2,7 @@ import produce from "../util/produce";
 
 export const initialState = {
   applicationList: null,
+  applicationDetail: null,
   //
   st_appCreateLoading: false, // 신청서 생성
   st_appCreateDone: false,
@@ -14,6 +15,10 @@ export const initialState = {
   st_appListLoading: false, // 신청서 생성
   st_appListDone: false,
   st_appListError: null,
+  //
+  st_appDetailLoading: false,
+  st_appDetailDone: false,
+  st_appDetailError: null,
   //
   updateModal: false,
 };
@@ -29,6 +34,10 @@ export const APP_LIST_FAILURE = "APP_LIST_FAILURE";
 export const APP_UPDATE_REQUEST = "APP_UPDATE_REQUEST";
 export const APP_UPDATE_SUCCESS = "APP_UPDATE_SUCCESS";
 export const APP_UPDATE_FAILURE = "APP_UPDATE_FAILURE";
+
+export const APP_DETAIL_REQUEST = "APP_DETAIL_REQUEST";
+export const APP_DETAIL_SUCCESS = "APP_DETAIL_SUCCESS";
+export const APP_DETAIL_FAILURE = "APP_DETAIL_FAILURE";
 
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
@@ -94,6 +103,27 @@ const reducer = (state = initialState, action) =>
         draft.st_appUpdateLoading = false;
         draft.st_appUpdateDone = false;
         draft.st_appUpdateError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case APP_DETAIL_REQUEST: {
+        draft.st_appDetailLoading = true;
+        draft.st_appDetailDone = false;
+        draft.st_appDetailError = null;
+        break;
+      }
+      case APP_DETAIL_SUCCESS: {
+        draft.st_appDetailLoading = false;
+        draft.st_appDetailDone = true;
+        draft.applicationDetail = action.data.lists;
+        break;
+      }
+      case APP_DETAIL_FAILURE: {
+        draft.st_appDetailLoading = false;
+        draft.st_appDetailDone = false;
+        draft.st_appDetailError = action.error;
         break;
       }
 

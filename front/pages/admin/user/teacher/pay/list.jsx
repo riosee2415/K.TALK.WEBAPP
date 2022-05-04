@@ -20,36 +20,17 @@ import { SearchOutlined } from "@ant-design/icons";
 import wrapper from "../../../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
-import {
-  GuideLi,
-  GuideUl,
-  Image,
-  Text,
-  TextArea,
-  Wrapper,
-} from "../../../../../components/commonComponents";
-
+import { Wrapper } from "../../../../../components/commonComponents";
 import {
   LOAD_MY_INFO_REQUEST,
-  USER_ADMIN_TEACHER_UPDATE_REQUEST,
-  USER_FIRE_UPDATE_REQUEST,
-  USER_TEA_CREATE_REQUEST,
   USER_TEA_LIST_REQUEST,
 } from "../../../../../reducers/user";
-
 import { useRouter, withRouter } from "next/router";
-import useInput from "../../../../../hooks/useInput";
-import { TEACHER_PARTICIPANT_LIST_REQUEST } from "../../../../../reducers/participant";
-import Theme from "../../../../../components/Theme";
 import { LECTURE_ALL_LIST_REQUEST } from "../../../../../reducers/lecture";
 import { TEACHER_ADMIN_PAY_LIST_REQUEST } from "../../../../../reducers/teacherpay";
 
 const AdminContent = styled.div`
   padding: 20px;
-`;
-
-const CustomTable = styled(Table)`
-  width: 100%;
 `;
 
 const FormTag = styled(Form)`
@@ -61,7 +42,7 @@ const FormItem = styled(Form.Item)`
   margin: 0 10px 0 0 !important;
 `;
 
-const UserList = ({}) => {
+const UserList = () => {
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
 
   const {
@@ -132,6 +113,15 @@ const UserList = ({}) => {
       title: "강사 이메일",
       render: (data) => <div>{data.email}</div>,
     },
+    {
+      title: "은행",
+      render: (data) => <div>{data.bankName}</div>,
+    },
+
+    {
+      title: "계좌번호",
+      render: (data) => <div>{data.bankNo}</div>,
+    },
 
     {
       title: "전화번호",
@@ -139,61 +129,29 @@ const UserList = ({}) => {
     },
 
     {
-      title: "강의 보기",
+      title: "수당유형",
+      render: (data) => <div>{data.type}</div>,
+    },
+
+    {
+      title: "가격",
       render: (data) => (
-        <Button
-          size="small"
-          type="primary"
-          onClick={() => moveLinkHandler(`/admin?teacher=${data.id}`)}>
-          강의보기
-        </Button>
+        <div>{String(data.price).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
       ),
     },
 
     {
-      title: "강사 상세보기",
-      render: (data) => (
-        <Button
-          size="small"
-          type="primary"
-          onClick={() => detailModalToggle(data)}>
-          상세보기
-        </Button>
-      ),
-    },
-
-    {
-      title: "해지/재계약",
-      render: (data) => (
-        <Popconfirm
-          onConfirm={() => TeacherFireUpdateHandler(data)}
-          title={`강사를 ${data.isFire ? `재계약` : `해지`} 하시겠습니까?`}>
-          <Button size="small" type={data.isFire ? `primary` : `danger`}>
-            {data.isFire ? `재계약` : `해지`}
-          </Button>
-        </Popconfirm>
-      ),
-    },
-
-    {
-      title: "해지/재계약 기록",
-      render: (data) => (
-        <Button
-          size="small"
-          type="primary"
-          onClick={() => logModalToggle(data)}>
-          DETAIL
-        </Button>
-      ),
+      title: "수당 지급일",
+      render: (data) => <div>{data.createdAt}</div>,
     },
   ];
 
   return (
     <AdminLayout>
       <PageHeader
-        breadcrumbs={["회원 관리", "관리"]}
-        title={`강사 목록`}
-        subTitle={`강사를 확인할 수 있습니다.`}
+        breadcrumbs={["강사료", "강사료 산정 관리"]}
+        title={`강사료 산정 관리`}
+        subTitle={`강사료 산정를 확인할 수 있습니다.`}
       />
       {/* <AdminTop createButton={true} createButtonAction={() => {})} /> */}
 
@@ -271,6 +229,8 @@ const UserList = ({}) => {
           dataSource={teacherAdminPayList ? teacherAdminPayList : []}
           size="small"
         />
+
+        {console.log(teacherAdminPayList, "teacherAdminPayList")}
       </AdminContent>
     </AdminLayout>
   );
