@@ -1230,6 +1230,8 @@ router.patch("/admin/teacher/update", isAdminCheck, async (req, res, next) => {
 router.patch("/admin/user/update", isAdminCheck, async (req, res, next) => {
   const {
     id,
+    userId,
+    email,
     birth,
     stuCountry,
     stuLiveCon,
@@ -1259,6 +1261,22 @@ router.patch("/admin/user/update", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 사용자입니다.");
     }
 
+    const exUser2 = await User.findOne({
+      where: { email: parseInt(email) },
+    });
+
+    if (!exUser2) {
+      return res.status(401).send("이미 존재하는 이메일입니다.");
+    }
+
+    const exUser3 = await User.findOne({
+      where: { userId: parseInt(userId) },
+    });
+
+    if (!exUser3) {
+      return res.status(401).send("이미 존재하는 이메일입니다.");
+    }
+
     if (exUser.level !== 1) {
       return res.status(401).send("해당 사용자는 학생이 아닙니다.");
     }
@@ -1267,6 +1285,8 @@ router.patch("/admin/user/update", isAdminCheck, async (req, res, next) => {
 
     const updateResult = await User.update(
       {
+        userId: userId ? userId : exUser.userId,
+        email: email ? email : exUser.email,
         birth,
         stuCountry,
         stuLiveCon,

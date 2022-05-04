@@ -400,7 +400,30 @@ router.get("/teacher/list/:TeacherId", async (req, res, next) => {
 
     const list = await models.sequelize.query(selectQuery);
 
-    return res.status(200).json({ list: list[0] });
+    let lectureIds = [];
+
+    for (let i = 0; i < list[0].length; i++) {
+      lectureIds.push(list[0][i].id);
+    }
+
+    const selectQuery2 = `
+    SELECT  A.id,
+            A.LectureId,
+            A.UserId,
+            B.username
+      FROM  participants    A
+     INNER
+      JOIN  users           B
+        ON  A.UserId = B.id
+     WHERE  1 = 1
+       AND  A.isDelete = FALSE
+       AND  A.isChange = FALSE
+       AND  A.LectureId IN (${lectureIds})
+   `;
+
+    const students = await models.sequelize.query(selectQuery2);
+
+    return res.status(200).json({ list: list[0], students: students[0] });
   } catch (error) {
     console.error(error);
     return res.status(401).send("강사별 강의를 불러올 수 없습니다.");
