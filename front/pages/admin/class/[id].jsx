@@ -788,12 +788,7 @@ const DetailClass = () => {
 
     {
       title: "수업 참여일",
-      render: (data) => (
-        <div>
-          {console.log(data)}
-          {data.createdAt}
-        </div>
-      ),
+      render: (data) => <div>{data.createdAt.slice(0, 10)}</div>,
     },
   ];
 
@@ -1646,7 +1641,7 @@ const DetailClass = () => {
       <Modal
         visible={stuDetailModal}
         width={`1000px`}
-        title={`학생 관리`}
+        title={`학생 정보`}
         onCancel={() => setStuDetailModal(false)}
         footer={null}
       >
@@ -1667,13 +1662,14 @@ const DetailClass = () => {
                   >
                     프로필 이미지
                   </ColWrapper>
-                  <ColWrapper>
+                  <ColWrapper radius={`50%`}>
                     <Image
+                      radius={`50%`}
                       width={`184px`}
                       height={`190px`}
                       src={
-                        stuDetail
-                          ? `${stuDetail && stuDetail.profileImage}`
+                        stuDetail && stuDetail.profileImage
+                          ? `${stuDetail.profileImage}`
                           : `https://via.placeholder.com/184x190`
                       }
                     />
