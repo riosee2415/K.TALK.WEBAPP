@@ -2140,7 +2140,11 @@ const List = () => {
             )}
           </Select>
 
-          <Button onClick={() => onClickCommuteHandler()}>검색</Button>
+          <Button
+            style={{ marginLeft: 10 }}
+            onClick={() => onClickCommuteHandler()}>
+            검색
+          </Button>
         </Wrapper>
 
         <Table
