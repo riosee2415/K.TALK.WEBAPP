@@ -522,6 +522,9 @@ const List = () => {
   const onStuFill = useCallback((data) => {
     if (data) {
       updateStuForm.setFieldsValue({
+        username: data.username,
+        email: data.email,
+        userId: data.userId,
         sns: data.sns,
         snsId: data.snsId,
         birth: data.birth.slice(0, 10),
@@ -704,6 +707,9 @@ const List = () => {
         type: USER_ADMIN_UPDATE_REQUEST,
         data: {
           id: stuDetail.id,
+          username: data.username,
+          userId: data.userId,
+          email: data.email,
           birth: data.birth,
           mobile: data.mobile,
           password: data.password,
@@ -1292,23 +1298,38 @@ const List = () => {
       {/* <AdminTop createButton={true} createButtonAction={() => {})} /> */}
 
       <AdminContent>
-        <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
-          <Input
-            size="small"
-            style={{ width: "20%" }}
-            placeholder="사용자명"
-            {...inputName}
-          />
-          <Input
-            size="small"
-            style={{ width: "20%" }}
-            placeholder="이메일"
-            {...inputEmail}
-          />
-          <Button size="small" onClick={() => onSeachStuHandler()}>
-            <SearchOutlined />
-            검색
-          </Button>
+        <Wrapper
+          width={`auto`}
+          dr={`row`}
+          margin={`0 0 10px`}
+          ju={`space-between`}>
+          <Wrapper dr={`row`} ju={`flex-start`} width={`80%`}>
+            <Input
+              size="small"
+              style={{ width: "30%" }}
+              placeholder="사용자명"
+              {...inputName}
+            />
+            <Input
+              size="small"
+              style={{ width: "30%" }}
+              placeholder="이메일"
+              {...inputEmail}
+            />
+            <Button size="small" onClick={() => onSeachStuHandler()}>
+              <SearchOutlined />
+              검색
+            </Button>
+          </Wrapper>
+
+          <Wrapper width={`auto`} al={`flex-end`}>
+            <Button
+              size="small"
+              type="primary"
+              onClick={() => moveLinkHandler("/application")}>
+              회원생성
+            </Button>
+          </Wrapper>
         </Wrapper>
 
         <Table
@@ -1653,22 +1674,10 @@ const List = () => {
                     margin={`0 5px 0 0`}>
                     이름
                   </ColWrapper>
-                  <ColWrapper>
-                    {stuDetail && stuDetail.username}&nbsp;
-                    {stuDetail && stuDetail.lastName}
-                  </ColWrapper>
-                </RowWrapper>
 
-                <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                  <ColWrapper
-                    width={`120px`}
-                    height={`30px`}
-                    bgColor={Theme.basicTheme_C}
-                    color={Theme.white_C}
-                    margin={`0 5px 0 0`}>
-                    아이디
-                  </ColWrapper>
-                  <ColWrapper>{stuDetail && stuDetail.userId}</ColWrapper>
+                  <FormItem name="username">
+                    <CustomInput />
+                  </FormItem>
                 </RowWrapper>
 
                 <RowWrapper width={`100%`} margin={`0 0 10px`}>
@@ -1680,7 +1689,31 @@ const List = () => {
                     margin={`0 5px 0 0`}>
                     이메일
                   </ColWrapper>
-                  <ColWrapper>{stuDetail && stuDetail.email}</ColWrapper>
+
+                  <FormItem name="email">
+                    <CustomInput
+                      onChange={(e) =>
+                        updateStuForm.setFieldsValue({
+                          userId: e.target.value,
+                        })
+                      }
+                    />
+                  </FormItem>
+                </RowWrapper>
+
+                <RowWrapper width={`100%`} margin={`0 0 10px`}>
+                  <ColWrapper
+                    width={`120px`}
+                    height={`30px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    margin={`0 5px 0 0`}>
+                    아이디
+                  </ColWrapper>
+
+                  <FormItem name="userId">
+                    <CustomInput disabled />
+                  </FormItem>
                 </RowWrapper>
 
                 <RowWrapper width={`100%`} margin={`0 0 10px`}>
@@ -1894,7 +1927,7 @@ const List = () => {
                     </ColWrapper>
 
                     <FormItem name="timeDiff">
-                      <CustomInput min={1} type={`number`} width={`250px`} />
+                      <CustomInput />
                     </FormItem>
                   </RowWrapper>
 
@@ -2097,7 +2130,7 @@ const List = () => {
             </Text>
           </Wrapper>
 
-          <ColWrapper width={`100%`}>
+          <ColWrapper width={`100%`} ju={`space-between`}>
             <Wrapper dr={`row`} ju={`flex-end`}>
               <Button
                 size={`small`}

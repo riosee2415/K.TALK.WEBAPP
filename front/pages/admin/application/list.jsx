@@ -56,19 +56,50 @@ import { useRouter } from "next/router";
 import moment from "moment";
 
 const FormItem = styled(Form.Item)`
-  width: 80%;
+  width: ${(props) => props.width};
+  margin: 0px;
 
   @media (max-width: 700px) {
     width: 100%;
   }
 `;
 
+const CustomSelect = styled(Select)`
+  margin: ${(props) => props.margin};
+
+  &:not(.ant-select-customize-input) .ant-select-selector {
+    border-radius: 5px;
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.16);
+  }
+
+  & .ant-select-selector {
+    width: 350px !important;
+    padding: 0 5px !important;
+  }
+
+  & .ant-select-arrow span svg {
+    color: ${Theme.black_C};
+  }
+
+  & .ant-select-selection-placeholder {
+    color: ${Theme.grey2_C};
+  }
+`;
+
+const CustomTextArea = styled(Input.TextArea)`
+  width: ${(props) => props.width || `100%`};
+`;
+
+const CustomDatePicker = styled(DatePicker)`
+  width: ${(props) => props.width || `350px`};
+`;
+
 const CustomInput = styled(Input)`
-  width: ${(props) => props.width};
+  width: ${(props) => props.width || `350px`};
 `;
 
 const CustomForm = styled(Form)`
-  width: 718px;
+  width: 100%;
 
   & .ant-form-item {
     width: 100%;
@@ -87,7 +118,8 @@ const CustomForm = styled(Form)`
 const CustomForm2 = styled(Form)`
   width: 100%;
 
-  @media (max-width: 700px) {
+  & .ant-form-item {
+    margin: 0;
   }
 `;
 
@@ -95,15 +127,7 @@ const AdminContent = styled.div`
   padding: 20px;
 `;
 
-const LoadNotification = (msg, content) => {
-  notification.open({
-    message: msg,
-    description: content,
-    onClick: () => {},
-  });
-};
-
-const List = ({ location }) => {
+const List = () => {
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
   const {
     me,
@@ -304,6 +328,16 @@ const List = ({ location }) => {
     setUpdateData(data);
 
     dispatch({
+      type: LECTURE_ALL_LIST_REQUEST,
+      data: {
+        TeacherId: "",
+        studentName: "",
+        time: "",
+        startLv: "",
+      },
+    });
+
+    dispatch({
       type: UPDATE_MODAL_OPEN_REQUEST,
     });
   }, []);
@@ -402,12 +436,12 @@ const List = ({ location }) => {
             ? data.wantStartDate.format("YYYY-MM-DD")
             : "",
           teacher: data.teacher ? data.teacher : "",
+          freeTeacher: data.freeTeacher,
           isDiscount: data.isDiscount,
           meetDate: data.meetDate.format("YYYY-MM-DD HH:mm"),
           level: data.level ? data.level : "",
           job: data.job ? data.job : "",
           purpose: data.purpose ? data.purpose : "",
-          freeTeacher: data.freeTeacher,
         },
       });
     },
@@ -491,7 +525,12 @@ const List = ({ location }) => {
       ),
     },
     {
-      title: "처리 여부",
+      title: "이메일",
+      render: (data) => <div>{data.gmailAddress}</div>,
+    },
+
+    {
+      title: "회원가입여부",
       render: (data) => <div>{data.completedAt ? `완료` : `미완료`}</div>,
     },
     ,
@@ -514,7 +553,7 @@ const List = ({ location }) => {
     },
 
     {
-      title: "학생 등록",
+      title: "학생등록 및 상세정보",
       width: "100px",
       render: (data) => (
         <ColWrapper al={`flex-start`} width={`auto`}>
@@ -589,7 +628,7 @@ const List = ({ location }) => {
               미처리
             </Button>
           </Col>
-          <Col>
+          {/* <Col>
             <Select
               defaultValue={false}
               style={{ width: `200px` }}
@@ -597,9 +636,9 @@ const List = ({ location }) => {
               <Select.Option value={false}>신청일로 정렬</Select.Option>
               <Select.Option value={true}>줌미팅 일자로 정렬</Select.Option>
             </Select>
-          </Col>
+          </Col> */}
           <Col>
-            <DatePicker
+            <CustomDatePicker
               style={{ width: `200px` }}
               onChange={(e) => setTime(e?.format(`YYYY-MM-DD`))}
               format={`YYYY-MM-DD`}
@@ -801,38 +840,51 @@ const List = ({ location }) => {
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 24 }}>
             <Wrapper>
-              <Wrapper dr={`row`} ju={`flex-start`} al={`flex-start`}>
-                <Wrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  시차
-                </Wrapper>
-
-                <FormItem name="timeDiff">
-                  <CustomInput min={1} type={`number`} width={`100%`} />
-                </FormItem>
-              </Wrapper>
-
-              <RowWrapper width={`100%`} al={`flex-start`}>
+              <RowWrapper
+                width={`100%`}
+                al={`flex-start`}
+                margin={`0 0 10px 0`}>
                 <ColWrapper
                   width={`140px`}
                   height={`30px`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
                   margin={`0 5px 0 0`}>
-                  원하는 시작날짜
+                  줌 미팅 시간
                 </ColWrapper>
                 <ColWrapper>
-                  <Form.Item name="wantStartDate">
-                    <DatePicker />
+                  <Form.Item name="meetDate">
+                    <CustomDatePicker
+                      showTime={{ format: "HH:mm", minuteStep: 10 }}
+                      format="YYYY-MM-DD HH:mm"
+                    />
                   </Form.Item>
                 </ColWrapper>
               </RowWrapper>
 
-              <RowWrapper width={`100%`} al={`flex-start`}>
+              <RowWrapper
+                dr={`row`}
+                ju={`flex-start`}
+                al={`flex-start`}
+                margin={`0 0 10px 0`}>
+                <ColWrapper
+                  width={`140px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
+                  시차
+                </ColWrapper>
+
+                <FormItem name="timeDiff">
+                  <CustomInput />
+                </FormItem>
+              </RowWrapper>
+
+              <RowWrapper
+                width={`100%`}
+                al={`flex-start`}
+                margin={`0 0 10px 0`}>
                 <ColWrapper
                   width={`140px`}
                   height={`30px`}
@@ -843,9 +895,8 @@ const List = ({ location }) => {
                 </ColWrapper>
                 <ColWrapper>
                   <Form.Item name="freeTeacher">
-                    <Select
-                      style={{ width: `200px` }}
-                      placeholder={`강사를 선택해주세요.`}>
+                    <CustomSelect
+                      placeholder={`무료수업 담당강사를 선택해주세요.`}>
                       {teachers &&
                         teachers.map((data, idx) => {
                           return (
@@ -854,12 +905,15 @@ const List = ({ location }) => {
                             </Select.Option>
                           );
                         })}
-                    </Select>
+                    </CustomSelect>
                   </Form.Item>
                 </ColWrapper>
               </RowWrapper>
 
-              <RowWrapper width={`100%`} al={`flex-start`}>
+              <RowWrapper
+                width={`100%`}
+                al={`flex-start`}
+                margin={`0 0 10px 0`}>
                 <ColWrapper
                   width={`140px`}
                   height={`30px`}
@@ -868,20 +922,46 @@ const List = ({ location }) => {
                   margin={`0 5px 0 0`}>
                   담당 강사
                 </ColWrapper>
-                <ColWrapper>
+                <ColWrapper dr={`row`}>
                   <Form.Item name="teacher">
-                    <Select
-                      style={{ width: `200px` }}
-                      placeholder={`강사를 선택해주세요.`}>
-                      {teachers &&
-                        teachers.map((data, idx) => {
+                    <CustomSelect
+                      placeholder={`수업을 선택해주세요.`}
+                      filterOption={(input, option) =>
+                        option.children
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                      showSearch>
+                      {allLectures &&
+                        allLectures.map((data, idx) => {
                           return (
-                            <Select.Option key={data.id} value={data.username}>
-                              {data.username}
+                            <Select.Option
+                              key={`${data.User.username} ${data.course}`}
+                              value={data.username}>
+                              {`${data.User.username} ${data.course}`}
                             </Select.Option>
                           );
                         })}
-                    </Select>
+                    </CustomSelect>
+                  </Form.Item>
+                </ColWrapper>
+              </RowWrapper>
+
+              <RowWrapper
+                width={`100%`}
+                al={`flex-start`}
+                margin={`0 0 10px 0`}>
+                <ColWrapper
+                  width={`140px`}
+                  height={`30px`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  margin={`0 5px 0 0`}>
+                  희망 시작일
+                </ColWrapper>
+                <ColWrapper>
+                  <Form.Item name="wantStartDate">
+                    <CustomDatePicker />
                   </Form.Item>
                 </ColWrapper>
               </RowWrapper>
@@ -906,26 +986,10 @@ const List = ({ location }) => {
                 </ColWrapper>
               </RowWrapper> */}
 
-              <RowWrapper width={`100%`} al={`flex-start`}>
-                <ColWrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  줌 미팅 시간
-                </ColWrapper>
-                <ColWrapper>
-                  <Form.Item name="meetDate">
-                    <DatePicker
-                      showTime={{ format: "HH:mm", minuteStep: 10 }}
-                      format="YYYY-MM-DD HH:mm"
-                    />
-                  </Form.Item>
-                </ColWrapper>
-              </RowWrapper>
-
-              <RowWrapper width={`100%`} al={`flex-start`}>
+              <RowWrapper
+                width={`100%`}
+                al={`flex-start`}
+                margin={`0 0 10px 0`}>
                 <ColWrapper
                   width={`140px`}
                   height={`30px`}
@@ -936,11 +1000,14 @@ const List = ({ location }) => {
                 </ColWrapper>
 
                 <FormItem name="level">
-                  <CustomInput width={`100%`} />
+                  <CustomInput />
                 </FormItem>
               </RowWrapper>
 
-              <RowWrapper width={`100%`} al={`flex-start`}>
+              <RowWrapper
+                width={`100%`}
+                al={`flex-start`}
+                margin={`0 0 10px 0`}>
                 <ColWrapper
                   width={`140px`}
                   height={`30px`}
@@ -951,7 +1018,7 @@ const List = ({ location }) => {
                 </ColWrapper>
                 <ColWrapper>
                   <Form.Item name="job">
-                    <CustomInput width={`100%`} />
+                    <CustomInput />
                   </Form.Item>
                 </ColWrapper>
               </RowWrapper>
@@ -966,10 +1033,9 @@ const List = ({ location }) => {
                   메모
                 </ColWrapper>
                 <ColWrapper width={`80%`} al={`flex-start`}>
-                  <FormItem name="purpose">
-                    <TextArea
-                      height={`200px`}
-                      width={`100%`}
+                  <FormItem width={`100%`} name="purpose">
+                    <CustomTextArea
+                      rows={6}
                       border={`1px solid ${Theme.grey_C} !important`}
                     />
                   </FormItem>
@@ -1131,17 +1197,6 @@ const List = ({ location }) => {
           <Form.Item label="sns아이디" name="snsId">
             <Input />
           </Form.Item>
-          {/* <Wrapper dr={`row`} ju={`flex-end`}>
-            <Button
-              size="small"
-              style={{ margin: `0 10px 0 0` }}
-              onClick={createModalToggle}>
-              취소
-            </Button>
-            <Button size="small" type="primary" htmlType="submit">
-              생성
-            </Button>
-          </Wrapper> */}
         </CustomForm>
       </Modal>
     </AdminLayout>

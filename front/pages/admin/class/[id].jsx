@@ -1976,7 +1976,7 @@ const DetailClass = () => {
                     </ColWrapper>
 
                     <FormItem name="timeDiff">
-                      <CustomInput min={1} type={`number`} width={`250px`} />
+                      <CustomInput />
                     </FormItem>
                   </RowWrapper>
 
