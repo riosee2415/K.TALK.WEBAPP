@@ -1262,20 +1262,24 @@ router.patch("/admin/user/update", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 사용자입니다.");
     }
 
-    const exUser2 = await User.findOne({
-      where: { email: parseInt(email) },
-    });
+    if (email) {
+      const exUser2 = await User.findOne({
+        where: { email: email },
+      });
 
-    if (!exUser2) {
-      return res.status(401).send("이미 존재하는 이메일입니다.");
+      if (!exUser2) {
+        return res.status(401).send("이미 존재하는 이메일입니다.");
+      }
     }
 
-    const exUser3 = await User.findOne({
-      where: { userId: parseInt(userId) },
-    });
+    if (userId) {
+      const exUser3 = await User.findOne({
+        where: { userId: userId },
+      });
 
-    if (!exUser3) {
-      return res.status(401).send("이미 존재하는 이메일입니다.");
+      if (!exUser3) {
+        return res.status(401).send("이미 존재하는 이메일입니다.");
+      }
     }
 
     if (exUser.level !== 1) {
