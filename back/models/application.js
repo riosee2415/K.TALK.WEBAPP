@@ -99,6 +99,11 @@ module.exports = class Application extends Model {
           type: DataTypes.TEXT,
           allowNull: true,
         },
+        status: {
+          type: DataTypes.STRING(50),
+          allowNull: true,
+          defaultValue: "대기중",
+        },
         isComplete: {
           type: DataTypes.BOOLEAN,
           allowNull: false,

@@ -7,9 +7,12 @@ const models = require("../models");
 const router = express.Router();
 
 router.post("/list", isAdminCheck, async (req, res, next) => {
-  const { isComplete, isTime, time } = req.body;
+  const { isComplete, isTime, time, status } = req.body;
 
   const _isComplete = isComplete || null;
+
+  const _status = status || ``;
+
   const _isTime = isTime || ``;
 
   const _time = time ? time : ``;
@@ -50,11 +53,13 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
                 meetDate,
                 level,
                 job,
+                status,
                 purpose
         FROM	  applications
        WHERE    1 = 1
                 ${_isComplete ? `AND   isComplete = ${_isComplete}` : ``}
                 ${_time !== `` ? `AND meetDate LIKE '%${_time}%' ` : ``}
+                ${_status !== `` ? `AND status LIKE '%${_status}%' ` : ``}
        ORDER    BY  ${orderName} ${orderSC}
       `;
 
@@ -106,6 +111,7 @@ router.post("/detail", isAdminCheck, async (req, res, next) => {
                 meetDate,
                 level,
                 job,
+                status,
                 purpose
       FROM	    applications
      WHERE      1 = 1
@@ -175,6 +181,7 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
     level,
     job,
     purpose,
+    status,
   } = req.body;
   try {
     const exApp = await Application.findOne({
@@ -196,6 +203,7 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
         level,
         job,
         purpose,
+        status,
       },
       {
         where: { id: parseInt(id) },
