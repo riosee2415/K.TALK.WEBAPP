@@ -233,9 +233,13 @@ const UserDeliAddress = ({}) => {
   ////// HANDLER //////
 
   const onFillBookData = useCallback((data) => {
+    console.log(data);
     form.setFieldsValue({
       title: data.title,
       folder: data.LectureId,
+      level: data.level,
+      stage: data.stage,
+      kinds: data.kinds,
     });
 
     setImagePathTh(data.thumbnail);
@@ -322,6 +326,9 @@ const UserDeliAddress = ({}) => {
           title: data.title,
           file: uploadPath,
           LectureId: data.folder,
+          level: data.level,
+          stage: data.stage,
+          kinds: data.kinds,
         },
       });
     },
@@ -338,6 +345,9 @@ const UserDeliAddress = ({}) => {
           title: data.title,
           file: uploadPath ? uploadPath : updateData.file,
           LectureId: data.folder,
+          level: data.level,
+          stage: data.stage,
+          kinds: data.kinds,
         },
       });
     },
@@ -604,6 +614,53 @@ const UserDeliAddress = ({}) => {
                       </Select.Option>
                     );
                   })}
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              rules={[{ required: true, message: "권을 선택해주세요." }]}
+              label={`권`}
+              name={`level`}
+            >
+              <Select>
+                {[1, 2, 3, 4, 5, 6].map((data, idx) => {
+                  return (
+                    <Select.Option value={data} key={idx}>
+                      {data}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+            </Form.Item>
+            <Form.Item
+              rules={[{ required: true, message: "단원을 선택해주세요." }]}
+              label={`단원`}
+              name={`stage`}
+            >
+              <Select>
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((data, idx) => {
+                  return (
+                    <Select.Option value={data} key={idx}>
+                      {data}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              rules={[{ required: true, message: "유형을 선택해주세요." }]}
+              label={`유형`}
+              name={`kinds`}
+            >
+              <Select>
+                {[`교과서`, `워크북`, `듣기파일`, `토픽`].map((data, idx) => {
+                  return (
+                    <Select.Option value={data} key={idx}>
+                      {data}
+                    </Select.Option>
+                  );
+                })}
               </Select>
             </Form.Item>
           </Form>
