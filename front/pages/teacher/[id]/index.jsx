@@ -33,7 +33,6 @@ import {
   RollbackOutlined,
 } from "@ant-design/icons";
 import {
-  Progress,
   Checkbox,
   Pagination,
   Input,
@@ -43,6 +42,7 @@ import {
   Calendar,
   message,
   Empty,
+  Select,
 } from "antd";
 import {
   MESSAGE_CREATE_REQUEST,
@@ -3363,7 +3363,14 @@ const Index = () => {
                 }}
                 name="process1"
                 rules={[{ required: true, message: "진도를 입력해주세요." }]}>
-                <CustomInput type={`number`} width={`100%`} />
+                <Select>
+                  <Select.Option value={`1`}>1</Select.Option>
+                  <Select.Option value={`2`}>2</Select.Option>
+                  <Select.Option value={`3`}>3</Select.Option>
+                  <Select.Option value={`4`}>4</Select.Option>
+                  <Select.Option value={`5`}>5</Select.Option>
+                  <Select.Option value={`6`}>6</Select.Option>
+                </Select>
               </Form.Item>
               <Text margin={`0 15px 0 0`} width={`50px`}>
                 &nbsp; 권
@@ -3375,7 +3382,20 @@ const Index = () => {
                 }}
                 name="process2"
                 rules={[{ required: true, message: "진도를 입력해주세요." }]}>
-                <CustomInput type={`number`} width={`100%`} />
+                <Select>
+                  <Select.Option value={`1`}>1</Select.Option>
+                  <Select.Option value={`2`}>2</Select.Option>
+                  <Select.Option value={`3`}>3</Select.Option>
+                  <Select.Option value={`4`}>4</Select.Option>
+                  <Select.Option value={`5`}>5</Select.Option>
+                  <Select.Option value={`6`}>6</Select.Option>
+                  <Select.Option value={`7`}>7</Select.Option>
+                  <Select.Option value={`8`}>8</Select.Option>
+                  <Select.Option value={`9`}>9</Select.Option>
+                  <Select.Option value={`10`}>10</Select.Option>
+                  <Select.Option value={`11`}>11</Select.Option>
+                  <Select.Option value={`12`}>12</Select.Option>
+                </Select>
               </Form.Item>
               <Text margin={`0 15px 0 0`} width={`50px`}>
                 &nbsp; 단원

@@ -1106,7 +1106,26 @@ const AdminHome = () => {
                       dr={`row`}
                       ju={`flex-start`}>
                       <FormItem name={`lv1`} width={`calc(100% - 50px)`}>
+                       
+
                         <Select>
+                          <Select.Option value={`1`}>1</Select.Option>
+                          <Select.Option value={`2`}>2</Select.Option>
+                          <Select.Option value={`3`}>3</Select.Option>
+                          <Select.Option value={`4`}>4</Select.Option>
+                          <Select.Option value={`5`}>5</Select.Option>
+                          <Select.Option value={`6`}>6</Select.Option>
+                        </Select>
+                      </FormItem>
+                      <Text>&nbsp;권</Text>
+                    </Wrapper>
+
+                    <Wrapper
+                      width={`calc(100% / 3)`}
+                      dr={`row`}
+                      ju={`flex-start`}>
+                      <FormItem name={`lv2`} width={`calc(100% - 50px)`}>
+                      <Select>
                           <Select.Option value={`1`}>1</Select.Option>
                           <Select.Option value={`2`}>2</Select.Option>
                           <Select.Option value={`3`}>3</Select.Option>
@@ -1119,23 +1138,6 @@ const AdminHome = () => {
                           <Select.Option value={`10`}>10</Select.Option>
                           <Select.Option value={`11`}>11</Select.Option>
                           <Select.Option value={`12`}>12</Select.Option>
-                        </Select>
-                      </FormItem>
-                      <Text>&nbsp;권</Text>
-                    </Wrapper>
-
-                    <Wrapper
-                      width={`calc(100% / 3)`}
-                      dr={`row`}
-                      ju={`flex-start`}>
-                      <FormItem name={`lv2`} width={`calc(100% - 50px)`}>
-                        <Select>
-                          <Select.Option value={`1`}>1</Select.Option>
-                          <Select.Option value={`2`}>2</Select.Option>
-                          <Select.Option value={`3`}>3</Select.Option>
-                          <Select.Option value={`4`}>4</Select.Option>
-                          <Select.Option value={`5`}>5</Select.Option>
-                          <Select.Option value={`6`}>6</Select.Option>
                         </Select>
                       </FormItem>
                       <Text>&nbsp;단원</Text>

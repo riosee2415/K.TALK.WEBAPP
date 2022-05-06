@@ -511,8 +511,8 @@ const DetailClass = () => {
       type: PARTICIPANT_USER_DELETE_LIST_REQUEST,
       data: {
         UserId: data.UserId,
-        isDelete: true,
-        isChange: false,
+        isDelete: "1",
+        isChange: "0",
       },
     });
 
@@ -520,16 +520,16 @@ const DetailClass = () => {
       type: PARTICIPANT_USER_MOVE_LIST_REQUEST,
       data: {
         UserId: data.UserId,
-        isDelete: false,
-        isChange: true,
+        isDelete: "0",
+        isChange: "1",
       },
     });
     dispatch({
       type: PARTICIPANT_USER_CURRENT_LIST_REQUEST,
       data: {
         UserId: data.UserId,
-        isDelete: false,
-        isChange: false,
+        isDelete: "0",
+        isChange: "0",
       },
     });
 

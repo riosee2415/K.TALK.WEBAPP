@@ -158,7 +158,8 @@ const List = () => {
   const [paymentOpt, setPaymentOpt] = useState(null);
 
   const [isPayment, setIsPayment] = useState();
-  const [isTime, setIsTime] = useState(false);
+  const [isTime, setIsTime] = useState("");
+
   const [time, setTime] = useState(false);
 
   const [statusType, setStatusType] = useState("");
@@ -521,10 +522,17 @@ const List = () => {
         status: "",
       },
     });
-
+    setIsTime(false);
     setStatusType("");
   }, []);
 
+  const onChangeDate = useCallback((date) => {
+    if (date) {
+      setTime(date.format("YYYY-MM-DD hh:mm"));
+    } else {
+      setTime(null);
+    }
+  }, []);
   ////// DATAVIEW //////
 
   const stateList = ["등록", "잠정등록", "NoShow", "연기"];
@@ -574,13 +582,15 @@ const List = () => {
     {
       title: "등록일",
       render: (data) => {
-        return <div>{data.createdAt.substring(0, 10)}</div>;
+        return <div>{moment(data.createdAt).format("YYYY-MM-DD")}</div>;
       },
     },
 
     {
       title: "처리일",
-      render: (data) => <div>{data.updatedAt.substring(0, 10)}</div>,
+      render: (data) => (
+        <div>{moment(data.updatedAt).format("YYYY-MM-DD")}</div>
+      ),
     },
 
     {
@@ -699,7 +709,7 @@ const List = () => {
               onChange={(e) => setStatusType(e)}
               style={{ width: `250px` }}
               size={`small`}
-              defaultValue={statusType ? statusType : ""}
+              value={statusType ? statusType : null}
               placeholder={"등록상태를 선택해주세요. Ex) NoShow"}>
               {stateList &&
                 stateList.map((data, idx) => {
@@ -716,16 +726,24 @@ const List = () => {
             {/* <Text fontSize={`14px`} color={Theme.basicTheme_C}>
               신청서 등록일 또는 미팅 일자로 검색하기
             </Text> */}
-            <Select
+            <DatePicker
+              size="small"
+              showTime
+              minuteStep={10}
+              format="YYYY-MM-DD hh:mm"
+              onChange={(e) => onChangeDate(e)}></DatePicker>
+
+            {/* <Select
               placeholder={
                 "신청서 등록일 또는 미팅 일자로 검색하기. Ex) NoShow"
               }
               style={{ width: `250px` }}
               size={`small`}
-              onChange={(e) => setIsTime(e)}>
+              value={isTime}
+              onChange={(e) => onChangeApp(e)}>
               <Select.Option value={false}>신청서 등록일</Select.Option>
               <Select.Option value={true}>줌 미팅 시간</Select.Option>
-            </Select>
+            </Select> */}
           </Col>
 
           {/* <Col>
