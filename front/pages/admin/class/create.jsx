@@ -286,8 +286,7 @@ const List = () => {
           padding={`20px 20px 0 30px`}
           margin={`0 0 30px`}
           radius={`10px`}
-          shadow={`0 0 6px rgba(0,0,0,0.16)`}
-        >
+          shadow={`0 0 6px rgba(0,0,0,0.16)`}>
           <GuideUl>
             <GuideLi color={Theme.red_C} margin={`0 0 5px`} isImpo>
               강의시간을 선택하려면 강의를 진행하는 요일부터 선택해야 합니다.
@@ -299,8 +298,7 @@ const List = () => {
             <Text width={`90px`}>강의명</Text>
             <FormItem
               rules={[{ required: true, message: "강의명을 입력해주세요." }]}
-              name={`course`}
-            >
+              name={`course`}>
               <CusotmInput />
             </FormItem>
           </Wrapper>
@@ -309,8 +307,7 @@ const List = () => {
             <Text width={`90px`}>강의 번호</Text>
             <FormItem
               rules={[{ required: true, message: "강의번호를 입력해주세요." }]}
-              name={`number`}
-            >
+              name={`number`}>
               <CusotmInput />
             </FormItem>
           </Wrapper>
@@ -319,8 +316,7 @@ const List = () => {
             <Text width={`90px`}>강사</Text>
             <FormItem
               rules={[{ required: true, message: "강사를 선택해주세요." }]}
-              name={`UserId`}
-            >
+              name={`UserId`}>
               <Select size={`large`}>
                 {allUsers &&
                   allUsers.map((data) => {
@@ -344,8 +340,7 @@ const List = () => {
                   width={`calc(100% - 50px)`}
                   rules={[
                     { required: true, message: "강의 레벨을 입력해주세요." },
-                  ]}
-                >
+                  ]}>
                   <Select>
                     <Select.Option value={`1`}>1</Select.Option>
                     <Select.Option value={`2`}>2</Select.Option>
@@ -353,12 +348,6 @@ const List = () => {
                     <Select.Option value={`4`}>4</Select.Option>
                     <Select.Option value={`5`}>5</Select.Option>
                     <Select.Option value={`6`}>6</Select.Option>
-                    <Select.Option value={`7`}>7</Select.Option>
-                    <Select.Option value={`8`}>8</Select.Option>
-                    <Select.Option value={`9`}>9</Select.Option>
-                    <Select.Option value={`10`}>10</Select.Option>
-                    <Select.Option value={`11`}>11</Select.Option>
-                    <Select.Option value={`12`}>12</Select.Option>
                   </Select>
                 </FormItem>
                 <Text>&nbsp;권</Text>
@@ -370,8 +359,7 @@ const List = () => {
                   width={`calc(100% - 50px)`}
                   rules={[
                     { required: true, message: "강의 레벨을 입력해주세요." },
-                  ]}
-                >
+                  ]}>
                   <Select>
                     <Select.Option value={`1`}>1</Select.Option>
                     <Select.Option value={`2`}>2</Select.Option>
@@ -379,6 +367,9 @@ const List = () => {
                     <Select.Option value={`4`}>4</Select.Option>
                     <Select.Option value={`5`}>5</Select.Option>
                     <Select.Option value={`6`}>6</Select.Option>
+                    <Select.Option value={`7`}>7</Select.Option>
+                    <Select.Option value={`8`}>8</Select.Option>
+                    <Select.Option value={`9`}>9</Select.Option>
                   </Select>
                 </FormItem>
                 <Text>&nbsp;단원</Text>
@@ -390,8 +381,7 @@ const List = () => {
                   width={`calc(100% - 50px)`}
                   rules={[
                     { required: true, message: "강의 레벨을 입력해주세요." },
-                  ]}
-                >
+                  ]}>
                   <Input type={`number`} min={`0`} />
                 </FormItem>
                 <Text>&nbsp;페이지</Text>
@@ -411,8 +401,7 @@ const List = () => {
               ]}
               name={`cnt`}
               {...inputCnt}
-              width={`calc(100% - 120px)`}
-            >
+              width={`calc(100% - 120px)`}>
               <CusotmInput type={`number`} />
             </FormItem>
             <Text width={`30px`} padding={`0 0 0 10px`}>
@@ -424,15 +413,13 @@ const List = () => {
             <Text width={`90px`}>진행 요일</Text>
             <FormItem
               rules={[{ required: true, message: "요일을 입력해주세요." }]}
-              name={`day`}
-            >
+              name={`day`}>
               <Select
                 mode="multiple"
                 size={`large`}
                 onChange={(e) => {
                   setDayArr(e);
-                }}
-              >
+                }}>
                 <Select.Option value={`월`}>월</Select.Option>
                 <Select.Option value={`화`}>화</Select.Option>
                 <Select.Option value={`수`}>수</Select.Option>
@@ -459,8 +446,7 @@ const List = () => {
                           required: true,
                           message: `${data}요일의 수업시간을 입력해주세요.`,
                         },
-                      ]}
-                    >
+                      ]}>
                       <TimeInput format={`HH:mm`} />
                     </FormItem>
                   );
@@ -473,8 +459,7 @@ const List = () => {
             <Text width={`90px`}>시작 날짜</Text>
             <FormItem
               rules={[{ required: true, message: "시작 날짜를 입력해주세요." }]}
-              name={`startDate`}
-            >
+              name={`startDate`}>
               <DateInput
                 format={`YYYY-MM-DD`}
                 size={`large`}
@@ -490,8 +475,7 @@ const List = () => {
                 { required: true, message: "줌링크를 입력해주세요." },
                 { type: `url`, message: "https://를 붙여주세요." },
               ]}
-              name={`zoomLink`}
-            >
+              name={`zoomLink`}>
               <CusotmInput format={`YYYY-MM-DD`} size={`large`} />
             </FormItem>
           </Wrapper>

@@ -430,6 +430,7 @@ const Index = () => {
     if (st_bookCreateDone) {
       onReset();
       textbookModalHandler(null);
+      setTextbookToggle(false);
       return message.success("교재 등록이 완료되었습니다.");
     }
   }, [st_bookCreateDone]);

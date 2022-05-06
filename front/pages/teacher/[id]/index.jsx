@@ -993,8 +993,6 @@ const Index = () => {
       let receiverId = await checkList.map((data) => data.UserId);
       let level = await checkList.map((data) => data.level);
 
-      console.log(checkList, "checkList");
-
       if (receiverId) {
         dispatch({
           type: MESSAGE_MANY_CREATE_REQUEST,
