@@ -47,6 +47,7 @@ import {
   PARTICIPANT_USER_DELETE_LIST_REQUEST,
   PARTICIPANT_USER_MOVE_LIST_REQUEST,
   PARTICIPANT_USER_LIMIT_LIST_REQUEST,
+  PARTICIPANT_USER_CURRENT_LIST_REQUEST,
 } from "../../../../reducers/participant";
 import { APP_DETAIL_REQUEST } from "../../../../reducers/application";
 import useInput from "../../../../hooks//useInput";
@@ -117,6 +118,10 @@ const List = () => {
   const { allLectures } = useSelector((state) => state.lecture);
 
   const {
+    partUserCurrentList,
+    st_participantUserCurrentListDone,
+    st_participantUserCurrentListError,
+
     st_participantCreateDone,
     st_participantCreateError,
     st_participantDeleteDone,
@@ -371,6 +376,17 @@ const List = () => {
     if (st_participantUserMoveListDone) {
     }
   }, [st_participantUserMoveListDone]);
+
+  useEffect(() => {
+    if (st_participantUserCurrentListDone) {
+    }
+  }, [st_participantUserCurrentListDone]);
+
+  useEffect(() => {
+    if (st_participantUserCurrentListError) {
+      return message.error(st_participantUserCurrentListError);
+    }
+  }, [st_participantUserCurrentListError]);
 
   useEffect(() => {
     if (st_userAdminUpdateDone) {
@@ -668,11 +684,20 @@ const List = () => {
 
   const detailModalOpen = useCallback((data) => {
     dispatch({
+      type: PARTICIPANT_USER_CURRENT_LIST_REQUEST,
+      data: {
+        UserId: data.id,
+        isDelete: "0",
+        isChange: "0",
+      },
+    });
+
+    dispatch({
       type: PARTICIPANT_USER_DELETE_LIST_REQUEST,
       data: {
         UserId: data.id,
-        isDelete: true,
-        isChange: false,
+        isDelete: "1",
+        isChange: "0",
       },
     });
 
@@ -680,8 +705,8 @@ const List = () => {
       type: PARTICIPANT_USER_MOVE_LIST_REQUEST,
       data: {
         UserId: data.id,
-        isDelete: false,
-        isChange: true,
+        isDelete: "0",
+        isChange: "1",
       },
     });
 
@@ -697,7 +722,6 @@ const List = () => {
     });
 
     setDetailDatum(save);
-
     setDetailToggle(true);
   }, []);
 
@@ -818,17 +842,15 @@ const List = () => {
       render: (data) => <div>{data.username}</div>,
     },
     {
-      title: "회원아이디",
-      render: (data) => <div>{data.userId}</div>,
-    },
-    {
       title: "이메일",
       render: (data) => <div>{data.email}</div>,
     },
+
     {
-      title: "전화번호",
-      render: (data) => <div>{data.mobile}</div>,
+      title: "국적",
+      render: (data) => <div>{data.stuCountry}</div>,
     },
+
     {
       title: "권한",
       render: (data) => (
@@ -856,8 +878,7 @@ const List = () => {
               data.level === 5
                 ? message.error("개발사는 권한을 수정할 수 없습니다.")
                 : classChangeModalOpen(data)
-            }
-          >
+            }>
             반 옮기기
           </Button>
 
@@ -867,8 +888,7 @@ const List = () => {
               data.level === 5
                 ? message.error("개발사는 권한을 수정할 수 없습니다.")
                 : classPartModalOpen(data)
-            }
-          >
+            }>
             수업참여
           </Button>
 
@@ -879,8 +899,7 @@ const List = () => {
               data.level === 5
                 ? message.error("개발사는 권한을 수정할 수 없습니다.")
                 : classPartEndModalOpen(data)
-            }
-          >
+            }>
             수업빼기
           </Button>
         </Wrapper>
@@ -894,8 +913,7 @@ const List = () => {
           <Button
             size="small"
             type="primary"
-            onClick={() => detailModalOpen(data)}
-          >
+            onClick={() => detailModalOpen(data)}>
             강의내역보기
           </Button>
 
@@ -905,8 +923,7 @@ const List = () => {
               data.level === 5
                 ? message.error("개발사는 권한을 수정할 수 없습니다.")
                 : classPartDetailModalOpen(data)
-            }
-          >
+            }>
             학생정보보기
           </Button>
 
@@ -917,8 +934,7 @@ const List = () => {
               data.level === 5
                 ? message.error("개발사는 권한을 수정할 수 없습니다.")
                 : classStuModalOpen(data)
-            }
-          >
+            }>
             학생출석보기
           </Button>
         </Wrapper>
@@ -941,24 +957,34 @@ const List = () => {
       dataIndex: "id",
     },
 
+    // {
+    //   title: "수업 번호",
+    //   render: (data) => <div>{data.Lecture.number}</div>,
+    // },
+
     {
       title: "수업 이름",
-      render: (data) => <div>{data.Lecture && data.Lecture.course}</div>,
+      render: (data) => <div>{data.course}</div>,
     },
 
     {
       title: "요일",
-      render: (data) => <div>{data.Lecture && data.Lecture.day}</div>,
+      render: (data) => <div>{data.day}</div>,
     },
 
     {
       title: "시간",
-      render: (data) => <div>{data.Lecture && data.Lecture.time}</div>,
+      render: (data) => <div>{data.time}</div>,
     },
 
     {
       title: "수업 참여일",
       render: (data) => <div>{data.createdAt.slice(0, 10)}</div>,
+    },
+
+    {
+      title: "수업 종료일",
+      render: (data) => <div>{data.endDate}</div>,
     },
   ];
 
@@ -967,6 +993,11 @@ const List = () => {
       title: "No",
       dataIndex: "id",
     },
+
+    // {
+    //   title: "수업 번호",
+    //   render: (data) => <div>{console.log(data, "data")}</div>,
+    // },
 
     {
       title: "수업 이름",
@@ -1006,6 +1037,11 @@ const List = () => {
       dataIndex: "id",
     },
 
+    // {
+    //   title: "수업 번호",
+    //   render: (data) => <div>{console.log(data, "data")}</div>,
+    // },
+
     {
       title: "수업 이름",
       render: (data) => <div>{data.course}</div>,
@@ -1032,6 +1068,11 @@ const List = () => {
       title: "No",
       dataIndex: "id",
     },
+
+    // {
+    //   title: "수업 번호",
+    //   render: (data) => <div>{console.log(data, "data")}</div>,
+    // },
 
     {
       title: "수업 이름",
@@ -1339,8 +1380,7 @@ const List = () => {
           width={`auto`}
           dr={`row`}
           margin={`0 0 10px`}
-          ju={`space-between`}
-        >
+          ju={`space-between`}>
           <Wrapper dr={`row`} ju={`flex-start`} width={`80%`}>
             <Input
               size="small"
@@ -1364,8 +1404,7 @@ const List = () => {
             <Button
               size="small"
               type="primary"
-              onClick={() => moveLinkHandler("/application")}
-            >
+              onClick={() => moveLinkHandler("/application")}>
               회원생성
             </Button>
           </Wrapper>
@@ -1384,14 +1423,12 @@ const List = () => {
         width={`400px`}
         title={`학생 수업 변경`}
         onCancel={classChangeModalClose}
-        onOk={onModalOk}
-      >
+        onOk={onModalOk}>
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
             form={form}
             style={{ width: `100%` }}
-            onFinish={(data) => onSubmit(data)}
-          >
+            onFinish={(data) => onSubmit(data)}>
             <Form.Item label={`학생`}>
               <Input disabled value={updateData && updateData.username} />
             </Form.Item>
@@ -1401,8 +1438,7 @@ const List = () => {
                 width={`100%`}
                 height={`32px`}
                 showSearch
-                placeholder="Select a Lecture"
-              >
+                placeholder="Select a Lecture">
                 {updateData &&
                   updateData.Participants.map((data, idx) => {
                     if (data.isDelete) {
@@ -1414,8 +1450,7 @@ const List = () => {
                     return (
                       <Option
                         key={data.id}
-                        value={`${data.LectureId},${data.date},${data.endDate}`}
-                      >
+                        value={`${data.LectureId},${data.date},${data.endDate}`}>
                         {data.Lecture?.number} | {data.Lecture?.course}
                       </Option>
                     );
@@ -1443,14 +1478,12 @@ const List = () => {
         width={`800px`}
         title={`학생 수업 참여`}
         onCancel={classPartModalClose}
-        onOk={onModalChangeOk}
-      >
+        onOk={onModalChangeOk}>
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
             form={updateClassform}
             style={{ width: `100%` }}
-            onFinish={onUpdateClassSubmit}
-          >
+            onFinish={onUpdateClassSubmit}>
             <Form.Item label={`학생`}>
               <Input disabled value={parData && parData.username} />
             </Form.Item>
@@ -1458,19 +1491,18 @@ const List = () => {
             <Form.Item
               label="결제 여부"
               name="isPayment"
-              rules={[{ required: true, message: "결제 여부를 선택해주세요." }]}
-            >
+              rules={[
+                { required: true, message: "결제 여부를 선택해주세요." },
+              ]}>
               <Button
                 style={{ marginRight: 10 }}
                 type={isPayment === 1 && `primary`}
-                onClick={() => buttonHandle(1)}
-              >
+                onClick={() => buttonHandle(1)}>
                 네
               </Button>
               <Button
                 type={isPayment === 2 && `primary`}
-                onClick={() => buttonHandle(2)}
-              >
+                onClick={() => buttonHandle(2)}>
                 아니요
               </Button>
             </Form.Item>
@@ -1481,8 +1513,7 @@ const List = () => {
                 name={`partLecture`}
                 rules={[
                   { required: true, message: "참가시킬 강의를 선택해주세요." },
-                ]}
-              >
+                ]}>
                 <Select
                   width={`100%`}
                   height={`32px`}
@@ -1495,8 +1526,7 @@ const List = () => {
                       .toLowerCase()
                       .indexOf(input.toLowerCase()) >= 0
                   }
-                  placeholder="Select a Lecture"
-                >
+                  placeholder="Select a Lecture">
                   {opt2}
                 </Select>
               </Form.Item>
@@ -1509,8 +1539,7 @@ const List = () => {
                   name="lectureList"
                   rules={[
                     { message: "강의목록을 선택해주세요.", required: true },
-                  ]}
-                >
+                  ]}>
                   <Select showSearch placeholder="Select a Lecture">
                     {allLectures && allLectures.length === 0
                       ? ""
@@ -1519,8 +1548,7 @@ const List = () => {
                           return (
                             <Select.Option
                               key={data.id}
-                              value={JSON.stringify(data)}
-                            >
+                              value={JSON.stringify(data)}>
                               {`${data.number} | ${data.course} | ${data.User.username}`}
                             </Select.Option>
                           );
@@ -1533,8 +1561,7 @@ const List = () => {
                   name="date"
                   rules={[
                     { message: "강의기간 입력해주세요.", required: true },
-                  ]}
-                >
+                  ]}>
                   <Wrapper dr={`row`}>
                     <TextInput
                       width={`calc(100% - 30px)`}
@@ -1558,14 +1585,12 @@ const List = () => {
         width={`400px`}
         title={`학생 수업 종료`}
         onCancel={classPartEndModalClose}
-        onOk={onSubmitEnd}
-      >
+        onOk={onSubmitEnd}>
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
             form={updateEndClassform}
             style={{ width: `100%` }}
-            onFinish={onEndClassSubmit}
-          >
+            onFinish={onEndClassSubmit}>
             <Form.Item label={`학생`} name={`userName`}>
               <Input disabled value={parEndData && parEndData.username} />
             </Form.Item>
@@ -1575,14 +1600,12 @@ const List = () => {
               name={`partLecture`}
               rules={[
                 { required: true, message: "종료할 강의를 선택해주세요." },
-              ]}
-            >
+              ]}>
               <Select
                 width={`100%`}
                 height={`32px`}
                 showSearch
-                placeholder="Select a Lecture"
-              >
+                placeholder="Select a Lecture">
                 {parEndData &&
                   parEndData.Participants.map((data, idx) => {
                     if (data.isDelete) {
@@ -1608,23 +1631,22 @@ const List = () => {
         width={`80%`}
         title={`학생 강의 목록`}
         footer={null}
-        onCancel={() => setDetailToggle(false)}
-      >
+        onCancel={() => setDetailToggle(false)}>
         <Text
           padding={`16px 0px`}
           color={Theme.black_2C}
           fontSize={`16px`}
-          fontWeight={`500`}
-        >
+          fontWeight={`500`}>
           참여하고 있는 강의
           <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
             *수업 참여일:관리자가 학생의 수업을 참여시킨 날짜
           </SpanText>
         </Text>
+
         <Table
           rowKey="id"
           columns={columnsList}
-          dataSource={detailDatum}
+          dataSource={partUserCurrentList}
           size="small"
         />
 
@@ -1632,8 +1654,7 @@ const List = () => {
           padding={`16px 0px`}
           color={Theme.black_2C}
           fontSize={`16px`}
-          fontWeight={`500`}
-        >
+          fontWeight={`500`}>
           반 이동 내역
           <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
             *수업 변경일:관리자가 학생의 수업을 변경시킨 날짜
@@ -1650,8 +1671,7 @@ const List = () => {
           padding={`16px 0px`}
           color={Theme.black_2C}
           fontSize={`16px`}
-          fontWeight={`500`}
-        >
+          fontWeight={`500`}>
           종료된 강의 내역
           <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
             *수업 종료일:관리자가 학생의 수업을 종료시킨 날짜
@@ -1670,8 +1690,7 @@ const List = () => {
           padding={`16px 0px`}
           color={Theme.black_2C}
           fontSize={`16px`}
-          fontWeight={`500`}
-        >
+          fontWeight={`500`}>
           일주일 이하로 남은 강의
           <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
             *수업 7일 이하:학생의 수업 7일 이하 남은 강의
@@ -1690,8 +1709,7 @@ const List = () => {
         width={`1000px`}
         title={`학생 관리`}
         onCancel={() => setStuDetailModal(false)}
-        footer={null}
-      >
+        footer={null}>
         <CustomForm form={updateStuForm} onFinish={updateStuFinish}>
           <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 50px`}>
             <Text fontSize={`16px`} fontWeight={`700`} margin={`0 0 10px`}>
@@ -1705,8 +1723,7 @@ const List = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}
-                  >
+                    margin={`0 5px 0 0`}>
                     프로필 이미지
                   </ColWrapper>
                   <ColWrapper>
@@ -1714,8 +1731,7 @@ const List = () => {
                       width={`100px`}
                       height={`100px`}
                       margin={`0 0 10px`}
-                      radius={`50%`}
-                    >
+                      radius={`50%`}>
                       <Image
                         radius={`50%`}
                         src={
@@ -1734,8 +1750,7 @@ const List = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}
-                  >
+                    margin={`0 5px 0 0`}>
                     이름
                   </ColWrapper>
 
@@ -1750,8 +1765,7 @@ const List = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}
-                  >
+                    margin={`0 5px 0 0`}>
                     이메일
                   </ColWrapper>
 
@@ -1766,8 +1780,7 @@ const List = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}
-                  >
+                    margin={`0 5px 0 0`}>
                     아이디
                   </ColWrapper>
 
@@ -1782,8 +1795,7 @@ const List = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}
-                  >
+                    margin={`0 5px 0 0`}>
                     휴대폰 번호
                   </ColWrapper>
                   <ColWrapper>
@@ -1805,8 +1817,7 @@ const List = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}
-                  >
+                    margin={`0 5px 0 0`}>
                     비밀번호
                   </ColWrapper>
 
@@ -1823,8 +1834,7 @@ const List = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}
-                  >
+                    margin={`0 5px 0 0`}>
                     생년월일
                   </ColWrapper>
 
@@ -1842,8 +1852,7 @@ const List = () => {
                     display={isCalendar ? "flex" : "none"}
                     width={`auto`}
                     border={`1px solid ${Theme.grey_C}`}
-                    margin={`0 0 20px`}
-                  >
+                    margin={`0 0 20px`}>
                     <Calendar
                       style={{ width: width < 1350 ? `100%` : `300px` }}
                       fullscreen={false}
@@ -1859,8 +1868,7 @@ const List = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}
-                  >
+                    margin={`0 5px 0 0`}>
                     국가
                   </ColWrapper>
 
@@ -1886,8 +1894,7 @@ const List = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}
-                  >
+                    margin={`0 5px 0 0`}>
                     거주 국가
                   </ColWrapper>
 
@@ -1913,8 +1920,7 @@ const List = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}
-                  >
+                    margin={`0 5px 0 0`}>
                     사용언어
                   </ColWrapper>
 
@@ -1931,8 +1937,7 @@ const List = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}
-                  >
+                    margin={`0 5px 0 0`}>
                     SNS
                   </ColWrapper>
 
@@ -1949,8 +1954,7 @@ const List = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}
-                  >
+                    margin={`0 5px 0 0`}>
                     SNS Id
                   </ColWrapper>
 
@@ -1967,8 +1971,7 @@ const List = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}
-                  >
+                    margin={`0 5px 0 0`}>
                     회차
                   </ColWrapper>
 
@@ -1986,15 +1989,13 @@ const List = () => {
                     dr={`row`}
                     margin={`0 0 10px 0`}
                     ju={`flex-start`}
-                    al={`flex-start`}
-                  >
+                    al={`flex-start`}>
                     <ColWrapper
                       width={`140px`}
                       height={`30px`}
                       bgColor={Theme.basicTheme_C}
                       color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
+                      margin={`0 5px 0 0`}>
                       시차
                     </ColWrapper>
 
@@ -2006,15 +2007,13 @@ const List = () => {
                   <RowWrapper
                     width={`100%`}
                     al={`flex-start`}
-                    margin={`0 0 10px 0`}
-                  >
+                    margin={`0 0 10px 0`}>
                     <ColWrapper
                       width={`140px`}
                       height={`30px`}
                       bgColor={Theme.basicTheme_C}
                       color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
+                      margin={`0 5px 0 0`}>
                       원하는 시작 날짜
                     </ColWrapper>
                     <ColWrapper>
@@ -2027,30 +2026,26 @@ const List = () => {
                   <RowWrapper
                     width={`100%`}
                     al={`flex-start`}
-                    margin={`0 0 10px 0`}
-                  >
+                    margin={`0 0 10px 0`}>
                     <ColWrapper
                       width={`140px`}
                       height={`30px`}
                       bgColor={Theme.basicTheme_C}
                       color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
+                      margin={`0 5px 0 0`}>
                       무료수업 담당 강사
                     </ColWrapper>
                     <ColWrapper>
                       <FormItem name="freeTeacher">
                         <Select
                           style={{ width: `250px` }}
-                          placeholder={`강사를 선택해주세요.`}
-                        >
+                          placeholder={`강사를 선택해주세요.`}>
                           {teachers &&
                             teachers.map((data, idx) => {
                               return (
                                 <Select.Option
                                   key={data.id}
-                                  value={data.username}
-                                >
+                                  value={data.username}>
                                   {data.username}
                                 </Select.Option>
                               );
@@ -2063,30 +2058,26 @@ const List = () => {
                   <RowWrapper
                     width={`100%`}
                     al={`flex-start`}
-                    margin={`0 0 10px 0`}
-                  >
+                    margin={`0 0 10px 0`}>
                     <ColWrapper
                       width={`140px`}
                       height={`30px`}
                       bgColor={Theme.basicTheme_C}
                       color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
+                      margin={`0 5px 0 0`}>
                       담당 강사
                     </ColWrapper>
                     <ColWrapper>
                       <FormItem name="teacher">
                         <Select
                           style={{ width: `250px` }}
-                          placeholder={`강사를 선택해주세요.`}
-                        >
+                          placeholder={`강사를 선택해주세요.`}>
                           {teachers &&
                             teachers.map((data, idx) => {
                               return (
                                 <Select.Option
                                   key={data.id}
-                                  value={data.username}
-                                >
+                                  value={data.username}>
                                   {data.username}
                                 </Select.Option>
                               );
@@ -2113,15 +2104,13 @@ const List = () => {
                   <RowWrapper
                     width={`100%`}
                     al={`flex-start`}
-                    margin={`0 0 10px 0`}
-                  >
+                    margin={`0 0 10px 0`}>
                     <ColWrapper
                       width={`140px`}
                       height={`30px`}
                       bgColor={Theme.basicTheme_C}
                       color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
+                      margin={`0 5px 0 0`}>
                       줌 미팅 시간
                     </ColWrapper>
                     <ColWrapper>
@@ -2137,15 +2126,13 @@ const List = () => {
                   <RowWrapper
                     width={`100%`}
                     al={`flex-start`}
-                    margin={`0 0 10px 0`}
-                  >
+                    margin={`0 0 10px 0`}>
                     <ColWrapper
                       width={`140px`}
                       height={`30px`}
                       bgColor={Theme.basicTheme_C}
                       color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
+                      margin={`0 5px 0 0`}>
                       레벨
                     </ColWrapper>
 
@@ -2157,15 +2144,13 @@ const List = () => {
                   <RowWrapper
                     width={`100%`}
                     al={`flex-start`}
-                    margin={`0 0 10px 0`}
-                  >
+                    margin={`0 0 10px 0`}>
                     <ColWrapper
                       width={`140px`}
                       height={`30px`}
                       bgColor={Theme.basicTheme_C}
                       color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
+                      margin={`0 5px 0 0`}>
                       가능한 수업시간
                     </ColWrapper>
 
@@ -2180,8 +2165,7 @@ const List = () => {
                       height={`30px`}
                       bgColor={Theme.basicTheme_C}
                       color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
+                      margin={`0 5px 0 0`}>
                       메모
                     </ColWrapper>
                     <ColWrapper al={`flex-start`}>
@@ -2224,8 +2208,7 @@ const List = () => {
               <Button
                 size={`small`}
                 onClick={() => setStuDetailModal(false)}
-                style={{ marginRight: 10 }}
-              >
+                style={{ marginRight: 10 }}>
                 취소
               </Button>
 
@@ -2243,14 +2226,12 @@ const List = () => {
         title={`학생 출석 목록`}
         footer={null}
         onCancel={() => stuCancelHandler()}
-        onOk={onModalOk}
-      >
+        onOk={onModalOk}>
         <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px 0`}>
           <Select
             style={{ width: 200 }}
             onChange={(e) => setStuSelect(e)}
-            value={stuSelect}
-          >
+            value={stuSelect}>
             {stuCommuteDetail && stuCommuteDetail.Participants.length === 0 ? (
               <Select>{"참여중인 수업이 없습니다."}</Select>
             ) : (
@@ -2267,8 +2248,7 @@ const List = () => {
 
           <Button
             style={{ marginLeft: 10 }}
-            onClick={() => onClickCommuteHandler()}
-          >
+            onClick={() => onClickCommuteHandler()}>
             검색
           </Button>
         </Wrapper>
