@@ -157,9 +157,11 @@ const List = () => {
 
   const [paymentOpt, setPaymentOpt] = useState(null);
 
-  const [isPayment, setIsPayment] = useState(0);
+  const [isPayment, setIsPayment] = useState();
   const [isTime, setIsTime] = useState(false);
   const [time, setTime] = useState(false);
+
+  const [statusType, setStatusType] = useState("");
 
   const { paymentList, st_paymentListDone, st_paymentListError } = useSelector(
     (state) => state.payment
@@ -190,9 +192,10 @@ const List = () => {
         isComplete: qs.type ? qs.type : null,
         isTime,
         time,
+        status: statusType,
       },
     });
-  }, [router.query, isTime, time]);
+  }, [router.query, isTime, time, statusType]);
 
   useEffect(() => {
     if (st_appUpdateDone) {
@@ -481,6 +484,7 @@ const List = () => {
           job: data.job,
           purpose: data.purpose,
           freeTeacher: data.freeTeacher,
+          status: data.status,
         });
       } else {
         updateForm.setFieldsValue({
@@ -507,9 +511,23 @@ const List = () => {
     [createForm]
   );
 
+  const onClickAllList = useCallback(() => {
+    dispatch({
+      type: APP_LIST_REQUEST,
+      data: {
+        isComplete: "",
+        isTime: false,
+        time: false,
+        status: "",
+      },
+    });
+
+    setStatusType("");
+  }, []);
+
   ////// DATAVIEW //////
 
-  const stateList = ["등록", "잠정등록", "입금예정", "취소"];
+  const stateList = ["등록", "잠정등록", "NoShow", "연기"];
 
   // Table
   const columns = [
@@ -533,7 +551,7 @@ const List = () => {
 
     {
       title: "진행여부",
-      render: (data) => <div>{data.completedAt ? `완료` : `미완료`}</div>,
+      render: (data) => <div>{data.status}</div>,
     },
 
     {
@@ -646,14 +664,14 @@ const List = () => {
         </Wrapper>
 
         <RowWrapper margin={`0 0 10px 0`} gutter={5}>
-          {/* <Col>
+          <Col>
             <Button
               type={!router.query.type && `primary`}
               size={`small`}
-              onClick={() => moveLinkHandler(`/admin/application/list`)}>
+              onClick={() => onClickAllList()}>
               전체
             </Button>
-          </Col> */}
+          </Col>
           {/* <Col>
             <Button
               type={router.query.type === "true" && `primary`}
@@ -674,13 +692,17 @@ const List = () => {
           </Col> */}
 
           <Col>
+            {/* <Text fontSize={`14px`} color={Theme.basicTheme_C}>
+              등록상태로 검색하기
+            </Text> */}
             <Select
-              defaultValue={false}
-              style={{ width: `200px` }}
-              size={`small`}>
+              onChange={(e) => setStatusType(e)}
+              style={{ width: `250px` }}
+              size={`small`}
+              defaultValue={statusType ? statusType : ""}
+              placeholder={"등록상태를 선택해주세요. Ex) NoShow"}>
               {stateList &&
                 stateList.map((data, idx) => {
-                  console.log(data, "data");
                   return (
                     <Select.Option key={idx} value={data}>
                       {data}
@@ -691,12 +713,17 @@ const List = () => {
           </Col>
 
           <Col>
+            {/* <Text fontSize={`14px`} color={Theme.basicTheme_C}>
+              신청서 등록일 또는 미팅 일자로 검색하기
+            </Text> */}
             <Select
-              defaultValue={false}
-              style={{ width: `200px` }}
+              placeholder={
+                "신청서 등록일 또는 미팅 일자로 검색하기. Ex) NoShow"
+              }
+              style={{ width: `250px` }}
               size={`small`}
               onChange={(e) => setIsTime(e)}>
-              <Select.Option value={false}>등록일</Select.Option>
+              <Select.Option value={false}>신청서 등록일</Select.Option>
               <Select.Option value={true}>줌 미팅 시간</Select.Option>
             </Select>
           </Col>
@@ -1198,10 +1225,7 @@ const List = () => {
           <Form.Item label="현재 거주 나라" name="stuLiveCon">
             <Input />
           </Form.Item>
-          <Form.Item
-            label="결제 여부"
-            name="isPayment"
-            rules={[{ message: "결제 목록을 선택해주세요.", required: true }]}>
+          <Form.Item label="결제 여부" name="isPayment">
             <Button
               style={{ marginRight: 10 }}
               type={isPayment === 1 && `primary`}
@@ -1209,11 +1233,11 @@ const List = () => {
               네
             </Button>
 
-            {/* <Button
+            <Button
               type={isPayment === 2 && `primary`}
               onClick={() => buttonHandle(2)}>
               아니요
-            </Button> */}
+            </Button>
 
             {/* <Select
               showSearch
@@ -1290,7 +1314,7 @@ const List = () => {
           </Form.Item>
           <Form.Item
             label="주소"
-            rules={[{ required: true, message: "주소를 입력해주세요." }]}
+            rules={[{ message: "주소를 입력해주세요." }]}
             name="address">
             <Input />
           </Form.Item>
