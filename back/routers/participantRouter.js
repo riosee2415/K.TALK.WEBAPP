@@ -353,13 +353,6 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
       return res.status(201).json({ result: true });
     }
 
-    await TeacherPay.create({
-      type: "등록수당",
-      price: 30000,
-      LectureId: parseInt(LectureId),
-      UserId: parseInt(exLecture.UserId),
-    });
-
     return res.status(201).json({ result: true });
   } catch (error) {
     console.error(error);
