@@ -254,6 +254,7 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
       price,
       LectureId: LectureId ? parseInt(LectureId) : null,
       memo: memo ? memo : null,
+      UserId: parseInt(req.user.id),
     });
 
     if (!createResult) {
