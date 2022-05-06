@@ -26,7 +26,7 @@ import {
   InputNumber,
 } from "antd";
 import { useRouter } from "next/router";
-import styled from "styled-components";
+import styled, { ThemeConsumer, ThemeProvider } from "styled-components";
 import {
   RsWrapper,
   WholeWrapper,
@@ -35,6 +35,7 @@ import {
   CommonButton,
   Image,
   Text,
+  TextArea,
 } from "../../../components/commonComponents";
 import { LECTURE_TEACHER_LIST_REQUEST } from "../../../reducers/lecture";
 import moment from "moment";
@@ -113,6 +114,8 @@ const Index = () => {
 
   const [currentPage, setCurrentPage] = useState("");
 
+  const [currentType, setCurrentType] = useState(null);
+
   const {
     teacherPayList,
     teacherPayLastPage,
@@ -121,7 +124,7 @@ const Index = () => {
     teacherPayPrice,
     st_teacherCreateDone,
     st_teacherCreateError,
-  } = useSelector((state) => state.teacherPay);
+  } = useSelector((state) => state.teacherpay);
 
   const {
     lectureTeacherList,
@@ -182,6 +185,12 @@ const Index = () => {
     }
   }, [st_teacherCreateError]);
 
+  useEffect(() => {
+    meetingForm.setFieldsValue({
+      price: currentType && JSON.parse(currentType).price,
+    });
+  }, [currentType]);
+
   ////// TOGGLE //////
   ////// HANDLER //////
 
@@ -229,14 +238,14 @@ const Index = () => {
   const clickHandler = useCallback(() => {
     setMeetingModal(true);
 
-    meetingForm.setFieldsValue({
-      price: 20000,
-    });
+    // meetingForm.setFieldsValue({
+    //   price: 20000,
+    // });
   }, [meetingForm]);
 
   const modalMettingClose = useCallback(() => {
     setMeetingModal(false);
-
+    setCurrentType(null);
     meetingForm.resetFields();
   }, []);
 
@@ -244,13 +253,24 @@ const Index = () => {
     dispatch({
       type: TEACHER_PAY_CREATE_REQUEST,
       data: {
+        type: JSON.parse(data.type).type,
         price: data.price,
         LectureId: data.LectureId,
+        memo: data.memo,
       },
     });
   }, []);
 
-  const typeArr = ["기본수당", "연장수당", "회의수당", "등록수당"];
+  const typeArr = [
+    { type: "기본수당(정규과정)", price: 20000 },
+    { type: "기본수당(무료설명회)", price: 30000 },
+    { type: "대기수당(정규과정)", price: 10000 },
+    { type: "대기수당(무료설명회)", price: 15000 },
+    { type: "회의수당", price: 20000 },
+    { type: "참관수당", price: 15000 },
+    { type: "등록수당", price: 30000 },
+    { type: "연장수당", price: 144 * 200 },
+  ];
 
   return (
     <>
@@ -306,7 +326,8 @@ const Index = () => {
             <Wrapper
               margin={width < 700 ? `30px 0` : `60px 0`}
               dr={`row`}
-              ju={`space-between`}>
+              ju={`space-between`}
+            >
               <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
                 <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
                   <Image
@@ -324,7 +345,8 @@ const Index = () => {
                 <Text
                   fontSize={width < 700 ? `20px` : `28px`}
                   fontWeight={`bold`}
-                  padding={`0 0 0 15px`}>
+                  padding={`0 0 0 15px`}
+                >
                   안녕하세요,&nbsp;
                   <SpanText color={Theme.basicTheme_C} wordBreak={`break-all`}>
                     {me && me.username}
@@ -339,23 +361,25 @@ const Index = () => {
                 <RangePicker format="YYYY-MM-DD" onChange={onChangeDate} />
 
                 <Select
-                  style={{ width: 150, marginLeft: 10 }}
+                  style={{ width: 200, marginLeft: 10 }}
                   onChange={handleChange}
-                  placeholder="수당을 선택해주세요.">
+                  placeholder="수당을 선택해주세요."
+                >
                   <Option value={""}>{"전체"}</Option>
                   {typeArr.map((data, idx) => {
                     return (
-                      <Option key={idx} value={data}>
-                        {data}
+                      <Option key={idx} value={data.type}>
+                        {data.type}
                       </Option>
                     );
                   })}
                 </Select>
 
                 <Select
-                  style={{ width: 150, marginLeft: 10 }}
+                  style={{ width: 200, marginLeft: 10 }}
                   onChange={lectureHandle}
-                  placeholder="강의를 선택해주세요.">
+                  placeholder="강의를 선택해주세요."
+                >
                   <Option value={""}>{"전체"}</Option>
 
                   {lectureTeacherList &&
@@ -371,7 +395,8 @@ const Index = () => {
                 <CommonButton
                   radius={`5px`}
                   margin={`0 0 0 10px`}
-                  onClick={searchHandler}>
+                  onClick={searchHandler}
+                >
                   검색
                 </CommonButton>
               </Wrapper>
@@ -379,8 +404,9 @@ const Index = () => {
               <CommonButton
                 radius={`5px`}
                 kindOf={`white`}
-                onClick={clickHandler}>
-                회의수당 입력
+                onClick={clickHandler}
+              >
+                수당 입력
               </CommonButton>
             </Wrapper>
 
@@ -389,7 +415,8 @@ const Index = () => {
                 color={Theme.black_2C}
                 fontSize={width < 700 ? `18px` : `22px`}
                 fontWeight={`Bold`}
-                margin={`86px 0 20px`}>
+                margin={`86px 0 20px`}
+              >
                 강의료 산정
               </Text>
             </Wrapper>
@@ -399,26 +426,30 @@ const Index = () => {
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
-                  width={`15%`}>
+                  width={`15%`}
+                >
                   수당유형
                 </Text>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
-                  width={`30%`}>
+                  width={`30%`}
+                >
                   강의
                 </Text>
 
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
-                  width={`30%`}>
+                  width={`30%`}
+                >
                   금액
                 </Text>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
-                  width={`25%`}>
+                  width={`25%`}
+                >
                   날짜
                 </Text>
               </Wrapper>
@@ -438,21 +469,25 @@ const Index = () => {
                       ju={`flex-start`}
                       padding={`25px 0 20px`}
                       cursor={`pointer`}
-                      bgColor={idx % 2 === 0 && Theme.lightGrey_C}>
+                      bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                    >
                       <Text
                         fontSize={width < 700 ? `14px` : `16px`}
                         width={`15%`}
-                        wordBreak={`break-word`}>
+                        wordBreak={`break-word`}
+                      >
                         {data.type}
                       </Text>
                       <Text
                         fontSize={width < 700 ? `14px` : `16px`}
-                        width={`30%`}>
+                        width={`30%`}
+                      >
                         {data.course}
                       </Text>
                       <Text
                         fontSize={width < 700 ? `14px` : `16px`}
-                        width={`30%`}>
+                        width={`30%`}
+                      >
                         {String(data.price).replace(
                           /\B(?=(\d{3})+(?!\d))/g,
                           ","
@@ -461,7 +496,8 @@ const Index = () => {
                       </Text>
                       <Text
                         fontSize={width < 700 ? `14px` : `16px`}
-                        width={`25%`}>
+                        width={`25%`}
+                      >
                         {moment(data.createdAt, "YYYY/MM/DD").format(
                           "YYYY/MM/DD"
                         )}
@@ -477,11 +513,15 @@ const Index = () => {
               ju={`flex-end`}
               shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
               radius={`10px`}
-              padding={`20px`}>
+              padding={`20px`}
+              margin={`20px 0 0`}
+            >
               <Text
-                fontSize={width < 700 ? `14px` : `16px`}>{`총 가격 : ${String(
-                teacherPayPrice
-              ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}원`}</Text>
+                fontSize={width < 700 ? `14px` : `16px`}
+              >{`총 가격 : ${String(teacherPayPrice).replace(
+                /\B(?=(\d{3})+(?!\d))/g,
+                ","
+              )}원`}</Text>
             </Wrapper>
 
             <Wrapper margin={`65px 0 85px`}>
@@ -494,22 +534,50 @@ const Index = () => {
 
           <Modal
             visible={meetingModal}
-            title="회의 수당"
+            title="회의수당"
             okText="등록"
             footer={null}
             cancelText="취소"
-            onCancel={() => modalMettingClose()}>
+            onCancel={() => modalMettingClose()}
+          >
             <Form form={meetingForm} onFinish={onSubmit}>
+              <Form.Item
+                labelCol={{ span: 4 }}
+                labelWrap={{ span: 20 }}
+                name={"type"}
+                label="수당 유형"
+                rules={[
+                  { required: true, message: "수당유형을 선택해주세요." },
+                ]}
+              >
+                <Select
+                  style={{ width: "100%" }}
+                  placeholder="유형을 선택해주세요"
+                  onChange={(e) => setCurrentType(e)}
+                  defaultValue={null}
+                >
+                  {typeArr.map((data, idx) => {
+                    return (
+                      <Option key={idx} value={JSON.stringify(data)}>
+                        {data.type}
+                      </Option>
+                    );
+                  })}
+                </Select>
+              </Form.Item>
+              {console.log(JSON.parse(currentType))}
               <Form.Item
                 labelCol={{ span: 4 }}
                 labelWrap={{ span: 20 }}
                 name={"LectureId"}
                 label="강의"
-                rules={[{ required: true, message: "강의를 선택해주세요." }]}>
+                rules={[{ required: true, message: "강의를 선택해주세요." }]}
+              >
                 <Select
                   style={{ width: "100%" }}
                   onChange={lectureHandle}
-                  placeholder="강의를 선택해주세요">
+                  placeholder="강의를 선택해주세요"
+                >
                   {lectureTeacherList &&
                     lectureTeacherList.map((data, idx) => {
                       return (
@@ -525,15 +593,32 @@ const Index = () => {
                 name={"price"}
                 label="가격"
                 labelCol={{ span: 4 }}
-                labelWrap={{ span: 20 }}>
-                <Input disabled></Input>
+                labelWrap={{ span: 20 }}
+              >
+                <Input
+                  value={currentType && JSON.parse(currentType).price}
+                  disabled
+                ></Input>
+              </Form.Item>
+
+              <Form.Item
+                name={"memo"}
+                label="메모"
+                labelCol={{ span: 4 }}
+                labelWrap={{ span: 20 }}
+              >
+                <TextArea
+                  width={`100%`}
+                  border={`1px solid ${Theme.grey_C} !important`}
+                />
               </Form.Item>
 
               <Wrapper al={`flex-end`} margin={`10px 0 0 0`}>
                 <CommonButton
                   radius={`5px`}
                   margin={`0 0 0 10px`}
-                  htmlType="submit">
+                  htmlType="submit"
+                >
                   입력
                 </CommonButton>
               </Wrapper>

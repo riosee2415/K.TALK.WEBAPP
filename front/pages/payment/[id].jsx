@@ -142,7 +142,7 @@ const Index = () => {
   const onSuccess = (payment) => {
     console.log(payment, "payment");
     setSuccessData(payment);
-    // console.log(payment);
+    console.log(payment);
   };
 
   // 결제 취소
@@ -319,7 +319,9 @@ const Index = () => {
                         padding={`0 0 10px`}
                         margin={`0 0 5px`}
                       >
-                        <Text color={Theme.grey2_C}>제목</Text>
+                        <Text color={Theme.grey2_C}>
+                          {payClassDetail && payClassDetail.name}
+                        </Text>
                       </Wrapper>
                       {payClassDetail &&
                         payClassDetail.memo.split(`\n`).map((data) => {
@@ -338,7 +340,8 @@ const Index = () => {
                     padding={`10px`}
                     fontSize={`16px`}
                   >
-                    *메모내용 들어옴
+                    *강의 기간은 강의 참여일로부터&nbsp;
+                    {payClassDetail && payClassDetail.week}뒤 까지 입니다.
                   </Wrapper>
                 </Wrapper>
                 <Wrapper

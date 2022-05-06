@@ -89,8 +89,8 @@ const UserList = () => {
       type: TEACHER_ADMIN_PAY_LIST_REQUEST,
       data: {
         TeacherId: data.TeacherId ? data.TeacherId : ``,
-        searchDate: data.date[0].format(`YYYY-MM-DD`),
-        endDate: data.date[1].format(`YYYY-MM-DD`),
+        searchDate: data.date ? data.date[0].format(`YYYY-MM-DD`) : "",
+        endDate: data.date ? data.date[1].format(`YYYY-MM-DD`) : "",
         type: data.type,
         LectureId: data.LectureId,
       },
@@ -146,12 +146,22 @@ const UserList = () => {
     },
   ];
 
+  const typeArr = [
+    { type: "기본수당(정규과정)", price: 20000 },
+    { type: "기본수당(무료설명회)", price: 30000 },
+    { type: "대기수당(정규과정)", price: 10000 },
+    { type: "대기수당(무료설명회)", price: 15000 },
+    { type: "회의수당", price: 20000 },
+    { type: "참관수당", price: 15000 },
+    { type: "등록수당", price: 30000 },
+    { type: "연장수당", price: 144 * 200 },
+  ];
   return (
     <AdminLayout>
       <PageHeader
-        breadcrumbs={["강사료", "강사료 산정 관리"]}
-        title={`강사료 산정 관리`}
-        subTitle={`강사료 산정를 확인할 수 있습니다.`}
+        breadcrumbs={["강의료", "강의료 산정 관리"]}
+        title={`강의료 산정 관리`}
+        subTitle={`강의료 산정를 확인할 수 있습니다.`}
       />
       {/* <AdminTop createButton={true} createButtonAction={() => {})} /> */}
 
@@ -161,7 +171,8 @@ const UserList = () => {
             dr={`row`}
             ju={`flex-start`}
             margin={`0 0 10px`}
-            width={`calc(100% - 80px)`}>
+            width={`calc(100% - 80px)`}
+          >
             <FormTag form={form} onFinish={searchHandler}>
               <Row>
                 <FormItem name={`TeacherId`}>
@@ -188,13 +199,13 @@ const UserList = () => {
                 <FormItem name={`type`}>
                   <Select size="small" placeholder="유형">
                     <Select.Option value={``}>전체</Select.Option>
-                    {["기본수당", "연장수당", "회의수당", "등록수당"].map(
-                      (data) => {
-                        return (
-                          <Select.Option value={data}>{data}</Select.Option>
-                        );
-                      }
-                    )}
+                    {typeArr.map((data) => {
+                      return (
+                        <Select.Option key={data.id} value={data.type}>
+                          {data.type}
+                        </Select.Option>
+                      );
+                    })}
                   </Select>
                 </FormItem>
 
@@ -233,7 +244,8 @@ const UserList = () => {
         <Wrapper
           margin={`10px 0 0`}
           al={`flex-end`}
-          fontSize={`16px`}>{`총 가격: ${String(teacherPayAdminPrice).replace(
+          fontSize={`16px`}
+        >{`총 가격: ${String(teacherPayAdminPrice).replace(
           /\B(?=(\d{3})+(?!\d))/g,
           ","
         )}원`}</Wrapper>
