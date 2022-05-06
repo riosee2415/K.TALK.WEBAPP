@@ -42,6 +42,7 @@ router.post("/teacher/list", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(A.updatedAt, "%Y-%m-%d")				AS updatedAt,
             A.UserId,
             A.LectureId,
+            A.memo,
             B.profileImage,
             B.username,
             B.mobile,
@@ -82,6 +83,7 @@ router.post("/teacher/list", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(A.updatedAt, "%Y-%m-%d")				AS updatedAt,
             A.UserId,
             A.LectureId,
+            A.memo,
             B.profileImage,
             B.username,
             B.mobile,
@@ -168,6 +170,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
             DATE_FORMAT(A.updatedAt, "%Y-%m-%d")				AS updatedAt,
             A.UserId,
             A.LectureId,
+            A.memo,
             B.profileImage,
             B.username,
             B.mobile,
@@ -221,7 +224,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
 
 // 회의 수당
 router.post("/create", isLoggedIn, async (req, res, next) => {
-  const { type, price, LectureId } = req.body;
+  const { type, price, LectureId, memo } = req.body;
 
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
@@ -250,6 +253,7 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
       type,
       price,
       LectureId: LectureId ? parseInt(LectureId) : null,
+      memo: memo ? memo : null,
     });
 
     if (!createResult) {

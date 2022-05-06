@@ -13,6 +13,10 @@ module.exports = class TeacherPay extends Model {
           type: DataTypes.INTEGER,
           allowNull: false,
         },
+        memo: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
       },
       {
         modelName: "TeacherPay",
