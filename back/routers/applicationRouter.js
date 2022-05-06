@@ -58,8 +58,8 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
         FROM	  applications
        WHERE    1 = 1
                 ${_isComplete ? `AND   isComplete = ${_isComplete}` : ``}
-                ${_time !== `` ? `AND meetDate LIKE '%${_time}%' ` : ``}
-                ${_status !== `` ? `AND status LIKE '%${_status}%' ` : ``}
+                ${_time !== `` ? `AND meetDate LIKE '${_time}' ` : ``}
+                ${_status !== `` ? `AND status LIKE '${_status}' ` : ``}
        ORDER    BY  ${orderName} ${orderSC}
       `;
 
