@@ -225,27 +225,69 @@ const Index = () => {
       </Head>
 
       <ClientLayout>
-        <WholeWrapper>
+        <WholeWrapper
+          bgColor={`rgba(216, 231, 255, 0.2)`}
+          minHeight={`calc(100vh - 200px)`}
+          ju={`flex-start`}
+        >
+          <Wrapper
+            position={`fixed`}
+            top={width < 900 ? `82px` : `100px`}
+            left={`0`}
+            bgColor={`rgb(230, 239, 255)`}
+            padding={`15px 0`}
+            zIndex={`100`}
+            shadow={`2px 2px 2px rgb(226, 226, 226)`}
+          >
+            <RsWrapper dr={`row`} ju={width < 900 ? `center` : `space-between`}>
+              <Wrapper
+                width={`auto`}
+                fontSize={width < 900 ? `16px` : `20px`}
+                margin={width < 900 && `0 0 10px`}
+                fontWeight={`bold`}
+              >
+                새 인보이스 번호(2202512)
+              </Wrapper>
+              {toggle && (
+                <Wrapper width={`auto`}>
+                  <PaypalBtn
+                    style={style}
+                    env={env}
+                    client={client}
+                    total={Math.floor(
+                      payClassDetail &&
+                        payClassDetail.price -
+                          (payClassDetail.price * payClassDetail.discount) / 100
+                    )}
+                    currency={currency}
+                    onSuccess={onSuccess}
+                    onError={onError}
+                    onCancel={onCancel}
+                  />
+                </Wrapper>
+              )}
+            </RsWrapper>
+          </Wrapper>
           <RsWrapper>
             {payClassDetail ? (
               <Wrapper
-                margin={`180px 0 0 0`}
-                minHeight={`600px`}
+                margin={`230px 0 0 0`}
                 al={`flex-start`}
-                ju={`flex-start`}>
-                <Wrapper
-                  dr={`row`}
-                  ju={width < 800 ? `center` : `space-between`}>
+                dr={`row`}
+                ju={width < 800 ? `center` : `space-between`}
+              >
+                <Wrapper width={width < 800 ? `100%` : `calc(100% - 370px)`}>
                   <Wrapper
                     dr={`row`}
-                    width={width < 800 ? `100%` : `auto`}
                     ju={`flex-start`}
                     padding={`15px 20px`}
                     fontSize={width < 700 ? `14px` : `18px`}
                     color={Theme.black_3C}
-                    minHeight={width < 700 ? `80px` : `94px`}
-                    shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}
-                    radius={`10px`}>
+                    minHeight={`80px`}
+                    shadow={`0px 5px 15px rgba(0, 0, 0, 0.05)`}
+                    bgColor={Theme.white_C}
+                    radius={`5px`}
+                  >
                     <Image
                       width={`22px`}
                       margin={width < 900 ? `0 5px 0 0` : `0 16px 0 0`}
@@ -258,107 +300,119 @@ const Index = () => {
                     <Text>{payClassDetail && payClassDetail.name}</Text>
                   </Wrapper>
 
-                  {toggle && (
+                  <Wrapper margin={`15px 0 0`}>
                     <Wrapper
+                      al={`flex-start`}
                       ju={`flex-start`}
-                      margin={`10px 0 0`}
-                      width={`auto`}>
-                      <PaypalBtn
-                        style={style}
-                        env={env}
-                        client={client}
-                        total={Math.floor(
-                          payClassDetail &&
-                            payClassDetail.price -
-                              (payClassDetail.price * payClassDetail.discount) /
-                                100
-                        )}
-                        currency={currency}
-                        onSuccess={onSuccess}
-                        onError={onError}
-                        onCancel={onCancel}
-                      />
+                      padding={width < 900 ? `20px` : `20px 30px`}
+                      fontSize={width < 700 ? `14px` : `18px`}
+                      color={Theme.black_3C}
+                      height={`auto`}
+                      minHeight={`210px`}
+                      shadow={`0px 5px 15px rgba(0, 0, 0, 0.05)`}
+                      bgColor={Theme.white_C}
+                      radius={`10px `}
+                    >
+                      <Wrapper
+                        al={`flex-start`}
+                        borderBottom={`1px solid ${Theme.grey_C}`}
+                        padding={`0 0 10px`}
+                        margin={`0 0 5px`}
+                      >
+                        <Text color={Theme.grey2_C}>제목</Text>
+                      </Wrapper>
+                      {payClassDetail &&
+                        payClassDetail.memo.split(`\n`).map((data) => {
+                          return (
+                            <SpanText>
+                              {data}
+                              <br />
+                            </SpanText>
+                          );
+                        })}
                     </Wrapper>
-                  )}
-                </Wrapper>
-
-                <Wrapper
-                  al={`flex-start`}
-                  dr={width < 1000 ? `column` : `row`}
-                  margin={`30px 0 100px 0`}>
+                  </Wrapper>
                   <Wrapper
                     al={`flex-start`}
-                    ju={`flex-start`}
-                    padding={`35px 25px`}
-                    fontSize={width < 700 ? `14px` : `18px`}
-                    color={Theme.black_3C}
-                    height={`auto`}
-                    shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}
-                    radius={`10px `}>
-                    {payClassDetail &&
-                      payClassDetail.memo.split(`\n`).map((data) => {
-                        return (
-                          <SpanText>
-                            {data}
-                            <br />
-                          </SpanText>
-                        );
-                      })}
+                    color={Theme.red_C}
+                    padding={`10px`}
+                    fontSize={`16px`}
+                  >
+                    *메모내용 들어옴
                   </Wrapper>
-
-                  <Wrapper
-                    fontSize={width < 700 ? `14px` : `18px`}
-                    color={Theme.black_3C}
-                    padding={width < 700 ? `10px` : `20px 30px`}
-                    margin={`30px 0 0 0`}
-                    shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}
-                    radius={`10px `}>
-                    <Wrapper borderBottom={`1px dashed ${Theme.grey_C}`}>
-                      <Wrapper
-                        dr={`row`}
-                        ju={`space-between`}
-                        fontSize={width < 700 ? `14px` : `18px`}>
-                        <Text fontWeight={`600`}>수업 금액</Text>
-                        <Text>
-                          {`$${
-                            payClassDetail &&
-                            String(payClassDetail.price).replace(
-                              /\B(?=(\d{3})+(?!\d))/g,
-                              ","
-                            )
-                          }`}
-                        </Text>
-                      </Wrapper>
-
-                      <Wrapper
-                        dr={`row`}
-                        ju={`space-between`}
-                        margin={`13px 0 10px 0`}
-                        fontSize={width < 700 ? `14px` : `18px`}>
-                        <Text>할인율</Text>
-                        <Text color={Theme.subTheme2_C}>
-                          {payClassDetail && payClassDetail.discount}%
-                        </Text>
-                      </Wrapper>
+                </Wrapper>
+                <Wrapper
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  color={Theme.black_3C}
+                  padding={width < 700 ? `20px` : `20px 30px`}
+                  shadow={`0px 5px 15px rgba(0, 0, 0, 0.05)`}
+                  bgColor={Theme.white_C}
+                  minHeight={width < 900 ? `200px` : `305px`}
+                  margin={width < 900 && `0 0 50px`}
+                  ju={`space-between`}
+                  radius={`5px`}
+                  width={width < 800 ? `100%` : `350px`}
+                >
+                  <Wrapper>
+                    <Wrapper
+                      dr={`row`}
+                      ju={`space-between`}
+                      fontSize={width < 700 ? `14px` : `18px`}
+                    >
+                      <Text fontWeight={`600`}>수업 금액</Text>
+                      <Text>
+                        {`$${
+                          payClassDetail &&
+                          String(payClassDetail.price).replace(
+                            /\B(?=(\d{3})+(?!\d))/g,
+                            ","
+                          )
+                        }`}
+                      </Text>
                     </Wrapper>
 
                     <Wrapper
                       dr={`row`}
                       ju={`space-between`}
-                      fontSize={width < 700 ? `14px` : `18px`}>
-                      <Text>총 결제 금액</Text>
-                      <Text
-                        color={Theme.black_3C}
-                        fontSize={width < 700 ? `16px` : `24px`}>
-                        {` $${String(
-                          Math.floor(
-                            payClassDetail.price -
-                              (payClassDetail.price * payClassDetail.discount) /
-                                100
-                          )
-                        ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
+                      margin={`13px 0 0`}
+                      fontSize={width < 700 ? `14px` : `18px`}
+                    >
+                      <Text>할인율</Text>
+                      <Text color={Theme.subTheme2_C}>
+                        {payClassDetail && payClassDetail.discount}%
                       </Text>
                     </Wrapper>
+                    <Wrapper
+                      dr={`row`}
+                      ju={`space-between`}
+                      margin={`13px 0 25px`}
+                      fontSize={width < 700 ? `14px` : `18px`}
+                    >
+                      <Text>강의 기간</Text>
+                      <Text>4주</Text>
+                    </Wrapper>
+                  </Wrapper>
+
+                  <Wrapper
+                    dr={`row`}
+                    ju={`space-between`}
+                    borderTop={`2px dashed ${Theme.grey_C}`}
+                    padding={`10px 0 0`}
+                    fontSize={width < 700 ? `14px` : `18px`}
+                  >
+                    <Text>총 결제 금액</Text>
+                    <Text
+                      color={Theme.black_3C}
+                      fontSize={width < 700 ? `16px` : `24px`}
+                    >
+                      {` $${String(
+                        Math.floor(
+                          payClassDetail.price -
+                            (payClassDetail.price * payClassDetail.discount) /
+                              100
+                        )
+                      ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
+                    </Text>
                   </Wrapper>
                 </Wrapper>
               </Wrapper>

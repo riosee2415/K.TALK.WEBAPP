@@ -77,6 +77,7 @@ export const ColWrapper = styled(Col)`
 export const WholeWrapper = styled.section`
   width: ${(props) => props.width || `100%`};
   height: ${(props) => props.height};
+  min-height: ${(props) => props.minHeight};
   color: ${(props) => props.color};
   display: ${(props) => props.display || `flex`};
   background: ${(props) => props.bgColor};

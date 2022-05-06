@@ -29,10 +29,6 @@ const GlobalStyles = createGlobalStyle`
     color : inherit;
   }
 
-
-
-
-  
   @media (max-width : 576px) {
     html { 
       font-size : 14px;

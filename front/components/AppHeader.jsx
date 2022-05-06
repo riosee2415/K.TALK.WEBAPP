@@ -131,13 +131,14 @@ const AppHeader = ({ width }) => {
       position={`fixed`}
       top={`0`}
       left={`0`}
-      zIndex={`100`}>
+      zIndex={`100`}
+    >
       <RsWrapper>
         <Wrapper dr={`row`} ju={`space-between`}>
           <Image
             alt="logo"
             width={width < 800 ? `130px` : `250px`}
-            margin={width < 900 ? `` : `0 0 10px`}
+            margin={width < 900 ? `0 0 10px` : `0`}
             src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/logo/logo.png`}
             cursor={`pointer`}
             onClick={() => moveLinkHandler(`/`)}
@@ -158,14 +159,16 @@ const AppHeader = ({ width }) => {
                   height={width < 700 ? `30px` : `50px`}
                   width={width < 700 ? `auto` : `110px`}
                   fontSize={width < 700 && `11px`}
-                  margin={`0 10px 0 0`}>
+                  margin={`0 10px 0 0`}
+                >
                   MYPAGE
                 </CommonButton>
                 <CommonButton
                   onClick={() => logoutHandler()}
                   height={width < 700 ? `30px` : `50px`}
                   width={width < 700 ? `auto` : `110px`}
-                  fontSize={width < 700 && `11px`}>
+                  fontSize={width < 700 && `11px`}
+                >
                   LOGOUT
                 </CommonButton>
               </Wrapper>
@@ -199,7 +202,8 @@ const AppHeader = ({ width }) => {
                   onClick={() => loginHandler()}
                   height={width < 700 ? `30px` : `50px`}
                   width={width < 700 ? `auto` : `110px`}
-                  fontSize={width < 700 && `11px`}>
+                  fontSize={width < 700 && `11px`}
+                >
                   LOGIN
                 </CommonButton>
               </>
