@@ -352,7 +352,6 @@ const Index = () => {
   ////// HANDLER //////
   const onClickBookFolder = useCallback(
     (data) => {
-      console.log(searchInput.value);
       setCurrentPage(1);
       dispatch({
         type: BOOK_LIST_REQUEST,
