@@ -59,7 +59,18 @@ const LoadNotification = (msg, content) => {
   });
 };
 
-const UserDeliAddress = ({}) => {
+const FormTag = styled(Form)`
+  width: auto;
+  display: flex;
+  flex-direction: row;
+`;
+
+const FormItem = styled(Form.Item)`
+  width: auto;
+  margin: 0 10px 0 0 !important;
+`;
+
+const Book = ({}) => {
   const { st_loadMyInfoDone, me } = useSelector((state) => state.user);
 
   const {
@@ -82,6 +93,7 @@ const UserDeliAddress = ({}) => {
   const filename = useInput("");
 
   const [form] = Form.useForm();
+  const [searchForm] = Form.useForm();
 
   const router = useRouter();
   const fileRef = useRef();
@@ -127,14 +139,18 @@ const UserDeliAddress = ({}) => {
   }, []);
 
   const onClickBookFolder = useCallback((data) => {
-    setBookMenuId(data);
+    console.log(data);
+    setBookMenuId(data.lectureId);
     setCurrentPage(1);
     dispatch({
       type: BOOK_LIST_REQUEST,
       data: {
-        LectureId: data,
-        search: "",
+        LectureId: data.lectureId,
+        search: data.search,
         page: "",
+        level: data.level,
+        stage: data.stage,
+        kinds: data.kinds,
       },
     });
   }, []);
@@ -159,12 +175,16 @@ const UserDeliAddress = ({}) => {
       setImagePathTh("");
       setCreateModal(false);
       filename.setValue("");
+      searchForm.resetFields();
       dispatch({
         type: BOOK_LIST_REQUEST,
         data: {
-          LectureId: bookMenuId,
+          LectureId: "",
           search: "",
           page: "",
+          level: "",
+          stage: "",
+          kinds: "",
         },
       });
       return message.success("교재를 업로드 했습니다.");
@@ -185,6 +205,9 @@ const UserDeliAddress = ({}) => {
           LectureId: bookMenuId,
           search: "",
           page: "",
+          level: "",
+          stage: "",
+          kinds: "",
         },
       });
     }
@@ -204,9 +227,13 @@ const UserDeliAddress = ({}) => {
           LectureId: bookMenuId,
           search: "",
           page: "",
+          level: "",
+          stage: "",
+          kinds: "",
         },
       });
       form.resetFields();
+      searchForm.resetFields();
       setImagePathTh("");
       setCreateModal(false);
       filename.setValue("");
@@ -299,16 +326,6 @@ const UserDeliAddress = ({}) => {
     });
   }, []);
 
-  const onSearchBookNameHandler = useCallback(() => {
-    dispatch({
-      type: BOOK_LIST_REQUEST,
-      data: {
-        LectureId: bookMenuId,
-        search: inputBookName.value,
-      },
-    });
-  }, [inputBookName.value, bookMenuId]);
-
   const onSubmit = useCallback(
     (data) => {
       if (!imagePathTh || imagePathTh.trim() === "") {
@@ -386,13 +403,18 @@ const UserDeliAddress = ({}) => {
   const onChangeBookPage = useCallback(
     (page) => {
       setCurrentPage(page);
-
+      console.log(searchForm.getFieldValue(`level`));
+      console.log(searchForm.getFieldValue(`stage`));
+      console.log(searchForm.getFieldValue(`kinds`));
       dispatch({
         type: BOOK_LIST_REQUEST,
         data: {
           LectureId: bookMenuId,
           search: inputBookName.value,
           page,
+          level: searchForm.getFieldValue(`level`),
+          stage: searchForm.getFieldValue(`stage`),
+          kinds: searchForm.getFieldValue(`kinds`),
         },
       });
     },
@@ -411,11 +433,6 @@ const UserDeliAddress = ({}) => {
     },
 
     {
-      title: "강의 이름",
-      render: (data) => <Text>{data.course}</Text>,
-    },
-
-    {
       title: "표지",
       width: 100,
       render: (data) => (
@@ -430,6 +447,10 @@ const UserDeliAddress = ({}) => {
     {
       title: "교재 이름",
       render: (data) => <Text>{data.title}</Text>,
+    },
+    {
+      title: "강의 이름",
+      render: (data) => <Text>{data.course}</Text>,
     },
 
     {
@@ -502,51 +523,105 @@ const UserDeliAddress = ({}) => {
         </SearchForm> */}
 
         <Wrapper margin={"0px 0px 20px 0px"} dr={"row"}>
-          <Wrapper dr={`row`} margin={`0 0 10px`} ju={`space-between`}>
-            <Wrapper dr={`row`} ju={`flex-start`} width={`50%`}>
-              <Input
-                size="small"
-                style={{ width: "50%" }}
-                placeholder="교재 검색"
-                {...inputBookName}
-                onKeyDown={(e) =>
-                  e.key === "Enter" && onSearchBookNameHandler()
-                }
-              />
-              <Button size="small" onClick={() => onSearchBookNameHandler()}>
-                <SearchOutlined />
-                검색
-              </Button>
-            </Wrapper>
+          <Wrapper dr={`row`} ju={`space-between`}>
+            <FormTag form={searchForm} onFinish={onClickBookFolder}>
+              <FormItem name={`search`} label={`검색`}>
+                <Wrapper dr={`row`} ju={`flex-start`}>
+                  <Input size={`small`} />
+                </Wrapper>
+              </FormItem>
+              <FormItem name={`lectureId`} label={`강의`}>
+                <Select
+                  size={`small`}
+                  style={{ width: `200px` }}
+                  defaultValue={null}
+                >
+                  <Select.Option value={null} type="primary" size="small">
+                    전체
+                  </Select.Option>
+                  {allLectures &&
+                    allLectures.map((data, idx) => {
+                      return (
+                        <Select.Option
+                          value={data.id}
+                          key={data.id}
+                          type="primary"
+                          size="small"
+                        >
+                          {data.course}
+                        </Select.Option>
+                      );
+                    })}
+                </Select>
+              </FormItem>
+              <FormItem name={`level`} label={`권`}>
+                <Select
+                  size={`small`}
+                  style={{ width: `200px` }}
+                  defaultValue={null}
+                >
+                  <Select.Option value={null} type="primary" size="small">
+                    전체
+                  </Select.Option>
+                  <Select.Option value={`1`}>1</Select.Option>
+                  <Select.Option value={`2`}>2</Select.Option>
+                  <Select.Option value={`3`}>3</Select.Option>
+                  <Select.Option value={`4`}>4</Select.Option>
+                  <Select.Option value={`5`}>5</Select.Option>
+                  <Select.Option value={`6`}>6</Select.Option>
+                </Select>
+              </FormItem>
+              <FormItem name={`stage`} label={`단원`}>
+                <Select
+                  size={`small`}
+                  style={{ width: `200px` }}
+                  defaultValue={null}
+                >
+                  <Select.Option value={null} type="primary" size="small">
+                    전체
+                  </Select.Option>
+                  <Select.Option value={`1`}>1</Select.Option>
+                  <Select.Option value={`2`}>2</Select.Option>
+                  <Select.Option value={`3`}>3</Select.Option>
+                  <Select.Option value={`4`}>4</Select.Option>
+                  <Select.Option value={`5`}>5</Select.Option>
+                  <Select.Option value={`6`}>6</Select.Option>
+                  <Select.Option value={`7`}>7</Select.Option>
+                  <Select.Option value={`8`}>8</Select.Option>
+                  <Select.Option value={`9`}>9</Select.Option>
+                  <Select.Option value={`10`}>10</Select.Option>
+                  <Select.Option value={`11`}>11</Select.Option>
+                  <Select.Option value={`12`}>12</Select.Option>
+                </Select>
+              </FormItem>
 
+              <FormItem name={`kinds`} label={`교재 종류`}>
+                <Select
+                  size={`small`}
+                  style={{ width: `200px` }}
+                  defaultValue={null}
+                >
+                  <Select.Option value={null} type="primary" size="small">
+                    전체
+                  </Select.Option>
+                  {[`교과서`, `워크북`, `듣기파일`, `토픽`].map((data, idx) => {
+                    return (
+                      <Select.Option value={data} key={idx}>
+                        {data}
+                      </Select.Option>
+                    );
+                  })}
+                </Select>
+              </FormItem>
+              <Wrapper width={`auto`}>
+                <Button type={`primary`} htmlType={`submit`} size={`small`}>
+                  검색
+                </Button>
+              </Wrapper>
+            </FormTag>
             <Button size="small" onClick={() => setCreateModal(true)}>
               자료 올리기
             </Button>
-          </Wrapper>
-
-          <Wrapper dr={`row`} ju={`flex-start`}>
-            <Select
-              style={{ width: `200px` }}
-              onChange={(e) => onClickBookFolder(e)}
-              defaultValue={null}
-            >
-              <Select.Option value={null} type="primary" size="small">
-                전체
-              </Select.Option>
-              {allLectures &&
-                allLectures.map((data, idx) => {
-                  return (
-                    <Select.Option
-                      value={data.id}
-                      key={data.id}
-                      type="primary"
-                      size="small"
-                    >
-                      {data.course}
-                    </Select.Option>
-                  );
-                })}
-            </Select>
           </Wrapper>
         </Wrapper>
 
@@ -638,7 +713,7 @@ const UserDeliAddress = ({}) => {
               name={`stage`}
             >
               <Select>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((data, idx) => {
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((data, idx) => {
                   return (
                     <Select.Option value={data} key={idx}>
                       {data}
@@ -753,4 +828,4 @@ export const getServerSideProps = wrapper.getServerSideProps(
   }
 );
 
-export default withRouter(UserDeliAddress);
+export default withRouter(Book);

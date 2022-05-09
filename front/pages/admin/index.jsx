@@ -619,7 +619,8 @@ const AdminHome = () => {
         <Button
           type="primary"
           size="small"
-          onClick={() => noticeModalToggle(data)}>
+          onClick={() => noticeModalToggle(data)}
+        >
           상세보기
         </Button>
       ),
@@ -651,7 +652,8 @@ const AdminHome = () => {
         <Button
           type="primary"
           size="small"
-          onClick={() => messageModalToggle(data)}>
+          onClick={() => messageModalToggle(data)}
+        >
           상세보기
         </Button>
       ),
@@ -676,19 +678,22 @@ const AdminHome = () => {
               dr={`row`}
               ju={`space-between`}
               al={`flex-start`}
-              margin={`0 0 30px`}>
+              margin={`0 0 30px`}
+            >
               <Wrapper al={`flex-start`} width={`49%`}>
                 <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
                   <Text
                     fontSize={`18px`}
                     fontWeight={`bold`}
-                    margin={`0 20px 0 0`}>
+                    margin={`0 20px 0 0`}
+                  >
                     전체 게시판
                   </Text>
                   <Button
                     size={`small`}
                     type={`primary`}
-                    onClick={() => moveLinkHandler(`/admin/board/notice/list`)}>
+                    onClick={() => moveLinkHandler(`/admin/board/notice/list`)}
+                  >
                     게시판 관리 페이지로 이동
                   </Button>
                 </Wrapper>
@@ -711,15 +716,15 @@ const AdminHome = () => {
                   <Text
                     fontSize={`18px`}
                     fontWeight={`bold`}
-                    margin={`0 20px 0 0`}>
+                    margin={`0 20px 0 0`}
+                  >
                     전체 쪽지 목록
                   </Text>
                   <Button
                     size={`small`}
                     type={`primary`}
-                    onClick={() =>
-                      moveLinkHandler(`/admin/board/message/list`)
-                    }>
+                    onClick={() => moveLinkHandler(`/admin/board/message/list`)}
+                  >
                     쪽지 관리 페이지로 이동
                   </Button>
                 </Wrapper>
@@ -743,13 +748,15 @@ const AdminHome = () => {
                 <Text
                   fontSize={`18px`}
                   fontWeight={`bold`}
-                  margin={`0 20px 0 0`}>
+                  margin={`0 20px 0 0`}
+                >
                   클래스 목록
                 </Text>
                 <Button
                   size="small"
                   type="primary"
-                  onClick={() => moveLinkHandler(`/admin/class/create`)}>
+                  onClick={() => moveLinkHandler(`/admin/class/create`)}
+                >
                   새 클래스 추가
                 </Button>
               </Wrapper>
@@ -759,7 +766,8 @@ const AdminHome = () => {
                   placeholder={`강사를 선택해주세요.`}
                   onChange={(e) => setCurrentTeacher(e)}
                   allowClear
-                  value={currentTeacher}>
+                  value={currentTeacher}
+                >
                   <Select.Option value={null}>전체</Select.Option>
                   {teachers &&
                     teachers.map((data) => {
@@ -784,7 +792,8 @@ const AdminHome = () => {
                   <Select
                     placeholder={`학생을 선택해주세요.`}
                     onChange={(e) => setSearchStuName(e)}
-                    allowClear>
+                    allowClear
+                  >
                     <Select.Option value={""}>선택안함</Select.Option>
 
                     {userStuList && userStuList.length === 0 ? (
@@ -809,7 +818,8 @@ const AdminHome = () => {
                     width={`auto`}
                     dr={`row`}
                     ju={`flex-start`}
-                    margin={`0 10px 0 0`}>
+                    margin={`0 10px 0 0`}
+                  >
                     <FormItem width={`70px`}>
                       <Select onChange={(e) => setSearchLevel(e)} allowClear>
                         <Select.Option value={`1`}>1</Select.Option>
@@ -827,7 +837,8 @@ const AdminHome = () => {
                     width={`auto`}
                     dr={`row`}
                     ju={`flex-start`}
-                    margin={`0 10px 0 0`}>
+                    margin={`0 10px 0 0`}
+                  >
                     <FormItem width={`70px`}>
                       <Select onChange={(e) => setSearchStep(e)} allowClear>
                         <Select.Option value={`1`}>1</Select.Option>
@@ -866,7 +877,8 @@ const AdminHome = () => {
 
                   <Button
                     type="primary"
-                    onClick={() => onClickSearchLevelHandle()}>
+                    onClick={() => onClickSearchLevelHandle()}
+                  >
                     검색
                   </Button>
                 </Wrapper>
@@ -892,24 +904,28 @@ const AdminHome = () => {
                           (idx + 1) % 3 === 0 ? `0 0 30px 0` : `0 10px 30px 0`
                         }
                         padding={`20px 10px`}
-                        ju={`space-between`}>
+                        ju={`space-between`}
+                      >
                         <Wrapper>
                           <Wrapper
                             dr={`row`}
                             ju={`space-between`}
                             al={`flex-start`}
                             padding={`0 0 20px`}
-                            borderBottom={`1px solid ${Theme.grey2_C}`}>
+                            borderBottom={`1px solid ${Theme.grey2_C}`}
+                          >
                             <Wrapper width={`auto`}>
                               <Wrapper
                                 dr={`row`}
                                 ju={`flex-start`}
                                 al={`flex-start`}
-                                margin={`0 0 15px`}>
+                                margin={`0 0 15px`}
+                              >
                                 <Wrapper
                                   width={`34px`}
                                   padding={`0 5px`}
-                                  margin={`0 10px 0 0`}>
+                                  margin={`0 10px 0 0`}
+                                >
                                   <Image
                                     src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png`}
                                     alt={`icon_lecture`}
@@ -917,7 +933,8 @@ const AdminHome = () => {
                                 </Wrapper>
                                 <Wrapper
                                   width={`calc(100% - 44px)`}
-                                  al={`flex-start`}>
+                                  al={`flex-start`}
+                                >
                                   <Text fontSize={`16px`} fontWeight={`700`}>
                                     {data.day}
                                   </Text>
@@ -930,11 +947,13 @@ const AdminHome = () => {
                               <Wrapper
                                 dr={`row`}
                                 ju={`flex-start`}
-                                margin={`0 0 15px`}>
+                                margin={`0 0 15px`}
+                              >
                                 <Wrapper
                                   width={`34px`}
                                   padding={`0 5px`}
-                                  margin={`0 10px 0 0`}>
+                                  margin={`0 10px 0 0`}
+                                >
                                   <Image
                                     src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_name_yellow.png`}
                                     alt={`icon_lecture`}
@@ -950,7 +969,8 @@ const AdminHome = () => {
                                 <Wrapper
                                   width={`34px`}
                                   padding={`0 5px`}
-                                  margin={`0 10px 0 0`}>
+                                  margin={`0 10px 0 0`}
+                                >
                                   <Image
                                     src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_number.png`}
                                     alt={`icon_lecture`}
@@ -966,7 +986,8 @@ const AdminHome = () => {
                               fontSize={`15px`}
                               color={Theme.grey2_C}
                               al={width < 1350 ? `flex-start` : `flex-end`}
-                              margin={width < 1350 ? `20px 0 0` : `0`}>
+                              margin={width < 1350 ? `20px 0 0` : `0`}
+                            >
                               <Text fontSize={`14px`} fontWeight={`bold`}>
                                 {data.startLv}
                               </Text>
@@ -979,15 +1000,20 @@ const AdminHome = () => {
                             </Wrapper>
                           </Wrapper>
                           <Wrapper
-                            margin={`20px 0 0`}
+                            margin={`20px 0 10px`}
                             dr={`row`}
-                            ju={`flex-start`}>
+                            ju={`flex-start`}
+                          >
                             {data.Participants &&
-                              data.Participants.map((data) => {
+                              data.Participants.map((data, idx) => {
                                 return (
-                                  <Text key={data.id} margin={`0 15px 0 0`}>
+                                  <Wrapper
+                                    key={data.id}
+                                    margin={`0 0 10px`}
+                                    al={`flex-stasrt`}
+                                  >
                                     {data.User.username}
-                                  </Text>
+                                  </Wrapper>
                                 );
                               })}
                           </Wrapper>
@@ -1002,7 +1028,8 @@ const AdminHome = () => {
                             fontSize={`14px`}
                             onClick={() =>
                               moveLinkHandler(`/admin/class/${data.id}`)
-                            }>
+                            }
+                          >
                             자세히 보기
                           </CommonButton>
                           <CommonButton
@@ -1012,12 +1039,14 @@ const AdminHome = () => {
                             radius={`5px`}
                             margin={`0 10px 0 0`}
                             fontSize={`14px`}
-                            onClick={() => updateModalOpen(data)}>
+                            onClick={() => updateModalOpen(data)}
+                          >
                             수정
                           </CommonButton>
                           <CustomButton
                             type={`danger`}
-                            onClick={() => deletePopToggle(data.id)}>
+                            onClick={() => deletePopToggle(data.id)}
+                          >
                             삭제
                           </CustomButton>
                         </Wrapper>
@@ -1033,7 +1062,8 @@ const AdminHome = () => {
             visible={deletePopVisible}
             onOk={deleteClassHandler}
             onCancel={() => deletePopToggle(null)}
-            title="강의를 종료하시겠습니까?">
+            title="강의를 종료하시겠습니까?"
+          >
             <Wrapper>종료된 데이터는 다시 복구할 수 있습니다.</Wrapper>
             <Wrapper>강의를 종료하시겠습니까?</Wrapper>
           </Modal>
@@ -1043,7 +1073,8 @@ const AdminHome = () => {
             width={`1100px`}
             title={`클래스 수정`}
             onOk={updateModalOk}
-            onCancel={updateModalClose}>
+            onCancel={updateModalClose}
+          >
             <Form form={form} ref={formRef} onFinish={onSubmitUpdate}>
               <Wrapper padding={`0 50px`}>
                 <Wrapper dr={`row`} margin={`0 0 20px`}>
@@ -1052,7 +1083,8 @@ const AdminHome = () => {
                     rules={[
                       { required: true, message: "강의명을 입력해주세요." },
                     ]}
-                    name={`course`}>
+                    name={`course`}
+                  >
                     <CusotmInput />
                   </FormItem>
                 </Wrapper>
@@ -1063,7 +1095,8 @@ const AdminHome = () => {
                     rules={[
                       { required: true, message: "강의 번호을 입력해주세요." },
                     ]}
-                    name={`number`}>
+                    name={`number`}
+                  >
                     <CusotmInput />
                   </FormItem>
                 </Wrapper>
@@ -1074,7 +1107,8 @@ const AdminHome = () => {
                     rules={[
                       { required: true, message: "강사를 선택해주세요." },
                     ]}
-                    name={`UserId`}>
+                    name={`UserId`}
+                  >
                     <Select size={`large`}>
                       {allUsers &&
                         allUsers.map((data) => {
@@ -1104,10 +1138,9 @@ const AdminHome = () => {
                     <Wrapper
                       width={`calc(100% / 3)`}
                       dr={`row`}
-                      ju={`flex-start`}>
+                      ju={`flex-start`}
+                    >
                       <FormItem name={`lv1`} width={`calc(100% - 50px)`}>
-                       
-
                         <Select>
                           <Select.Option value={`1`}>1</Select.Option>
                           <Select.Option value={`2`}>2</Select.Option>
@@ -1123,9 +1156,10 @@ const AdminHome = () => {
                     <Wrapper
                       width={`calc(100% / 3)`}
                       dr={`row`}
-                      ju={`flex-start`}>
+                      ju={`flex-start`}
+                    >
                       <FormItem name={`lv2`} width={`calc(100% - 50px)`}>
-                      <Select>
+                        <Select>
                           <Select.Option value={`1`}>1</Select.Option>
                           <Select.Option value={`2`}>2</Select.Option>
                           <Select.Option value={`3`}>3</Select.Option>
@@ -1146,7 +1180,8 @@ const AdminHome = () => {
                     <Wrapper
                       width={`calc(100% / 3)`}
                       dr={`row`}
-                      ju={`flex-start`}>
+                      ju={`flex-start`}
+                    >
                       <FormItem name={`lv3`} width={`calc(100% - 50px)`}>
                         <Input type={`number`} min={`0`} />
                       </FormItem>
@@ -1166,7 +1201,8 @@ const AdminHome = () => {
                       { required: true, message: "횟수를 입력해주세요." },
                     ]}
                     name={`cnt`}
-                    width={`calc(100% - 130px)`}>
+                    width={`calc(100% - 130px)`}
+                  >
                     <CusotmInput disabled type={`number`} {...inputCnt} />
                   </FormItem>
                   <Text width={`30px`} padding={`0 0 0 10px`}>
@@ -1180,14 +1216,16 @@ const AdminHome = () => {
                     rules={[
                       { required: true, message: "요일을 입력해주세요." },
                     ]}
-                    name={`day`}>
+                    name={`day`}
+                  >
                     <Select
                       mode="multiple"
                       size={`large`}
                       onChange={(e) => {
                         setDayArr(e);
                       }}
-                      disabled>
+                      disabled
+                    >
                       <Select.Option value={`월`}>월</Select.Option>
                       <Select.Option value={`화`}>화</Select.Option>
                       <Select.Option value={`수`}>수</Select.Option>
@@ -1205,7 +1243,8 @@ const AdminHome = () => {
                     <Wrapper
                       dr={`row`}
                       ju={`flex-start`}
-                      width={`calc(100% - 100px)`}>
+                      width={`calc(100% - 100px)`}
+                    >
                       {dayArr.map((data, idx) => {
                         return (
                           <FormItem
@@ -1219,7 +1258,8 @@ const AdminHome = () => {
                                 required: true,
                                 message: `${data}요일의 수업시간을 입력해주세요.`,
                               },
-                            ]}>
+                            ]}
+                          >
                             <TimeInput format={`HH:mm`} />
                           </FormItem>
                         );
@@ -1234,7 +1274,8 @@ const AdminHome = () => {
                     rules={[
                       { required: true, message: "시작 날짜를 입력해주세요." },
                     ]}
-                    name={`startDate`}>
+                    name={`startDate`}
+                  >
                     <DateInput
                       format={`YYYY-MM-DD`}
                       size={`large`}
@@ -1255,7 +1296,8 @@ const AdminHome = () => {
                     rules={[
                       { required: true, message: "줌링크를 작성해주세요." },
                     ]}
-                    name={`zoomLink`}>
+                    name={`zoomLink`}
+                  >
                     <CusotmInput type={`url`} />
                   </FormItem>
                 </Wrapper>
@@ -1267,12 +1309,14 @@ const AdminHome = () => {
             title={`게시판 상세보기`}
             visible={noticeDetailModal}
             footer={null}
-            onCancel={() => noticeModalToggle(null)}>
+            onCancel={() => noticeModalToggle(null)}
+          >
             <Wrapper
               dr={`row`}
               ju={`space-between`}
               margin={`0 0 35px`}
-              fontSize={width < 700 ? `14px` : `16px`}>
+              fontSize={width < 700 ? `14px` : `16px`}
+            >
               <Text margin={`0 54px 0 0`}>
                 {`작성자: ${noticeDetailData && noticeDetailData.author}`}
               </Text>
@@ -1303,7 +1347,8 @@ const AdminHome = () => {
                   size={`small`}
                   radius={`5px`}
                   fontSize={`14px`}
-                  onClick={() => fileDownloadHandler(noticeDetailData.file)}>
+                  onClick={() => fileDownloadHandler(noticeDetailData.file)}
+                >
                   다운로드
                 </CommonButton>
               </Wrapper>
@@ -1325,7 +1370,8 @@ const AdminHome = () => {
               <WordbreakText
                 dangerouslySetInnerHTML={{
                   __html: noticeDetailData && noticeDetailData.content,
-                }}></WordbreakText>
+                }}
+              ></WordbreakText>
             </Wrapper>
           </Modal>
           {/* MESSAGE MODAL */}
@@ -1333,12 +1379,14 @@ const AdminHome = () => {
             title={`쪽지 상세보기`}
             visible={messageDetailModal}
             footer={null}
-            onCancel={() => messageModalToggle(null)}>
+            onCancel={() => messageModalToggle(null)}
+          >
             <Wrapper
               dr={`row`}
               ju={`space-between`}
               margin={`0 0 35px`}
-              fontSize={width < 700 ? `14px` : `16px`}>
+              fontSize={width < 700 ? `14px` : `16px`}
+            >
               <Text margin={`0 54px 0 0`}>
                 {`작성자: ${messageDetailData && messageDetailData.author}`}
               </Text>
@@ -1368,7 +1416,8 @@ const AdminHome = () => {
               padding={`10px`}
               al={`flex-start`}
               ju={`flex-start`}
-              fontSize={width < 700 ? `14px` : `16px`}>
+              fontSize={width < 700 ? `14px` : `16px`}
+            >
               {messageDetailData &&
                 messageDetailData.content.split(`\n`).map((data) => {
                   return (
@@ -1387,7 +1436,8 @@ const AdminHome = () => {
             <Wrapper
               width={`50%`}
               height={`100%`}
-              bgImg={`url("https://firebasestorage.googleapis.com/v0/b/storage-4leaf.appspot.com/o/4leaf%2F5137894.jpg?alt=media&token=99858357-4602-44aa-b32a-e6c9867788ff")`}>
+              bgImg={`url("https://firebasestorage.googleapis.com/v0/b/storage-4leaf.appspot.com/o/4leaf%2F5137894.jpg?alt=media&token=99858357-4602-44aa-b32a-e6c9867788ff")`}
+            >
               <Image
                 width={`300px`}
                 alt="logo"
@@ -1396,7 +1446,8 @@ const AdminHome = () => {
               <Wrapper
                 color={Theme.white_C}
                 margin={`15px 0 0`}
-                fontSize={`1.1rem`}>
+                fontSize={`1.1rem`}
+              >
                 관리자페이지에 오신걸 환영합니다.
               </Wrapper>
             </Wrapper>
@@ -1406,7 +1457,8 @@ const AdminHome = () => {
                   fontSize={`2rem`}
                   fontWeight={`bold`}
                   margin={`0 0 30px`}
-                  al={`flex-start`}>
+                  al={`flex-start`}
+                >
                   Log in
                 </Wrapper>
                 <Wrapper al={`flex-start`}>아이디</Wrapper>
