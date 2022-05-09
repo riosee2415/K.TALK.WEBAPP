@@ -70,11 +70,15 @@ router.post("/list", async (req, res, next) => {
             A.level,
             A.stage,
             A.kinds,
-            B.course
+            B.course,
+            C.username
       FROM	books					    A
      INNER
       JOIN	lectures 			    B
         ON	A.LectureId = B.id
+     INNER
+      JOIN	users 			      C
+        ON	B.UserId = C.id
      WHERE	1 = 1
        AND	A.isDelete = FALSE
        AND	B.isDelete = FALSE
@@ -94,11 +98,15 @@ router.post("/list", async (req, res, next) => {
             A.level,
             A.stage,
             A.kinds,
-            B.course
+            B.course,
+            C.username
       FROM	books					    A
      INNER
       JOIN	lectures 			    B
         ON	A.LectureId = B.id
+     INNER
+      JOIN	users 			      C
+        ON	B.UserId = C.id
      WHERE	1 = 1
        AND	A.isDelete = FALSE
        AND	B.isDelete = FALSE
