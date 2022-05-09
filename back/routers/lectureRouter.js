@@ -146,7 +146,7 @@ router.get(["/list", "/list/:sort"], async (req, res, next) => {
 router.get(
   ["/allLectures", "/allLectures/:listType"],
   async (req, res, next) => {
-    const { TeacherId, studentName, time, startLv } = req.query;
+    const { TeacherId, studentName, time, startLv, isDelete } = req.query;
     const { listType } = req.params;
 
     let nanFlag = isNaN(listType);
@@ -154,6 +154,8 @@ router.get(
     const _studentName = studentName ? studentName : ``;
     const _time = time ? time : ``;
     const _startLv = startLv ? startLv : ``;
+
+    let _isDelete = isDelete ? isDelete : null;
 
     if (!listType) {
       nanFlag = false;
@@ -181,6 +183,7 @@ router.get(
         startLv: {
           [Op.like]: `%${_startLv}%`,
         },
+        isDelete: _isDelete ? _isDelete : false,
       };
     }
 
@@ -193,6 +196,7 @@ router.get(
         startLv: {
           [Op.like]: `%${_startLv}%`,
         },
+        isDelete: _isDelete ? _isDelete : false,
       };
     }
 
@@ -785,6 +789,18 @@ router.delete("/delete/:lectureId", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의입니다.");
     }
 
+    const exParts = await Participant.findAll({
+      where: {
+        LectureId: parseInt(lectureId),
+        isDelete: false,
+        isChange: false,
+      },
+    });
+
+    if (exParts.length !== 0) {
+      return res.status(401).send("해당 강의에 참여하고 있는 학생이 있습니다.");
+    }
+
     const deleteResult = await Lecture.update(
       {
         isDelete: true,
@@ -802,6 +818,38 @@ router.delete("/delete/:lectureId", isAdminCheck, async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의를 삭제할 수 없습니다.");
+  }
+});
+
+router.patch("/restore", isAdminCheck, async (req, res, next) => {
+  const { LectureId } = req.params;
+
+  try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의입니다.");
+    }
+
+    const deleteResult = await Lecture.update(
+      {
+        isDelete: false,
+      },
+      {
+        where: { id: parseInt(LectureId) },
+      }
+    );
+
+    if (deleteResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("강의를 복구할 수 없습니다.");
   }
 });
 
