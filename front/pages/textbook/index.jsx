@@ -551,8 +551,7 @@ const Index = () => {
               <Text
                 color={Theme.black_2C}
                 fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`Bold`}
-              >
+                fontWeight={`Bold`}>
                 교재 목록
               </Text>
             </Wrapper>
@@ -560,8 +559,7 @@ const Index = () => {
             <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 40px`}>
               <Wrapper
                 position={`relative`}
-                width={width < 800 ? `calc(100% - 100px - 20px)` : `500px`}
-              >
+                width={width < 800 ? `calc(100% - 100px - 20px)` : `500px`}>
                 <SearchOutlined
                   style={{
                     color: Theme.grey2_C,
@@ -582,8 +580,7 @@ const Index = () => {
                 width={width < 800 ? `100px` : `160px`}
                 height={`50px`}
                 shadow={`0 2px 10px rgba(0,0,0,0.16)`}
-                onClick={() => setCreateModal(true)}
-              >
+                onClick={() => setCreateModal(true)}>
                 자료 올리기
               </CommonButton>
             </Wrapper>
@@ -591,8 +588,7 @@ const Index = () => {
               <Select
                 style={{ width: `400px` }}
                 onChange={(e) => setCurrentTab(e)}
-                defaultValue={null}
-              >
+                defaultValue={null}>
                 <Select.Option value={null}>전체</Select.Option>
                 {allLectures &&
                   allLectures.map((data) => {
@@ -608,8 +604,7 @@ const Index = () => {
               dr={`row`}
               al={`flex-start`}
               ju={`flex-start`}
-              minHeight={`680px`}
-            >
+              minHeight={`680px`}>
               {bookList && bookList.length === 0 ? (
                 <Wrapper>
                   <Empty description={`조회된 데이터가 없습니다.`} />
@@ -617,6 +612,7 @@ const Index = () => {
               ) : (
                 bookList &&
                 bookList.map((data, idx) => {
+                  console.log(data, "data");
                   return (
                     <ProductWrapper>
                       <ProductMenu
@@ -649,14 +645,12 @@ const Index = () => {
                             : (idx + 1) % 6 === 0
                             ? `-100px`
                             : ``
-                        }
-                      >
+                        }>
                         <Wrapper
                           height={`20px`}
                           al={`flex-end`}
                           padding={`20px 20px 0 0`}
-                          margin={`0 0 10px`}
-                        >
+                          margin={`0 0 10px`}>
                           <CloseOutlined
                             onClick={() => {
                               setCurrentMenu(null);
@@ -675,8 +669,7 @@ const Index = () => {
                           onClick={() => {
                             updateModalOpen(data);
                             setCurrentMenu(null);
-                          }}
-                        >
+                          }}>
                           <Wrapper width={`22px`} margin={`0 20px 0 0`}>
                             <Image
                               src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_change.png`}
@@ -697,8 +690,7 @@ const Index = () => {
                           onClick={() => {
                             fileDownloadHandler(data.file);
                             setCurrentMenu(null);
-                          }}
-                        >
+                          }}>
                           <Wrapper width={`22px`} margin={`0 20px 0 0`}>
                             <Image
                               src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_download_gray.png`}
@@ -716,8 +708,7 @@ const Index = () => {
                           height={`40px`}
                           padding={width < 1100 ? `0 0 0 10px` : `0 0 0 30px`}
                           margin={`0 0 20px 0`}
-                          onClick={deletePopToggle(data.id)}
-                        >
+                          onClick={deletePopToggle(data.id)}>
                           <Wrapper width={`22px`} margin={`0 20px 0 0`}>
                             <Image
                               src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_delet.png`}
@@ -732,8 +723,7 @@ const Index = () => {
                         position={`relative`}
                         height={`0`}
                         padding={`0 0 125%`}
-                        onClick={() => setCurrentMenu(data.id)}
-                      >
+                        onClick={() => setCurrentMenu(data.id)}>
                         <Image
                           position={`absolute`}
                           top={`0`}
@@ -764,8 +754,7 @@ const Index = () => {
             onCancel={
               updateData ? updateModalClose : () => setCreateModal(false)
             }
-            onOk={modalOk}
-          >
+            onOk={modalOk}>
             <Wrapper al={`flex-start`}>
               <Form form={form} onFinish={updateData ? updateSubmit : onSubmit}>
                 <Form.Item
@@ -773,15 +762,13 @@ const Index = () => {
                     { required: true, message: "교재 제목을 입력해주세요." },
                   ]}
                   label={`교재 제목`}
-                  name={`title`}
-                >
+                  name={`title`}>
                   <TextInput height={`30px`} />
                 </Form.Item>
                 <Form.Item
                   rules={[{ required: true, message: "강의를 선택해주세요." }]}
                   label={`강의 선택`}
-                  name={`folder`}
-                >
+                  name={`folder`}>
                   <Select
                     placeholder="Select a Lecture"
                     optionFilterProp="children"
@@ -789,8 +776,7 @@ const Index = () => {
                       option.children
                         .toLowerCase()
                         .indexOf(input.toLowerCase()) >= 0
-                    }
-                  >
+                    }>
                     {allLectures &&
                       allLectures.map((data) => {
                         return (
@@ -804,8 +790,7 @@ const Index = () => {
                 <Form.Item
                   rules={[{ required: true, message: "권을 선택해주세요." }]}
                   label={`권`}
-                  name={`level`}
-                >
+                  name={`level`}>
                   <Select>
                     {[1, 2, 3, 4, 5, 6].map((data, idx) => {
                       return (
@@ -819,8 +804,7 @@ const Index = () => {
                 <Form.Item
                   rules={[{ required: true, message: "단원을 선택해주세요." }]}
                   label={`단원`}
-                  name={`stage`}
-                >
+                  name={`stage`}>
                   <Select>
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((data, idx) => {
                       return (
@@ -835,8 +819,7 @@ const Index = () => {
                 <Form.Item
                   rules={[{ required: true, message: "유형을 선택해주세요." }]}
                   label={`유형`}
-                  name={`kinds`}
-                >
+                  name={`kinds`}>
                   <Select>
                     {[`교과서`, `워크북`, `듣기파일`, `토픽`].map(
                       (data, idx) => {
@@ -882,8 +865,7 @@ const Index = () => {
                 width={`auto`}
                 margin={`20px 0 0`}
                 dr={`row`}
-                ju={`flex-end`}
-              >
+                ju={`flex-end`}>
                 <input
                   type="file"
                   name="file"
@@ -897,8 +879,7 @@ const Index = () => {
                 <Button
                   type="primary"
                   onClick={fileUploadClick}
-                  loading={st_bookUploadLoading}
-                >
+                  loading={st_bookUploadLoading}>
                   교재 파일 업로드
                 </Button>
               </Wrapper>
@@ -909,8 +890,7 @@ const Index = () => {
             visible={deletePopVisible}
             onOk={deleteNoticeHandler}
             onCancel={deletePopToggle(null)}
-            title="정말 삭제하시겠습니까?"
-          >
+            title="정말 삭제하시겠습니까?">
             <Wrapper>삭제 된 데이터는 다시 복구할 수 없습니다.</Wrapper>
             <Wrapper>정말 삭제하시겠습니까?</Wrapper>
           </Modal>

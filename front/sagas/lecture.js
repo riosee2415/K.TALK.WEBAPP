@@ -108,6 +108,10 @@ import {
   LECTURE_STU_LIMIT_LIST_REQUEST,
   LECTURE_STU_LIMIT_LIST_SUCCESS,
   LECTURE_STU_LIMIT_LIST_FAILURE,
+  //
+  LECTURE_RESTORE_REQUEST,
+  LECTURE_RESTORE_SUCCESS,
+  LECTURE_RESTORE_FAILURE,
 } from "../reducers/lecture";
 
 // SAGA AREA ********************************************************************************************************
@@ -141,7 +145,7 @@ function* lectureList(action) {
 // ******************************************************************************************************************
 function lectureAllListAPI(data) {
   return axios.get(
-    `/api/lecture/allLectures?TeacherId=${data.TeacherId}&time=${data.time}&startLv=${data.startLv}&studentName=${data.studentName}`,
+    `/api/lecture/allLectures?TeacherId=${data.TeacherId}&time=${data.time}&startLv=${data.startLv}&studentName=${data.studentName}&isDelete=${data.isDelete}`,
     data
   );
 }
@@ -796,6 +800,37 @@ function* lectureStuLimitList(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function lectureRestoreAPI(data) {
+  return axios.patch(`/api/lecture/restore`, data);
+}
+
+function* lectureRestore(action) {
+  try {
+    const result = yield call(lectureRestoreAPI, action.data);
+
+    yield put({
+      type: LECTURE_RESTORE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_RESTORE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchLectureList() {
   yield takeLatest(LECTURE_LIST_REQUEST, lectureList);
@@ -902,6 +937,9 @@ function* watchLectureCommuteList() {
 function* watchLectureStuLimitList() {
   yield takeLatest(LECTURE_STU_LIMIT_LIST_REQUEST, lectureStuLimitList);
 }
+function* watchLectureRestore() {
+  yield takeLatest(LECTURE_RESTORE_REQUEST, lectureRestore);
+}
 
 //////////////////////////////////////////////////////////////
 export default function* lectureSaga() {
@@ -933,6 +971,7 @@ export default function* lectureSaga() {
     fork(watchLectureAllLevelList),
     fork(watchLectureCommuteList),
     fork(watchLectureStuLimitList),
+    fork(watchLectureRestore),
     //
   ]);
 }

@@ -684,6 +684,12 @@ const List = () => {
 
   const detailModalOpen = useCallback((data) => {
     dispatch({
+      type: PAYMENT_LIST_REQUEST,
+      data: {
+        email: data && data.email,
+      },
+    });
+    dispatch({
       type: PARTICIPANT_USER_CURRENT_LIST_REQUEST,
       data: {
         UserId: data.id,
@@ -957,10 +963,15 @@ const List = () => {
       dataIndex: "id",
     },
 
-    // {
-    //   title: "수업 번호",
-    //   render: (data) => <div>{data.Lecture.number}</div>,
-    // },
+    {
+      title: "수업 번호",
+      render: (data) => <div>{data.number}</div>,
+    },
+
+    {
+      title: "이름",
+      render: (data) => <div>{data.TeacherName}</div>,
+    },
 
     {
       title: "수업 이름",
@@ -994,10 +1005,15 @@ const List = () => {
       dataIndex: "id",
     },
 
-    // {
-    //   title: "수업 번호",
-    //   render: (data) => <div>{console.log(data, "data")}</div>,
-    // },
+    {
+      title: "수업 번호",
+      render: (data) => <div>{data.number}</div>,
+    },
+
+    {
+      title: "이름",
+      render: (data) => <div>{data.TeacherName}</div>,
+    },
 
     {
       title: "수업 이름",
@@ -1037,10 +1053,15 @@ const List = () => {
       dataIndex: "id",
     },
 
-    // {
-    //   title: "수업 번호",
-    //   render: (data) => <div>{console.log(data, "data")}</div>,
-    // },
+    {
+      title: "수업 번호",
+      render: (data) => <div>{data.number}</div>,
+    },
+
+    {
+      title: "이름",
+      render: (data) => <div>{data.TeacherName}</div>,
+    },
 
     {
       title: "수업 이름",
@@ -1069,10 +1090,15 @@ const List = () => {
       dataIndex: "id",
     },
 
-    // {
-    //   title: "수업 번호",
-    //   render: (data) => <div>{console.log(data, "data")}</div>,
-    // },
+    {
+      title: "수업 번호",
+      render: (data) => <div>{data.number}</div>,
+    },
+
+    {
+      title: "이름",
+      render: (data) => <div>{data.teacherName}</div>,
+    },
 
     {
       title: "수업 이름",
@@ -1121,6 +1147,33 @@ const List = () => {
     {
       title: "출석일",
       render: (data) => <div>{`${data.createdAt.slice(0, 13)}`}</div>,
+    },
+  ];
+
+  const columnsPayList = [
+    {
+      title: "번호",
+      dataIndex: "id",
+    },
+
+    {
+      title: "결제한 강의",
+      dataIndex: "course",
+    },
+
+    {
+      title: "결제한 가격",
+
+      render: (data) => {
+        return <div>{`$${data.price}`}</div>;
+      },
+    },
+
+    {
+      title: "결제일",
+      render: (data) => {
+        return <div>{data.createdAt.substring(0, 10)}</div>;
+      },
     },
   ];
 
@@ -1700,6 +1753,17 @@ const List = () => {
           rowKey="id"
           columns={columns7End}
           dataSource={st_participantUserLimitListDone ? partUserLimitList : []}
+          size="small"
+        />
+
+        <Text fontSize={`16px`} fontWeight={`700`} margin={`0 0 10px`}>
+          학생 결제 목록
+        </Text>
+
+        <Table
+          rowKey="id"
+          columns={columnsPayList}
+          dataSource={paymentList ? paymentList : []}
           size="small"
         />
       </Modal>

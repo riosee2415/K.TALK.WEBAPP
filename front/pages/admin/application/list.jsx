@@ -668,7 +668,7 @@ const List = () => {
               회원을 생성하면 학생 관리에서 확인할 수 있습니다.
             </GuideLi>
             <GuideLi width={`auto`}>
-              줌 미팅 시간과 등록일 순으로 정렬 할 수 있습니다.
+              줌 미팅 시간은 날짜와 시간을 선택해주시면 확인할 수 있습니다.
             </GuideLi>
           </GuideUl>
         </Wrapper>

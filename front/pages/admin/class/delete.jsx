@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import wrapper from "../../store/configureStore";
+import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
 
 import styled from "styled-components";
-import AdminLayout from "../../components/AdminLayout";
+import AdminLayout from "../../../components/AdminLayout";
 import {
   Wrapper,
   Image,
@@ -13,7 +13,7 @@ import {
   Text,
   TextInput,
   SpanText,
-} from "../../components/commonComponents";
+} from "../../../components/commonComponents";
 import {
   Button,
   DatePicker,
@@ -29,11 +29,11 @@ import {
   TimePicker,
 } from "antd";
 
-import useInput from "../../hooks/useInput";
+import useInput from "../../../hooks/useInput";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
-import Theme from "../../components/Theme";
-import useWidth from "../../hooks/useWidth";
+import Theme from "../../../components/Theme";
+import useWidth from "../../../hooks/useWidth";
 import moment from "moment";
 
 import {
@@ -44,14 +44,15 @@ import {
   USER_ALL_LIST_REQUEST,
   USER_STU_LIST_REQUEST,
   USER_TEACHER_LIST_REQUEST,
-} from "../../reducers/user";
+} from "../../../reducers/user";
 import {
   LECTURE_ALL_LIST_REQUEST,
   LECTURE_DELETE_REQUEST,
+  LECTURE_RESTORE_REQUEST,
   LECTURE_UPDATE_REQUEST,
-} from "../../reducers/lecture";
-import { MESSAGE_ADMIN_MAIN_LIST_REQUEST } from "../../reducers/message";
-import { NOTICE_ADMIN_MAIN_LIST_REQUEST } from "../../reducers/notice";
+} from "../../../reducers/lecture";
+import { MESSAGE_ADMIN_MAIN_LIST_REQUEST } from "../../../reducers/message";
+import { NOTICE_ADMIN_MAIN_LIST_REQUEST } from "../../../reducers/notice";
 
 // let Line;
 
@@ -112,7 +113,7 @@ const TimeInput = styled(TimePicker)`
   }
 `;
 
-const AdminHome = () => {
+const Delete = () => {
   ////// HOOKS //////
   const width = useWidth();
 
@@ -138,9 +139,6 @@ const AdminHome = () => {
   const [messageDetailData, setMessageDetailData] = useState(null);
   const [messageDetailModal, setMessageDetailModal] = useState(null);
 
-  const [currentPage1, setCurrentPage1] = useState(1);
-  const [currentPage2, setCurrentPage2] = useState(1);
-
   const [dayArr, setDayArr] = useState([]);
   const inputId = useInput("");
   const inputPw = useInput("");
@@ -162,6 +160,9 @@ const AdminHome = () => {
 
     st_lectureAllListDone,
     st_lectureAllListError,
+
+    st_lectureRestoreDone,
+    st_lectureRestoreError,
   } = useSelector((state) => state.lecture);
 
   const {
@@ -175,13 +176,6 @@ const AdminHome = () => {
     st_userStuListDone,
     st_userStuListError,
   } = useSelector((state) => state.user);
-
-  const { noticeAdminMain, noticeAdminMainMaxPage } = useSelector(
-    (state) => state.notice
-  );
-  const { messageAdminMainList, messageAdminMainMaxPage } = useSelector(
-    (state) => state.message
-  );
 
   ////// USEEFFECT //////
 
@@ -230,6 +224,7 @@ const AdminHome = () => {
           time: "",
           startLv: "",
           studentName: "",
+          isDelete: 1,
         },
       });
 
@@ -260,6 +255,7 @@ const AdminHome = () => {
           time: searchTime ? searchTime : "",
           startLv: "",
           studentName: searchStuName ? searchStuName : "",
+          isDelete: 1,
         },
       });
     }
@@ -282,6 +278,7 @@ const AdminHome = () => {
           time: searchTime ? searchTime : "",
           startLv: "",
           studentName: searchStuName ? searchStuName : "",
+          isDelete: 1,
         },
       });
       updateModalClose();
@@ -342,23 +339,6 @@ const AdminHome = () => {
     }
   }, [st_lectureAllListDone, router.query]);
 
-  useEffect(() => {
-    dispatch({
-      type: NOTICE_ADMIN_MAIN_LIST_REQUEST,
-      data: {
-        page: currentPage1,
-      },
-    });
-  }, [currentPage1]);
-  useEffect(() => {
-    dispatch({
-      type: MESSAGE_ADMIN_MAIN_LIST_REQUEST,
-      data: {
-        page: currentPage2,
-      },
-    });
-  }, [currentPage2]);
-
   // useEffect(() => {
   //   if (me) {
   //     moveLinkHandler(`/admin?login=true`);
@@ -379,10 +359,40 @@ const AdminHome = () => {
         time: "",
         startLv: "",
         studentName: "",
+        isDelete: 1,
       },
     });
     setCurrentTeacher(router.query.teacher);
   }, [router.query]);
+
+  useEffect(() => {
+    if (st_lectureAllListError) {
+      return message.error(st_lectureAllListError);
+    }
+  }, [st_lectureAllListError]);
+
+  useEffect(() => {
+    if (st_lectureRestoreError) {
+      return message.error(st_lectureRestoreError);
+    }
+  }, [st_lectureRestoreError]);
+
+  useEffect(() => {
+    if (st_lectureRestoreDone) {
+      dispatch({
+        type: LECTURE_ALL_LIST_REQUEST,
+        data: {
+          TeacherId: router.query.teacher ? router.query.teacher : "",
+          time: "",
+          startLv: "",
+          studentName: "",
+          isDelete: 1,
+        },
+      });
+
+      return message.success("해당 클래스를 복구 했습니다.");
+    }
+  }, [st_lectureRestoreDone, router.query.teacher]);
 
   ////// HANDLER ///////
 
@@ -467,9 +477,10 @@ const AdminHome = () => {
         "일시적인 장애가 발생되었습니다. 잠시 후 다시 시도해주세요."
       );
     }
+
     dispatch({
-      type: LECTURE_DELETE_REQUEST,
-      data: { lectureId: deleteId },
+      type: LECTURE_RESTORE_REQUEST,
+      data: { LectureId: deleteId },
     });
 
     setDeleteId(null);
@@ -592,152 +603,21 @@ const AdminHome = () => {
         time: searchTime ? searchTime : "",
         startLv: searchStartLv,
         studentName: searchStuName ? searchStuName : "",
+        isDelete: 1,
       },
     });
   }, [currentTeacher, searchLevel, searchStep, searchTime, searchStuName]);
-
-  const noticeColumns = [
-    {
-      title: "번호",
-      dataIndex: "id",
-    },
-    {
-      title: "제목",
-      dataIndex: "title",
-    },
-    {
-      title: "작성자",
-      dataIndex: "author",
-    },
-    {
-      title: "생성일",
-      render: (data) => <div>{data.createdAt.substring(0, 13)}</div>,
-    },
-    {
-      title: "상세보기",
-      render: (data) => (
-        <Button
-          type="primary"
-          size="small"
-          onClick={() => noticeModalToggle(data)}>
-          상세보기
-        </Button>
-      ),
-    },
-  ];
-
-  const columns = [
-    {
-      title: "번호",
-      dataIndex: "id",
-    },
-    {
-      title: "제목",
-      dataIndex: "title",
-    },
-
-    {
-      title: "작성자",
-      dataIndex: "author",
-    },
-
-    {
-      title: "생성일",
-      render: (data) => <div>{data.createdAt.substring(0, 14)}</div>,
-    },
-    {
-      title: "상세보기",
-      render: (data) => (
-        <Button
-          type="primary"
-          size="small"
-          onClick={() => messageModalToggle(data)}>
-          상세보기
-        </Button>
-      ),
-    },
-  ];
 
   return (
     <>
       {me && me.level >= 3 ? (
         <AdminLayout>
-          {/* <PageHeader
-            breadcrumbs={["클래스 관리", "클래스 목록, 검색, 정렬"]}
-            title={`클래스 목록, 검색, 정렬`}
-            subTitle={`클래스의 목록을 살펴볼 수 있고 클래스별 상세 설정을 할 수 있습니다.`}
-          /> */}
-
           <AdminContent>
-            <Text fontSize={`24px`} fontWeight={`bold`} margin={`0 0 30px`}>
-              관리자 메인페이지
-            </Text>
             <Wrapper
               dr={`row`}
               ju={`space-between`}
               al={`flex-start`}
-              margin={`0 0 30px`}>
-              <Wrapper al={`flex-start`} width={`49%`}>
-                <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
-                  <Text
-                    fontSize={`18px`}
-                    fontWeight={`bold`}
-                    margin={`0 20px 0 0`}>
-                    전체 게시판
-                  </Text>
-                  <Button
-                    size={`small`}
-                    type={`primary`}
-                    onClick={() => moveLinkHandler(`/admin/board/notice/list`)}>
-                    게시판 관리 페이지로 이동
-                  </Button>
-                </Wrapper>
-
-                <Table
-                  rowKey="id"
-                  dataSource={noticeAdminMain ? noticeAdminMain : []}
-                  size="small"
-                  columns={noticeColumns}
-                  style={{ width: `100%` }}
-                  pagination={{
-                    current: currentPage1,
-                    total: noticeAdminMainMaxPage * 10,
-                    onChange: (page) => setCurrentPage1(page),
-                  }}
-                />
-              </Wrapper>
-              <Wrapper al={`flex-start`} width={`49%`}>
-                <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
-                  <Text
-                    fontSize={`18px`}
-                    fontWeight={`bold`}
-                    margin={`0 20px 0 0`}>
-                    전체 쪽지 목록
-                  </Text>
-                  <Button
-                    size={`small`}
-                    type={`primary`}
-                    onClick={() =>
-                      moveLinkHandler(`/admin/board/message/list`)
-                    }>
-                    쪽지 관리 페이지로 이동
-                  </Button>
-                </Wrapper>
-
-                <Table
-                  rowKey="id"
-                  dataSource={messageAdminMainList ? messageAdminMainList : []}
-                  size="small"
-                  columns={columns}
-                  style={{ width: `100%` }}
-                  pagination={{
-                    current: currentPage2,
-                    total: messageAdminMainMaxPage * 10,
-                    onChange: (page) => setCurrentPage2(page),
-                  }}
-                />
-              </Wrapper>
-            </Wrapper>
+              margin={`0 0 30px`}></Wrapper>
 
             <Wrapper al={`flex-start`} margin={`0 0 10px`}>
               <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 16px`}>
@@ -745,22 +625,8 @@ const AdminHome = () => {
                   fontSize={`18px`}
                   fontWeight={`bold`}
                   margin={`0 20px 0 0`}>
-                  클래스 목록
+                  삭제된 클래스 목록
                 </Text>
-                <Button
-                  style={{ marginRight: 10 }}
-                  size="small"
-                  type="primary"
-                  onClick={() => moveLinkHandler(`/admin/class/create`)}>
-                  새 클래스 추가
-                </Button>
-
-                <Button
-                  size="small"
-                  type="danger"
-                  onClick={() => moveLinkHandler(`admin/class/delete`)}>
-                  삭제된 클래스
-                </Button>
               </Wrapper>
               <Wrapper dr={`row`} ju={`flex-start`}>
                 <Select
@@ -874,11 +740,16 @@ const AdminHome = () => {
                   </Wrapper> */}
 
                   <Button
+                    style={{ marginRight: 10 }}
                     type="primary"
                     onClick={() => onClickSearchLevelHandle()}>
                     검색
                   </Button>
                 </Wrapper>
+
+                <Button type="primary" onClick={() => router.back()}>
+                  뒤로가기
+                </Button>
               </Wrapper>
             </Wrapper>
             <Wrapper dr={`row`} ju={`flex-start`}>
@@ -994,12 +865,9 @@ const AdminHome = () => {
                             {data.Participants &&
                               data.Participants.map((data) => {
                                 return (
-                                  <Wrapper
-                                    al={`flex-start`}
-                                    key={data.id}
-                                    margin={`0 15px 0 0`}>
+                                  <Text key={data.id} margin={`0 15px 0 0`}>
                                     {data.User.username}
-                                  </Wrapper>
+                                  </Text>
                                 );
                               })}
                           </Wrapper>
@@ -1027,14 +895,10 @@ const AdminHome = () => {
                             onClick={() => updateModalOpen(data)}>
                             수정
                           </CommonButton>
-
-                          {data.Participants.length === 0 && (
-                            <CustomButton
-                              type={`danger`}
-                              onClick={() => deletePopToggle(data.id)}>
-                              삭제
-                            </CustomButton>
-                          )}
+                          <CustomButton
+                            onClick={() => deletePopToggle(data.id)}>
+                            복구
+                          </CustomButton>
                         </Wrapper>
                       </Wrapper>
                     );
@@ -1048,8 +912,8 @@ const AdminHome = () => {
             visible={deletePopVisible}
             onOk={deleteClassHandler}
             onCancel={() => deletePopToggle(null)}
-            title="강의를 종료하시겠습니까?">
-            <Wrapper>강의를 종료하시겠습니까?</Wrapper>
+            title="강의를 복구하시겠습니까?">
+            <Wrapper>강의를 복구하시겠습니까?</Wrapper>
           </Modal>
           {/* UPDATE MODAL */}
           <Modal
@@ -1501,4 +1365,4 @@ export const getServerSideProps = wrapper.getServerSideProps(
   }
 );
 
-export default AdminHome;
+export default Delete;

@@ -228,8 +228,7 @@ const Index = () => {
         <WholeWrapper
           bgColor={`rgba(216, 231, 255, 0.2)`}
           minHeight={`calc(100vh - 200px)`}
-          ju={`flex-start`}
-        >
+          ju={`flex-start`}>
           <Wrapper
             position={`fixed`}
             top={width < 900 ? `82px` : `100px`}
@@ -237,17 +236,15 @@ const Index = () => {
             bgColor={`rgb(230, 239, 255)`}
             padding={`15px 0`}
             zIndex={`100`}
-            shadow={`2px 2px 2px rgb(226, 226, 226)`}
-          >
-            <RsWrapper dr={`row`} ju={width < 900 ? `center` : `space-between`}>
-              <Wrapper
+            shadow={`2px 2px 2px rgb(226, 226, 226)`}>
+            <RsWrapper dr={`row`} ju={width < 900 ? `center` : `flex-end`}>
+              {/* <Wrapper
                 width={`auto`}
                 fontSize={width < 900 ? `16px` : `20px`}
                 margin={width < 900 && `0 0 10px`}
-                fontWeight={`bold`}
-              >
+                fontWeight={`bold`}>
                 새 인보이스 번호(2202512)
-              </Wrapper>
+              </Wrapper> */}
               {toggle && (
                 <Wrapper width={`auto`}>
                   <PaypalBtn
@@ -274,8 +271,7 @@ const Index = () => {
                 margin={`230px 0 0 0`}
                 al={`flex-start`}
                 dr={`row`}
-                ju={width < 800 ? `center` : `space-between`}
-              >
+                ju={width < 800 ? `center` : `space-between`}>
                 <Wrapper width={width < 800 ? `100%` : `calc(100% - 370px)`}>
                   <Wrapper
                     dr={`row`}
@@ -286,8 +282,7 @@ const Index = () => {
                     minHeight={`80px`}
                     shadow={`0px 5px 15px rgba(0, 0, 0, 0.05)`}
                     bgColor={Theme.white_C}
-                    radius={`5px`}
-                  >
+                    radius={`5px`}>
                     <Image
                       width={`22px`}
                       margin={width < 900 ? `0 5px 0 0` : `0 16px 0 0`}
@@ -311,14 +306,12 @@ const Index = () => {
                       minHeight={`210px`}
                       shadow={`0px 5px 15px rgba(0, 0, 0, 0.05)`}
                       bgColor={Theme.white_C}
-                      radius={`10px `}
-                    >
+                      radius={`10px `}>
                       <Wrapper
                         al={`flex-start`}
                         borderBottom={`1px solid ${Theme.grey_C}`}
                         padding={`0 0 10px`}
-                        margin={`0 0 5px`}
-                      >
+                        margin={`0 0 5px`}>
                         <Text color={Theme.grey2_C}>
                           {payClassDetail && payClassDetail.name}
                         </Text>
@@ -338,10 +331,9 @@ const Index = () => {
                     al={`flex-start`}
                     color={Theme.red_C}
                     padding={`10px`}
-                    fontSize={`16px`}
-                  >
+                    fontSize={`16px`}>
                     *강의 기간은 강의 참여일로부터&nbsp;
-                    {payClassDetail && payClassDetail.week}뒤 까지 입니다.
+                    {payClassDetail && payClassDetail.week}주뒤까지 입니다.
                   </Wrapper>
                 </Wrapper>
                 <Wrapper
@@ -354,14 +346,12 @@ const Index = () => {
                   margin={width < 900 && `0 0 50px`}
                   ju={`space-between`}
                   radius={`5px`}
-                  width={width < 800 ? `100%` : `350px`}
-                >
+                  width={width < 800 ? `100%` : `350px`}>
                   <Wrapper>
                     <Wrapper
                       dr={`row`}
                       ju={`space-between`}
-                      fontSize={width < 700 ? `14px` : `18px`}
-                    >
+                      fontSize={width < 700 ? `14px` : `18px`}>
                       <Text fontWeight={`600`}>수업 금액</Text>
                       <Text>
                         {`$${
@@ -378,8 +368,7 @@ const Index = () => {
                       dr={`row`}
                       ju={`space-between`}
                       margin={`13px 0 0`}
-                      fontSize={width < 700 ? `14px` : `18px`}
-                    >
+                      fontSize={width < 700 ? `14px` : `18px`}>
                       <Text>할인율</Text>
                       <Text color={Theme.subTheme2_C}>
                         {payClassDetail && payClassDetail.discount}%
@@ -389,10 +378,9 @@ const Index = () => {
                       dr={`row`}
                       ju={`space-between`}
                       margin={`13px 0 25px`}
-                      fontSize={width < 700 ? `14px` : `18px`}
-                    >
+                      fontSize={width < 700 ? `14px` : `18px`}>
                       <Text>강의 기간</Text>
-                      <Text>4주</Text>
+                      <Text>{payClassDetail && payClassDetail.week}주</Text>
                     </Wrapper>
                   </Wrapper>
 
@@ -401,13 +389,11 @@ const Index = () => {
                     ju={`space-between`}
                     borderTop={`2px dashed ${Theme.grey_C}`}
                     padding={`10px 0 0`}
-                    fontSize={width < 700 ? `14px` : `18px`}
-                  >
+                    fontSize={width < 700 ? `14px` : `18px`}>
                     <Text>총 결제 금액</Text>
                     <Text
                       color={Theme.black_3C}
-                      fontSize={width < 700 ? `16px` : `24px`}
-                    >
+                      fontSize={width < 700 ? `16px` : `24px`}>
                       {` $${String(
                         Math.floor(
                           payClassDetail.price -

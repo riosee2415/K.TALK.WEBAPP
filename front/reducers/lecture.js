@@ -147,6 +147,10 @@ export const initailState = {
   st_lectureStuLimitListLoading: false,
   st_lectureStuLimitListDone: false,
   st_lectureStuLimitListError: null,
+  //
+  st_lectureRestoreLoading: false,
+  st_lectureRestoreDone: false,
+  st_lectureRestoreError: null,
 };
 
 export const LECTURE_LIST_REQUEST = "LECTURE_LIST_REQUEST";
@@ -281,6 +285,11 @@ export const LECTURE_COMUTE_FAILURE = "LECTURE_COMUTE_FAILURE";
 export const LECTURE_STU_LIMIT_LIST_REQUEST = "LECTURE_STU_LIMIT_LIST_REQUEST";
 export const LECTURE_STU_LIMIT_LIST_SUCCESS = "LECTURE_STU_LIMIT_LIST_SUCCESS";
 export const LECTURE_STU_LIMIT_LIST_FAILURE = "LECTURE_STU_LIMIT_LIST_FAILURE";
+//
+
+export const LECTURE_RESTORE_REQUEST = "LECTURE_RESTORE_REQUEST";
+export const LECTURE_RESTORE_SUCCESS = "LECTURE_RESTORE_SUCCESS";
+export const LECTURE_RESTORE_FAILURE = "LECTURE_RESTORE_FAILURE";
 //
 
 export const CREATE_MODAL_OPEN_REQUEST = "CREATE_MODAL_OPEN_REQUEST";
@@ -857,6 +866,26 @@ const reducer = (state = initailState, action) =>
         draft.st_lectureStuLimitListLoading = false;
         draft.st_lectureStuLimitListDone = false;
         draft.st_lectureStuLimitListError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case LECTURE_RESTORE_REQUEST: {
+        draft.st_lectureRestoreLoading = true;
+        draft.st_lectureRestoreDone = null;
+        draft.st_lectureRestoreError = false;
+        break;
+      }
+      case LECTURE_RESTORE_SUCCESS: {
+        draft.st_lectureRestoreLoading = false;
+        draft.st_lectureRestoreDone = true;
+        break;
+      }
+      case LECTURE_RESTORE_FAILURE: {
+        draft.st_lectureRestoreLoading = false;
+        draft.st_lectureRestoreDone = false;
+        draft.st_lectureRestoreError = action.error;
         break;
       }
 
