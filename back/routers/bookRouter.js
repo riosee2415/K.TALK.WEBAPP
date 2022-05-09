@@ -44,7 +44,7 @@ const upload = multer({
 });
 
 router.post("/list", async (req, res, next) => {
-  const { LectureId, search, page } = req.body;
+  const { LectureId, search, page, level, stage, kinds } = req.body;
 
   const LIMIT = 12;
 
@@ -56,6 +56,9 @@ router.post("/list", async (req, res, next) => {
   let _LectureId = LectureId || null;
 
   const _search = search ? search : ``;
+  const _level = level ? level : ``;
+  const _stage = stage ? stage : ``;
+  const _kinds = kinds ? kinds : ``;
 
   try {
     const lengthQuery = `
@@ -77,6 +80,9 @@ router.post("/list", async (req, res, next) => {
        AND	B.isDelete = FALSE
        ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
        ${_search ? `AND A.title LIKE '%${_search}%'` : ``}
+       ${_level !== `` ? `AND A.level LIKE '%${_level}%'` : ``}
+       ${_stage !== `` ? `AND A.stage LIKE '${_stage}'` : ``}
+       ${_kinds !== `` ? `AND A.kinds LIKE '${_kinds}'` : ``}
     `;
 
     const selectQuery = `
@@ -98,6 +104,9 @@ router.post("/list", async (req, res, next) => {
        AND	B.isDelete = FALSE
        ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
        ${_search ? `AND A.title LIKE '%${_search}%'` : ``}
+       ${_level !== `` ? `AND A.level LIKE '%${_level}%'` : ``}
+       ${_stage !== `` ? `AND A.stage LIKE '${_stage}'` : ``}
+       ${_kinds !== `` ? `AND A.kinds LIKE '${_kinds}'` : ``}
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
     `;
