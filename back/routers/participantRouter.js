@@ -458,7 +458,7 @@ router.post("/user/delete/list", isAdminCheck, async (req, res, next) => {
             A.LectureId,
             A.UserId,
             A.isDelete,
-            B.number
+            B.number,
             B.time,
             B.course,
             B.day,
