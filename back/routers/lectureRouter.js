@@ -822,7 +822,7 @@ router.delete("/delete/:lectureId", isAdminCheck, async (req, res, next) => {
 });
 
 router.patch("/restore", isAdminCheck, async (req, res, next) => {
-  const { LectureId } = req.params;
+  const { LectureId } = req.body;
 
   try {
     const exLecture = await Lecture.findOne({
