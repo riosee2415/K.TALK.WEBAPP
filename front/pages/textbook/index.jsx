@@ -172,6 +172,17 @@ const ProductMenu = styled(Wrapper)`
   }
 `;
 
+const FormTag = styled(Form)`
+  width: auto;
+  display: flex;
+  flex-direction: row;
+`;
+
+const FormItem = styled(Form.Item)`
+  width: auto;
+  margin: 0 10px 0 0 !important;
+`;
+
 const Index = () => {
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
@@ -194,6 +205,8 @@ const Index = () => {
 
   const [deletePopVisible, setDeletePopVisible] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+
+  const [searchForm] = Form.useForm();
   ////// REDUX //////
   const dispatch = useDispatch();
   const {
@@ -327,16 +340,6 @@ const Index = () => {
   }, [st_bookDeleteError]);
 
   useEffect(() => {
-    dispatch({
-      type: BOOK_LIST_REQUEST,
-      data: {
-        LectureId: currentTab,
-        page: currentPage,
-      },
-    });
-  }, [currentPage]);
-
-  useEffect(() => {
     if (!me) {
       message.error("로그인 후 이용해주세요.");
       return router.push(`/`);
@@ -347,6 +350,23 @@ const Index = () => {
   }, [me]);
   ////// TOGGLE //////
   ////// HANDLER //////
+  const onClickBookFolder = useCallback(
+    (data) => {
+      setCurrentPage(1);
+      dispatch({
+        type: BOOK_LIST_REQUEST,
+        data: {
+          LectureId: data.lectureId,
+          page: "",
+          search: searchInput.value,
+          level: data.level,
+          stage: data.stage,
+          kinds: data.kinds,
+        },
+      });
+    },
+    [searchInput]
+  );
 
   const fileDownloadHandler = useCallback(async (filePath) => {
     let blob = await fetch(filePath).then((r) => r.blob());
@@ -482,17 +502,37 @@ const Index = () => {
     [form]
   );
 
-  const searchHandler = useCallback(
-    (link) => {
+  const searchHandler = useCallback(() => {
+    dispatch({
+      type: BOOK_LIST_REQUEST,
+      data: {
+        LectureId: currentTab,
+        search: searchInput.value,
+        page: "",
+        level: searchForm.getFieldValue(`level`),
+        stage: searchForm.getFieldValue(`stage`),
+        kinds: searchForm.getFieldValue(`kinds`),
+      },
+    });
+  }, [router.query, currentTab, searchInput, searchForm]);
+
+  const paginationHandler = useCallback(
+    (page) => {
+      setCurrentPage(page);
+
       dispatch({
         type: BOOK_LIST_REQUEST,
         data: {
           LectureId: currentTab,
+          page: page,
           search: searchInput.value,
+          level: searchForm.getFieldValue(`level`),
+          stage: searchForm.getFieldValue(`stage`),
+          kinds: searchForm.getFieldValue(`kinds`),
         },
       });
     },
-    [router.query, currentTab, searchInput]
+    [currentTab, searchForm, searchInput]
   );
   ////// DATAVIEW //////
 
@@ -585,20 +625,93 @@ const Index = () => {
               </CommonButton>
             </Wrapper>
             <Wrapper al={`flex-start`}>
-              <Select
-                style={{ width: `400px` }}
-                onChange={(e) => setCurrentTab(e)}
-                defaultValue={null}>
-                <Select.Option value={null}>전체</Select.Option>
-                {allLectures &&
-                  allLectures.map((data) => {
-                    return (
-                      <Select.Option value={data.id}>
-                        {data.course}
-                      </Select.Option>
-                    );
-                  })}
-              </Select>
+              <FormTag form={searchForm} onFinish={onClickBookFolder}>
+                <FormItem name={`lectureId`} label={`강의`}>
+                  <Select
+                    size={`small`}
+                    style={{ width: `200px` }}
+                    defaultValue={null}>
+                    <Select.Option value={null} type="primary" size="small">
+                      전체
+                    </Select.Option>
+                    {allLectures &&
+                      allLectures.map((data, idx) => {
+                        return (
+                          <Select.Option
+                            value={data.id}
+                            key={data.id}
+                            type="primary"
+                            size="small">
+                            {data.course}
+                          </Select.Option>
+                        );
+                      })}
+                  </Select>
+                </FormItem>
+                <FormItem name={`level`} label={`권`}>
+                  <Select
+                    size={`small`}
+                    style={{ width: `200px` }}
+                    defaultValue={null}>
+                    <Select.Option value={null} type="primary" size="small">
+                      전체
+                    </Select.Option>
+                    <Select.Option value={`1`}>1</Select.Option>
+                    <Select.Option value={`2`}>2</Select.Option>
+                    <Select.Option value={`3`}>3</Select.Option>
+                    <Select.Option value={`4`}>4</Select.Option>
+                    <Select.Option value={`5`}>5</Select.Option>
+                    <Select.Option value={`6`}>6</Select.Option>
+                  </Select>
+                </FormItem>
+                <FormItem name={`stage`} label={`단원`}>
+                  <Select
+                    size={`small`}
+                    style={{ width: `200px` }}
+                    defaultValue={null}>
+                    <Select.Option value={null} type="primary" size="small">
+                      전체
+                    </Select.Option>
+                    <Select.Option value={`1`}>1</Select.Option>
+                    <Select.Option value={`2`}>2</Select.Option>
+                    <Select.Option value={`3`}>3</Select.Option>
+                    <Select.Option value={`4`}>4</Select.Option>
+                    <Select.Option value={`5`}>5</Select.Option>
+                    <Select.Option value={`6`}>6</Select.Option>
+                    <Select.Option value={`7`}>7</Select.Option>
+                    <Select.Option value={`8`}>8</Select.Option>
+                    <Select.Option value={`9`}>9</Select.Option>
+                    <Select.Option value={`10`}>10</Select.Option>
+                    <Select.Option value={`11`}>11</Select.Option>
+                    <Select.Option value={`12`}>12</Select.Option>
+                  </Select>
+                </FormItem>
+
+                <FormItem name={`kinds`} label={`교재 종류`}>
+                  <Select
+                    size={`small`}
+                    style={{ width: `200px` }}
+                    defaultValue={null}>
+                    <Select.Option value={null} type="primary" size="small">
+                      전체
+                    </Select.Option>
+                    {[`교과서`, `워크북`, `듣기파일`, `토픽`].map(
+                      (data, idx) => {
+                        return (
+                          <Select.Option value={data} key={idx}>
+                            {data}
+                          </Select.Option>
+                        );
+                      }
+                    )}
+                  </Select>
+                </FormItem>
+                <Wrapper width={`auto`}>
+                  <Button type={`primary`} htmlType={`submit`} size={`small`}>
+                    검색
+                  </Button>
+                </Wrapper>
+              </FormTag>
             </Wrapper>
             <Wrapper
               dr={`row`}
@@ -744,7 +857,7 @@ const Index = () => {
               size="small"
               current={currentPage}
               total={bookMaxLength * 12}
-              onChange={(page) => setCurrentPage(page)}
+              onChange={(page) => paginationHandler(page)}
               pageSize={12}
             />
           </RsWrapper>

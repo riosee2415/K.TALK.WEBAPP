@@ -988,11 +988,11 @@ const AdminHome = () => {
                             </Wrapper>
                           </Wrapper>
                           <Wrapper
-                            margin={`20px 0 0`}
+                            margin={`20px 0 10px`}
                             dr={`row`}
                             ju={`flex-start`}>
                             {data.Participants &&
-                              data.Participants.map((data) => {
+                              data.Participants.map((data, idx) => {
                                 return (
                                   <Wrapper
                                     al={`flex-start`}
