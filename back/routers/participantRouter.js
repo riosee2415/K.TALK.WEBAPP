@@ -458,14 +458,19 @@ router.post("/user/delete/list", isAdminCheck, async (req, res, next) => {
             A.LectureId,
             A.UserId,
             A.isDelete,
+            B.number
             B.time,
             B.course,
             B.day,
-            B.UserId 						AS TeacherId
-      FROM	participants		A
+            B.UserId 						AS TeacherId,
+            C.username          AS TeacherName
+      FROM	participants	A
      INNER
       JOIN	lectures 			B	
         ON	A.LectureId = B.id
+     INNER
+      JOIN	users 			  C	
+        ON	B.UserId = C.id
      WHERE	1 = 1
       ${_isDelete ? `AND A.isDelete = ${_isDelete}` : ``}
       ${_isChange ? `AND A.isChange = ${_isChange}` : ``}
