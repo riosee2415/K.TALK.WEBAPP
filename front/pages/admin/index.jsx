@@ -759,7 +759,7 @@ const AdminHome = () => {
                   size="small"
                   type="danger"
                   onClick={() => moveLinkHandler(`admin/class/delete`)}>
-                  삭제된 클래스
+                  종료된 클래스
                 </Button>
               </Wrapper>
               <Wrapper dr={`row`} ju={`flex-start`}>
@@ -1032,7 +1032,7 @@ const AdminHome = () => {
                             <CustomButton
                               type={`danger`}
                               onClick={() => deletePopToggle(data.id)}>
-                              삭제
+                              종료
                             </CustomButton>
                           )}
                         </Wrapper>

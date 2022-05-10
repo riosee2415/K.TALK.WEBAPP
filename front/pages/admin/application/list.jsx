@@ -213,7 +213,7 @@ const List = () => {
         },
       });
 
-      return message.success("신청서 정보를 추가했습니다.");
+      return message.success("신청서 정보를 추가 및 수정했습니다.");
     }
   }, [st_appUpdateDone]);
 
@@ -435,13 +435,15 @@ const List = () => {
         data: {
           id: updateData.id,
           timeDiff: data.timeDiff ? data.timeDiff : "",
-          wantStartDate: data.wantStartDate?.format("YYYY-MM-DD")
+          wantStartDate: data.wantStartDate
             ? data.wantStartDate.format("YYYY-MM-DD")
             : "",
           teacher: data.teacher ? data.teacher : "",
           freeTeacher: data.freeTeacher,
           isDiscount: data.isDiscount,
-          meetDate: data.meetDate.format("YYYY-MM-DD HH:mm"),
+          meetDate: data.meetDate
+            ? data.meetDate.format("YYYY-MM-DD HH:mm")
+            : "",
           level: data.level ? data.level : "",
           job: data.job ? data.job : "",
           purpose: data.purpose ? data.purpose : "",
@@ -474,29 +476,46 @@ const List = () => {
 
   const onFillApp = useCallback(
     (data) => {
-      if (data && data.wantStartDate) {
+      if (data) {
         updateForm.setFieldsValue({
           timeDiff: data.timeDiff,
-          wantStartDate: moment(data.wantStartDate),
+          wantStartDate: data.wantStartDate ? moment(data.wantStartDate) : "",
           teacher: data.teacher,
           isDiscount: data.isDiscount,
-          meetDate: moment(data.meetDate),
+          meetDate: data.meetDate ? moment(data.meetDate) : "",
           level: data.level,
           job: data.job,
           purpose: data.purpose,
           freeTeacher: data.freeTeacher,
           status: data.status,
         });
-      } else {
-        updateForm.setFieldsValue({
-          timeDiff: data.timeDiff,
-          teacher: data.teacher,
-          isDiscount: data.isDiscount,
-          level: data.level,
-          job: data.job,
-          purpose: data.purpose,
-        });
       }
+
+      // if (data && data.wantStartDate) {
+      //   updateForm.setFieldsValue({
+      //     timeDiff: data.timeDiff,
+      //     wantStartDate: moment(data.wantStartDate),
+      //     teacher: data.teacher,
+      //     isDiscount: data.isDiscount,
+      //     meetDate: moment(data.meetDate),
+      //     level: data.level,
+      //     job: data.job,
+      //     purpose: data.purpose,
+      //     freeTeacher: data.freeTeacher,
+      //     status: data.status,
+      //   });
+      // } else {
+      //   updateForm.setFieldsValue({
+      //     timeDiff: data.timeDiff,
+      //     teacher: data.teacher,
+      //     isDiscount: data.isDiscount,
+      //     level: data.level,
+      //     job: data.job,
+      //     purpose: data.purpose,
+      //     freeTeacher: data.freeTeacher,
+      //     status: data.status,
+      //   });
+      // }
     },
     [updateForm]
   );

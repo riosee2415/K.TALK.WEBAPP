@@ -625,7 +625,7 @@ const Delete = () => {
                   fontSize={`18px`}
                   fontWeight={`bold`}
                   margin={`0 20px 0 0`}>
-                  삭제된 클래스 목록
+                  종료된 클래스 목록
                 </Text>
               </Wrapper>
               <Wrapper dr={`row`} ju={`flex-start`}>
