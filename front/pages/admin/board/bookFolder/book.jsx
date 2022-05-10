@@ -555,7 +555,7 @@ const Book = ({}) => {
                           key={data.id}
                           type="primary"
                           size="small">
-                          {data.course}
+                          {`(${data.number}) ${data.course}`}
                         </Select.Option>
                       );
                     })}

@@ -40,16 +40,7 @@ import {
   BOOK_UPLOAD_REQUEST,
   BOOK_UPLOAD_TH_REQUEST,
 } from "../../reducers/book";
-import {
-  Button,
-  Empty,
-  Form,
-  Input,
-  message,
-  Modal,
-  Pagination,
-  Select,
-} from "antd";
+import { Button, Empty, Form, message, Modal, Pagination, Select } from "antd";
 import { useRouter } from "next/router";
 import useInput from "../../hooks/useInput";
 import { saveAs } from "file-saver";
@@ -207,6 +198,8 @@ const Index = () => {
   const [createModal, setCreateModal] = useState(false);
   const [updateData, setUpdateData] = useState(null);
 
+  const [imageThum, setImageThum] = useState("");
+
   const [deletePopVisible, setDeletePopVisible] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
@@ -222,7 +215,12 @@ const Index = () => {
     st_bookCreateDone,
     st_bookCreateError,
 
+    st_bookUploadThLoading,
+    st_bookUploadThDone,
+    st_bookUploadThError,
+
     st_bookUploadLoading,
+
     st_bookUpdateDone,
     st_bookUpdateError,
     st_bookDeleteDone,
@@ -232,6 +230,13 @@ const Index = () => {
   const { allLectures, lectureTeacherList } = useSelector(
     (state) => state.lecture
   );
+
+  useEffect(() => {
+    if (st_bookUploadThDone) {
+      setImageThum(uploadPathTh);
+      return message.success("썸네일 이미지 업로드를 완료 했습니다.");
+    }
+  }, [st_bookUploadThDone]);
   ////// USEEFFECT //////
   useEffect(() => {
     if (updateData) {
@@ -453,36 +458,57 @@ const Index = () => {
     [uploadPath, uploadPathTh, router.query, updateData]
   );
 
-  const fileChangeHandler = useCallback((e) => {
-    const formData = new FormData();
-    filename.setValue(e.target.files[0].name);
+  const fileChangeHandler = useCallback(
+    (e) => {
+      const formData = new FormData();
 
-    [].forEach.call(e.target.files, (file) => {
-      formData.append("image", file);
-    });
+      [].forEach.call(e.target.files, (file) => {
+        formData.append("image", file);
+      });
 
-    dispatch({
-      type: BOOK_UPLOAD_REQUEST,
-      data: formData,
-    });
-  }, []);
+      if (e.target.files[0].size > 5242880) {
+        message.error("파일 용량 제한 (최대 5MB)");
+        return;
+      }
+
+      dispatch({
+        type: BOOK_UPLOAD_REQUEST,
+        data: formData,
+      });
+
+      filename.setValue(e.target.files[0].name);
+      fileRef.current.value = "";
+    },
+    [fileRef]
+  );
 
   const fileUploadClick = useCallback(() => {
     fileRef.current.click();
   }, [fileRef.current]);
 
-  const fileChangeHandler2 = useCallback((e) => {
-    const formData = new FormData();
+  const fileChangeHandler2 = useCallback(
+    (e) => {
+      const formData = new FormData();
 
-    [].forEach.call(e.target.files, (file) => {
-      formData.append("image", file);
-    });
+      [].forEach.call(e.target.files, (file) => {
+        formData.append("image", file);
+      });
 
-    dispatch({
-      type: BOOK_UPLOAD_TH_REQUEST,
-      data: formData,
-    });
-  }, []);
+      if (e.target.files[0].size > 5242880) {
+        message.error("파일 용량 제한 (최대 5MB)");
+        return;
+      }
+
+      dispatch({
+        type: BOOK_UPLOAD_TH_REQUEST,
+        data: formData,
+      });
+
+      fileRef2.current.value = "";
+      setImageThum("");
+    },
+    [fileRef2]
+  );
 
   const fileUploadClick2 = useCallback(() => {
     fileRef2.current.click();
@@ -492,6 +518,15 @@ const Index = () => {
     setCreateModal(true);
     setUpdateData(data);
   }, []);
+
+  const createModalClose = useCallback(() => {
+    setCreateModal(false);
+    setUpdateData(null);
+    setImageThum(``);
+    form.resetFields();
+    filename.setValue(``);
+  }, []);
+
   const updateModalClose = useCallback(
     (data) => {
       dispatch({
@@ -500,6 +535,7 @@ const Index = () => {
 
       setCreateModal(false);
       setUpdateData(null);
+      setImageThum(``);
       form.resetFields();
       filename.setValue(``);
     },
@@ -600,7 +636,7 @@ const Index = () => {
               </Text>
             </Wrapper>
 
-            <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 40px`}>
+            <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 20px`}>
               <Wrapper
                 position={`relative`}
                 width={width < 800 ? `calc(100% - 100px - 20px)` : `500px`}>
@@ -629,7 +665,7 @@ const Index = () => {
               </CommonButton>
             </Wrapper>
 
-            <Wrapper al={`flex-start`}>
+            <Wrapper al={`flex-start`} margin={`0 0 20px 0`}>
               <FormTag
                 layout={"inline"}
                 form={searchForm}
@@ -650,7 +686,7 @@ const Index = () => {
                             key={data.id}
                             type="primary"
                             size="small">
-                            {data.course}
+                            {`(${data.number}) ${data.course}`}
                           </Select.Option>
                         );
                       })}
@@ -731,7 +767,7 @@ const Index = () => {
               ju={`flex-start`}
               minHeight={`680px`}>
               {bookList && bookList.length === 0 ? (
-                <Wrapper>
+                <Wrapper margin={`50px 0`}>
                   <Empty description={`조회된 데이터가 없습니다.`} />
                 </Wrapper>
               ) : (
@@ -880,9 +916,7 @@ const Index = () => {
 
           <Modal
             visible={createModal}
-            onCancel={
-              updateData ? updateModalClose : () => setCreateModal(false)
-            }
+            onCancel={updateData ? updateModalClose : createModalClose}
             onOk={modalOk}>
             <Wrapper al={`flex-start`}>
               <Form form={form} onFinish={updateData ? updateSubmit : onSubmit}>
@@ -976,16 +1010,19 @@ const Index = () => {
                 <Wrapper width={`150px`} margin={`0 0 10px`}>
                   <Image
                     src={
-                      uploadPathTh
-                        ? `${uploadPathTh}`
-                        : updateData
+                      updateData
                         ? updateData.thumbnail
+                        : imageThum
+                        ? imageThum
                         : `https://via.placeholder.com/${`80`}x${`100`}`
                     }
                     alt={`thumbnail`}
                   />
                 </Wrapper>
-                <Button type="primary" onClick={fileUploadClick2}>
+                <Button
+                  type="primary"
+                  onClick={fileUploadClick2}
+                  loading={st_bookUploadThLoading}>
                   썸네일 이미지 업로드
                 </Button>
               </Wrapper>

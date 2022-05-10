@@ -336,9 +336,11 @@ const Index = () => {
     st_bookCreateDone,
     st_bookCreateError,
 
+    st_bookUploadLoading,
     st_bookUploadDone,
     st_bookUploadError,
 
+    st_bookUploadThLoading,
     st_bookUploadThDone,
     st_bookUploadThError,
   } = useSelector((state) => state.book);
@@ -599,12 +601,6 @@ const Index = () => {
   }, [st_messageAllListError]);
 
   useEffect(() => {
-    if (st_bookUploadError) {
-      return message.error(st_bookUploadError);
-    }
-  }, [st_bookUploadError]);
-
-  useEffect(() => {
     if (st_bookUploadThDone) {
       setThumbnail(uploadPathTh);
 
@@ -856,16 +852,23 @@ const Index = () => {
 
   const fileChangeHandler = useCallback((e) => {
     const formData = new FormData();
-    filename.setValue(e.target.files[0].name);
 
     [].forEach.call(e.target.files, (file) => {
       formData.append("image", file);
     });
 
+    if (e.target.files[0].size > 5242880) {
+      message.error("파일 용량 제한 (최대 5MB)");
+      return;
+    }
+
     dispatch({
       type: BOOK_UPLOAD_REQUEST,
       data: formData,
     });
+
+    filename.setValue(e.target.files[0].name);
+    fileRef2.current.value = "";
   }, []);
 
   const fileUploadClick = useCallback(() => {
@@ -1972,7 +1975,10 @@ const Index = () => {
                   alt={`thumbnail`}
                 />
               </Wrapper>
-              <Button type="primary" onClick={fileUploadClick2}>
+              <Button
+                type="primary"
+                onClick={fileUploadClick2}
+                loading={st_bookUploadThLoading}>
                 썸네일 이미지 업로드
               </Button>
             </Wrapper>
@@ -1992,7 +1998,10 @@ const Index = () => {
               <Text margin={`0 5px 0 0`}>
                 {filename.value ? filename.value : `파일을 선택해주세요.`}
               </Text>
-              <Button type="primary" onClick={fileUploadClick}>
+              <Button
+                type="primary"
+                onClick={fileUploadClick}
+                loading={st_bookUploadLoading}>
                 교재 파일 업로드
               </Button>
             </Wrapper>

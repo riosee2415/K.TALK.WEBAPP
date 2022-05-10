@@ -270,6 +270,7 @@ const Index = () => {
               <Wrapper
                 margin={`230px 0 0 0`}
                 dr={`row`}
+                al={`flex-end`}
                 ju={width < 800 ? `center` : `space-between`}>
                 <Wrapper
                   al={`flex-start`}
@@ -325,9 +326,9 @@ const Index = () => {
                         </Text>
                       </Wrapper>
                       {payClassDetail &&
-                        payClassDetail.memo.split(`\n`).map((data) => {
+                        payClassDetail.memo.split(`\n`).map((data, idx) => {
                           return (
-                            <SpanText>
+                            <SpanText key={idx}>
                               {data}
                               <br />
                             </SpanText>
@@ -335,15 +336,6 @@ const Index = () => {
                         })}
                     </Wrapper>
                   </Wrapper>
-
-                  {/* <Wrapper
-                    al={`flex-start`}
-                    color={Theme.red_C}
-                    padding={`10px`}
-                    fontSize={`16px`}>
-                    *강의 기간은 강의 참여일로부터&nbsp;
-                    {payClassDetail && payClassDetail.week}주뒤까지 입니다.
-                  </Wrapper> */}
                 </Wrapper>
 
                 <Wrapper
@@ -415,14 +407,14 @@ const Index = () => {
                   </Wrapper>
                 </Wrapper>
 
-                {/* <Wrapper
-                    al={`flex-start`}
-                    color={Theme.red_C}
-                    padding={`10px`}
-                    fontSize={`16px`}>
-                    *강의 기간은 강의 참여일로부터&nbsp;
-                    {payClassDetail && payClassDetail.week}주뒤까지 입니다.
-                  </Wrapper> */}
+                <Wrapper
+                  al={`flex-start`}
+                  color={Theme.red_C}
+                  padding={`10px`}
+                  fontSize={`16px`}>
+                  *강의 기간은 강의 참여일로부터&nbsp;
+                  {payClassDetail && payClassDetail.week}주뒤까지 입니다.
+                </Wrapper>
               </Wrapper>
             ) : (
               <Wrapper height={`100vh`}>

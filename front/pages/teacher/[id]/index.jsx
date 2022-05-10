@@ -3401,7 +3401,10 @@ const Index = () => {
                 &nbsp; 단원
               </Text>
               <Form.Item
-                style={{ width: `calc(100%내 / 3 - 10px - 100px)`, margin: `0` }}
+                style={{
+                  width: `calc(100%내 / 3 - 10px - 100px)`,
+                  margin: `0`,
+                }}
                 name="process3"
                 rules={[{ required: true, message: "진도를 입력해주세요." }]}>
                 <CustomInput type={`number`} width={`100%`} />
@@ -3613,7 +3616,7 @@ const Index = () => {
             form={memoWriteform}
             onFinish={memoFinishHandler}>
             <Text
-              fontSize={width < 700 ? `14px` : `18px`}
+              fontSize={width < 70 ? `14px` : `18px`}
               fontWeight={`bold`}
               margin={`0 0 10px`}>
               학생 메모
@@ -3625,9 +3628,7 @@ const Index = () => {
               ]}>
               <TextArea
                 width={`100%`}
-                placeholder={`
-                ex) 학생별 특이사항, 수업분위기 ,특별한 내용 등 입력해주세요.        
-`}
+                placeholder={`ex) 학생별 특이사항, 수업분위기 ,특별한 내용 등 입력해주세요.`}
               />
             </Form.Item>
 
