@@ -3401,7 +3401,7 @@ const Index = () => {
                 &nbsp; 단원
               </Text>
               <Form.Item
-                style={{ width: `calc(100% / 3 - 10px - 100px)`, margin: `0` }}
+                style={{ width: `calc(100%내 / 3 - 10px - 100px)`, margin: `0` }}
                 name="process3"
                 rules={[{ required: true, message: "진도를 입력해주세요." }]}>
                 <CustomInput type={`number`} width={`100%`} />

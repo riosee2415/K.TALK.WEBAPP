@@ -139,7 +139,6 @@ const Book = ({}) => {
   }, []);
 
   const onClickBookFolder = useCallback((data) => {
-    console.log(data);
     setBookMenuId(data.lectureId);
     setCurrentPage(1);
     dispatch({
@@ -260,7 +259,6 @@ const Book = ({}) => {
   ////// HANDLER //////
 
   const onFillBookData = useCallback((data) => {
-    console.log(data);
     form.setFieldsValue({
       title: data.title,
       folder: data.LectureId,
@@ -403,9 +401,7 @@ const Book = ({}) => {
   const onChangeBookPage = useCallback(
     (page) => {
       setCurrentPage(page);
-      console.log(searchForm.getFieldValue(`level`));
-      console.log(searchForm.getFieldValue(`stage`));
-      console.log(searchForm.getFieldValue(`kinds`));
+
       dispatch({
         type: BOOK_LIST_REQUEST,
         data: {
@@ -444,13 +440,29 @@ const Book = ({}) => {
         />
       ),
     },
+
     {
       title: "교재 이름",
       render: (data) => <Text>{data.title}</Text>,
     },
+
+    {
+      title: "종류",
+      render: (data) => <Text>{data.kinds}</Text>,
+    },
+
+    {
+      title: "레벨",
+      render: (data) => <Text>{`${data.level}권${data.stage}단원`}</Text>,
+    },
     {
       title: "강의 이름",
       render: (data) => <Text>{data.course}</Text>,
+    },
+
+    {
+      title: "강사 이름",
+      render: (data) => <Text>{data.username}</Text>,
     },
 
     {
@@ -461,8 +473,7 @@ const Book = ({}) => {
           type="primary"
           onClick={() => updateBookModal(data)}
           size={`small`}
-          pri
-        >
+          pri>
           수정
         </Button>
       ),
@@ -476,8 +487,7 @@ const Book = ({}) => {
           type="primary"
           onClick={() => fileDownloadHandler(data.file)}
           size={`small`}
-          pri
-        >
+          pri>
           다운로드
         </Button>
       ),
@@ -491,8 +501,7 @@ const Book = ({}) => {
           type="danger"
           onClick={() => deletePopToggle(data)}
           size={`small`}
-          pri
-        >
+          pri>
           삭제
         </Button>
       ),
@@ -534,8 +543,7 @@ const Book = ({}) => {
                 <Select
                   size={`small`}
                   style={{ width: `200px` }}
-                  defaultValue={null}
-                >
+                  defaultValue={null}>
                   <Select.Option value={null} type="primary" size="small">
                     전체
                   </Select.Option>
@@ -546,8 +554,7 @@ const Book = ({}) => {
                           value={data.id}
                           key={data.id}
                           type="primary"
-                          size="small"
-                        >
+                          size="small">
                           {data.course}
                         </Select.Option>
                       );
@@ -558,8 +565,7 @@ const Book = ({}) => {
                 <Select
                   size={`small`}
                   style={{ width: `200px` }}
-                  defaultValue={null}
-                >
+                  defaultValue={null}>
                   <Select.Option value={null} type="primary" size="small">
                     전체
                   </Select.Option>
@@ -575,8 +581,7 @@ const Book = ({}) => {
                 <Select
                   size={`small`}
                   style={{ width: `200px` }}
-                  defaultValue={null}
-                >
+                  defaultValue={null}>
                   <Select.Option value={null} type="primary" size="small">
                     전체
                   </Select.Option>
@@ -599,8 +604,7 @@ const Book = ({}) => {
                 <Select
                   size={`small`}
                   style={{ width: `200px` }}
-                  defaultValue={null}
-                >
+                  defaultValue={null}>
                   <Select.Option value={null} type="primary" size="small">
                     전체
                   </Select.Option>
@@ -644,8 +648,7 @@ const Book = ({}) => {
         visible={deletePopVisible}
         onOk={deleteBookHandler}
         onCancel={() => setDeletePopVisible(false)}
-        title="정말 삭제하시겠습니까?"
-      >
+        title="정말 삭제하시겠습니까?">
         <Wrapper>삭제 된 데이터는 다시 복구할 수 없습니다.</Wrapper>
         <Wrapper>정말 삭제하시겠습니까?</Wrapper>
       </Modal>
@@ -653,34 +656,29 @@ const Book = ({}) => {
       <Modal
         visible={createModal}
         onCancel={updateData ? updateModalClose : () => modalClose()}
-        onOk={modalOk}
-      >
+        onOk={modalOk}>
         <Wrapper al={`flex-start`}>
           <Form
             form={form}
             ref={formRef}
-            onFinish={updateData ? updateSubmit : onSubmit}
-          >
+            onFinish={updateData ? updateSubmit : onSubmit}>
             <Form.Item
               rules={[{ required: true, message: "교재 제목을 입력해주세요." }]}
               label={`교재 제목`}
-              name={`title`}
-            >
+              name={`title`}>
               <TextInput height={`30px`} />
             </Form.Item>
             <Form.Item
               rules={[{ required: true, message: "강의를 선택해주세요." }]}
               label={`강의 선택`}
-              name={`folder`}
-            >
+              name={`folder`}>
               <Select
                 placeholder="Select a Lecture"
                 optionFilterProp="children"
                 filterOption={(input, option) =>
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
-                }
-              >
+                }>
                 {allLectures &&
                   allLectures.map((data) => {
                     return (
@@ -695,8 +693,7 @@ const Book = ({}) => {
             <Form.Item
               rules={[{ required: true, message: "권을 선택해주세요." }]}
               label={`권`}
-              name={`level`}
-            >
+              name={`level`}>
               <Select>
                 {[1, 2, 3, 4, 5, 6].map((data, idx) => {
                   return (
@@ -710,8 +707,7 @@ const Book = ({}) => {
             <Form.Item
               rules={[{ required: true, message: "단원을 선택해주세요." }]}
               label={`단원`}
-              name={`stage`}
-            >
+              name={`stage`}>
               <Select>
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((data, idx) => {
                   return (
@@ -726,8 +722,7 @@ const Book = ({}) => {
             <Form.Item
               rules={[{ required: true, message: "유형을 선택해주세요." }]}
               label={`유형`}
-              name={`kinds`}
-            >
+              name={`kinds`}>
               <Select>
                 {[`교과서`, `워크북`, `듣기파일`, `토픽`].map((data, idx) => {
                   return (

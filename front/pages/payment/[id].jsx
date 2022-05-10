@@ -269,10 +269,18 @@ const Index = () => {
             {payClassDetail ? (
               <Wrapper
                 margin={`230px 0 0 0`}
-                al={`flex-start`}
                 dr={`row`}
                 ju={width < 800 ? `center` : `space-between`}>
-                <Wrapper width={width < 800 ? `100%` : `calc(100% - 370px)`}>
+                <Wrapper
+                  al={`flex-start`}
+                  width={width < 800 ? `100%` : `calc(100% - 370px)`}>
+                  <Text
+                    margin={`0 0 15px 0`}
+                    fontSize={width < 700 ? `16px` : `20px`}
+                    color={Theme.darkGrey_C}
+                    fontWeight={`600`}>
+                    상품
+                  </Text>
                   <Wrapper
                     dr={`row`}
                     ju={`flex-start`}
@@ -327,15 +335,17 @@ const Index = () => {
                         })}
                     </Wrapper>
                   </Wrapper>
-                  <Wrapper
+
+                  {/* <Wrapper
                     al={`flex-start`}
                     color={Theme.red_C}
                     padding={`10px`}
                     fontSize={`16px`}>
                     *강의 기간은 강의 참여일로부터&nbsp;
                     {payClassDetail && payClassDetail.week}주뒤까지 입니다.
-                  </Wrapper>
+                  </Wrapper> */}
                 </Wrapper>
+
                 <Wrapper
                   fontSize={width < 700 ? `14px` : `18px`}
                   color={Theme.black_3C}
@@ -404,6 +414,15 @@ const Index = () => {
                     </Text>
                   </Wrapper>
                 </Wrapper>
+
+                {/* <Wrapper
+                    al={`flex-start`}
+                    color={Theme.red_C}
+                    padding={`10px`}
+                    fontSize={`16px`}>
+                    *강의 기간은 강의 참여일로부터&nbsp;
+                    {payClassDetail && payClassDetail.week}주뒤까지 입니다.
+                  </Wrapper> */}
               </Wrapper>
             ) : (
               <Wrapper height={`100vh`}>

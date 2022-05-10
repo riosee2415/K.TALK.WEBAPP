@@ -173,14 +173,18 @@ const ProductMenu = styled(Wrapper)`
 `;
 
 const FormTag = styled(Form)`
-  width: auto;
-  display: flex;
-  flex-direction: row;
+  width: ${(props) => props.width || `auto`};
+  display: ${(props) => props.display || `flex`};
+  flex-direction: ${(props) => props.dr || `row`};
 `;
 
 const FormItem = styled(Form.Item)`
-  width: auto;
+  width: ${(props) => props.width || `auto`};
   margin: 0 10px 0 0 !important;
+
+  @media (max-width: 700px) {
+    width: 100%;
+  }
 `;
 
 const Index = () => {
@@ -609,7 +613,7 @@ const Index = () => {
                   }}
                 />
                 <CusotmInput
-                  placeholder="교재 검색"
+                  placeholder="교재 이름 검색"
                   {...searchInput}
                   onKeyDown={(e) => e.keyCode === 13 && searchHandler()}
                 />
@@ -624,12 +628,16 @@ const Index = () => {
                 자료 올리기
               </CommonButton>
             </Wrapper>
+
             <Wrapper al={`flex-start`}>
-              <FormTag form={searchForm} onFinish={onClickBookFolder}>
+              <FormTag
+                layout={"inline"}
+                form={searchForm}
+                onFinish={onClickBookFolder}>
                 <FormItem name={`lectureId`} label={`강의`}>
                   <Select
                     size={`small`}
-                    style={{ width: `200px` }}
+                    style={{ width: width < 700 ? `100%` : `200px` }}
                     defaultValue={null}>
                     <Select.Option value={null} type="primary" size="small">
                       전체
@@ -651,7 +659,7 @@ const Index = () => {
                 <FormItem name={`level`} label={`권`}>
                   <Select
                     size={`small`}
-                    style={{ width: `200px` }}
+                    style={{ width: width < 700 ? `100%` : `200px` }}
                     defaultValue={null}>
                     <Select.Option value={null} type="primary" size="small">
                       전체
@@ -667,7 +675,7 @@ const Index = () => {
                 <FormItem name={`stage`} label={`단원`}>
                   <Select
                     size={`small`}
-                    style={{ width: `200px` }}
+                    style={{ width: width < 700 ? `100%` : `200px` }}
                     defaultValue={null}>
                     <Select.Option value={null} type="primary" size="small">
                       전체
@@ -690,7 +698,7 @@ const Index = () => {
                 <FormItem name={`kinds`} label={`교재 종류`}>
                   <Select
                     size={`small`}
-                    style={{ width: `200px` }}
+                    style={{ width: width < 700 ? `100%` : `200px` }}
                     defaultValue={null}>
                     <Select.Option value={null} type="primary" size="small">
                       전체
@@ -706,13 +714,17 @@ const Index = () => {
                     )}
                   </Select>
                 </FormItem>
-                <Wrapper width={`auto`}>
+                <Wrapper
+                  margin={width < 700 && `10px 0`}
+                  width={width < 700 ? `100%` : `auto`}
+                  al={`flex-end`}>
                   <Button type={`primary`} htmlType={`submit`} size={`small`}>
                     검색
                   </Button>
                 </Wrapper>
               </FormTag>
             </Wrapper>
+
             <Wrapper
               dr={`row`}
               al={`flex-start`}
@@ -725,7 +737,6 @@ const Index = () => {
               ) : (
                 bookList &&
                 bookList.map((data, idx) => {
-                  console.log(data, "data");
                   return (
                     <ProductWrapper>
                       <ProductMenu
@@ -845,9 +856,14 @@ const Index = () => {
                           src={data.thumbnail}
                         />
                       </Wrapper>
-                      <Text margin={`5px 0 0 `} height={`30px`}>
-                        {data.title}
-                      </Text>
+
+                      <Wrapper al={`flex-start`}>
+                        <Text>{`강의: ${data.course}`}</Text>
+                        <Text>{`제목: ${data.title}`}</Text>
+                        <Text>{`종류: ${data.kinds}`}</Text>
+                        <Text>{`레벨: ${data.level}권 ${data.stage}단원`}</Text>
+                        <Text>{`선생님 이름: ${data.username}`}</Text>
+                      </Wrapper>
                     </ProductWrapper>
                   );
                 })
