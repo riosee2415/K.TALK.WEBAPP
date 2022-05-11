@@ -1094,7 +1094,7 @@ const List = () => {
                             <Select.Option
                               key={`${data.User.username} ${data.course}`}
                               value={data.username}>
-                              {`${data.User.username} ${data.course}`}
+                              {`(${data.number}) ${data.User.username} ${data.course}`}
                             </Select.Option>
                           );
                         })}

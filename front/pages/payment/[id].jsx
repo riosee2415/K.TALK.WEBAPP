@@ -20,6 +20,8 @@ import {
   Image,
   Text,
   SpanText,
+  Input,
+  TextInput,
 } from "../../components/commonComponents";
 import { Button, Empty, message, Select } from "antd";
 import PaypalExpressBtn from "react-paypal-express-checkout";
@@ -33,7 +35,18 @@ import moment from "moment";
 
 const PaypalBtn = styled(PaypalExpressBtn)``;
 
+const InputText = styled(TextInput)`
+  width: 100%;
+  height: 30px;
+`;
+
+const CustomSelect = styled(Select)`
+  width: 100%;
+`;
+
 const Index = () => {
+  const { Option } = Select;
+
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
@@ -59,6 +72,8 @@ const Index = () => {
 
   const [toggle, setToggle] = useState(false);
   const [successData, setSuccessData] = useState("");
+
+  const [send, setSend] = useState(false);
 
   useEffect(() => {
     if (st_paymentCreateDone) {
@@ -134,7 +149,10 @@ const Index = () => {
   // large
   // responsive
 
-  let env = "sandbox";
+  let env = "production";
+
+  // sandbox
+  // production
   let currency = "USD";
   // 결제 금액
 
@@ -152,14 +170,18 @@ const Index = () => {
 
   // 결제 실패
   const onError = (err) => {
-    return message.error("The payment was false!", data);
+    return message.error("The payment was false!", err);
   };
+
+  const onClickSend = useCallback(() => {
+    setSend((prev) => !prev);
+  }, []);
 
   // 클라이언트 정보
   const client = {
-    sandbox:
-      "ARjNDMl7aLKB5_m5zBKz4C7BV6Z4ePz8IeNPugWMjBisNcEEYLsUa2FUZ-qqDs_jICbI467wl_YdlhzA",
-    production: "k-talk",
+    // sandbox: "AUAudDNDjXE7tH9s9c5DaFIeNAQS08sv66p-EoyyDtWtpLkZcRs3SD8PiSgb2eZ__YYfV-mJcuIzXuJ2",
+    production:
+      "AU5XytqvAVo11IK8bdQvtVrVKcMReC99C_A3pdUq9CEUoeVI0e27Qm15gCr1_9YNqEaR3PQX8CWZJp6t",
   };
 
   useEffect(() => {
@@ -407,14 +429,72 @@ const Index = () => {
                   </Wrapper>
                 </Wrapper>
 
-                <Wrapper
-                  al={`flex-start`}
-                  color={Theme.red_C}
-                  padding={`10px`}
-                  fontSize={`16px`}>
-                  *강의 기간은 강의 참여일로부터&nbsp;
-                  {payClassDetail && payClassDetail.week}주뒤까지 입니다.
+                <Wrapper dr={`row`} ju={`space-between`} margin={`10px 0`}>
+                  <Wrapper
+                    width={`auto`}
+                    al={`flex-start`}
+                    color={Theme.red_C}
+                    padding={`10px`}
+                    fontSize={`16px`}>
+                    *강의 기간은 강의 참여일로부터&nbsp;
+                    {payClassDetail && payClassDetail.week}주뒤까지 입니다.
+                  </Wrapper>
+
+                  {/* <Button onClick={() => onClickSend()}>국내송금</Button> */}
                 </Wrapper>
+
+                {send && (
+                  <Wrapper
+                    width={`calc(100% - 370px)`}
+                    dr={`row`}
+                    padding={`20px 10px`}>
+                    <Wrapper
+                      dr={`row`}
+                      ju={`flex-start`}
+                      margin={`10px 0 0 0`}
+                      color={Theme.black_3C}
+                      fontSize={width < 700 ? `16px` : `18px`}>
+                      <Text margin={`0 0 10px 0`}>이메일</Text>
+                      <InputText />
+                    </Wrapper>
+
+                    <Wrapper
+                      dr={`row`}
+                      ju={`flex-start`}
+                      margin={`10px 0 0 0`}
+                      color={Theme.black_3C}
+                      fontSize={width < 700 ? `16px` : `18px`}>
+                      <Text margin={`0 0 10px 0`}>은행이름</Text>
+                      <Wrapper al={`flex-start`}>
+                        테스트은행 235-235235-235235
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper
+                      dr={`row`}
+                      ju={`flex-start`}
+                      margin={`10px 0 0 0`}
+                      color={Theme.black_3C}
+                      fontSize={width < 700 ? `16px` : `18px`}>
+                      <Text margin={`0 0 10px 0`}>가격</Text>
+                      <Wrapper al={`flex-start`}>
+                        {` $${String(
+                          Math.floor(
+                            payClassDetail.price -
+                              (payClassDetail.price * payClassDetail.discount) /
+                                100
+                          )
+                        ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper al={`flex-end`}>
+                      <Button onClick={() => console.log("ee")}>
+                        무통장 입금 신청
+                      </Button>
+                    </Wrapper>
+                  </Wrapper>
+                )}
               </Wrapper>
             ) : (
               <Wrapper height={`100vh`}>

@@ -409,6 +409,10 @@ const AdminHome = () => {
 
   const onSubmitUpdate = useCallback(
     (data) => {
+      if (parseInt(data.cnt) !== data.day.length) {
+        return message.error("횟수와 요일의 개수는 같아야합니다.");
+      }
+
       let time = "";
       if (data.time_1) {
         time += data.time_1.format(`HH:mm`) + " ";
@@ -890,6 +894,10 @@ const AdminHome = () => {
                 ) : (
                   allLectureList &&
                   allLectureList.map((data, idx) => {
+                    if (data.number === "22-123") {
+                      console.log(data, "data");
+                    }
+
                     return (
                       <Wrapper
                         key={data.id}
@@ -1179,7 +1187,7 @@ const AdminHome = () => {
                     ]}
                     name={`cnt`}
                     width={`calc(100% - 130px)`}>
-                    <CusotmInput disabled type={`number`} {...inputCnt} />
+                    <CusotmInput type={`number`} {...inputCnt} />
                   </FormItem>
                   <Text width={`30px`} padding={`0 0 0 10px`}>
                     회
@@ -1198,8 +1206,7 @@ const AdminHome = () => {
                       size={`large`}
                       onChange={(e) => {
                         setDayArr(e);
-                      }}
-                      disabled>
+                      }}>
                       <Select.Option value={`월`}>월</Select.Option>
                       <Select.Option value={`화`}>화</Select.Option>
                       <Select.Option value={`수`}>수</Select.Option>
@@ -1251,7 +1258,6 @@ const AdminHome = () => {
                       format={`YYYY-MM-DD`}
                       size={`large`}
                       // {...inputStartDate}
-                      disabled
                       value={
                         updateData && moment(updateData.startDate, "YYYY-MM-DD")
                       }

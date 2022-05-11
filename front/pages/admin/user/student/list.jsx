@@ -2135,14 +2135,20 @@ const List = () => {
                       <FormItem name="teacher">
                         <Select
                           style={{ width: `250px` }}
-                          placeholder={`강사를 선택해주세요.`}>
-                          {teachers &&
-                            teachers.map((data, idx) => {
+                          placeholder={`수업을 선택해주세요.`}
+                          filterOption={(input, option) =>
+                            option.children
+                              .toLowerCase()
+                              .indexOf(input.toLowerCase()) >= 0
+                          }
+                          showSearch>
+                          {allLectures &&
+                            allLectures.map((data, idx) => {
                               return (
                                 <Select.Option
-                                  key={data.id}
+                                  key={`${data.User.username} ${data.course}`}
                                   value={data.username}>
-                                  {data.username}
+                                  {`(${data.number}) ${data.User.username} ${data.course}`}
                                 </Select.Option>
                               );
                             })}
