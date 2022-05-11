@@ -462,7 +462,7 @@ const List = () => {
         userId: data.gmailAddress,
         password: password,
         repassword: password,
-        username: `${data.firstName}${data.lastName}`,
+        username: `${data.firstName} ${data.lastName}`,
         mobile: `${data.phoneNumber}${data.phoneNumber2}`,
         email: data.gmailAddress,
         stuLanguage: data.languageYouUse,
