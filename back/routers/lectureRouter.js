@@ -210,10 +210,6 @@ router.get(
           },
           {
             model: Participant,
-            where: {
-              isDelete: false,
-              isChange: false,
-            },
             include: [
               {
                 model: User,

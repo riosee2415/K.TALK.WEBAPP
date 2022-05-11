@@ -457,7 +457,6 @@ const List = () => {
   const onFillUser = useCallback((data) => {
     if (data) {
       let password = data.phoneNumber2.slice(-4);
-
       createForm.setFieldsValue({
         userId: data.gmailAddress,
         password: password,

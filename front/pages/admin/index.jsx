@@ -997,6 +997,8 @@ const AdminHome = () => {
                             ju={`flex-start`}>
                             {data.Participants &&
                               data.Participants.map((data, idx) => {
+                                if (data.isChange) return;
+
                                 return (
                                   <Wrapper
                                     al={`flex-start`}

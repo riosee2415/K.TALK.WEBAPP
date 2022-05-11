@@ -609,6 +609,8 @@ const List = () => {
       let partLecture = data.partLecture && JSON.parse(data.partLecture);
       let lectureList = data.lectureList && JSON.parse(data.lectureList);
 
+      
+
       if (lectureList) {
         if (moment() < moment(lectureList.startDate)) {
           return message.error(
@@ -1080,7 +1082,7 @@ const List = () => {
 
     {
       title: "수업 종료일",
-      render: (data) => <div>{data.updatedAt.slice(0, 10)}</div>,
+      render: (data) => <div>{data.createdAt.slice(0, 10)}</div>,
     },
   ];
 
