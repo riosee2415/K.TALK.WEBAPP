@@ -894,10 +894,6 @@ const AdminHome = () => {
                 ) : (
                   allLectureList &&
                   allLectureList.map((data, idx) => {
-                    if (data.number === "22-123") {
-                      console.log(data, "data");
-                    }
-
                     return (
                       <Wrapper
                         key={data.id}

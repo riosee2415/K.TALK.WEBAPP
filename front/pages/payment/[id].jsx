@@ -32,6 +32,7 @@ import {
 import { useRouter } from "next/router";
 import { PAY_CLASS_DETAIL_REQUEST } from "../../reducers/payClass";
 import moment from "moment";
+import useInput from "../../hooks/useInput";
 
 const PaypalBtn = styled(PaypalExpressBtn)``;
 
@@ -74,6 +75,8 @@ const Index = () => {
   const [successData, setSuccessData] = useState("");
 
   const [send, setSend] = useState(false);
+
+  const inputEmail = useInput("");
 
   useEffect(() => {
     if (st_paymentCreateDone) {
@@ -176,6 +179,23 @@ const Index = () => {
   const onClickSend = useCallback(() => {
     setSend((prev) => !prev);
   }, []);
+
+  const createAccount = useCallback(() => {
+    if (!inputEmail.value || inputEmail.value.trim() === "") {
+      return message.error("이메일을 입력해주세요");
+    }
+
+    // if (!inputEmail.value || inputEmail.value.trim() === "") {
+    //   return message.error("이메일을 입력해주세요");
+    // }
+
+    // dispatch({
+    //   type: "",
+    //   data: {
+    //     email: inputEmail,
+    //   },
+    // });
+  }, [inputEmail.value]);
 
   // 클라이언트 정보
   const client = {
@@ -440,7 +460,7 @@ const Index = () => {
                     {payClassDetail && payClassDetail.week}주뒤까지 입니다.
                   </Wrapper>
 
-                  {/* <Button onClick={() => onClickSend()}>국내송금</Button> */}
+                  <Button onClick={() => onClickSend()}>국내송금</Button>
                 </Wrapper>
 
                 {send && (
@@ -456,6 +476,18 @@ const Index = () => {
                       fontSize={width < 700 ? `16px` : `18px`}>
                       <Text margin={`0 0 10px 0`}>이메일</Text>
                       <InputText />
+                    </Wrapper>
+
+                    <Wrapper
+                      dr={`row`}
+                      ju={`flex-start`}
+                      margin={`10px 0 0 0`}
+                      color={Theme.black_3C}
+                      fontSize={width < 700 ? `16px` : `18px`}>
+                      <Text margin={`0 0 10px 0`}>계좌번호</Text>
+                      <Wrapper al={`flex-start`}>
+                        <InputText />
+                      </Wrapper>
                     </Wrapper>
 
                     <Wrapper
@@ -489,8 +521,8 @@ const Index = () => {
                     </Wrapper>
 
                     <Wrapper al={`flex-end`}>
-                      <Button onClick={() => console.log("ee")}>
-                        무통장 입금 신청
+                      <Button onClick={() => createAccount()}>
+                        계좌이체 신청
                       </Button>
                     </Wrapper>
                   </Wrapper>
