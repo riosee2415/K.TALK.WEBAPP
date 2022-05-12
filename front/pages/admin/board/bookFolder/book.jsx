@@ -683,7 +683,7 @@ const Book = ({}) => {
                   allLectures.map((data) => {
                     return (
                       <Select.Option key={data.id} value={data.id}>
-                        {data.course}
+                        {`(${data.number}) ${data.course}`}
                       </Select.Option>
                     );
                   })}

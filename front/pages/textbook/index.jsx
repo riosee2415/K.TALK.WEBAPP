@@ -944,7 +944,7 @@ const Index = () => {
                       allLectures.map((data) => {
                         return (
                           <Select.Option value={data.id}>
-                            {data.course}
+                            {`(${data.number})${data.course}`}
                           </Select.Option>
                         );
                       })}
