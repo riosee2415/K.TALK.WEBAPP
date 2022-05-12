@@ -35,6 +35,7 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
             A.price,
             A.email,
             A.type,
+            A.name,
             A.isComplete,
             DATE_FORMAT(A.completedAt, "%Y-%m-%d")      AS completedAt,
             A.createdAt,
@@ -65,6 +66,7 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
            ? ``
            : ``
        }
+     ORDER  BY A.createdAt DESC
     `;
 
     const list = await models.sequelize.query(selectQuery);
