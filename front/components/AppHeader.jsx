@@ -84,6 +84,14 @@ const AppHeader = ({ width }) => {
     router.push(link);
   }, []);
 
+  const onClickHandler = useCallback((data) => {
+    data === 1
+      ? moveLinkHandler("/student")
+      : data === 2
+      ? moveLinkHandler("/teacher")
+      : message.error("회원 또는 강사가 아닙니다.");
+  }, []);
+
   ////////////// - USE EFFECT- //////////////
   useEffect(() => {
     document.addEventListener("scroll", handleScroll);
@@ -131,8 +139,7 @@ const AppHeader = ({ width }) => {
       position={`fixed`}
       top={`0`}
       left={`0`}
-      zIndex={`100`}
-    >
+      zIndex={`100`}>
       <RsWrapper>
         <Wrapper dr={`row`} ju={`space-between`}>
           <Image
@@ -147,28 +154,18 @@ const AppHeader = ({ width }) => {
             {me && me ? (
               <Wrapper dr={`row`}>
                 <CommonButton
-                  onClick={() =>
-                    moveLinkHandler(
-                      me.level === 1
-                        ? "/student"
-                        : me.level === 2
-                        ? "/teacher"
-                        : message.error("회원 또는 강사가 아닙니다.")
-                    )
-                  }
+                  onClick={() => onClickHandler(me.level)}
                   height={width < 700 ? `30px` : `50px`}
                   width={width < 700 ? `auto` : `110px`}
                   fontSize={width < 700 && `11px`}
-                  margin={`0 10px 0 0`}
-                >
+                  margin={`0 10px 0 0`}>
                   MYPAGE
                 </CommonButton>
                 <CommonButton
                   onClick={() => logoutHandler()}
                   height={width < 700 ? `30px` : `50px`}
                   width={width < 700 ? `auto` : `110px`}
-                  fontSize={width < 700 && `11px`}
-                >
+                  fontSize={width < 700 && `11px`}>
                   LOGOUT
                 </CommonButton>
               </Wrapper>
@@ -202,8 +199,7 @@ const AppHeader = ({ width }) => {
                   onClick={() => loginHandler()}
                   height={width < 700 ? `30px` : `50px`}
                   width={width < 700 ? `auto` : `110px`}
-                  fontSize={width < 700 && `11px`}
-                >
+                  fontSize={width < 700 && `11px`}>
                   LOGIN
                 </CommonButton>
               </>

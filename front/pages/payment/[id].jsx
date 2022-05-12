@@ -23,7 +23,7 @@ import {
   Input,
   TextInput,
 } from "../../components/commonComponents";
-import { Button, Empty, message, Select } from "antd";
+import { Button, Empty, Form, message, Select } from "antd";
 import PaypalExpressBtn from "react-paypal-express-checkout";
 import {
   PAYMENT_CREATE_REQUEST,
@@ -39,15 +39,22 @@ const PaypalBtn = styled(PaypalExpressBtn)``;
 const InputText = styled(TextInput)`
   width: 100%;
   height: 30px;
+
+  background-color: rgb(230, 239, 255);
+  box-shadow: 2px 2px 2px rgb(226, 226, 226);
 `;
 
-const CustomSelect = styled(Select)`
+const CustomForm = styled(Form)`
   width: 100%;
+
+  & .ant-form-item {
+    margin: 0;
+
+    width: 100%;
+  }
 `;
 
 const Index = () => {
-  const { Option } = Select;
-
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
@@ -78,9 +85,11 @@ const Index = () => {
 
   const inputEmail = useInput("");
 
+  const [depositForm] = Form.useForm();
+
   useEffect(() => {
     if (st_paymentCreateDone) {
-      return message.success("결제를 완료했습니다.");
+      return message.success("결제 또는 계좌이체 신청서를 완료했습니다.");
     }
   }, [st_paymentCreateDone]);
 
@@ -119,17 +128,20 @@ const Index = () => {
 
   useEffect(() => {
     if (successData) {
-      dispatch({
-        type: PAYMENT_CREATE_REQUEST,
-        data: {
-          price:
-            payClassDetail &&
-            payClassDetail.price -
-              (payClassDetail.price * payClassDetail.discount) / 100,
-          email: successData && successData.email,
-          PayClassId: payClassDetail && payClassDetail.id,
-        },
-      });
+      // dispatch({
+      //   type: PAYMENT_CREATE_REQUEST,
+      //   data: {
+      //     PayClassId: payClassDetail && payClassDetail.id,
+      //     email: successData && successData.email,
+      //     price:
+      //       payClassDetail &&
+      //       payClassDetail.price -
+      //         (payClassDetail.price * payClassDetail.discount) / 100,
+      //     name: data.name,
+      //     type: "PayPal",
+      //     account: "",
+      //   },
+      // });
     }
   }, [successData]);
 
@@ -152,7 +164,7 @@ const Index = () => {
   // large
   // responsive
 
-  let env = "production";
+  let env = "sandbox";
 
   // sandbox
   // production
@@ -160,10 +172,10 @@ const Index = () => {
   // 결제 금액
 
   // 결제 성공
-  const onSuccess = (payment) => {
-    console.log(payment, "payment");
+  const onSuccess = (payment, data) => {
+    console.log(payment, data, "ac");
+
     setSuccessData(payment);
-    console.log(payment);
   };
 
   // 결제 취소
@@ -180,43 +192,54 @@ const Index = () => {
     setSend((prev) => !prev);
   }, []);
 
-  const createAccount = useCallback(() => {
-    if (!inputEmail.value || inputEmail.value.trim() === "") {
-      return message.error("이메일을 입력해주세요");
+  const onFinishDeposit = useCallback((data) => {
+    dispatch({
+      type: PAYMENT_CREATE_REQUEST,
+      data: {
+        name: data.name,
+        type: "계좌이체",
+        account: data.account,
+        price:
+          payClassDetail &&
+          payClassDetail.price -
+            (payClassDetail.price * payClassDetail.discount) / 100,
+        email: data.email,
+        PayClassId: payClassDetail && payClassDetail.id,
+      },
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!send) {
+      depositForm.resetFields();
     }
-
-    // if (!inputEmail.value || inputEmail.value.trim() === "") {
-    //   return message.error("이메일을 입력해주세요");
-    // }
-
-    // dispatch({
-    //   type: "",
-    //   data: {
-    //     email: inputEmail,
-    //   },
-    // });
-  }, [inputEmail.value]);
-
-  // 클라이언트 정보
-  const client = {
-    // sandbox: "AUAudDNDjXE7tH9s9c5DaFIeNAQS08sv66p-EoyyDtWtpLkZcRs3SD8PiSgb2eZ__YYfV-mJcuIzXuJ2",
-    production:
-      "AU5XytqvAVo11IK8bdQvtVrVKcMReC99C_A3pdUq9CEUoeVI0e27Qm15gCr1_9YNqEaR3PQX8CWZJp6t",
-  };
+  }, [send, depositForm]);
 
   useEffect(() => {
     if (st_payClassDetailDone) {
       let saveData = moment()
         .add(payClassDetail.week * 7, "days")
         .format("YYYY-MM-DD");
-
       let diff = moment
         .duration(moment(payClassDetail.Lecture.endDate).diff(moment(saveData)))
         .asDays();
-
       diff = Math.abs(diff);
+
+      depositForm.setFieldsValue({
+        price:
+          payClassDetail.price -
+          (payClassDetail.price * payClassDetail.discount) / 100,
+      });
     }
-  }, [st_payClassDetailDone]);
+  }, [depositForm, st_payClassDetailDone]);
+
+  // 클라이언트 정보
+  const client = {
+    sandbox:
+      "Adg97RInMG1OEFbUeFnVlso4UtdnapZiaEcDhCPH58CCBLg0IwMq__Q9uAlPs90GmpCgDW9t76svLBc-",
+    // production:
+    //   "AU5XytqvAVo11IK8bdQvtVrVKcMReC99C_A3pdUq9CEUoeVI0e27Qm15gCr1_9YNqEaR3PQX8CWZJp6t",
+  };
 
   return (
     <>
@@ -460,72 +483,137 @@ const Index = () => {
                     {payClassDetail && payClassDetail.week}주뒤까지 입니다.
                   </Wrapper>
 
-                  <Button onClick={() => onClickSend()}>국내송금</Button>
+                  <Button onClick={() => onClickSend()}>
+                    {send ? `취소` : `국내송금`}
+                  </Button>
                 </Wrapper>
 
                 {send && (
-                  <Wrapper
-                    width={`calc(100% - 370px)`}
-                    dr={`row`}
-                    padding={`20px 10px`}>
-                    <Wrapper
-                      dr={`row`}
-                      ju={`flex-start`}
-                      margin={`10px 0 0 0`}
-                      color={Theme.black_3C}
-                      fontSize={width < 700 ? `16px` : `18px`}>
-                      <Text margin={`0 0 10px 0`}>이메일</Text>
-                      <InputText />
-                    </Wrapper>
-
-                    <Wrapper
-                      dr={`row`}
-                      ju={`flex-start`}
-                      margin={`10px 0 0 0`}
-                      color={Theme.black_3C}
-                      fontSize={width < 700 ? `16px` : `18px`}>
-                      <Text margin={`0 0 10px 0`}>계좌번호</Text>
-                      <Wrapper al={`flex-start`}>
-                        <InputText />
-                      </Wrapper>
-                    </Wrapper>
-
-                    <Wrapper
-                      dr={`row`}
-                      ju={`flex-start`}
-                      margin={`10px 0 0 0`}
-                      color={Theme.black_3C}
-                      fontSize={width < 700 ? `16px` : `18px`}>
-                      <Text margin={`0 0 10px 0`}>은행이름</Text>
-                      <Wrapper al={`flex-start`}>
-                        테스트은행 235-235235-235235
-                      </Wrapper>
-                    </Wrapper>
-
-                    <Wrapper
-                      dr={`row`}
-                      ju={`flex-start`}
-                      margin={`10px 0 0 0`}
-                      color={Theme.black_3C}
-                      fontSize={width < 700 ? `16px` : `18px`}>
-                      <Text margin={`0 0 10px 0`}>가격</Text>
-                      <Wrapper al={`flex-start`}>
-                        {` $${String(
-                          Math.floor(
-                            payClassDetail.price -
-                              (payClassDetail.price * payClassDetail.discount) /
-                                100
-                          )
-                        ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
-                      </Wrapper>
-                    </Wrapper>
-
-                    <Wrapper al={`flex-end`}>
-                      <Button onClick={() => createAccount()}>
-                        계좌이체 신청
-                      </Button>
-                    </Wrapper>
+                  <Wrapper al={`flex-start`} margin={`40px 0 0 0`}>
+                    <Text
+                      margin={`0 0 15px 0`}
+                      fontSize={width < 700 ? `16px` : `20px`}
+                      color={Theme.darkGrey_C}
+                      fontWeight={`600`}>
+                      계좌이체 신청서
+                    </Text>
                   </Wrapper>
+                )}
+
+                {send && (
+                  <>
+                    <Wrapper
+                      width={width < 800 ? `100%` : `calc(100% - 370px)`}
+                      dr={`row`}
+                      padding={`20px 30px`}
+                      bgColor={Theme.white_C}>
+                      <CustomForm form={depositForm} onFinish={onFinishDeposit}>
+                        <Wrapper
+                          dr={`row`}
+                          ju={`flex-start`}
+                          margin={`10px 0 0 0`}
+                          color={Theme.black_3C}
+                          fontSize={width < 700 ? `16px` : `18px`}>
+                          <Text margin={`0 0 10px 0`}>이름</Text>
+                          <Form.Item
+                            name={`name`}
+                            rules={[
+                              {
+                                required: true,
+                                message: "이름을 입력해주세요.",
+                              },
+                            ]}>
+                            <InputText />
+                          </Form.Item>
+                        </Wrapper>
+                        <Wrapper
+                          dr={`row`}
+                          ju={`flex-start`}
+                          margin={`10px 0 0 0`}
+                          color={Theme.black_3C}
+                          fontSize={width < 700 ? `16px` : `18px`}>
+                          <Text margin={`0 0 10px 0`}>이메일</Text>
+                          <Form.Item
+                            name={`email`}
+                            rules={[
+                              {
+                                required: true,
+                                message: "이메일을 입력해주세요.",
+                              },
+                            ]}>
+                            <InputText type={`email`} />
+                          </Form.Item>
+                        </Wrapper>
+                        <Wrapper
+                          dr={`row`}
+                          ju={`flex-start`}
+                          margin={`10px 0 0 0`}
+                          color={Theme.black_3C}
+                          fontSize={width < 700 ? `16px` : `18px`}>
+                          <Text margin={`0 0 10px 0`}>계좌번호</Text>
+                          <Wrapper al={`flex-start`}>
+                            <Form.Item
+                              name={`account`}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "계좌번호를 입력해주세요.",
+                                },
+                              ]}>
+                              <InputText />
+                            </Form.Item>
+                          </Wrapper>
+                        </Wrapper>
+                        <Wrapper
+                          dr={`row`}
+                          ju={`flex-start`}
+                          margin={`10px 0 0 0`}
+                          color={Theme.black_3C}
+                          fontSize={width < 700 ? `16px` : `18px`}>
+                          <Text>은행 및 계좌번호</Text>
+                          <Wrapper
+                            al={`flex-start`}
+                            fontSize={width < 700 ? `14px` : `16px`}>
+                            OO은행 235-235235-235235
+                          </Wrapper>
+                        </Wrapper>
+                        <Wrapper
+                          dr={`row`}
+                          ju={`flex-start`}
+                          margin={`10px 0 0 0`}
+                          color={Theme.black_3C}
+                          fontSize={width < 700 ? `16px` : `18px`}>
+                          <Text>가격</Text>
+                          <Form.Item name={"price"}>
+                            <Text
+                              al={`flex-start`}
+                              margin={`0 0 10px 0`}
+                              fontSize={width < 700 ? `14px` : `16px`}>
+                              {` $${String(
+                                Math.floor(
+                                  payClassDetail.price -
+                                    (payClassDetail.price *
+                                      payClassDetail.discount) /
+                                      100
+                                )
+                              ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
+                            </Text>
+                          </Form.Item>
+                        </Wrapper>
+                        <Wrapper al={`flex-end`} margin={`10px 0 0 0`}>
+                          <Button htmlType="submit">신청하기</Button>
+                        </Wrapper>
+                      </CustomForm>
+                    </Wrapper>
+
+                    <Wrapper
+                      width={`calc(100% - 370px)`}
+                      al={`flex-start`}
+                      color={Theme.red_C}
+                      padding={`10px`}
+                      fontSize={`16px`}
+                      margin={`0 0 50px 0`}></Wrapper>
+                  </>
                 )}
               </Wrapper>
             ) : (
