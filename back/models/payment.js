@@ -13,6 +13,27 @@ module.exports = class Payment extends Model {
           type: DataTypes.STRING(100),
           allowNull: false,
         },
+        type: {
+          type: DataTypes.STRING(60),
+          allowNull: false,
+        },
+        name: {
+          type: DataTypes.STRING(100),
+          allowNull: false,
+        },
+        bankNo: {
+          type: DataTypes.STRING(100),
+          allowNull: true,
+        },
+        isComplete: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+        },
+        completedAt: {
+          type: DataTypes.DATE,
+          defaultValue: true,
+        },
       },
       {
         modelName: "Payment",
