@@ -32,7 +32,7 @@ module.exports = class Payment extends Model {
         },
         completedAt: {
           type: DataTypes.DATE,
-          defaultValue: true,
+          allowNull: true,
         },
       },
       {
