@@ -83,12 +83,12 @@ const Index = () => {
 
   const [send, setSend] = useState(false);
 
-  const inputEmail = useInput("");
-
   const [depositForm] = Form.useForm();
 
   useEffect(() => {
     if (st_paymentCreateDone) {
+      setSend(false);
+      depositForm.resetFields();
       return message.success("결제 또는 계좌이체 신청서를 완료했습니다.");
     }
   }, [st_paymentCreateDone]);
@@ -128,20 +128,19 @@ const Index = () => {
 
   useEffect(() => {
     if (successData) {
-      // dispatch({
-      //   type: PAYMENT_CREATE_REQUEST,
-      //   data: {
-      //     PayClassId: payClassDetail && payClassDetail.id,
-      //     email: successData && successData.email,
-      //     price:
-      //       payClassDetail &&
-      //       payClassDetail.price -
-      //         (payClassDetail.price * payClassDetail.discount) / 100,
-      //     name: data.name,
-      //     type: "PayPal",
-      //     account: "",
-      //   },
-      // });
+      dispatch({
+        type: PAYMENT_CREATE_REQUEST,
+        data: {
+          PayClassId: payClassDetail && payClassDetail.id,
+          email: successData && successData.email,
+          price:
+            payClassDetail &&
+            payClassDetail.price -
+              (payClassDetail.price * payClassDetail.discount) / 100,
+          type: "PayPal",
+          name: successData.address.recipient_name,
+        },
+      });
     }
   }, [successData]);
 
@@ -173,8 +172,6 @@ const Index = () => {
 
   // 결제 성공
   const onSuccess = (payment, data) => {
-    console.log(payment, data, "ac");
-
     setSuccessData(payment);
   };
 
@@ -192,22 +189,26 @@ const Index = () => {
     setSend((prev) => !prev);
   }, []);
 
-  const onFinishDeposit = useCallback((data) => {
-    dispatch({
-      type: PAYMENT_CREATE_REQUEST,
-      data: {
-        name: data.name,
-        type: "계좌이체",
-        account: data.account,
-        price:
-          payClassDetail &&
-          payClassDetail.price -
-            (payClassDetail.price * payClassDetail.discount) / 100,
-        email: data.email,
-        PayClassId: payClassDetail && payClassDetail.id,
-      },
-    });
-  }, []);
+  const onFinishDeposit = useCallback(
+    (data) => {
+      dispatch({
+        type: PAYMENT_CREATE_REQUEST,
+        data: {
+          PayClassId: payClassDetail && payClassDetail.id,
+          email: data.email,
+          price:
+            payClassDetail &&
+            payClassDetail.price -
+              (payClassDetail.price * payClassDetail.discount) / 100,
+
+          type: "계좌이체",
+          name: data.name,
+          bankNo: data.account,
+        },
+      });
+    },
+    [payClassDetail]
+  );
 
   useEffect(() => {
     if (!send) {
@@ -310,10 +311,39 @@ const Index = () => {
                 fontWeight={`bold`}>
                 새 인보이스 번호(2202512)
               </Wrapper> */}
+
               {toggle && (
                 <Wrapper width={`auto`}>
                   <PaypalBtn
                     style={style}
+                    // paymentOptions={{
+                    //   transactions: [
+                    //     {
+                    //       amount: {
+                    //         total: Math.floor(
+                    //           payClassDetail &&
+                    //             payClassDetail.price -
+                    //               (payClassDetail.price *
+                    //                 payClassDetail.discount) /
+                    //                 100
+                    //         ),
+                    //         currency: currency,
+                    //       },
+                    //       item_list: {
+                    //         shipping_address: {
+                    //           recipient_name: "Brian Robinson",
+                    //           line1: "4th Floor",
+                    //           line2: "Unit #34",
+                    //           city: "San Jose Test",
+                    //           state: "CA",
+                    //           phone: "011862212345678",
+                    //           postal_code: "95131",
+                    //           country_code: "US",
+                    //         },
+                    //       },
+                    //     },
+                    //   ],
+                    // }}
                     env={env}
                     client={client}
                     total={Math.floor(
@@ -523,7 +553,7 @@ const Index = () => {
                                 message: "이름을 입력해주세요.",
                               },
                             ]}>
-                            <InputText />
+                            <InputText placeholder="이름을 입력해주세요." />
                           </Form.Item>
                         </Wrapper>
                         <Wrapper
@@ -541,7 +571,10 @@ const Index = () => {
                                 message: "이메일을 입력해주세요.",
                               },
                             ]}>
-                            <InputText type={`email`} />
+                            <InputText
+                              type={`email`}
+                              placeholder="가입한 이메일 또는 신청서 이메일을 입력해주세요."
+                            />
                           </Form.Item>
                         </Wrapper>
                         <Wrapper
@@ -550,7 +583,7 @@ const Index = () => {
                           margin={`10px 0 0 0`}
                           color={Theme.black_3C}
                           fontSize={width < 700 ? `16px` : `18px`}>
-                          <Text margin={`0 0 10px 0`}>계좌번호</Text>
+                          <Text margin={`0 0 10px 0`}>입금 계좌번호</Text>
                           <Wrapper al={`flex-start`}>
                             <Form.Item
                               name={`account`}
@@ -560,7 +593,7 @@ const Index = () => {
                                   message: "계좌번호를 입력해주세요.",
                                 },
                               ]}>
-                              <InputText />
+                              <InputText placeholder="입금 계좌번호를 입력해주세요." />
                             </Form.Item>
                           </Wrapper>
                         </Wrapper>

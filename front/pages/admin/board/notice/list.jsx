@@ -558,7 +558,10 @@ const NoticeList = ({ router }) => {
     {
       title: "수정",
       render: (data) => (
-        <Button type="primary" onClick={() => updateModalOpen(data)}>
+        <Button
+          type="primary"
+          size="small"
+          onClick={() => updateModalOpen(data)}>
           수정
         </Button>
       ),
@@ -566,7 +569,7 @@ const NoticeList = ({ router }) => {
     {
       title: "삭제",
       render: (data) => (
-        <Button type="danger" onClick={deletePopToggle(data.id)}>
+        <Button type="danger" size="small" onClick={deletePopToggle(data.id)}>
           삭제
         </Button>
       ),
@@ -576,7 +579,7 @@ const NoticeList = ({ router }) => {
   return (
     <AdminLayout>
       <PageHeader
-        breadcrumbs={["게시판 관리", "게시판 관리"]}
+        breadcrumbs={["게시판 관리", "게시판"]}
         title={`게시판 목록`}
         subTitle={`사용자에게 제공하는 게시판을 관리할 수 있습니다.`}
       />
@@ -587,33 +590,33 @@ const NoticeList = ({ router }) => {
         <RowWrapper margin={`0 0 10px`} gutter={5}>
           <Col>
             <Button
+              size="small"
               type={currentListType === 1 && `primary`}
-              onClick={() => listBtnClickHandler(1)}
-            >
+              onClick={() => listBtnClickHandler(1)}>
               학생 게시판
             </Button>
           </Col>
           <Col>
             <Button
+              size="small"
               type={currentListType === 2 && `primary`}
-              onClick={() => listBtnClickHandler(2)}
-            >
+              onClick={() => listBtnClickHandler(2)}>
               강사 게시판
             </Button>
           </Col>
           <Col>
             <Button
+              size="small"
               type={currentListType === 4 && `primary`}
-              onClick={() => listBtnClickHandler(4)}
-            >
+              onClick={() => listBtnClickHandler(4)}>
               강의 게시판
             </Button>
           </Col>
           <Col>
             <Button
+              size="small"
               type={currentListType === 3 && `primary`}
-              onClick={() => listBtnClickHandler(3)}
-            >
+              onClick={() => listBtnClickHandler(3)}>
               전체 이용자 게시판
             </Button>
           </Col>
@@ -630,8 +633,7 @@ const NoticeList = ({ router }) => {
               filterOption={(input, option) =>
                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
-              style={{ width: `300px` }}
-            >
+              style={{ width: `300px` }}>
               {allLectures &&
                 allLectures.map((data) => {
                   return (
@@ -673,20 +675,17 @@ const NoticeList = ({ router }) => {
         width={`1100px`}
         title={`새로운 게시글 작성`}
         onOk={createModalOk}
-        onCancel={updateData ? updateModalClose : createModalClose}
-      >
+        onCancel={updateData ? updateModalClose : createModalClose}>
         <Wrapper padding={`10px`}>
           <Form
             style={{ width: `100%` }}
             onFinish={updateData ? onSubmitUpdate : onSubmit}
             form={form}
-            ref={formRef}
-          >
+            ref={formRef}>
             <Form.Item
               name={"title"}
               label="제목"
-              rules={[{ required: true, message: "제목을 입력해 주세요" }]}
-            >
+              rules={[{ required: true, message: "제목을 입력해 주세요" }]}>
               <Input allowClear placeholder="Title..." />
             </Form.Item>
 
@@ -695,8 +694,7 @@ const NoticeList = ({ router }) => {
               label="유형"
               rules={[
                 { required: true, message: "메세지 유형을 선택해 주세요." },
-              ]}
-            >
+              ]}>
               <Select
                 disabled={updateData ? true : false}
                 showSearch
@@ -707,8 +705,7 @@ const NoticeList = ({ router }) => {
                 filterOption={(input, option) =>
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
-                }
-              >
+                }>
                 <Select.Option value="강사 게시판">강사 게시판</Select.Option>
                 <Select.Option value="학생 게시판">학생 게시판</Select.Option>
                 <Select.Option value="강의 게시판">강의 게시판</Select.Option>
@@ -721,8 +718,7 @@ const NoticeList = ({ router }) => {
               <Form.Item
                 name={"lecture"}
                 label="강의"
-                rules={[{ required: true, message: "강의를 선택해 주세요." }]}
-              >
+                rules={[{ required: true, message: "강의를 선택해 주세요." }]}>
                 <Select
                   disabled={updateData ? true : false}
                   showSearch
@@ -733,8 +729,7 @@ const NoticeList = ({ router }) => {
                     option.children
                       .toLowerCase()
                       .indexOf(input.toLowerCase()) >= 0
-                  }
-                >
+                  }>
                   {allLectures &&
                     allLectures.map((data) => {
                       return (
@@ -750,8 +745,7 @@ const NoticeList = ({ router }) => {
             <Form.Item
               name={"content"}
               label="본문"
-              rules={[{ required: true, message: "본문을 입력해 주세요." }]}
-            >
+              rules={[{ required: true, message: "본문을 입력해 주세요." }]}>
               {/* <Input.TextArea
                 allowClear
                 placeholder="Content..."
@@ -807,8 +801,7 @@ const NoticeList = ({ router }) => {
         visible={deletePopVisible}
         onOk={deleteNoticeHandler}
         onCancel={deletePopToggle(null)}
-        title="정말 삭제하시겠습니까?"
-      >
+        title="정말 삭제하시겠습니까?">
         <Wrapper>삭제 된 데이터는 다시 복구할 수 없습니다.</Wrapper>
         <Wrapper>정말 삭제하시겠습니까?</Wrapper>
       </Modal>

@@ -7,7 +7,15 @@ import axios from "axios";
 import styled from "styled-components";
 import AdminLayout from "../../../components/AdminLayout";
 import PageHeader from "../../../components/admin/PageHeader";
-import { Table, Button, Modal, notification, message, Input } from "antd";
+import {
+  Table,
+  Button,
+  Modal,
+  notification,
+  message,
+  Input,
+  Select,
+} from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import {
   AdminContent,
@@ -22,7 +30,11 @@ import useInput from "../../../hooks/useInput";
 import { useRouter, withRouter } from "next/router";
 
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
-import { PAYMENT_LIST_REQUEST } from "../../../reducers/payment";
+import {
+  PAYMENT_LIST_REQUEST,
+  PAYMENT_PERMIT_REQUEST,
+} from "../../../reducers/payment";
+import Theme from "../../../components/Theme";
 
 const LoadNotification = (msg, content) => {
   notification.open({
@@ -41,10 +53,19 @@ const PaymentList = () => {
     st_paymentListError,
     st_userFindEmailByDone,
     st_userFindEmailByError,
+    st_paymentPermitDone,
+    st_paymentPermitError,
   } = useSelector((state) => state.payment);
+
+  const router = useRouter();
 
   const [accountModal, setAccountModal] = useState("");
   const [accountDetail, setAccountDetail] = useState("");
+
+  const [listType, setListType] = useState("");
+  const [type, setType] = useState("");
+
+  const inputEmail = useInput("");
 
   useEffect(() => {
     if (st_userFindEmailByDone) {
@@ -68,10 +89,6 @@ const PaymentList = () => {
     }
   }, [st_paymentListError]);
 
-  const router = useRouter();
-
-  const inputEmail = useInput("");
-
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
@@ -81,9 +98,11 @@ const PaymentList = () => {
       type: PAYMENT_LIST_REQUEST,
       data: {
         email: inputEmail.value,
+        type: type,
+        listType: listType,
       },
     });
-  }, [inputEmail.value]);
+  }, [inputEmail.value, type, listType]);
 
   const modalOpen = useCallback((data) => {
     setAccountModal(true);
@@ -94,16 +113,30 @@ const PaymentList = () => {
     setAccountModal(false);
 
     dispatch({
-      type: TEST,
-      data: {},
+      type: PAYMENT_PERMIT_REQUEST,
+      data: {
+        id: accountDetail.id,
+      },
     });
-  }, []);
+  }, [accountDetail]);
 
   const onCancelHandler = useCallback(() => {
     setAccountModal(false);
   }, []);
 
-  const onClickAllList = useCallback(() => {}, []);
+  const onClickAllList = useCallback(() => {
+    dispatch({
+      type: PAYMENT_LIST_REQUEST,
+      data: {
+        email: "",
+        type: "",
+        listType: 3,
+      },
+    });
+
+    setType("");
+    setListType("");
+  }, []);
 
   useEffect(() => {
     if (st_loadMyInfoDone) {
@@ -120,6 +153,27 @@ const PaymentList = () => {
 
   ////// USEEFFECT //////
 
+  useEffect(() => {
+    if (st_paymentPermitDone) {
+      dispatch({
+        type: PAYMENT_LIST_REQUEST,
+        data: {
+          email: inputEmail.value,
+          type: type,
+          listType: listType,
+        },
+      });
+
+      return message.success("입금 승인을 완료 했습니다.");
+    }
+  }, [st_paymentPermitDone, inputEmail.value, type, listType]);
+
+  useEffect(() => {
+    if (st_paymentPermitError) {
+      return message.error(st_paymentPermitError);
+    }
+  }, [st_paymentPermitError]);
+
   ////// HANDLER //////
 
   ////// DATAVIEW //////
@@ -133,26 +187,27 @@ const PaymentList = () => {
     },
 
     {
+      title: "이름",
+      dataIndex: "name",
+    },
+
+    {
       title: "결제 유형",
+      width: "80px",
       render: (data) => {
         return (
           <Wrapper>
-            <Text>
-              {data.type ? data.type === "account" && "계좌이체" : "페이팔"}
-            </Text>
+            <Text>{data.type ? data.type : "PayPal"}</Text>
 
-            <Button size="small" type="primary" onClick={() => modalOpen(data)}>
-              입금확인
-            </Button>
-
-            {/* {data.type && (
+            {data.type === "계좌이체" && (
               <Button
                 size="small"
                 type="primary"
+                disabled={data.isComplete}
                 onClick={() => modalOpen(data)}>
-                입금확인
+                {data.isComplete ? "입금완료" : "입금승인"}
               </Button>
-            )} */}
+            )}
           </Wrapper>
         );
       },
@@ -163,11 +218,6 @@ const PaymentList = () => {
       render: (data) => {
         return <Text>{data.course}</Text>;
       },
-    },
-
-    {
-      title: "이름",
-      dataIndex: "name",
     },
 
     {
@@ -185,9 +235,17 @@ const PaymentList = () => {
     {
       title: "결제일",
       render: (data) => {
-        return <Text>{data.createdAt.slice(0, 10)}</Text>;
+        return (
+          <Text>
+            {data.type === "PayPal" || data.type === ""
+              ? data.createdAt.slice(0, 10)
+              : data.completedAt}
+          </Text>
+        );
       },
     },
+
+    // data.createdAt.slice(0, 10)
 
     // {
     //   title: "아이디 여부",
@@ -214,31 +272,56 @@ const PaymentList = () => {
       />
 
       <AdminContent>
-        <Input.Group
-          compact
-          style={{
-            margin: ` 0 0 10px 0`,
-          }}>
+        <Wrapper dr={`row`} ju={`flex-start`}>
+          <Wrapper
+            width={`auto`}
+            dr={`row`}
+            ju={`flex-start`}
+            margin={`0 5px 0 0`}>
+            <Button size="small" type="primary" onClick={onClickAllList}>
+              전체
+            </Button>
+          </Wrapper>
+
           <Input
             size="small"
-            style={{ width: "20%" }}
+            style={{ width: `200px`, marginRight: 5 }}
             placeholder="이메일"
             {...inputEmail}
             onKeyDown={(e) => e.key === "Enter" && onClickSearch()}
           />
+
+          <Select
+            onChange={(e) => setType(e)}
+            size="small"
+            value={type || null}
+            style={{ width: `200px`, marginRight: 5 }}
+            placeholder="결제유형을 선택해주세요.">
+            <Select.Option value={"Paypal"}>Paypal</Select.Option>
+            <Select.Option value={"계좌이체"}>계좌이체</Select.Option>
+          </Select>
+
+          <Select
+            // disabled={type === "계좌이체" ? false : true}
+            onChange={(e) => setListType(e)}
+            size="small"
+            value={listType || null}
+            style={{ width: `200px` }}
+            placeholder="입금승인 선택해주세요.">
+            <Select.Option value={1}>미승인</Select.Option>
+            <Select.Option value={2}>승인</Select.Option>
+          </Select>
           <Button size="small" onClick={() => onClickSearch()}>
             <SearchOutlined />
             검색
           </Button>
-        </Input.Group>
 
-        <Wrapper dr={`row`} ju={`flex-start`}>
-          <Button size="small" type="primary" onClick={onClickAllList}>
-            전체
-          </Button>
-
-          <Button size="small">페이팔</Button>
-          <Button size="small">계좌이체</Button>
+          {/* <Button size="small" onClick={() => onClickTypeHandler("PayPal")}>
+              PayPal
+            </Button>
+            <Button size="small" onClick={() => onClickTypeHandler("계좌이체")}>
+              계좌이체
+            </Button> */}
         </Wrapper>
 
         <Table
@@ -291,6 +374,11 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: PAYMENT_LIST_REQUEST,
+      data: {
+        email: "",
+        type: "",
+        listType: 3,
+      },
     });
 
     // 구현부 종료

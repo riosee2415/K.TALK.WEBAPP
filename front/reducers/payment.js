@@ -10,6 +10,10 @@ export const initialState = {
   st_paymentCreateLoading: false,
   st_paymentCreateDone: false,
   st_paymentCreateError: null,
+
+  st_paymentPermitLoading: false,
+  st_paymentPermitDone: false,
+  st_paymentPermitError: null,
 };
 
 export const PAYMENT_LIST_REQUEST = "PAYMENT_LIST_REQUEST";
@@ -19,6 +23,10 @@ export const PAYMENT_LIST_FAILURE = "PAYMENT_LIST_FAILURE";
 export const PAYMENT_CREATE_REQUEST = "PAYMENT_CREATE_REQUEST";
 export const PAYMENT_CREATE_SUCCESS = "PAYMENT_CREATE_SUCCESS";
 export const PAYMENT_CREATE_FAILURE = "PAYMENT_CREATE_FAILURE";
+
+export const PAYMENT_PERMIT_REQUEST = "PAYMENT_PERMIT_REQUEST";
+export const PAYMENT_PERMIT_SUCCESS = "PAYMENT_PERMIT_SUCCESS";
+export const PAYMENT_PERMIT_FAILURE = "PAYMENT_PERMIT_FAILURE";
 
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
@@ -60,6 +68,27 @@ const reducer = (state = initialState, action) =>
         draft.st_paymentCreateLoading = false;
         draft.st_paymentCreateDone = false;
         draft.st_paymentCreateError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case PAYMENT_PERMIT_REQUEST: {
+        draft.st_paymentPermitLoading = true;
+        draft.st_paymentPermitDone = null;
+        draft.st_paymentPermitError = false;
+        break;
+      }
+      case PAYMENT_PERMIT_SUCCESS: {
+        draft.st_paymentPermitLoading = false;
+        draft.st_paymentPermitDone = true;
+        draft.st_paymentPermitError = false;
+        break;
+      }
+      case PAYMENT_PERMIT_FAILURE: {
+        draft.st_paymentPermitLoading = false;
+        draft.st_paymentPermitDone = false;
+        draft.st_paymentPermitError = action.error;
         break;
       }
       //////////////////////////////////////////////

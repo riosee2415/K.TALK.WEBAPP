@@ -239,6 +239,9 @@ const List = () => {
       const payOpt =
         paymentList &&
         paymentList.map((data) => {
+          if (data.isComplete === 0) {
+            return;
+          }
           return (
             <Select.Option key={data.id} value={JSON.stringify(data)}>
               {`결제일: ${data.createdAt.slice(0, 10)} | ${data.course} | `}
@@ -303,6 +306,7 @@ const List = () => {
       type: PAYMENT_LIST_REQUEST,
       data: {
         email: data && data.gmailAddress,
+        listType: 2,
       },
     });
 

@@ -298,6 +298,9 @@ const List = () => {
       paymentList &&
         paymentList.map((data) => {
           if (data.UserId) return;
+          if (data.isComplete === 0) {
+            return;
+          }
           return (
             <Option
               key={data.id}
@@ -474,6 +477,7 @@ const List = () => {
         type: PAYMENT_LIST_REQUEST,
         data: {
           email: data.email,
+          listType: 2,
         },
       });
 
@@ -608,8 +612,6 @@ const List = () => {
     (data) => {
       let partLecture = data.partLecture && JSON.parse(data.partLecture);
       let lectureList = data.lectureList && JSON.parse(data.lectureList);
-
-      
 
       if (lectureList) {
         if (moment() < moment(lectureList.startDate)) {
