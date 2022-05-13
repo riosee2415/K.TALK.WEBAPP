@@ -163,7 +163,7 @@ const Index = () => {
   // large
   // responsive
 
-  let env = "production";
+  let env = "sandbox";
 
   // sandbox
   // production
@@ -236,10 +236,11 @@ const Index = () => {
 
   // 클라이언트 정보
   const client = {
-    // sandbox:
-    //   "Adg97RInMG1OEFbUeFnVlso4UtdnapZiaEcDhCPH58CCBLg0IwMq__Q9uAlPs90GmpCgDW9t76svLBc-",
-    production:
-      "AU5XytqvAVo11IK8bdQvtVrVKcMReC99C_A3pdUq9CEUoeVI0e27Qm15gCr1_9YNqEaR3PQX8CWZJp6t",
+    sandbox:
+      "Adg97RInMG1OEFbUeFnVlso4UtdnapZiaEcDhCPH58CCBLg0IwMq__Q9uAlPs90GmpCgDW9t76svLBc-",
+
+    // production:
+    //   "AU5XytqvAVo11IK8bdQvtVrVKcMReC99C_A3pdUq9CEUoeVI0e27Qm15gCr1_9YNqEaR3PQX8CWZJp6t",
   };
 
   return (
@@ -536,7 +537,9 @@ const Index = () => {
                       width={width < 800 ? `100%` : `calc(100% - 370px)`}
                       dr={`row`}
                       padding={`20px 30px`}
-                      bgColor={Theme.white_C}>
+                      bgColor={Theme.white_C}
+                      radius={`5px`}
+                      shadow={`0px 5px 15px rgba(0, 0, 0, 0.05)`}>
                       <CustomForm form={depositForm} onFinish={onFinishDeposit}>
                         <Wrapper
                           dr={`row`}
@@ -607,7 +610,7 @@ const Index = () => {
                           <Wrapper
                             al={`flex-start`}
                             fontSize={width < 700 ? `14px` : `16px`}>
-                            OO은행 235-235235-235235
+                            K-Talk Live OO은행 235-235235-235235
                           </Wrapper>
                         </Wrapper>
                         <Wrapper

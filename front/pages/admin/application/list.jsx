@@ -961,171 +961,171 @@ const List = () => {
                   })}
               </ColWrapper>
             </Wrapper>
-          </Wrapper>
-        </Wrapper>
 
-        <Wrapper al={`flex-start`}>
-          <CustomForm2
-            form={updateForm}
-            onFinish={updateFinish}
-            labelCol={{ span: 4 }}
-            wrapperCol={{ span: 24 }}>
-            <Wrapper>
-              <RowWrapper
-                width={`100%`}
-                al={`flex-start`}
-                margin={`0 0 10px 0`}>
-                <ColWrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  등록상태
-                </ColWrapper>
-                <ColWrapper>
-                  <Form.Item name="status">
-                    <CustomSelect placeholder={`등록상태를 선택해주세요.`}>
-                      {stateList &&
-                        stateList.map((data, idx) => {
-                          return (
-                            <Select.Option key={idx} value={data}>
-                              {data}
-                            </Select.Option>
-                          );
-                        })}
-                    </CustomSelect>
-                  </Form.Item>
-                </ColWrapper>
-              </RowWrapper>
+            <Wrapper al={`flex-start`}>
+              <CustomForm2
+                form={updateForm}
+                onFinish={updateFinish}
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 24 }}>
+                <Wrapper>
+                  <RowWrapper
+                    width={`100%`}
+                    al={`flex-start`}
+                    margin={`0 0 10px 0`}>
+                    <ColWrapper
+                      width={`140px`}
+                      height={`30px`}
+                      bgColor={Theme.basicTheme_C}
+                      color={Theme.white_C}
+                      margin={`0 5px 0 0`}>
+                      등록상태
+                    </ColWrapper>
+                    <ColWrapper>
+                      <Form.Item name="status">
+                        <CustomSelect placeholder={`등록상태를 선택해주세요.`}>
+                          {stateList &&
+                            stateList.map((data, idx) => {
+                              return (
+                                <Select.Option key={idx} value={data}>
+                                  {data}
+                                </Select.Option>
+                              );
+                            })}
+                        </CustomSelect>
+                      </Form.Item>
+                    </ColWrapper>
+                  </RowWrapper>
 
-              <RowWrapper
-                width={`100%`}
-                al={`flex-start`}
-                margin={`0 0 10px 0`}>
-                <ColWrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  줌 미팅 시간
-                </ColWrapper>
-                <ColWrapper>
-                  <Form.Item name="meetDate">
-                    <CustomDatePicker
-                      showTime={{ format: "HH:mm", minuteStep: 10 }}
-                      format="YYYY-MM-DD HH:mm"
-                    />
-                  </Form.Item>
-                </ColWrapper>
-              </RowWrapper>
+                  <RowWrapper
+                    width={`100%`}
+                    al={`flex-start`}
+                    margin={`0 0 10px 0`}>
+                    <ColWrapper
+                      width={`140px`}
+                      height={`30px`}
+                      bgColor={Theme.basicTheme_C}
+                      color={Theme.white_C}
+                      margin={`0 5px 0 0`}>
+                      줌 미팅 시간
+                    </ColWrapper>
+                    <ColWrapper>
+                      <Form.Item name="meetDate">
+                        <CustomDatePicker
+                          showTime={{ format: "HH:mm", minuteStep: 10 }}
+                          format="YYYY-MM-DD HH:mm"
+                        />
+                      </Form.Item>
+                    </ColWrapper>
+                  </RowWrapper>
 
-              <RowWrapper
-                dr={`row`}
-                ju={`flex-start`}
-                al={`flex-start`}
-                margin={`0 0 10px 0`}>
-                <ColWrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  시차
-                </ColWrapper>
+                  <RowWrapper
+                    dr={`row`}
+                    ju={`flex-start`}
+                    al={`flex-start`}
+                    margin={`0 0 10px 0`}>
+                    <ColWrapper
+                      width={`140px`}
+                      height={`30px`}
+                      bgColor={Theme.basicTheme_C}
+                      color={Theme.white_C}
+                      margin={`0 5px 0 0`}>
+                      시차
+                    </ColWrapper>
 
-                <FormItem name="timeDiff">
-                  <CustomInput />
-                </FormItem>
-              </RowWrapper>
+                    <FormItem name="timeDiff">
+                      <CustomInput />
+                    </FormItem>
+                  </RowWrapper>
 
-              <RowWrapper
-                width={`100%`}
-                al={`flex-start`}
-                margin={`0 0 10px 0`}>
-                <ColWrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  무료수업 담당 강사
-                </ColWrapper>
-                <ColWrapper>
-                  <Form.Item name="freeTeacher">
-                    <CustomSelect
-                      placeholder={`무료수업 담당강사를 선택해주세요.`}>
-                      {teachers &&
-                        teachers.map((data, idx) => {
-                          return (
-                            <Select.Option key={data.id} value={data.username}>
-                              {data.username}
-                            </Select.Option>
-                          );
-                        })}
-                    </CustomSelect>
-                  </Form.Item>
-                </ColWrapper>
-              </RowWrapper>
+                  <RowWrapper
+                    width={`100%`}
+                    al={`flex-start`}
+                    margin={`0 0 10px 0`}>
+                    <ColWrapper
+                      width={`140px`}
+                      height={`30px`}
+                      bgColor={Theme.basicTheme_C}
+                      color={Theme.white_C}
+                      margin={`0 5px 0 0`}>
+                      무료수업 담당 강사
+                    </ColWrapper>
+                    <ColWrapper>
+                      <Form.Item name="freeTeacher">
+                        <CustomSelect
+                          placeholder={`무료수업 담당강사를 선택해주세요.`}>
+                          {teachers &&
+                            teachers.map((data, idx) => {
+                              return (
+                                <Select.Option
+                                  key={data.id}
+                                  value={data.username}>
+                                  {data.username}
+                                </Select.Option>
+                              );
+                            })}
+                        </CustomSelect>
+                      </Form.Item>
+                    </ColWrapper>
+                  </RowWrapper>
 
-              <RowWrapper
-                width={`100%`}
-                al={`flex-start`}
-                margin={`0 0 10px 0`}>
-                <ColWrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  담당 강사
-                </ColWrapper>
-                <ColWrapper dr={`row`}>
-                  <Form.Item name="teacher">
-                    <CustomSelect
-                      placeholder={`수업을 선택해주세요.`}
-                      filterOption={(input, option) =>
-                        option.children
-                          .toLowerCase()
-                          .indexOf(input.toLowerCase()) >= 0
-                      }
-                      showSearch>
-                      {allLectures &&
-                        allLectures.map((data, idx) => {
-                          return (
-                            <Select.Option
-                              key={`${data.User.username} ${data.course}`}
-                              value={data.username}>
-                              {`(${data.number}) ${data.User.username} ${data.course}`}
-                            </Select.Option>
-                          );
-                        })}
-                    </CustomSelect>
-                  </Form.Item>
-                </ColWrapper>
-              </RowWrapper>
+                  <RowWrapper
+                    width={`100%`}
+                    al={`flex-start`}
+                    margin={`0 0 10px 0`}>
+                    <ColWrapper
+                      width={`140px`}
+                      height={`30px`}
+                      bgColor={Theme.basicTheme_C}
+                      color={Theme.white_C}
+                      margin={`0 5px 0 0`}>
+                      담당 강사
+                    </ColWrapper>
+                    <ColWrapper dr={`row`}>
+                      <Form.Item name="teacher">
+                        <CustomSelect
+                          placeholder={`수업을 선택해주세요.`}
+                          filterOption={(input, option) =>
+                            option.children
+                              .toLowerCase()
+                              .indexOf(input.toLowerCase()) >= 0
+                          }
+                          showSearch>
+                          {allLectures &&
+                            allLectures.map((data, idx) => {
+                              return (
+                                <Select.Option
+                                  key={`${data.User.username} ${data.course}`}
+                                  value={data.username}>
+                                  {`(${data.number}) ${data.User.username} ${data.course}`}
+                                </Select.Option>
+                              );
+                            })}
+                        </CustomSelect>
+                      </Form.Item>
+                    </ColWrapper>
+                  </RowWrapper>
 
-              <RowWrapper
-                width={`100%`}
-                al={`flex-start`}
-                margin={`0 0 10px 0`}>
-                <ColWrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  희망 시작일
-                </ColWrapper>
-                <ColWrapper>
-                  <Form.Item name="wantStartDate">
-                    <CustomDatePicker />
-                  </Form.Item>
-                </ColWrapper>
-              </RowWrapper>
+                  <RowWrapper
+                    width={`100%`}
+                    al={`flex-start`}
+                    margin={`0 0 10px 0`}>
+                    <ColWrapper
+                      width={`140px`}
+                      height={`30px`}
+                      bgColor={Theme.basicTheme_C}
+                      color={Theme.white_C}
+                      margin={`0 5px 0 0`}>
+                      희망 시작일
+                    </ColWrapper>
+                    <ColWrapper>
+                      <Form.Item name="wantStartDate">
+                        <CustomDatePicker />
+                      </Form.Item>
+                    </ColWrapper>
+                  </RowWrapper>
 
-              {/* <RowWrapper width={`100%`} al={`flex-start`}>
+                  {/* <RowWrapper width={`100%`} al={`flex-start`}>
                 <ColWrapper
                   width={`140px`}
                   height={`30px`}
@@ -1145,63 +1145,65 @@ const List = () => {
                 </ColWrapper>
               </RowWrapper> */}
 
-              <RowWrapper
-                width={`100%`}
-                al={`flex-start`}
-                margin={`0 0 10px 0`}>
-                <ColWrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  레벨
-                </ColWrapper>
+                  <RowWrapper
+                    width={`100%`}
+                    al={`flex-start`}
+                    margin={`0 0 10px 0`}>
+                    <ColWrapper
+                      width={`140px`}
+                      height={`30px`}
+                      bgColor={Theme.basicTheme_C}
+                      color={Theme.white_C}
+                      margin={`0 5px 0 0`}>
+                      레벨
+                    </ColWrapper>
 
-                <FormItem name="level">
-                  <CustomInput />
-                </FormItem>
-              </RowWrapper>
+                    <FormItem name="level">
+                      <CustomInput />
+                    </FormItem>
+                  </RowWrapper>
 
-              <RowWrapper
-                width={`100%`}
-                al={`flex-start`}
-                margin={`0 0 10px 0`}>
-                <ColWrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  직업
-                </ColWrapper>
-                <ColWrapper>
-                  <Form.Item name="job">
-                    <CustomInput />
-                  </Form.Item>
-                </ColWrapper>
-              </RowWrapper>
+                  <RowWrapper
+                    width={`100%`}
+                    al={`flex-start`}
+                    margin={`0 0 10px 0`}>
+                    <ColWrapper
+                      width={`140px`}
+                      height={`30px`}
+                      bgColor={Theme.basicTheme_C}
+                      color={Theme.white_C}
+                      margin={`0 5px 0 0`}>
+                      직업
+                    </ColWrapper>
+                    <ColWrapper>
+                      <Form.Item name="job">
+                        <CustomInput />
+                      </Form.Item>
+                    </ColWrapper>
+                  </RowWrapper>
 
-              <RowWrapper al={`flex-start`}>
-                <ColWrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}>
-                  메모
-                </ColWrapper>
-                <ColWrapper width={`80%`} al={`flex-start`}>
-                  <FormItem width={`100%`} name="purpose">
-                    <CustomTextArea
-                      rows={6}
-                      border={`1px solid ${Theme.grey_C} !important`}
-                    />
-                  </FormItem>
-                </ColWrapper>
-              </RowWrapper>
+                  <RowWrapper al={`flex-start`}>
+                    <ColWrapper
+                      width={`140px`}
+                      height={`30px`}
+                      bgColor={Theme.basicTheme_C}
+                      color={Theme.white_C}
+                      margin={`0 5px 0 0`}>
+                      메모
+                    </ColWrapper>
+                    <ColWrapper width={`80%`} al={`flex-start`}>
+                      <FormItem width={`100%`} name="purpose">
+                        <CustomTextArea
+                          rows={6}
+                          border={`1px solid ${Theme.grey_C} !important`}
+                        />
+                      </FormItem>
+                    </ColWrapper>
+                  </RowWrapper>
+                </Wrapper>
+              </CustomForm2>
             </Wrapper>
-          </CustomForm2>
+          </Wrapper>
         </Wrapper>
 
         <Text fontSize={`16px`} fontWeight={`700`} margin={`0 0 10px`}>
