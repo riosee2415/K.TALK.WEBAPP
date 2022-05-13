@@ -377,7 +377,7 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
         endDate,
       },
       {
-        id: parseInt(partId),
+        where: { id: parseInt(partId) },
       }
     );
 
