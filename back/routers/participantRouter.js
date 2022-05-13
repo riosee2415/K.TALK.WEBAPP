@@ -360,7 +360,7 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
   }
 });
 
-router.post("/create", isAdminCheck, async (req, res, next) => {
+router.patch("/update", isAdminCheck, async (req, res, next) => {
   const { UserId, LectureId, createdAt, endDate } = req.body;
   try {
     const exLecture = await Lecture.findOne({
