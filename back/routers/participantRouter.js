@@ -361,59 +361,31 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
 });
 
 router.patch("/update", isAdminCheck, async (req, res, next) => {
-  const { UserId, LectureId, createdAt, endDate } = req.body;
+  const { partId, createdAt, endDate } = req.body;
   try {
-    const exLecture = await Lecture.findOne({
-      where: { id: parseInt(LectureId) },
+    const exPart = await Participant.findOne({
+      where: { id: parseInt(partId) },
     });
 
-    if (!exLecture) {
-      return res.status(401).send("존재하지 않는 강의입니다.");
+    if (!exPart) {
+      return res.status(401).send("존재하지 않는 참여 내역입니다.");
     }
 
-    const exUser = await User.findOne({
-      where: { id: parseInt(UserId) },
-    });
-
-    if (!exUser) {
-      return res.status(401).send("존재하지 않는 사용자입니다.");
-    }
-
-    if (exUser.level < 1) {
-      return res.status(401).send("해당 사용자는 학생이 아닙니다.");
-    }
-
-    const partValidation = await Participant.findOne({
-      where: {
-        UserId: parseInt(UserId),
-        LectureId: parseInt(LectureId),
-        isDelete: false,
-        isChange: false,
-      },
-    });
-
-    if (!partValidation) {
-      return res
-        .status(401)
-        .send("해당 학생은 해당 강의에 참여하고 있지 않습니다.");
-    }
-
-    const createResult = await Participant.update(
+    const updateResult = await Participant.update(
       {
         createdAt,
         endDate,
       },
       {
-        UserId: parseInt(UserId),
-        LectureId: parseInt(LectureId),
+        id: parseInt(partId),
       }
     );
 
-    if (!createResult) {
-      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
     }
-
-    return res.status(201).json({ result: true });
   } catch (error) {
     console.error(error);
     return res.status(401).send("데이터를 수정할 수 없습니다.");
