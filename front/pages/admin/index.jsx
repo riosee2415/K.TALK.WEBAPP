@@ -997,7 +997,7 @@ const AdminHome = () => {
                             ju={`flex-start`}>
                             {data.Participants &&
                               data.Participants.map((data, idx) => {
-                                if (data.isChange) return;
+                                if (data.isChange || data.isDelete) return;
 
                                 return (
                                   <Wrapper
