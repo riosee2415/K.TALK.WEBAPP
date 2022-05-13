@@ -542,6 +542,8 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
      WHERE	1 = 1
        AND	A.UserId = ${req.user.id}
        AND	B.isDelete  = FALSE
+       AND  A.isDelete = FALSE
+       AND  A.isChange = FALSE
     `;
 
     let lectureIds = [];
