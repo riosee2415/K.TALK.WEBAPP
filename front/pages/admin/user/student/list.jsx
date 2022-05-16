@@ -1037,11 +1037,7 @@ const List = () => {
     {
       title: "수업 참여일",
       render: (data) => (
-        <div>
-          {moment(data.endDate)
-            .add(parseInt(-data.date), "days")
-            .format("YYYY-MM-DD")}
-        </div>
+        <div>{moment(data.createdAt).format("YYYY-MM-DD")}</div>
       ),
     },
 
@@ -1472,6 +1468,9 @@ const List = () => {
           columns={column}
           dataSource={allUsers ? allUsers : []}
           size="small"
+          pagination={{
+            pageSize: 30,
+          }}
         />
       </AdminContent>
 

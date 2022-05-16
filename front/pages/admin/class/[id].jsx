@@ -50,6 +50,7 @@ import { saveAs } from "file-saver";
 import useWidth from "../../../hooks/useWidth";
 import {
   PARTICIPANT_ADMIN_LIST_REQUEST,
+  PARTICIPANT_UPDATE_REQUEST,
   PARTICIPANT_USER_CURRENT_LIST_REQUEST,
   PARTICIPANT_USER_DELETE_LIST_REQUEST,
   PARTICIPANT_USER_LIMIT_LIST_REQUEST,
@@ -66,6 +67,10 @@ const CustomTextArea = styled(Input.TextArea)`
 
 const CustomDatePicker = styled(DatePicker)`
   width: ${(props) => props.width || `250px`};
+`;
+
+const RangePicker = styled(DatePicker.RangePicker)`
+  width: ${(props) => props.width || `100%`};
 `;
 
 const AdminContent = styled.div`
@@ -146,7 +151,11 @@ const DetailClass = () => {
 
     st_participantUserLimitListDone,
     st_participantUserLimitListError,
+
+    st_participantUpdateDone,
+    st_participantUpdateError,
   } = useSelector((state) => state.participant);
+
   const { bookList, bookMaxLength } = useSelector((state) => state.book);
   const { noticeLectureList } = useSelector((state) => state.notice);
   const { messageLectureList, messageLectureLastPage } = useSelector(
@@ -193,6 +202,9 @@ const DetailClass = () => {
   const [detailBook, setDetailBook] = useState(null);
   const [bookModal, setBookModal] = useState(false);
 
+  const [stuChangeModal, setStuChangeModal] = useState(false);
+  const [stuChangeDetail, setStuChangeDetail] = useState(null);
+
   const [currentNoticePage, setCurrentNoticePage] = useState(1);
   const [currentMessagePage, setCurrentMessagePage] = useState(1);
 
@@ -206,6 +218,7 @@ const DetailClass = () => {
 
   const [detailToggle, setDetailToggle] = useState(false);
   const [stuDetailModal, setStuDetailModal] = useState(false);
+  const [stuChangeDate, setStuChangeDate] = useState("");
 
   const [updateStuForm] = Form.useForm();
   const [stuDetail, setStuDetail] = useState([]);
@@ -351,6 +364,36 @@ const DetailClass = () => {
     }
   }, [st_appDetailError]);
 
+  useEffect(() => {
+    if (st_participantUserLimitListError) {
+      return message.error(st_participantUserLimitListError);
+    }
+  }, [st_participantUserLimitListError]);
+
+  useEffect(() => {
+    if (st_participantUserMoveListError) {
+      return message.error(st_participantUserMoveListError);
+    }
+  }, [st_participantUserMoveListError]);
+
+  useEffect(() => {
+    if (st_participantUserDeleteListError) {
+      return message.error(st_participantUserDeleteListError);
+    }
+  }, [st_participantUserDeleteListError]);
+
+  useEffect(() => {
+    if (st_participantUpdateDone) {
+      return message.success("학생 참여일이 수정 되었습니다.");
+    }
+  }, [st_participantUpdateDone]);
+
+  useEffect(() => {
+    if (st_participantUpdateError) {
+      return message.error(st_participantUpdateError);
+    }
+  }, [st_participantUpdateError]);
+
   const updateStuFinish = useCallback(
     (data) => {
       dispatch({
@@ -478,6 +521,29 @@ const DetailClass = () => {
     });
   }, []);
 
+  const stuDateChangeHandler = useCallback(
+    (data, data2) => {
+      setStuChangeDate(data);
+    },
+    [stuChangeDetail]
+  );
+
+  const onClicStuHandler = useCallback(() => {
+    dispatch({
+      type: PARTICIPANT_UPDATE_REQUEST,
+      data: {
+        partId: stuChangeDetail.id,
+        endDate: stuChangeDate && stuChangeDate[1].format("YYYY-MM-DD"),
+        createdAt:
+          stuChangeDate && stuChangeDate[0].format("YYYY-MM-DD HH:mm:ss"),
+      },
+    });
+
+    setStuChangeDate(null);
+    setStuDetail(null);
+    setStuChangeModal(false);
+  }, [stuChangeDetail, stuChangeDate]);
+
   const onStuFill = useCallback((data) => {
     if (data) {
       updateStuForm.setFieldsValue({
@@ -567,6 +633,15 @@ const DetailClass = () => {
     onStuFill(data);
   }, []);
 
+  const changeModalOpen = useCallback((data) => {
+    setStuChangeModal(true);
+    setStuChangeDetail(data);
+  }, []);
+
+  const changeModalClose = useCallback(() => {
+    setStuChangeModal(false);
+  }, []);
+
   ////// DATAVIEW //////
   const stuColumns = [
     {
@@ -643,6 +718,18 @@ const DetailClass = () => {
           type={`primary`}
           onClick={() => detailModalOpen(data)}>
           내역 보기
+        </Button>
+      ),
+    },
+
+    {
+      title: "학생 참여일",
+      render: (data) => (
+        <Button
+          size={`small`}
+          type={`primary`}
+          onClick={() => changeModalOpen(data)}>
+          변경
         </Button>
       ),
     },
@@ -864,6 +951,11 @@ const DetailClass = () => {
     {
       title: "수업 참여일",
       render: (data) => <div>{data.createdAt.slice(0, 10)}</div>,
+    },
+
+    {
+      title: "수업 종료일",
+      render: (data) => <div>{data.endDate}</div>,
     },
   ];
 
@@ -2194,6 +2286,30 @@ const DetailClass = () => {
             </Wrapper>
           </ColWrapper>
         </CustomForm>
+      </Modal>
+
+      <Modal
+        width={`600px`}
+        visible={stuChangeModal}
+        footer={null}
+        onCancel={changeModalClose}>
+        <Wrapper al={`flex-start`} ju={`flex-start`} minHeight={`400px`}>
+          <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
+            학생수업 변경
+          </Text>
+
+          <RangePicker
+            value={stuChangeDate || ""}
+            placeholder={["수업참여 시작일", "수업 끝나는날"]}
+            onChange={stuDateChangeHandler}
+            showTime></RangePicker>
+        </Wrapper>
+
+        <Wrapper al={`flex-end`}>
+          <Button type="primary" onClick={onClicStuHandler}>
+            변경
+          </Button>
+        </Wrapper>
       </Modal>
     </AdminLayout>
   );

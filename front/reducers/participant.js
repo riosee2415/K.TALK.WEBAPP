@@ -58,6 +58,10 @@ export const initialState = {
   st_teacherParticipantListLoading: false,
   st_teacherParticipantListDone: false,
   st_teacherParticipantListError: null,
+  //
+  st_ParticipantUpdateLoading: false,
+  st_ParticipantUpdateDone: false,
+  st_ParticipantUpdateError: null,
 };
 
 export const PARTICIPANT_LIST_REQUEST = "PARTICIPANT_LIST_REQUEST";
@@ -125,6 +129,10 @@ export const PARTICIPANT_LASTDATE_LIST_SUCCESS =
 export const PARTICIPANT_LASTDATE_LIST_FAILURE =
   "PARTICIPANT_LASTDATE_LIST_FAILURE";
 
+export const PARTICIPANT_UPDATE_REQUEST = "PARTICIPANT_UPDATE_REQUEST";
+export const PARTICIPANT_UPDATE_SUCCESS = "PARTICIPANT_UPDATE_SUCCESS";
+export const PARTICIPANT_UPDATE_FAILURE = "PARTICIPANT_UPDATE_FAILURE";
+
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
@@ -159,7 +167,6 @@ const reducer = (state = initialState, action) =>
         draft.st_teacherParticipantListLoading = false;
         draft.st_teacherParticipantListDone = true;
         draft.teaPartList = action.data.list;
-
         break;
       }
       case TEACHER_PARTICIPANT_LIST_FAILURE: {
@@ -355,6 +362,26 @@ const reducer = (state = initialState, action) =>
         draft.st_participantLastDateListLoading = false;
         draft.st_participantLastDateListDone = false;
         draft.st_participantLastDateListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case PARTICIPANT_UPDATE_REQUEST: {
+        draft.st_participantUpdateLoading = true;
+        draft.st_participantUpdateDone = null;
+        draft.st_participantUpdateError = false;
+        break;
+      }
+      case PARTICIPANT_UPDATE_SUCCESS: {
+        draft.st_participantUpdateLoading = false;
+        draft.st_participantUpdateDone = true;
+        break;
+      }
+      case PARTICIPANT_UPDATE_FAILURE: {
+        draft.st_participantUpdateLoading = false;
+        draft.st_participantUpdateDone = false;
+        draft.st_participantUpdateError = action.error;
         break;
       }
 

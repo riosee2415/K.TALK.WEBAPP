@@ -929,11 +929,13 @@ const Student = () => {
   }, []);
 
   const stepHanlder2 = useCallback((startDate, endDate, day) => {
-    let dir = 0;
+    // let dir = 0;
 
-    const save = Math.abs(
-      moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays()
-    );
+    console.log(startDate, endDate, day);
+
+    // const save = Math.abs(
+    //   moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays()
+    // );
 
     let check = parseInt(
       moment
@@ -941,16 +943,16 @@ const Student = () => {
         .asDays() + 1
     );
 
-    if (save >= check) {
-      dir = check;
-    } else {
-      dir = save;
-    }
+    // if (save >= check) {
+    //   dir = check;
+    // } else {
+    //   dir = save;
+    // }
 
     const arr = ["일", "월", "화", "수", "목", "금", "토"];
     let add = 0;
 
-    for (let i = 0; i <= dir; i++) {
+    for (let i = 0; i <= check; i++) {
       let saveDay = moment(startDate).add(i, "days").day();
 
       const saveResult = day.includes(arr[saveDay]);
@@ -1331,14 +1333,19 @@ const Student = () => {
 
                                 <Text lineHeight={`1.19`}>
                                   {`강의 수 : ${stepHanlder2(
+                                    moment().format("YYYY-MM-DD"),
+                                    data.endDate,
+                                    data.day
+                                  )} / ${stepHanlder2(
                                     moment(data.PartCreatedAt).format(
                                       "YYYY-MM-DD"
                                     ),
                                     data.endDate,
                                     data.day
-                                  )} / ${(data.date / 7) * data.count}`}
+                                  )}`}
                                 </Text>
                               </Wrapper>
+                              {/* ${Math.floor((data.date / 7) * data.count)} */}
 
                               <Wrapper
                                 margin={`10px 0 0 0`}
@@ -1371,7 +1378,9 @@ const Student = () => {
                                           data.endDate,
                                           data.day
                                         ) -
-                                          (data.date / 7) * data.count
+                                          Math.floor(
+                                            (data.date / 7) * data.count
+                                          )
                                       )}
                                       회
                                     </SpanText>

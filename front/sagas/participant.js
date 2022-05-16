@@ -44,6 +44,10 @@ import {
   TEACHER_PARTICIPANT_LIST_REQUEST,
   TEACHER_PARTICIPANT_LIST_SUCCESS,
   TEACHER_PARTICIPANT_LIST_FAILURE,
+  //////////////////////////////////////////////////////////
+  PARTICIPANT_UPDATE_REQUEST,
+  PARTICIPANT_UPDATE_SUCCESS,
+  PARTICIPANT_UPDATE_FAILURE,
 } from "../reducers/participant";
 
 // SAGA AREA ********************************************************************************************************
@@ -331,6 +335,37 @@ function* teacherParticipantList(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function participantUpdateAPI(data) {
+  return axios.patch(`/api/part/update`, data);
+}
+
+function* participantUpdate(action) {
+  try {
+    const result = yield call(participantUpdateAPI, action.data);
+
+    yield put({
+      type: PARTICIPANT_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: PARTICIPANT_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchParticipantList() {
@@ -387,6 +422,9 @@ function* watchParticipantUserCurrentList() {
     participantUserCurrentList
   );
 }
+function* watchParticipantUpdate() {
+  yield takeLatest(PARTICIPANT_UPDATE_REQUEST, participantUpdate);
+}
 
 //////////////////////////////////////////////////////////////
 export default function* participantSaga() {
@@ -402,6 +440,7 @@ export default function* participantSaga() {
     fork(watchParticipantUserCurrentList),
     fork(watchParticipantUserLastDateList),
     fork(watchParticipantTeacherList),
+    fork(watchParticipantUpdate),
 
     //
   ]);
