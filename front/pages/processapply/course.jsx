@@ -181,16 +181,16 @@ const Course = () => {
     <>
       <Head>
         <title>
-          {seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          {seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         </title>
 
         <meta
           name="subject"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta
           name="title"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta name="keywords" content={seo_keywords} />
         <meta
@@ -204,11 +204,11 @@ const Course = () => {
         {/* <!-- OG tag  --> */}
         <meta
           property="og:title"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta
           property="og:site_name"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta
           property="og:description"
@@ -234,14 +234,16 @@ const Course = () => {
                 </Text>
                 <Text
                   fontSize={width < 700 ? `20px` : `28px`}
-                  fontWeight={`bold`}>
+                  fontWeight={`bold`}
+                >
                   정규과정 등록신청서
                 </Text>
               </Wrapper>
               <Text
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}>
+                margin={`0 0 10px`}
+              >
                 Name in full (First / Last)
               </Text>
               <Wrapper dr={`row`} ju={`space-between`}>
@@ -250,7 +252,8 @@ const Course = () => {
                     name="firstname2"
                     rules={[
                       { required: true, message: "'firstname' is required" },
-                    ]}>
+                    ]}
+                  >
                     <CusotmInput placeholder="First" width={`100%`} />
                   </Form.Item>
                 </Wrapper>
@@ -259,7 +262,8 @@ const Course = () => {
                     name="lastname2"
                     rules={[
                       { required: true, message: "'lastname2' is required" },
-                    ]}>
+                    ]}
+                  >
                     <CusotmInput placeholder="Last" width={`100%`} />
                   </Form.Item>
                 </Wrapper>
@@ -268,7 +272,8 @@ const Course = () => {
                 <Text
                   fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
-                  margin={`0 0 10px`}>
+                  margin={`0 0 10px`}
+                >
                   Date of Birth
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
@@ -304,7 +309,8 @@ const Course = () => {
                   <Wrapper
                     width={`30px`}
                     margin={width < 700 ? `0 0 28px` : `0 0 48px`}
-                    fontSize={width < 700 ? `20px` : `30px`}>
+                    fontSize={width < 700 ? `20px` : `30px`}
+                  >
                     <CalendarOutlined onClick={calender2Toggle} />
                   </Wrapper>
                 </Wrapper>
@@ -316,7 +322,8 @@ const Course = () => {
                   top={`30px`}
                   right={`-310px`}
                   border={`1px solid ${Theme.grey_C}`}
-                  margin={`0 0 20px`}>
+                  margin={`0 0 20px`}
+                >
                   <Calendar
                     style={{ width: width < 1350 ? `100%` : `300px` }}
                     fullscreen={false}
@@ -328,7 +335,8 @@ const Course = () => {
               <Text
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}>
+                margin={`0 0 10px`}
+              >
                 Gmail Address
               </Text>
               <Wrapper dr={`row`} ju={`flex-start`}>
@@ -337,7 +345,8 @@ const Course = () => {
                     name="firstEmail2"
                     rules={[
                       { required: true, message: "'firstEmail' is required" },
-                    ]}>
+                    ]}
+                  >
                     <CusotmInput width={`100%`} placeholder={"Address"} />
                   </Form.Item>
                 </Wrapper>
@@ -347,7 +356,8 @@ const Course = () => {
                     name="lastEmail2"
                     rules={[
                       { required: true, message: "'lastEmail' is required" },
-                    ]}>
+                    ]}
+                  >
                     <CusotmInput width={`100%`} placeholder={"@gmail.com"} />
                   </Form.Item>
                 </Wrapper>
@@ -356,12 +366,14 @@ const Course = () => {
               <Text
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}>
+                margin={`0 0 10px`}
+              >
                 Login PW
               </Text>
               <Form.Item
                 name="loginPW2"
-                rules={[{ required: true, message: "'loginPW' is required" }]}>
+                rules={[{ required: true, message: "'loginPW' is required" }]}
+              >
                 <CusotmInput
                   type="password"
                   width={`100%`}
@@ -373,14 +385,16 @@ const Course = () => {
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
                 margin={`0 0 10px`}
-                lineHeight={`1.22`}>
+                lineHeight={`1.22`}
+              >
                 성별
               </Text>
               <Form.Item name="gender" rules={[{ required: true }]}>
                 <CustomSelect
                   suffixIcon={() => {
                     return <CaretDownOutlined />;
-                  }}>
+                  }}
+                >
                   {genderArr &&
                     genderArr.map((data) => {
                       return (
@@ -396,7 +410,8 @@ const Course = () => {
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
                 margin={`0 0 10px`}
-                lineHeight={`1.22`}>
+                lineHeight={`1.22`}
+              >
                 Nationality
               </Text>
               <Form.Item name="nationality2" rules={[{ required: true }]}>
@@ -409,7 +424,8 @@ const Course = () => {
               <Text
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}>
+                margin={`0 0 10px`}
+              >
                 Country of Residence
               </Text>
               <Form.Item
@@ -419,7 +435,8 @@ const Course = () => {
                     required: true,
                     message: "'country of Residence' is required",
                   },
-                ]}>
+                ]}
+              >
                 <CusotmInput
                   width={`100%`}
                   placeholder={"Select Country of Residence"}
@@ -429,7 +446,8 @@ const Course = () => {
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
                 margin={`0 0 10px`}
-                lineHeight={`1.22`}>
+                lineHeight={`1.22`}
+              >
                 Language you use
               </Text>
               <Wrapper dr={`row`} ju={`flex-start`}>
@@ -440,7 +458,8 @@ const Course = () => {
                       required: true,
                       message: "'language you user' is required",
                     },
-                  ]}>
+                  ]}
+                >
                   <CusotmInput
                     width={`100%`}
                     radius={`5px`}
@@ -451,7 +470,8 @@ const Course = () => {
               <Text
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}>
+                margin={`0 0 10px`}
+              >
                 Phone number
               </Text>
               <Wrapper dr={`row`} ju={`flex-start`}>
@@ -463,11 +483,13 @@ const Course = () => {
                         required: true,
                         message: "'firstPhoneNumber' is required",
                       },
-                    ]}>
+                    ]}
+                  >
                     <CustomSelect
                       suffixIcon={() => {
                         return <CaretDownOutlined />;
-                      }}>
+                      }}
+                    >
                       {firstPhoneArr &&
                         firstPhoneArr.map((data) => {
                           return (
@@ -488,7 +510,8 @@ const Course = () => {
                         required: true,
                         message: "'lasyPhonNumber' is required",
                       },
-                    ]}>
+                    ]}
+                  >
                     <CusotmInput type="number" width={`100%`} />
                   </Form.Item>
                 </Wrapper>
@@ -497,7 +520,8 @@ const Course = () => {
               <Text
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}>
+                margin={`0 0 10px`}
+              >
                 SNS
               </Text>
               <Wrapper dr={`row`} ju={`flex-start`}>
@@ -506,12 +530,14 @@ const Course = () => {
                     name="firstsns2"
                     rules={[
                       { required: true, message: "'firstsns' is required" },
-                    ]}>
+                    ]}
+                  >
                     <CustomSelect
                       placeholder="SNS"
                       suffixIcon={() => {
                         return <CaretDownOutlined />;
-                      }}>
+                      }}
+                    >
                       {snsArr &&
                         snsArr.map((data) => {
                           return (
@@ -529,7 +555,8 @@ const Course = () => {
                     name="lastsns2"
                     rules={[
                       { required: true, message: "'lastsns' is required" },
-                    ]}>
+                    ]}
+                  >
                     <CusotmInput placeholder={`ID`} width={`100%`} />
                   </Form.Item>
                 </Wrapper>
@@ -538,20 +565,23 @@ const Course = () => {
               <Text
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}>
+                margin={`0 0 10px`}
+              >
                 Occupation
               </Text>
               <Form.Item
                 name="occupation2"
                 rules={[
                   { required: true, message: "'occupation' is required" },
-                ]}>
+                ]}
+              >
                 <CusotmInput
                   suffixIcon={() => {
                     return <CaretDownOutlined />;
                   }}
                   width={`100%`}
-                  placeholder={"Select Your Occupation"}></CusotmInput>
+                  placeholder={"Select Your Occupation"}
+                ></CusotmInput>
               </Form.Item>
 
               <Wrapper>

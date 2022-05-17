@@ -247,16 +247,16 @@ const Index = () => {
     <>
       <Head>
         <title>
-          {seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          {seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         </title>
 
         <meta
           name="subject"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta
           name="title"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta name="keywords" content={seo_keywords} />
         <meta
@@ -270,11 +270,11 @@ const Index = () => {
         {/* <!-- OG tag  --> */}
         <meta
           property="og:title"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta
           property="og:site_name"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta
           property="og:description"
@@ -295,7 +295,8 @@ const Index = () => {
         <WholeWrapper
           bgColor={`rgba(216, 231, 255, 0.2)`}
           minHeight={`calc(100vh - 200px)`}
-          ju={`flex-start`}>
+          ju={`flex-start`}
+        >
           <Wrapper
             position={`fixed`}
             top={width < 900 ? `82px` : `100px`}
@@ -303,7 +304,8 @@ const Index = () => {
             bgColor={`rgb(230, 239, 255)`}
             padding={`15px 0`}
             zIndex={`100`}
-            shadow={`2px 2px 2px rgb(226, 226, 226)`}>
+            shadow={`2px 2px 2px rgb(226, 226, 226)`}
+          >
             <RsWrapper dr={`row`} ju={width < 900 ? `center` : `flex-end`}>
               {/* <Wrapper
                 width={`auto`}
@@ -367,15 +369,18 @@ const Index = () => {
                 margin={`230px 0 0 0`}
                 dr={`row`}
                 al={`flex-end`}
-                ju={width < 800 ? `center` : `space-between`}>
+                ju={width < 800 ? `center` : `space-between`}
+              >
                 <Wrapper
                   al={`flex-start`}
-                  width={width < 800 ? `100%` : `calc(100% - 370px)`}>
+                  width={width < 800 ? `100%` : `calc(100% - 370px)`}
+                >
                   <Text
                     margin={`0 0 15px 0`}
                     fontSize={width < 700 ? `16px` : `20px`}
                     color={Theme.darkGrey_C}
-                    fontWeight={`600`}>
+                    fontWeight={`600`}
+                  >
                     상품
                   </Text>
                   <Wrapper
@@ -387,7 +392,8 @@ const Index = () => {
                     minHeight={`80px`}
                     shadow={`0px 5px 15px rgba(0, 0, 0, 0.05)`}
                     bgColor={Theme.white_C}
-                    radius={`5px`}>
+                    radius={`5px`}
+                  >
                     <Image
                       width={`22px`}
                       margin={width < 900 ? `0 5px 0 0` : `0 16px 0 0`}
@@ -411,12 +417,14 @@ const Index = () => {
                       minHeight={`210px`}
                       shadow={`0px 5px 15px rgba(0, 0, 0, 0.05)`}
                       bgColor={Theme.white_C}
-                      radius={`10px `}>
+                      radius={`10px `}
+                    >
                       <Wrapper
                         al={`flex-start`}
                         borderBottom={`1px solid ${Theme.grey_C}`}
                         padding={`0 0 10px`}
-                        margin={`0 0 5px`}>
+                        margin={`0 0 5px`}
+                      >
                         <Text color={Theme.grey2_C}>
                           {payClassDetail && payClassDetail.name}
                         </Text>
@@ -444,12 +452,14 @@ const Index = () => {
                   margin={width < 900 && `0 0 50px`}
                   ju={`space-between`}
                   radius={`5px`}
-                  width={width < 800 ? `100%` : `350px`}>
+                  width={width < 800 ? `100%` : `350px`}
+                >
                   <Wrapper>
                     <Wrapper
                       dr={`row`}
                       ju={`space-between`}
-                      fontSize={width < 700 ? `14px` : `18px`}>
+                      fontSize={width < 700 ? `14px` : `18px`}
+                    >
                       <Text fontWeight={`600`}>수업 금액</Text>
                       <Text>
                         {`$${
@@ -466,7 +476,8 @@ const Index = () => {
                       dr={`row`}
                       ju={`space-between`}
                       margin={`13px 0 0`}
-                      fontSize={width < 700 ? `14px` : `18px`}>
+                      fontSize={width < 700 ? `14px` : `18px`}
+                    >
                       <Text>할인율</Text>
                       <Text color={Theme.subTheme2_C}>
                         {payClassDetail && payClassDetail.discount}%
@@ -476,7 +487,8 @@ const Index = () => {
                       dr={`row`}
                       ju={`space-between`}
                       margin={`13px 0 25px`}
-                      fontSize={width < 700 ? `14px` : `18px`}>
+                      fontSize={width < 700 ? `14px` : `18px`}
+                    >
                       <Text>강의 기간</Text>
                       <Text>{payClassDetail && payClassDetail.week}주</Text>
                     </Wrapper>
@@ -487,11 +499,13 @@ const Index = () => {
                     ju={`space-between`}
                     borderTop={`2px dashed ${Theme.grey_C}`}
                     padding={`10px 0 0`}
-                    fontSize={width < 700 ? `14px` : `18px`}>
+                    fontSize={width < 700 ? `14px` : `18px`}
+                  >
                     <Text>총 결제 금액</Text>
                     <Text
                       color={Theme.black_3C}
-                      fontSize={width < 700 ? `16px` : `24px`}>
+                      fontSize={width < 700 ? `16px` : `24px`}
+                    >
                       {` $${String(
                         Math.floor(
                           payClassDetail.price -
@@ -509,7 +523,8 @@ const Index = () => {
                     al={`flex-start`}
                     color={Theme.red_C}
                     padding={`10px`}
-                    fontSize={`16px`}>
+                    fontSize={`16px`}
+                  >
                     *강의 기간은 강의 참여일로부터&nbsp;
                     {payClassDetail && payClassDetail.week}주뒤까지 입니다.
                   </Wrapper>
@@ -525,7 +540,8 @@ const Index = () => {
                       margin={`0 0 15px 0`}
                       fontSize={width < 700 ? `16px` : `20px`}
                       color={Theme.darkGrey_C}
-                      fontWeight={`600`}>
+                      fontWeight={`600`}
+                    >
                       계좌이체 신청서
                     </Text>
                   </Wrapper>
@@ -539,14 +555,16 @@ const Index = () => {
                       padding={`20px 30px`}
                       bgColor={Theme.white_C}
                       radius={`5px`}
-                      shadow={`0px 5px 15px rgba(0, 0, 0, 0.05)`}>
+                      shadow={`0px 5px 15px rgba(0, 0, 0, 0.05)`}
+                    >
                       <CustomForm form={depositForm} onFinish={onFinishDeposit}>
                         <Wrapper
                           dr={`row`}
                           ju={`flex-start`}
                           margin={`10px 0 0 0`}
                           color={Theme.black_3C}
-                          fontSize={width < 700 ? `16px` : `18px`}>
+                          fontSize={width < 700 ? `16px` : `18px`}
+                        >
                           <Text margin={`0 0 10px 0`}>이름</Text>
                           <Form.Item
                             name={`name`}
@@ -555,7 +573,8 @@ const Index = () => {
                                 required: true,
                                 message: "이름을 입력해주세요.",
                               },
-                            ]}>
+                            ]}
+                          >
                             <InputText placeholder="이름을 입력해주세요." />
                           </Form.Item>
                         </Wrapper>
@@ -564,7 +583,8 @@ const Index = () => {
                           ju={`flex-start`}
                           margin={`10px 0 0 0`}
                           color={Theme.black_3C}
-                          fontSize={width < 700 ? `16px` : `18px`}>
+                          fontSize={width < 700 ? `16px` : `18px`}
+                        >
                           <Text margin={`0 0 10px 0`}>이메일</Text>
                           <Form.Item
                             name={`email`}
@@ -573,7 +593,8 @@ const Index = () => {
                                 required: true,
                                 message: "이메일을 입력해주세요.",
                               },
-                            ]}>
+                            ]}
+                          >
                             <InputText
                               type={`email`}
                               placeholder="가입한 이메일 또는 신청서 이메일을 입력해주세요."
@@ -585,7 +606,8 @@ const Index = () => {
                           ju={`flex-start`}
                           margin={`10px 0 0 0`}
                           color={Theme.black_3C}
-                          fontSize={width < 700 ? `16px` : `18px`}>
+                          fontSize={width < 700 ? `16px` : `18px`}
+                        >
                           <Text margin={`0 0 10px 0`}>입금 계좌번호</Text>
                           <Wrapper al={`flex-start`}>
                             <Form.Item
@@ -595,7 +617,8 @@ const Index = () => {
                                   required: true,
                                   message: "계좌번호를 입력해주세요.",
                                 },
-                              ]}>
+                              ]}
+                            >
                               <InputText placeholder="입금 계좌번호를 입력해주세요." />
                             </Form.Item>
                           </Wrapper>
@@ -605,12 +628,14 @@ const Index = () => {
                           ju={`flex-start`}
                           margin={`10px 0 0 0`}
                           color={Theme.black_3C}
-                          fontSize={width < 700 ? `16px` : `18px`}>
+                          fontSize={width < 700 ? `16px` : `18px`}
+                        >
                           <Text>은행 및 계좌번호</Text>
                           <Wrapper
                             al={`flex-start`}
-                            fontSize={width < 700 ? `14px` : `16px`}>
-                            K-Talk Live OO은행 235-235235-235235
+                            fontSize={width < 700 ? `14px` : `16px`}
+                          >
+                            K-talk Live OO은행 235-235235-235235
                           </Wrapper>
                         </Wrapper>
                         <Wrapper
@@ -618,13 +643,15 @@ const Index = () => {
                           ju={`flex-start`}
                           margin={`10px 0 0 0`}
                           color={Theme.black_3C}
-                          fontSize={width < 700 ? `16px` : `18px`}>
+                          fontSize={width < 700 ? `16px` : `18px`}
+                        >
                           <Text>가격</Text>
                           <Form.Item name={"price"}>
                             <Text
                               al={`flex-start`}
                               margin={`0 0 10px 0`}
-                              fontSize={width < 700 ? `14px` : `16px`}>
+                              fontSize={width < 700 ? `14px` : `16px`}
+                            >
                               {` $${String(
                                 Math.floor(
                                   payClassDetail.price -
@@ -648,7 +675,8 @@ const Index = () => {
                       color={Theme.red_C}
                       padding={`10px`}
                       fontSize={`16px`}
-                      margin={`0 0 50px 0`}></Wrapper>
+                      margin={`0 0 50px 0`}
+                    ></Wrapper>
                   </>
                 )}
               </Wrapper>

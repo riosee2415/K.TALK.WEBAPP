@@ -189,16 +189,16 @@ const Presentation = () => {
     <>
       <Head>
         <title>
-          {seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          {seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         </title>
 
         <meta
           name="subject"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta
           name="title"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta name="keywords" content={seo_keywords} />
         <meta
@@ -212,11 +212,11 @@ const Presentation = () => {
         {/* <!-- OG tag  --> */}
         <meta
           property="og:title"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta
           property="og:site_name"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta
           property="og:description"
@@ -250,7 +250,8 @@ const Presentation = () => {
               )}
               <Text
                 fontSize={width < 700 ? `20px` : `28px`}
-                fontWeight={`bold`}>
+                fontWeight={`bold`}
+              >
                 설명회 참가신청서 (초급/중급)
               </Text>
             </Wrapper>
@@ -258,7 +259,8 @@ const Presentation = () => {
               <Text
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}>
+                margin={`0 0 10px`}
+              >
                 Name in full (First / Last)
               </Text>
               <Wrapper dr={`row`} ju={`space-between`}>
@@ -277,7 +279,8 @@ const Presentation = () => {
                 <Text
                   fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
-                  margin={`0 0 10px`}>
+                  margin={`0 0 10px`}
+                >
                   Date of Birth
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
@@ -313,7 +316,8 @@ const Presentation = () => {
                   <Wrapper
                     width={`30px`}
                     margin={width < 700 ? `0 0 28px` : `0 0 48px`}
-                    fontSize={width < 700 ? `20px` : `30px`}>
+                    fontSize={width < 700 ? `20px` : `30px`}
+                  >
                     <CalendarOutlined onClick={calenderToggle} />
                   </Wrapper>
                 </Wrapper>
@@ -325,7 +329,8 @@ const Presentation = () => {
                   top={`30px`}
                   right={`-310px`}
                   border={`1px solid ${Theme.grey_C}`}
-                  margin={`0 0 20px`}>
+                  margin={`0 0 20px`}
+                >
                   <Calendar
                     style={{ width: width < 1350 ? `100%` : `300px` }}
                     fullscreen={false}
@@ -337,7 +342,8 @@ const Presentation = () => {
               <Text
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}>
+                margin={`0 0 10px`}
+              >
                 Gmail Address
               </Text>
               <Wrapper dr={`row`} ju={`flex-start`}>
@@ -357,7 +363,8 @@ const Presentation = () => {
               <Text
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}>
+                margin={`0 0 10px`}
+              >
                 Login PW
               </Text>
               <Form.Item name="loginPW" rules={[{ required: true }]}>
@@ -370,7 +377,8 @@ const Presentation = () => {
               <Text
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}>
+                margin={`0 0 10px`}
+              >
                 Country of Residence
               </Text>
               <Form.Item name="countryOfResidence" rules={[{ required: true }]}>
@@ -379,18 +387,21 @@ const Presentation = () => {
               <Text
                 fontSize={width < 700 ? `16px` : `18px`}
                 fontWeight={`bold`}
-                margin={`0 0 10px`}>
+                margin={`0 0 10px`}
+              >
                 Phone number
               </Text>
               <Wrapper dr={`row`} ju={`flex-start`}>
                 <Wrapper width={`calc(20% - 4px)`} margin={`0 8px 0 0`}>
                   <Form.Item
                     name="firstPhoneNumber"
-                    rules={[{ required: true }]}>
+                    rules={[{ required: true }]}
+                  >
                     <CustomSelect
                       suffixIcon={() => {
                         return <CaretDownOutlined />;
-                      }}>
+                      }}
+                    >
                       {firstPhoneArr &&
                         firstPhoneArr.map((data) => {
                           return (
@@ -406,7 +417,8 @@ const Presentation = () => {
                 <Wrapper width={`calc(80% - 4px)`}>
                   <Form.Item
                     name="lastPhoneNumber"
-                    rules={[{ required: true }]}>
+                    rules={[{ required: true }]}
+                  >
                     <CusotmInput type="number" width={`100%`} />
                   </Form.Item>
                 </Wrapper>

@@ -21,7 +21,7 @@ const AppFooter = () => {
       <RsWrapper dr={`row`} ju={`space-between`} al={`flex-end`}>
         <Wrapper width={`auto`} al={`flex-start`}>
           <Text fontSize={width < 800 ? `16px` : `20px`} fontWeight={`bold`}>
-            K-Talk Live
+            K-talk Live
           </Text>
           <Text fontSize={width < 800 ? `15px` : `18px`} fontWeight={`300`}>
             Powered by Jeju Korean Language School

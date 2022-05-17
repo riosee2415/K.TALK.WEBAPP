@@ -313,16 +313,16 @@ const Index = () => {
     <>
       <Head>
         <title>
-          {seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          {seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         </title>
 
         <meta
           name="subject"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta
           name="title"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta name="keywords" content={seo_keywords} />
         <meta
@@ -336,11 +336,11 @@ const Index = () => {
         {/* <!-- OG tag  --> */}
         <meta
           property="og:title"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta
           property="og:site_name"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta
           property="og:description"

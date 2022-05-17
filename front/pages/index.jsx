@@ -50,16 +50,16 @@ const Home = ({}) => {
     <>
       <Head>
         <title>
-          {seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          {seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         </title>
 
         <meta
           name="subject"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta
           name="title"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta name="keywords" content={seo_keywords} />
         <meta
@@ -73,11 +73,11 @@ const Home = ({}) => {
         {/* <!-- OG tag  --> */}
         <meta
           property="og:title"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta
           property="og:site_name"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta
           property="og:description"
@@ -115,7 +115,7 @@ const Home = ({}) => {
                 margin={`0 0 20px`}
               >
                 <Text>
-                  <SpanText color={Theme.subTheme6_C}>K-TALK LIVE</SpanText>
+                  <SpanText color={Theme.subTheme6_C}>K-talk Live</SpanText>
                   &nbsp;RUNS&nbsp;
                   <SpanText color={Theme.subTheme6_C}>
                     FREE ONLINE LESSONS

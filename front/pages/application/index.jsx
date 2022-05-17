@@ -1573,16 +1573,16 @@ const Application = () => {
     <>
       <Head>
         <title>
-          {seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          {seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         </title>
 
         <meta
           name="subject"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta
           name="title"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta name="keywords" content={seo_keywords} />
         <meta
@@ -1596,11 +1596,11 @@ const Application = () => {
         {/* <!-- OG tag  --> */}
         <meta
           property="og:title"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta
           property="og:site_name"
-          content={seo_title.length < 1 ? "K-Talk Live" : seo_title[0].content}
+          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
         />
         <meta
           property="og:description"
@@ -1621,15 +1621,17 @@ const Application = () => {
         <WholeWrapper
           bgColor={Theme.subTheme_C}
           padding={`80px 0`}
-          margin={width < 700 ? `50px 0 0` : `100px 0 0`}>
+          margin={width < 700 ? `50px 0 0` : `100px 0 0`}
+        >
           <RsWrapper>
             <Text fontSize={width < 700 ? `20px` : `28px`} fontWeight={`bold`}>
               Application Form
             </Text>
             <Text
               fontSize={width < 700 ? `16px` : `18px`}
-              margin={`10px 0 30px`}>
-              for K-talk LIve regular paid Korean lessons
+              margin={`10px 0 30px`}
+            >
+              for K-talk Live regular paid Korean lessons
             </Text>
             {width < 700 ? (
               <>
@@ -1668,7 +1670,8 @@ const Application = () => {
                 target="_blank"
                 width={`auto`}
                 color={Theme.basicTheme_C}
-                rel="noopener noreferrer">
+                rel="noopener noreferrer"
+              >
                 http://ktalklive.com
               </ATag>
               &nbsp;or our FB page at&nbsp;
@@ -1677,7 +1680,8 @@ const Application = () => {
                 target="_blank"
                 width={`auto`}
                 color={Theme.basicTheme_C}
-                rel="noopener noreferrer">
+                rel="noopener noreferrer"
+              >
                 https://www.facebook.com/ktalklive
               </ATag>
             </Wrapper>
@@ -1685,20 +1689,23 @@ const Application = () => {
               color={Theme.subTheme2_C}
               margin={`20px 0 68px`}
               fontSize={`20px`}
-              fontWeight={`bold`}>
+              fontWeight={`bold`}
+            >
               Thank you very much!
             </Wrapper>
 
             <CustomForm
               onFinish={submissionHandler}
               form={form}
-              scrollToFirstError>
+              scrollToFirstError
+            >
               <Wrapper al={`flex-start`}>
                 <Text
                   fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
                   margin={`0 0 10px`}
-                  lineHeight={`1.22`}>
+                  lineHeight={`1.22`}
+                >
                   Name in full (First/Last)
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
@@ -1729,7 +1736,8 @@ const Application = () => {
                   fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
                   margin={`0 0 10px`}
-                  lineHeight={`1.22`}>
+                  lineHeight={`1.22`}
+                >
                   Date of Birth
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
@@ -1769,7 +1777,8 @@ const Application = () => {
                   <Wrapper
                     width={`30px`}
                     margin={width < 700 ? `0 0 28px` : `0 0 48px`}
-                    fontSize={width < 700 ? `20px` : `30px`}>
+                    fontSize={width < 700 ? `20px` : `30px`}
+                  >
                     <CalendarOutlined onClick={calenderToggle} />
                   </Wrapper>
                 </Wrapper>
@@ -1780,7 +1789,8 @@ const Application = () => {
                   top={`40px`}
                   right={`-310px`}
                   border={`1px solid ${Theme.grey_C}`}
-                  margin={`0 0 20px`}>
+                  margin={`0 0 20px`}
+                >
                   <Calendar
                     style={{ width: width < 1350 ? `100%` : `300px` }}
                     fullscreen={false}
@@ -1794,7 +1804,8 @@ const Application = () => {
                   fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
                   margin={`0 0 10px`}
-                  lineHeight={`1.22`}>
+                  lineHeight={`1.22`}
+                >
                   Gmail Address
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
@@ -1824,7 +1835,8 @@ const Application = () => {
                   fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
                   margin={`0 0 10px`}
-                  lineHeight={`1.22`}>
+                  lineHeight={`1.22`}
+                >
                   Nationality
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
@@ -1848,7 +1860,8 @@ const Application = () => {
                   fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
                   margin={`0 0 10px`}
-                  lineHeight={`1.22`}>
+                  lineHeight={`1.22`}
+                >
                   Language you use
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
@@ -1866,24 +1879,28 @@ const Application = () => {
                   fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
                   margin={`0 0 10px`}
-                  lineHeight={`1.22`}>
+                  lineHeight={`1.22`}
+                >
                   Phone number
                 </Text>
                 <Wrapper dr={`row`} al={`flex-start`}>
                   <Wrapper
                     width={width < 700 ? `60%` : `60%`}
-                    padding={`0 8px 0 0`}>
+                    padding={`0 8px 0 0`}
+                  >
                     <Form.Item name="phoneNumber" rules={[{ required: true }]}>
                       <CustomSelect
                         suffixIcon={() => {
                           return <CaretDownOutlined />;
-                        }}>
+                        }}
+                      >
                         {total &&
                           total.map((data, idx) => {
                             return (
                               <Select.Option
                                 key={idx}
-                                value={JSON.stringify(data)}>
+                                value={JSON.stringify(data)}
+                              >
                                 {`${data.number} ${data.Afghanistan}`}
                               </Select.Option>
                             );
@@ -1905,13 +1922,15 @@ const Application = () => {
                   fontSize={width < 700 ? `16px` : `18px`}
                   fontWeight={`bold`}
                   margin={`0 0 10px`}
-                  lineHeight={`1.22`}>
+                  lineHeight={`1.22`}
+                >
                   Please choose your available class hours.
                 </Text>
                 <Text
                   fontSize={width < 700 ? `16px` : `18px`}
                   margin={`0 0 10px`}
-                  lineHeight={`1.19`}>
+                  lineHeight={`1.19`}
+                >
                   Stated time are in Korean Standard Time(GMT +9). Please check
                   all that apply.
                 </Text>
@@ -1926,11 +1945,13 @@ const Application = () => {
                           width < 700 ? `calc(100% / 2)` : `calc(100% / 3)`
                         }
                         fontSize={width < 700 ? `16px` : `18px`}
-                        al={`flex-start`}>
+                        al={`flex-start`}
+                      >
                         <CustomCheckBox2
                           key={idx}
                           checked={timeSelectCheck[idx]}
-                          onChange={(e) => timeSelectToggle(data, idx)}>
+                          onChange={(e) => timeSelectToggle(data, idx)}
+                        >
                           {data}
                         </CustomCheckBox2>
                       </Wrapper>
@@ -1940,7 +1961,8 @@ const Application = () => {
 
               <Wrapper
                 color={Theme.red_C}
-                fontSize={width < 700 ? `14px` : `18px`}>
+                fontSize={width < 700 ? `14px` : `18px`}
+              >
                 <Text>Do you agree to the terms of our Student Rules?</Text>
                 {width < 700 ? (
                   <>
@@ -1958,13 +1980,15 @@ const Application = () => {
                 <SpanText
                   fontSize={width < 700 ? `14px` : `16px`}
                   margin={`42px 0 28px`}
-                  textDecoration={"underline"}>
+                  textDecoration={"underline"}
+                >
                   https://drive.google.com/file/d/14ccUCUmYMGk04y-4NF3TK5qP8Vvgc_02/view?usp=sharing
                 </SpanText>
 
                 <CustomCheckBox2
                   checked={agreeCheck}
-                  onChange={agreeCheckToggle}>
+                  onChange={agreeCheckToggle}
+                >
                   Yes, I agree
                 </CustomCheckBox2>
               </Wrapper>
@@ -1974,7 +1998,8 @@ const Application = () => {
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`bold`}
                   margin={`48px 0 10px`}
-                  lineHeight={`1.22`}>
+                  lineHeight={`1.22`}
+                >
                   {width < 700 ? (
                     <>
                       <Text>Do you have any other questions or</Text>
@@ -1997,7 +2022,8 @@ const Application = () => {
                   width={`121px`}
                   height={`34px`}
                   radius={`5px`}
-                  htmlType="submit">
+                  htmlType="submit"
+                >
                   submission
                 </CommonButton>
               </Wrapper>
