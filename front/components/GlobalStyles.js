@@ -28,6 +28,15 @@ const GlobalStyles = createGlobalStyle`
   a:hover {
     color : inherit;
   }
+  
+  .ant-modal-header{
+    background:${(props) => props.theme.subTheme7_C};
+    color:${(props) => props.theme.white_C};
+  }
+
+  .ant-modal-title, .ant-modal-close{
+    color:${(props) => props.theme.white_C};
+  }
 
   @media (max-width : 576px) {
     html { 
