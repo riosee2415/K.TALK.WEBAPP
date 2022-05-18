@@ -28,7 +28,7 @@ import {
   Select,
   Button,
 } from "antd";
-
+import { SyncOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 import useWidth from "../../hooks/useWidth";
 import ClientLayout from "../../components/ClientLayout";
@@ -41,6 +41,7 @@ import {
   SpanText,
   TextInput,
   CommonButton,
+  CommonTitle,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
 import {
@@ -61,8 +62,8 @@ import {
 } from "../../reducers/book";
 import useInput from "../../hooks/useInput";
 
-const PROFILE_WIDTH = `184`;
-const PROFILE_HEIGHT = `190`;
+const PROFILE_WIDTH = `150`;
+const PROFILE_HEIGHT = `150`;
 
 const CustomPage = styled(Pagination)`
   & .ant-pagination-next > button {
@@ -120,7 +121,8 @@ const CustomButton = styled.button`
   height: 70px;
   border: none;
   background-color: ${Theme.white_C};
-  box-shadow: 0px 5px 15px rgb(0, 0, 0, 0.16);
+  border: 1px solid ${Theme.basicTheme_C};
+  box-shadow: 0px 0px 5px rgb(0, 0, 0, 0.16);
   cursor: pointer;
 
   &:hover {
@@ -166,6 +168,7 @@ const CustomText2 = styled(Text)`
 const CustomText3 = styled(Text)`
   font-size: 18px;
   font-weight: Bold;
+  margin: 0 20px 0 0;
 
   &::before {
     content: "";
@@ -178,6 +181,23 @@ const CustomText3 = styled(Text)`
     font-size: 14px;
     &::before {
       margin: 0 10px;
+    }
+  }
+`;
+
+const Name = styled(Text)`
+  margin: 0 25px 0 0;
+
+  &::after {
+    content: "•";
+    margin: 0 0 0 25px;
+  }
+
+  &:last-child {
+    margin: 0;
+
+    &::after {
+      display: none;
     }
   }
 `;
@@ -232,13 +252,13 @@ const ProfileWrapper = styled.div`
 `;
 
 const ProfileImage = styled.img`
-  width: 184px;
-  height: 190px;
+  width: 150px;
+  height: 150px;
   object-fit: cover;
   border-radius: 5px;
 `;
 const UploadWrapper = styled.div`
-  width: 184px;
+  width: 150px;
   margin: 5px 0;
 
   display: flex;
@@ -965,58 +985,66 @@ const Index = () => {
       </Head>
 
       <ClientLayout>
-        <WholeWrapper margin={`100px 0 0`} bgColor={Theme.subTheme_C}>
-          <RsWrapper>
-            <Wrapper
-              margin={width < 700 ? `30px 0` : `60px 0`}
-              dr={`row`}
-              ju={`space-between`}
-            >
+        <WholeWrapper margin={width < 900 ? `52px 0 0` : `100px 0 0`}>
+          <Wrapper
+            bgImg={`url("https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/student/subBanner.png")`}
+            padding={width < 700 ? `30px 0` : `60px 0`}
+            color={Theme.white_C}
+          >
+            <RsWrapper dr={`row`} ju={width < 900 ? `center` : `flex-start`}>
               <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
-                <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
-                  <Image
-                    width={width < 700 ? `65px` : `75px`}
-                    height={width < 700 ? `65px` : `75px`}
-                    radius={`100px`}
-                    src={
-                      me && me.profileImage
-                        ? me.profileImage
-                        : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile.png"
-                    }
-                    alt="teacher_thumbnail"
-                  />
-                </Wrapper>
+                <Image
+                  width={width < 700 ? `65px` : `95px`}
+                  height={width < 700 ? `65px` : `95px`}
+                  border={
+                    width < 900
+                      ? `5px solid ${Theme.white_C}`
+                      : `15px solid ${Theme.white_C}`
+                  }
+                  radius={`100px`}
+                  src={
+                    me && me.profileImage
+                      ? me.profileImage
+                      : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile.png"
+                  }
+                  alt="teacher_thumbnail"
+                />
                 <Text
                   fontSize={width < 700 ? `20px` : `28px`}
                   fontWeight={`bold`}
                   padding={`0 0 0 15px`}
                 >
                   안녕하세요,&nbsp;
-                  <SpanText color={Theme.basicTheme_C} wordBreak={`break-all`}>
+                  <SpanText color={Theme.subTheme9_C} wordBreak={`break-all`}>
                     {me && me.username}&nbsp;
                   </SpanText>
                   님!
                 </Text>
               </Wrapper>
               <Wrapper width={`auto`}>
-                <CommonButton radius={`5px`} onClick={meUpdateModalToggle}>
-                  Upload My ID picture
+                <CommonButton
+                  radius={`20px`}
+                  kindOf={`subTheme3`}
+                  margin={width < 900 ? `20px 0 0` : `0 0 0 20px`}
+                  onClick={meUpdateModalToggle}
+                >
+                  <SyncOutlined /> Upload My ID picture
                 </CommonButton>
               </Wrapper>
-            </Wrapper>
-
+            </RsWrapper>
+          </Wrapper>
+          <RsWrapper margin={`80px 0 0`}>
             <Wrapper al={`flex-start`}>
-              <Text
-                color={Theme.black_2C}
-                fontSize={width < 700 ? `18px` : `22px`}
-                fontWeight={`Bold`}
-                margin={`0 0 20px`}
-              >
-                공지사항
-              </Text>
+              <CommonTitle margin={`0 0 20px`}>공지사항</CommonTitle>
 
-              <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
-                <Wrapper dr={`row`} textAlign={`center`} padding={`20px 0`}>
+              <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
+                <Wrapper
+                  dr={`row`}
+                  textAlign={`center`}
+                  padding={`20px 0`}
+                  bgColor={Theme.subTheme9_C}
+                  borderBottom={`1px solid ${Theme.grey_C}`}
+                >
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
@@ -1063,7 +1091,8 @@ const Index = () => {
                         ju={`flex-start`}
                         padding={`25px 0 20px`}
                         cursor={`pointer`}
-                        bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                        bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                        borderBottom={`1px solid ${Theme.grey_C}`}
                         onClick={() => onClickNoticeHandler(data)}
                       >
                         <Text
@@ -1115,14 +1144,9 @@ const Index = () => {
               al={`flex-start`}
               margin={`0 0 20px 0`}
             >
-              <Text
-                color={Theme.black_2C}
-                fontSize={width < 700 ? `18px` : `22px`}
-                fontWeight={`Bold`}
-                margin={width < 700 && `0 0 10px 0`}
-              >
+              <CommonTitle margin={width < 700 && `0 0 10px 0`}>
                 수업 공지사항
-              </Text>
+              </CommonTitle>
 
               <Select
                 style={{ width: width < 700 ? `100%` : `300px` }}
@@ -1149,8 +1173,14 @@ const Index = () => {
               </Select>
             </Wrapper>
 
-            <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
-              <Wrapper dr={`row`} textAlign={`center`} padding={`20px 0`}>
+            <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
+              <Wrapper
+                dr={`row`}
+                textAlign={`center`}
+                padding={`20px 0`}
+                bgColor={Theme.subTheme9_C}
+                borderBottom={`1px solid ${Theme.grey_C}`}
+              >
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
@@ -1191,7 +1221,8 @@ const Index = () => {
                       ju={`flex-start`}
                       padding={`25px 0 20px`}
                       cursor={`pointer`}
-                      bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                      borderBottom={`1px solid ${Theme.grey_C}`}
+                      bgColor={idx % 2 === 1 && Theme.subTheme_C}
                     >
                       <Text
                         fontSize={width < 700 ? `14px` : `16px`}
@@ -1230,14 +1261,7 @@ const Index = () => {
             </Wrapper>
 
             <Wrapper al={`flex-start`}>
-              <Text
-                color={Theme.black_2C}
-                fontSize={width < 700 ? `18px` : `22px`}
-                fontWeight={`Bold`}
-                margin={`0 0 20px`}
-              >
-                내 수업
-              </Text>
+              <CommonTitle margin={`0 0 20px`}>내 수업</CommonTitle>
 
               {lectureTeacherList && lectureTeacherList.length === 0 ? (
                 <Wrapper margin={`30px 0`}>
@@ -1249,14 +1273,18 @@ const Index = () => {
                   return (
                     <Wrapper
                       key={data.id}
-                      shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
-                      padding={width < 700 ? `15px 10px 10px` : `35px 30px`}
                       margin={
                         idx === lectureTeacherList.length - 1 ? `0` : "0 0 20px"
                       }
-                      radius={`10px`}
+                      border={`1px solid ${Theme.grey_C}`}
                     >
-                      <Wrapper dr={`row`} ju={`flex-start`} al={`flex-start`}>
+                      <Wrapper
+                        dr={`row`}
+                        ju={`flex-start`}
+                        al={`flex-start`}
+                        bgColor={Theme.subTheme9_C}
+                        padding={width < 900 ? `20px 10px` : `25px 30px`}
+                      >
                         <Wrapper
                           width={
                             width < 1280
@@ -1267,7 +1295,6 @@ const Index = () => {
                           }
                           dr={`row`}
                           ju={`flex-start`}
-                          al={`flex-start`}
                         >
                           <Wrapper
                             width={`auto`}
@@ -1275,15 +1302,16 @@ const Index = () => {
                             margin={`0 10px 0 0`}
                           >
                             <Image
-                              width={`22px`}
-                              height={`22px`}
+                              width={width < 900 ? `15px` : `22px`}
+                              height={width < 900 ? `15px` : `22px`}
                               src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
                               alt="clock_icon"
                             />
                           </Wrapper>
 
                           <Wrapper
-                            width={`calc(100% - 42px - 100px)`}
+                            width={`auto`}
+                            minWidth={`calc(100% - 42px - 100px)`}
                             dr={`row`}
                             ju={`flex-start`}
                           >
@@ -1297,19 +1325,19 @@ const Index = () => {
                                 data && data.time
                               )}
                             </Text>
-                            <Wrapper
-                              width={`1px`}
-                              height={width < 800 ? `20px` : `34px`}
-                              borderLeft={`1px dashed ${Theme.grey_C}`}
-                              margin={
-                                width < 1350
-                                  ? width < 700
-                                    ? `0 4px`
-                                    : `0 10px`
-                                  : `0 20px`
-                              }
-                            />
                           </Wrapper>
+                          <Wrapper
+                            width={`1px`}
+                            height={width < 800 ? `20px` : `34px`}
+                            borderLeft={`1px dashed ${Theme.grey_C}`}
+                            margin={
+                              width < 1350
+                                ? width < 700
+                                  ? `0 4px`
+                                  : `0 10px`
+                                : `0 20px`
+                            }
+                          />
                         </Wrapper>
 
                         <Wrapper
@@ -1320,8 +1348,8 @@ const Index = () => {
                         >
                           <Wrapper dr={`row`} width={`auto`}>
                             <Image
-                              width={`22px`}
-                              height={`22px`}
+                              width={width < 900 ? `15px` : `22px`}
+                              height={width < 900 ? `15px` : `22px`}
                               src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
                               alt="calender_icon"
                               margin={`0 5px 0 0`}
@@ -1337,8 +1365,8 @@ const Index = () => {
                             </CustomText2>
 
                             <Image
-                              width={`22px`}
-                              height={`22px`}
+                              width={width < 900 ? `15px` : `22px`}
+                              height={width < 900 ? `15px` : `22px`}
                               src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_number.png"
                               alt="calender_icon"
                               margin={`0 5px 0 0`}
@@ -1357,7 +1385,7 @@ const Index = () => {
                                 cursor={`pointer`}
                                 color={Theme.black_2C}
                                 fontSize={width < 700 ? `12px` : `18px`}
-                                width={width < 700 ? `auto` : `140px`}
+                                width={`auto`}
                                 onClick={() => textbookModalHandler(data)}
                               >
                                 교재 등록
@@ -1385,14 +1413,14 @@ const Index = () => {
                           </Wrapper>
                         </Wrapper>
                       </Wrapper>
-                      <Wrapper dr={`row`} ju={`flex-start`} margin={`20px 0 0`}>
+                      <Wrapper
+                        dr={`row`}
+                        ju={`flex-start`}
+                        padding={width < 900 ? `20px 10px` : `30px`}
+                      >
                         {lectureTeacherStudents.map((data2) => {
                           if (data2.LectureId === data.id) {
-                            return (
-                              <Text margin={`0 10px 0 0`}>
-                                {data2.username}
-                              </Text>
-                            );
+                            return <Name>{data2.username}</Name>;
                           } else {
                             return null;
                           }
@@ -1413,17 +1441,17 @@ const Index = () => {
             </Wrapper>
 
             <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
-              <Text
-                color={Theme.black_2C}
-                fontSize={width < 700 ? `18px` : `22px`}
-                fontWeight={`Bold`}
-              >
-                전체 쪽지 및 강사
-              </Text>
+              <CommonTitle>전체 쪽지 및 강사</CommonTitle>
             </Wrapper>
 
-            <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
-              <Wrapper dr={`row`} textAlign={`center`} padding={`20px 0`}>
+            <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
+              <Wrapper
+                dr={`row`}
+                textAlign={`center`}
+                padding={`20px 0`}
+                bgColor={Theme.subTheme9_C}
+                borderBottom={`1px solid ${Theme.grey_C}`}
+              >
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
@@ -1470,7 +1498,8 @@ const Index = () => {
                       textAlign={`center`}
                       padding={`25px 0 20px`}
                       cursor={`pointer`}
-                      bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                      borderBottom={`1px solid ${Theme.grey_C}`}
+                      bgColor={idx % 2 === 1 && Theme.subTheme_C}
                       onClick={() => messageViewModalHanlder(data2)}
                     >
                       <Text
@@ -1517,18 +1546,17 @@ const Index = () => {
             </Wrapper>
 
             <Wrapper al={`flex-start`}>
-              <Text
-                color={Theme.black_2C}
-                fontSize={width < 700 ? `18px` : `22px`}
-                fontWeight={`Bold`}
-                margin={`0 0 20px 0`}
-              >
-                개인 쪽지함
-              </Text>
+              <CommonTitle margin={`0 0 20px 0`}>개인 쪽지함</CommonTitle>
             </Wrapper>
 
-            <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
-              <Wrapper dr={`row`} textAlign={`center`} padding={`20px 0`}>
+            <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
+              <Wrapper
+                dr={`row`}
+                textAlign={`center`}
+                padding={`20px 0`}
+                bgColor={Theme.subTheme9_C}
+                borderBottom={`1px solid ${Theme.grey_C}`}
+              >
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
@@ -1575,7 +1603,8 @@ const Index = () => {
                       textAlign={`center`}
                       padding={`25px 0 20px`}
                       cursor={`pointer`}
-                      bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                      borderBottom={`1px solid ${Theme.grey_C}`}
+                      bgColor={idx % 2 === 1 && Theme.subTheme_C}
                       onClick={() => messageViewModalHanlder(data2)}
                     >
                       <Text
@@ -1642,12 +1671,9 @@ const Index = () => {
             width={`700px`}
             visible={meUpdateModal}
             footer={null}
+            title={"Upload My ID picture"}
             onCancel={meUpdateModalToggle}
           >
-            <Text fontSize={`22px`} fontWeight={`bold`} margin={`0 0 24px`}>
-              Upload My ID picture
-            </Text>
-
             <ProfileWrapper>
               <GuideWrapper>
                 <GuideText>
@@ -1696,8 +1722,13 @@ const Index = () => {
 
             <CustomForm form={updateForm} onFinish={meUpdateHandler}>
               <Wrapper al={`flex-end`} margin={`10px 0 0 0`}>
-                <CommonButton height={`40px`} radius={`5px`} htmlType="submit">
-                  Upload My ID picture
+                <CommonButton
+                  kindOf={`subTheme3`}
+                  height={`40px`}
+                  radius={`5px`}
+                  htmlType="submit"
+                >
+                  <SyncOutlined /> Upload My ID picture
                 </CommonButton>
               </Wrapper>
             </CustomForm>
@@ -1711,7 +1742,11 @@ const Index = () => {
             footer={null}
           >
             <Wrapper>
-              <Text fontSize={`22px`} fontWeight={`bold`} margin={`0 0 24px`}>
+              <Text
+                fontSize={width < 900 ? `15px` : `22px`}
+                fontWeight={`bold`}
+                margin={`0 0 24px`}
+              >
                 줌링크 등록하기
               </Text>
             </Wrapper>

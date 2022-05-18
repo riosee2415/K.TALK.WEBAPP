@@ -24,6 +24,7 @@ import {
   CommonButton,
   TextInput,
   TextArea,
+  CommonTitle,
 } from "../../../components/commonComponents";
 import {
   CalendarOutlined,
@@ -83,16 +84,8 @@ import { saveAs } from "file-saver";
 const CustomInput = styled(TextInput)`
   width: ${(props) => props.width || `100%`};
 
-  border: none;
-  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.16);
-  border-radius: 5px;
-
   &::placeholder {
     color: ${Theme.grey2_C};
-  }
-
-  &:focus {
-    border: 1px solid ${Theme.basicTheme_C};
   }
 `;
 
@@ -101,15 +94,15 @@ const BackIcon = styled(Wrapper)`
   transition: 0.5s;
   & .anticon-rollback {
     font-size: 30px;
-    color: ${Theme.black_C};
+    color: ${Theme.white_C};
   }
 
   &:hover {
     & .anticon-rollback {
       font-size: 30px;
-      color: ${Theme.grey2_C};
+      color: ${Theme.basicTheme_C};
     }
-    color: ${Theme.grey2_C};
+    color: ${Theme.basicTheme_C};
   }
 `;
 
@@ -117,15 +110,10 @@ const CusotmTextArea = styled(TextArea)`
   width: 100%;
   min-height: 200px;
   border: none;
-  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.16);
-  border-radius: 5px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
 
   &::placeholder {
     color: ${Theme.grey2_C};
-  }
-
-  &:focus {
-    border: 1px solid ${Theme.basicTheme_C};
   }
 `;
 
@@ -1597,24 +1585,19 @@ const Index = () => {
       </Head>
 
       <ClientLayout>
-        <WholeWrapper margin={`100px 0 0`} bgColor={Theme.subTheme_C}>
-          <RsWrapper>
-            <Wrapper dr={`row`} ju={`space-between`}>
-              <Wrapper
-                dr={`row`}
-                width={`auto`}
-                margin={width < 700 ? `30px 0` : `60px 0`}
-                ju={`flex-start`}
-              >
-                <Wrapper
-                  width={`auto`}
-                  paddingyment={`9px`}
-                  bgColor={Theme.white_C}
-                >
+        <WholeWrapper margin={width < 900 ? `52px 0 0` : `100px 0 0`}>
+          <Wrapper
+            bgImg={`url("https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/student/subBanner.png")`}
+            padding={width < 700 ? `30px 0` : `60px 0`}
+            color={Theme.white_C}
+          >
+            <RsWrapper dr={`row`} ju={width < 900 ? `center` : `flex-start`}>
+              <Wrapper dr={`row`} ju={`space-between`}>
+                <Wrapper dr={`row`} width={`auto`} ju={`flex-start`}>
                   <Image
                     width={width < 700 ? `65px` : `75px`}
                     height={width < 700 ? `65px` : `75px`}
-                    radius={`50%`}
+                    radius={`100%`}
                     src={
                       me && me.profileImage
                         ? me.profileImage
@@ -1622,33 +1605,33 @@ const Index = () => {
                     }
                     alt="teacher_thumbnail"
                   />
-                </Wrapper>
 
-                <Wrapper
-                  dr={`row`}
-                  width={`auto`}
-                  fontSize={width < 700 ? `20px` : `28px`}
-                  padding={`0 0 0 15px`}
-                  color={Theme.black_2C}
-                >
-                  <Text fontWeight={`bold`}>
-                    안녕하세요,&nbsp;
-                    <SpanText
-                      color={Theme.basicTheme_C}
-                      wordBreak={`break-all`}
-                    >
-                      {me && me.username}&nbsp;
-                    </SpanText>
-                    님!
-                  </Text>
+                  <Wrapper
+                    dr={`row`}
+                    width={`auto`}
+                    fontSize={width < 700 ? `20px` : `28px`}
+                    padding={`0 0 0 15px`}
+                  >
+                    <Text fontWeight={`bold`}>
+                      안녕하세요,&nbsp;
+                      <SpanText
+                        color={Theme.subTheme9_C}
+                        wordBreak={`break-all`}
+                      >
+                        {me && me.username}&nbsp;
+                      </SpanText>
+                      님!
+                    </Text>
+                  </Wrapper>
                 </Wrapper>
+                <BackIcon width={`auto`} onClick={moveBackHandler}>
+                  <RollbackOutlined />
+                  <Text>뒤로가기</Text>
+                </BackIcon>
               </Wrapper>
-              <BackIcon width={`auto`} onClick={moveBackHandler}>
-                <RollbackOutlined />
-                <Text>뒤로가기</Text>
-              </BackIcon>
-            </Wrapper>
-
+            </RsWrapper>
+          </Wrapper>
+          <RsWrapper margin={`80px 0 0`}>
             <Wrapper>
               {lectureDetail && lectureDetail.length === 0
                 ? ""
@@ -1660,10 +1643,10 @@ const Index = () => {
                         dr={`row`}
                         ju={`flex-start`}
                         al={`flex-start`}
-                        shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
+                        border={`1px solid ${Theme.grey_C}`}
                         padding={width < 700 ? `15px 10px 10px` : `35px 30px`}
                         margin={`0 0 20px`}
-                        radius={`10px`}
+                        bgColor={Theme.subTheme9_C}
                       >
                         <Wrapper
                           width={
@@ -1819,7 +1802,7 @@ const Index = () => {
                     );
                   })}
 
-              <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
+              <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
                 {width < 700 ? (
                   <>
                     <Wrapper
@@ -1827,6 +1810,8 @@ const Index = () => {
                       textAlign={`center`}
                       ju={`center`}
                       padding={`20px 0`}
+                      bgColor={Theme.subTheme9_C}
+                      borderBottom={`1px solid ${Theme.grey_C}`}
                     >
                       <CustomCheckBox
                         checked={checkedAllValue}
@@ -1868,7 +1853,8 @@ const Index = () => {
                             dr={`row`}
                             textAlign={`center`}
                             padding={`25px 0 20px`}
-                            bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                            bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                            borderBottom={`1px solid ${Theme.grey_C}`}
                           >
                             <CustomCheckBox
                               checked={
@@ -1909,6 +1895,9 @@ const Index = () => {
                       ju={`center`}
                       padding={`20px 0`}
                       margin={width < 700 ? `20px 0 0` : `0`}
+                      bgColor={Theme.subTheme9_C}
+                      borderBottom={`1px solid ${Theme.grey_C}`}
+                      borderTop={`2px solid ${Theme.black_C}`}
                     >
                       <Text
                         fontSize={width < 700 ? `14px` : `18px`}
@@ -1955,7 +1944,8 @@ const Index = () => {
                             dr={`row`}
                             textAlign={`center`}
                             padding={`25px 0 20px`}
-                            bgColor={Theme.lightGrey_C}
+                            bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                            borderBottom={`1px solid ${Theme.grey_C}`}
                           >
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
@@ -2013,7 +2003,8 @@ const Index = () => {
                                 type={`primary`}
                                 size={`small`}
                                 style={{ margin: `0 0 0 10px` }}
-                                bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                                bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                                borderBottom={`1px solid ${Theme.grey_C}`}
                                 onClick={() => onCommuteHandler(data, "출석")}
                                 cursor={`pointer`}
                                 fontSize={width < 700 ? `14px` : `16px`}
@@ -2040,7 +2031,8 @@ const Index = () => {
                               <Button
                                 size={`small`}
                                 style={{ margin: `0 0 0 10px` }}
-                                bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                                bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                                borderBottom={`1px solid ${Theme.grey_C}`}
                                 onClick={() => onCommuteHandler(data, "결석")}
                                 cursor={`pointer`}
                                 fontSize={width < 700 ? `14px` : `16px`}
@@ -2068,7 +2060,8 @@ const Index = () => {
                                 type={`primary`}
                                 size={`small`}
                                 style={{ margin: `0 0 0 10px` }}
-                                bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                                bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                                borderBottom={`1px solid ${Theme.grey_C}`}
                                 onClick={() => onCommuteHandler(data, "지각")}
                                 cursor={`pointer`}
                                 fontSize={width < 700 ? `14px` : `16px`}
@@ -2103,6 +2096,8 @@ const Index = () => {
                     textAlign={`center`}
                     ju={`center`}
                     padding={`20px 0px`}
+                    bgColor={Theme.subTheme9_C}
+                    borderBottom={`1px solid ${Theme.grey_C}`}
                   >
                     <CustomCheckBox
                       checked={checkedAllValue}
@@ -2178,7 +2173,8 @@ const Index = () => {
                             textAlign={`center`}
                             wordBreak={`break-word`}
                             padding={`25px 0 20px`}
-                            bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                            bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                            borderBottom={`1px solid ${Theme.grey_C}`}
                           >
                             <CustomCheckBox
                               checked={
@@ -2258,7 +2254,8 @@ const Index = () => {
                                 type={`primary`}
                                 size={`small`}
                                 style={{ margin: `0 0 5px` }}
-                                bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                                bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                                borderBottom={`1px solid ${Theme.grey_C}`}
                                 onClick={() => onCommuteHandler(data, "출석")}
                                 cursor={`pointer`}
                                 fontSize={width < 700 ? `14px` : `16px`}
@@ -2285,7 +2282,8 @@ const Index = () => {
                               <Button
                                 size={`small`}
                                 style={{ margin: `0 0 5px` }}
-                                bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                                bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                                borderBottom={`1px solid ${Theme.grey_C}`}
                                 onClick={() => onCommuteHandler(data, "결석")}
                                 cursor={`pointer`}
                                 fontSize={width < 700 ? `14px` : `16px`}
@@ -2312,7 +2310,8 @@ const Index = () => {
                               <Button
                                 type={`primary`}
                                 size={`small`}
-                                bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                                bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                                borderBottom={`1px solid ${Theme.grey_C}`}
                                 onClick={() => onCommuteHandler(data, "지각")}
                                 cursor={`pointer`}
                                 fontSize={width < 700 ? `14px` : `16px`}
@@ -2353,7 +2352,7 @@ const Index = () => {
                   width={width < 700 ? `40%` : `150px`}
                   height={width < 700 ? `32px` : `38px`}
                   padding={`0`}
-                  margin={`0 5px 0 0`}
+                  margin={width < 900 ? `5px` : `0 5px 0 0`}
                   fontSize={`14px`}
                   onClick={() => messageSendModalHandler()}
                 >
@@ -2365,7 +2364,7 @@ const Index = () => {
                   width={width < 700 ? `40%` : `150px`}
                   height={width < 700 ? `32px` : `38px`}
                   padding={`0`}
-                  margin={`0 5px 0 0`}
+                  margin={width < 900 ? `5px` : `0 5px 0 0`}
                   fontSize={`14px`}
                   onClick={() => adminMessageModal()}
                 >
@@ -2377,7 +2376,7 @@ const Index = () => {
                   width={width < 700 ? `40%` : `150px`}
                   height={width < 700 ? `32px` : `38px`}
                   padding={`0`}
-                  margin={`0 5px 0 0`}
+                  margin={width < 900 ? `5px` : `0 5px 0 0`}
                   fontSize={`14px`}
                   onClick={() => detailStuViewToggleHandler()}
                 >
@@ -2390,6 +2389,7 @@ const Index = () => {
                   height={width < 700 ? `32px` : `38px`}
                   padding={`0`}
                   fontSize={`14px`}
+                  margin={width < 900 && `5px`}
                   onClick={() => onCommuteListHandler()}
                 >
                   출석 목록
@@ -2398,17 +2398,16 @@ const Index = () => {
             </Wrapper>
 
             <Wrapper al={`flex-start`} margin={`86px 0 0 0`}>
-              <Text
-                color={Theme.black_2C}
-                fontSize={width < 700 ? `18px` : `22px`}
-                fontWeight={`Bold`}
-                margin={`0 0 20px`}
-              >
-                강사일지
-              </Text>
+              <CommonTitle margin={`0 0 20px`}>강사일지</CommonTitle>
 
-              <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
-                <Wrapper dr={`row`} textAlign={`center`} padding={`20px 0`}>
+              <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
+                <Wrapper
+                  dr={`row`}
+                  textAlign={`center`}
+                  padding={`20px 0`}
+                  bgColor={Theme.subTheme9_C}
+                  borderBottom={`1px solid ${Theme.grey_C}`}
+                >
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
@@ -2460,7 +2459,8 @@ const Index = () => {
                         textAlign={`center`}
                         padding={`25px 0 20px`}
                         cursor={`pointer`}
-                        bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                        bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                        borderBottom={`1px solid ${Theme.grey_C}`}
                         onClick={() => diaryViewClickHandler(data)}
                       >
                         <Text
@@ -2522,14 +2522,7 @@ const Index = () => {
             </Wrapper>
 
             <Wrapper al={`flex-start`}>
-              <Text
-                cTolor={Theme.black_2C}
-                fontSize={width < 700 ? `18px` : `22px`}
-                fontWeight={`Bold`}
-                margin={`86px 0 20px`}
-              >
-                숙제관리
-              </Text>
+              <CommonTitle margin={`86px 0 20px`}>숙제관리</CommonTitle>
 
               {(lectureHomeworkList && lectureHomeworkList.length === 0) ||
               null ? (
@@ -2548,7 +2541,8 @@ const Index = () => {
                       margin={`0 0 10px 0`}
                       padding={`20px`}
                       radius={`10px`}
-                      bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                      bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                      borderBottom={`1px solid ${Theme.grey_C}`}
                     >
                       <Text
                         width={`50%`}
@@ -2663,18 +2657,17 @@ const Index = () => {
             </Wrapper>
 
             <Wrapper al={`flex-start`}>
-              <Text
-                color={Theme.black_2C}
-                fontSize={width < 700 ? `18px` : `22px`}
-                fontWeight={`Bold`}
-                margin={`86px 0 20px`}
-              >
-                공지사항
-              </Text>
+              <CommonTitle margin={`86px 0 20px`}>공지사항</CommonTitle>
             </Wrapper>
 
-            <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
-              <Wrapper dr={`row`} textAlign={`center`} padding={`20px 0`}>
+            <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
+              <Wrapper
+                dr={`row`}
+                textAlign={`center`}
+                padding={`20px 0`}
+                bgColor={Theme.subTheme9_C}
+                borderBottom={`1px solid ${Theme.grey_C}`}
+              >
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
@@ -2714,7 +2707,8 @@ const Index = () => {
                       ju={`flex-start`}
                       padding={`25px 0 20px`}
                       cursor={`pointer`}
-                      bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                      bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                      borderBottom={`1px solid ${Theme.grey_C}`}
                     >
                       <Text
                         fontSize={width < 700 ? `14px` : `16px`}
@@ -2765,18 +2759,18 @@ const Index = () => {
             </Wrapper>
 
             <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
-              <Text
-                color={Theme.black_2C}
-                fontSize={width < 700 ? `18px` : `22px`}
-                fontWeight={`Bold`}
-              >
-                쪽지함
-              </Text>
+              <CommonTitle>쪽지함</CommonTitle>
             </Wrapper>
 
             <Wrapper>
-              <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
-                <Wrapper dr={`row`} textAlign={`center`} padding={`20px 0`}>
+              <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
+                <Wrapper
+                  dr={`row`}
+                  textAlign={`center`}
+                  padding={`20px 0`}
+                  bgColor={Theme.subTheme9_C}
+                  borderBottom={`1px solid ${Theme.grey_C}`}
+                >
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
@@ -2823,7 +2817,8 @@ const Index = () => {
                         textAlign={`center`}
                         padding={`25px 0 20px`}
                         cursor={`pointer`}
-                        bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                        bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                        borderBottom={`1px solid ${Theme.grey_C}`}
                         onClick={() => messageViewModalHanlder(data2)}
                       >
                         <Text
@@ -3990,7 +3985,8 @@ const Index = () => {
                           padding={`25px 30px 20px`}
                           cursor={`pointer`}
                           textAlign={width < 700 ? `center` : `left`}
-                          bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                          bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                          borderBottom={`1px solid ${Theme.grey_C}`}
                         >
                           <Text
                             fontSize={width < 700 ? `14px` : `16px`}
@@ -4085,7 +4081,7 @@ const Index = () => {
             </Wrapper>
           </Wrapper>
 
-          <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
+          <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
             <Wrapper
               dr={`row`}
               textAlign={width < 700 ? `center` : `left`}
@@ -4130,7 +4126,8 @@ const Index = () => {
                     padding={`25px 30px 20px`}
                     cursor={`pointer`}
                     textAlign={width < 700 ? `center` : `left`}
-                    bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                    bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                    borderBottom={`1px solid ${Theme.grey_C}`}
                   >
                     <Text
                       fontSize={width < 700 ? `14px` : `16px`}

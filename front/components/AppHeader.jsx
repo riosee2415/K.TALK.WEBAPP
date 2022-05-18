@@ -155,6 +155,7 @@ const AppHeader = ({ width }) => {
             {me && me ? (
               <Wrapper dr={`row`}>
                 <CommonButton
+                  radius={`50px`}
                   onClick={() => onClickHandler(me.level)}
                   height={width < 700 ? `30px` : `50px`}
                   width={width < 700 ? `auto` : `110px`}
@@ -164,6 +165,7 @@ const AppHeader = ({ width }) => {
                   My page
                 </CommonButton>
                 <CommonButton
+                  radius={`50px`}
                   onClick={() => logoutHandler()}
                   height={width < 700 ? `30px` : `50px`}
                   width={width < 700 ? `auto` : `110px`}
@@ -199,6 +201,7 @@ const AppHeader = ({ width }) => {
                 />
 
                 <CommonButton
+                  radius={`50px`}
                   onClick={() => loginHandler()}
                   height={width < 700 ? `30px` : `50px`}
                   width={width < 700 ? `auto` : `110px`}
