@@ -290,13 +290,14 @@ export const CommonButton = styled(Button)`
   height: ${(props) => props.height};
   margin: ${(props) => props.margin};
   padding: ${(props) => props.padding};
-  font-size: ${(props) => props.fontSize || `1rem`};
+  font-size: ${(props) => props.fontSize};
   color: ${(props) => props.color || props.theme.white_C};
-  border-radius: ${(props) => props.radius || `25px`};
+  border-radius: ${(props) => props.radius || `5px`};
   box-shadow: ${(props) => props.shadow};
 
   ${(props) => !props.kindOf && `background : ${props.theme.basicTheme_C};`}
-
+  ${(props) =>
+    !props.kindOf && `border :1px solid ${props.theme.basicTheme_C};`}
   ${(props) =>
     props.kindOf === `white` && `background : ${props.theme.white_C};`}
   ${(props) =>
@@ -558,21 +559,23 @@ export const SpanText = styled.span`
 export const TextInput = styled.input`
   width: ${(props) => props.width};
   height: ${(props) => props.height || `40px`};
-  border: ${(props) => props.border || `1px solid ${props.theme.grey_C}`};
+  border: ${(props) => props.border};
   border-bottom: ${(props) => props.borderBottom};
   padding: ${(props) => props.padding || `10px`};
   transition: ${(props) => props.transition || props.theme.transition};
   margin: ${(props) => props.margin};
-  background-color: ${(props) => props.bgColor || props.theme.lightGrey_C};
+  background-color: ${(props) => props.bgColor};
   border-radius: ${(props) => props.radius};
   font-size: ${(props) => props.fontSize};
   cursor: ${(props) => props.cursor};
   border-radius: ${(props) => props.radius};
   transition: 0.3s;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
 
   &:focus {
     outline: none;
-    border: 1px solid ${(props) => props.theme.subTheme_C};
+    border: 1px solid ${(props) => props.theme.subTheme7_C};
+    box-shadow: 0px 0px 5px rgba(0, 69, 255, 0.2);
   }
 
   &:read-only {
