@@ -556,10 +556,31 @@ export const SpanText = styled.span`
   `}
 `;
 
+export const CommonTitle = styled(Text)`
+  font-size: 22px;
+  font-weight: bold;
+  position: relative;
+
+  &:before {
+    content: "";
+    width: 100%;
+    height: 8px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: ${(props) => props.theme.subTheme8_C};
+    z-index: -1;
+  }
+
+  @media (max-width: 800px) {
+    font-size: 17px;
+  }
+`;
+
 export const TextInput = styled.input`
   width: ${(props) => props.width};
   height: ${(props) => props.height || `40px`};
-  border: ${(props) => props.border};
+  border: ${(props) => props.border || `none`};
   border-bottom: ${(props) => props.borderBottom};
   padding: ${(props) => props.padding || `10px`};
   transition: ${(props) => props.transition || props.theme.transition};
@@ -568,7 +589,6 @@ export const TextInput = styled.input`
   border-radius: ${(props) => props.radius};
   font-size: ${(props) => props.fontSize};
   cursor: ${(props) => props.cursor};
-  border-radius: ${(props) => props.radius};
   transition: 0.3s;
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
 
@@ -597,17 +617,19 @@ export const TextArea = styled.textarea`
   width: ${(props) => props.width};
   height: ${(props) => props.height || `100px`};
   padding: ${(props) => props.padding || `10px`};
-  border: ${(props) => props.border || `1px solid ${props.theme.grey_C}`};
+  border: ${(props) => props.border || `none`};
   border-radius: ${(props) => props.theme.radius};
   background: ${(props) => props.bgColor};
   transition: ${(props) => props.transition || props.theme.transition};
   margin: ${(props) => props.margin};
   resize: none;
-  border-radius: ${(props) => props.radius || `10px`};
+  border-radius: ${(props) => props.radius};
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
 
   &:focus {
     outline: none;
-    border: 1px solid ${(props) => props.theme.subTheme_C};
+    border: 1px solid ${(props) => props.theme.subTheme7_C};
+    box-shadow: 0px 0px 5px rgba(0, 69, 255, 0.2);
   }
 
   &::placeholder {
