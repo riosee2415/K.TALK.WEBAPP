@@ -139,7 +139,8 @@ const AppHeader = ({ width }) => {
       position={`fixed`}
       top={`0`}
       left={`0`}
-      zIndex={`100`}>
+      zIndex={`100`}
+    >
       <RsWrapper>
         <Wrapper dr={`row`} ju={`space-between`}>
           <Image
@@ -158,15 +159,17 @@ const AppHeader = ({ width }) => {
                   height={width < 700 ? `30px` : `50px`}
                   width={width < 700 ? `auto` : `110px`}
                   fontSize={width < 700 && `11px`}
-                  margin={`0 10px 0 0`}>
-                  MYPAGE
+                  margin={`0 10px 0 0`}
+                >
+                  My page
                 </CommonButton>
                 <CommonButton
                   onClick={() => logoutHandler()}
                   height={width < 700 ? `30px` : `50px`}
                   width={width < 700 ? `auto` : `110px`}
-                  fontSize={width < 700 && `11px`}>
-                  LOGOUT
+                  fontSize={width < 700 && `11px`}
+                >
+                  Log-out
                 </CommonButton>
               </Wrapper>
             ) : (
@@ -199,7 +202,8 @@ const AppHeader = ({ width }) => {
                   onClick={() => loginHandler()}
                   height={width < 700 ? `30px` : `50px`}
                   width={width < 700 ? `auto` : `110px`}
-                  fontSize={width < 700 && `11px`}>
+                  fontSize={width < 700 && `11px`}
+                >
                   LOGIN
                 </CommonButton>
               </>

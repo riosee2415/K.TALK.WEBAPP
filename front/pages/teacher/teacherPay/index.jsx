@@ -349,7 +349,7 @@ const Index = () => {
                 >
                   안녕하세요,&nbsp;
                   <SpanText color={Theme.basicTheme_C} wordBreak={`break-all`}>
-                    {me && me.username}
+                    {me && me.username}&nbsp;
                   </SpanText>
                   님!
                 </Text>

@@ -993,14 +993,14 @@ const Index = () => {
                 >
                   안녕하세요,&nbsp;
                   <SpanText color={Theme.basicTheme_C} wordBreak={`break-all`}>
-                    {me && me.username}
+                    {me && me.username}&nbsp;
                   </SpanText>
                   님!
                 </Text>
               </Wrapper>
               <Wrapper width={`auto`}>
                 <CommonButton radius={`5px`} onClick={meUpdateModalToggle}>
-                  회원정보 수정
+                  Upload My ID picture
                 </CommonButton>
               </Wrapper>
             </Wrapper>
@@ -1645,13 +1645,13 @@ const Index = () => {
             onCancel={meUpdateModalToggle}
           >
             <Text fontSize={`22px`} fontWeight={`bold`} margin={`0 0 24px`}>
-              회원정보 수정
+              Upload My ID picture
             </Text>
 
             <ProfileWrapper>
               <GuideWrapper>
                 <GuideText>
-                  프로필 이미지 사이즈는 가로 {PROFILE_WIDTH}px 과 세로
+                  프로필 이미지 사이즈는 가로 {PROFILE_WIDTH}px 과 세로&nbsp;
                   {PROFILE_HEIGHT}px을 기준으로 합니다.
                 </GuideText>
                 <GuideText>
@@ -1697,7 +1697,7 @@ const Index = () => {
             <CustomForm form={updateForm} onFinish={meUpdateHandler}>
               <Wrapper al={`flex-end`} margin={`10px 0 0 0`}>
                 <CommonButton height={`40px`} radius={`5px`} htmlType="submit">
-                  회원정보 수정
+                  Upload My ID picture
                 </CommonButton>
               </Wrapper>
             </CustomForm>

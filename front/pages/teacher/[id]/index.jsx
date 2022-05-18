@@ -1637,7 +1637,7 @@ const Index = () => {
                       color={Theme.basicTheme_C}
                       wordBreak={`break-all`}
                     >
-                      {me && me.username}
+                      {me && me.username}&nbsp;
                     </SpanText>
                     님!
                   </Text>
