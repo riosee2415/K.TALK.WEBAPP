@@ -3513,8 +3513,11 @@ const Index = () => {
             <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px 0`}>
               <Form.Item
                 style={{
-                  width: `calc(100% / 3 - 10px - 100px)`,
-                  margin: `0`,
+                  width:
+                    width < 900
+                      ? `calc(100% - 100px)`
+                      : `calc(100% / 3 - 10px - 100px)`,
+                  margin: width < 900 ? `0 0 10px` : `0`,
                 }}
                 name="process1"
                 rules={[{ required: true, message: "진도를 입력해주세요." }]}
@@ -3533,8 +3536,11 @@ const Index = () => {
               </Text>
               <Form.Item
                 style={{
-                  width: `calc(100% / 3 - 10px - 100px)`,
-                  margin: `0`,
+                  width:
+                    width < 900
+                      ? `calc(100% - 100px)`
+                      : `calc(100% / 3 - 10px - 100px)`,
+                  margin: width < 900 ? `0 0 10px` : `0`,
                 }}
                 name="process2"
                 rules={[{ required: true, message: "진도를 입력해주세요." }]}
@@ -3559,7 +3565,10 @@ const Index = () => {
               </Text>
               <Form.Item
                 style={{
-                  width: `calc(100%내 / 3 - 10px - 100px)`,
+                  width:
+                    width < 900
+                      ? `calc(100% - 100px)`
+                      : `calc(100%내 / 3 - 10px - 100px)`,
                   margin: `0`,
                 }}
                 name="process3"
@@ -3580,7 +3589,7 @@ const Index = () => {
               name="lectureMemo"
               rules={[{ required: true, message: "수업 메모를 입력해주세요." }]}
             >
-              <Input.TextArea style={{ height: `360px` }} />
+              <Input.TextArea style={{ height: `300px` }} />
             </Form.Item>
             <Wrapper dr={`row`}>
               <CommonButton
