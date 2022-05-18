@@ -3934,14 +3934,13 @@ const Index = () => {
                   />
                 </Wrapper>
 
-                <Wrapper
-                  shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
-                  radius={`10px`}
-                >
+                <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
                   <Wrapper
                     dr={`row`}
                     textAlign={width < 700 ? `center` : `left`}
                     padding={`20px 30px`}
+                    bgColor={Theme.subTheme9_C}
+                    borderBottom={`1px solid ${Theme.grey_C}`}
                   >
                     <Text
                       fontSize={width < 700 ? `14px` : `18px`}
