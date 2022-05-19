@@ -25,6 +25,7 @@ import useWidth from "../../hooks/useWidth";
 import ClientLayout from "../../components/ClientLayout";
 import {
   CommonButton,
+  CommonTitle,
   Image,
   RsWrapper,
   SpanText,
@@ -886,16 +887,11 @@ const LectureAll = () => {
               al={`flex-start`}
               margin={width < 700 ? `20px 0 10px` : `0 0 20px`}
             >
-              <Text
-                fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-              >
-                Class / Bulletin Board
-              </Text>
+              <CommonTitle>Class / Bulletin Board</CommonTitle>
             </Wrapper>
 
             <Wrapper
-              margin={`0 0 60px`}
+              margin={`0 0 40px`}
               Wrapper
               borderTop={`2px solid ${Theme.black_C}`}
             >
@@ -982,13 +978,8 @@ const LectureAll = () => {
               onChange={(page) => noticeChangePage(page)}
             />
 
-            <Wrapper al={`flex-start`} margin={`0 0 20px`}>
-              <Text
-                fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-              >
-                관리자 강의 쪽지함
-              </Text>
+            <Wrapper al={`flex-start`} margin={`50px 0 20px`}>
+              <CommonTitle>관리자 강의 쪽지함</CommonTitle>
 
               <Text fontSize={width < 800 ? `14px` : `18px`}>
                 관리자에서 강의 단위로 보낸 쪽지 목록 입니다.
@@ -1073,7 +1064,7 @@ const LectureAll = () => {
                 ))}
             </Wrapper>
 
-            <Wrapper margin={`60px 0`}>
+            <Wrapper margin={`40px 0 50px`}>
               <CustomPage
                 size="small"
                 current={currentPage3}
@@ -1083,12 +1074,7 @@ const LectureAll = () => {
             </Wrapper>
 
             <Wrapper al={`flex-start`} margin={`0 0 20px`}>
-              <Text
-                fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-              >
-                전체 쪽지 및 학생
-              </Text>
+              <CommonTitle>전체 쪽지 및 학생</CommonTitle>
             </Wrapper>
 
             <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
@@ -1178,13 +1164,7 @@ const LectureAll = () => {
             </Wrapper>
 
             <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
-              <Text
-                fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-                margin={`0 30px 0 0`}
-              >
-                My Class
-              </Text>
+              <CommonTitle>My Class</CommonTitle> &nbsp; &nbsp;
               <Button
                 type={`primary`}
                 size={`small`}
@@ -1288,6 +1268,7 @@ const LectureAll = () => {
                                 &nbsp;My Attendance&nbsp; &nbsp;
                               </Text>
                               <Wrapper width={width < 800 ? `150px` : `200px`}>
+                                {console.log(lectureStuCommute)}
                                 <CustomSlide
                                   value={slideValue(lectureStuCommute, data)}
                                   disabled={true}
