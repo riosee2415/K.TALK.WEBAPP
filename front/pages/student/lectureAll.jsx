@@ -46,7 +46,7 @@ import {
   LECTURE_STU_LECTURE_LIST_REQUEST,
   LECTURE_STU_LIMIT_LIST_REQUEST,
 } from "../../reducers/lecture";
-import { RollbackOutlined } from "@ant-design/icons";
+import { CloseOutlined, RollbackOutlined } from "@ant-design/icons";
 import { saveAs } from "file-saver";
 import { BOOK_LIST_REQUEST } from "../../reducers/book";
 
@@ -58,6 +58,36 @@ const CustomButton = styled(Button)`
     font-size: 14px;
 
     height: 24px;
+  }
+`;
+
+const MessageSelectButton = styled(Button)`
+  width: 100px;
+  height: 40px;
+
+  @media (max-width: 800px) {
+    width: 50px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 12px;
+  }
+  background-color: ${Theme.basicTheme_C};
+  border: 1px solid ${Theme.white_C};
+  color: ${Theme.white_C};
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 40px;
+  margin: ${(props) => props.margin};
+  &.active {
+    background-color: ${Theme.white_C};
+    border: 1px solid ${Theme.white_C};
+    color: ${Theme.black_C};
+  }
+  &:hover {
+    background-color: ${Theme.white_C};
+    border: 1px solid ${Theme.white_C};
+    color: ${Theme.black_C};
   }
 `;
 
@@ -171,6 +201,24 @@ const CustomTableHoverWrapper = styled(Wrapper)`
 `;
 
 const CustomModal = styled(Modal)`
+  & .ant-modal-header,
+  & .ant-modal-content {
+    border-radius: 5px;
+  }
+
+  & .ant-modal-title {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  &.messageModal .ant-modal-header {
+    padding: 0;
+  }
+
+  &.messageModal {
+    padding: 0;
+  }
+
   & .ant-modal-header,
   & .ant-modal-content {
     border-radius: 5px;
@@ -385,7 +433,7 @@ const LectureAll = () => {
         page: 1,
       },
     });
-  }, []);
+  }, [router.query]);
 
   useEffect(() => {
     if (st_noticeMyLectureListError) {
@@ -1158,7 +1206,11 @@ const LectureAll = () => {
               lectureStuLectureList &&
               lectureStuLectureList.map((data, idx) => {
                 return (
-                  <Wrapper radius={`10px`}>
+                  <Wrapper
+                    // padding={`0 0 10px`}
+                    margin={`0 0 20px`}
+                    // borderBottom={`1px dashed ${Theme.grey}`}
+                  >
                     <Wrapper
                       key={data.id}
                       width={`100%`}
@@ -1188,12 +1240,31 @@ const LectureAll = () => {
                         }
                       >
                         <Wrapper margin={`10px 0 0 0`} al={`flex-start`}>
-                          <Text fontSize={`16px`} margin={`0 0 10px`}>
-                            {data.course}
+                          <Text
+                            fontSize={width < 800 ? `14px` : `16px`}
+                            margin={`0 0 10px`}
+                          >
+                            {data.course}&nbsp;{" "}
+                            <Button
+                              size={`small`}
+                              type={`primary`}
+                              onClick={() => messageSendModalHandler(data)}
+                            >
+                              쪽지 보내기
+                            </Button>
                           </Text>
 
-                          <Wrapper dr={`row`} width={`auto`} fontSize={`16px`}>
-                            <Text fontSize={`16px`} margin={`0 10px 0 0`}>
+                          <Wrapper
+                            dr={width < 800 ? `column` : `row`}
+                            ju={width < 800 ? `center` : `flex-start`}
+                            al={width < 800 ? `flex-start` : `center`}
+                            width={`auto`}
+                            fontSize={width < 800 ? `14px` : `16px`}
+                          >
+                            <Text
+                              fontSize={width < 800 ? `14px` : `16px`}
+                              margin={`0 10px 0 0`}
+                            >
                               Lecturer: {data.username}
                             </Text>
                             <Wrapper
@@ -1207,23 +1278,27 @@ const LectureAll = () => {
                                   : `1px dashed ${Theme.grey_C}`
                               }
                             />
-                            Leanrning at chapter&nbsp;
-                            {data.startLv.split(` `)[0].split(`권`)[0]} of
-                            Book&nbsp;
-                            {data.startLv.split(` `)[1].split(`단원`)[0]}
-                            &nbsp;(Page&nbsp;
-                            {data.startLv.split(` `)[2].split(`페이지`)[0]})
-                            <Text margin={`0 0 0 20px`}>
-                              <SpanText color={Theme.subTheme2_C}>●</SpanText>
-                              &nbsp;My Attendance&nbsp; &nbsp;
+                            <Text margin={width < 800 ? `0` : `0 20px 0 0`}>
+                              Leanrning at chapter&nbsp;
+                              {data.startLv.split(` `)[0].split(`권`)[0]} of
+                              Book&nbsp;
+                              {data.startLv.split(` `)[1].split(`단원`)[0]}
+                              &nbsp;(Page&nbsp;
+                              {data.startLv.split(` `)[2].split(`페이지`)[0]})
                             </Text>
-                            <Wrapper width={`200px`}>
-                              <CustomSlide
-                                value={slideValue(lectureStuCommute, data)}
-                                disabled={true}
-                                draggableTrack={true}
-                                bgColor={Theme.subTheme2_C}
-                              />
+                            <Wrapper dr={`row`} width={`auto`}>
+                              <Text>
+                                <SpanText color={Theme.subTheme2_C}>●</SpanText>
+                                &nbsp;My Attendance&nbsp; &nbsp;
+                              </Text>
+                              <Wrapper width={width < 800 ? `150px` : `200px`}>
+                                <CustomSlide
+                                  value={slideValue(lectureStuCommute, data)}
+                                  disabled={true}
+                                  draggableTrack={true}
+                                  bgColor={Theme.subTheme2_C}
+                                />
+                              </Wrapper>
                             </Wrapper>
                           </Wrapper>
                         </Wrapper>
@@ -1551,12 +1626,54 @@ const LectureAll = () => {
         <CustomModal
           visible={messageSendModal}
           width={`1350px`}
+          className={`messageModal`}
           title={
-            sendMessageType === 1
-              ? "강사에게 쪽지 보내기"
-              : sendMessageType === 2
-              ? "수업에 대해 쪽지 보내기"
-              : sendMessageType === 3 && "관리자에게 쪽지 보내기"
+            <Wrapper
+              dr={`row`}
+              ju={`space-between`}
+              height={width < 800 ? `80px` : `100px`}
+              padding={width < 800 ? `0 10px` : `0 50px`}
+              bgColor={Theme.basicTheme_C}
+            >
+              <Text fontSize={width < 800 ? `14px` : `20px`}>
+                {sendMessageType === 1
+                  ? "강사에게 쪽지 보내기"
+                  : sendMessageType === 2
+                  ? "수업에 대한 쪽지 보내기"
+                  : sendMessageType === 3 && "관리자에게 쪽지 보내기"}
+              </Text>
+              <Wrapper dr={`row`} width={`auto`}>
+                <MessageSelectButton
+                  className={sendMessageType === 1 && `active`}
+                  size="small"
+                  onClick={() => sendMessageTypeHandler(1)}
+                >
+                  {"강사"}
+                </MessageSelectButton>
+
+                <MessageSelectButton
+                  className={sendMessageType === 2 && `active`}
+                  margin={width < 800 ? `0 0 0 5px` : `0 0 0 8px`}
+                  size="small"
+                  onClick={() => sendMessageTypeHandler(2)}
+                >
+                  {"수업"}
+                </MessageSelectButton>
+
+                <MessageSelectButton
+                  className={sendMessageType === 3 && `active`}
+                  margin={width < 800 ? `0 10px 0 5px` : `0 40px 0 8px`}
+                  size="small"
+                  onClick={() => sendMessageTypeHandler(3)}
+                >
+                  {"관리자"}
+                </MessageSelectButton>
+                <CloseOutlined
+                  onClick={onReset}
+                  style={{ fontSize: `20px`, color: Theme.white_C }}
+                />
+              </Wrapper>
+            </Wrapper>
           }
           footer={null}
           closable={false}
@@ -1572,41 +1689,6 @@ const LectureAll = () => {
                 : sendMessageType === 3 && sendMessageAdminFinishHandler(data)
             }
           >
-            <Wrapper dr={`row`} ju={`flex-end`}>
-              <CommonButton
-                margin={`0 0 0 5px`}
-                radius={`5px`}
-                width={`100px`}
-                height={`32px`}
-                size="small"
-                onClick={() => sendMessageTypeHandler(1)}
-              >
-                {"강사"}
-              </CommonButton>
-
-              <CommonButton
-                margin={`0 0 0 5px`}
-                radius={`5px`}
-                width={`100px`}
-                height={`32px`}
-                size="small"
-                onClick={() => sendMessageTypeHandler(2)}
-              >
-                {"수업"}
-              </CommonButton>
-
-              <CommonButton
-                margin={`0 0 0 5px`}
-                radius={`5px`}
-                width={`100px`}
-                height={`32px`}
-                size="small"
-                onClick={() => sendMessageTypeHandler(3)}
-              >
-                {"관리자"}
-              </CommonButton>
-            </Wrapper>
-
             {sendMessageType === 1 && (
               <>
                 <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
