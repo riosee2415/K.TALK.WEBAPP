@@ -31,6 +31,7 @@ import useWidth from "../../hooks/useWidth";
 import ClientLayout from "../../components/ClientLayout";
 import {
   CommonButton,
+  CommonTitle,
   Image,
   RsWrapper,
   SpanText,
@@ -56,7 +57,12 @@ import {
   LECTURE_STU_LECTURE_LIST_REQUEST,
   LECTURE_SUBMIT_CREATE_REQUEST,
 } from "../../reducers/lecture";
-import { UploadOutlined } from "@ant-design/icons";
+import {
+  CloseOutlined,
+  RightCircleFilled,
+  SyncOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import { saveAs } from "file-saver";
 import { BOOK_LIST_REQUEST } from "../../reducers/book";
 
@@ -65,7 +71,23 @@ const PROFILE_HEIGHT = `190`;
 
 const CustomButton2 = styled(Button)`
   font-size: 16px;
-  height: 26px;
+  width: 205px;
+  height: 52px;
+  line-height: 52px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 18px;
+
+  border-radius: 26px;
+  background-color: ${Theme.white_C};
+  color: ${Theme.basicTheme_C};
+  & .btnIcon {
+    color: ${Theme.basicTheme_C};
+    font-size: 35px;
+    line-height: 0;
+  }
 
   @media (max-width: 700px) {
     font-size: 14px;
@@ -192,14 +214,13 @@ const CustomPage = styled(Pagination)`
 const CustomTableHoverWrapper = styled(Wrapper)`
   flex-direction: row;
   text-align: center;
-  padding: 25px 0 20px;
+  height: 80px;
   font-size: 16px;
-  background-color: ${(props) =>
-    props.bgColor ? Theme.lightGrey_C : Theme.white_C};
+  border-bottom: 1px solid ${Theme.grey_C};
+  background-color: ${Theme.white_C};
   cursor: pointer;
   &:hover {
-    background-color: ${(props) =>
-      props.bgColor ? Theme.white_C : Theme.lightGrey_C};
+    background-color: ${Theme.lightGrey_C};
   }
 
   @media (max-width: 800px) {
@@ -226,6 +247,10 @@ const CustomModal = styled(Modal)`
   &.messageModal .ant-modal-header {
     padding: 0;
   }
+
+  &.messageModal {
+    padding: 0;
+  }
 `;
 
 const CustomForm = styled(Form)`
@@ -234,6 +259,40 @@ const CustomForm = styled(Form)`
   & .ant-form-item {
     width: 100%;
   }
+`;
+
+const MessageSelectButton = styled(Button)`
+  width: 100px;
+  height: 40px;
+
+  @media (max-width: 800px) {
+    width: 50px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 12px;
+  }
+  background-color: ${Theme.basicTheme_C};
+  border: 1px solid ${Theme.white_C};
+  color: ${Theme.white_C};
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 40px;
+  margin: ${(props) => props.margin};
+  &.active {
+    background-color: ${Theme.white_C};
+    border: 1px solid ${Theme.white_C};
+    color: ${Theme.black_C};
+  }
+  &:hover {
+    background-color: ${Theme.white_C};
+    border: 1px solid ${Theme.white_C};
+    color: ${Theme.black_C};
+  }
+`;
+
+const MessageModalSelect = styled(Select)`
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
 `;
 
 const Student = () => {
@@ -1105,55 +1164,56 @@ const Student = () => {
         />
       </Head>
       <ClientLayout>
-        <WholeWrapper margin={`100px 0 0`} bgColor={Theme.subTheme_C}>
-          <RsWrapper>
-            <Wrapper
-              margin={width < 700 ? `30px 0` : `60px 0`}
-              dr={`row`}
-              ju={`space-between`}
-            >
+        <WholeWrapper margin={`100px 0 0`}>
+          <Wrapper
+            bgImg={`url("https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/student/subBanner.png")`}
+            padding={width < 700 ? `30px 0` : `60px 0 140px 0`}
+            color={Theme.white_C}
+          >
+            <RsWrapper dr={`row`} ju={width < 900 ? `center` : `flex-start`}>
               <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
-                <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
-                  <Image
-                    width={width < 700 ? `65px` : `75px`}
-                    height={width < 700 ? `65px` : `75px`}
-                    radius={`100px`}
-                    src={
-                      me && me.profileImage
-                        ? me.profileImage
-                        : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile.png"
-                    }
-                    alt="student_thumbnail"
-                  />
-                </Wrapper>
+                <Image
+                  width={width < 700 ? `65px` : `95px`}
+                  height={width < 700 ? `65px` : `95px`}
+                  border={
+                    width < 900
+                      ? `5px solid ${Theme.white_C}`
+                      : `15px solid ${Theme.white_C}`
+                  }
+                  radius={`100px`}
+                  src={
+                    me && me.profileImage
+                      ? me.profileImage
+                      : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile.png"
+                  }
+                  alt="teacher_thumbnail"
+                />
                 <Text
                   fontSize={width < 700 ? `20px` : `28px`}
                   fontWeight={`bold`}
                   padding={`0 0 0 15px`}
                 >
                   안녕하세요,&nbsp;
-                  <SpanText color={Theme.basicTheme_C} wordBreak={`break-all`}>
+                  <SpanText color={Theme.subTheme9_C} wordBreak={`break-all`}>
                     {me && me.username}&nbsp;
                   </SpanText>
                   님!
                 </Text>
               </Wrapper>
               <Wrapper width={`auto`}>
-                <CommonButton radius={`5px`} onClick={meUpdateModalToggle}>
-                  Upload My ID picture
+                <CommonButton
+                  radius={`20px`}
+                  kindOf={`subTheme3`}
+                  margin={width < 900 ? `20px 0 0` : `0 0 0 20px`}
+                  onClick={meUpdateModalToggle}
+                >
+                  <SyncOutlined /> Upload My ID picture
                 </CommonButton>
               </Wrapper>
-            </Wrapper>
+            </RsWrapper>
+          </Wrapper>
 
-            <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 20px`}>
-              <Text
-                fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-              >
-                My schedule
-              </Text>
-            </Wrapper>
-
+          <RsWrapper margin={`-94px 0 0`}>
             {lectureStuLectureList && lectureStuLectureList.length === 0 ? (
               <Wrapper marign={`50px 0`}>
                 <Empty description="조회된 시간표 목록이 없습니다." />
@@ -1173,41 +1233,41 @@ const Student = () => {
                     shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
                     margin={`0 0 86px`}
                   >
+                    <Wrapper
+                      dr={`row`}
+                      ju={`space-between`}
+                      margin={`0 0 20px`}
+                    >
+                      <Text
+                        fontSize={width < 800 ? `18px` : `22px`}
+                        fontWeight={`bold`}
+                      >
+                        <CommonTitle>My schedule</CommonTitle>
+                      </Text>
+                    </Wrapper>
+
                     <Wrapper width={`auto`} al={`flex-start`}>
                       <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
-                        <Text
-                          fontSize={width < 800 ? `16px` : `18px`}
-                          margin={`0 20px 0 0`}
-                        >
-                          <SpanText
-                            fontSize={width < 800 ? `16px` : `18px`}
-                            fontWeight={`bold`}
-                          >
-                            Class number :
-                          </SpanText>
-                          &nbsp;
+                        <Text fontSize={width < 800 ? `16px` : `18px`}>
+                          Class number:&nbsp;
                           {data.number}
                         </Text>
-                        <Text fontSize={width < 800 ? `14px` : `16px`}>
+                        &nbsp;
+                        <Text fontSize={width < 800 ? `16px` : `18px`}>
                           ({divideLecture(data.day, data.time)})
                         </Text>
-                      </Wrapper>
-
-                      <Wrapper
-                        dr={`row`}
-                        width={`auto`}
-                        fontSize={width < 800 ? `16px` : `18px`}
-                        margin={`0 0 10px`}
-                      >
-                        <Text margin={`0 10px 0 0`}>
-                          <SpanText fontWeight={`bold`}>From:</SpanText>
-                          &nbsp;{data.PartCreatedAt.slice(0, 10)}
-                        </Text>
-                        <Text margin={`0 10px 0 0`}>
-                          <SpanText fontWeight={`bold`}>To:</SpanText>
-                          &nbsp;{data.endDate}
-                        </Text>
-                        <Text>
+                        {/* dash */}
+                        <Wrapper
+                          display={width < 800 && `none`}
+                          width={`1px`}
+                          height={`21px`}
+                          margin={`0 20px`}
+                          borderRight={
+                            width < 1100 ? `0` : `1px dashed ${Theme.grey_C}`
+                          }
+                        />
+                        {/* dash */}
+                        <Text fontSize={width < 800 ? `16px` : `18px`}>
                           {`${stepHanlder2(
                             moment().format("YYYY-MM-DD"),
                             data.endDate,
@@ -1219,10 +1279,40 @@ const Student = () => {
                           )}`}
                         </Text>
                       </Wrapper>
-                      <Text fontSize={`16px`}>
-                        Please click here if you’d like to extend you term (7
-                        days before the new term starts)
-                      </Text>
+
+                      <Wrapper
+                        dr={`row`}
+                        width={`auto`}
+                        fontSize={width < 800 ? `16px` : `18px`}
+                        margin={`0 0 10px`}
+                      >
+                        <Text
+                          margin={width < 800 ? `0 30px 0 0` : `0 80px 0 0`}
+                        >
+                          <SpanText fontWeight={`bold`}>From:</SpanText>
+                          &nbsp;{data.PartCreatedAt.slice(0, 10)}
+                        </Text>
+                        <Text margin={`0 10px 0 0`}>
+                          <SpanText fontWeight={`bold`}>To:</SpanText>
+                          &nbsp;{data.endDate}
+                        </Text>
+                      </Wrapper>
+                      <SpanText
+                        fontSize={`16px`}
+                        color={Theme.subTheme2_C}
+                        textDecoration={`underline`}
+                        cursor={`pointer`}
+                      >
+                        <Image
+                          src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/student/icon_click.png`}
+                          width={`18px`}
+                          margin={`0 5px 0 0`}
+                        />
+                        Please click&nbsp;
+                        <SpanText fontWeight={`700`}>here</SpanText> if you’d
+                        like to extend you term (7 days before the new term
+                        starts)
+                      </SpanText>
                     </Wrapper>
 
                     <CustomButton2
@@ -1231,19 +1321,26 @@ const Student = () => {
                       onClick={() => window.open(`${data.zoomLink}`, "_blank")}
                     >
                       Go to My class
+                      <RightCircleFilled className="btnIcon" />
                     </CustomButton2>
                   </Wrapper>
                 );
               })
             )}
 
-            <Wrapper al={`flex-start`} margin={`0 0 20px`}>
-              <Text
-                fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
+            <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 40px`}>
+              <CommonTitle>My Class</CommonTitle>
+
+              <SpanText
+                textDecoration={`underLine`}
+                color={Theme.basicTheme_C}
+                fontSize={`18px`}
+                margin={`0 0 0 25px`}
+                cursor={`pointer`}
+                onClick={() => moveLinkHandler(`student/lectureAll`)}
               >
-                My Class
-              </Text>
+                All See
+              </SpanText>
             </Wrapper>
 
             {lectureStuLectureList && lectureStuLectureList.length === 0 ? (
@@ -1254,141 +1351,117 @@ const Student = () => {
               lectureStuLectureList &&
               lectureStuLectureList.slice(0, 1).map((data, idx) => {
                 return (
-                  <Wrapper
-                    key={data.id}
-                    dr={`row`}
-                    padding={width < 800 ? `10px` : `30px`}
-                    bgColor={Theme.white_C}
-                    radius={`10px`}
-                    ju={`space-between`}
-                    shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
-                    margin={`0 0 86px`}
-                    al={width < 1100 && `flex-start`}
-                  >
-                    <Wrapper dr={`row`}>
+                  <Wrapper>
+                    <Wrapper
+                      key={data.id}
+                      width={`100%`}
+                      dr={`row`}
+                      ju={`flex-start`}
+                      margin={`0 0 30px`}
+                    >
+                      <Image
+                        top={`0`}
+                        left={`0`}
+                        width={width < 800 ? `60px` : `80px`}
+                        height={width < 800 ? `60px` : `80px`}
+                        radius={`5px`}
+                        src={
+                          data.profileImage
+                            ? data.profileImage
+                            : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile_big.png"
+                        }
+                        alt="student_thumbnail"
+                      />
                       <Wrapper
-                        width={width < 1100 ? `100%` : `calc(70% - 1px)`}
+                        padding={`0 0 0 16px`}
+                        width={
+                          width < 800
+                            ? `calc(100% - 80px)`
+                            : `calc(100% - 184px)`
+                        }
                       >
-                        <Wrapper width={`100%`} dr={`row`} al={`flex-start`}>
-                          <Image
-                            top={`0`}
-                            left={`0`}
-                            width={width < 800 ? `80px` : `120px`}
-                            height={width < 800 ? `80px` : `120px`}
-                            radius={`5px`}
-                            src={
-                              data.profileImage
-                                ? data.profileImage
-                                : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile_big.png"
-                            }
-                            alt="student_thumbnail"
-                          />
-                          <Wrapper
-                            padding={`0 0 0 30px`}
-                            width={
-                              width < 800
-                                ? `calc(100% - 80px)`
-                                : `calc(100% - 184px)`
-                            }
-                          >
+                        <Wrapper margin={`10px 0 0 0`} al={`flex-start`}>
+                          <Text fontSize={`16px`} margin={`0 0 10px`}>
+                            {data.course}
+                          </Text>
+
+                          <Wrapper dr={`row`} width={`auto`} fontSize={`16px`}>
+                            <Text fontSize={`16px`} margin={`0 10px 0 0`}>
+                              Lecturer: {data.username}
+                            </Text>
                             <Wrapper
-                              dr={`row`}
-                              ju={`flex-start`}
-                              margin={`10px 0 0 0`}
-                            >
-                              <Text fontSize={`16px`} margin={`0 10px 0 0`}>
-                                {data.course}
-                              </Text>
+                              display={width < 1100 && `none`}
+                              width={`1px`}
+                              height={`20px`}
+                              margin={`0 10px`}
+                              borderRight={
+                                width < 1100
+                                  ? `0`
+                                  : `1px dashed ${Theme.grey_C}`
+                              }
+                            />
+                            Leanrning at chapter&nbsp;
+                            {data.startLv.split(` `)[0].split(`권`)[0]} of
+                            Book&nbsp;
+                            {data.startLv.split(` `)[1].split(`단원`)[0]}
+                            &nbsp;(Page&nbsp;
+                            {data.startLv.split(` `)[2].split(`페이지`)[0]})
+                            <Text margin={`0 0 0 20px`}>
+                              <SpanText color={Theme.subTheme2_C}>●</SpanText>
+                              &nbsp;My Attendance&nbsp; &nbsp;
+                            </Text>
+                            <Wrapper width={`200px`}>
+                              <CustomSlide
+                                value={slideValue(lectureStuCommute, data)}
+                                disabled={true}
+                                draggableTrack={true}
+                                bgColor={Theme.subTheme2_C}
+                              />
                             </Wrapper>
-                            <Wrapper
-                              dr={`row`}
-                              ju={`flex-start`}
-                              margin={`10px 0 0 0`}
-                              color={Theme.grey2_C}
-                              fontSize={width < 800 ? `12px` : `16px`}
+                          </Wrapper>
+                        </Wrapper>
+
+                        {/* 
+                      <Wrapper
+                        margin={`10px 0 0 0`}
+                        dr={`row`}
+                        ju={`flex-start`}
+                        color={Theme.grey2_C}
+                        fontSize={width < 800 ? `12px` : `16px`}
+                        lineHeight={`1.19`}
+                      >
+                        {`${data.startLv}`}
+
+                        <Text fontSize={width < 700 ? `14px` : `16px`}>
+                          {stepHanlder2(
+                            moment(data.PartCreatedAt).format("YYYY-MM-DD"),
+                            data.endDate,
+                            data.day
+                          ) -
+                            (data.date / 7) * data.count <=
+                            0 && (
+                            <SpanText
+                              fontWeight={`bold`}
+                              color={Theme.red_C}
+                              margin={`0 0 0 15px`}
                             >
-                              <Text lineHeight={`1.19`}>
-                                <SpanText>Lecturer:&nbsp;</SpanText>
-                                {data.username}
-                              </Text>
-
-                              <Text lineHeight={`1.19`}></Text>
-                            </Wrapper>
-                            {/* ${Math.floor((data.date / 7) * data.count)} */}
-
-                            <Wrapper
-                              margin={`10px 0 0 0`}
-                              dr={`row`}
-                              ju={`flex-start`}
-                              color={Theme.grey2_C}
-                              fontSize={width < 800 ? `12px` : `16px`}
-                              lineHeight={`1.19`}
-                            >
-                              {`${data.startLv}`}
-
-                              <Text fontSize={width < 700 ? `14px` : `16px`}>
-                                {stepHanlder2(
+                              {Math.abs(
+                                stepHanlder2(
                                   moment(data.PartCreatedAt).format(
                                     "YYYY-MM-DD"
                                   ),
                                   data.endDate,
                                   data.day
-                                ) -
-                                  (data.date / 7) * data.count <=
-                                  0 && (
-                                  <SpanText
-                                    fontWeight={`bold`}
-                                    color={Theme.red_C}
-                                    margin={`0 0 0 15px`}
-                                  >
-                                    {Math.abs(
-                                      stepHanlder2(
-                                        moment(data.PartCreatedAt).format(
-                                          "YYYY-MM-DD"
-                                        ),
-                                        data.endDate,
-                                        data.day
-                                      ) -
-                                        Math.floor((data.date / 7) * data.count)
-                                    )}
-                                    회
-                                  </SpanText>
-                                )}
-                              </Text>
-                            </Wrapper>
+                                ) - Math.floor((data.date / 7) * data.count)
+                              )}
+                              회
+                            </SpanText>
+                          )}
+                        </Text>
+                      </Wrapper> */}
 
-                            <Wrapper>
-                              <Wrapper
-                                dr={`row`}
-                                ju={`flex-start`}
-                                margin={`10px 0 0 0`}
-                              >
-                                <Text width={width < 800 ? `100%` : `20%`}>
-                                  <SpanText color={Theme.subTheme2_C}>
-                                    ●
-                                  </SpanText>
-                                  &nbsp; My Attendance
-                                </Text>
-                                <Wrapper width={width < 800 ? `80%` : `70%`}>
-                                  <CustomSlide
-                                    value={slideValue(lectureStuCommute, data)}
-                                    disabled={true}
-                                    draggableTrack={true}
-                                    bgColor={Theme.subTheme2_C}
-                                  />
-                                </Wrapper>
-
-                                <Text
-                                  width={`10%`}
-                                  color={Theme.grey2_C}
-                                  padding={`0 0 0 10px`}
-                                >
-                                  {`(${parseInt(
-                                    slideValue(lectureStuCommute, data)
-                                  )}%)`}
-                                </Text>
-                              </Wrapper>
-                              {/* <Wrapper
+                        <Wrapper>
+                          {/* <Wrapper
                                 dr={`row`}
                                 ju={`flex-start`}
                                 margin={`10px 0`}>
@@ -1425,7 +1498,7 @@ const Student = () => {
                                   )}%)`}
                                 </Text>
                               </Wrapper> */}
-                              {/* <Wrapper dr={`row`} ju={`flex-start`}>
+                          {/* <Wrapper dr={`row`} ju={`flex-start`}>
                                 <Text width={width < 800 ? `100%` : `15%`}>
                                   <SpanText color={Theme.subTheme6_C}>
                                     ●
@@ -1447,12 +1520,48 @@ const Student = () => {
                                   (100%)
                                 </Text>
                               </Wrapper> */}
-                            </Wrapper>
+                        </Wrapper>
+                      </Wrapper>
+                    </Wrapper>
+                    <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
+                      <Wrapper
+                        dr={`row`}
+                        textAlign={`center`}
+                        height={`80px`}
+                        bgColor={Theme.subTheme9_C}
+                        borderBottom={`1px solid ${Theme.grey_C}`}
+                      >
+                        <Wrapper width={`50%`} dr={`row`} height={`100%`}>
+                          <Wrapper width={`50%`}>
+                            Registration Frequency
+                          </Wrapper>
+                          <Wrapper
+                            width={`50%`}
+                            bgColor={Theme.white_C}
+                            height={`100%`}
+                          >
+                            {data.stuPayCount}
+                          </Wrapper>
+                        </Wrapper>
+                        <Wrapper width={`50%`} dr={`row`} height={`100%`}>
+                          <Wrapper width={`50%`}>
+                            Date of my first lessons
+                          </Wrapper>
+                          <Wrapper
+                            width={`50%`}
+                            bgColor={Theme.white_C}
+                            height={`100%`}
+                          >
+                            {data.PartCreatedAt.slice(0, 10)}
                           </Wrapper>
                         </Wrapper>
                       </Wrapper>
-
-                      <Wrapper
+                    </Wrapper>
+                  </Wrapper>
+                );
+              })
+            )}
+            {/* <Wrapper
                         display={width < 1100 && `none`}
                         width={`1px`}
                         height={`190px`}
@@ -1460,9 +1569,10 @@ const Student = () => {
                         borderRight={
                           width < 1100 ? `0` : `1px dashed ${Theme.grey_C}`
                         }
-                      />
+                      /> */}
+            {/* 쪽지 버튼들 */}
 
-                      <Wrapper
+            {/* <Wrapper
                         al={`flex-start`}
                         width={width < 1100 ? `100%` : `calc(30% - 80px)`}
                         margin={
@@ -1526,29 +1636,10 @@ const Student = () => {
                         >
                           교재 리스트
                         </Button>
-                      </Wrapper>
-                    </Wrapper>
-                  </Wrapper>
-                );
-              })
-            )}
-
-            <CommonButton
-              radius={`10px`}
-              height={`34px`}
-              width={`107px`}
-              onClick={() => moveLinkHandler(`student/lectureAll`)}
-            >
-              전체보기
-            </CommonButton>
+                      </Wrapper> */}
 
             <Wrapper al={`flex-start`} margin={`80px 0 20px`}>
-              <Text
-                fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-              >
-                숙제보기 / 제출하기
-              </Text>
+              <CommonTitle>숙제보기 / 제출하기</CommonTitle>
             </Wrapper>
 
             <Wrapper margin={`0 0 60px`}>
@@ -1701,106 +1792,51 @@ const Student = () => {
               onChange={(page) => onChangeHomeworkPage(page)}
             />
 
-            <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
-              <Text
-                fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-              >
-                공지사항
-              </Text>
-            </Wrapper>
-
-            <Wrapper
-              radius={`10px`}
-              shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}
-              margin={`0 0 60px`}
-            >
-              <Wrapper
-                dr={`row`}
-                fontWeight={`bold`}
-                padding={`20px 0`}
-                fontSize={width < 800 ? `14px` : `18px`}
-              >
-                <Wrapper width={width < 800 ? `15%` : `10%`}>번호</Wrapper>
-                <Wrapper width={width < 800 ? `45%` : `70%`}>제목</Wrapper>
-                <Wrapper width={width < 800 ? `15%` : `10%`}>작성자</Wrapper>
-                <Wrapper width={width < 800 ? `25%` : `10%`}>날짜</Wrapper>
-              </Wrapper>
-
-              {noticeList &&
-                (noticeList.length === 0 ? (
-                  <Wrapper margin={`50px 0`}>
-                    <Empty description="공지사항이 없습니다." />
-                  </Wrapper>
-                ) : (
-                  noticeList.map((data, idx) => {
-                    return (
-                      <CustomTableHoverWrapper
-                        onClick={() => onClickNoticeHandler(data)}
-                        key={data.id}
-                        bgColor={idx % 2 === 0}
-                      >
-                        <Wrapper width={width < 800 ? `15%` : `10%`}>
-                          {data.id}
-                        </Wrapper>
-                        <Wrapper
-                          width={width < 800 ? `45%` : `70%`}
-                          al={`flex-start`}
-                          padding={`0 0 0 10px`}
-                        >
-                          {data.title}
-                        </Wrapper>
-                        <Wrapper width={width < 800 ? `15%` : `10%`}>
-                          {data.author}
-                        </Wrapper>
-                        <Wrapper width={width < 800 ? `25%` : `10%`}>
-                          {moment(data.createdAt, "YYYY/MM/DD").format(
-                            "YYYY/MM/DD"
-                          )}
-                        </Wrapper>
-                      </CustomTableHoverWrapper>
-                    );
-                  })
-                ))}
-            </Wrapper>
-            <CustomPage
-              size="small"
-              current={currentPage1}
-              total={noticeLastPage * 10}
-              onChange={(page) => noticeChangePage(page)}
-            />
-
             <Wrapper
               dr={width < 700 ? ` column` : `row`}
               ju={width < 700 ? `center` : `space-between`}
               al={`flex-start`}
               margin={`0 0 20px 0`}
             >
-              <Text
-                color={Theme.black_2C}
-                fontSize={width < 700 ? `18px` : `22px`}
-                fontWeight={`Bold`}
-                margin={width < 700 && `0 0 10px 0`}
-              >
-                강의 공지사항
-              </Text>
+              <CommonTitle>Class / Bulletin Board</CommonTitle>
             </Wrapper>
 
-            <Wrapper
-              radius={`10px`}
-              shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}
-              margin={`0 0 60px`}
-            >
+            <Wrapper margin={`0 0 40px`}>
               <Wrapper
                 dr={`row`}
-                fontWeight={`bold`}
+                textAlign={`center`}
                 padding={`20px 0`}
-                fontSize={width < 800 ? `14px` : `18px`}
+                bgColor={Theme.subTheme9_C}
+                borderBottom={`1px solid ${Theme.grey_C}`}
               >
-                <Wrapper width={width < 800 ? `15%` : `10%`}>번호</Wrapper>
-                <Wrapper width={width < 800 ? `45%` : `70%`}>제목</Wrapper>
-                <Wrapper width={width < 800 ? `15%` : `10%`}>작성자</Wrapper>
-                <Wrapper width={width < 800 ? `25%` : `10%`}>날짜</Wrapper>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `15%` : `10%`}
+                >
+                  No
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `45%` : `70%`}
+                >
+                  제목
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `15%` : `10%`}
+                >
+                  작성자
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `25%` : `10%`}
+                >
+                  날짜
+                </Text>
               </Wrapper>
               {noticeMyLectureList &&
                 (noticeMyLectureList.length === 0 ? (
@@ -1846,26 +1882,132 @@ const Student = () => {
             />
 
             <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
-              <Text
-                fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-              >
-                내게 온 쪽지
-              </Text>
+              <CommonTitle>School / Bulletin Board</CommonTitle>
             </Wrapper>
 
-            <Wrapper radius={`10px`} shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}>
+            <Wrapper
+              dr={`row`}
+              textAlign={`center`}
+              padding={`20px 0`}
+              bgColor={Theme.subTheme9_C}
+              borderBottom={`1px solid ${Theme.grey_C}`}
+            >
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`Bold`}
+                width={width < 800 ? `15%` : `10%`}
+              >
+                No
+              </Text>
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`Bold`}
+                width={width < 800 ? `45%` : `70%`}
+              >
+                제목
+              </Text>
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`Bold`}
+                width={width < 800 ? `15%` : `10%`}
+              >
+                작성자
+              </Text>
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`Bold`}
+                width={width < 800 ? `25%` : `10%`}
+              >
+                날짜
+              </Text>
+            </Wrapper>
+            <Wrapper margin={`0 0 40px`}>
+              {noticeList &&
+                (noticeList.length === 0 ? (
+                  <Wrapper margin={`50px 0`}>
+                    <Empty description="공지사항이 없습니다." />
+                  </Wrapper>
+                ) : (
+                  noticeList.map((data, idx) => {
+                    return (
+                      <CustomTableHoverWrapper
+                        onClick={() => onClickNoticeHandler(data)}
+                        key={data.id}
+                        bgColor={idx % 2 === 0}
+                      >
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.id}
+                        </Wrapper>
+                        <Wrapper
+                          width={width < 800 ? `45%` : `70%`}
+                          al={`flex-start`}
+                          padding={`0 0 0 10px`}
+                        >
+                          {data.title}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.author}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `25%` : `10%`}>
+                          {moment(data.createdAt, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )}
+                        </Wrapper>
+                      </CustomTableHoverWrapper>
+                    );
+                  })
+                ))}
+            </Wrapper>
+
+            <CustomPage
+              size="small"
+              current={currentPage1}
+              total={noticeLastPage * 10}
+              onChange={(page) => noticeChangePage(page)}
+            />
+
+            <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
+              <CommonTitle>Message to/from my teacher / admin </CommonTitle>
+            </Wrapper>
+
+            <Wrapper>
               <Wrapper
                 dr={`row`}
-                fontWeight={`bold`}
+                textAlign={`center`}
                 padding={`20px 0`}
-                fontSize={width < 800 ? `14px` : `18px`}
+                bgColor={Theme.subTheme9_C}
+                borderBottom={`1px solid ${Theme.grey_C}`}
               >
-                <Wrapper width={width < 800 ? `15%` : `10%`}>번호</Wrapper>
-                <Wrapper width={width < 800 ? `45%` : `70%`}>제목</Wrapper>
-                <Wrapper width={width < 800 ? `15%` : `10%`}>작성자</Wrapper>
-                <Wrapper width={width < 800 ? `25%` : `10%`}>날짜</Wrapper>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `15%` : `10%`}
+                >
+                  번호
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `45%` : `70%`}
+                >
+                  제목
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `15%` : `10%`}
+                >
+                  작성자
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `25%` : `10%`}
+                >
+                  날짜
+                </Text>
               </Wrapper>
+
               {messageUserList &&
                 (messageUserList.length === 0 ? (
                   <Wrapper margin={`50px 0`}>
@@ -2494,11 +2636,11 @@ const Student = () => {
               <Wrapper
                 dr={`row`}
                 ju={`space-between`}
-                height={`100px`}
-                padding={`0 50px`}
+                height={width < 800 ? `80px` : `100px`}
+                padding={width < 800 ? `0 10px` : `0 50px`}
                 bgColor={Theme.basicTheme_C}
               >
-                <Text>
+                <Text fontSize={width < 800 ? `14px` : `20px`}>
                   {sendMessageType === 1
                     ? "강사에게 쪽지 보내기"
                     : sendMessageType === 2
@@ -2506,43 +2648,40 @@ const Student = () => {
                     : sendMessageType === 3 && "관리자에게 쪽지 보내기"}
                 </Text>
                 <Wrapper dr={`row`} width={`auto`}>
-                  <CommonButton
-                    margin={`0 0 0 5px`}
-                    radius={`5px`}
-                    width={`100px`}
-                    height={`32px`}
+                  <MessageSelectButton
+                    className={sendMessageType === 1 && `active`}
                     size="small"
                     onClick={() => sendMessageTypeHandler(1)}
                   >
                     {"강사"}
-                  </CommonButton>
+                  </MessageSelectButton>
 
-                  <CommonButton
-                    margin={`0 0 0 5px`}
-                    radius={`5px`}
-                    width={`100px`}
-                    height={`32px`}
+                  <MessageSelectButton
+                    className={sendMessageType === 2 && `active`}
+                    margin={width < 800 ? `0 0 0 5px` : `0 0 0 8px`}
                     size="small"
                     onClick={() => sendMessageTypeHandler(2)}
                   >
                     {"수업"}
-                  </CommonButton>
+                  </MessageSelectButton>
 
-                  <CommonButton
-                    margin={`0 0 0 5px`}
-                    radius={`5px`}
-                    width={`100px`}
-                    height={`32px`}
+                  <MessageSelectButton
+                    className={sendMessageType === 3 && `active`}
+                    margin={width < 800 ? `0 10px 0 5px` : `0 40px 0 8px`}
                     size="small"
                     onClick={() => sendMessageTypeHandler(3)}
                   >
                     {"관리자"}
-                  </CommonButton>
+                  </MessageSelectButton>
+                  <CloseOutlined
+                    onClick={onReset}
+                    style={{ fontSize: `20px`, color: Theme.white_C }}
+                  />
                 </Wrapper>
               </Wrapper>
             }
             footer={null}
-            onCancel={onReset}
+            closable={false}
           >
             <CustomForm
               form={sendform}
@@ -2569,7 +2708,7 @@ const Student = () => {
                       },
                     ]}
                   >
-                    <Select style={{ width: `100%` }}>
+                    <MessageModalSelect style={{ width: `100%` }}>
                       {lectureStuLectureList &&
                       lectureStuLectureList.length === 0 ? (
                         <Option value="참여 중인 강의가 없습니다.">
@@ -2588,7 +2727,7 @@ const Student = () => {
                           );
                         })
                       )}
-                    </Select>
+                    </MessageModalSelect>
                   </Form.Item>
                   <Text
                     fontSize={`14px`}
@@ -2615,7 +2754,7 @@ const Student = () => {
                       },
                     ]}
                   >
-                    <Select style={{ width: `100%` }}>
+                    <MessageModalSelect>
                       {lectureStuLectureList &&
                       lectureStuLectureList.length === 0 ? (
                         <Option value="참여 중인 강의가 없습니다.">
@@ -2634,7 +2773,7 @@ const Student = () => {
                           );
                         })
                       )}
-                    </Select>
+                    </MessageModalSelect>
                   </Form.Item>
                   <Text
                     fontSize={`14px`}

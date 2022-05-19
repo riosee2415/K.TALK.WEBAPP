@@ -531,7 +531,8 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
             B.createdAt       AS LectureCreatedAt,
             C.username,
             C.profileImage,
-            C.level
+            C.level,
+            C.stuPayCount
       FROM	participants		A
      INNER
       JOIN	lectures 			B
