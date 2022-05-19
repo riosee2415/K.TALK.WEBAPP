@@ -65,9 +65,10 @@ import {
 } from "@ant-design/icons";
 import { saveAs } from "file-saver";
 import { BOOK_LIST_REQUEST } from "../../reducers/book";
+import { CalendarOutlined } from "@ant-design/icons";
 
-const PROFILE_WIDTH = `184`;
-const PROFILE_HEIGHT = `190`;
+const PROFILE_WIDTH = `150`;
+const PROFILE_HEIGHT = `150`;
 
 const CustomButton2 = styled(Button)`
   font-size: 16px;
@@ -116,7 +117,7 @@ const ProfileImage = styled.img`
   border-radius: 5px;
 `;
 const UploadWrapper = styled.div`
-  width: 184px;
+  width: 150px;
   margin: 5px 0;
 
   display: flex;
@@ -1164,7 +1165,7 @@ const Student = () => {
         />
       </Head>
       <ClientLayout>
-        <WholeWrapper margin={`100px 0 0`}>
+        <WholeWrapper margin={width < 900 ? `52px 0 0` : `100px 0 0`}>
           <Wrapper
             bgImg={`url("https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/student/subBanner.png")`}
             padding={width < 700 ? `30px 0` : `60px 0 140px 0`}
@@ -1229,8 +1230,7 @@ const Student = () => {
                     dr={`row`}
                     ju={`space-between`}
                     bgColor={Theme.white_C}
-                    radius={`10px`}
-                    shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
+                    shadow={`0px 2px 10px rgba(0, 0, 0, 0.05)`}
                     margin={`0 0 86px`}
                   >
                     <Wrapper
@@ -2130,7 +2130,7 @@ const Student = () => {
 
           <CustomModal
             visible={noticeViewModal}
-            width={`1350px`}
+            width={`900px`}
             title="공지사항"
             footer={null}
             closable={false}
@@ -2146,7 +2146,9 @@ const Student = () => {
               </Text>
               <Wrapper width={`auto`}>
                 <Text>
-                  {`작성일: ${moment(
+                  <CalendarOutlined style={{ color: Theme.basicTheme_C }} />
+                  &nbsp;
+                  {`${moment(
                     noticeViewDatum && noticeViewDatum.createdAt,
                     "YYYY/MM/DD"
                   ).format("YYYY/MM/DD")}`}
@@ -2174,7 +2176,11 @@ const Student = () => {
             <Text fontSize={`18px`} fontWeight={`bold`}>
               제목
             </Text>
-            <Wrapper padding={`10px`}>
+            <Wrapper
+              padding={`10px`}
+              bgColor={Theme.subTheme9_C}
+              margin={`5px 0 10px`}
+            >
               <WordbreakText fontSize={width < 700 ? "14px" : "16px"}>
                 {noticeViewDatum && noticeViewDatum.title}
               </WordbreakText>
@@ -2183,7 +2189,7 @@ const Student = () => {
             <Text fontSize={`18px`} fontWeight={`bold`}>
               내용
             </Text>
-            <Wrapper padding={`10px`}>
+            <Wrapper padding={`10px`} bgColor={Theme.subTheme9_C}>
               <WordbreakText
                 fontSize={width < 700 ? "14px" : "16px"}
                 dangerouslySetInnerHTML={{
@@ -2192,7 +2198,7 @@ const Student = () => {
               ></WordbreakText>
             </Wrapper>
 
-            <Wrapper>
+            <Wrapper margin={`20px 0 0`}>
               <CommonButton
                 onClick={() => onReset()}
                 kindOf={`grey`}
@@ -2206,7 +2212,7 @@ const Student = () => {
 
           <CustomModal
             visible={messageViewModal}
-            width={`1350px`}
+            width={`900px`}
             title={
               sendMessageAnswerType === 0
                 ? "쪽지 보기"
@@ -2429,6 +2435,8 @@ const Student = () => {
                   padding={`10px`}
                   al={`flex-start`}
                   fontSize={width < 700 ? "14px" : "16px"}
+                  bgColor={Theme.subTheme9_C}
+                  margin={`5px 0 10px`}
                 >
                   <Text>{messageDatum && messageDatum.title}</Text>
                 </Wrapper>
@@ -2439,8 +2447,9 @@ const Student = () => {
                   padding={`10px`}
                   al={`flex-start`}
                   fontSize={width < 700 ? "14px" : "16px"}
+                  bgColor={Theme.subTheme9_C}
                 >
-                  <Text minHeight={`360px`}>
+                  <Text minHeight={`150px`}>
                     {messageDatum &&
                       messageDatum.content.split("\n").map((data, idx) => {
                         return (
@@ -2479,12 +2488,9 @@ const Student = () => {
             width={`700px`}
             visible={meUpdateModal}
             footer={null}
+            title={"Upload My ID picture"}
             onCancel={meUpdateModalToggle}
           >
-            <Text fontSize={`22px`} fontWeight={`bold`} margin={`0 0 24px`}>
-              Upload My ID picture
-            </Text>
-
             <ProfileWrapper>
               <GuideWrapper>
                 <GuideText>
@@ -2532,9 +2538,14 @@ const Student = () => {
             </ProfileWrapper>
 
             <CustomForm form={updateForm} onFinish={meUpdateHandler}>
-              <Wrapper al={`flex-end`}>
-                <CommonButton height={`32px`} radius={`5px`} htmlType="submit">
-                  Upload My ID picture
+              <Wrapper al={`flex-end`} margin={`10px 0 0 0`}>
+                <CommonButton
+                  kindOf={`subTheme3`}
+                  height={`40px`}
+                  radius={`5px`}
+                  htmlType="submit"
+                >
+                  <SyncOutlined /> Upload My ID picture
                 </CommonButton>
               </Wrapper>
             </CustomForm>
@@ -2542,7 +2553,7 @@ const Student = () => {
 
           <CustomModal
             visible={homeWorkModalToggle}
-            width={`1350px`}
+            width={`900px`}
             title="숙제 제출하기"
             footer={null}
             closable={false}
@@ -2630,7 +2641,7 @@ const Student = () => {
 
           <CustomModal
             visible={messageSendModal}
-            width={`1350px`}
+            width={`900px`}
             className={`messageModal`}
             title={
               <Wrapper
