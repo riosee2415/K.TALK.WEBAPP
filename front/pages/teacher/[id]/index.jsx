@@ -2867,8 +2867,8 @@ const Index = () => {
         </WholeWrapper>
 
         <CustomModal
+          width={`900px`}
           visible={noticeViewModal}
-          width={`1350px`}
           title="공지사항"
           footer={null}
           closable={false}
@@ -2882,7 +2882,15 @@ const Index = () => {
                 fontSize={width < 700 ? `14px` : `16px`}
               >
                 <Text margin={`0 54px 0 0`}>
-                  {`작성자: ${
+                  <Image
+                    alt="thumnail"
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/logo/favicon.png`}
+                    width={`65px`}
+                    height={`65px`}
+                    radius={`100%`}
+                    margin={`0 10px 0 0`}
+                  />
+                  {`${
                     noticeDetail && noticeDetail[0] && noticeDetail[0].author
                   }`}
                 </Text>
@@ -2891,7 +2899,9 @@ const Index = () => {
                   fontSize={width < 700 ? `14px` : `16px`}
                 >
                   <Text>
-                    {`작성일: ${moment(
+                    <CalendarOutlined style={{ color: Theme.basicTheme_C }} />
+                    &nbsp;
+                    {`${moment(
                       noticeDetail &&
                         noticeDetail[0] &&
                         noticeDetail[0].createdAt,
@@ -2958,11 +2968,21 @@ const Index = () => {
                 fontSize={width < 700 ? `14px` : `16px`}
               >
                 <Text margin={`0 54px 0 0`}>
-                  {`작성자: ${noticeViewDatum && noticeViewDatum.author}`}
+                  <Image
+                    alt="thumnail"
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/logo/favicon.png`}
+                    width={`65px`}
+                    height={`65px`}
+                    radius={`100%`}
+                    margin={`0 10px 0 0`}
+                  />
+                  {`${noticeViewDatum && noticeViewDatum.author}`}
                 </Text>
                 <Wrapper width={`auto`}>
                   <Text>
-                    {`작성일: ${moment(
+                    <CalendarOutlined style={{ color: Theme.basicTheme_C }} />
+                    &nbsp;
+                    {`${moment(
                       noticeViewDatum && noticeViewDatum.createdAt,
                       "YYYY/MM/DD"
                     ).format("YYYY/MM/DD")}`}
@@ -2993,6 +3013,8 @@ const Index = () => {
               <Wrapper
                 padding={`10px`}
                 fontSize={width < 700 ? `14px` : `16px`}
+                bgColor={Theme.subTheme9_C}
+                margin={`5px 0 10px`}
               >
                 <WordbreakText>
                   {noticeViewDatum && noticeViewDatum.title}
@@ -3004,6 +3026,7 @@ const Index = () => {
               </Text>
               <Wrapper
                 padding={`10px`}
+                bgColor={Theme.subTheme9_C}
                 fontSize={width < 700 ? `14px` : `16px`}
               >
                 <WordbreakText
@@ -3013,7 +3036,7 @@ const Index = () => {
                 ></WordbreakText>
               </Wrapper>
 
-              <Wrapper dr={`row`}>
+              <Wrapper dr={`row`} margin={`20px 0 0`}>
                 <CommonButton
                   margin={`0 10px 0 0`}
                   onClick={() => onReset()}
@@ -3038,7 +3061,7 @@ const Index = () => {
 
         <CustomModal
           visible={messageViewToggle}
-          width={`1350px`}
+          width={`900px`}
           title={messageAnswerModal ? "쪽지 답변" : "쪽지함"}
           footer={null}
           closable={false}
@@ -3058,12 +3081,16 @@ const Index = () => {
                   <Text margin={`0 54px 0 0`}>
                     {`작성자 :${messageDatum && messageDatum.author}`}
                   </Text>
-                  <Text>{`날짜: ${
-                    messageDatum &&
-                    moment(messageDatum.createdAt, "YYYY/MM/DD").format(
-                      "YYYY/MM/DD"
-                    )
-                  }`}</Text>
+                  <Text>
+                    <CalendarOutlined style={{ color: Theme.basicTheme_C }} />
+                    &nbsp;
+                    {`${
+                      messageDatum &&
+                      moment(messageDatum.createdAt, "YYYY/MM/DD").format(
+                        "YYYY/MM/DD"
+                      )
+                    }`}
+                  </Text>
                 </Wrapper>
                 <Text fontSize={`18px`} fontWeight={`bold`}>
                   제목
@@ -3072,6 +3099,8 @@ const Index = () => {
                   padding={`10px`}
                   al={`flex-start`}
                   fontSize={width < 700 ? `14px` : `16px`}
+                  bgColor={Theme.subTheme9_C}
+                  margin={`5px 0 10px`}
                 >
                   <Text>{messageDatum && messageDatum.title}</Text>
                 </Wrapper>
@@ -3082,8 +3111,9 @@ const Index = () => {
                   padding={`10px`}
                   al={`flex-start`}
                   fontSize={width < 700 ? `14px` : `16px`}
+                  bgColor={Theme.subTheme9_C}
                 >
-                  <Text minHeight={`360px`}>
+                  <Text minHeight={`150px`}>
                     {messageDatum &&
                       messageDatum.content.split("\n").map((data, idx) => {
                         return (
@@ -3095,7 +3125,7 @@ const Index = () => {
                       })}
                   </Text>
                 </Wrapper>
-                <Wrapper dr={`row`}>
+                <Wrapper dr={`row`} margin={`20px 0 0`}>
                   <CommonButton
                     margin={`0 5px 0 0`}
                     kindOf={`grey`}
@@ -3152,7 +3182,7 @@ const Index = () => {
                   <Input.TextArea style={{ height: `360px` }} />
                 </Form.Item>
 
-                <Wrapper dr={`row`}>
+                <Wrapper dr={`row`} margin={`20px 0 0`}>
                   <CommonButton
                     margin={`0 5px 0 0`}
                     kindOf={`grey`}
@@ -3177,7 +3207,7 @@ const Index = () => {
 
         <CustomModal
           visible={messageSendModalToggle}
-          width={`1350px`}
+          width={`900px`}
           title={
             adminSendMessageToggle ? "관리자에게 쪽지 보내기" : "학생에게 쪽지"
           }
@@ -3277,7 +3307,7 @@ const Index = () => {
 
         <CustomModal
           visible={noticeModalToggle}
-          width={`1350px`}
+          width={`900px`}
           title="공지사항 글 작성하기"
           footer={null}
           closable={false}
@@ -3497,7 +3527,7 @@ const Index = () => {
 
         <CustomModal
           visible={diaryModalToggle}
-          width={`1350px`}
+          width={`900px`}
           title="강사일지 작성하기"
           footer={null}
           closable={false}
@@ -3513,8 +3543,11 @@ const Index = () => {
             <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px 0`}>
               <Form.Item
                 style={{
-                  width: `calc(100% / 3 - 10px - 100px)`,
-                  margin: `0`,
+                  width:
+                    width < 900
+                      ? `calc(100% - 100px)`
+                      : `calc(100% / 3 - 10px - 100px)`,
+                  margin: width < 900 ? `0 0 10px` : `0`,
                 }}
                 name="process1"
                 rules={[{ required: true, message: "진도를 입력해주세요." }]}
@@ -3533,8 +3566,11 @@ const Index = () => {
               </Text>
               <Form.Item
                 style={{
-                  width: `calc(100% / 3 - 10px - 100px)`,
-                  margin: `0`,
+                  width:
+                    width < 900
+                      ? `calc(100% - 100px)`
+                      : `calc(100% / 3 - 10px - 100px)`,
+                  margin: width < 900 ? `0 0 10px` : `0`,
                 }}
                 name="process2"
                 rules={[{ required: true, message: "진도를 입력해주세요." }]}
@@ -3559,7 +3595,10 @@ const Index = () => {
               </Text>
               <Form.Item
                 style={{
-                  width: `calc(100%내 / 3 - 10px - 100px)`,
+                  width:
+                    width < 900
+                      ? `calc(100% - 100px)`
+                      : `calc(100%내 / 3 - 10px - 100px)`,
                   margin: `0`,
                 }}
                 name="process3"
@@ -3580,7 +3619,7 @@ const Index = () => {
               name="lectureMemo"
               rules={[{ required: true, message: "수업 메모를 입력해주세요." }]}
             >
-              <Input.TextArea style={{ height: `360px` }} />
+              <Input.TextArea style={{ height: `300px` }} />
             </Form.Item>
             <Wrapper dr={`row`}>
               <CommonButton
@@ -3605,22 +3644,28 @@ const Index = () => {
 
         <CustomModal
           visible={diaryViewModalToggle}
-          width={`1350px`}
+          width={`900px`}
           title="자세한 강사일지"
           footer={null}
           closable={false}
         >
           <CustomForm form={diaryViewform}>
-            <Wrapper al={`flex-start`} fontSize={width < 700 ? `14px` : `18px`}>
-              <Text fontWeight={`bold`} margin={`0 0 10px`}>
+            <Wrapper
+              dr={`row`}
+              ju={`flex-start`}
+              fontSize={width < 700 ? `14px` : `18px`}
+            >
+              <Text fontWeight={`bold`} margin={`0 10px 0 0`}>
                 진도
               </Text>
 
-              <Text>{diaryData && diaryData.process}</Text>
+              <Text padding={`10px`} bgColor={Theme.subTheme9_C}>
+                {diaryData && diaryData.process}
+              </Text>
             </Wrapper>
 
             <Wrapper al={`flex-start`} fontSize={width < 700 ? `14px` : `18px`}>
-              <Text fontWeight={`bold`} margin={`0 0 10px`}>
+              <Text fontWeight={`bold`} margin={`10px 0`}>
                 수업 메모
               </Text>
 
@@ -3628,7 +3673,11 @@ const Index = () => {
                 diaryData.lectureMemo &&
                 diaryData.lectureMemo.split("\n").map((data, idx) => {
                   return (
-                    <Text key={`${data}${idx}`}>
+                    <Text
+                      key={`${data}${idx}`}
+                      bgColor={Theme.subTheme9_C}
+                      padding={`10px`}
+                    >
                       {data}
                       <br />
                     </Text>
@@ -3638,7 +3687,7 @@ const Index = () => {
 
             <Wrapper dr={`row`}>
               <CommonButton
-                margin={`0 5px 0 0`}
+                margin={`15px 0 0`}
                 kindOf={`grey`}
                 color={Theme.darkGrey_C}
                 radius={`5px`}
@@ -3652,7 +3701,7 @@ const Index = () => {
 
         <CustomModal
           visible={studentToggle}
-          width={`1350px`}
+          width={`900px`}
           title="학생 숙제 제출 목록"
           onCancel={() => onReset()}
           footer={null}
@@ -3777,7 +3826,7 @@ const Index = () => {
 
         <CustomModal
           visible={memoToggle}
-          width={`1350px`}
+          width={`900px`}
           title="학생 메모 생성하기"
           footer={null}
           closable={false}
@@ -3827,7 +3876,7 @@ const Index = () => {
 
         <CustomModal
           visible={memoStuDetailToggle}
-          width={`1350px`}
+          width={`900px`}
           title="학생메모 목록"
           footer={null}
           closable={false}
@@ -3925,14 +3974,13 @@ const Index = () => {
                   />
                 </Wrapper>
 
-                <Wrapper
-                  shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
-                  radius={`10px`}
-                >
+                <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
                   <Wrapper
                     dr={`row`}
                     textAlign={width < 700 ? `center` : `left`}
                     padding={`20px 30px`}
+                    bgColor={Theme.subTheme9_C}
+                    borderBottom={`1px solid ${Theme.grey_C}`}
                   >
                     <Text
                       fontSize={width < 700 ? `14px` : `18px`}
@@ -4048,7 +4096,7 @@ const Index = () => {
 
         <CustomModal
           visible={commuteToggle}
-          width={`1350px`}
+          width={`900px`}
           title="학생 출석 목록"
           footer={null}
           closable={false}
@@ -4086,6 +4134,8 @@ const Index = () => {
               dr={`row`}
               textAlign={width < 700 ? `center` : `left`}
               padding={`20px 30px`}
+              bgColor={Theme.subTheme9_C}
+              borderBottom={`1px solid ${Theme.grey_C}`}
             >
               <Text
                 fontSize={width < 700 ? `14px` : `18px`}

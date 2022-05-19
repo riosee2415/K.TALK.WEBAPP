@@ -321,18 +321,23 @@ const Index = () => {
       </Head>
 
       <ClientLayout>
-        <WholeWrapper margin={`100px 0 0`}>
-          <RsWrapper>
-            <Wrapper
-              margin={width < 700 ? `30px 0` : `60px 0`}
-              dr={`row`}
-              ju={`space-between`}
-            >
-              <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
-                <Wrapper width={`auto`} padding={`9px`} bgColor={Theme.white_C}>
+        <WholeWrapper margin={width < 900 ? `52px 0 0` : `100px 0 0`}>
+          <Wrapper
+            bgImg={`url("https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/student/subBanner.png")`}
+            padding={width < 700 ? `30px 0` : `60px 0`}
+            color={Theme.white_C}
+          >
+            <RsWrapper dr={`row`} ju={width < 900 ? `center` : `flex-start`}>
+              <Wrapper dr={`row`} ju={`space-between`}>
+                <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
                   <Image
-                    width={width < 700 ? `65px` : `75px`}
-                    height={width < 700 ? `65px` : `75px`}
+                    width={width < 700 ? `65px` : `95px`}
+                    height={width < 700 ? `65px` : `95px`}
+                    border={
+                      width < 900
+                        ? `5px solid ${Theme.white_C}`
+                        : `15px solid ${Theme.white_C}`
+                    }
                     radius={`100px`}
                     src={
                       me && me.profileImage
@@ -341,21 +346,25 @@ const Index = () => {
                     }
                     alt="teacher_thumbnail"
                   />
+                  <Text
+                    fontSize={width < 700 ? `20px` : `28px`}
+                    fontWeight={`bold`}
+                    padding={`0 0 0 15px`}
+                  >
+                    안녕하세요,&nbsp;
+                    <SpanText
+                      color={Theme.basicTheme_C}
+                      wordBreak={`break-all`}
+                    >
+                      {me && me.username}&nbsp;
+                    </SpanText>
+                    님!
+                  </Text>
                 </Wrapper>
-                <Text
-                  fontSize={width < 700 ? `20px` : `28px`}
-                  fontWeight={`bold`}
-                  padding={`0 0 0 15px`}
-                >
-                  안녕하세요,&nbsp;
-                  <SpanText color={Theme.basicTheme_C} wordBreak={`break-all`}>
-                    {me && me.username}&nbsp;
-                  </SpanText>
-                  님!
-                </Text>
               </Wrapper>
-            </Wrapper>
-
+            </RsWrapper>
+          </Wrapper>
+          <RsWrapper margin={`80px 0 0`}>
             <Wrapper dr={`row`} ju={`space-between`}>
               <Wrapper dr={`row`} width={`auto`}>
                 <RangePicker format="YYYY-MM-DD" onChange={onChangeDate} />
@@ -421,8 +430,14 @@ const Index = () => {
               </Text>
             </Wrapper>
 
-            <Wrapper shadow={`0px 5px 15px rgb(0,0,0,0.16)`} radius={`10px`}>
-              <Wrapper dr={`row`} textAlign={`center`} padding={`20px 0`}>
+            <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
+              <Wrapper
+                dr={`row`}
+                textAlign={`center`}
+                padding={`20px 0`}
+                bgColor={Theme.subTheme9_C}
+                borderBottom={`1px solid ${Theme.grey_C}`}
+              >
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
@@ -453,7 +468,6 @@ const Index = () => {
                   날짜
                 </Text>
               </Wrapper>
-
               {teacherPayList && teacherPayList.length === 0 ? (
                 <Wrapper margin={`50px 0`}>
                   <Empty description="조회된 데이터가 없습니다." />
@@ -469,7 +483,8 @@ const Index = () => {
                       ju={`flex-start`}
                       padding={`25px 0 20px`}
                       cursor={`pointer`}
-                      bgColor={idx % 2 === 0 && Theme.lightGrey_C}
+                      bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                      borderBottom={`1px solid ${Theme.grey_C}`}
                     >
                       <Text
                         fontSize={width < 700 ? `14px` : `16px`}
@@ -511,7 +526,8 @@ const Index = () => {
             <Wrapper
               dr={`row`}
               ju={`flex-end`}
-              shadow={`0px 5px 15px rgb(0,0,0,0.16)`}
+              border={`1px solid ${Theme.grey_C}`}
+              bgColor={Theme.subTheme9_C}
               radius={`10px`}
               padding={`20px`}
               margin={`20px 0 0`}
@@ -531,7 +547,6 @@ const Index = () => {
               />
             </Wrapper>
           </RsWrapper>
-
           <Modal
             visible={meetingModal}
             title="회의수당"
