@@ -838,54 +838,50 @@ const LectureAll = () => {
       </Head>
       <ClientLayout>
         <WholeWrapper margin={`100px 0 0`} bgColor={Theme.subTheme_C}>
-          <RsWrapper>
-            <Wrapper dr={`row`} ju={`space-between`}>
-              <Wrapper
-                margin={width < 700 ? `30px 0` : `60px 0`}
-                dr={`row`}
-                ju={`space-between`}
-                width={`auto`}
-              >
-                <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
-                  <Wrapper
-                    width={`auto`}
-                    padding={`9px`}
-                    bgColor={Theme.white_C}
-                  >
-                    <Image
-                      width={width < 700 ? `65px` : `75px`}
-                      height={width < 700 ? `65px` : `75px`}
-                      radius={`100px`}
-                      src={
-                        me && me.profileImage
-                          ? me.profileImage
-                          : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile.png"
-                      }
-                      alt="student_thumbnail"
-                    />
-                  </Wrapper>
-                  <Text
-                    fontSize={width < 700 ? `20px` : `28px`}
-                    fontWeight={`bold`}
-                    padding={`0 0 0 15px`}
-                  >
-                    안녕하세요,&nbsp;
-                    <SpanText
-                      color={Theme.basicTheme_C}
-                      wordBreak={`break-all`}
-                    >
-                      {me && me.username}&nbsp;
-                    </SpanText>
-                    님!
-                  </Text>
-                </Wrapper>
+          <Wrapper
+            bgImg={`url("https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/student/subBanner.png")`}
+            padding={width < 700 ? `30px 0` : `60px 0`}
+            color={Theme.white_C}
+          >
+            <RsWrapper dr={`row`} ju={width < 900 ? `center` : `flex-start`}>
+              <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
+                <Image
+                  width={width < 700 ? `65px` : `95px`}
+                  height={width < 700 ? `65px` : `95px`}
+                  border={
+                    width < 900
+                      ? `5px solid ${Theme.white_C}`
+                      : `15px solid ${Theme.white_C}`
+                  }
+                  radius={`100px`}
+                  src={
+                    me && me.profileImage
+                      ? me.profileImage
+                      : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile.png"
+                  }
+                  alt="teacher_thumbnail"
+                />
+                <Text
+                  fontSize={width < 700 ? `20px` : `28px`}
+                  fontWeight={`bold`}
+                  padding={`0 0 0 15px`}
+                >
+                  안녕하세요,&nbsp;
+                  <SpanText color={Theme.subTheme9_C} wordBreak={`break-all`}>
+                    {me && me.username}&nbsp;
+                  </SpanText>
+                  님!
+                </Text>
               </Wrapper>
+            </RsWrapper>
+          </Wrapper>
+          <RsWrapper margin={`50px 0 0`}>
+            <Wrapper al={`flex-end`}>
               <BackIcon width={`auto`} onClick={moveBackHandler}>
                 <RollbackOutlined />
                 <Text>뒤로가기</Text>
               </BackIcon>
             </Wrapper>
-
             <Wrapper
               al={`flex-start`}
               margin={width < 700 ? `20px 0 10px` : `0 0 20px`}
