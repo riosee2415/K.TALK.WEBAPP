@@ -25,6 +25,7 @@ import useWidth from "../../hooks/useWidth";
 import ClientLayout from "../../components/ClientLayout";
 import {
   CommonButton,
+  CommonTitle,
   Image,
   RsWrapper,
   SpanText,
@@ -838,68 +839,59 @@ const LectureAll = () => {
       </Head>
       <ClientLayout>
         <WholeWrapper margin={`100px 0 0`} bgColor={Theme.subTheme_C}>
-          <RsWrapper>
-            <Wrapper dr={`row`} ju={`space-between`}>
-              <Wrapper
-                margin={width < 700 ? `30px 0` : `60px 0`}
-                dr={`row`}
-                ju={`space-between`}
-                width={`auto`}
-              >
-                <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
-                  <Wrapper
-                    width={`auto`}
-                    padding={`9px`}
-                    bgColor={Theme.white_C}
-                  >
-                    <Image
-                      width={width < 700 ? `65px` : `75px`}
-                      height={width < 700 ? `65px` : `75px`}
-                      radius={`100px`}
-                      src={
-                        me && me.profileImage
-                          ? me.profileImage
-                          : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile.png"
-                      }
-                      alt="student_thumbnail"
-                    />
-                  </Wrapper>
-                  <Text
-                    fontSize={width < 700 ? `20px` : `28px`}
-                    fontWeight={`bold`}
-                    padding={`0 0 0 15px`}
-                  >
-                    안녕하세요,&nbsp;
-                    <SpanText
-                      color={Theme.basicTheme_C}
-                      wordBreak={`break-all`}
-                    >
-                      {me && me.username}&nbsp;
-                    </SpanText>
-                    님!
-                  </Text>
-                </Wrapper>
+          <Wrapper
+            bgImg={`url("https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/student/subBanner.png")`}
+            padding={width < 700 ? `30px 0` : `60px 0`}
+            color={Theme.white_C}
+          >
+            <RsWrapper dr={`row`} ju={width < 900 ? `center` : `flex-start`}>
+              <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
+                <Image
+                  width={width < 700 ? `65px` : `95px`}
+                  height={width < 700 ? `65px` : `95px`}
+                  border={
+                    width < 900
+                      ? `5px solid ${Theme.white_C}`
+                      : `15px solid ${Theme.white_C}`
+                  }
+                  radius={`100px`}
+                  src={
+                    me && me.profileImage
+                      ? me.profileImage
+                      : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile.png"
+                  }
+                  alt="teacher_thumbnail"
+                />
+                <Text
+                  fontSize={width < 700 ? `20px` : `28px`}
+                  fontWeight={`bold`}
+                  padding={`0 0 0 15px`}
+                >
+                  안녕하세요,&nbsp;
+                  <SpanText color={Theme.subTheme9_C} wordBreak={`break-all`}>
+                    {me && me.username}&nbsp;
+                  </SpanText>
+                  님!
+                </Text>
               </Wrapper>
+            </RsWrapper>
+          </Wrapper>
+          <RsWrapper margin={`50px 0 0`}>
+            <Wrapper al={`flex-end`}>
               <BackIcon width={`auto`} onClick={moveBackHandler}>
                 <RollbackOutlined />
                 <Text>뒤로가기</Text>
               </BackIcon>
             </Wrapper>
-
             <Wrapper
               al={`flex-start`}
               margin={width < 700 ? `20px 0 10px` : `0 0 20px`}
             >
-              <Text
-                fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-              >
-                Class / Bulletin Board
-              </Text>
+              <CommonTitle>Class / Bulletin Board</CommonTitle>
             </Wrapper>
 
             <Wrapper
-              margin={`0 0 60px`}
+              margin={`0 0 40px`}
               Wrapper
               borderTop={`2px solid ${Theme.black_C}`}
             >
@@ -986,13 +978,8 @@ const LectureAll = () => {
               onChange={(page) => noticeChangePage(page)}
             />
 
-            <Wrapper al={`flex-start`} margin={`0 0 20px`}>
-              <Text
-                fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-              >
-                관리자 강의 쪽지함
-              </Text>
+            <Wrapper al={`flex-start`} margin={`50px 0 20px`}>
+              <CommonTitle>관리자 강의 쪽지함</CommonTitle>
 
               <Text fontSize={width < 800 ? `14px` : `18px`}>
                 관리자에서 강의 단위로 보낸 쪽지 목록 입니다.
@@ -1077,7 +1064,7 @@ const LectureAll = () => {
                 ))}
             </Wrapper>
 
-            <Wrapper margin={`60px 0`}>
+            <Wrapper margin={`40px 0 50px`}>
               <CustomPage
                 size="small"
                 current={currentPage3}
@@ -1087,12 +1074,7 @@ const LectureAll = () => {
             </Wrapper>
 
             <Wrapper al={`flex-start`} margin={`0 0 20px`}>
-              <Text
-                fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-              >
-                전체 쪽지 및 학생
-              </Text>
+              <CommonTitle>전체 쪽지 및 학생</CommonTitle>
             </Wrapper>
 
             <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
@@ -1182,13 +1164,7 @@ const LectureAll = () => {
             </Wrapper>
 
             <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
-              <Text
-                fontSize={width < 800 ? `18px` : `22px`}
-                fontWeight={`bold`}
-                margin={`0 30px 0 0`}
-              >
-                My Class
-              </Text>
+              <CommonTitle>My Class</CommonTitle> &nbsp; &nbsp;
               <Button
                 type={`primary`}
                 size={`small`}
@@ -1292,6 +1268,7 @@ const LectureAll = () => {
                                 &nbsp;My Attendance&nbsp; &nbsp;
                               </Text>
                               <Wrapper width={width < 800 ? `150px` : `200px`}>
+                                {console.log(lectureStuCommute)}
                                 <CustomSlide
                                   value={slideValue(lectureStuCommute, data)}
                                   disabled={true}
