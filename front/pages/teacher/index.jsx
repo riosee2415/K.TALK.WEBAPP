@@ -28,7 +28,11 @@ import {
   Select,
   Button,
 } from "antd";
-import { SyncOutlined } from "@ant-design/icons";
+import {
+  SyncOutlined,
+  UserOutlined,
+  CalendarOutlined,
+} from "@ant-design/icons";
 import styled from "styled-components";
 import useWidth from "../../hooks/useWidth";
 import ClientLayout from "../../components/ClientLayout";
@@ -1781,7 +1785,7 @@ const Index = () => {
 
         <CustomModal
           visible={messageViewToggle}
-          width={`1350px`}
+          width={`900px`}
           title={messageAnswerModal ? "쪽지 답변" : "쪽지함"}
           footer={null}
           closable={false}
@@ -1793,13 +1797,14 @@ const Index = () => {
             {messageAnswerModal && (
               <>
                 <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 40px`}>
-                  <Text
-                    fontSize={`18px`}
-                    fontWeight={`bold`}
-                    margin={`0 35px 0 0`}
-                  >
-                    작성자
-                  </Text>
+                  <Image
+                    alt="thumnail"
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/logo/favicon.png`}
+                    width={`65px`}
+                    height={`65px`}
+                    radius={`100%`}
+                    margin={`0 10px 0 0`}
+                  />
 
                   <Text>{messageDatum && messageDatum.author}</Text>
                 </Wrapper>
@@ -1869,21 +1874,38 @@ const Index = () => {
                 fontSize={width < 700 ? `14px` : `16px`}
               >
                 <Text margin={`0 54px 0 0`}>
-                  {`작성자: ${messageDatum && messageDatum.author}`}
+                  <Image
+                    alt="thumnail"
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/logo/favicon.png`}
+                    width={`65px`}
+                    height={`65px`}
+                    radius={`100%`}
+                    margin={`0 10px 0 0`}
+                  />
+                  {`${messageDatum && messageDatum.author}`}
                 </Text>
-                <Text>{`날짜: ${
-                  messageDatum &&
-                  moment(messageDatum.createdAt, "YYYY/MM/DD").format(
-                    "YYYY/MM/DD"
-                  )
-                }`}</Text>
+                <Text>
+                  <CalendarOutlined style={{ color: Theme.basicTheme_C }} />
+                  &nbsp;
+                  {`${
+                    messageDatum &&
+                    moment(messageDatum.createdAt, "YYYY/MM/DD").format(
+                      "YYYY/MM/DD"
+                    )
+                  }`}
+                </Text>
               </Wrapper>
 
               <Text fontSize={`18px`} fontWeight={`bold`}>
                 제목
               </Text>
 
-              <Wrapper padding={`10px`} al={`flex-start`}>
+              <Wrapper
+                padding={`10px`}
+                al={`flex-start`}
+                bgColor={Theme.subTheme9_C}
+                margin={`5px 0 10px`}
+              >
                 <Text fontSize={width < 700 ? `14px` : `16px`}>
                   {messageDatum && messageDatum.title}
                 </Text>
@@ -1892,9 +1914,13 @@ const Index = () => {
               <Text fontSize={`18px`} fontWeight={`bold`}>
                 내용
               </Text>
-              <Wrapper padding={`10px`} al={`flex-start`}>
+              <Wrapper
+                padding={`10px`}
+                al={`flex-start`}
+                bgColor={Theme.subTheme9_C}
+              >
                 <Text
-                  minHeight={`360px`}
+                  minHeight={`150px`}
                   fontSize={width < 700 ? `14px` : `16px`}
                 >
                   {messageDatum &&
@@ -1909,7 +1935,7 @@ const Index = () => {
                 </Text>
               </Wrapper>
 
-              <Wrapper dr={`row`}>
+              <Wrapper dr={`row`} margin={`20px 0 0`}>
                 <CommonButton
                   margin={`0 5px 0 0`}
                   kindOf={`grey`}
@@ -1933,8 +1959,8 @@ const Index = () => {
 
         <CustomModal
           visible={noticeViewModal}
-          width={`1350px`}
           title="공지사항"
+          width={`900px`}
           footer={null}
           closable={false}
         >
@@ -1945,11 +1971,21 @@ const Index = () => {
             fontSize={width < 700 ? `14px` : `16px`}
           >
             <Text margin={`0 54px 0 0`}>
-              {`작성자: ${noticeViewDatum && noticeViewDatum.author}`}
+              <Image
+                alt="thumnail"
+                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/logo/favicon.png`}
+                width={`65px`}
+                height={`65px`}
+                radius={`100%`}
+                margin={`0 10px 0 0`}
+              />
+              {`${noticeViewDatum && noticeViewDatum.author}`}
             </Text>
             <Wrapper width={`auto`}>
               <Text>
-                {`작성일: ${moment(
+                <CalendarOutlined style={{ color: Theme.basicTheme_C }} />
+                &nbsp;
+                {` ${moment(
                   noticeViewDatum && noticeViewDatum.createdAt,
                   "YYYY/MM/DD"
                 ).format("YYYY/MM/DD")}`}
@@ -1977,7 +2013,11 @@ const Index = () => {
           <Text fontSize={`18px`} fontWeight={`bold`}>
             제목
           </Text>
-          <Wrapper padding={`10px`}>
+          <Wrapper
+            padding={`10px`}
+            bgColor={Theme.subTheme9_C}
+            margin={`5px 0 10px`}
+          >
             <WordbreakText fontSize={width < 700 ? `14px` : `16px`}>
               {noticeViewDatum && noticeViewDatum.title}
             </WordbreakText>
@@ -1986,7 +2026,7 @@ const Index = () => {
           <Text fontSize={`18px`} fontWeight={`bold`}>
             내용
           </Text>
-          <Wrapper padding={`10px`}>
+          <Wrapper padding={`10px`} bgColor={Theme.subTheme9_C}>
             <WordbreakText
               fontSize={width < 700 ? `14px` : `16px`}
               dangerouslySetInnerHTML={{
@@ -1995,7 +2035,7 @@ const Index = () => {
             ></WordbreakText>
           </Wrapper>
 
-          <Wrapper>
+          <Wrapper margin={`20px 0 0`}>
             <CommonButton
               onClick={() => onReset()}
               kindOf={`grey`}
