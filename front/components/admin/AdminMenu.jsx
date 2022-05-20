@@ -52,6 +52,10 @@ const AdminMenu = () => {
     [currentAdminMenu]
   );
 
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
+  }, []);
+
   return (
     <>
       <Menu
@@ -63,10 +67,14 @@ const AdminMenu = () => {
         selectedKeys={router.pathname}
         disabled={false}
       >
-        <Wrapper margin={`20px 0 10px`}>
+        <Wrapper
+          margin={`20px 0 10px`}
+          cursor={`pointer`}
+          onClick={() => moveLinkHandler(`/`)}
+        >
           <Image
             alt="logo"
-            src={`https://firebasestorage.googleapis.com/v0/b/storage-4leaf.appspot.com/o/4leaf%2Flogo%2Ffavicon.ico?alt=media&token=22fe389b-44d2-45c2-8735-2baf77e55651`}
+            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/logo/favicon.png`}
             width={`50px`}
             height={`50px`}
             radius={`100%`}

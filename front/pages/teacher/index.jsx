@@ -1022,7 +1022,7 @@ const Index = () => {
                   <SpanText color={Theme.subTheme9_C} wordBreak={`break-all`}>
                     {me && me.username}&nbsp;
                   </SpanText>
-                  님!
+                  쌤!
                 </Text>
               </Wrapper>
               <Wrapper width={`auto`}>
@@ -1264,187 +1264,7 @@ const Index = () => {
               />
             </Wrapper>
 
-            <Wrapper al={`flex-start`}>
-              <CommonTitle margin={`0 0 20px`}>내 수업</CommonTitle>
-
-              {lectureTeacherList && lectureTeacherList.length === 0 ? (
-                <Wrapper margin={`30px 0`}>
-                  <Empty description="조회된 수업 리스트가 없습니다." />
-                </Wrapper>
-              ) : (
-                lectureTeacherList &&
-                lectureTeacherList.map((data, idx) => {
-                  return (
-                    <Wrapper
-                      key={data.id}
-                      margin={
-                        idx === lectureTeacherList.length - 1 ? `0` : "0 0 20px"
-                      }
-                      border={`1px solid ${Theme.grey_C}`}
-                    >
-                      <Wrapper
-                        dr={`row`}
-                        ju={`flex-start`}
-                        al={`flex-start`}
-                        bgColor={Theme.subTheme9_C}
-                        padding={width < 900 ? `20px 10px` : `25px 30px`}
-                      >
-                        <Wrapper
-                          width={
-                            width < 1280
-                              ? width < 800
-                                ? `100%`
-                                : `60%`
-                              : `37%`
-                          }
-                          dr={`row`}
-                          ju={`flex-start`}
-                        >
-                          <Wrapper
-                            width={`auto`}
-                            padding={width < 700 ? `0` : `5px`}
-                            margin={`0 10px 0 0`}
-                          >
-                            <Image
-                              width={width < 900 ? `15px` : `22px`}
-                              height={width < 900 ? `15px` : `22px`}
-                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
-                              alt="clock_icon"
-                            />
-                          </Wrapper>
-
-                          <Wrapper
-                            width={`auto`}
-                            minWidth={`calc(100% - 42px - 100px)`}
-                            dr={`row`}
-                            ju={`flex-start`}
-                          >
-                            <Text
-                              fontSize={width < 700 ? `14px` : `18px`}
-                              fontWeight={`bold`}
-                              lineHeight={`1.22`}
-                            >
-                              {divideLecture(
-                                data && data.day,
-                                data && data.time
-                              )}
-                            </Text>
-                          </Wrapper>
-                          <Wrapper
-                            width={`1px`}
-                            height={width < 800 ? `20px` : `34px`}
-                            borderLeft={`1px dashed ${Theme.grey_C}`}
-                            margin={
-                              width < 1350
-                                ? width < 700
-                                  ? `0 4px`
-                                  : `0 10px`
-                                : `0 20px`
-                            }
-                          />
-                        </Wrapper>
-
-                        <Wrapper
-                          dr={`row`}
-                          ju={`space-between`}
-                          width={width < 1400 ? `100%` : `62%`}
-                          margin={width < 700 ? `10px 0 0 0` : `0`}
-                        >
-                          <Wrapper dr={`row`} width={`auto`}>
-                            <Image
-                              width={width < 900 ? `15px` : `22px`}
-                              height={width < 900 ? `15px` : `22px`}
-                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
-                              alt="calender_icon"
-                              margin={`0 5px 0 0`}
-                            />
-                            <CustomText2
-                              color={Theme.black_2C}
-                              fontWeight={`normal`}
-                              width={width < 700 ? `auto` : `140px`}
-                            >
-                              {moment(data.startDate, "YYYY/MM/DD").format(
-                                "YYYY/MM/DD"
-                              )}
-                            </CustomText2>
-
-                            <Image
-                              width={width < 900 ? `15px` : `22px`}
-                              height={width < 900 ? `15px` : `22px`}
-                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_number.png"
-                              alt="calender_icon"
-                              margin={`0 5px 0 0`}
-                            />
-                            <Text
-                              color={Theme.black_2C}
-                              fontSize={width < 700 ? `12px` : `18px`}
-                              width={width < 700 ? `auto` : `140px`}
-                              margin={`0 10px 0 0`}
-                            >
-                              {`${data.number}`}
-                            </Text>
-
-                            <Wrapper width={`auto`} fontWeight={`bold`}>
-                              <Text
-                                cursor={`pointer`}
-                                color={Theme.black_2C}
-                                fontSize={width < 700 ? `12px` : `18px`}
-                                width={`auto`}
-                                onClick={() => textbookModalHandler(data)}
-                              >
-                                교재 등록
-                              </Text>
-                            </Wrapper>
-                          </Wrapper>
-
-                          <Text
-                            color={Theme.black_2C}
-                            fontSize={width < 700 ? `12px` : `18px`}
-                          >
-                            {data.course}
-                          </Text>
-
-                          <Wrapper width={`auto`}>
-                            <CustomText3
-                              onClick={() =>
-                                moveLinkHandler(`/teacher/${data.id}`)
-                              }
-                              color={Theme.black_2C}
-                              cursor={`pointer`}
-                            >
-                              상세 수업 보러가기
-                            </CustomText3>
-                          </Wrapper>
-                        </Wrapper>
-                      </Wrapper>
-                      <Wrapper
-                        dr={`row`}
-                        ju={`flex-start`}
-                        padding={width < 900 ? `20px 10px` : `30px`}
-                      >
-                        {lectureTeacherStudents.map((data2) => {
-                          if (data2.LectureId === data.id) {
-                            return <Name>{data2.username}</Name>;
-                          } else {
-                            return null;
-                          }
-                        })}
-                      </Wrapper>
-                    </Wrapper>
-                  );
-                })
-              )}
-
-              <Wrapper margin={`65px 0 0`}>
-                <CustomPage
-                  current={currentPage2}
-                  total={noticeLastPage * 10}
-                  onChange={(page) => onChangeLecturePage(page)}
-                ></CustomPage>
-              </Wrapper>
-            </Wrapper>
-
-            <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
+            <Wrapper al={`flex-start`} margin={`0 0 20px`}>
               <CommonTitle>전체 쪽지 및 강사</CommonTitle>
             </Wrapper>
 
@@ -1645,12 +1465,192 @@ const Index = () => {
               )}
             </Wrapper>
 
-            <Wrapper margin={`65px 0 0`}>
+            <Wrapper margin={`65px 0 85px`}>
               <CustomPage
                 current={currentPage3}
                 total={messageUserLastPage * 10}
                 onChange={(page) => onChangeMessagePage(page)}
               ></CustomPage>
+            </Wrapper>
+
+            <Wrapper al={`flex-start`}>
+              <CommonTitle margin={`0 0 20px`}>내 수업</CommonTitle>
+
+              {lectureTeacherList && lectureTeacherList.length === 0 ? (
+                <Wrapper margin={`30px 0`}>
+                  <Empty description="조회된 수업 리스트가 없습니다." />
+                </Wrapper>
+              ) : (
+                lectureTeacherList &&
+                lectureTeacherList.map((data, idx) => {
+                  return (
+                    <Wrapper
+                      key={data.id}
+                      margin={
+                        idx === lectureTeacherList.length - 1 ? `0` : "0 0 20px"
+                      }
+                      border={`1px solid ${Theme.grey_C}`}
+                    >
+                      <Wrapper
+                        dr={`row`}
+                        ju={`flex-start`}
+                        al={`flex-start`}
+                        bgColor={Theme.subTheme9_C}
+                        padding={width < 900 ? `20px 10px` : `25px 30px`}
+                      >
+                        <Wrapper
+                          width={
+                            width < 1280
+                              ? width < 800
+                                ? `100%`
+                                : `60%`
+                              : `37%`
+                          }
+                          dr={`row`}
+                          ju={`flex-start`}
+                        >
+                          <Wrapper
+                            width={`auto`}
+                            padding={width < 700 ? `0` : `5px`}
+                            margin={`0 10px 0 0`}
+                          >
+                            <Image
+                              width={width < 900 ? `15px` : `22px`}
+                              height={width < 900 ? `15px` : `22px`}
+                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
+                              alt="clock_icon"
+                            />
+                          </Wrapper>
+
+                          <Wrapper
+                            width={`auto`}
+                            minWidth={`calc(100% - 42px - 100px)`}
+                            dr={`row`}
+                            ju={`flex-start`}
+                          >
+                            <Text
+                              fontSize={width < 700 ? `14px` : `18px`}
+                              fontWeight={`bold`}
+                              lineHeight={`1.22`}
+                            >
+                              {divideLecture(
+                                data && data.day,
+                                data && data.time
+                              )}
+                            </Text>
+                          </Wrapper>
+                          <Wrapper
+                            width={`1px`}
+                            height={width < 800 ? `20px` : `34px`}
+                            borderLeft={`1px dashed ${Theme.grey_C}`}
+                            margin={
+                              width < 1350
+                                ? width < 700
+                                  ? `0 4px`
+                                  : `0 10px`
+                                : `0 20px`
+                            }
+                          />
+                        </Wrapper>
+
+                        <Wrapper
+                          dr={`row`}
+                          ju={`space-between`}
+                          width={width < 1400 ? `100%` : `62%`}
+                          margin={width < 700 ? `10px 0 0 0` : `0`}
+                        >
+                          <Wrapper dr={`row`} width={`auto`}>
+                            <Image
+                              width={width < 900 ? `15px` : `22px`}
+                              height={width < 900 ? `15px` : `22px`}
+                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
+                              alt="calender_icon"
+                              margin={`0 5px 0 0`}
+                            />
+                            <CustomText2
+                              color={Theme.black_2C}
+                              fontWeight={`normal`}
+                              width={width < 700 ? `auto` : `140px`}
+                            >
+                              {moment(data.startDate, "YYYY/MM/DD").format(
+                                "YYYY/MM/DD"
+                              )}
+                            </CustomText2>
+
+                            <Image
+                              width={width < 900 ? `15px` : `22px`}
+                              height={width < 900 ? `15px` : `22px`}
+                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_number.png"
+                              alt="calender_icon"
+                              margin={`0 5px 0 0`}
+                            />
+                            <Text
+                              color={Theme.black_2C}
+                              fontSize={width < 700 ? `12px` : `18px`}
+                              width={width < 700 ? `auto` : `140px`}
+                              margin={`0 10px 0 0`}
+                            >
+                              {`${data.number}`}
+                            </Text>
+
+                            <Wrapper width={`auto`} fontWeight={`bold`}>
+                              <Text
+                                cursor={`pointer`}
+                                color={Theme.black_2C}
+                                fontSize={width < 700 ? `12px` : `18px`}
+                                width={`auto`}
+                                onClick={() => textbookModalHandler(data)}
+                              >
+                                교재 등록
+                              </Text>
+                            </Wrapper>
+                          </Wrapper>
+
+                          <Text
+                            color={Theme.black_2C}
+                            fontSize={width < 700 ? `12px` : `18px`}
+                          >
+                            {data.course}
+                          </Text>
+
+                          <Wrapper width={`auto`}>
+                            <CustomText3
+                              onClick={() =>
+                                moveLinkHandler(`/teacher/${data.id}`)
+                              }
+                              color={Theme.black_2C}
+                              cursor={`pointer`}
+                            >
+                              상세 수업 보러가기
+                            </CustomText3>
+                          </Wrapper>
+                        </Wrapper>
+                      </Wrapper>
+                      <Wrapper
+                        dr={`row`}
+                        ju={`flex-start`}
+                        padding={width < 900 ? `20px 10px` : `30px`}
+                      >
+                        {lectureTeacherStudents.map((data2) => {
+                          if (data2.LectureId === data.id) {
+                            return <Name>{data2.username}</Name>;
+                          } else {
+                            return null;
+                          }
+                        })}
+                      </Wrapper>
+                    </Wrapper>
+                  );
+                })
+              )}
+
+              <Wrapper margin={`65px 0 0`}>
+                <CustomPage
+                  current={currentPage2}
+                  total={noticeLastPage * 10}
+                  onChange={(page) => onChangeLecturePage(page)}
+                ></CustomPage>
+              </Wrapper>
             </Wrapper>
 
             <Wrapper

@@ -415,6 +415,9 @@ const Student = () => {
   const [currentPage4, setCurrentPage4] = useState(1);
   const [currentPage5, setCurrentPage5] = useState(1);
 
+  const [attendanceModal, setAttendanceModal] = useState(false);
+  const [attendanceData, setAttendanceData] = useState(null);
+
   const bookColumns = [
     {
       title: "No",
@@ -1104,6 +1107,8 @@ const Student = () => {
     return (tempArr.length * 100) / ((data.date / 7) * data.count);
   }, []);
 
+  console.log(lectureStuCommute);
+
   const onChangeBookPage = useCallback(
     (page) => {
       setCurrentPage5(page);
@@ -1118,7 +1123,30 @@ const Student = () => {
     [bookDetail]
   );
 
+  const attendanceToggle = useCallback(
+    (data) => {
+      setAttendanceModal((prev) => !prev);
+      setAttendanceData(data);
+    },
+    [attendanceModal]
+  );
+
   ////// DATAVIEW //////
+
+  const commuteColumns = [
+    {
+      title: `No`,
+      dataIndex: `id`,
+    },
+    {
+      title: `시간`,
+      dataIndex: `time`,
+    },
+    {
+      title: `구분`,
+      dataIndex: `status`,
+    },
+  ];
 
   return (
     <>
@@ -1434,20 +1462,13 @@ const Student = () => {
                               &nbsp;(Page&nbsp;
                               {data.startLv.split(` `)[2].split(`페이지`)[0]})
                             </Text>
-                            <Wrapper dr={`row`} width={`auto`}>
-                              <Text>
-                                <SpanText color={Theme.subTheme2_C}>●</SpanText>
-                                &nbsp;My Attendance&nbsp; &nbsp;
-                              </Text>
-                              <Wrapper width={width < 800 ? `150px` : `200px`}>
-                                <CustomSlide
-                                  value={slideValue(lectureStuCommute, data)}
-                                  disabled={true}
-                                  draggableTrack={true}
-                                  bgColor={Theme.subTheme2_C}
-                                />
-                              </Wrapper>
-                            </Wrapper>
+                            <Button
+                              type={`primary`}
+                              size={`small`}
+                              onClick={() => attendanceToggle(data)}
+                            >
+                              My Attendance
+                            </Button>
                           </Wrapper>
                         </Wrapper>
 
@@ -2003,7 +2024,7 @@ const Student = () => {
             />
 
             <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
-              <CommonTitle>Message to/from my teacher / admin </CommonTitle>
+              <CommonTitle>Message to / from my teacher / admin </CommonTitle>
             </Wrapper>
 
             <Wrapper>
@@ -2896,6 +2917,20 @@ const Student = () => {
                 />
               </Wrapper>
             </Wrapper>
+          </Modal>
+          <Modal
+            visible={attendanceModal}
+            onCancel={() => attendanceToggle(null)}
+            footer={null}
+            title={`My Attandance`}
+          >
+            <Table
+              dataSource={
+                lectureStuCommute &&
+                lectureStuCommute.filter((data) => data.LectureId === data.id)
+              }
+              columns={commuteColumns}
+            />
           </Modal>
         </WholeWrapper>
       </ClientLayout>

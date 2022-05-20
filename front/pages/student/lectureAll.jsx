@@ -63,11 +63,11 @@ const CustomButton = styled(Button)`
 `;
 
 const MessageSelectButton = styled(Button)`
-  width: 100px;
+  width: 120px;
   height: 40px;
 
   @media (max-width: 800px) {
-    width: 50px;
+    width: 90px;
     height: 30px;
     line-height: 30px;
     font-size: 12px;
@@ -330,6 +330,7 @@ const LectureAll = () => {
   const [bookDetail, setBookDetail] = useState("");
 
   const [limitModal, setLimitModal] = useState(false);
+  const [attendanceModal, setAttendanceModal] = useState(false);
 
   const bookColumns = [
     {
@@ -735,6 +736,10 @@ const LectureAll = () => {
     [bookDetail]
   );
 
+  const attendanceToggle = useCallback(() => {
+    setAttendanceModal((prev) => !prev);
+  }, [attendanceModal]);
+
   ////// DATAVIEW //////
 
   const limitColumns = [
@@ -787,6 +792,21 @@ const LectureAll = () => {
     {
       title: "일수",
       render: (data) => <div>D-{data.limitDate}</div>,
+    },
+  ];
+
+  const commuteColumns = [
+    {
+      title: `No`,
+      dataIndex: `id`,
+    },
+    {
+      title: `시간`,
+      dataIndex: `time`,
+    },
+    {
+      title: `구분`,
+      dataIndex: `status`,
     },
   ];
 
@@ -1262,21 +1282,13 @@ const LectureAll = () => {
                               &nbsp;(Page&nbsp;
                               {data.startLv.split(` `)[2].split(`페이지`)[0]})
                             </Text>
-                            <Wrapper dr={`row`} width={`auto`}>
-                              <Text>
-                                <SpanText color={Theme.subTheme2_C}>●</SpanText>
-                                &nbsp;My Attendance&nbsp; &nbsp;
-                              </Text>
-                              <Wrapper width={width < 800 ? `150px` : `200px`}>
-                                {console.log(lectureStuCommute)}
-                                <CustomSlide
-                                  value={slideValue(lectureStuCommute, data)}
-                                  disabled={true}
-                                  draggableTrack={true}
-                                  bgColor={Theme.subTheme2_C}
-                                />
-                              </Wrapper>
-                            </Wrapper>
+                            <Button
+                              type={`primary`}
+                              size={`small`}
+                              onClick={attendanceToggle}
+                            >
+                              My Attandance
+                            </Button>
                           </Wrapper>
                         </Wrapper>
 
@@ -1614,10 +1626,10 @@ const LectureAll = () => {
             >
               <Text fontSize={width < 800 ? `14px` : `20px`}>
                 {sendMessageType === 1
-                  ? "강사에게 쪽지 보내기"
+                  ? "Message to my teacher"
                   : sendMessageType === 2
-                  ? "수업에 대한 쪽지 보내기"
-                  : sendMessageType === 3 && "관리자에게 쪽지 보내기"}
+                  ? "Message to my lecture"
+                  : sendMessageType === 3 && "Message to admin"}
               </Text>
               <Wrapper dr={`row`} width={`auto`}>
                 <MessageSelectButton
@@ -1625,17 +1637,17 @@ const LectureAll = () => {
                   size="small"
                   onClick={() => sendMessageTypeHandler(1)}
                 >
-                  {"강사"}
+                  {"to my teacher"}
                 </MessageSelectButton>
 
-                <MessageSelectButton
+                {/* <MessageSelectButton
                   className={sendMessageType === 2 && `active`}
                   margin={width < 800 ? `0 0 0 5px` : `0 0 0 8px`}
                   size="small"
                   onClick={() => sendMessageTypeHandler(2)}
                 >
                   {"수업"}
-                </MessageSelectButton>
+                </MessageSelectButton> */}
 
                 <MessageSelectButton
                   className={sendMessageType === 3 && `active`}
@@ -1643,7 +1655,7 @@ const LectureAll = () => {
                   size="small"
                   onClick={() => sendMessageTypeHandler(3)}
                 >
-                  {"관리자"}
+                  {"to admin"}
                 </MessageSelectButton>
                 <CloseOutlined
                   onClick={onReset}
@@ -1814,6 +1826,21 @@ const LectureAll = () => {
             />
           </Wrapper>
         </CustomModal>
+
+        <Modal
+          visible={attendanceModal}
+          onCancel={attendanceToggle}
+          footer={null}
+          title={`My Attandance`}
+        >
+          <Table
+            dataSource={
+              lectureStuCommute &&
+              lectureStuCommute.filter((data) => data.LectureId === data.id)
+            }
+            columns={commuteColumns}
+          />
+        </Modal>
       </ClientLayout>
     </>
   );
