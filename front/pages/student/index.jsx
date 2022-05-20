@@ -1876,6 +1876,13 @@ const Student = () => {
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
+                  width={width < 800 ? `25%` : `10%`}
+                >
+                  날짜
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
                   width={width < 800 ? `45%` : `70%`}
                 >
                   제목
@@ -1886,13 +1893,6 @@ const Student = () => {
                   width={width < 800 ? `15%` : `10%`}
                 >
                   작성자
-                </Text>
-                <Text
-                  fontSize={width < 700 ? `14px` : `18px`}
-                  fontWeight={`Bold`}
-                  width={width < 800 ? `25%` : `10%`}
-                >
-                  날짜
                 </Text>
               </Wrapper>
               {noticeMyLectureList &&
@@ -1911,6 +1911,11 @@ const Student = () => {
                         <Wrapper width={width < 800 ? `15%` : `10%`}>
                           {data.id}
                         </Wrapper>
+                        <Wrapper width={width < 800 ? `25%` : `10%`}>
+                          {moment(data.createdAt, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )}
+                        </Wrapper>
                         <Wrapper
                           width={width < 800 ? `45%` : `70%`}
                           al={`flex-start`}
@@ -1920,11 +1925,6 @@ const Student = () => {
                         </Wrapper>
                         <Wrapper width={width < 800 ? `15%` : `10%`}>
                           {data.author}
-                        </Wrapper>
-                        <Wrapper width={width < 800 ? `25%` : `10%`}>
-                          {moment(data.createdAt, "YYYY/MM/DD").format(
-                            "YYYY/MM/DD"
-                          )}
                         </Wrapper>
                       </CustomTableHoverWrapper>
                     );
@@ -1959,6 +1959,13 @@ const Student = () => {
               <Text
                 fontSize={width < 700 ? `14px` : `18px`}
                 fontWeight={`Bold`}
+                width={width < 800 ? `25%` : `10%`}
+              >
+                날짜
+              </Text>
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`Bold`}
                 width={width < 800 ? `45%` : `70%`}
               >
                 제목
@@ -1969,13 +1976,6 @@ const Student = () => {
                 width={width < 800 ? `15%` : `10%`}
               >
                 작성자
-              </Text>
-              <Text
-                fontSize={width < 700 ? `14px` : `18px`}
-                fontWeight={`Bold`}
-                width={width < 800 ? `25%` : `10%`}
-              >
-                날짜
               </Text>
             </Wrapper>
             <Wrapper margin={`0 0 40px`}>
@@ -1995,6 +1995,11 @@ const Student = () => {
                         <Wrapper width={width < 800 ? `15%` : `10%`}>
                           {data.id}
                         </Wrapper>
+                        <Wrapper width={width < 800 ? `25%` : `10%`}>
+                          {moment(data.createdAt, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )}
+                        </Wrapper>
                         <Wrapper
                           width={width < 800 ? `45%` : `70%`}
                           al={`flex-start`}
@@ -2004,11 +2009,6 @@ const Student = () => {
                         </Wrapper>
                         <Wrapper width={width < 800 ? `15%` : `10%`}>
                           {data.author}
-                        </Wrapper>
-                        <Wrapper width={width < 800 ? `25%` : `10%`}>
-                          {moment(data.createdAt, "YYYY/MM/DD").format(
-                            "YYYY/MM/DD"
-                          )}
                         </Wrapper>
                       </CustomTableHoverWrapper>
                     );
@@ -2045,6 +2045,13 @@ const Student = () => {
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
+                  width={width < 800 ? `25%` : `10%`}
+                >
+                  날짜
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
                   width={width < 800 ? `45%` : `70%`}
                 >
                   제목
@@ -2055,13 +2062,6 @@ const Student = () => {
                   width={width < 800 ? `15%` : `10%`}
                 >
                   작성자
-                </Text>
-                <Text
-                  fontSize={width < 700 ? `14px` : `18px`}
-                  fontWeight={`Bold`}
-                  width={width < 800 ? `25%` : `10%`}
-                >
-                  날짜
                 </Text>
               </Wrapper>
 
@@ -2081,6 +2081,11 @@ const Student = () => {
                         <Wrapper width={width < 800 ? `15%` : `10%`}>
                           {data.id}
                         </Wrapper>
+                        <Wrapper width={width < 800 ? `25%` : `10%`}>
+                          {moment(data.createdAt, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )}
+                        </Wrapper>
                         <Wrapper
                           width={width < 800 ? `45%` : `70%`}
                           al={`flex-start`}
@@ -2090,11 +2095,6 @@ const Student = () => {
                         </Wrapper>
                         <Wrapper width={width < 800 ? `15%` : `10%`}>
                           {data.author}
-                        </Wrapper>
-                        <Wrapper width={width < 800 ? `25%` : `10%`}>
-                          {moment(data.createdAt, "YYYY/MM/DD").format(
-                            "YYYY/MM/DD"
-                          )}
                         </Wrapper>
                       </CustomTableHoverWrapper>
                     );
