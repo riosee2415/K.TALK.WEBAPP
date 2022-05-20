@@ -1654,16 +1654,16 @@ const Index = () => {
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
-                  width={`60%`}
+                  width={`25%`}
                 >
-                  제목
+                  날짜
                 </Text>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
-                  width={`25%`}
+                  width={`60%`}
                 >
-                  날짜
+                  제목
                 </Text>
               </Wrapper>
 
@@ -1695,18 +1695,18 @@ const Index = () => {
                       </Text>
                       <Text
                         fontSize={width < 700 ? `14px` : `16px`}
-                        width={`60%`}
-                        textAlign={`left`}
-                      >
-                        {data.title}
-                      </Text>
-                      <Text
-                        fontSize={width < 700 ? `14px` : `16px`}
                         width={`25%`}
                       >
                         {moment(data.createdAt, "YYYY/MM/DD").format(
                           "YYYY/MM/DD"
                         )}
+                      </Text>
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={`60%`}
+                        textAlign={`left`}
+                      >
+                        {data.title}
                       </Text>
                     </Wrapper>
                   );
@@ -1757,6 +1757,13 @@ const Index = () => {
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
+                    width={`25%`}
+                  >
+                    날짜
+                  </Text>
+                  <Text
+                    fontSize={width < 700 ? `14px` : `18px`}
+                    fontWeight={`Bold`}
                     width={`calc(100% - 15% - 15% - 25%)`}
                   >
                     제목
@@ -1768,14 +1775,6 @@ const Index = () => {
                     width={`15%`}
                   >
                     작성자
-                  </Text>
-
-                  <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
-                    fontWeight={`Bold`}
-                    width={`25%`}
-                  >
-                    날짜
                   </Text>
                 </Wrapper>
 
@@ -1805,6 +1804,14 @@ const Index = () => {
                         </Text>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
+                          width={`25%`}
+                        >
+                          {moment(data2.createdAt, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )}
+                        </Text>
+                        <Text
+                          fontSize={width < 700 ? `14px` : `16px`}
                           width={`calc(100% - 15% - 15% - 25%)`}
                           textAlign={`left`}
                         >
@@ -1816,14 +1823,6 @@ const Index = () => {
                           width={`15%`}
                         >
                           {data2.author}
-                        </Text>
-                        <Text
-                          fontSize={width < 700 ? `14px` : `16px`}
-                          width={`25%`}
-                        >
-                          {moment(data2.createdAt, "YYYY/MM/DD").format(
-                            "YYYY/MM/DD"
-                          )}
                         </Text>
                       </Wrapper>
                     );
