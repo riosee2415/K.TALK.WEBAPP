@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useDebugValue,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { useRouter } from "next/router";
@@ -17,6 +23,7 @@ import {
   Input,
   message,
   Modal,
+  Popconfirm,
   Select,
   Table,
 } from "antd";
@@ -60,6 +67,12 @@ import { NOTICE_LECTURE_LIST_REQUEST } from "../../../reducers/notice";
 import { MESSAGE_LECTURE_LIST_REQUEST } from "../../../reducers/message";
 import { CalendarOutlined } from "@ant-design/icons";
 import { APP_DETAIL_REQUEST } from "../../../reducers/application";
+import {
+  LECTURE_MEMO_CREATE_REQUEST,
+  LECTURE_MEMO_DELETE_REQUEST,
+  LECTURE_MEMO_LIST_REQUEST,
+  LECTURE_MEMO_UDPATE_REQUEST,
+} from "../../../reducers/lectureMemo";
 
 const CustomTextArea = styled(Input.TextArea)`
   width: ${(props) => props.width || `250px`};
@@ -165,6 +178,16 @@ const DetailClass = () => {
   const { applicationDetail, st_appDetailDone, st_appDetailError } =
     useSelector((state) => state.app);
 
+  const {
+    lectureMemoList,
+    st_lectureMemoCreateDone,
+    st_lectureMemoCreateError,
+    st_lectureMemoUpdateDone,
+    st_lectureMemoUpdateError,
+    st_lectureMemoDeleteDone,
+    st_lectureMemoDeleteError,
+  } = useSelector((state) => state.lectureMemo);
+
   const router = useRouter();
 
   const moveLinkHandler = useCallback((link) => {
@@ -220,7 +243,16 @@ const DetailClass = () => {
   const [stuDetailModal, setStuDetailModal] = useState(false);
   const [stuChangeDate, setStuChangeDate] = useState("");
 
+  const [memoDetailModal, setMemoDetailModal] = useState("");
+  const [memoDetailData, setMemoDetailData] = useState("");
+
+  const [memoCreateModal, setMemoCreateModal] = useState("");
+  const [memoUpdateData, setMemoUpdateData] = useState("");
+
   const [updateStuForm] = Form.useForm();
+
+  const [createMemoForm] = Form.useForm();
+  const [updateMemoForm] = Form.useForm();
   const [stuDetail, setStuDetail] = useState([]);
 
   const [isCalendar, setIsCalendar] = useState(false);
@@ -250,6 +282,13 @@ const DetailClass = () => {
       });
       dispatch({
         type: PARTICIPANT_ADMIN_LIST_REQUEST,
+        data: {
+          LectureId: router.query.id,
+        },
+      });
+
+      dispatch({
+        type: LECTURE_MEMO_LIST_REQUEST,
         data: {
           LectureId: router.query.id,
         },
@@ -427,6 +466,70 @@ const DetailClass = () => {
     [stuDetail, me]
   );
 
+  // useEffect(() => {
+  //   if (memoCreateModal) {
+  // updateMemoForm.resetFields();
+  // createMemoForm.resetFields();
+  //   }
+  // }, [memoCreateModal]);
+
+  useEffect(() => {
+    if (st_lectureMemoCreateDone) {
+      dispatch({
+        type: LECTURE_MEMO_LIST_REQUEST,
+        data: {
+          LectureId: router.query.id,
+        },
+      });
+      memoCreateToggle(null);
+      message.success(`메모가 작성되었습니다.`);
+    }
+  }, [st_lectureMemoCreateDone]);
+
+  useEffect(() => {
+    if (st_lectureMemoCreateError) {
+      message.error(st_lectureMemoCreateError);
+    }
+  }, [st_lectureMemoCreateError]);
+
+  useEffect(() => {
+    if (st_lectureMemoUpdateDone) {
+      dispatch({
+        type: LECTURE_MEMO_LIST_REQUEST,
+        data: {
+          LectureId: router.query.id,
+        },
+      });
+      memoCreateToggle(null);
+      message.success(`메모가 수정되었습니다.`);
+    }
+  }, [st_lectureMemoUpdateDone]);
+
+  useEffect(() => {
+    if (st_lectureMemoUpdateError) {
+      message.error(st_lectureMemoUpdateError);
+    }
+  }, [st_lectureMemoUpdateError]);
+
+  useEffect(() => {
+    if (st_lectureMemoDeleteDone) {
+      dispatch({
+        type: LECTURE_MEMO_LIST_REQUEST,
+        data: {
+          LectureId: router.query.id,
+        },
+      });
+
+      message.success(`메모가 삭제되었습니다.`);
+    }
+  }, [st_lectureMemoDeleteDone]);
+
+  useEffect(() => {
+    if (st_lectureMemoDeleteError) {
+      message.error(st_lectureMemoDeleteError);
+    }
+  }, [st_lectureMemoDeleteError]);
+
   ////// HANDLER //////
 
   const fileDownloadHandler = useCallback(async (filePath) => {
@@ -466,9 +569,20 @@ const DetailClass = () => {
     setLecModal(true);
     setLecMemoData(data);
   }, []);
+
   const lecMemoClose = useCallback(() => {
     setLecModal(false);
     setLecMemoData(null);
+  }, []);
+
+  const memoOpen = useCallback((data) => {
+    setMemoDetailModal(true);
+    setMemoDetailData(data);
+  }, []);
+
+  const memoClose = useCallback(() => {
+    setMemoDetailModal(false);
+    setMemoDetailData(null);
   }, []);
 
   const detailBookOpen = useCallback(() => {
@@ -642,6 +756,72 @@ const DetailClass = () => {
     setStuChangeModal(false);
   }, []);
 
+  const memoCreateToggle = useCallback(
+    (data, create) => {
+      setMemoUpdateData(data);
+      if (memoCreateModal) {
+        setMemoCreateModal(false);
+        updateMemoForm.resetFields();
+        createMemoForm.resetFields();
+      } else {
+        setMemoCreateModal(true);
+        if (data) {
+          console.log(`123123`);
+          setTimeout(() => {
+            updateMemoForm.setFieldsValue({
+              title: data.title,
+              content: data.content,
+            });
+          }, 500);
+        }
+      }
+    },
+    [memoCreateModal, memoUpdateData]
+  );
+  const memoCreateModalOk = useCallback(() => {
+    createMemoForm.submit();
+  }, [memoCreateModal]);
+
+  const memoUpdateModalOk = useCallback(() => {
+    updateMemoForm.submit();
+  }, [memoCreateModal]);
+
+  const memoCreateSubmit = useCallback(
+    (data) => {
+      dispatch({
+        type: LECTURE_MEMO_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          content: data.content,
+          LectureId: router.query.id,
+        },
+      });
+    },
+    [router.query]
+  );
+
+  const memoUpdateSubmit = useCallback(
+    (data) => {
+      dispatch({
+        type: LECTURE_MEMO_UDPATE_REQUEST,
+        data: {
+          id: memoUpdateData.id,
+          title: data.title,
+          content: data.content,
+        },
+      });
+    },
+    [memoCreateModal]
+  );
+
+  const deleteHandler = useCallback((data) => {
+    dispatch({
+      type: LECTURE_MEMO_DELETE_REQUEST,
+      data: {
+        memoId: data.id,
+      },
+    });
+  }, []);
   ////// DATAVIEW //////
   const stuColumns = [
     {
@@ -679,7 +859,8 @@ const DetailClass = () => {
         <Button
           size={`small`}
           type={`primary`}
-          onClick={() => detailCommutesOpen(data)}>
+          onClick={() => detailCommutesOpen(data)}
+        >
           상세보기
         </Button>
       ),
@@ -690,7 +871,8 @@ const DetailClass = () => {
         <Button
           size={`small`}
           type={`primary`}
-          onClick={() => detailMemoOpen(data)}>
+          onClick={() => detailMemoOpen(data)}
+        >
           메모 보기
         </Button>
       ),
@@ -705,7 +887,8 @@ const DetailClass = () => {
             data.level === 5
               ? message.error("개발사는 권한을 수정할 수 없습니다.")
               : classPartDetailModalOpen(data)
-          }>
+          }
+        >
           정보 보기
         </Button>
       ),
@@ -716,7 +899,8 @@ const DetailClass = () => {
         <Button
           size={`small`}
           type={`primary`}
-          onClick={() => detailModalOpen(data)}>
+          onClick={() => detailModalOpen(data)}
+        >
           내역 보기
         </Button>
       ),
@@ -728,7 +912,8 @@ const DetailClass = () => {
         <Button
           size={`small`}
           type={`primary`}
-          onClick={() => changeModalOpen(data)}>
+          onClick={() => changeModalOpen(data)}
+        >
           변경
         </Button>
       ),
@@ -758,9 +943,54 @@ const DetailClass = () => {
         <Button
           size={`small`}
           type={`primary`}
-          onClick={() => lecMemoOpen(data)}>
+          onClick={() => lecMemoOpen(data)}
+        >
           메모 보기
         </Button>
+      ),
+    },
+  ];
+
+  const memoColumns = [
+    {
+      title: "번호",
+      dataIndex: "id",
+    },
+    {
+      title: "제목",
+      render: (data) => <div>{data.title}</div>,
+    },
+    {
+      title: "작성일",
+      render: (data) => <div>{data.createdAt.slice(0, 10)}</div>,
+    },
+
+    {
+      title: "수정",
+      render: (data) => (
+        <Button
+          size={`small`}
+          type={`primary`}
+          onClick={() => memoCreateToggle(data)}
+        >
+          UPDATE
+        </Button>
+      ),
+    },
+    {
+      title: "삭제",
+      render: (data) => (
+        <Popconfirm
+          placement="bottomRight"
+          title={`삭제하시겠습니가?`}
+          onConfirm={() => deleteHandler(data)}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button size={`small`} type={`danger`}>
+            DELETE
+          </Button>
+        </Popconfirm>
       ),
     },
   ];
@@ -816,7 +1046,8 @@ const DetailClass = () => {
           <Button
             type={`primary`}
             size={`small`}
-            onClick={() => fileDownloadHandler(data.file)}>
+            onClick={() => fileDownloadHandler(data.file)}
+          >
             다운로드
           </Button>
         );
@@ -840,7 +1071,8 @@ const DetailClass = () => {
           <Button
             type={`primary`}
             size={`small`}
-            onClick={() => detailMemoContentOpen(data)}>
+            onClick={() => detailMemoContentOpen(data)}
+          >
             내용 보기
           </Button>
         );
@@ -889,7 +1121,8 @@ const DetailClass = () => {
         <Button
           type="primary"
           size={`small`}
-          onClick={() => noticeToggle(data)}>
+          onClick={() => noticeToggle(data)}
+        >
           상세보기
         </Button>
       ),
@@ -1320,7 +1553,8 @@ const DetailClass = () => {
               <Text
                 fontSize={`16px`}
                 color={Theme.grey2_C}
-                margin={`0 0 0 15px`}>
+                margin={`0 0 0 15px`}
+              >
                 NO.{lectureDetail && lectureDetail[0].number}
               </Text>
             </Wrapper>
@@ -1332,7 +1566,8 @@ const DetailClass = () => {
               margin={`0 6px`}
               kindOf={`white`}
               padding={`0`}
-              onClick={() => moveLinkHandler(`/admin`)}>
+              onClick={() => moveLinkHandler(`/admin`)}
+            >
               강의 목록
             </CommonButton>
             <CommonButton
@@ -1341,7 +1576,8 @@ const DetailClass = () => {
               margin={`0 6px`}
               kindOf={`white`}
               padding={`0`}
-              onClick={() => moveLinkHandler(`/admin/board/notice/list`)}>
+              onClick={() => moveLinkHandler(`/admin/board/notice/list`)}
+            >
               게시판
             </CommonButton>
             <CommonButton
@@ -1350,7 +1586,8 @@ const DetailClass = () => {
               margin={`0 6px`}
               kindOf={`white`}
               padding={`0`}
-              onClick={() => moveLinkHandler(`/admin/board/message/list`)}>
+              onClick={() => moveLinkHandler(`/admin/board/message/list`)}
+            >
               쪽지
             </CommonButton>
           </Wrapper>
@@ -1364,7 +1601,8 @@ const DetailClass = () => {
           bgColor={Theme.white_C}
           radius={`10px`}
           shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
-          margin={`0 0 32px`}>
+          margin={`0 0 32px`}
+        >
           <Wrapper width={`auto`} al={`flex-start`}>
             <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
               <Wrapper width={`auto`} margin={`0 10px 0 0`} padding={`8px`}>
@@ -1386,7 +1624,8 @@ const DetailClass = () => {
             width={`auto`}
             dr={`row`}
             ju={`flex-start`}
-            margin={`0 100px 0 72px`}>
+            margin={`0 100px 0 72px`}
+          >
             <Wrapper width={`auto`} margin={`0 10px 0 0`} padding={`8px`}>
               <Image
                 width={`18px`}
@@ -1420,13 +1659,15 @@ const DetailClass = () => {
             al={`flex-start`}
             fontSize={`16px`}
             margin={`10px 0 0`}
-            padding={`0 0 0 44px`}>
+            padding={`0 0 0 44px`}
+          >
             <Wrapper dr={`row`} ju={`flex-start`}>
               <Text
                 fontWeight={`bold`}
                 width={`90px`}
                 margin={`0 20px 0 0`}
-                color={Theme.black_C}>
+                color={Theme.black_C}
+              >
                 ZOOM LINK
               </Text>
               {lectureDetail && lectureDetail[0].zoomLink
@@ -1477,7 +1718,8 @@ const DetailClass = () => {
           dr={`row`}
           ju={`space-between`}
           al={`flex-start`}
-          margin={`30px 0 0`}>
+          margin={`30px 0 0`}
+        >
           <Wrapper width={`49%`} al={`flex-start`}>
             <Text fontSize={`18px`} fontWeight={`bold`}>
               게시판
@@ -1515,6 +1757,24 @@ const DetailClass = () => {
             />
           </Wrapper>
         </Wrapper>
+        <Wrapper dr={`row`} ju={`space-between`}>
+          <Text fontSize={`18px`} fontWeight={`bold`}>
+            강의 메모
+          </Text>
+          <Button
+            size={`small`}
+            type={`primary`}
+            onClick={() => memoCreateToggle(null, "create")}
+          >
+            메모 작성
+          </Button>
+        </Wrapper>
+
+        <Table
+          size={`small`}
+          columns={memoColumns}
+          dataSource={lectureMemoList}
+        />
       </AdminContent>
 
       <Modal visible={memoModal} footer={null} onCancel={detailMemoClose}>
@@ -1541,7 +1801,8 @@ const DetailClass = () => {
       <Modal
         visible={commutesModal}
         footer={null}
-        onCancel={detailCommutesClose}>
+        onCancel={detailCommutesClose}
+      >
         <Wrapper al={`flex-start`}>
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
             출석 기록
@@ -1567,7 +1828,8 @@ const DetailClass = () => {
         footer={null}
         onCancel={detailMemoContentClose}
         width={800}
-        title={`메모 내용`}>
+        title={`메모 내용`}
+      >
         <Wrapper al={`flex-start`}>
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
             {detailMemo && detailMemo.username} &nbsp;| &nbsp;
@@ -1590,7 +1852,8 @@ const DetailClass = () => {
         footer={null}
         onCancel={lecMemoClose}
         width={600}
-        title={`메모 내용`}>
+        title={`메모 내용`}
+      >
         <Wrapper al={`flex-start`}>
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
             {lecMemoData && lecMemoData.createdAt.slice(0, 10)}
@@ -1611,7 +1874,8 @@ const DetailClass = () => {
         visible={bookModal}
         footer={null}
         onCancel={detailBookClose}
-        width={width < 700 ? `80%` : 700}>
+        width={width < 700 ? `80%` : 700}
+      >
         <Wrapper al={`flex-start`}>
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
             교재
@@ -1637,7 +1901,8 @@ const DetailClass = () => {
         visible={noticeModal}
         onCancel={() => noticeToggle(null)}
         footer={null}
-        title={`게시글 자세히 보기`}>
+        title={`게시글 자세히 보기`}
+      >
         <Wrapper al={`flex-start`}>
           <Wrapper dr={`row`} ju={`flex-start`}>
             <Text fontWeight={`700`}>작성일 : </Text>
@@ -1660,7 +1925,8 @@ const DetailClass = () => {
               <Text
                 dangerouslySetInnerHTML={{
                   __html: noticeDetail && noticeDetail.content,
-                }}></Text>
+                }}
+              ></Text>
             </Wrapper>
           </Wrapper>
         </Wrapper>
@@ -1670,7 +1936,8 @@ const DetailClass = () => {
         visible={messageModal}
         onCancel={() => messageToggle(null)}
         footer={null}
-        title={`쪽지 자세히 보기`}>
+        title={`쪽지 자세히 보기`}
+      >
         <Wrapper al={`flex-start`}>
           <Wrapper dr={`row`} ju={`flex-start`}>
             <Text fontWeight={`700`}>작성일 : </Text>
@@ -1693,7 +1960,8 @@ const DetailClass = () => {
               <Text
                 dangerouslySetInnerHTML={{
                   __html: messageDetail && messageDetail.content,
-                }}></Text>
+                }}
+              ></Text>
             </Wrapper>
           </Wrapper>
         </Wrapper>
@@ -1705,12 +1973,14 @@ const DetailClass = () => {
         width={`80%`}
         title={`학생 강의 목록`}
         footer={null}
-        onCancel={() => setDetailToggle(false)}>
+        onCancel={() => setDetailToggle(false)}
+      >
         <Text
           padding={`16px 0px`}
           color={Theme.black_2C}
           fontSize={`16px`}
-          fontWeight={`500`}>
+          fontWeight={`500`}
+        >
           참여하고 있는 강의
           <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
             *수업 참여일:관리자가 학생의 수업을 참여시킨 날짜
@@ -1727,7 +1997,8 @@ const DetailClass = () => {
           padding={`16px 0px`}
           color={Theme.black_2C}
           fontSize={`16px`}
-          fontWeight={`500`}>
+          fontWeight={`500`}
+        >
           반 이동 내역
           <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
             *수업 변경일:관리자가 학생의 수업을 변경시킨 날짜
@@ -1744,7 +2015,8 @@ const DetailClass = () => {
           padding={`16px 0px`}
           color={Theme.black_2C}
           fontSize={`16px`}
-          fontWeight={`500`}>
+          fontWeight={`500`}
+        >
           종료된 강의 내역
           <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
             *수업 종료일:관리자가 학생의 수업을 종료시킨 날짜
@@ -1763,7 +2035,8 @@ const DetailClass = () => {
           padding={`16px 0px`}
           color={Theme.black_2C}
           fontSize={`16px`}
-          fontWeight={`500`}>
+          fontWeight={`500`}
+        >
           일주일 이하로 남은 강의
           <SpanText color={Theme.red_C} fontSize={`14px`} margin={`0 0 0 10px`}>
             *수업 7일 이하:학생의 수업 7일 이하 남은 강의
@@ -1783,7 +2056,8 @@ const DetailClass = () => {
         width={`1000px`}
         title={`학생 정보`}
         onCancel={() => setStuDetailModal(false)}
-        footer={null}>
+        footer={null}
+      >
         <CustomForm form={updateStuForm} onFinish={updateStuFinish}>
           <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 50px`}>
             <Text fontSize={`16px`} fontWeight={`700`} margin={`0 0 10px`}>
@@ -1797,7 +2071,8 @@ const DetailClass = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}>
+                    margin={`0 5px 0 0`}
+                  >
                     프로필 이미지
                   </ColWrapper>
                   <ColWrapper>
@@ -1805,7 +2080,8 @@ const DetailClass = () => {
                       width={`100px`}
                       height={`100px`}
                       margin={`0 0 10px`}
-                      radius={`50%`}>
+                      radius={`50%`}
+                    >
                       <Image
                         radius={`50%`}
                         src={
@@ -1824,7 +2100,8 @@ const DetailClass = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}>
+                    margin={`0 5px 0 0`}
+                  >
                     이름
                   </ColWrapper>
                   <ColWrapper>
@@ -1839,7 +2116,8 @@ const DetailClass = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}>
+                    margin={`0 5px 0 0`}
+                  >
                     아이디
                   </ColWrapper>
                   <ColWrapper>{stuDetail && stuDetail.userId}</ColWrapper>
@@ -1851,7 +2129,8 @@ const DetailClass = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}>
+                    margin={`0 5px 0 0`}
+                  >
                     이메일
                   </ColWrapper>
                   <ColWrapper>{stuDetail && stuDetail.email}</ColWrapper>
@@ -1863,7 +2142,8 @@ const DetailClass = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}>
+                    margin={`0 5px 0 0`}
+                  >
                     휴대폰 번호
                   </ColWrapper>
                   <ColWrapper>
@@ -1885,7 +2165,8 @@ const DetailClass = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}>
+                    margin={`0 5px 0 0`}
+                  >
                     비밀번호
                   </ColWrapper>
 
@@ -1902,7 +2183,8 @@ const DetailClass = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}>
+                    margin={`0 5px 0 0`}
+                  >
                     생년월일
                   </ColWrapper>
 
@@ -1920,7 +2202,8 @@ const DetailClass = () => {
                     display={isCalendar ? "flex" : "none"}
                     width={`auto`}
                     border={`1px solid ${Theme.grey_C}`}
-                    margin={`0 0 20px`}>
+                    margin={`0 0 20px`}
+                  >
                     <Calendar
                       style={{ width: width < 1350 ? `100%` : `300px` }}
                       fullscreen={false}
@@ -1936,7 +2219,8 @@ const DetailClass = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}>
+                    margin={`0 5px 0 0`}
+                  >
                     국가
                   </ColWrapper>
 
@@ -1962,7 +2246,8 @@ const DetailClass = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}>
+                    margin={`0 5px 0 0`}
+                  >
                     거주 국가
                   </ColWrapper>
 
@@ -1988,7 +2273,8 @@ const DetailClass = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}>
+                    margin={`0 5px 0 0`}
+                  >
                     사용언어
                   </ColWrapper>
 
@@ -2005,7 +2291,8 @@ const DetailClass = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}>
+                    margin={`0 5px 0 0`}
+                  >
                     SNS
                   </ColWrapper>
 
@@ -2022,7 +2309,8 @@ const DetailClass = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}>
+                    margin={`0 5px 0 0`}
+                  >
                     SNS Id
                   </ColWrapper>
 
@@ -2039,7 +2327,8 @@ const DetailClass = () => {
                     height={`30px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
-                    margin={`0 5px 0 0`}>
+                    margin={`0 5px 0 0`}
+                  >
                     회차
                   </ColWrapper>
 
@@ -2057,13 +2346,15 @@ const DetailClass = () => {
                     dr={`row`}
                     margin={`0 0 10px 0`}
                     ju={`flex-start`}
-                    al={`flex-start`}>
+                    al={`flex-start`}
+                  >
                     <ColWrapper
                       width={`140px`}
                       height={`30px`}
                       bgColor={Theme.basicTheme_C}
                       color={Theme.white_C}
-                      margin={`0 5px 0 0`}>
+                      margin={`0 5px 0 0`}
+                    >
                       시차
                     </ColWrapper>
 
@@ -2075,13 +2366,15 @@ const DetailClass = () => {
                   <RowWrapper
                     width={`100%`}
                     al={`flex-start`}
-                    margin={`0 0 10px 0`}>
+                    margin={`0 0 10px 0`}
+                  >
                     <ColWrapper
                       width={`140px`}
                       height={`30px`}
                       bgColor={Theme.basicTheme_C}
                       color={Theme.white_C}
-                      margin={`0 5px 0 0`}>
+                      margin={`0 5px 0 0`}
+                    >
                       원하는 시작 날짜
                     </ColWrapper>
                     <ColWrapper>
@@ -2094,26 +2387,30 @@ const DetailClass = () => {
                   <RowWrapper
                     width={`100%`}
                     al={`flex-start`}
-                    margin={`0 0 10px 0`}>
+                    margin={`0 0 10px 0`}
+                  >
                     <ColWrapper
                       width={`140px`}
                       height={`30px`}
                       bgColor={Theme.basicTheme_C}
                       color={Theme.white_C}
-                      margin={`0 5px 0 0`}>
+                      margin={`0 5px 0 0`}
+                    >
                       무료수업 담당 강사
                     </ColWrapper>
                     <ColWrapper>
                       <FormItem name="freeTeacher">
                         <Select
                           style={{ width: `250px` }}
-                          placeholder={`강사를 선택해주세요.`}>
+                          placeholder={`강사를 선택해주세요.`}
+                        >
                           {teachers &&
                             teachers.map((data, idx) => {
                               return (
                                 <Select.Option
                                   key={data.id}
-                                  value={data.username}>
+                                  value={data.username}
+                                >
                                   {data.username}
                                 </Select.Option>
                               );
@@ -2126,26 +2423,30 @@ const DetailClass = () => {
                   <RowWrapper
                     width={`100%`}
                     al={`flex-start`}
-                    margin={`0 0 10px 0`}>
+                    margin={`0 0 10px 0`}
+                  >
                     <ColWrapper
                       width={`140px`}
                       height={`30px`}
                       bgColor={Theme.basicTheme_C}
                       color={Theme.white_C}
-                      margin={`0 5px 0 0`}>
+                      margin={`0 5px 0 0`}
+                    >
                       담당 강사
                     </ColWrapper>
                     <ColWrapper>
                       <FormItem name="teacher">
                         <Select
                           style={{ width: `250px` }}
-                          placeholder={`강사를 선택해주세요.`}>
+                          placeholder={`강사를 선택해주세요.`}
+                        >
                           {teachers &&
                             teachers.map((data, idx) => {
                               return (
                                 <Select.Option
                                   key={data.id}
-                                  value={data.username}>
+                                  value={data.username}
+                                >
                                   {data.username}
                                 </Select.Option>
                               );
@@ -2172,13 +2473,15 @@ const DetailClass = () => {
                   <RowWrapper
                     width={`100%`}
                     al={`flex-start`}
-                    margin={`0 0 10px 0`}>
+                    margin={`0 0 10px 0`}
+                  >
                     <ColWrapper
                       width={`140px`}
                       height={`30px`}
                       bgColor={Theme.basicTheme_C}
                       color={Theme.white_C}
-                      margin={`0 5px 0 0`}>
+                      margin={`0 5px 0 0`}
+                    >
                       줌 미팅 시간
                     </ColWrapper>
                     <ColWrapper>
@@ -2194,13 +2497,15 @@ const DetailClass = () => {
                   <RowWrapper
                     width={`100%`}
                     al={`flex-start`}
-                    margin={`0 0 10px 0`}>
+                    margin={`0 0 10px 0`}
+                  >
                     <ColWrapper
                       width={`140px`}
                       height={`30px`}
                       bgColor={Theme.basicTheme_C}
                       color={Theme.white_C}
-                      margin={`0 5px 0 0`}>
+                      margin={`0 5px 0 0`}
+                    >
                       레벨
                     </ColWrapper>
 
@@ -2212,13 +2517,15 @@ const DetailClass = () => {
                   <RowWrapper
                     width={`100%`}
                     al={`flex-start`}
-                    margin={`0 0 10px 0`}>
+                    margin={`0 0 10px 0`}
+                  >
                     <ColWrapper
                       width={`140px`}
                       height={`30px`}
                       bgColor={Theme.basicTheme_C}
                       color={Theme.white_C}
-                      margin={`0 5px 0 0`}>
+                      margin={`0 5px 0 0`}
+                    >
                       가능한 수업시간
                     </ColWrapper>
 
@@ -2233,7 +2540,8 @@ const DetailClass = () => {
                       height={`30px`}
                       bgColor={Theme.basicTheme_C}
                       color={Theme.white_C}
-                      margin={`0 5px 0 0`}>
+                      margin={`0 5px 0 0`}
+                    >
                       메모
                     </ColWrapper>
                     <ColWrapper al={`flex-start`}>
@@ -2276,7 +2584,8 @@ const DetailClass = () => {
               <Button
                 size={`small`}
                 onClick={() => setStuDetailModal(false)}
-                style={{ marginRight: 10 }}>
+                style={{ marginRight: 10 }}
+              >
                 취소
               </Button>
 
@@ -2292,7 +2601,8 @@ const DetailClass = () => {
         width={`600px`}
         visible={stuChangeModal}
         footer={null}
-        onCancel={changeModalClose}>
+        onCancel={changeModalClose}
+      >
         <Wrapper al={`flex-start`} ju={`flex-start`} minHeight={`400px`}>
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
             학생수업 변경
@@ -2302,7 +2612,8 @@ const DetailClass = () => {
             value={stuChangeDate || ""}
             placeholder={["수업참여 시작일", "수업 끝나는날"]}
             onChange={stuDateChangeHandler}
-            showTime></RangePicker>
+            showTime
+          ></RangePicker>
         </Wrapper>
 
         <Wrapper al={`flex-end`}>
@@ -2310,6 +2621,38 @@ const DetailClass = () => {
             변경
           </Button>
         </Wrapper>
+      </Modal>
+
+      <Modal
+        title={`강의 메모 내용 보기`}
+        visible={memoDetailModal}
+        onCancel={memoClose}
+      >
+        asdasd
+      </Modal>
+
+      <Modal
+        title={memoUpdateData ? `강의 메모 수정` : `강의 메모 작성`}
+        visible={memoCreateModal}
+        onCancel={() => memoCreateToggle(null)}
+        onOk={memoUpdateData ? memoUpdateModalOk : memoCreateModalOk}
+      >
+        <Form
+          form={memoUpdateData ? updateMemoForm : createMemoForm}
+          onFinish={memoUpdateData ? memoUpdateSubmit : memoCreateSubmit}
+        >
+          <FormItem name={`title`} label={`제목`} rules={[{ required: true }]}>
+            <Input />
+          </FormItem>
+          <br />
+          <FormItem
+            name={`content`}
+            label={`내용`}
+            rules={[{ required: true }]}
+          >
+            <Input.TextArea />
+          </FormItem>
+        </Form>
       </Modal>
     </AdminLayout>
   );

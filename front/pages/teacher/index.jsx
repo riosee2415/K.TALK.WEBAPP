@@ -417,6 +417,10 @@ const Index = () => {
 
   const [messageDatum, setMessageDatum] = useState();
 
+  const [currentModalStage, setCurrentModalStage] = useState(null);
+  const [currentModalLevel, setCurrentModalLevel] = useState(null);
+  const [currentModalKinds, setCurrentModalKinds] = useState(null);
+
   const textbookModalHandler = useCallback((data) => {
     setTextbookToggle((prev) => !prev);
     setTextbookData(data);
@@ -696,6 +700,9 @@ const Index = () => {
 
     setNoticeViewDatum("");
     setTextbookData("");
+    setCurrentModalKinds(null);
+    setCurrentModalLevel(null);
+    setCurrentModalStage(null);
   }, []);
 
   const clickImageUpload = useCallback(() => {
@@ -2071,47 +2078,73 @@ const Index = () => {
                 rules={[{ required: true, message: "권을 선택해주세요." }]}
                 label={`권`}
                 name={`level`}
+                onBlur={() =>
+                  textBookUploadform.getFieldValue(`level`) === "" &&
+                  setCurrentModalLevel(null)
+                }
               >
-                <Select>
-                  {[1, 2, 3, 4, 5, 6].map((data, idx) => {
-                    return (
-                      <Select.Option value={data} key={idx}>
-                        {data}
-                      </Select.Option>
-                    );
-                  })}
-                </Select>
+                {currentModalLevel === "기타" ? (
+                  <Input />
+                ) : (
+                  <Select onSelect={(e) => setCurrentModalLevel(e)}>
+                    {[`기타`, 1, 2, 3, 4, 5, 6].map((data, idx) => {
+                      return (
+                        <Select.Option value={data} key={idx}>
+                          {data}
+                        </Select.Option>
+                      );
+                    })}
+                  </Select>
+                )}
               </Form.Item>
               <Form.Item
                 rules={[{ required: true, message: "단원을 선택해주세요." }]}
                 label={`단원`}
                 name={`stage`}
+                onBlur={() =>
+                  textBookUploadform.getFieldValue(`stage`) === "" &&
+                  setCurrentModalStage(null)
+                }
               >
-                <Select>
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((data, idx) => {
-                    return (
-                      <Select.Option value={data} key={idx}>
-                        {data}
-                      </Select.Option>
-                    );
-                  })}
-                </Select>
+                {currentModalStage === "기타" ? (
+                  <Input />
+                ) : (
+                  <Select onSelect={(e) => setCurrentModalStage(e)}>
+                    {[`기타`, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((data, idx) => {
+                      return (
+                        <Select.Option value={data} key={idx}>
+                          {data}
+                        </Select.Option>
+                      );
+                    })}
+                  </Select>
+                )}
               </Form.Item>
 
               <Form.Item
                 rules={[{ required: true, message: "유형을 선택해주세요." }]}
                 label={`유형`}
                 name={`kinds`}
+                onBlur={() =>
+                  textBookUploadform.getFieldValue(`kinds`) === "" &&
+                  setCurrentModalKinds(null)
+                }
               >
-                <Select>
-                  {[`교과서`, `워크북`, `듣기파일`, `토픽`].map((data, idx) => {
-                    return (
-                      <Select.Option value={data} key={idx}>
-                        {data}
-                      </Select.Option>
-                    );
-                  })}
-                </Select>
+                {currentModalKinds === "기타" ? (
+                  <Input />
+                ) : (
+                  <Select onSelect={(e) => setCurrentModalKinds(e)}>
+                    {[`기타`, `교과서`, `워크북`, `듣기파일`, `토픽`].map(
+                      (data, idx) => {
+                        return (
+                          <Select.Option value={data} key={idx}>
+                            {data}
+                          </Select.Option>
+                        );
+                      }
+                    )}
+                  </Select>
+                )}
               </Form.Item>
             </Form>
           </Wrapper>

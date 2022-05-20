@@ -19,6 +19,7 @@ import paymentSaga from "./payment";
 import bookSaga from "./book";
 import payClassSaga from "./payClass";
 import teacherPaySaga from "./teacherPay";
+import lectureMemoSaga from "./lectureMemo";
 //
 import axios from "axios";
 import backURL from "../config/config";
@@ -48,5 +49,6 @@ export default function* rootSaga() {
     fork(bookSaga),
     fork(payClassSaga),
     fork(teacherPaySaga),
+    fork(lectureMemoSaga),
   ]);
 }
