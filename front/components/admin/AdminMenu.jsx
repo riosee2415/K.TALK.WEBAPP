@@ -15,7 +15,7 @@ import styled from "styled-components";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { CURRENT_ADMINMENU_STATUS } from "../../reducers/user";
-import { Wrapper, Image } from "../commonComponents";
+import { Wrapper, Image, ATag } from "../commonComponents";
 
 const { SubMenu } = Menu;
 const MenuName = styled.div`
@@ -67,18 +67,16 @@ const AdminMenu = () => {
         selectedKeys={router.pathname}
         disabled={false}
       >
-        <Wrapper
-          margin={`20px 0 10px`}
-          cursor={`pointer`}
-          onClick={() => moveLinkHandler(`/`)}
-        >
-          <Image
-            alt="logo"
-            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/logo/favicon.png`}
-            width={`50px`}
-            height={`50px`}
-            radius={`100%`}
-          />
+        <Wrapper margin={`20px 0 10px`}>
+          <ATag href={`/`} width={`auto`}>
+            <Image
+              alt="logo"
+              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/logo/favicon.png`}
+              width={`50px`}
+              height={`50px`}
+              radius={`100%`}
+            />
+          </ATag>
         </Wrapper>
         <Wrapper height={`30px`} fontSize={`0.8rem`}>
           {me && me.username}

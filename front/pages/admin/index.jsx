@@ -1460,7 +1460,7 @@ const AdminHome = () => {
               <Image
                 width={`300px`}
                 alt="logo"
-                src={`https://firebasestorage.googleapis.com/v0/b/storage-4leaf.appspot.com/o/4leaf%2Flogo%2F4leafsoftware_logo_LW.png?alt=media&token=bc68284c-e82a-42ee-b4c4-a95e0ebc699e`}
+                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/logo/logo.png`}
               />
               <Wrapper
                 color={Theme.white_C}
