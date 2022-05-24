@@ -188,10 +188,13 @@ router.post("/lecture/list", isLoggedIn, async (req, res, next) => {
 // END DATE 빠짐 ////////////////////////////////////////////
 // END DATE 빠짐 ////////////////////////////////////////////
 router.post("/admin/list", isAdminCheck, async (req, res, next) => {
-  const { UserId, LectureId } = req.body;
+  const { UserId, LectureId, isDelete, isChange } = req.body;
 
   const _UserId = UserId || ``;
   const _LectureId = LectureId || ``;
+
+  let _isDelete = isDelete || null;
+  let _isChange = isChange || null;
 
   try {
     const selectQuery = `
@@ -231,10 +234,10 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
         JOIN	lectures					  C
           ON	A.LectureId = C.id
        WHERE  1 = 1
-         AND  A.isDelete = FALSE
-         ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
-         ${_UserId ? `AND A.UserId = ${_UserId}` : ``}
-         AND  A.isChange = FALSE
+       ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
+       ${_UserId ? `AND A.UserId = ${_UserId}` : ``}
+       ${_isDelete ? ` AND  A.isChange = ${_isDelete}` : ``}
+       ${_isChange ? ` AND  A.isDelete = ${_isChange}` : ``}
        ORDER  BY A.createdAt DESC
     `;
 
@@ -252,7 +255,8 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
 
     if (userIds.length !== 0) {
       const priceQuery = `
-      SELECT  A.price,
+      SELECT  A.id,
+              A.price,
               A.UserId,
               B.LectureId
         FROM  payments    A
