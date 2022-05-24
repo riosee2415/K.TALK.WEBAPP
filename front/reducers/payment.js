@@ -14,6 +14,10 @@ export const initialState = {
   st_paymentPermitLoading: false,
   st_paymentPermitDone: false,
   st_paymentPermitError: null,
+
+  st_priceUpdateLoading: false,
+  st_priceUpdateDone: false,
+  st_priceUpdateError: null,
 };
 
 export const PAYMENT_LIST_REQUEST = "PAYMENT_LIST_REQUEST";
@@ -27,6 +31,10 @@ export const PAYMENT_CREATE_FAILURE = "PAYMENT_CREATE_FAILURE";
 export const PAYMENT_PERMIT_REQUEST = "PAYMENT_PERMIT_REQUEST";
 export const PAYMENT_PERMIT_SUCCESS = "PAYMENT_PERMIT_SUCCESS";
 export const PAYMENT_PERMIT_FAILURE = "PAYMENT_PERMIT_FAILURE";
+
+export const PRICE_UPDATE_REQUEST = "PRICE_UPDATE_REQUEST";
+export const PRICE_UPDATE_SUCCESS = "PRICE_UPDATE_SUCCESS";
+export const PRICE_UPDATE_FAILURE = "PRICE_UPDATE_FAILURE";
 
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
@@ -89,6 +97,27 @@ const reducer = (state = initialState, action) =>
         draft.st_paymentPermitLoading = false;
         draft.st_paymentPermitDone = false;
         draft.st_paymentPermitError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case PRICE_UPDATE_REQUEST: {
+        draft.st_priceUpdateLoading = true;
+        draft.st_priceUpdateDone = null;
+        draft.st_priceUpdateError = false;
+        break;
+      }
+      case PRICE_UPDATE_SUCCESS: {
+        draft.st_priceUpdateLoading = false;
+        draft.st_priceUpdateDone = true;
+        draft.st_priceUpdateError = false;
+        break;
+      }
+      case PRICE_UPDATE_FAILURE: {
+        draft.st_priceUpdateLoading = false;
+        draft.st_priceUpdateDone = false;
+        draft.st_priceUpdateError = action.error;
         break;
       }
       //////////////////////////////////////////////

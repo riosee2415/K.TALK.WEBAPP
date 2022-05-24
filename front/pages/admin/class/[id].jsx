@@ -257,6 +257,9 @@ const DetailClass = () => {
 
   const [isCalendar, setIsCalendar] = useState(false);
 
+  const [isDelete, setIsDelete] = useState(false);
+  const [isChange, setIsChange] = useState(false);
+
   ////// REDUX //////
   ////// USEEFFECT //////
 
@@ -284,6 +287,8 @@ const DetailClass = () => {
         type: PARTICIPANT_ADMIN_LIST_REQUEST,
         data: {
           LectureId: router.query.id,
+          isDelete: false,
+          isChange: false,
         },
       });
 
@@ -1549,15 +1554,15 @@ const DetailClass = () => {
             </Wrapper>
             <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
               <Text fontSize={`24px`} fontWeight={`bold`}>
-                {/* {lectureDetail && lectureDetail[0].day}&nbsp;/&nbsp;
-                {lectureDetail && lectureDetail[0].time} */}
+                {lectureDetail && lectureDetail[0].day}&nbsp;/&nbsp;
+                {lectureDetail && lectureDetail[0].time}
               </Text>
               <Text
                 fontSize={`16px`}
                 color={Theme.grey2_C}
                 margin={`0 0 0 15px`}
               >
-                {/* NO.{lectureDetail && lectureDetail[0].number} */}
+                NO.{lectureDetail && lectureDetail[0].number}
               </Text>
             </Wrapper>
           </Wrapper>
@@ -1615,11 +1620,11 @@ const DetailClass = () => {
                 />
               </Wrapper>
               <Text fontSize={`18px`}>
-                {/* {lectureDetail && lectureDetail[0].startDate.slice(0, 10)} */}
+                {lectureDetail && lectureDetail[0].startDate.slice(0, 10)}
               </Text>
             </Wrapper>
             <Text padding={`0 0 0 44px`}>
-              {/* {lectureDetail && lectureDetail[0].startLv} */}
+              {lectureDetail && lectureDetail[0].startLv}
             </Text>
           </Wrapper>
           <Wrapper
@@ -1637,8 +1642,8 @@ const DetailClass = () => {
             </Wrapper>
 
             <Text fontSize={`18px`}>
-              {/* {lectureDetail && lectureDetail[0].teacherName}&nbsp;/&nbsp;
-              {lectureDetail && lectureDetail[0].course} */}
+              {lectureDetail && lectureDetail[0].teacherName}&nbsp;/&nbsp;
+              {lectureDetail && lectureDetail[0].course}
             </Text>
           </Wrapper>
           <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
@@ -1672,17 +1677,39 @@ const DetailClass = () => {
               >
                 ZOOM LINK
               </Text>
-              {/* {lectureDetail && lectureDetail[0].zoomLink
+              {lectureDetail && lectureDetail[0].zoomLink
                 ? lectureDetail[0].zoomLink
-                : "-"} */}
+                : "-"}
             </Wrapper>
             <Wrapper dr={`row`} ju={`flex-start`}></Wrapper>
           </Wrapper>
         </Wrapper>
-
-        <Text fontSize={`18px`} fontWeight={`bold`}>
-          수강 학생 목록
-        </Text>
+        <Wrapper dr={`row`} ju={`flex-start`}>
+          <Text fontSize={`18px`} fontWeight={`bold`} margin={`0 10px 0`}>
+            수강 학생 목록
+          </Text>
+          <Button
+            size={`small`}
+            type={isDelete === false && isChange === false}
+            onClick={() => {
+              setIsDelete(false);
+              setIsChange(false);
+            }}
+          >
+            현재 수강중인 학생 조회
+          </Button>
+          &nbsp;
+          <Button
+            size={`small`}
+            type={isDelete === null && isChange === null}
+            onClick={() => {
+              setIsDelete(null);
+              setIsChange(null);
+            }}
+          >
+            전체조회
+          </Button>
+        </Wrapper>
 
         <Table
           size={`small`}

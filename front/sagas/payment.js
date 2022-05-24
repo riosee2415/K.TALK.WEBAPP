@@ -12,6 +12,10 @@ import {
   PAYMENT_PERMIT_REQUEST,
   PAYMENT_PERMIT_SUCCESS,
   PAYMENT_PERMIT_FAILURE,
+  //////////////////////////
+  PRICE_UPDATE_REQUEST,
+  PRICE_UPDATE_SUCCESS,
+  PRICE_UPDATE_FAILURE,
 } from "../reducers/payment";
 
 // SAGA AREA ********************************************************************************************************
@@ -95,6 +99,33 @@ function* paymentPermit(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function priceUpdateAPI(data) {
+  return axios.patch(`/api/payment/price/update`, data);
+}
+
+function* priceUpdate(action) {
+  try {
+    const result = yield call(priceUpdateAPI, action.data);
+
+    yield put({
+      type: PRICE_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: PRICE_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchPaymentList() {
   yield takeLatest(PAYMENT_LIST_REQUEST, paymentList);
@@ -108,12 +139,17 @@ function* watchPaymentPermit() {
   yield takeLatest(PAYMENT_PERMIT_REQUEST, paymentPermit);
 }
 
+function* watchPriceUpdate() {
+  yield takeLatest(PRICE_UPDATE_REQUEST, priceUpdate);
+}
+
 //////////////////////////////////////////////////////////////
-export default function* bannerSaga() {
+export default function* paymentSaga() {
   yield all([
     fork(watchPaymentList),
     fork(watchPaymentCreate),
     fork(watchPaymentPermit),
+    fork(watchPriceUpdate),
     //
   ]);
 }
