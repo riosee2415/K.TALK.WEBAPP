@@ -252,7 +252,8 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
 
     if (userIds.length !== 0) {
       const priceQuery = `
-      SELECT  A.price,
+      SELECT  A.id,
+              A.price,
               A.UserId,
               B.LectureId
         FROM  payments    A

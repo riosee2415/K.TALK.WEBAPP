@@ -176,6 +176,38 @@ router.patch("/update", async (req, res, next) => {
   }
 });
 
+router.patch("/price/update", isAdminCheck, async (req, res, next) => {
+  const { id, price } = req.body;
+
+  try {
+    const exPayment = await Payment.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exPayment) {
+      return res.status(401).send("존재하지 않는 결제정보 입니다.");
+    }
+
+    const updateResult = await Payment.update(
+      {
+        price: parseInt(price),
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(201).json({ result: true });
+    } else {
+      return res.status(201).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("결제를 진행할 수 없습니다.");
+  }
+});
+
 router.patch("/permit", isAdminCheck, async (req, res, next) => {
   const { id } = req.body;
   try {

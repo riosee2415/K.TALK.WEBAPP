@@ -143,6 +143,8 @@ router.get(["/list", "/list/:sort"], async (req, res, next) => {
 });
 
 // 관리자에서 확인하는 모든 강의
+// 강의 번호 오름차순, 내림차순
+// createdAt 오름차순, 내림차순
 router.get(
   ["/allLectures", "/allLectures/:listType"],
   async (req, res, next) => {
@@ -229,6 +231,12 @@ router.get(
             ? ["startLv", "ASC"]
             : _listType === 2
             ? ["createdAt", "DESC"]
+            : _listType === 3
+            ? ["createdAt", "ASC"]
+            : _listType === 4
+            ? ["number", "DESC"]
+            : _listType === 5
+            ? ["number", "ASC"]
             : ["createdAt", "DESC"],
         ],
       });
@@ -428,12 +436,10 @@ router.get("/teacher/list/:TeacherId", async (req, res, next) => {
 
       students = await models.sequelize.query(selectQuery2);
     }
-    return res
-      .status(200)
-      .json({
-        list: list[0],
-        students: lectureIds.length !== 0 ? students[0] : null,
-      });
+    return res.status(200).json({
+      list: list[0],
+      students: lectureIds.length !== 0 ? students[0] : null,
+    });
   } catch (error) {
     console.error(error);
     return res.status(401).send("강사별 강의를 불러올 수 없습니다.");
