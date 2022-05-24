@@ -1002,7 +1002,9 @@ const DetailClass = () => {
     },
     {
       title: "학생이름(생년월일)",
-      dataIndex: "birth",
+      render: (data) => {
+        return <div>{`${data.username}(${data.birth.slice(0, 10)})`}</div>;
+      },
     },
     {
       title: "국적",
@@ -1287,6 +1289,8 @@ const DetailClass = () => {
   ];
 
   const country = [
+    "S. Korea",
+    "USA",
     "Australia",
     "Canada",
     "China",
@@ -1300,14 +1304,12 @@ const DetailClass = () => {
     "Netherland",
     "Poland",
     "S. Africa",
-    "S. Korea",
     "Singapore",
     "Spain",
     "Sweden",
     "Switzland",
     "Taiwan",
     "U.K.",
-    "USA",
 
     //
     "Afghanistan",
@@ -1547,15 +1549,15 @@ const DetailClass = () => {
             </Wrapper>
             <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
               <Text fontSize={`24px`} fontWeight={`bold`}>
-                {lectureDetail && lectureDetail[0].day}&nbsp;/&nbsp;
-                {lectureDetail && lectureDetail[0].time}
+                {/* {lectureDetail && lectureDetail[0].day}&nbsp;/&nbsp;
+                {lectureDetail && lectureDetail[0].time} */}
               </Text>
               <Text
                 fontSize={`16px`}
                 color={Theme.grey2_C}
                 margin={`0 0 0 15px`}
               >
-                NO.{lectureDetail && lectureDetail[0].number}
+                {/* NO.{lectureDetail && lectureDetail[0].number} */}
               </Text>
             </Wrapper>
           </Wrapper>
@@ -1613,11 +1615,11 @@ const DetailClass = () => {
                 />
               </Wrapper>
               <Text fontSize={`18px`}>
-                {lectureDetail && lectureDetail[0].startDate.slice(0, 10)}
+                {/* {lectureDetail && lectureDetail[0].startDate.slice(0, 10)} */}
               </Text>
             </Wrapper>
             <Text padding={`0 0 0 44px`}>
-              {lectureDetail && lectureDetail[0].startLv}
+              {/* {lectureDetail && lectureDetail[0].startLv} */}
             </Text>
           </Wrapper>
           <Wrapper
@@ -1635,8 +1637,8 @@ const DetailClass = () => {
             </Wrapper>
 
             <Text fontSize={`18px`}>
-              {lectureDetail && lectureDetail[0].teacherName}&nbsp;/&nbsp;
-              {lectureDetail && lectureDetail[0].course}
+              {/* {lectureDetail && lectureDetail[0].teacherName}&nbsp;/&nbsp;
+              {lectureDetail && lectureDetail[0].course} */}
             </Text>
           </Wrapper>
           <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
@@ -1670,9 +1672,9 @@ const DetailClass = () => {
               >
                 ZOOM LINK
               </Text>
-              {lectureDetail && lectureDetail[0].zoomLink
+              {/* {lectureDetail && lectureDetail[0].zoomLink
                 ? lectureDetail[0].zoomLink
-                : "-"}
+                : "-"} */}
             </Wrapper>
             <Wrapper dr={`row`} ju={`flex-start`}></Wrapper>
           </Wrapper>
@@ -1720,7 +1722,7 @@ const DetailClass = () => {
           al={`flex-start`}
           margin={`30px 0 0`}
         >
-          <Wrapper width={`49%`} al={`flex-start`}>
+          <Wrapper width={`100%`} al={`flex-start`}>
             <Text fontSize={`18px`} fontWeight={`bold`}>
               게시판
             </Text>
@@ -1738,7 +1740,7 @@ const DetailClass = () => {
               size={`small`}
             />
           </Wrapper>
-          <Wrapper width={`49%`} al={`flex-start`}>
+          {/* <Wrapper width={`49%`} al={`flex-start`}>
             <Text fontSize={`18px`} fontWeight={`bold`}>
               쪽지
             </Text>
@@ -1755,7 +1757,7 @@ const DetailClass = () => {
                 total: messageLectureLastPage * 10,
               }}
             />
-          </Wrapper>
+          </Wrapper> */}
         </Wrapper>
         <Wrapper dr={`row`} ju={`space-between`}>
           <Text fontSize={`18px`} fontWeight={`bold`}>
@@ -2207,7 +2209,7 @@ const DetailClass = () => {
                     <Calendar
                       style={{ width: width < 1350 ? `100%` : `300px` }}
                       fullscreen={false}
-                      validRange={[moment(1970), moment()]}
+                      validRange={[moment(`1940`), moment()]}
                       onChange={dateChagneHandler}
                     />
                   </Wrapper>

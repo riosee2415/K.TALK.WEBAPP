@@ -599,7 +599,7 @@ const UserList = ({}) => {
           >
             <Calendar
               fullscreen={false}
-              validRange={[moment(1970), moment()]}
+              validRange={[moment(1940), moment()]}
             />
           </Form.Item> */}
           <Form.Item

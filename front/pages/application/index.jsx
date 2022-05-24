@@ -307,6 +307,8 @@ const Application = () => {
   ];
 
   const country = [
+    "S. Korea",
+    "USA",
     "Australia",
     "Canada",
     "China",
@@ -320,14 +322,12 @@ const Application = () => {
     "Netherland",
     "Poland",
     "S. Africa",
-    "S. Korea",
     "Singapore",
     "Spain",
     "Sweden",
     "Switzland",
     "Taiwan",
     "U.K.",
-    "USA",
 
     //
     "Afghanistan",
@@ -572,6 +572,14 @@ const Application = () => {
 
   let total = [
     {
+      Afghanistan: "South Korea",
+      number: "+82",
+    },
+    {
+      Afghanistan: "United States",
+      number: "+1",
+    },
+    {
       Afghanistan: "Australia",
       number: "+61",
     },
@@ -624,10 +632,6 @@ const Application = () => {
       number: "+27",
     },
     {
-      Afghanistan: "South Korea",
-      number: "+82",
-    },
-    {
       Afghanistan: "Singapore",
       number: "+65",
     },
@@ -650,10 +654,6 @@ const Application = () => {
     {
       Afghanistan: "United Kingdom",
       number: "+44",
-    },
-    {
-      Afghanistan: "United States",
-      number: "+1",
     },
     {
       Afghanistan: "Albania",
@@ -1794,7 +1794,7 @@ const Application = () => {
                   <Calendar
                     style={{ width: width < 1350 ? `100%` : `300px` }}
                     fullscreen={false}
-                    validRange={[moment(1970), moment()]}
+                    validRange={[moment(`1940`), moment()]}
                     onChange={dateChagneHandler}
                   />
                 </Wrapper>

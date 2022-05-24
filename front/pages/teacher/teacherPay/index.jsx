@@ -36,6 +36,8 @@ import {
   Image,
   Text,
   TextArea,
+  GuideUl,
+  GuideLi,
 } from "../../../components/commonComponents";
 import { LECTURE_TEACHER_LIST_REQUEST } from "../../../reducers/lecture";
 import moment from "moment";
@@ -365,6 +367,22 @@ const Index = () => {
             </RsWrapper>
           </Wrapper>
           <RsWrapper margin={`80px 0 0`}>
+            <Wrapper
+              width={`100%`}
+              al={`flex-start`}
+              bgColor={Theme.lightGrey_C}
+              padding={`20px 20px 0 30px`}
+              margin={`0 0 30px`}
+              radius={`10px`}
+              shadow={`0 0 6px rgba(0,0,0,0.16)`}
+            >
+              <GuideUl>
+                <GuideLi color={Theme.red_C} margin={`0 0 5px`} isImpo>
+                  오늘 발생될 강사료를 직접 수당입력버튼을 클릭하여 직접
+                  강사료산정을 진행해주세요.
+                </GuideLi>
+              </GuideUl>
+            </Wrapper>
             <Wrapper dr={`row`} ju={`space-between`}>
               <Wrapper dr={`row`} width={`auto`}>
                 <RangePicker format="YYYY-MM-DD" onChange={onChangeDate} />
@@ -395,7 +413,7 @@ const Index = () => {
                     lectureTeacherList.map((data, idx) => {
                       return (
                         <Option key={data.id} value={data.id}>
-                          {data.course}
+                          {data.course} | {data.number}
                         </Option>
                       );
                     })}
@@ -597,7 +615,7 @@ const Index = () => {
                     lectureTeacherList.map((data, idx) => {
                       return (
                         <Option key={data.id} value={data.id}>
-                          {data.course}
+                          {data.course} | {data.number}
                         </Option>
                       );
                     })}

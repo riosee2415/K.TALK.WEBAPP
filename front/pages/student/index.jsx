@@ -1301,9 +1301,10 @@ const Student = () => {
                         <Text fontSize={width < 800 ? `16px` : `18px`}>
                           {`${stepHanlder2(
                             moment().format("YYYY-MM-DD"),
-                            data.endDate,
+                            // data.endDate,
+                            `2022-06-19`,
                             data.day
-                          )} sessopns remaining out of ${stepHanlder2(
+                          )} sessons remaining out of ${stepHanlder2(
                             moment(data.PartCreatedAt).format("YYYY-MM-DD"),
                             data.endDate,
                             data.day
@@ -1788,10 +1789,10 @@ const Student = () => {
                               alt="lecture_icon"
                             />
                             <Text>
+                              ~
                               {moment(data.date, "YYYY/MM/DD").format(
                                 "YYYY/MM/DD"
                               )}
-                              까지
                             </Text>
                           </Wrapper>
 

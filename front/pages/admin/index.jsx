@@ -795,7 +795,7 @@ const AdminHome = () => {
 
                 <Wrapper width={`auto`} margin={`0 10px 0 0`}>
                   <TimeInput
-                    placeholder={`시간을 선택해주세요.`}
+                    placeholder={`강의시간을 선택해주세요.`}
                     width={`200px`}
                     format={`HH:mm`}
                     onChange={(e) => onChangeTimeHandle(e)}

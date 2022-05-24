@@ -25,6 +25,8 @@ import {
   TextInput,
   TextArea,
   CommonTitle,
+  GuideUl,
+  GuideLi,
 } from "../../../components/commonComponents";
 import {
   CalendarOutlined,
@@ -706,8 +708,8 @@ const Index = () => {
           LectureId: router.query.id,
         },
       });
-
-      return message.success("강사일지 작성을 완료했습니다.");
+      message.success("강사일지 작성을 완료했습니다.");
+      return router.push(`/teacher/teacherPay`);
     }
   }, [st_lectureDiaryCreateDone]);
 
@@ -2190,17 +2192,17 @@ const Index = () => {
                                 style={{ margin: `0 0 0 10px` }}
                                 onClick={() => detailStuToggleHandler(data)}
                                 fontSize={width < 700 ? `14px` : `16px`}
-                                disabled={
-                                  stepHanlder2(
-                                    data.startDate,
-                                    data.endDate,
-                                    data.count,
+                                // disabled={
+                                //   stepHanlder2(
+                                //     data.startDate,
+                                //     data.endDate,
+                                //     data.count,
 
-                                    data.day
-                                  )
-                                    ? false
-                                    : true
-                                }
+                                //     data.day
+                                //   )
+                                //     ? false
+                                //     : true
+                                // }
                               >
                                 작성하기
                               </Button>
@@ -2216,17 +2218,17 @@ const Index = () => {
                                 onClick={() => onCommuteHandler(data, "출석")}
                                 cursor={`pointer`}
                                 fontSize={width < 700 ? `14px` : `16px`}
-                                disabled={
-                                  stepHanlder2(
-                                    data.startDate,
-                                    data.endDate,
-                                    data.count,
+                                // disabled={
+                                //   stepHanlder2(
+                                //     data.startDate,
+                                //     data.endDate,
+                                //     data.count,
 
-                                    data.day
-                                  )
-                                    ? false
-                                    : true
-                                }
+                                //     data.day
+                                //   )
+                                //     ? false
+                                //     : true
+                                // }
                                 color={
                                   "출석"
                                     ? `${Theme.basicTheme_C}`
@@ -2244,17 +2246,17 @@ const Index = () => {
                                 onClick={() => onCommuteHandler(data, "결석")}
                                 cursor={`pointer`}
                                 fontSize={width < 700 ? `14px` : `16px`}
-                                disabled={
-                                  stepHanlder2(
-                                    data.startDate,
-                                    data.endDate,
-                                    data.count,
+                                // disabled={
+                                //   stepHanlder2(
+                                //     data.startDate,
+                                //     data.endDate,
+                                //     data.count,
 
-                                    data.day
-                                  )
-                                    ? false
-                                    : true
-                                }
+                                //     data.day
+                                //   )
+                                //     ? false
+                                //     : true
+                                // }
                                 color={
                                   "결석"
                                     ? `${Theme.basicTheme_C}`
@@ -2273,17 +2275,17 @@ const Index = () => {
                                 onClick={() => onCommuteHandler(data, "지각")}
                                 cursor={`pointer`}
                                 fontSize={width < 700 ? `14px` : `16px`}
-                                disabled={
-                                  stepHanlder2(
-                                    data.startDate,
-                                    data.endDate,
-                                    data.count,
+                                // disabled={
+                                //   stepHanlder2(
+                                //     data.startDate,
+                                //     data.endDate,
+                                //     data.count,
 
-                                    data.day
-                                  )
-                                    ? false
-                                    : true
-                                }
+                                //     data.day
+                                //   )
+                                //     ? false
+                                //     : true
+                                // }
                                 color={
                                   "지각"
                                     ? `${Theme.basicTheme_C}`
@@ -2441,17 +2443,17 @@ const Index = () => {
                                 size={`small`}
                                 onClick={() => detailStuToggleHandler(data)}
                                 fontSize={width < 700 ? `14px` : `16px`}
-                                disabled={
-                                  stepHanlder2(
-                                    data.startDate,
-                                    data.endDate,
-                                    data.count,
+                                // disabled={
+                                //   stepHanlder2(
+                                //     data.startDate,
+                                //     data.endDate,
+                                //     data.count,
 
-                                    data.day
-                                  )
-                                    ? false
-                                    : true
-                                }
+                                //     data.day
+                                //   )
+                                //     ? false
+                                //     : true
+                                // }
                               >
                                 작성하기
                               </Button>
@@ -2467,17 +2469,17 @@ const Index = () => {
                                 onClick={() => onCommuteHandler(data, "출석")}
                                 cursor={`pointer`}
                                 fontSize={width < 700 ? `14px` : `16px`}
-                                disabled={
-                                  stepHanlder2(
-                                    data.startDate,
-                                    data.endDate,
-                                    data.count,
+                                // disabled={
+                                //   stepHanlder2(
+                                //     data.startDate,
+                                //     data.endDate,
+                                //     data.count,
 
-                                    data.day
-                                  )
-                                    ? false
-                                    : true
-                                }
+                                //     data.day
+                                //   )
+                                //     ? false
+                                //     : true
+                                // }
                                 color={
                                   "출석"
                                     ? `${Theme.basicTheme_C}`
@@ -2495,17 +2497,17 @@ const Index = () => {
                                 onClick={() => onCommuteHandler(data, "결석")}
                                 cursor={`pointer`}
                                 fontSize={width < 700 ? `14px` : `16px`}
-                                disabled={
-                                  stepHanlder2(
-                                    data.startDate,
-                                    data.endDate,
-                                    data.count,
+                                // disabled={
+                                //   stepHanlder2(
+                                //     data.startDate,
+                                //     data.endDate,
+                                //     data.count,
 
-                                    data.day
-                                  )
-                                    ? false
-                                    : true
-                                }
+                                //     data.day
+                                //   )
+                                //     ? false
+                                //     : true
+                                // }
                                 color={
                                   "결석"
                                     ? `${Theme.basicTheme_C}`
@@ -2523,17 +2525,17 @@ const Index = () => {
                                 onClick={() => onCommuteHandler(data, "지각")}
                                 cursor={`pointer`}
                                 fontSize={width < 700 ? `14px` : `16px`}
-                                disabled={
-                                  stepHanlder2(
-                                    data.startDate,
-                                    data.endDate,
-                                    data.count,
+                                // disabled={
+                                //   stepHanlder2(
+                                //     data.startDate,
+                                //     data.endDate,
+                                //     data.count,
 
-                                    data.day
-                                  )
-                                    ? false
-                                    : true
-                                }
+                                //     data.day
+                                //   )
+                                //     ? false
+                                //     : true
+                                // }
                                 color={
                                   "지각"
                                     ? `${Theme.basicTheme_C}`
@@ -3458,6 +3460,7 @@ const Index = () => {
                     fontSize: 25,
                     position: `relative`,
                   }}
+                  validRange={[moment(`1940`), moment()]}
                   onClick={() => setIsCalendar(!isCalendar)}
                 />
 
@@ -3470,6 +3473,7 @@ const Index = () => {
                     style={{ width: width < 1350 ? `100%` : `250` }}
                     fullscreen={false}
                     onChange={dateChagneHandler}
+                    validRange={[moment(), moment(`9999-99-99`)]}
                   />
                 </Wrapper>
               </Wrapper>
@@ -3483,7 +3487,6 @@ const Index = () => {
               <input
                 type="file"
                 name="file"
-                accept=".pdf"
                 // multiple
                 hidden
                 ref={imageInput}
@@ -3532,6 +3535,25 @@ const Index = () => {
           footer={null}
           closable={false}
         >
+          <Wrapper
+            width={`100%`}
+            al={`flex-start`}
+            bgColor={Theme.lightGrey_C}
+            padding={`20px 20px 0 30px`}
+            margin={`0 0 30px`}
+            radius={`10px`}
+            shadow={`0 0 6px rgba(0,0,0,0.16)`}
+          >
+            <GuideUl>
+              <GuideLi color={Theme.red_C} margin={`0 0 5px`} isImpo>
+                강사료 산정은 강사료 산정페이지에서 직접 진행해주세요.
+              </GuideLi>
+              <GuideLi color={Theme.red_C} margin={`0 0 5px`}>
+                강사일지의 작성이 완료되면 강사료 산정페이지로 이동됩니다.
+              </GuideLi>
+            </GuideUl>
+          </Wrapper>
+
           <CustomForm form={diaryform} onFinish={diaryFinishHandler}>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}

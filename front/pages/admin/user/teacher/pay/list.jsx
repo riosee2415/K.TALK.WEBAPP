@@ -216,7 +216,7 @@ const UserList = () => {
                       allLectures.map((data) => {
                         return (
                           <Select.Option value={data.id}>
-                            {data.course}
+                            {data.course} | {data.number}
                           </Select.Option>
                         );
                       })}
