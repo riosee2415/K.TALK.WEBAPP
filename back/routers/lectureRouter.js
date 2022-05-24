@@ -169,8 +169,8 @@ router.get(
 
     let _listType = Number(listType);
 
-    if (_listType > 2 || !listType) {
-      _listType = 2;
+    if (_listType > 5 || !listType) {
+      _listType = 5;
     }
 
     let newWhere = {};
