@@ -123,7 +123,15 @@ const List = ({}) => {
     },
     {
       title: "남은 일수",
-      render: (data) => <div>{`D-${data.limitDate}`}</div>,
+      render: (data) => (
+        <div>
+          {data.limitDate < 0
+            ? `D+${Math.abs(data.limitDate)}`
+            : data.limitDate === 0
+            ? `D-day`
+            : `D-${data.limitDate}`}
+        </div>
+      ),
     },
 
     {

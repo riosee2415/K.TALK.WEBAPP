@@ -471,6 +471,9 @@ const Index = () => {
 
   const [noticeContent, setNoticeContent] = useState("");
 
+  const [homework, setHomework] = useState(null);
+  const [homeworkModal, setHomeworkModal] = useState(false);
+
   ////// REDUX //////
 
   ////// USEEFFECT //////
@@ -937,6 +940,11 @@ const Index = () => {
   }, []);
 
   ////// HANDLER //////
+
+  const homeworksToggle = useCallback((data) => {
+    setHomework(data);
+    setHomeworkModal((prev) => !prev);
+  }, []);
 
   const fileUploadClick = useCallback(() => {
     fileRef.current.click();
@@ -1656,16 +1664,16 @@ const Index = () => {
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
-                  width={`25%`}
+                  width={`60%`}
                 >
-                  날짜
+                  제목
                 </Text>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
-                  width={`60%`}
+                  width={`25%`}
                 >
-                  제목
+                  날짜
                 </Text>
               </Wrapper>
 
@@ -1697,18 +1705,18 @@ const Index = () => {
                       </Text>
                       <Text
                         fontSize={width < 700 ? `14px` : `16px`}
+                        width={`60%`}
+                        textAlign={`left`}
+                      >
+                        {data.title}
+                      </Text>
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
                         width={`25%`}
                       >
                         {moment(data.createdAt, "YYYY/MM/DD").format(
                           "YYYY/MM/DD"
                         )}
-                      </Text>
-                      <Text
-                        fontSize={width < 700 ? `14px` : `16px`}
-                        width={`60%`}
-                        textAlign={`left`}
-                      >
-                        {data.title}
                       </Text>
                     </Wrapper>
                   );
@@ -1759,13 +1767,6 @@ const Index = () => {
                   <Text
                     fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
-                    width={`25%`}
-                  >
-                    날짜
-                  </Text>
-                  <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
-                    fontWeight={`Bold`}
                     width={`calc(100% - 15% - 15% - 25%)`}
                   >
                     제목
@@ -1777,6 +1778,14 @@ const Index = () => {
                     width={`15%`}
                   >
                     작성자
+                  </Text>
+
+                  <Text
+                    fontSize={width < 700 ? `14px` : `18px`}
+                    fontWeight={`Bold`}
+                    width={`25%`}
+                  >
+                    날짜
                   </Text>
                 </Wrapper>
 
@@ -1806,17 +1815,8 @@ const Index = () => {
                         </Text>
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
-                          width={`25%`}
-                        >
-                          {moment(data2.createdAt, "YYYY/MM/DD").format(
-                            "YYYY/MM/DD"
-                          )}
-                        </Text>
-                        <Text
-                          fontSize={width < 700 ? `14px` : `16px`}
                           width={`calc(100% - 15% - 15% - 25%)`}
                           textAlign={`left`}
-                          isEllipsis
                         >
                           {data2.title}
                         </Text>
@@ -1824,9 +1824,16 @@ const Index = () => {
                         <Text
                           fontSize={width < 700 ? `14px` : `16px`}
                           width={`15%`}
-                          isEllipsis
                         >
                           {data2.author}
+                        </Text>
+                        <Text
+                          fontSize={width < 700 ? `14px` : `16px`}
+                          width={`25%`}
+                        >
+                          {moment(data2.createdAt, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )}
                         </Text>
                       </Wrapper>
                     );
@@ -2620,35 +2627,35 @@ const Index = () => {
                   borderBottom={`1px solid ${Theme.grey_C}`}
                 >
                   <Text
-                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
                     width={`15%`}
                   >
                     글번호
                   </Text>
                   <Text
-                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
                     width={`15%`}
                   >
                     강사명
                   </Text>
                   <Text
-                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
                     width={`20%`}
                   >
                     진도
                   </Text>
                   <Text
-                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
                     width={`25%`}
                   >
                     수업메모
                   </Text>
                   <Text
-                    fontSize={width < 700 ? `12px` : `18px`}
+                    fontSize={width < 700 ? `14px` : `18px`}
                     fontWeight={`Bold`}
                     width={`25%`}
                   >
@@ -2675,35 +2682,33 @@ const Index = () => {
                         onClick={() => diaryViewClickHandler(data)}
                       >
                         <Text
-                          fontSize={width < 700 ? `12px` : `16px`}
+                          fontSize={width < 700 ? `14px` : `16px`}
                           width={`15%`}
                           wordBreak={`break-word`}
                         >
                           {data.id}
                         </Text>
                         <Text
-                          fontSize={width < 700 ? `12px` : `16px`}
+                          fontSize={width < 700 ? `14px` : `16px`}
                           width={`15%`}
                         >
                           {data.author}
                         </Text>
                         <Text
-                          fontSize={width < 700 ? `12px` : `16px`}
+                          fontSize={width < 700 ? `14px` : `16px`}
                           width={`20%`}
-                          isEllipsis
                         >
                           {data.process}
                         </Text>
 
                         <Text
-                          fontSize={width < 700 ? `12px` : `16px`}
+                          fontSize={width < 700 ? `14px` : `16px`}
                           width={`25%`}
-                          isEllipsis
                         >
                           {data.lectureMemo}
                         </Text>
                         <Text
-                          fontSize={width < 700 ? `12px` : `16px`}
+                          fontSize={width < 700 ? `14px` : `16px`}
                           width={`25%`}
                         >
                           {data.createdAt.slice(0, 10)}
@@ -2750,29 +2755,32 @@ const Index = () => {
                       key={data.id}
                       dr={`row`}
                       ju={`flex-start`}
-                      margin={`0 0 10px`}
-                      padding={width < 700 ? `15px 10px` : `20px`}
-                      bgColor={idx % 2 === 0 && Theme.subTheme_C}
-                      border={`1px solid ${Theme.grey_C}`}
+                      margin={`0 0 10px 0`}
+                      padding={`20px`}
+                      bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                      borderTop={idx === 0 && `1px solid ${Theme.grey_C}`}
+                      borderBottom={`1px solid ${Theme.grey_C}`}
                     >
-                      <Text
-                        width={width < 600 ? `39%` : `50%`}
-                        fontSize={width < 700 ? `14px` : `16px`}
-                        isEllipsis
-                      >
-                        {data.title}
-                      </Text>
+                      <Wrapper width={`50%`} dr={`row`} ju={`space-between`}>
+                        <Text fontSize={width < 700 ? `14px` : `16px`}>
+                          제목 : {data.title}
+                        </Text>
+                        <Button
+                          type={`primary`}
+                          size={`small`}
+                          onClick={() => homeworksToggle(data)}
+                        >
+                          내용보기
+                        </Button>
+                      </Wrapper>
 
                       <Wrapper
-                        width={width < 700 ? `34%` : `40%`}
+                        width={`40%`}
                         dr={width < 1100 ? `column` : `row`}
                       >
-                        <CustomWrapper
-                          width={width < 1100 ? `100%` : `50%`}
-                          cursor={`pointer`}
-                          onClick={() => fileDownloadHandler(data.file)}
-                        >
+                        <CustomWrapper width={width < 1100 ? `100%` : `50%`}>
                           <DownloadOutlined
+                            onClick={() => fileDownloadHandler(data.file)}
                             style={{
                               fontSize: width < 700 ? 15 : 25,
                               color: Theme.basicTheme_C,
@@ -2781,8 +2789,11 @@ const Index = () => {
                             }}
                           />
 
-                          <Text fontSize={width < 700 ? `12px` : `16px`}>
-                            파일 다운로드
+                          <Text
+                            fontSize={width < 700 ? `14px` : `16px`}
+                            display={width < 700 ? `none` : `block`}
+                          >
+                            파일 업로드
                           </Text>
                         </CustomWrapper>
 
@@ -2798,18 +2809,15 @@ const Index = () => {
                               cursor: `pointer`,
                             }}
                           />
-                          <Text fontSize={width < 700 ? `12px` : `16px`}>
+                          <Text fontSize={width < 700 ? `14px` : `16px`}>
                             {`${data.date}까지`}
                           </Text>
                         </CustomWrapper>
                       </Wrapper>
 
-                      <Wrapper
-                        width={width < 700 ? `27%` : `10%`}
-                        ju={`center`}
-                      >
+                      <Wrapper width={`10%`} ju={`center`}>
                         <Text
-                          fontSize={width < 700 ? `12px` : `16px`}
+                          fontSize={width < 700 ? `14px` : `16px`}
                           margin={width < 700 ? `0 0 0 5px` : "0"}
                           fontWeight={`bold`}
                           color={
@@ -2832,7 +2840,7 @@ const Index = () => {
                             )
                             .asDays() < -1
                             ? "기간 만료"
-                            : "제출 가능 기간"}
+                            : "제출 기간"}
                         </Text>
                       </Wrapper>
                     </Wrapper>
@@ -3399,7 +3407,7 @@ const Index = () => {
         <CustomModal
           visible={homeWorkModalToggle}
           title="숙제 업로드"
-          width={`900px`}
+          width={`80%`}
           footer={null}
           closable={false}
         >
@@ -3532,10 +3540,70 @@ const Index = () => {
             </Wrapper>
           </CustomForm>
         </CustomModal>
+        <CustomModal
+          visible={homeworkModal}
+          title="숙제 내용"
+          width={width < 700 ? `100%` : 700}
+          footer={null}
+          closable={false}
+        >
+          <Text
+            fontSize={width < 700 ? `14px` : `18px`}
+            fontWeight={`bold`}
+            margin={`0 0 10px`}
+          >
+            제목
+          </Text>
+          <CustomInput
+            width={`100%`}
+            value={homework && homework.title}
+            disabled
+          />
+          <br />
+          <br />
+          <Text
+            fontSize={width < 700 ? `14px` : `18px`}
+            fontWeight={`bold`}
+            margin={`0 0 10px`}
+          >
+            내용
+          </Text>
+          <CusotmTextArea value={homework && homework.content} disabled />
+          <br />
+          <br />
+          <Text
+            fontSize={width < 700 ? `14px` : `18px`}
+            fontWeight={`bold`}
+            margin={`0 0 10px`}
+          >
+            날짜
+          </Text>
+
+          <Wrapper dr={`row`} ju={`flex-start`}>
+            <CustomInput
+              value={homework && homework.date + "까지"}
+              style={{
+                height: `40px`,
+              }}
+              disabled
+            />
+          </Wrapper>
+          <Wrapper dr={`row`} margin={`20px 0 0`}>
+            <CommonButton
+              margin={`0 5px 0 0`}
+              kindOf={`grey`}
+              color={Theme.darkGrey_C}
+              radius={`5px`}
+              onClick={() => homeworksToggle(null)}
+            >
+              돌아가기
+            </CommonButton>
+          </Wrapper>
+        </CustomModal>
 
         <CustomModal
           visible={diaryModalToggle}
-          width={`900px`}
+          width={width < 700 ? `100%` : 700}
           title="강사일지 작성하기"
           footer={null}
           closable={false}
@@ -3671,7 +3739,7 @@ const Index = () => {
 
         <CustomModal
           visible={diaryViewModalToggle}
-          width={`900px`}
+          width={width < 700 ? `100%` : 700}
           title="자세한 강사일지"
           footer={null}
           closable={false}
@@ -3696,24 +3764,20 @@ const Index = () => {
                 수업 메모
               </Text>
 
-              <Wrapper
-                bgColor={Theme.subTheme9_C}
-                padding={`10px`}
-                al={`flex-start`}
-                ju={`flex-start`}
-                minHeight={`150px`}
-              >
-                {diaryData &&
-                  diaryData.lectureMemo &&
-                  diaryData.lectureMemo.split("\n").map((data, idx) => {
-                    return (
-                      <Text key={`${data}${idx}`}>
-                        {data}
-                        <br />
-                      </Text>
-                    );
-                  })}
-              </Wrapper>
+              {diaryData &&
+                diaryData.lectureMemo &&
+                diaryData.lectureMemo.split("\n").map((data, idx) => {
+                  return (
+                    <Text
+                      key={`${data}${idx}`}
+                      bgColor={Theme.subTheme9_C}
+                      padding={`10px`}
+                    >
+                      {data}
+                      <br />
+                    </Text>
+                  );
+                })}
             </Wrapper>
 
             <Wrapper dr={`row`}>
@@ -3732,7 +3796,7 @@ const Index = () => {
 
         <CustomModal
           visible={studentToggle}
-          width={`900px`}
+          width={width < 700 ? `100%` : 700}
           title="학생 숙제 제출 목록"
           onCancel={() => onReset()}
           footer={null}

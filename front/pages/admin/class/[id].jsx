@@ -73,6 +73,7 @@ import {
   LECTURE_MEMO_LIST_REQUEST,
   LECTURE_MEMO_UDPATE_REQUEST,
 } from "../../../reducers/lectureMemo";
+import { PRICE_UPDATE_REQUEST } from "../../../reducers/payment";
 
 const CustomTextArea = styled(Input.TextArea)`
   width: ${(props) => props.width || `250px`};
@@ -178,6 +179,10 @@ const DetailClass = () => {
   const { applicationDetail, st_appDetailDone, st_appDetailError } =
     useSelector((state) => state.app);
 
+  const { st_priceUpdateDone, st_priceUpdateError } = useSelector(
+    (state) => state.payment
+  );
+
   const {
     lectureMemoList,
     st_lectureMemoCreateDone,
@@ -228,6 +233,9 @@ const DetailClass = () => {
   const [stuChangeModal, setStuChangeModal] = useState(false);
   const [stuChangeDetail, setStuChangeDetail] = useState(null);
 
+  const [priceChangeModal, setPriceChangeModal] = useState(false);
+  const [priceChangeDetail, setPriceChangeDetail] = useState(null);
+
   const [currentNoticePage, setCurrentNoticePage] = useState(1);
   const [currentMessagePage, setCurrentMessagePage] = useState(1);
 
@@ -253,12 +261,14 @@ const DetailClass = () => {
 
   const [createMemoForm] = Form.useForm();
   const [updateMemoForm] = Form.useForm();
+
+  const [priceForm] = Form.useForm();
   const [stuDetail, setStuDetail] = useState([]);
 
   const [isCalendar, setIsCalendar] = useState(false);
 
-  const [isDelete, setIsDelete] = useState(false);
-  const [isChange, setIsChange] = useState(false);
+  const [isDelete, setIsDelete] = useState(`0`);
+  const [isChange, setIsChange] = useState(`0`);
 
   ////// REDUX //////
   ////// USEEFFECT //////
@@ -287,8 +297,8 @@ const DetailClass = () => {
         type: PARTICIPANT_ADMIN_LIST_REQUEST,
         data: {
           LectureId: router.query.id,
-          isDelete: false,
-          isChange: false,
+          isDelete: `0`,
+          isChange: `0`,
         },
       });
 
@@ -428,6 +438,14 @@ const DetailClass = () => {
 
   useEffect(() => {
     if (st_participantUpdateDone) {
+      dispatch({
+        type: PARTICIPANT_ADMIN_LIST_REQUEST,
+        data: {
+          LectureId: router.query.id,
+          isDelete: isDelete ? isDelete : `0`,
+          isChange: isChange ? isChange : `0`,
+        },
+      });
       return message.success("학생 참여일이 수정 되었습니다.");
     }
   }, [st_participantUpdateDone]);
@@ -437,6 +455,26 @@ const DetailClass = () => {
       return message.error(st_participantUpdateError);
     }
   }, [st_participantUpdateError]);
+
+  useEffect(() => {
+    if (st_priceUpdateDone) {
+      dispatch({
+        type: PARTICIPANT_ADMIN_LIST_REQUEST,
+        data: {
+          LectureId: router.query.id,
+          isDelete: isDelete ? isDelete : `0`,
+          isChange: isChange ? isChange : `0`,
+        },
+      });
+      return message.success("학생 수업료가 수정 되었습니다.");
+    }
+  }, [st_priceUpdateDone]);
+
+  useEffect(() => {
+    if (st_priceUpdateError) {
+      return message.error(st_priceUpdateError);
+    }
+  }, [st_priceUpdateError]);
 
   const updateStuFinish = useCallback(
     (data) => {
@@ -534,6 +572,17 @@ const DetailClass = () => {
       message.error(st_lectureMemoDeleteError);
     }
   }, [st_lectureMemoDeleteError]);
+
+  useEffect(() => {
+    dispatch({
+      type: PARTICIPANT_ADMIN_LIST_REQUEST,
+      data: {
+        LectureId: router.query.id,
+        isDelete,
+        isChange,
+      },
+    });
+  }, [isDelete, isChange]);
 
   ////// HANDLER //////
 
@@ -652,33 +701,44 @@ const DetailClass = () => {
       type: PARTICIPANT_UPDATE_REQUEST,
       data: {
         partId: stuChangeDetail.id,
-        endDate: stuChangeDate && stuChangeDate[1].format("YYYY-MM-DD"),
+        endDate: stuChangeDate && stuChangeDate.format("YYYY-MM-DD"),
         createdAt:
-          stuChangeDate && stuChangeDate[0].format("YYYY-MM-DD HH:mm:ss"),
+          stuChangeDetail &&
+          moment(stuChangeDetail.createdAt, "YYYY-MM-DD").format("YYYY-MM-DD"),
       },
     });
-
     setStuChangeDate(null);
     setStuDetail(null);
     setStuChangeModal(false);
   }, [stuChangeDetail, stuChangeDate]);
 
-  const onStuFill = useCallback((data) => {
-    if (data) {
-      updateStuForm.setFieldsValue({
-        sns: data.sns,
-        snsId: data.snsId,
-        birth: data.birth.slice(0, 10),
-        mobile: data.mobile,
-        password: data.mobile,
-        stuLiveCon: data.stuLiveCon,
-        stuCountry: data.stuCountry,
-        stuLanguage: data.stuLanguage,
-        stuPayCount: data.stuPayCount,
-      });
-    }
-  }, []);
+  const onStuFill = useCallback(
+    (data) => {
+      if (data) {
+        updateStuForm.setFieldsValue({
+          sns: data.sns,
+          snsId: data.snsId,
+          birth: data.birth.slice(0, 10),
+          mobile: data.mobile,
+          password: data.mobile,
+          stuLiveCon: data.stuLiveCon,
+          stuCountry: data.stuCountry,
+          stuLanguage: data.stuLanguage,
+          stuPayCount: data.stuPayCount,
+        });
+      }
+    },
+    [stuChangeDetail]
+  );
 
+  const onSubmitPriceUpdate = useCallback((data) => {
+    dispatch({
+      type: PRICE_UPDATE_REQUEST,
+      data: {
+        price: data.price,
+      },
+    });
+  }, []);
   ////// TOGGLE //////
 
   const noticeToggle = useCallback((data) => {
@@ -757,8 +817,21 @@ const DetailClass = () => {
     setStuChangeDetail(data);
   }, []);
 
+  const priceChangeModalToggle = useCallback((data) => {
+    setPriceChangeModal((prev) => !prev);
+    setPriceChangeDetail(data);
+
+    setTimeout(() => {
+      priceForm.setFieldsValue({
+        price: priceChangeDetail && priceChangeDetail.price,
+      });
+    }, 500);
+  }, []);
+  console.log(priceChangeDetail && priceChangeDetail);
+
   const changeModalClose = useCallback(() => {
     setStuChangeModal(false);
+    setStuChangeDetail(null);
   }, []);
 
   const memoCreateToggle = useCallback(
@@ -923,6 +996,23 @@ const DetailClass = () => {
         </Button>
       ),
     },
+    // {
+    //   title: "수업료 수정",
+    //   render: (data) => {
+    //     const findData = partAdminList.price.find(
+    //       (value) => value.UserId === data.UserId
+    //     );
+    //     return (
+    //       <Button
+    //         size={`small`}
+    //         type={`primary`}
+    //         onClick={() => findData && priceChangeModalToggle(findData.price)}
+    //       >
+    //         수정
+    //       </Button>
+    //     );
+    //   },
+    // },
   ];
 
   const lectureColumns = [
@@ -1288,7 +1378,13 @@ const DetailClass = () => {
     {
       title: "수업 남은 날",
       render: (data) => (
-        <div style={{ color: Theme.red_C }}>{`D-${data.limitDate}`}</div>
+        <div style={{ color: Theme.red_C }}>
+          {data.limitDate < 0
+            ? `D+${Math.abs(data.limitDate)}`
+            : data.limitDate === 0
+            ? `D-day`
+            : `D-${data.limitDate}`}
+        </div>
       ),
     },
   ];
@@ -1690,10 +1786,10 @@ const DetailClass = () => {
           </Text>
           <Button
             size={`small`}
-            type={isDelete === false && isChange === false}
+            type={isDelete === `0` && isChange === `0` && `primary`}
             onClick={() => {
-              setIsDelete(false);
-              setIsChange(false);
+              setIsDelete(`0`);
+              setIsChange(`0`);
             }}
           >
             현재 수강중인 학생 조회
@@ -1701,7 +1797,7 @@ const DetailClass = () => {
           &nbsp;
           <Button
             size={`small`}
-            type={isDelete === null && isChange === null}
+            type={isDelete === null && isChange === null && `primary`}
             onClick={() => {
               setIsDelete(null);
               setIsChange(null);
@@ -1714,7 +1810,19 @@ const DetailClass = () => {
         <Table
           size={`small`}
           columns={stuColumns}
-          dataSource={partAdminList.partList}
+          dataSource={
+            partAdminList &&
+            partAdminList.partList &&
+            partAdminList.partList.filter((data, idx) => {
+              return (
+                partAdminList &&
+                partAdminList.partList &&
+                partAdminList.partList.findIndex((data2, idx2) => {
+                  return data.UserId === data2.UserId;
+                }) === idx
+              );
+            })
+          }
         />
 
         <Wrapper dr={`row`} ju={`flex-start`}>
@@ -1786,10 +1894,11 @@ const DetailClass = () => {
             />
           </Wrapper> */}
         </Wrapper>
-        <Wrapper dr={`row`} ju={`space-between`}>
+        <Wrapper dr={`row`} ju={`flex-start`}>
           <Text fontSize={`18px`} fontWeight={`bold`}>
             강의 메모
           </Text>
+          &nbsp; &nbsp;
           <Button
             size={`small`}
             type={`primary`}
@@ -2632,17 +2741,56 @@ const DetailClass = () => {
         footer={null}
         onCancel={changeModalClose}
       >
-        <Wrapper al={`flex-start`} ju={`flex-start`} minHeight={`400px`}>
+        <Wrapper al={`flex-start`} ju={`flex-start`}>
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
             학생수업 변경
           </Text>
+          <Wrapper dr={`row`} ju={`flex-start`}>
+            <Text>
+              시작일:{" "}
+              {stuChangeDetail &&
+                moment(stuChangeDetail.createdAt, `YYYY-MM-DD`).format(
+                  `YYYY-MM-DD`
+                )}
+            </Text>
+            &nbsp; &nbsp; &nbsp;
+            <Text>
+              만기일:
+              <DatePicker
+                value={
+                  stuChangeDate ||
+                  (stuChangeDetail &&
+                    moment(stuChangeDetail.endDate, `YYYY-MM-DD`))
+                }
+                placeholder={"변경할 만기일"}
+                onChange={stuDateChangeHandler}
+              />
+            </Text>
+          </Wrapper>
+        </Wrapper>
 
-          <RangePicker
-            value={stuChangeDate || ""}
-            placeholder={["수업참여 시작일", "수업 끝나는날"]}
-            onChange={stuDateChangeHandler}
-            showTime
-          ></RangePicker>
+        <Wrapper al={`flex-end`}>
+          <Button type="primary" onClick={onClicStuHandler}>
+            변경
+          </Button>
+        </Wrapper>
+      </Modal>
+
+      <Modal
+        width={`600px`}
+        visible={priceChangeModal}
+        footer={null}
+        onCancel={() => priceChangeModalToggle(null)}
+      >
+        <Wrapper al={`flex-start`} ju={`flex-start`}>
+          <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
+            수업료 수정
+          </Text>
+          <Form for={priceForm} onFinish={onSubmitPriceUpdate}>
+            <FormItem name={`price`}>
+              <Input type={`number`} size={`small`} />
+            </FormItem>
+          </Form>
         </Wrapper>
 
         <Wrapper al={`flex-end`}>

@@ -348,7 +348,7 @@ const LectureAll = () => {
       },
     },
     {
-      title: "제목",
+      title: "Subject",
       render: (data) => {
         return <Text>{data.title}</Text>;
       },
@@ -383,10 +383,10 @@ const LectureAll = () => {
 
   useEffect(() => {
     if (!me) {
-      message.error("로그인 후 이용해주세요.");
+      message.error("Please log in");
       return router.push(`/`);
     } else if (me.level !== 1) {
-      message.error("학생이 아닙니다.");
+      message.error("Access denied");
       return router.push(`/`);
     }
     dispatch({
@@ -449,7 +449,7 @@ const LectureAll = () => {
     if (st_messageCreateDone) {
       onReset();
 
-      return message.success("해당 강사님에게 쪽지를 보냈습니다.");
+      return message.success("Message sent.");
     }
   }, [st_messageCreateDone]);
 
@@ -462,7 +462,7 @@ const LectureAll = () => {
   useEffect(() => {
     if (st_messageForAdminCreateDone) {
       onReset();
-      return message.success("관리자에게 쪽지를 보냈습니다.");
+      return message.success("Message sent.");
     }
   }, [st_messageForAdminCreateDone]);
 
@@ -685,7 +685,7 @@ const LectureAll = () => {
       filePath.length
     );
 
-    const originName = `첨부파일.${ext}`;
+    const originName = `Attachments.${ext}`;
 
     saveAs(file, originName);
   }, []);
@@ -744,34 +744,42 @@ const LectureAll = () => {
 
   const limitColumns = [
     {
-      title: "번호",
+      title: "Name of teacher ",
       dataIndex: "id",
     },
     {
-      title: "강의명",
+      title: "Class name",
       dataIndex: "course",
     },
     {
-      title: "강사명",
+      title: "Name of teacher ",
       dataIndex: "teacherName",
     },
     {
-      title: "가격($)",
+      title: "Fee($)",
       dataIndex: "price",
     },
     {
-      title: "강의 참가일",
+      title: "Attendacne",
       render: (data) => data.createdAt.slice(0, 10),
     },
 
     {
-      title: "남은 일수",
-      render: (data) => <div>D-{data.limitDate}</div>,
+      title: "The number of remaining classes",
+      render: (data) => (
+        <div>
+          {data.limitDate < 0
+            ? `D+${Math.abs(data.limitDate)}`
+            : data.limitDate === 0
+            ? `D-day`
+            : `D-${data.limitDate}`}
+        </div>
+      ),
     },
   ];
   const limitColumnsM = [
     {
-      title: "강의명 / 강사명",
+      title: "Class name / Name of teacher ",
       width: 110,
       render: (data) => (
         <Wrapper al={`flex-start`}>
@@ -781,16 +789,16 @@ const LectureAll = () => {
       ),
     },
     {
-      title: "가격($)",
+      title: "Fee($)",
       dataIndex: "price",
     },
     {
-      title: "참가일",
+      title: "Date of participation",
       render: (data) => data.createdAt.slice(0, 10),
     },
 
     {
-      title: "일수",
+      title: "D-Day",
       render: (data) => <div>D-{data.limitDate}</div>,
     },
   ];
@@ -801,11 +809,11 @@ const LectureAll = () => {
       dataIndex: `id`,
     },
     {
-      title: `시간`,
+      title: `Time`,
       dataIndex: `time`,
     },
     {
-      title: `구분`,
+      title: `Category`,
       dataIndex: `status`,
     },
   ];
@@ -900,7 +908,7 @@ const LectureAll = () => {
             <Wrapper al={`flex-end`}>
               <BackIcon width={`auto`} onClick={moveBackHandler}>
                 <RollbackOutlined />
-                <Text>뒤로가기</Text>
+                <Text>Go back</Text>
               </BackIcon>
             </Wrapper>
             <Wrapper
@@ -927,21 +935,21 @@ const LectureAll = () => {
                   fontWeight={`Bold`}
                   width={width < 800 ? `15%` : `10%`}
                 >
-                  번호
+                  Name of teacher
                 </Text>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
                   width={width < 800 ? `25%` : `10%`}
                 >
-                  날짜
+                  Date
                 </Text>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
                   width={width < 800 ? `45%` : `70%`}
                 >
-                  제목
+                  Subject
                 </Text>
 
                 <Text
@@ -949,14 +957,14 @@ const LectureAll = () => {
                   fontWeight={`Bold`}
                   width={width < 800 ? `15%` : `10%`}
                 >
-                  작성자
+                  Writer
                 </Text>
               </Wrapper>
 
               {noticeMyLectureList &&
                 (noticeMyLectureList.length === 0 ? (
                   <Wrapper margin={`50px 0`}>
-                    <Empty description="공지사항이 없습니다." />
+                    <Empty description="No announcement" />
                   </Wrapper>
                 ) : (
                   noticeMyLectureList.map((data, idx) => {
@@ -998,11 +1006,11 @@ const LectureAll = () => {
             />
 
             <Wrapper al={`flex-start`} margin={`50px 0 20px`}>
-              <CommonTitle>관리자 강의 쪽지함</CommonTitle>
+              <CommonTitle>Messages from Admin</CommonTitle>
 
-              <Text fontSize={width < 800 ? `14px` : `18px`}>
+              {/* <Text fontSize={width < 800 ? `14px` : `18px`}>
                 관리자에서 강의 단위로 보낸 쪽지 목록 입니다.
-              </Text>
+              </Text> */}
             </Wrapper>
 
             <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
@@ -1018,21 +1026,21 @@ const LectureAll = () => {
                   fontWeight={`Bold`}
                   width={width < 800 ? `15%` : `10%`}
                 >
-                  번호
+                  Name of teacher
                 </Text>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
                   width={width < 800 ? `25%` : `10%`}
                 >
-                  날짜
+                  Date
                 </Text>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
                   width={width < 800 ? `45%` : `70%`}
                 >
-                  제목
+                  Subject
                 </Text>
 
                 <Text
@@ -1040,14 +1048,14 @@ const LectureAll = () => {
                   fontWeight={`Bold`}
                   width={width < 800 ? `15%` : `10%`}
                 >
-                  작성자
+                  Writer
                 </Text>
               </Wrapper>
 
               {messagePartList &&
                 (messagePartList.length === 0 ? (
                   <Wrapper margin={`50px 0`}>
-                    <Empty description="내게 온 쪽지가 없습니다." />
+                    <Empty description="No message" />
                   </Wrapper>
                 ) : (
                   messagePartList.map((data, idx) => {
@@ -1092,7 +1100,7 @@ const LectureAll = () => {
             </Wrapper>
 
             <Wrapper al={`flex-start`} margin={`0 0 20px`}>
-              <CommonTitle>전체 쪽지</CommonTitle>
+              <CommonTitle>All messages</CommonTitle>
             </Wrapper>
 
             <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
@@ -1108,21 +1116,21 @@ const LectureAll = () => {
                   fontWeight={`Bold`}
                   width={width < 800 ? `15%` : `10%`}
                 >
-                  글 번호
+                  Name of teacher
                 </Text>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
                   width={width < 800 ? `25%` : `10%`}
                 >
-                  날짜
+                  Date
                 </Text>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
                   width={width < 800 ? `45%` : `70%`}
                 >
-                  제목
+                  Subject
                 </Text>
 
                 <Text
@@ -1130,13 +1138,13 @@ const LectureAll = () => {
                   fontWeight={`Bold`}
                   width={width < 800 ? `15%` : `10%`}
                 >
-                  작성자
+                  Writer
                 </Text>
               </Wrapper>
               {messageAllList &&
                 (messageAllList.length === 0 ? (
                   <Wrapper margin={`50px 0`}>
-                    <Empty description="내게 온 쪽지가 없습니다." />
+                    <Empty description="No message" />
                   </Wrapper>
                 ) : (
                   messageAllList.map((data, idx) => {
@@ -1187,13 +1195,13 @@ const LectureAll = () => {
                 size={`small`}
                 onClick={() => setLimitModal(true)}
               >
-                내가 결제한 강의 정보
+                Paid classes
               </Button>
             </Wrapper>
 
             {lectureStuLectureList && lectureStuLectureList.length === 0 ? (
               <Wrapper margin={`50px 0`}>
-                <Empty description="조회된 리스트가 없습니다." />
+                <Empty description="Not found" />
               </Wrapper>
             ) : (
               lectureStuLectureList &&
@@ -1243,7 +1251,7 @@ const LectureAll = () => {
                               type={`primary`}
                               onClick={() => messageSendModalHandler(data)}
                             >
-                              쪽지 보내기
+                              Send message
                             </Button>
                           </Text>
 
@@ -1435,7 +1443,7 @@ const LectureAll = () => {
         <CustomModal
           visible={noticeViewModal}
           width={`1350px`}
-          title="공지사항"
+          title="Announcement"
           footer={null}
           closable={false}
         >
@@ -1446,11 +1454,11 @@ const LectureAll = () => {
             fontSize={width < 700 ? "14px" : "16px"}
           >
             <Text margin={`0 54px 0 0`}>
-              {`작성자: ${noticeViewDatum && noticeViewDatum.author}`}
+              {`Writer: ${noticeViewDatum && noticeViewDatum.author}`}
             </Text>
             <Wrapper width={`auto`}>
               <Text>
-                {`작성일: ${moment(
+                {`createdAt: ${moment(
                   noticeViewDatum && noticeViewDatum.createdAt,
                   "YYYY/MM/DD"
                 ).format("YYYY/MM/DD")}`}
@@ -1461,7 +1469,7 @@ const LectureAll = () => {
           {noticeViewDatum && noticeViewDatum.file && (
             <Wrapper dr={`row`} ju={`flex-end`}>
               <Text margin={`0 10px 0 0`} fontSize={`15px`}>
-                첨부파일
+                Attachments
               </Text>
 
               <CommonButton
@@ -1470,13 +1478,13 @@ const LectureAll = () => {
                 fontSize={`14px`}
                 onClick={() => fileDownloadHandler(noticeViewDatum.file)}
               >
-                다운로드
+                Download
               </CommonButton>
             </Wrapper>
           )}
 
           <Text fontSize={`18px`} fontWeight={`bold`}>
-            제목
+            Subject
           </Text>
           <Wrapper padding={`10px`}>
             <WordbreakText fontSize={width < 700 ? "14px" : "16px"}>
@@ -1485,7 +1493,7 @@ const LectureAll = () => {
           </Wrapper>
 
           <Text fontSize={`18px`} fontWeight={`bold`}>
-            내용
+            Content
           </Text>
           <Wrapper padding={`10px`}>
             <WordbreakText
@@ -1503,7 +1511,7 @@ const LectureAll = () => {
               color={Theme.darkGrey_C}
               radius={`5px`}
             >
-              돌아가기
+              Go back
             </CommonButton>
           </Wrapper>
         </CustomModal>
@@ -1516,7 +1524,7 @@ const LectureAll = () => {
         >
           <Wrapper al={`flex-start`}>
             <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
-              교재 목록
+              List of class materials
             </Text>
             <Wrapper al={`flex-start`} ju={`flex-start`}>
               <Table
@@ -1538,7 +1546,7 @@ const LectureAll = () => {
         <CustomModal
           visible={messageViewModal}
           width={`1350px`}
-          title={"쪽지 상세"}
+          title={"Message Content"}
           footer={null}
           closable={false}
         >
@@ -1551,9 +1559,9 @@ const LectureAll = () => {
                 fontSize={width < 700 ? "14px" : "16px"}
               >
                 <Text margin={`0 54px 0 0`}>
-                  {`작성자: ${messageDatum && messageDatum.author}`}
+                  {`Writer: ${messageDatum && messageDatum.author}`}
                 </Text>
-                <Text>{`날짜 ${
+                <Text>{`Date ${
                   messageDatum &&
                   moment(messageDatum.createdAt, "YYYY/MM/DD").format(
                     "YYYY/MM/DD"
@@ -1562,7 +1570,7 @@ const LectureAll = () => {
               </Wrapper>
 
               <Text fontSize={`18px`} fontWeight={`bold`}>
-                제목
+                Subject
               </Text>
 
               <Wrapper
@@ -1574,7 +1582,7 @@ const LectureAll = () => {
               </Wrapper>
 
               <Text fontSize={`18px`} fontWeight={`bold`}>
-                내용
+                Content
               </Text>
               <Wrapper
                 padding={`10px`}
@@ -1602,7 +1610,7 @@ const LectureAll = () => {
                   radius={`5px`}
                   onClick={() => onReset()}
                 >
-                  돌아가기
+                  Go back
                 </CommonButton>
               </Wrapper>
             </>
@@ -1678,7 +1686,7 @@ const LectureAll = () => {
             {sendMessageType === 1 && (
               <>
                 <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
-                  듣고 있는 강의 목록
+                  My classes
                 </Text>
 
                 <Form.Item
@@ -1686,16 +1694,14 @@ const LectureAll = () => {
                   rules={[
                     {
                       required: true,
-                      message: "듣고있는 강의 목록을 선택해주세요.",
+                      message: "Choose your class.",
                     },
                   ]}
                 >
                   <Select style={{ width: `100%` }}>
                     {lectureStuLectureList &&
                     lectureStuLectureList.length === 0 ? (
-                      <Option value="참여 중인 강의가 없습니다.">
-                        참여 중인 강의가 없습니다.
-                      </Option>
+                      <Option value="No class found">No class found</Option>
                     ) : (
                       lectureStuLectureList &&
                       lectureStuLectureList.map((data, idx) => {
@@ -1716,7 +1722,7 @@ const LectureAll = () => {
                   color={Theme.grey2_C}
                   margin={`0 0 20px`}
                 >
-                  강사님 개인쪽지함에 쪽지가 전달됩니다.
+                  This message will be sent to your teacher.
                 </Text>
               </>
             )}
@@ -1724,7 +1730,7 @@ const LectureAll = () => {
             {sendMessageType === 2 && (
               <>
                 <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
-                  듣고 있는 강의 목록
+                  My classes
                 </Text>
 
                 <Form.Item
@@ -1732,16 +1738,14 @@ const LectureAll = () => {
                   rules={[
                     {
                       required: true,
-                      message: "듣고있는 강의 목록을 선택해주세요.",
+                      message: "Choose your class.",
                     },
                   ]}
                 >
                   <Select style={{ width: `100%` }}>
                     {lectureStuLectureList &&
                     lectureStuLectureList.length === 0 ? (
-                      <Option value="참여 중인 강의가 없습니다.">
-                        참여 중인 강의가 없습니다.
-                      </Option>
+                      <Option value="No class found">No class found</Option>
                     ) : (
                       lectureStuLectureList &&
                       lectureStuLectureList.map((data, idx) => {
@@ -1762,13 +1766,13 @@ const LectureAll = () => {
                   color={Theme.grey2_C}
                   margin={`0 0 20px`}
                 >
-                  강사님에 수업 상세페이지 쪽지함에 전달 됩니다.
+                  This message will be sent to your teacher
                 </Text>
               </>
             )}
 
             <Text fontSize={`18px`} fontWeight={`bold`}>
-              제목
+              Subject
             </Text>
             <Form.Item
               name="title"
@@ -1777,7 +1781,7 @@ const LectureAll = () => {
               <Input />
             </Form.Item>
             <Text fontSize={`18px`} fontWeight={`bold`}>
-              내용
+              Content
             </Text>
 
             <Form.Item
@@ -1794,21 +1798,21 @@ const LectureAll = () => {
                 radius={`5px`}
                 onClick={() => onReset()}
               >
-                돌아가기
+                Go back
               </CommonButton>
               <CommonButton
                 margin={`0 0 0 5px`}
                 radius={`5px`}
                 htmlType="submit"
               >
-                쪽지 보내기
+                Send message
               </CommonButton>
             </Wrapper>
           </CustomForm>
         </CustomModal>
         <CustomModal
           width={800}
-          title={`내가 결제한 강의 정보`}
+          title={`Paid classes`}
           footer={null}
           onCancel={() => setLimitModal(false)}
           visible={limitModal}

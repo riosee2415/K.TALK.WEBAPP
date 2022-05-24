@@ -140,6 +140,7 @@ const AdminHome = () => {
 
   const [currentPage1, setCurrentPage1] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
+  const [listType, setListType] = useState(2);
 
   const [dayArr, setDayArr] = useState([]);
   const inputId = useInput("");
@@ -230,6 +231,7 @@ const AdminHome = () => {
           time: "",
           startLv: "",
           studentName: "",
+          listType: listType ? listType : 2,
         },
       });
 
@@ -260,6 +262,7 @@ const AdminHome = () => {
           time: searchTime ? searchTime : "",
           startLv: "",
           studentName: searchStuName ? searchStuName : "",
+          listType: listType ? listType : 2,
         },
       });
     }
@@ -282,6 +285,7 @@ const AdminHome = () => {
           time: searchTime ? searchTime : "",
           startLv: "",
           studentName: searchStuName ? searchStuName : "",
+          listType: listType ? listType : 2,
         },
       });
       updateModalClose();
@@ -379,6 +383,7 @@ const AdminHome = () => {
         time: "",
         startLv: "",
         studentName: "",
+        listType: listType ? listType : 2,
       },
     });
     setCurrentTeacher(router.query.teacher);
@@ -596,9 +601,17 @@ const AdminHome = () => {
         time: searchTime ? searchTime : "",
         startLv: searchStartLv,
         studentName: searchStuName ? searchStuName : "",
+        listType: listType ? listType : 2,
       },
     });
-  }, [currentTeacher, searchLevel, searchStep, searchTime, searchStuName]);
+  }, [
+    currentTeacher,
+    searchLevel,
+    searchStep,
+    searchTime,
+    searchStuName,
+    listType,
+  ]);
 
   const noticeColumns = [
     {
@@ -775,6 +788,23 @@ const AdminHome = () => {
                 </Button>
               </Wrapper>
               <Wrapper dr={`row`} ju={`flex-start`}>
+                <Select
+                  style={{ width: `200px`, marginRight: 10 }}
+                  placeholder={`정렬을 선택해주세요.`}
+                  value={listType}
+                  onChange={(e) => setListType(e)}
+                  allowClear
+                >
+                  <Select.Option value={2}>생성일 기준 내림차순</Select.Option>
+                  <Select.Option value={3}>생성일 기준 오름차순</Select.Option>
+                  <Select.Option value={4}>
+                    강의번호 기준 내림차순
+                  </Select.Option>
+                  <Select.Option value={5}>
+                    강의번호 기준 오름차순
+                  </Select.Option>
+                </Select>
+
                 <Select
                   style={{ width: `200px`, marginRight: 10 }}
                   placeholder={`강사를 선택해주세요.`}

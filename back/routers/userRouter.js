@@ -492,7 +492,7 @@ router.post("/me/update", isLoggedIn, async (req, res, next) => {
     return res.status(200).json({ result: true });
   } catch (error) {
     console.error(error);
-    return res.status(401).send("정보를 수정할 수 없습니다.");
+    return res.status(401).send("Unable to update profile. ");
   }
 });
 

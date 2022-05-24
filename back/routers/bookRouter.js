@@ -132,7 +132,7 @@ router.post("/list", async (req, res, next) => {
       .json({ books: books[0], lastPage: parseInt(lastPage) });
   } catch (error) {
     console.error(error);
-    return res.status(401).send("교재 목록을 불러올 수 없습니다.");
+    return res.status(401).send("Unable to load the list of classes.");
   }
 });
 

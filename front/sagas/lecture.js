@@ -144,10 +144,15 @@ function* lectureList(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function lectureAllListAPI(data) {
-  return axios.get(
-    `/api/lecture/allLectures?TeacherId=${data.TeacherId}&time=${data.time}&startLv=${data.startLv}&studentName=${data.studentName}&isDelete=${data.isDelete}`,
-    data
-  );
+  return data.listType
+    ? axios.get(
+        `/api/lecture/allLectures/${data.listType}?TeacherId=${data.TeacherId}&time=${data.time}&startLv=${data.startLv}&studentName=${data.studentName}&isDelete=${data.isDelete}`,
+        data
+      )
+    : axios.get(
+        `/api/lecture/allLectures?TeacherId=${data.TeacherId}&time=${data.time}&startLv=${data.startLv}&studentName=${data.studentName}&isDelete=${data.isDelete}`,
+        data
+      );
 }
 
 function* lectureAllList(action) {

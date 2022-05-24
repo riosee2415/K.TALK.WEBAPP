@@ -36,6 +36,8 @@ import {
   RsWrapper,
   SpanText,
   Text,
+  TextArea,
+  TextInput,
   WholeWrapper,
   Wrapper,
 } from "../../components/commonComponents";
@@ -69,6 +71,25 @@ import { CalendarOutlined } from "@ant-design/icons";
 
 const PROFILE_WIDTH = `150`;
 const PROFILE_HEIGHT = `150`;
+
+const CustomInput = styled(TextInput)`
+  width: ${(props) => props.width || `100%`};
+
+  &::placeholder {
+    color: ${Theme.grey2_C};
+  }
+`;
+
+const CusotmTextArea = styled(TextArea)`
+  width: 100%;
+  min-height: 200px;
+  border: none;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
+
+  &::placeholder {
+    color: ${Theme.grey2_C};
+  }
+`;
 
 const CustomButton2 = styled(Button)`
   font-size: 16px;
@@ -418,6 +439,9 @@ const Student = () => {
   const [attendanceModal, setAttendanceModal] = useState(false);
   const [attendanceData, setAttendanceData] = useState(null);
 
+  const [homework, setHomework] = useState(null);
+  const [homeworkModal, setHomeworkModal] = useState(false);
+
   const bookColumns = [
     {
       title: "No",
@@ -434,7 +458,7 @@ const Student = () => {
       },
     },
     {
-      title: "제목",
+      title: "Subject",
       render: (data) => {
         return <Text>{data.title}</Text>;
       },
@@ -505,10 +529,10 @@ const Student = () => {
 
   useEffect(() => {
     if (!me) {
-      message.error("로그인 후 이용해주세요.");
+      message.error("Please log in");
       return router.push(`/`);
     } else if (me.level !== 1) {
-      message.error("학생이 아닙니다.");
+      message.error("Access denied");
       return router.push(`/`);
     }
   }, [me]);
@@ -527,7 +551,7 @@ const Student = () => {
 
   useEffect(() => {
     if (st_userProfileUploadDone) {
-      return message.success("프로필 사진이 업로드되었습니다.");
+      return message.success("ID picture successfully uploaded");
     }
   }, [st_userProfileUploadDone]);
 
@@ -547,7 +571,7 @@ const Student = () => {
         type: ME_UPDATE_MODAL_TOGGLE,
       });
 
-      return message.success("회원 정보가 수정되었습니다.");
+      return message.success("Profile successfully updated");
     }
   }, [st_userUserUpdateDone]);
 
@@ -595,7 +619,7 @@ const Student = () => {
   useEffect(() => {
     if (st_messageCreateDone) {
       onReset();
-      return message.success("해당 강사님에게 쪽지를 보냈습니다.");
+      return message.success("Message sent.");
     }
   }, [st_messageCreateDone]);
 
@@ -614,7 +638,7 @@ const Student = () => {
   useEffect(() => {
     if (st_messageForAdminCreateDone) {
       onReset();
-      return message.success("관리자에게 쪽지를 보냈습니다.");
+      return message.success("Message sent.");
     }
   }, [st_messageForAdminCreateDone]);
 
@@ -651,7 +675,7 @@ const Student = () => {
   useEffect(() => {
     if (st_lectureSubmitCreateDone) {
       onReset();
-      return message.success("해당 강의 숙제를 제출했습니다.");
+      return message.success("Submission completed");
     }
   }, [st_lectureSubmitCreateDone]);
 
@@ -779,7 +803,7 @@ const Student = () => {
       setFileName(
         e.target.files[0] && e.target.files[0].name
           ? e.target.files[0].name
-          : "파일을 다시 선택해주세요."
+          : "Please reupload file."
       );
 
       fileInput.current.value = "";
@@ -790,7 +814,7 @@ const Student = () => {
   const meUpdateHandler = useCallback(
     (data) => {
       if (!userProfilePath || userProfilePath.trim().length === 0) {
-        return message.error("프로필 사진을 업로드해주세요");
+        return message.error("Upload your ID picture.");
       }
 
       dispatch({
@@ -925,7 +949,7 @@ const Student = () => {
       fileInput.current.value = "";
       setFileName("");
     } else {
-      return message.error("파일을 업로드 해주세요.");
+      return message.error("Please upload the file.");
     }
   }, [fileName, filePath, homeWorkData, fileInput]);
 
@@ -939,7 +963,7 @@ const Student = () => {
       filePath.length
     );
 
-    const originName = `첨부파일.${ext}`;
+    const originName = `Attachments.${ext}`;
 
     saveAs(file, originName);
   }, []);
@@ -1131,6 +1155,10 @@ const Student = () => {
     [attendanceModal]
   );
 
+  const homeworksToggle = useCallback((data) => {
+    setHomework(data);
+    setHomeworkModal((prev) => !prev);
+  }, []);
   ////// DATAVIEW //////
 
   const commuteColumns = [
@@ -1139,11 +1167,11 @@ const Student = () => {
       dataIndex: `id`,
     },
     {
-      title: `시간`,
+      title: `Time`,
       dataIndex: `time`,
     },
     {
-      title: `구분`,
+      title: `Category `,
       dataIndex: `status`,
     },
   ];
@@ -1248,7 +1276,7 @@ const Student = () => {
           <RsWrapper margin={width < 800 ? `0` : `-94px 0 0`}>
             {lectureStuLectureList && lectureStuLectureList.length === 0 ? (
               <Wrapper marign={`50px 0`}>
-                <Empty description="조회된 시간표 목록이 없습니다." />
+                <Empty description="Class Not found" />
               </Wrapper>
             ) : (
               lectureStuLectureList &&
@@ -1377,7 +1405,7 @@ const Student = () => {
 
             {lectureStuLectureList && lectureStuLectureList.length === 0 ? (
               <Wrapper margin={`50px 0`}>
-                <Empty description="조회된 리스트가 없습니다." />
+                <Empty description="Not found" />
               </Wrapper>
             ) : (
               lectureStuLectureList &&
@@ -1427,7 +1455,7 @@ const Student = () => {
                               type={`primary`}
                               onClick={() => messageSendModalHandler(data)}
                             >
-                              쪽지 보내기
+                              Send message
                             </Button>
                           </Text>
 
@@ -1691,7 +1719,9 @@ const Student = () => {
                       </Wrapper> */}
 
             <Wrapper al={`flex-start`} margin={`80px 0 20px`}>
-              <CommonTitle>숙제보기 / 제출하기</CommonTitle>
+              <CommonTitle>
+                View your homework / submit your homework
+              </CommonTitle>
             </Wrapper>
 
             <Wrapper margin={`0 0 40px`}>
@@ -1702,15 +1732,15 @@ const Student = () => {
                   </Wrapper>
                 ) : (
                   lectureHomeworkStuList &&
-                  lectureHomeworkStuList.map((data) => {
+                  lectureHomeworkStuList.map((data, idx) => {
                     return (
                       <Wrapper
                         key={data.id}
                         dr={`row`}
-                        shadow={`0px 5px 15px rgba(0, 0, 0, 0.16)`}
-                        radius={`10px`}
                         padding={`20px`}
                         margin={`0 0 10px`}
+                        borderTop={idx === 0 && `1px solid ${Theme.grey_C}`}
+                        borderBottom={`1px solid ${Theme.grey_C}`}
                       >
                         <Wrapper
                           width={width < 900 ? `100%` : `55%`}
@@ -1739,7 +1769,7 @@ const Student = () => {
                             ju={`flex-start`}
                           >
                             <Text fontSize={`14px`}>
-                              {`${data.username} 강사님`}
+                              {`${data.username}님`}
                             </Text>
                           </Wrapper>
 
@@ -1748,7 +1778,17 @@ const Student = () => {
                             width={width < 900 ? `45%` : `50%`}
                             ju={`flex-start`}
                           >
-                            <Text fontSize={`14px`}>{data.title}</Text>
+                            <Text fontSize={`14px`}>
+                              Subject : {data.title}
+                            </Text>{" "}
+                            &nbsp; &nbsp; &nbsp;
+                            <Button
+                              size={`small`}
+                              type={`primary`}
+                              onClick={() => homeworksToggle(data)}
+                            >
+                              View Content
+                            </Button>
                           </Wrapper>
                         </Wrapper>
                         <Wrapper
@@ -1771,7 +1811,7 @@ const Student = () => {
                               alt="lecture_icon"
                             />
 
-                            <Text cursor={`pointer`}>파일 다운로드</Text>
+                            <Text cursor={`pointer`}>Download file</Text>
                           </Wrapper>
 
                           <Wrapper
@@ -1833,8 +1873,8 @@ const Student = () => {
                                   )
                                 )
                                 .asDays() < -1
-                                ? "제출 기간 만료"
-                                : "제출 하기"}
+                                ? "Submission period expired"
+                                : "Submit"}
                             </CustomButton>
                           </Wrapper>
                         </Wrapper>
@@ -1879,27 +1919,27 @@ const Student = () => {
                   fontWeight={`Bold`}
                   width={width < 800 ? `25%` : `10%`}
                 >
-                  날짜
+                  Date
                 </Text>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
                   width={width < 800 ? `45%` : `70%`}
                 >
-                  제목
+                  Subject
                 </Text>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
                   width={width < 800 ? `15%` : `10%`}
                 >
-                  작성자
+                  Writer
                 </Text>
               </Wrapper>
               {noticeMyLectureList &&
                 (noticeMyLectureList.length === 0 ? (
                   <Wrapper margin={`50px 0`}>
-                    <Empty description="공지사항이 없습니다." />
+                    <Empty description="No announcement" />
                   </Wrapper>
                 ) : (
                   noticeMyLectureList.map((data, idx) => {
@@ -1962,28 +2002,28 @@ const Student = () => {
                 fontWeight={`Bold`}
                 width={width < 800 ? `25%` : `10%`}
               >
-                날짜
+                Date
               </Text>
               <Text
                 fontSize={width < 700 ? `14px` : `18px`}
                 fontWeight={`Bold`}
                 width={width < 800 ? `45%` : `70%`}
               >
-                제목
+                Subject
               </Text>
               <Text
                 fontSize={width < 700 ? `14px` : `18px`}
                 fontWeight={`Bold`}
                 width={width < 800 ? `15%` : `10%`}
               >
-                작성자
+                Writer
               </Text>
             </Wrapper>
             <Wrapper margin={`0 0 40px`}>
               {noticeList &&
                 (noticeList.length === 0 ? (
                   <Wrapper margin={`50px 0`}>
-                    <Empty description="공지사항이 없습니다." />
+                    <Empty description="No announcement" />
                   </Wrapper>
                 ) : (
                   noticeList.map((data, idx) => {
@@ -2048,28 +2088,28 @@ const Student = () => {
                   fontWeight={`Bold`}
                   width={width < 800 ? `25%` : `10%`}
                 >
-                  날짜
+                  Date
                 </Text>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
                   width={width < 800 ? `45%` : `70%`}
                 >
-                  제목
+                  Subject
                 </Text>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
                   fontWeight={`Bold`}
                   width={width < 800 ? `15%` : `10%`}
                 >
-                  작성자
+                  Writer
                 </Text>
               </Wrapper>
 
               {messageUserList &&
                 (messageUserList.length === 0 ? (
                   <Wrapper margin={`50px 0`}>
-                    <Empty description="내게 온 쪽지가 없습니다." />
+                    <Empty description="No message" />
                   </Wrapper>
                 ) : (
                   messageUserList.map((data, idx) => {
@@ -2108,7 +2148,7 @@ const Student = () => {
                 radius={`5px`}
                 onClick={() => messageSendModalHandler()}
               >
-                쪽지 보내기
+                Send message
               </CommonButton>
             </Wrapper>
 
@@ -2138,12 +2178,12 @@ const Student = () => {
                 <Wrapper width={width < 800 ? `15%` : `10%`}>번호</Wrapper>
                 <Wrapper width={width < 800 ? `45%` : `70%`}>자료명</Wrapper>
                 <Wrapper width={width < 800 ? `15%` : `10%`}>자료</Wrapper>
-                <Wrapper width={width < 800 ? `25%` : `10%`}>날짜</Wrapper>
+                <Wrapper width={width < 800 ? `25%` : `10%`}>Date</Wrapper>
               </Wrapper>
               {preparationArr &&
                 (preparationArr.length === 0 ? (
                   <Wrapper>
-                    <Empty description="공지사항이 없습니다." />
+                    <Empty description="No announcement" />
                   </Wrapper>
                 ) : (
                   preparationArr.map((data, idx) => {
@@ -2189,7 +2229,7 @@ const Student = () => {
           <CustomModal
             visible={noticeViewModal}
             width={`900px`}
-            title="공지사항"
+            title="Announcement"
             footer={null}
             closable={false}
           >
@@ -2200,7 +2240,7 @@ const Student = () => {
               fontSize={width < 700 ? "14px" : "16px"}
             >
               <Text margin={`0 54px 0 0`}>
-                {`작성자: ${noticeViewDatum && noticeViewDatum.author}`}
+                {`Writer: ${noticeViewDatum && noticeViewDatum.author}`}
               </Text>
               <Wrapper width={`auto`}>
                 <Text>
@@ -2217,7 +2257,7 @@ const Student = () => {
             {noticeViewDatum && noticeViewDatum.file && (
               <Wrapper dr={`row`} ju={`flex-end`}>
                 <Text margin={`0 10px 0 0`} fontSize={`15px`}>
-                  첨부파일
+                  Attachments
                 </Text>
 
                 <CommonButton
@@ -2226,13 +2266,13 @@ const Student = () => {
                   fontSize={`14px`}
                   onClick={() => fileDownloadHandler(noticeViewDatum.file)}
                 >
-                  다운로드
+                  Download
                 </CommonButton>
               </Wrapper>
             )}
 
             <Text fontSize={`18px`} fontWeight={`bold`}>
-              제목
+              Subject
             </Text>
             <Wrapper
               padding={`10px`}
@@ -2245,7 +2285,7 @@ const Student = () => {
             </Wrapper>
 
             <Text fontSize={`18px`} fontWeight={`bold`}>
-              내용
+              Content
             </Text>
             <Wrapper padding={`10px`} bgColor={Theme.subTheme9_C}>
               <WordbreakText
@@ -2263,7 +2303,7 @@ const Student = () => {
                 color={Theme.darkGrey_C}
                 radius={`5px`}
               >
-                돌아가기
+                Go back
               </CommonButton>
             </Wrapper>
           </CustomModal>
@@ -2275,10 +2315,10 @@ const Student = () => {
               sendMessageAnswerType === 0
                 ? "쪽지 보기"
                 : sendMessageAnswerType === 1
-                ? "강사에게 쪽지 보내기"
+                ? "Message to my teacher"
                 : sendMessageAnswerType === 2
-                ? "수업에 대한 쪽지 보내기"
-                : sendMessageAnswerType === 3 && "관리자에게 쪽지 보내기"
+                ? "Message to my lecture"
+                : sendMessageAnswerType === 3 && "Message to admin"
             }
             footer={null}
             closable={false}
@@ -2304,10 +2344,10 @@ const Student = () => {
                     size="small"
                     onClick={() => sendMessageAnswerTypeHandler(1)}
                   >
-                    {"강사"}
+                    {"to my teacher"}
                   </CommonButton>
 
-                  <CommonButton
+                  {/* <CommonButton
                     margin={`0 0 0 5px`}
                     radius={`5px`}
                     width={`100px`}
@@ -2316,7 +2356,7 @@ const Student = () => {
                     onClick={() => sendMessageAnswerTypeHandler(2)}
                   >
                     {"수업"}
-                  </CommonButton>
+                  </CommonButton> */}
 
                   <CommonButton
                     margin={`0 0 0 5px`}
@@ -2326,7 +2366,7 @@ const Student = () => {
                     size="small"
                     onClick={() => sendMessageAnswerTypeHandler(3)}
                   >
-                    {"관리자"}
+                    {"to admin"}
                   </CommonButton>
                 </Wrapper>
               )}
@@ -2334,7 +2374,7 @@ const Student = () => {
               {sendMessageAnswerType === 1 && (
                 <>
                   <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
-                    듣고 있는 강의 목록
+                    My classes
                   </Text>
 
                   <Form.Item
@@ -2342,16 +2382,14 @@ const Student = () => {
                     rules={[
                       {
                         required: true,
-                        message: "듣고있는 강의 목록을 선택해주세요.",
+                        message: "Choose your class.",
                       },
                     ]}
                   >
                     <Select style={{ width: `100%` }}>
                       {lectureStuLectureList &&
                       lectureStuLectureList.length === 0 ? (
-                        <Option value="참여 중인 강의가 없습니다.">
-                          참여 중인 강의가 없습니다.
-                        </Option>
+                        <Option value="No class found">No class found</Option>
                       ) : (
                         lectureStuLectureList &&
                         lectureStuLectureList.map((data, idx) => {
@@ -2372,7 +2410,7 @@ const Student = () => {
                     color={Theme.grey2_C}
                     margin={`0 0 20px`}
                   >
-                    강사님 개인쪽지함에 쪽지가 전달됩니다.
+                    This message will be sent to your teacher.
                   </Text>
                 </>
               )}
@@ -2380,7 +2418,7 @@ const Student = () => {
               {sendMessageAnswerType === 2 && (
                 <>
                   <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
-                    듣고 있는 강의 목록
+                    My classes
                   </Text>
 
                   <Form.Item
@@ -2388,16 +2426,14 @@ const Student = () => {
                     rules={[
                       {
                         required: true,
-                        message: "듣고있는 강의 목록을 선택해주세요.",
+                        message: "Choose your class.",
                       },
                     ]}
                   >
                     <Select style={{ width: `100%` }}>
                       {lectureStuLectureList &&
                       lectureStuLectureList.length === 0 ? (
-                        <Option value="참여 중인 강의가 없습니다.">
-                          참여 중인 강의가 없습니다.
-                        </Option>
+                        <Option value="No class found">No class found</Option>
                       ) : (
                         lectureStuLectureList &&
                         lectureStuLectureList.map((data, idx) => {
@@ -2418,14 +2454,14 @@ const Student = () => {
                     color={Theme.grey2_C}
                     margin={`0 0 20px`}
                   >
-                    강사님에 수업 상세페이지 쪽지함에 전달 됩니다.
+                    This message will be sent to your teacher
                   </Text>
                 </>
               )}
               {sendMessageAnswerType !== 0 && (
                 <>
                   <Text fontSize={`18px`} fontWeight={`bold`}>
-                    제목
+                    Subject
                   </Text>
                   <Form.Item
                     name="title"
@@ -2436,7 +2472,7 @@ const Student = () => {
                     <Input />
                   </Form.Item>
                   <Text fontSize={`18px`} fontWeight={`bold`}>
-                    내용
+                    Content
                   </Text>
                   <Form.Item
                     name="content"
@@ -2454,14 +2490,14 @@ const Student = () => {
                       radius={`5px`}
                       onClick={() => onReset()}
                     >
-                      돌아가기
+                      Go back
                     </CommonButton>
                     <CommonButton
                       margin={`0 0 0 5px`}
                       radius={`5px`}
                       htmlType="submit"
                     >
-                      쪽지 보내기
+                      Send message
                     </CommonButton>
                   </Wrapper>
                 </>
@@ -2477,9 +2513,9 @@ const Student = () => {
                   fontSize={width < 700 ? "14px" : "16px"}
                 >
                   <Text margin={`0 54px 0 0`}>
-                    {`작성자: ${messageDatum && messageDatum.author}`}
+                    {`Writer: ${messageDatum && messageDatum.author}`}
                   </Text>
-                  <Text>{`날짜 ${
+                  <Text>{`Date ${
                     messageDatum &&
                     moment(messageDatum.createdAt, "YYYY/MM/DD").format(
                       "YYYY/MM/DD"
@@ -2487,7 +2523,7 @@ const Student = () => {
                   }`}</Text>
                 </Wrapper>
                 <Text fontSize={`18px`} fontWeight={`bold`}>
-                  제목
+                  Subject
                 </Text>
                 <Wrapper
                   padding={`10px`}
@@ -2499,7 +2535,7 @@ const Student = () => {
                   <Text>{messageDatum && messageDatum.title}</Text>
                 </Wrapper>
                 <Text fontSize={`18px`} fontWeight={`bold`}>
-                  내용
+                  Content
                 </Text>
                 <Wrapper
                   padding={`10px`}
@@ -2527,7 +2563,7 @@ const Student = () => {
                     radius={`5px`}
                     onClick={() => onReset()}
                   >
-                    돌아가기
+                    Go back
                   </CommonButton>
 
                   <CommonButton
@@ -2535,7 +2571,7 @@ const Student = () => {
                     margin={`0 0 0 5px`}
                     radius={`5px`}
                   >
-                    답변하기
+                    Send Message
                   </CommonButton>
                 </Wrapper>
               </>
@@ -2552,13 +2588,11 @@ const Student = () => {
             <ProfileWrapper>
               <GuideWrapper>
                 <GuideText>
-                  프로필 이미지 사이즈는 가로 {PROFILE_WIDTH}px 과 세로&nbsp;
-                  {PROFILE_HEIGHT}px을 기준으로 합니다.
+                  The size of your ID picture should be {PROFILE_WIDTH}px x
+                  &nbsp;
+                  {PROFILE_HEIGHT}px.
                 </GuideText>
-                <GuideText>
-                  이미지 사이즈가 상이할 경우 화면에 올바르지 않게 보일 수
-                  있으니 이미지 사이즈를 확인해주세요.
-                </GuideText>
+                <GuideText>Check the size of your picture.</GuideText>
               </GuideWrapper>
 
               <ProfileImage
@@ -2569,9 +2603,7 @@ const Student = () => {
                 }
                 alt="main_GALLEY_image"
               />
-              <PreviewGuide>
-                {userProfilePath && `이미지 미리보기 입니다.`}
-              </PreviewGuide>
+              <PreviewGuide>{userProfilePath && `Image preview`}</PreviewGuide>
 
               <UploadWrapper>
                 <input
@@ -2612,7 +2644,7 @@ const Student = () => {
           <CustomModal
             visible={homeWorkModalToggle}
             width={`900px`}
-            title="숙제 제출하기"
+            title="Submit homework"
             footer={null}
             closable={false}
           >
@@ -2621,7 +2653,7 @@ const Student = () => {
               fontWeight={`bold`}
               margin={`0 0 10px`}
             >
-              제목
+              Subject
             </Text>
             <Text fontSize={width < 700 ? `14px` : `18px`} margin={`0 0 10px`}>
               {homeWorkData && homeWorkData.title}
@@ -2632,7 +2664,7 @@ const Student = () => {
               fontWeight={`bold`}
               margin={`0 0 10px`}
             >
-              내용
+              Content
             </Text>
 
             <Text fontSize={width < 700 ? `14px` : `18px`} margin={`0 0 10px`}>
@@ -2648,7 +2680,7 @@ const Student = () => {
                 fontSize={width < 700 ? `14px` : `18px`}
                 fontWeight={`bold`}
               >
-                파일 업로드
+                Upload file
               </Text>
 
               <Wrapper al={`flex-start`}>
@@ -2671,7 +2703,7 @@ const Student = () => {
                     margin: `10px 0 0`,
                   }}
                 >
-                  파일 올리기
+                  Upload file
                 </Button>
                 <Text>{`${fileName}`}</Text>
               </Wrapper>
@@ -2684,14 +2716,14 @@ const Student = () => {
                   radius={`5px`}
                   onClick={() => onReset()}
                 >
-                  돌아가기
+                  Go back
                 </CommonButton>
                 <CommonButton
                   margin={`0 0 0 5px`}
                   radius={`5px`}
                   htmlType="submit"
                 >
-                  작성하기
+                  Submit
                 </CommonButton>
               </Wrapper>
             </CustomForm>
@@ -2711,10 +2743,10 @@ const Student = () => {
               >
                 <Text fontSize={width < 800 ? `14px` : `20px`}>
                   {sendMessageType === 1
-                    ? "강사에게 쪽지 보내기"
+                    ? "Message to my teacher"
                     : sendMessageType === 2
-                    ? "수업에 대한 쪽지 보내기"
-                    : sendMessageType === 3 && "관리자에게 쪽지 보내기"}
+                    ? "Message to my lecture"
+                    : sendMessageType === 3 && "Message to admin"}
                 </Text>
                 <Wrapper dr={`row`} width={`auto`}>
                   <MessageSelectButton
@@ -2722,17 +2754,17 @@ const Student = () => {
                     size="small"
                     onClick={() => sendMessageTypeHandler(1)}
                   >
-                    {"강사"}
+                    {"to my teacher"}
                   </MessageSelectButton>
 
-                  <MessageSelectButton
+                  {/* <MessageSelectButton
                     className={sendMessageType === 2 && `active`}
                     margin={width < 800 ? `0 0 0 5px` : `0 0 0 8px`}
                     size="small"
                     onClick={() => sendMessageTypeHandler(2)}
                   >
                     {"수업"}
-                  </MessageSelectButton>
+                  </MessageSelectButton> */}
 
                   <MessageSelectButton
                     className={sendMessageType === 3 && `active`}
@@ -2740,7 +2772,7 @@ const Student = () => {
                     size="small"
                     onClick={() => sendMessageTypeHandler(3)}
                   >
-                    {"관리자"}
+                    {"to admin"}
                   </MessageSelectButton>
                   <CloseOutlined
                     onClick={onReset}
@@ -2765,7 +2797,7 @@ const Student = () => {
               {sendMessageType === 1 && (
                 <>
                   <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
-                    듣고 있는 강의 목록
+                    My classes
                   </Text>
 
                   <Form.Item
@@ -2773,16 +2805,14 @@ const Student = () => {
                     rules={[
                       {
                         required: true,
-                        message: "듣고있는 강의 목록을 선택해주세요.",
+                        message: "Choose your class.",
                       },
                     ]}
                   >
                     <MessageModalSelect style={{ width: `100%` }}>
                       {lectureStuLectureList &&
                       lectureStuLectureList.length === 0 ? (
-                        <Option value="참여 중인 강의가 없습니다.">
-                          참여 중인 강의가 없습니다.
-                        </Option>
+                        <Option value="No class found">No class found</Option>
                       ) : (
                         lectureStuLectureList &&
                         lectureStuLectureList.map((data, idx) => {
@@ -2803,7 +2833,7 @@ const Student = () => {
                     color={Theme.grey2_C}
                     margin={`0 0 20px`}
                   >
-                    강사님 개인쪽지함에 쪽지가 전달됩니다.
+                    This message will be sent to your teacher.
                   </Text>
                 </>
               )}
@@ -2811,7 +2841,7 @@ const Student = () => {
               {sendMessageType === 2 && (
                 <>
                   <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
-                    듣고 있는 강의 목록
+                    My classes
                   </Text>
 
                   <Form.Item
@@ -2819,16 +2849,14 @@ const Student = () => {
                     rules={[
                       {
                         required: true,
-                        message: "듣고있는 강의 목록을 선택해주세요.",
+                        message: "Choose your class.",
                       },
                     ]}
                   >
                     <MessageModalSelect>
                       {lectureStuLectureList &&
                       lectureStuLectureList.length === 0 ? (
-                        <Option value="참여 중인 강의가 없습니다.">
-                          참여 중인 강의가 없습니다.
-                        </Option>
+                        <Option value="No class found">No class found</Option>
                       ) : (
                         lectureStuLectureList &&
                         lectureStuLectureList.map((data, idx) => {
@@ -2849,13 +2877,13 @@ const Student = () => {
                     color={Theme.grey2_C}
                     margin={`0 0 20px`}
                   >
-                    강사님에 수업 상세페이지 쪽지함에 전달 됩니다.
+                    This message will be sent to your teacher
                   </Text>
                 </>
               )}
 
               <Text fontSize={`18px`} fontWeight={`bold`}>
-                제목
+                Subject
               </Text>
               <Form.Item
                 name="title"
@@ -2864,7 +2892,7 @@ const Student = () => {
                 <Input />
               </Form.Item>
               <Text fontSize={`18px`} fontWeight={`bold`}>
-                내용
+                Content
               </Text>
               <Form.Item
                 name="content"
@@ -2880,14 +2908,14 @@ const Student = () => {
                   radius={`5px`}
                   onClick={() => onReset()}
                 >
-                  돌아가기
+                  Go back
                 </CommonButton>
                 <CommonButton
                   margin={`0 0 0 5px`}
                   radius={`5px`}
                   htmlType="submit"
                 >
-                  쪽지 보내기
+                  Send message
                 </CommonButton>
               </Wrapper>
             </CustomForm>
@@ -2901,7 +2929,7 @@ const Student = () => {
           >
             <Wrapper al={`flex-start`}>
               <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
-                교재 목록
+                List of class materials
               </Text>
               <Wrapper al={`flex-start`} ju={`flex-start`}>
                 <Table
@@ -2933,6 +2961,67 @@ const Student = () => {
               columns={commuteColumns}
             />
           </Modal>
+
+          <CustomModal
+            visible={homeworkModal}
+            title="Homework Content"
+            width={width < 700 ? `100%` : 700}
+            footer={null}
+            closable={false}
+          >
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+              fontWeight={`bold`}
+              margin={`0 0 10px`}
+            >
+              Subject
+            </Text>
+            <CustomInput
+              width={`100%`}
+              value={homework && homework.title}
+              disabled
+            />
+            <br />
+            <br />
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+              fontWeight={`bold`}
+              margin={`0 0 10px`}
+            >
+              Content
+            </Text>
+            <CusotmTextArea value={homework && homework.content} disabled />
+            <br />
+            <br />
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+              fontWeight={`bold`}
+              margin={`0 0 10px`}
+            >
+              Date
+            </Text>
+
+            <Wrapper dr={`row`} ju={`flex-start`}>
+              <CustomInput
+                value={homework && homework.date + "까지"}
+                style={{
+                  height: `40px`,
+                }}
+                disabled
+              />
+            </Wrapper>
+            <Wrapper dr={`row`} margin={`20px 0 0`}>
+              <CommonButton
+                margin={`0 5px 0 0`}
+                kindOf={`grey`}
+                color={Theme.darkGrey_C}
+                radius={`5px`}
+                onClick={() => homeworksToggle(null)}
+              >
+                Go back
+              </CommonButton>
+            </Wrapper>
+          </CustomModal>
         </WholeWrapper>
       </ClientLayout>
     </>

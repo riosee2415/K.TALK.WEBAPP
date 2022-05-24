@@ -209,14 +209,14 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
       .json({ notice: notice[0], lastPage: parseInt(lastPage) });
   } catch (error) {
     console.error(error);
-    return res.status(401).send("공지사항 목록을 불러올 수 업습니다.");
+    return res.status(401).send("Unable to load announcement");
   }
 });
 router.get("/myLecture/list", isLoggedIn, async (req, res, next) => {
   const { page } = req.query;
 
   if (!req.user) {
-    return res.status(403).send("로그인 후 이용 가능합니다.");
+    return res.status(403).send("Please log in");
   }
 
   const LIMIT = 10;
@@ -236,7 +236,7 @@ router.get("/myLecture/list", isLoggedIn, async (req, res, next) => {
     });
 
     if (exPart.length === 0) {
-      return res.status(401).send("현재 참여중인 강의가 없습니다.");
+      return res.status(401).send("No class found.");
     }
 
     let lectureIds = [];
@@ -295,9 +295,7 @@ router.get("/myLecture/list", isLoggedIn, async (req, res, next) => {
       .json({ notices: notices[0], lastPage: parseInt(lastPage) });
   } catch (error) {
     console.error(error);
-    return res
-      .status(401)
-      .send("내가 참여하고 있는 강의 게시판 목록을 불러올 수 없습니다.");
+    return res.status(401).send("Unable to load your class list.");
   }
 });
 

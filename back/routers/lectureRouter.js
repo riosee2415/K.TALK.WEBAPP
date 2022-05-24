@@ -516,7 +516,7 @@ SELECT	A.id,
 
 router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
   if (!req.user) {
-    return res.status(403).send("로그인 후 이용 가능합니다.");
+    return res.status(403).send("Please log in");
   }
   try {
     const selectQuery = `
@@ -586,7 +586,7 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
       .json({ partList: partList[0], commutes: commutes[0] });
   } catch (error) {
     console.error(error);
-    return res.status(401).send("강의 목록을 불러올 수 없습니다.");
+    return res.status(401).send("Unable to load class list ");
   }
 });
 
@@ -1432,7 +1432,7 @@ router.post("/homework/list", async (req, res, next) => {
 
 router.get("/homework/student/list", isLoggedIn, async (req, res, next) => {
   if (!req.user) {
-    return res.status(403).send("로그인 후 이용 가능합니다.");
+    return res.status(403).send("Please log in");
   }
 
   const { page, search } = req.query;
@@ -1455,7 +1455,7 @@ router.get("/homework/student/list", isLoggedIn, async (req, res, next) => {
     });
 
     if (!lectures) {
-      return res.status(401).send("참여하고 있는 강의가 없습니다.");
+      return res.status(401).send("No class found.");
     }
 
     let lectureIds = [];
@@ -1528,7 +1528,7 @@ router.get("/homework/student/list", isLoggedIn, async (req, res, next) => {
       .json({ homeworks: homeworks[0], lastPage: parseInt(lastPage) });
   } catch (error) {
     console.error(error);
-    return res.status(401).send("숙제 목록을 불러올 수 없습니다.");
+    return res.status(401).send("Unable to load your Homework list");
   }
 });
 
@@ -1673,7 +1673,7 @@ router.post("/submit/list", isLoggedIn, async (req, res, next) => {
 router.post("/submit/create", isLoggedIn, async (req, res, next) => {
   const { HomeworkId, LectureId, file } = req.body;
   if (!req.user) {
-    return res.status(403).send("로그인 후 이용 가능합니다.");
+    return res.status(403).send("Please log in");
   }
   try {
     const exPart = await Participant.findOne({
@@ -1686,7 +1686,7 @@ router.post("/submit/create", isLoggedIn, async (req, res, next) => {
     });
 
     if (!exPart) {
-      return res.status(401).send("해당 강의에 참여하고 있지 않습니다.");
+      return res.status(401).send("You don't have access to this class.");
     }
 
     const exHomework = await Homework.findOne({
@@ -1694,7 +1694,7 @@ router.post("/submit/create", isLoggedIn, async (req, res, next) => {
     });
 
     if (!exHomework) {
-      return res.status(401).send("존재하지 않는 숙제입니다.");
+      return res.status(401).send("File does not exist");
     }
 
     const exSubmit = `
@@ -1715,13 +1715,13 @@ router.post("/submit/create", isLoggedIn, async (req, res, next) => {
     const validate = await models.sequelize.query(exSubmit);
 
     if (validate[0].length > 0) {
-      return res.status(401).send("이미 기한 안에 숙제를 제출하였습니다.");
+      return res.status(401).send("Submission already completed");
     }
 
     const today = moment().format("YYYY-MM-DD");
 
     if (new Date(exHomework.date) < new Date(today)) {
-      return res.status(401).send("숙제 제출기한이 지났습니다.");
+      return res.status(401).send("Submission date expired");
     }
 
     const createResult = await Submit.create({
@@ -1732,13 +1732,13 @@ router.post("/submit/create", isLoggedIn, async (req, res, next) => {
     });
 
     if (!createResult) {
-      return res.status(401).send("처리중 문제가 발생하였습니다.");
+      return res.status(401).send("Error");
     }
 
     return res.status(201).json({ result: true });
   } catch (error) {
     console.error(error);
-    return res.status(401).send("숙제를 제출할 수 없습니다.");
+    return res.status(401).send("Unable to submit your homework");
   }
 });
 

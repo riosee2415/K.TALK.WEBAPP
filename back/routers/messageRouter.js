@@ -13,7 +13,7 @@ router.get("/user/list", isLoggedIn, async (req, res, next) => {
   const { page } = req.query;
 
   if (!req.user) {
-    return res.status(403).send("로그인 후 이용 가능합니다.");
+    return res.status(403).send("Please log in");
   }
 
   const LIMIT = 5;
@@ -82,7 +82,7 @@ router.get("/user/list", isLoggedIn, async (req, res, next) => {
       .json({ message: message[0], lastPage: parseInt(lastPage) });
   } catch (error) {
     console.error(error);
-    return res.status(401).send("쪽지를 확인할 수 없습니다.");
+    return res.status(401).send("No message found");
   }
 });
 
@@ -91,7 +91,7 @@ router.get("/all/list", isLoggedIn, async (req, res, next) => {
   const { page } = req.query;
 
   if (!req.user) {
-    return res.status(403).send("로그인 후 이용 가능합니다.");
+    return res.status(403).send("Please log in");
   }
 
   const LIMIT = 5;
@@ -164,7 +164,7 @@ router.get("/all/list", isLoggedIn, async (req, res, next) => {
       .json({ message: message[0], lastPage: parseInt(lastPage) });
   } catch (error) {
     console.error(error);
-    return res.status(401).send("쪽지를 확인할 수 없습니다.");
+    return res.status(401).send("No message found");
   }
 });
 
@@ -172,7 +172,7 @@ router.get("/user/partList", isLoggedIn, async (req, res, next) => {
   const { page } = req.query;
 
   if (!req.user) {
-    return res.status(403).send("로그인 후 이용 가능합니다.");
+    return res.status(403).send("Please log in");
   }
 
   const LIMIT = 5;
@@ -192,7 +192,7 @@ router.get("/user/partList", isLoggedIn, async (req, res, next) => {
     });
 
     if (parts.length === 0) {
-      return res.status(401).send("현재 참여중인 강의가 없습니다.");
+      return res.status(401).send("No class found.");
     }
 
     let lectureIds = [];
@@ -249,9 +249,7 @@ router.get("/user/partList", isLoggedIn, async (req, res, next) => {
       .json({ message: message[0], lastPage: parseInt(lastPage) });
   } catch (error) {
     console.error(error);
-    return res
-      .status(401)
-      .send("내가 참여중인 강의의 쪽지 목록을 불러올 수 없습니다.");
+    return res.status(401).send("Unable to load your class list.");
   }
 });
 
@@ -527,7 +525,7 @@ router.get("/detail/:messageId", async (req, res, next) => {
 // 사용자가 강사에게 쪽지를 보낼때 필요한 리스트
 router.get("/teacherList", isLoggedIn, async (req, res, next) => {
   if (!req.user) {
-    return res.status(403).send("로그인 후 이용 가능합니다.");
+    return res.status(403).send("Please log in");
   }
   try {
     const parts = await Participant.findAll({
@@ -539,7 +537,7 @@ router.get("/teacherList", isLoggedIn, async (req, res, next) => {
     });
 
     if (parts.length === 0) {
-      return res.status(401).send("참여중인 강의가 없습니다.");
+      return res.status(401).send("No class found");
     }
 
     let users = [];
@@ -562,7 +560,7 @@ router.get("/teacherList", isLoggedIn, async (req, res, next) => {
     return res.status(200).json(users);
   } catch (error) {
     console.error(error);
-    return res.status(401).send("강사 목록을 불러올 수 없습니다.");
+    return res.status(401).send("Unable to load teacher list");
   }
 });
 
@@ -583,7 +581,7 @@ router.post("/create", async (req, res, next) => {
     });
 
     if (!exUser) {
-      return res.status(401).send("존재하지 않는 사용자입니다. [수신자]");
+      return res.status(401).send("User ID does not exist.");
     }
 
     const exUser2 = await User.findOne({
@@ -591,7 +589,7 @@ router.post("/create", async (req, res, next) => {
     });
 
     if (!exUser2) {
-      return res.status(401).send("존재하지 않는 사용자입니다. [발신자]");
+      return res.status(401).send("User ID does not exist.");
     }
 
     if (receiveLectureId) {
@@ -600,7 +598,7 @@ router.post("/create", async (req, res, next) => {
       });
 
       if (!exLecture) {
-        return res.status(401).send("존재하지 않는 강의입니다.");
+        return res.status(401).send("Class does not exist.");
       }
     }
 
@@ -615,13 +613,13 @@ router.post("/create", async (req, res, next) => {
     });
 
     if (!createResult) {
-      return res.status(401).send("처리중 문제가 발생하였습니다.");
+      return res.status(401).send("Error");
     }
 
     return res.status(201).json({ result: true });
   } catch (error) {
     console.error(error);
-    return res.status(401).send("쪽지를 확인할 수 없습니다.");
+    return res.status(401).send("No message found");
   }
 });
 
@@ -630,7 +628,7 @@ router.post("/forAdminCreate", isLoggedIn, async (req, res, next) => {
   const { title, author, content } = req.body;
 
   if (!req.user) {
-    return res.status(403).send("로그인 후 이용 가능합니다.");
+    return res.status(403).send("Please log in");
   }
 
   try {
@@ -639,7 +637,7 @@ router.post("/forAdminCreate", isLoggedIn, async (req, res, next) => {
     });
 
     if (exAdmin.length === 0) {
-      return res.status(401).send("관리자가 존재하지 않습니다.");
+      return res.status(401).send("Admin does not exist.");
     }
 
     await Promise.all(
@@ -658,7 +656,7 @@ router.post("/forAdminCreate", isLoggedIn, async (req, res, next) => {
     return res.status(201).json({ result: true });
   } catch (error) {
     console.error(error);
-    return res.status(401).send("관리자에게 쪽지를 쓸 수 없습니다.");
+    return res.status(401).send("Message cannot be sent to Admin.");
   }
 });
 
