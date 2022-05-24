@@ -17,12 +17,6 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 강의 정보입니다.");
     }
 
-    if (exLecture.isDelete) {
-      return res
-        .status(401)
-        .send("삭제된 강의입니다. 확인 후 다시 시도하여 주십시오.");
-    }
-
     const selectQuery = `
         SELECT  id,
                 title,

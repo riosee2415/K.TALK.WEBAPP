@@ -290,8 +290,7 @@ router.get("/detail/:LectureId", async (req, res, next) => {
        INNER
         JOIN  users         C
           ON  A.UserId = C.id
-       WHERE	A.isDelete = false
-         AND  A.id = ${LectureId}
+       WHERE	A.id = ${LectureId}
     `;
 
     const memoQuery = `
