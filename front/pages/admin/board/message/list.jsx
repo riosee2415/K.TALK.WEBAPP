@@ -614,9 +614,9 @@ const List = ({ router }) => {
             단체로 보내기
           </Button>
 
-          <Button size="small" onClick={() => lectureToggleHandler()}>
+          {/* <Button size="small" onClick={() => lectureToggleHandler()}>
             강의 단위 보내기
-          </Button>
+          </Button> */}
         </Wrapper>
         <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 10px 0`}>
           <Wrapper dr={`row`} width={`auto`}>

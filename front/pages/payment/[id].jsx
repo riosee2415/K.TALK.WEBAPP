@@ -163,7 +163,7 @@ const Index = () => {
   // large
   // responsive
 
-  let env = "sandbox";
+  let env = "production";
 
   // sandbox
   // production
@@ -236,11 +236,11 @@ const Index = () => {
 
   // 클라이언트 정보
   const client = {
-    sandbox:
-      "Adg97RInMG1OEFbUeFnVlso4UtdnapZiaEcDhCPH58CCBLg0IwMq__Q9uAlPs90GmpCgDW9t76svLBc-",
+    // sandbox:
+    //   "Adg97RInMG1OEFbUeFnVlso4UtdnapZiaEcDhCPH58CCBLg0IwMq__Q9uAlPs90GmpCgDW9t76svLBc-",
 
-    // production:
-    //   "AU5XytqvAVo11IK8bdQvtVrVKcMReC99C_A3pdUq9CEUoeVI0e27Qm15gCr1_9YNqEaR3PQX8CWZJp6t",
+    production:
+      "AU5XytqvAVo11IK8bdQvtVrVKcMReC99C_A3pdUq9CEUoeVI0e27Qm15gCr1_9YNqEaR3PQX8CWZJp6t",
   };
 
   return (

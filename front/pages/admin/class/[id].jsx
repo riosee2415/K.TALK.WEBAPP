@@ -823,11 +823,10 @@ const DetailClass = () => {
 
     setTimeout(() => {
       priceForm.setFieldsValue({
-        price: priceChangeDetail && priceChangeDetail.price,
+        price: data,
       });
     }, 500);
   }, []);
-  console.log(priceChangeDetail && priceChangeDetail);
 
   const changeModalClose = useCallback(() => {
     setStuChangeModal(false);
@@ -1013,6 +1012,119 @@ const DetailClass = () => {
     //     );
     //   },
     // },
+  ];
+  const stuColumns2 = [
+    {
+      title: "No",
+      dataIndex: "id",
+    },
+    {
+      title: "수강생 이름(출생년도)",
+      render: (data) => {
+        return `${data.username}(${data.birth.slice(0, 10)})`;
+      },
+    },
+    {
+      title: "국가",
+      dataIndex: "stuCountry",
+    },
+    {
+      title: "수업료",
+      render: (data) => {
+        const findData = partAdminList.price.find(
+          (value) => value.UserId === data.UserId
+        );
+        return <Text>{findData ? `$` + findData.price : `-`}</Text>;
+      },
+    },
+    {
+      title: "만기일",
+      render: (data) => {
+        return <Text>{data.endDate}</Text>;
+      },
+    },
+    {
+      title: "출석 기록",
+      render: (data) => (
+        <Button
+          size={`small`}
+          type={`primary`}
+          onClick={() => detailCommutesOpen(data)}
+        >
+          상세보기
+        </Button>
+      ),
+    },
+    {
+      title: "메모",
+      render: (data) => (
+        <Button
+          size={`small`}
+          type={`primary`}
+          onClick={() => detailMemoOpen(data)}
+        >
+          메모 보기
+        </Button>
+      ),
+    },
+    {
+      title: "학생 정보 보기",
+      render: (data) => (
+        <Button
+          size={`small`}
+          type={`primary`}
+          onClick={() =>
+            data.level === 5
+              ? message.error("개발사는 권한을 수정할 수 없습니다.")
+              : classPartDetailModalOpen(data)
+          }
+        >
+          정보 보기
+        </Button>
+      ),
+    },
+    {
+      title: "강의 내역 보기",
+      render: (data) => (
+        <Button
+          size={`small`}
+          type={`primary`}
+          onClick={() => detailModalOpen(data)}
+        >
+          내역 보기
+        </Button>
+      ),
+    },
+
+    {
+      title: "학생 참여일",
+      render: (data) => (
+        <Button
+          size={`small`}
+          type={`primary`}
+          onClick={() => changeModalOpen(data)}
+        >
+          변경
+        </Button>
+      ),
+    },
+    {
+      title: "수업료 수정",
+      render: (data) => {
+        const findData = partAdminList.price.find(
+          (value) => value.UserId === data.UserId
+        );
+        return (
+          <Button
+            size={`small`}
+            type={`primary`}
+            onClick={() => findData && priceChangeModalToggle(findData.price)}
+          >
+            수정
+          </Button>
+        );
+      },
+    },
   ];
 
   const lectureColumns = [
@@ -1809,7 +1921,9 @@ const DetailClass = () => {
 
         <Table
           size={`small`}
-          columns={stuColumns}
+          columns={
+            isChange === null && isDelete === null ? stuColumns : stuColumns2
+          }
           dataSource={
             partAdminList &&
             partAdminList.partList &&
@@ -2786,9 +2900,9 @@ const DetailClass = () => {
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
             수업료 수정
           </Text>
-          <Form for={priceForm} onFinish={onSubmitPriceUpdate}>
+          <Form form={priceForm} onFinish={onSubmitPriceUpdate}>
             <FormItem name={`price`}>
-              <Input type={`number`} size={`small`} />
+              <Input label={`수업료`} type={`number`} size={`small`} />
             </FormItem>
           </Form>
         </Wrapper>
