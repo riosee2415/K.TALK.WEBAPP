@@ -287,11 +287,11 @@ const CustomForm = styled(Form)`
 `;
 
 const MessageSelectButton = styled(Button)`
-  width: 100px;
+  width: 120px;
   height: 40px;
 
   @media (max-width: 800px) {
-    width: 50px;
+    width: 90px;
     height: 30px;
     line-height: 30px;
     font-size: 12px;

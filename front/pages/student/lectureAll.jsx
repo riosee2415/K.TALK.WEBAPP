@@ -1190,6 +1190,16 @@ const LectureAll = () => {
 
             <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
               <CommonTitle>My Class</CommonTitle> &nbsp; &nbsp;
+              {/* //// 강의쪽지함에서 data를 넣어준 함수였다 */}
+              <Button
+                size={`small`}
+                type={`primary`}
+                onClick={() => messageSendModalHandler()}
+              >
+                Send message
+              </Button>{" "}
+              {/* //// */}
+              &nbsp; &nbsp;
               <Button
                 type={`primary`}
                 size={`small`}
@@ -1241,7 +1251,7 @@ const LectureAll = () => {
                         }
                       >
                         <Wrapper margin={`10px 0 0 0`} al={`flex-start`}>
-                          <Text
+                          {/* <Text
                             fontSize={width < 800 ? `14px` : `16px`}
                             margin={`0 0 10px`}
                           >
@@ -1253,7 +1263,7 @@ const LectureAll = () => {
                             >
                               Send message
                             </Button>
-                          </Text>
+                          </Text> */}
 
                           <Wrapper
                             dr={width < 800 ? `column` : `row`}

@@ -1743,8 +1743,9 @@ const Index = () => {
                 onChange={(page) => onChangeNoticePage(page)}
               ></CustomPage>
             </Wrapper>
+            {/* ////////////////////////////////// 강의 쪽지함 ///////////////////////////////////////// */}
 
-            <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
+            {/* <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
               <CommonTitle>쪽지함</CommonTitle>
             </Wrapper>
 
@@ -1848,7 +1849,8 @@ const Index = () => {
                   onChange={(page) => onChangeMessagePage(page)}
                 ></CustomPage>
               </Wrapper>
-            </Wrapper>
+            </Wrapper> */}
+            {/* /////////////////////////////////////////////////////////////////////////// */}
 
             <Wrapper>
               {lectureDetail && lectureDetail.length === 0
