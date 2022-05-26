@@ -313,6 +313,7 @@ const LectureAll = () => {
   const [sendMessageType, setSendMessageType] = useState(1);
   const [messageSendModal, setMessageSendModal] = useState(false);
   const [messageViewModal, setMessageViewModal] = useState(false);
+
   const [messageAnswerModal, setMessageAnswerModal] = useState(false);
   const [messageAnswerAdminModal, setMessageAnswerAdminModal] = useState(false);
 
@@ -331,6 +332,8 @@ const LectureAll = () => {
 
   const [limitModal, setLimitModal] = useState(false);
   const [attendanceModal, setAttendanceModal] = useState(false);
+
+  const [sendMessageAnswerType, setSendMessageAnswerType] = useState(0);
 
   const bookColumns = [
     {
@@ -509,9 +512,18 @@ const LectureAll = () => {
 
     setNoticeViewModal(false);
     setNoticeViewDatum(null);
+    setSendMessageAnswerType(0);
   }, []);
 
   ////// TOGGLE //////
+
+  const messageAnswerToggleHanlder = useCallback((data) => {
+    if (data.userLevel >= 3) {
+      setSendMessageAnswerType(3);
+    } else {
+      setSendMessageAnswerType(1);
+    }
+  }, []);
 
   const messageSendModalHandler = useCallback((data, num) => {
     setMessageSendModal((prev) => !prev);
@@ -740,11 +752,69 @@ const LectureAll = () => {
     setAttendanceModal((prev) => !prev);
   }, [attendanceModal]);
 
+  const sendMessageAnswerTypeHandler = useCallback((num) => {
+    setSendMessageAnswerType(num);
+  }, []);
+
+  const sendMessageAnswerAdminFinish = useCallback(
+    (data) => {
+      dispatch({
+        type: MESSAGE_FOR_ADMIN_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          author: me.username,
+          content: data.content,
+        },
+      });
+    },
+    [me]
+  );
+
+  const answerLectureFinishHanlder = useCallback(
+    (data) => {
+      let lectureStuLectureData = JSON.parse(data.lectureStuLectureList);
+
+      dispatch({
+        type: MESSAGE_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          author: me.username,
+          senderId: me.id,
+          receiverId: lectureStuLectureData.TeacherId,
+          receiveLectureId: lectureStuLectureData.LectureId,
+          content: data.content,
+          level: lectureStuLectureData.level,
+        },
+      });
+    },
+
+    [me, messageDatum]
+  );
+
+  const answerFinishHandler = useCallback(
+    (data) => {
+      let lectureStuLectureData = JSON.parse(data.lectureStuLectureList);
+
+      dispatch({
+        type: MESSAGE_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          author: me.username,
+          senderId: me.id,
+          receiverId: lectureStuLectureData.TeacherId,
+          content: data.content,
+          level: lectureStuLectureData.level,
+        },
+      });
+    },
+    [me]
+  );
+
   ////// DATAVIEW //////
 
   const limitColumns = [
     {
-      title: "Name of teacher ",
+      title: "Number ",
       dataIndex: "id",
     },
     {
@@ -935,7 +1005,7 @@ const LectureAll = () => {
                   fontWeight={`Bold`}
                   width={width < 800 ? `15%` : `10%`}
                 >
-                  Name of teacher
+                  Number
                 </Text>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
@@ -1026,7 +1096,7 @@ const LectureAll = () => {
                   fontWeight={`Bold`}
                   width={width < 800 ? `15%` : `10%`}
                 >
-                  Name of teacher
+                  Number
                 </Text>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
@@ -1116,7 +1186,7 @@ const LectureAll = () => {
                   fontWeight={`Bold`}
                   width={width < 800 ? `15%` : `10%`}
                 >
-                  Name of teacher
+                  Number
                 </Text>
                 <Text
                   fontSize={width < 700 ? `14px` : `18px`}
@@ -1555,12 +1625,197 @@ const LectureAll = () => {
 
         <CustomModal
           visible={messageViewModal}
-          width={`1350px`}
-          title={"Message Content"}
+          width={`900px`}
+          title={
+            sendMessageAnswerType === 0
+              ? "쪽지 보기"
+              : sendMessageAnswerType === 1
+              ? "Message to my teacher"
+              : sendMessageAnswerType === 2
+              ? "Message to my lecture"
+              : sendMessageAnswerType === 3 && "Message to admin"
+          }
           footer={null}
           closable={false}
         >
-          {!messageAnswerModal && !messageAnswerAdminModal && (
+          <CustomForm
+            form={answerform}
+            onFinish={(data) =>
+              sendMessageAnswerType === 1
+                ? answerFinishHandler(data)
+                : sendMessageAnswerType === 2
+                ? answerLectureFinishHanlder(data, messageTeacherList)
+                : sendMessageAnswerType === 3 &&
+                  sendMessageAnswerAdminFinish(data)
+            }
+          >
+            {sendMessageAnswerType !== 0 && (
+              <Wrapper dr={`row`} ju={`flex-end`}>
+                <CommonButton
+                  margin={`0 0 0 5px`}
+                  radius={`5px`}
+                  width={`100px`}
+                  height={`32px`}
+                  size="small"
+                  onClick={() => sendMessageAnswerTypeHandler(1)}
+                >
+                  {"to my teacher"}
+                </CommonButton>
+
+                {/* <CommonButton
+                    margin={`0 0 0 5px`}
+                    radius={`5px`}
+                    width={`100px`}
+                    height={`32px`}
+                    size="small"
+                    onClick={() => sendMessageAnswerTypeHandler(2)}
+                  >
+                    {"수업"}
+                  </CommonButton> */}
+
+                <CommonButton
+                  margin={`0 0 0 5px`}
+                  radius={`5px`}
+                  width={`100px`}
+                  height={`32px`}
+                  size="small"
+                  onClick={() => sendMessageAnswerTypeHandler(3)}
+                >
+                  {"to admin"}
+                </CommonButton>
+              </Wrapper>
+            )}
+
+            {sendMessageAnswerType === 1 && (
+              <>
+                <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
+                  My classes
+                </Text>
+
+                <Form.Item
+                  name="lectureStuLectureList"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Choose your class.",
+                    },
+                  ]}
+                >
+                  <Select style={{ width: `100%` }}>
+                    {lectureStuLectureList &&
+                    lectureStuLectureList.length === 0 ? (
+                      <Option value="No class found">No class found</Option>
+                    ) : (
+                      lectureStuLectureList &&
+                      lectureStuLectureList.map((data, idx) => {
+                        return (
+                          <Option
+                            key={`${data.id}${idx}`}
+                            value={JSON.stringify(data)}
+                          >
+                            {`${data.course} | ${data.username}`}
+                          </Option>
+                        );
+                      })
+                    )}
+                  </Select>
+                </Form.Item>
+                <Text
+                  fontSize={`14px`}
+                  color={Theme.grey2_C}
+                  margin={`0 0 20px`}
+                >
+                  This message will be sent to your teacher.
+                </Text>
+              </>
+            )}
+
+            {sendMessageAnswerType === 2 && (
+              <>
+                <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
+                  My classes
+                </Text>
+
+                <Form.Item
+                  name="lectureStuLectureList"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Choose your class.",
+                    },
+                  ]}
+                >
+                  <Select style={{ width: `100%` }}>
+                    {lectureStuLectureList &&
+                    lectureStuLectureList.length === 0 ? (
+                      <Option value="No class found">No class found</Option>
+                    ) : (
+                      lectureStuLectureList &&
+                      lectureStuLectureList.map((data, idx) => {
+                        return (
+                          <Option
+                            key={`${data.id}${idx}`}
+                            value={JSON.stringify(data)}
+                          >
+                            {`${data.course} | ${data.username}`}
+                          </Option>
+                        );
+                      })
+                    )}
+                  </Select>
+                </Form.Item>
+                <Text
+                  fontSize={`14px`}
+                  color={Theme.grey2_C}
+                  margin={`0 0 20px`}
+                >
+                  This message will be sent to your teacher
+                </Text>
+              </>
+            )}
+            {sendMessageAnswerType !== 0 && (
+              <>
+                <Text fontSize={`18px`} fontWeight={`bold`}>
+                  Subject
+                </Text>
+                <Form.Item
+                  name="title"
+                  rules={[{ required: true, message: "제목을 입력해주세요." }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Text fontSize={`18px`} fontWeight={`bold`}>
+                  Content
+                </Text>
+                <Form.Item
+                  name="content"
+                  rules={[{ required: true, message: "내용을 입력해주세요." }]}
+                >
+                  <Input.TextArea style={{ height: `360px` }} />
+                </Form.Item>
+                <Wrapper dr={`row`}>
+                  <CommonButton
+                    margin={`0 5px 0 0`}
+                    kindOf={`grey`}
+                    color={Theme.darkGrey_C}
+                    radius={`5px`}
+                    onClick={() => onReset()}
+                  >
+                    Go back
+                  </CommonButton>
+                  <CommonButton
+                    margin={`0 0 0 5px`}
+                    radius={`5px`}
+                    htmlType="submit"
+                  >
+                    Send message
+                  </CommonButton>
+                </Wrapper>
+              </>
+            )}
+          </CustomForm>
+
+          {sendMessageAnswerType === 0 && (
             <>
               <Wrapper
                 dr={`row`}
@@ -1578,19 +1833,18 @@ const LectureAll = () => {
                   )
                 }`}</Text>
               </Wrapper>
-
               <Text fontSize={`18px`} fontWeight={`bold`}>
                 Subject
               </Text>
-
               <Wrapper
                 padding={`10px`}
                 al={`flex-start`}
                 fontSize={width < 700 ? "14px" : "16px"}
+                bgColor={Theme.subTheme9_C}
+                margin={`5px 0 10px`}
               >
                 <Text>{messageDatum && messageDatum.title}</Text>
               </Wrapper>
-
               <Text fontSize={`18px`} fontWeight={`bold`}>
                 Content
               </Text>
@@ -1598,10 +1852,11 @@ const LectureAll = () => {
                 padding={`10px`}
                 al={`flex-start`}
                 fontSize={width < 700 ? "14px" : "16px"}
+                bgColor={Theme.subTheme9_C}
               >
-                <Text minHeight={`360px`}>
+                <Text minHeight={`150px`}>
                   {messageDatum &&
-                    messageDatum.content?.split("\n").map((data, idx) => {
+                    messageDatum.content.split("\n").map((data, idx) => {
                       return (
                         <Text key={`${data}${idx}`}>
                           {data}
@@ -1611,7 +1866,6 @@ const LectureAll = () => {
                     })}
                 </Text>
               </Wrapper>
-
               <Wrapper dr={`row`}>
                 <CommonButton
                   margin={`0 5px 0 0`}
@@ -1621,6 +1875,14 @@ const LectureAll = () => {
                   onClick={() => onReset()}
                 >
                   Go back
+                </CommonButton>
+
+                <CommonButton
+                  onClick={() => messageAnswerToggleHanlder(messageDatum)}
+                  margin={`0 0 0 5px`}
+                  radius={`5px`}
+                >
+                  Send Message
                 </CommonButton>
               </Wrapper>
             </>

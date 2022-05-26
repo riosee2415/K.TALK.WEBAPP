@@ -66,6 +66,7 @@ router.get("/detail/:classId", async (req, res, next) => {
 router.post("/create", isAdminCheck, async (req, res, next) => {
   const { name, price, discount, memo, startDate, week, LectureId, domain } =
     req.body;
+
   try {
     const exLecture = await Lecture.findOne({
       where: { id: parseInt(LectureId) },

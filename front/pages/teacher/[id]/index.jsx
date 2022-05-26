@@ -1852,7 +1852,7 @@ const Index = () => {
             </Wrapper> */}
             {/* /////////////////////////////////////////////////////////////////////////// */}
 
-            <Wrapper>
+            <Wrapper margin={`86px 0 0`}>
               {lectureDetail && lectureDetail.length === 0
                 ? ""
                 : lectureDetail &&

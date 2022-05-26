@@ -697,6 +697,12 @@ const DetailClass = () => {
   );
 
   const onClicStuHandler = useCallback(() => {
+    console.log(moment(stuChangeDate), "만기일");
+
+    if ((moment(stuChangeDate) < moment(stuChangeDetail.createdAt), "시작일")) {
+      return message.error("만기일은 시작일보다 과거일 수 없습니다.");
+    }
+
     dispatch({
       type: PARTICIPANT_UPDATE_REQUEST,
       data: {
@@ -1097,7 +1103,7 @@ const DetailClass = () => {
     },
 
     {
-      title: "학생 참여일",
+      title: "만기일 수정",
       render: (data) => (
         <Button
           size={`small`}
@@ -2857,11 +2863,11 @@ const DetailClass = () => {
       >
         <Wrapper al={`flex-start`} ju={`flex-start`}>
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
-            학생수업 변경
+            만기일 수정
           </Text>
           <Wrapper dr={`row`} ju={`flex-start`}>
             <Text>
-              시작일:{" "}
+              시작일:&nbsp;
               {stuChangeDetail &&
                 moment(stuChangeDetail.createdAt, `YYYY-MM-DD`).format(
                   `YYYY-MM-DD`
@@ -2869,12 +2875,12 @@ const DetailClass = () => {
             </Text>
             &nbsp; &nbsp; &nbsp;
             <Text>
-              만기일:
+              {console.log(stuChangeDetail && stuChangeDetail.endDate)}
+              만기일:&nbsp;
               <DatePicker
                 value={
-                  stuChangeDate ||
-                  (stuChangeDetail &&
-                    moment(stuChangeDetail.endDate, `YYYY-MM-DD`))
+                  stuChangeDetail &&
+                  moment(stuChangeDetail.endDate, `YYYY-MM-DD`)
                 }
                 placeholder={"변경할 만기일"}
                 onChange={stuDateChangeHandler}

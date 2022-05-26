@@ -1273,7 +1273,7 @@ const Index = () => {
             </Wrapper>
 
             <Wrapper al={`flex-start`} margin={`0 0 20px`}>
-              <CommonTitle>전체 쪽지 및 강사</CommonTitle>
+              <CommonTitle>전체 쪽지함</CommonTitle>
             </Wrapper>
 
             <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
