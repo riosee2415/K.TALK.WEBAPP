@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isNanCheck = require("../middlewares/isNanCheck");
 const { PayClass, Lecture } = require("../models");
+const models = require("../models");
 const moment = require("moment");
 
 const router = express.Router();
@@ -29,6 +30,53 @@ router.get("/list", isAdminCheck, async (req, res, next) => {
     });
 
     return res.status(200).json(list);
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("결제 클래스 목록을 불러올 수 없습니다.");
+  }
+});
+
+router.get("/class/detail", async (req, res, next) => {
+  const { LectureId } = req.body;
+  try {
+    const exLecture = await Lecture.findOne({
+      where: { id: parseInt(LectureId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의입니다.");
+    }
+
+    const selectQuery = `
+   SELECT A.id,
+          A.name,
+          A.price,
+          A.discount,
+          A.link,
+          A.memo,
+          A.startDate,
+          A.week,
+          A.isDelete,
+          DATE_FORMAT(A.createdAt,"%Y-%m-%d")		AS createdAt,
+          DATE_FORMAT(A.updatedAt,"%Y-%m-%d")		AS updatedAt,
+          A.LectureId,
+          B.number,
+          B.course,
+          C.username
+     FROM payClass			A
+    INNER
+     JOIN lectures 			B
+       ON A.LectureId = B.id
+    INNER
+     JOIN users 				C
+       ON B.UserId = C.id
+    WHERE A.isDelete = FALSE
+      AND A.LectureId = ${LectureId}
+    `;
+
+    const result = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ result: result[0] });
   } catch (error) {
     console.error(error);
     return res.status(401).send("결제 클래스 목록을 불러올 수 없습니다.");
