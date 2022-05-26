@@ -36,7 +36,7 @@ router.get("/list", isAdminCheck, async (req, res, next) => {
   }
 });
 
-router.get("/class/detail", async (req, res, next) => {
+router.post("/class/detail", async (req, res, next) => {
   const { LectureId } = req.body;
   try {
     const exLecture = await Lecture.findOne({
