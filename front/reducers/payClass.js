@@ -3,7 +3,7 @@ import produce from "../util/produce";
 export const initailState = {
   payClassList: null,
   maxPage: 1,
-  payClassDetail: null,
+  payClassLecDetail: null,
 
   st_payClassListLoading: false,
   st_payClassListDone: false,
@@ -24,6 +24,10 @@ export const initailState = {
   st_payClassDetailLoading: false,
   st_payClassDetailDone: false,
   st_payClassDetailError: null,
+  //
+  st_payClassLecDetailLoading: false,
+  st_payClassLecDetailDone: false,
+  st_payClassLecDetailError: null,
 
   createModal: null,
 };
@@ -47,6 +51,10 @@ export const PAY_CLASS_DELETE_FAILURE = "PAY_CLASS_DELETE_FAILURE";
 export const PAY_CLASS_DETAIL_REQUEST = "PAY_CLASS_DEATIL_REQUEST";
 export const PAY_CLASS_DETAIL_SUCCESS = "PAY_CLASS_DEATIL_SUCCESS";
 export const PAY_CLASS_DETAIL_FAILURE = "PAY_CLASS_DEATIL_FAILURE";
+
+export const PAY_CLASS_LEC_DETAIL_REQUEST = "PAY_CLASS_LEC_DEATIL_REQUEST";
+export const PAY_CLASS_LEC_DETAIL_SUCCESS = "PAY_CLASS_LEC_DEATIL_SUCCESS";
+export const PAY_CLASS_LEC_DETAIL_FAILURE = "PAY_CLASS_LEC_DEATIL_FAILURE";
 
 export const CREATE_MODAL_OPEN_REQUEST = "CREATE_MODAL_OPEN_REQUEST";
 export const CREATE_MODAL_CLOSE_REQUEST = "CREATE_MODAL_CLOSE_REQUEST";
@@ -151,6 +159,28 @@ const reducer = (state = initailState, action) =>
         draft.st_payClassDetailLoading = false;
         draft.st_payClassDetailDone = false;
         draft.st_payClassDetailError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case PAY_CLASS_LEC_DETAIL_REQUEST: {
+        draft.st_payClassLecDetailLoading = true;
+        draft.st_payClassLecDetailDone = null;
+        draft.st_payClassLecDetailError = false;
+        break;
+      }
+      case PAY_CLASS_LEC_DETAIL_SUCCESS: {
+        draft.st_payClassLecDetailLoading = false;
+        draft.st_payClassLecDetailDone = true;
+        draft.payClassLecDetail = action.data.result;
+
+        break;
+      }
+      case PAY_CLASS_LEC_DETAIL_FAILURE: {
+        draft.st_payClassLecDetailLoading = false;
+        draft.st_payClassLecDetailDone = false;
+        draft.st_payClassLecDetailError = action.error;
         break;
       }
 

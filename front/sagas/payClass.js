@@ -20,6 +20,10 @@ import {
   PAY_CLASS_DETAIL_REQUEST,
   PAY_CLASS_DETAIL_SUCCESS,
   PAY_CLASS_DETAIL_FAILURE,
+  /////////////////////////////////
+  PAY_CLASS_LEC_DETAIL_REQUEST,
+  PAY_CLASS_LEC_DETAIL_SUCCESS,
+  PAY_CLASS_LEC_DETAIL_FAILURE,
 } from "../reducers/payClass";
 
 // SAGA AREA ********************************************************************************************************
@@ -132,6 +136,28 @@ function* payClassDetail(action) {
     });
   }
 }
+
+//////////////////////////////////////////////////////////////
+function payClassLecDetailAPI(data) {
+  return axios.post(`/api/payclass/class/detail`, data);
+}
+
+function* payClassLecDetail(action) {
+  try {
+    const result = yield call(payClassLecDetailAPI, action.data);
+
+    yield put({
+      type: PAY_CLASS_LEC_DETAIL_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: PAY_CLASS_LEC_DETAIL_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
 //////////////////////////////////////////////////////////////
 
 function* watchPayClassList() {
@@ -149,6 +175,9 @@ function* watchPayClassDelete() {
 function* watchPayClassDetail() {
   yield takeLatest(PAY_CLASS_DETAIL_REQUEST, payClassDetail);
 }
+function* watchPayClassLecDetail() {
+  yield takeLatest(PAY_CLASS_LEC_DETAIL_REQUEST, payClassLecDetail);
+}
 //////////////////////////////////////////////////////////////
 export default function* payClassSaga() {
   yield all([
@@ -157,5 +186,6 @@ export default function* payClassSaga() {
     fork(watchPayClassUpdate),
     fork(watchPayClassDelete),
     fork(watchPayClassDetail),
+    fork(watchPayClassLecDetail),
   ]);
 }

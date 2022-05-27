@@ -47,9 +47,14 @@ import {
   LECTURE_STU_LECTURE_LIST_REQUEST,
   LECTURE_STU_LIMIT_LIST_REQUEST,
 } from "../../reducers/lecture";
-import { CloseOutlined, RollbackOutlined } from "@ant-design/icons";
+import {
+  CloseOutlined,
+  ConsoleSqlOutlined,
+  RollbackOutlined,
+} from "@ant-design/icons";
 import { saveAs } from "file-saver";
 import { BOOK_LIST_REQUEST } from "../../reducers/book";
+import { PAY_CLASS_LEC_DETAIL_REQUEST } from "../../reducers/payClass";
 
 const CustomButton = styled(Button)`
   font-size: 16px;
@@ -248,6 +253,10 @@ const WordbreakText = styled(Text)`
   word-wrap: break-all;
 `;
 
+const CustomSelect = styled(Select)`
+  width: calc(100% - 80px);
+`;
+
 const LectureAll = () => {
   ////// GLOBAL STATE //////
 
@@ -333,7 +342,12 @@ const LectureAll = () => {
   const [limitModal, setLimitModal] = useState(false);
   const [attendanceModal, setAttendanceModal] = useState(false);
 
+  const [payModal, setPayModal] = useState(false);
+  const [selectPayClass, setSelectPayClass] = useState(null);
+
   const [sendMessageAnswerType, setSendMessageAnswerType] = useState(0);
+
+  const { payClassLecDetail } = useSelector((state) => state.payClass);
 
   const bookColumns = [
     {
@@ -517,6 +531,24 @@ const LectureAll = () => {
 
   ////// TOGGLE //////
 
+  const payModalToggle = useCallback(
+    (data) => {
+      if (payModal) {
+        setPayModal(false);
+        setSelectPayClass(null);
+      } else {
+        setPayModal(true);
+        dispatch({
+          type: PAY_CLASS_LEC_DETAIL_REQUEST,
+          data: {
+            LectureId: data.LectureId,
+          },
+        });
+      }
+    },
+    [payModal]
+  );
+
   const messageAnswerToggleHanlder = useCallback((data) => {
     if (data.userLevel >= 3) {
       setSendMessageAnswerType(3);
@@ -536,6 +568,10 @@ const LectureAll = () => {
   }, []);
 
   ////// HANDLER //////
+
+  const moveLinkHandler = useCallback((data) => {
+    router.push(`/payment/${data}`);
+  }, []);
 
   const onClickNoticeHandler = useCallback((data) => {
     setNoticeViewDatum(data);
@@ -1374,6 +1410,14 @@ const LectureAll = () => {
                             >
                               My Attandance
                             </Button>
+                            &nbsp;
+                            <Button
+                              type={`primary`}
+                              size={`small`}
+                              onClick={() => payModalToggle(data)}
+                            >
+                              Pay
+                            </Button>
                           </Wrapper>
                         </Wrapper>
 
@@ -2113,6 +2157,115 @@ const LectureAll = () => {
             }
             columns={commuteColumns}
           />
+        </Modal>
+
+        <Modal
+          title={`추가 결제`}
+          visible={payModal}
+          footer={null}
+          onCancel={payModalToggle}
+        >
+          <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
+            <Text width={`80px`}>강의명 :&nbsp;</Text>
+            <CustomSelect onSelect={(e) => setSelectPayClass(e)}>
+              {payClassLecDetail &&
+                payClassLecDetail.map((data) => {
+                  return (
+                    <Select.Option key={data.id} value={JSON.stringify(data)}>
+                      {data.name}
+                    </Select.Option>
+                  );
+                })}
+            </CustomSelect>
+          </Wrapper>
+          {selectPayClass && (
+            <>
+              <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
+                <Text width={`80px`}>메모 :&nbsp;</Text>
+                <Wrapper
+                  width={`calc(100% - 80px)`}
+                  ju={`flex-start`}
+                  al={`flex-start`}
+                >
+                  {selectPayClass &&
+                    JSON.parse(selectPayClass)
+                      .memo.split(`\n`)
+                      .map((content, idx) => {
+                        return (
+                          <SpanText>
+                            {content}
+                            <br />
+                          </SpanText>
+                        );
+                      })}
+                </Wrapper>
+              </Wrapper>
+
+              <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
+                <Text width={`80px`}>가격 :&nbsp;</Text>
+                <Wrapper
+                  width={`calc(100% - 80px)`}
+                  ju={`flex-start`}
+                  al={`flex-start`}
+                >
+                  ${selectPayClass && JSON.parse(selectPayClass).price}
+                </Wrapper>
+              </Wrapper>
+
+              {selectPayClass && JSON.parse(selectPayClass).discount !== 0 && (
+                <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
+                  <Text width={`80px`}>할인율 :&nbsp;</Text>
+                  <Wrapper
+                    width={`calc(100% - 80px)`}
+                    ju={`flex-start`}
+                    al={`flex-start`}
+                  >
+                    {selectPayClass && JSON.parse(selectPayClass).discount}%
+                  </Wrapper>
+                </Wrapper>
+              )}
+
+              <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
+                <Text width={`80px`}>강의 기간 :&nbsp;</Text>
+                <Wrapper
+                  width={`calc(100% - 80px)`}
+                  ju={`flex-start`}
+                  al={`flex-start`}
+                >
+                  {selectPayClass && JSON.parse(selectPayClass).week}주
+                </Wrapper>
+              </Wrapper>
+
+              <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
+                <Text width={`80px`}>결제할 가격 :&nbsp;</Text>
+                <Wrapper
+                  width={`calc(100% - 80px)`}
+                  ju={`flex-start`}
+                  al={`flex-start`}
+                >
+                  $
+                  {selectPayClass &&
+                    Math.floor(
+                      JSON.parse(selectPayClass).price -
+                        (JSON.parse(selectPayClass).price *
+                          JSON.parse(selectPayClass).discount) /
+                          100
+                    )}
+                </Wrapper>
+              </Wrapper>
+            </>
+          )}
+          <Wrapper>
+            <CommonButton
+              size={`small`}
+              type={`primary`}
+              onClick={() =>
+                moveLinkHandler(selectPayClass && JSON.parse(selectPayClass).id)
+              }
+            >
+              결제하러 가기
+            </CommonButton>
+          </Wrapper>
         </Modal>
       </ClientLayout>
     </>
