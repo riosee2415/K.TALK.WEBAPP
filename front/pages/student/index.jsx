@@ -68,9 +68,14 @@ import {
 import { saveAs } from "file-saver";
 import { BOOK_LIST_REQUEST } from "../../reducers/book";
 import { CalendarOutlined } from "@ant-design/icons";
+import { PAY_CLASS_LEC_DETAIL_REQUEST } from "../../reducers/payClass";
 
 const PROFILE_WIDTH = `150`;
 const PROFILE_HEIGHT = `150`;
+
+const CustomSelect = styled(Select)`
+  width: calc(100% - 80px);
+`;
 
 const CustomInput = styled(TextInput)`
   width: ${(props) => props.width || `100%`};
@@ -441,6 +446,10 @@ const Student = () => {
 
   const [homework, setHomework] = useState(null);
   const [homeworkModal, setHomeworkModal] = useState(false);
+
+  const { payClassLecDetail } = useSelector((state) => state.payClass);
+  const [payModal, setPayModal] = useState(false);
+  const [selectPayClass, setSelectPayClass] = useState(null);
 
   const bookColumns = [
     {
@@ -1159,6 +1168,24 @@ const Student = () => {
     setHomework(data);
     setHomeworkModal((prev) => !prev);
   }, []);
+
+  const payModalToggle = useCallback(
+    (data) => {
+      if (payModal) {
+        setPayModal(false);
+        setSelectPayClass(null);
+      } else {
+        setPayModal(true);
+        dispatch({
+          type: PAY_CLASS_LEC_DETAIL_REQUEST,
+          data: {
+            LectureId: data.LectureId,
+          },
+        });
+      }
+    },
+    [payModal]
+  );
   ////// DATAVIEW //////
 
   const commuteColumns = [
@@ -1274,119 +1301,151 @@ const Student = () => {
           </Wrapper>
 
           <RsWrapper margin={width < 800 ? `0` : `-94px 0 0`}>
-            {lectureStuLectureList && lectureStuLectureList.length === 0 ? (
-              <Wrapper marign={`50px 0`}>
-                <Empty description="Class Not found" />
+            <Wrapper
+              padding={width < 700 ? `15px 10px 10px` : `40px 30px 35px`}
+              dr={`row`}
+              ju={`space-between`}
+              bgColor={Theme.white_C}
+              shadow={`0px 2px 10px rgba(0, 0, 0, 0.05)`}
+              margin={`0 0 86px`}
+            >
+              <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 20px`}>
+                <Text
+                  fontSize={width < 800 ? `18px` : `22px`}
+                  fontWeight={`bold`}
+                >
+                  <CommonTitle>My schedule</CommonTitle>
+                </Text>
               </Wrapper>
-            ) : (
-              lectureStuLectureList &&
-              lectureStuLectureList.slice(0, 1).map((data, idx) => {
-                console.log(data);
-                return (
-                  <Wrapper
-                    key={data.id}
-                    padding={width < 700 ? `15px 10px 10px` : `40px 30px 35px`}
-                    dr={`row`}
-                    ju={`space-between`}
-                    bgColor={Theme.white_C}
-                    shadow={`0px 2px 10px rgba(0, 0, 0, 0.05)`}
-                    margin={`0 0 86px`}
-                  >
+              {lectureStuLectureList && lectureStuLectureList.length === 0 ? (
+                <Wrapper marign={`50px 0`}>
+                  <Empty description="Class Not found" />
+                </Wrapper>
+              ) : (
+                lectureStuLectureList &&
+                lectureStuLectureList.map((data, idx) => {
+                  return (
                     <Wrapper
                       dr={`row`}
                       ju={`space-between`}
-                      margin={`0 0 20px`}
+                      borderBottom={
+                        idx + 1 !== lectureStuLectureList.length &&
+                        `1px dashed ${Theme.grey_C}`
+                      }
+                      padding={
+                        idx + 1 !== lectureStuLectureList.length
+                          ? `30px 0`
+                          : `30px 0 0`
+                      }
                     >
-                      <Text
-                        fontSize={width < 800 ? `18px` : `22px`}
-                        fontWeight={`bold`}
-                      >
-                        <CommonTitle>My schedule</CommonTitle>
-                      </Text>
-                    </Wrapper>
-
-                    <Wrapper width={`auto`} al={`flex-start`}>
-                      <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
-                        <Text fontSize={width < 800 ? `16px` : `18px`}>
-                          Class number:&nbsp;
-                          {data.number}
-                        </Text>
-                        &nbsp;
-                        <Text fontSize={width < 800 ? `16px` : `18px`}>
-                          ({divideLecture(data.day, data.time)})
-                        </Text>
-                        {/* dash */}
+                      <Wrapper width={`auto`} al={`flex-start`} key={data.id}>
                         <Wrapper
-                          display={width < 800 && `none`}
-                          width={`1px`}
-                          height={`21px`}
-                          margin={`0 20px`}
-                          borderRight={
-                            width < 1100 ? `0` : `1px dashed ${Theme.grey_C}`
-                          }
-                        />
-                        {/* dash */}
-                        <Text fontSize={width < 800 ? `16px` : `18px`}>
-                          {`${stepHanlder2(
-                            moment().format("YYYY-MM-DD"),
-                            // data.endDate,
-                            `2022-06-19`,
-                            data.day
-                          )} sessons remaining out of ${stepHanlder2(
-                            moment(data.PartCreatedAt).format("YYYY-MM-DD"),
-                            data.endDate,
-                            data.day
-                          )}`}
-                        </Text>
-                      </Wrapper>
-
-                      <Wrapper
-                        dr={`row`}
-                        width={`auto`}
-                        fontSize={width < 800 ? `16px` : `18px`}
-                        margin={`0 0 10px`}
-                      >
-                        <Text
-                          margin={width < 800 ? `0 30px 0 0` : `0 80px 0 0`}
+                          dr={`row`}
+                          ju={`flex-start`}
+                          margin={`0 0 10px`}
                         >
-                          <SpanText fontWeight={`bold`}>From:</SpanText>
-                          &nbsp;{data.PartCreatedAt.slice(0, 10)}
-                        </Text>
-                        <Text margin={`0 10px 0 0`}>
-                          <SpanText fontWeight={`bold`}>To:</SpanText>
-                          &nbsp;{data.endDate}
-                        </Text>
-                      </Wrapper>
-                      <SpanText
-                        fontSize={`16px`}
-                        color={Theme.subTheme2_C}
-                        textDecoration={`underline`}
-                        cursor={`pointer`}
-                      >
-                        <Image
-                          src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/student/icon_click.png`}
-                          width={`18px`}
-                          margin={`0 5px 0 0`}
-                        />
-                        Please click&nbsp;
-                        <SpanText fontWeight={`700`}>here</SpanText> if you’d
-                        like to extend you term (7 days before the new term
-                        starts)
-                      </SpanText>
-                    </Wrapper>
+                          <Text fontSize={width < 800 ? `16px` : `18px`}>
+                            Class number:&nbsp;
+                            {data.number}
+                          </Text>
+                          &nbsp;
+                          <Text fontSize={width < 800 ? `16px` : `18px`}>
+                            ({divideLecture(data.day, data.time)})
+                          </Text>
+                          {/* dash */}
+                          <Wrapper
+                            display={width < 800 && `none`}
+                            width={`1px`}
+                            height={`21px`}
+                            margin={`0 20px`}
+                            borderRight={
+                              width < 1100 ? `0` : `1px dashed ${Theme.grey_C}`
+                            }
+                          />
+                          {/* dash */}
+                          <Text fontSize={width < 800 ? `16px` : `18px`}>
+                            {`${stepHanlder2(
+                              moment().format("YYYY-MM-DD"),
+                              // data.endDate,
+                              `2022-06-19`,
+                              data.day
+                            )} sessons remaining out of ${stepHanlder2(
+                              moment(data.PartCreatedAt).format("YYYY-MM-DD"),
+                              data.endDate,
+                              data.day
+                            )}`}
+                          </Text>
+                        </Wrapper>
 
-                    <CustomButton2
-                      type={`primary`}
-                      size={`small`}
-                      onClick={() => window.open(`${data.zoomLink}`, "_blank")}
-                    >
-                      Go to My class
-                      {width > 800 && <RightCircleFilled className="btnIcon" />}
-                    </CustomButton2>
-                  </Wrapper>
-                );
-              })
-            )}
+                        <Wrapper
+                          dr={`row`}
+                          width={`auto`}
+                          fontSize={width < 800 ? `16px` : `18px`}
+                          margin={`0 0 10px`}
+                        >
+                          <Text
+                            margin={width < 800 ? `0 30px 0 0` : `0 80px 0 0`}
+                          >
+                            <SpanText fontWeight={`bold`}>From:</SpanText>
+                            &nbsp;{data.PartCreatedAt.slice(0, 10)}
+                          </Text>
+                          <Text margin={`0 10px 0 0`}>
+                            <SpanText fontWeight={`bold`}>To:</SpanText>
+                            &nbsp;{data.endDate}
+                          </Text>
+                        </Wrapper>
+                        {console.log(
+                          moment(
+                            moment(lectureStuLectureList[0].endDate).format(
+                              `YYYY-MM-DD`
+                            )
+                          )
+                        )}
+
+                        {moment
+                          .duration(
+                            moment(
+                              moment(data.endDate).format(`YYYY-MM-DD`)
+                            ).diff(moment(moment().format(`YYYY-MM-DD`)))
+                          )
+                          .asDays() <= 7 && (
+                          <SpanText
+                            fontSize={`16px`}
+                            color={Theme.subTheme2_C}
+                            textDecoration={`underline`}
+                            cursor={`pointer`}
+                            onClick={() => payModalToggle(data)}
+                          >
+                            <Image
+                              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/student/icon_click.png`}
+                              width={`18px`}
+                              margin={`0 5px 0 0`}
+                            />
+                            Please click&nbsp;
+                            <SpanText fontWeight={`700`}>here</SpanText> if
+                            you’d like to extend you term (7 days before the new
+                            term starts)
+                          </SpanText>
+                        )}
+                      </Wrapper>
+
+                      <CustomButton2
+                        type={`primary`}
+                        size={`small`}
+                        onClick={() =>
+                          window.open(`${data.zoomLink}`, "_blank")
+                        }
+                      >
+                        Go to My class
+                        {width > 800 && (
+                          <RightCircleFilled className="btnIcon" />
+                        )}
+                      </CustomButton2>
+                    </Wrapper>
+                  );
+                })
+              )}
+            </Wrapper>
 
             <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 40px`}>
               <CommonTitle>My Class</CommonTitle>
@@ -3022,6 +3081,118 @@ const Student = () => {
               </CommonButton>
             </Wrapper>
           </CustomModal>
+          <Modal
+            title={`추가 결제`}
+            visible={payModal}
+            footer={null}
+            onCancel={payModalToggle}
+          >
+            <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
+              <Text width={`80px`}>강의명 :&nbsp;</Text>
+              <CustomSelect onSelect={(e) => setSelectPayClass(e)}>
+                {payClassLecDetail &&
+                  payClassLecDetail.map((data) => {
+                    return (
+                      <Select.Option key={data.id} value={JSON.stringify(data)}>
+                        {data.name}
+                      </Select.Option>
+                    );
+                  })}
+              </CustomSelect>
+            </Wrapper>
+            {selectPayClass && (
+              <>
+                <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
+                  <Text width={`80px`}>메모 :&nbsp;</Text>
+                  <Wrapper
+                    width={`calc(100% - 80px)`}
+                    ju={`flex-start`}
+                    al={`flex-start`}
+                  >
+                    {selectPayClass &&
+                      JSON.parse(selectPayClass)
+                        .memo.split(`\n`)
+                        .map((content, idx) => {
+                          return (
+                            <SpanText>
+                              {content}
+                              <br />
+                            </SpanText>
+                          );
+                        })}
+                  </Wrapper>
+                </Wrapper>
+
+                <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
+                  <Text width={`80px`}>가격 :&nbsp;</Text>
+                  <Wrapper
+                    width={`calc(100% - 80px)`}
+                    ju={`flex-start`}
+                    al={`flex-start`}
+                  >
+                    ${selectPayClass && JSON.parse(selectPayClass).price}
+                  </Wrapper>
+                </Wrapper>
+
+                {selectPayClass && JSON.parse(selectPayClass).discount !== 0 && (
+                  <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
+                    <Text width={`80px`}>할인율 :&nbsp;</Text>
+                    <Wrapper
+                      width={`calc(100% - 80px)`}
+                      ju={`flex-start`}
+                      al={`flex-start`}
+                    >
+                      {selectPayClass && JSON.parse(selectPayClass).discount}%
+                    </Wrapper>
+                  </Wrapper>
+                )}
+
+                <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
+                  <Text width={`80px`}>강의 기간 :&nbsp;</Text>
+                  <Wrapper
+                    width={`calc(100% - 80px)`}
+                    ju={`flex-start`}
+                    al={`flex-start`}
+                  >
+                    {selectPayClass && JSON.parse(selectPayClass).week}주
+                  </Wrapper>
+                </Wrapper>
+
+                <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
+                  <Text width={`80px`}>결제할 가격 :&nbsp;</Text>
+                  <Wrapper
+                    width={`calc(100% - 80px)`}
+                    ju={`flex-start`}
+                    al={`flex-start`}
+                  >
+                    $
+                    {selectPayClass &&
+                      Math.floor(
+                        JSON.parse(selectPayClass).price -
+                          (JSON.parse(selectPayClass).price *
+                            JSON.parse(selectPayClass).discount) /
+                            100
+                      )}
+                  </Wrapper>
+                </Wrapper>
+              </>
+            )}
+            <Wrapper>
+              <CommonButton
+                size={`small`}
+                type={`primary`}
+                onClick={() =>
+                  moveLinkHandler(
+                    `/payment/${
+                      selectPayClass && JSON.parse(selectPayClass).id
+                    }`
+                  )
+                }
+              >
+                결제하러 가기
+              </CommonButton>
+            </Wrapper>
+          </Modal>
         </WholeWrapper>
       </ClientLayout>
     </>
