@@ -28,6 +28,9 @@ const payment = require("./payment");
 const teacherpart = require("./teacherpart");
 const teacherpay = require("./teacherpay");
 const lecturememo = require("./lecturememo");
+const communitytype = require("./communitytype");
+const community = require("./community");
+const communitycomment = require("./communitycomment");
 
 const env = process.env.NODE_ENV || "development";
 const config = require("../config/config")[env];
@@ -68,6 +71,9 @@ db.Payment = payment;
 db.TeacherPart = teacherpart;
 db.TeacherPay = teacherpay;
 db.LectureMemo = lecturememo;
+db.CommunityType = communitytype;
+db.Community = community;
+db.CommunityComment = communitycomment;
 
 Object.keys(db).forEach((modelName) => {
   db[modelName].init(sequelize);

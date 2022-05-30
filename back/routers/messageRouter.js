@@ -86,6 +86,83 @@ router.get("/user/list", isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.get("/sender/list", isLoggedIn, async (req, res, next) => {
+  const { page } = req.query;
+
+  if (!req.user) {
+    return res.status(403).send("Please log in");
+  }
+
+  const LIMIT = 5;
+
+  const _page = page ? page : 1;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 5;
+
+  try {
+    const lengthQuery = `
+    SELECT	A.id,
+            A.title,
+            A.author,
+            A.senderId,
+            A.receiverId,
+            A.receiveLectureId,
+            A.content,
+            A.level,
+            DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            B.username,
+            B.level                                                      AS  userLevel
+      FROM	Messages  A
+     INNER
+      JOIN  users     B
+        ON  A.receiverId = B.id
+     WHERE  A.senderId = ${req.user.id}
+       AND  A.receiveLectureId IS NULL     
+    `;
+
+    const selectQuery = `
+    SELECT	A.id,
+            A.title,
+            A.author,
+            A.senderId,
+            A.receiverId,
+            A.receiveLectureId,
+            A.content,
+            A.level,
+            DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	createdAt,
+            DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt,
+            B.username,
+            B.level                                                      AS  userLevel
+      FROM	Messages  A
+     INNER
+      JOIN  users     B
+        ON  A.receiverId = B.id
+     WHERE  A.senderId = ${req.user.id} 
+       AND  A.receiveLectureId IS NULL    
+     ORDER  BY A.createdAt  DESC
+     LIMIT  ${LIMIT}
+    OFFSET  ${OFFSET}
+    `;
+
+    const length = await models.sequelize.query(lengthQuery);
+    const message = await models.sequelize.query(selectQuery);
+
+    const messagelen = length[0].length;
+
+    const lastPage =
+      messagelen % LIMIT > 0 ? messagelen / LIMIT + 1 : messagelen / LIMIT;
+
+    return res
+      .status(200)
+      .json({ message: message[0], lastPage: parseInt(lastPage) });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("No message found");
+  }
+});
+
 // 전체 쪽지
 router.get("/all/list", isLoggedIn, async (req, res, next) => {
   const { page } = req.query;
