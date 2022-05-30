@@ -125,7 +125,7 @@ const Home = ({}) => {
               </Wrapper>
               <Image
                 alt="icon"
-                margin={`10px 0 5px`}
+                margin={`10px 0 5px 15px`}
                 width={width < 800 ? `220px` : `280px`}
                 src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/img_free-message.png`}
               />
@@ -156,6 +156,7 @@ const Home = ({}) => {
                     >
                       <CommonButton
                         height={`40px`}
+                        radius={`25px`}
                         kindOf={`white`}
                         padding={`5px 5px 5px 8px`}
                       >
@@ -196,6 +197,7 @@ const Home = ({}) => {
                     >
                       <CommonButton
                         height={`40px`}
+                        radius={`25px`}
                         kindOf={`white`}
                         padding={`5px 5px 5px 8px`}
                         onClick={() => moveLinkHandler(`/application`)}
@@ -294,6 +296,7 @@ const Home = ({}) => {
                 <Wrapper width={`auto`} margin={width < 900 && `15px 0 0`}>
                   <CommonButton
                     height={`40px`}
+                    radius={`25px`}
                     kindOf={`subTheme`}
                     padding={`5px 5px 5px 8px`}
                     onClick={() => moveLinkHandler("/application")}
