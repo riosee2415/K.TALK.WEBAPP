@@ -1,7 +1,7 @@
 const express = require("express");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isLoggedIn = require("../middlewares/isLoggedIn");
-const { CommunityType, Community } = require("../models");
+const { CommunityType, Community, CommunityComment } = require("../models");
 const models = require("../models");
 const fs = require("fs");
 const multer = require("multer");
@@ -46,6 +46,12 @@ const upload = multer({
 router.post("/file", upload.single("file"), async (req, res, next) => {
   return res.json({ path: req.file.location });
 });
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+/////////////////////////////// - TYPE - //////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 
 router.get("/type/list", async (req, res, next) => {
   try {
@@ -154,6 +160,12 @@ router.delete("/type/delete/:typeId", isAdminCheck, async (req, res, next) => {
     return res.status(401).send("게시글 유형을 삭제할 수 없습니다.");
   }
 });
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////// - COMMUNITY - ///////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 
 router.post("/list", isLoggedIn, async (req, res, next) => {
   const { searchTitle, searchName, level, typeId, page } = req.body;
@@ -271,6 +283,7 @@ router.get("/detail/:communityId", isLoggedIn, async (req, res, next) => {
   if (isNanCheck(communityId)) {
     return res.status(401).send("잘못된 요청입니다.");
   }
+
   try {
     const selectQuery = `
   SELECT	A.id,
@@ -309,66 +322,77 @@ router.get("/detail/:communityId", isLoggedIn, async (req, res, next) => {
             Z.content,
             Z.parent,
             Z.parentId,
-            Z.createdAt,
-            Z.updatedAt,
+            DATE_FORMAT(Z.createdAt, "%Y-%m-%d")		AS createdAt,
+       		DATE_FORMAT(Z.updatedAt, "%Y-%m-%d") 		AS updatedAt,
             Z.innerCount,
-            Z.author,
-            Z.isSecret,
-            Z.password
+            Z.userId,
+            Z.profileImage,
+            Z.username,
+            Z.level 
       FROM	(
-                SELECT  A.id,
-                        CASE
-                            WHEN	parent = 0 	THEN  ""
-                            WHEN	parent = 1 	THEN  "-"
-                            WHEN	parent = 2 	THEN  "--"
-                            WHEN	parent = 3 	THEN  "---"
-                            WHEN	parent = 4 	THEN  "----"
-                            WHEN	parent = 5 	THEN  "-----"
-                            WHEN	parent = 6 	THEN  "------"
-                            WHEN	parent = 7 	THEN  "-------"
-                            WHEN	parent = 8 	THEN  "--------"
-                            WHEN	parent = 9 	THEN  "---------"
-                            WHEN	parent = 10 THEN  "----------"
-                            WHEN	parent = 11 THEN  "-----------"
-                            WHEN	parent = 12 THEN  "------------"
-                            WHEN	parent = 13 THEN  "-------------"
-                            WHEN	parent = 14 THEN  "--------------"
-                            WHEN	parent = 15 THEN  "---------------"
-                            WHEN	parent = 16 THEN  "----------------"
-                            WHEN	parent = 17 THEN  "-----------------"
-                            WHEN	parent = 18 THEN  "------------------"
-                            WHEN	parent = 19 THEN  "-------------------"
-                            WHEN	parent = 20 THEN  "--------------------"
-                            WHEN	parent = 21 THEN  "---------------------"
-                            WHEN	parent = 22	THEN  "----------------------"
-                            WHEN	parent = 23	THEN  "-----------------------"
-                            WHEN	parent = 24	THEN  "------------------------"
-                            WHEN	parent = 25	THEN  "-------------------------"
-                            WHEN	parent = 26	THEN  "--------------------------"
-                            WHEN	parent = 27	THEN  "---------------------------"
-                            WHEN	parent = 28	THEN  "----------------------------"
-                            WHEN	parent = 29	THEN  "-----------------------------"
-                            WHEN	parent = 30	THEN  "------------------------------"
-                        END					 AS leaf,
-                        A.content,
-                        A.parent,
-                        A.parentId,
-                        A.createdAt,
-                        A.updatedAt,
-                        A.author,
-                        A.isSecret,
-                        A.password,
-                        (
-                          SELECT	COUNT(id)
-                            FROM	communityComments
-                           WHERE	parentId = A.id
-                        )		AS  innerCount
-                   FROM	 communityComments	    A
-              WHERE	   A.CommunityId = ${communityId}
-                AND	   A.parent = 0
-                AND    A.isDelete = FALSE
-        )	Z
+                 SELECT  A.id,
+                         CASE
+                            WHEN	A.parent = 0 	THEN  ""
+                            WHEN	A.parent = 1 	THEN  "-"
+                            WHEN	A.parent = 2 	THEN  "--"
+                            WHEN	A.parent = 3 	THEN  "---"
+                            WHEN	A.parent = 4 	THEN  "----"
+                            WHEN	A.parent = 5 	THEN  "-----"
+                            WHEN	A.parent = 6 	THEN  "------"
+                            WHEN	A.parent = 7 	THEN  "-------"
+                            WHEN	A.parent = 8 	THEN  "--------"
+                            WHEN	A.parent = 9 	THEN  "---------"
+                            WHEN	A.parent = 10   THEN  "----------"
+                            WHEN	A.parent = 11   THEN  "-----------"
+                            WHEN	A.parent = 12   THEN  "------------"
+                            WHEN	A.parent = 13   THEN  "-------------"
+                            WHEN	A.parent = 14   THEN  "--------------"
+                            WHEN	A.parent = 15   THEN  "---------------"
+                            WHEN	A.parent = 16   THEN  "----------------"
+                            WHEN	A.parent = 17   THEN  "-----------------"
+                            WHEN	A.parent = 18   THEN  "------------------"
+                            WHEN	A.parent = 19   THEN  "-------------------"
+                            WHEN	A.parent = 20   THEN  "--------------------"
+                            WHEN	A.parent = 21   THEN  "---------------------"
+                            WHEN	A.parent = 22	THEN  "----------------------"
+                            WHEN	A.parent = 23	THEN  "-----------------------"
+                            WHEN	A.parent = 24	THEN  "------------------------"
+                            WHEN	A.parent = 25	THEN  "-------------------------"
+                            WHEN	A.parent = 26	THEN  "--------------------------"
+                            WHEN	A.parent = 27	THEN  "---------------------------"
+                            WHEN	A.parent = 28	THEN  "----------------------------"
+                            WHEN	A.parent = 29	THEN  "-----------------------------"
+                            WHEN	A.parent = 30	THEN  "------------------------------"
+                         END					 AS leaf,
+                         A.content,
+                         A.parent,
+                         A.parentId,
+                         A.createdAt,
+                         A.updatedAt,
+                         (
+                            SELECT	COUNT(id)
+                              FROM	communityComments
+                             WHERE	parentId = A.id
+                         )		AS  innerCount,
+                         B.userId,
+                         B.profileImage,
+                         B.username,
+                         B.level 
+                FROM	 communityComments	    A
+               INNER
+                JOIN	 users					B
+                  ON	 A.UserId = B.id 
+                WHERE	 A.CommunityId = ${communityId}
+                 AND	 A.parent = 0
+                  AND    A.isDelete = FALSE
+            )	Z;
     `;
+
+    const comments = await models.sequelize.query(commentQuery);
+
+    return res
+      .status(200)
+      .json({ detailData: detailData[0][0], comments: comments[0] });
   } catch (error) {
     console.error(error);
     return res.status(401).send("게시글 상세정보를 불러올 수 없습니다.");
@@ -539,5 +563,244 @@ router.delete("/delete/:communityId", isLoggedIn, async (req, res, next) => {
     return res.status(401).send("게시글을 삭제할 수 없습니다.");
   }
 });
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+////////////////////////////// - COMMENT - ////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+router.post("/comment/detail", isLoggedIn, async (req, res, next) => {
+  const { parentId, communityId } = req.body;
+
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
+  try {
+    const selectQuery = `
+    SELECT	Z.id,
+            Z.leaf,
+            Z.content,
+            Z.parent,
+            Z.parentId,
+            DATE_FORMAT(Z.createdAt, "%Y-%m-%d")		AS createdAt,
+       		DATE_FORMAT(Z.updatedAt, "%Y-%m-%d") 		AS updatedAt,
+            Z.innerCount,
+            Z.userId,
+            Z.profileImage,
+            Z.username,
+            Z.level 
+      FROM	(
+                SELECT	A.id,
+                        CASE
+                            WHEN	A.parent = 0 	THEN  ""
+                            WHEN	A.parent = 1 	THEN  "-"
+                            WHEN	A.parent = 2 	THEN  "--"
+                            WHEN	A.parent = 3 	THEN  "---"
+                            WHEN	A.parent = 4 	THEN  "----"
+                            WHEN	A.parent = 5 	THEN  "-----"
+                            WHEN	A.parent = 6 	THEN  "------"
+                            WHEN	A.parent = 7 	THEN  "-------"
+                            WHEN	A.parent = 8 	THEN  "--------"
+                            WHEN	A.parent = 9 	THEN  "---------"
+                            WHEN	A.parent = 10   THEN  "----------"
+                            WHEN	A.parent = 11   THEN  "-----------"
+                            WHEN	A.parent = 12   THEN  "------------"
+                            WHEN	A.parent = 13   THEN  "-------------"
+                            WHEN	A.parent = 14   THEN  "--------------"
+                            WHEN	A.parent = 15   THEN  "---------------"
+                            WHEN	A.parent = 16   THEN  "----------------"
+                            WHEN	A.parent = 17   THEN  "-----------------"
+                            WHEN	A.parent = 18   THEN  "------------------"
+                            WHEN	A.parent = 19   THEN  "-------------------"
+                            WHEN	A.parent = 20   THEN  "--------------------"
+                            WHEN	A.parent = 21   THEN  "---------------------"
+                            WHEN	A.parent = 22   THEN  "----------------------"
+                            WHEN	A.parent = 23   THEN  "-----------------------"
+                            WHEN	A.parent = 24   THEN  "------------------------"
+                            WHEN	A.parent = 25   THEN  "-------------------------"
+                            WHEN	A.parent = 26   THEN  "--------------------------"
+                            WHEN	A.parent = 27   THEN  "---------------------------"
+                            WHEN	A.parent = 28   THEN  "----------------------------"
+                            WHEN	A.parent = 29	THEN  "-----------------------------"
+                            WHEN	A.parent = 30	THEN  "------------------------------"
+                        END						 AS leaf,
+                        A.content,
+                        A.parent,
+                        A.parentId,
+                        A.createdAt,
+                        A.updatedAt,
+                        (
+                            SELECT	COUNT(id)
+                            FROM	communityComments
+                            WHERE	parentId = A.id
+                        )		AS  innerCount,
+                        B.userId,
+                        B.profileImage,
+                        B.username,
+                        B.level 
+                 FROM	communityComments	        A
+                INNER
+                 JOIN	users					    B
+                   ON	A.UserId = B.id 
+                WHERE	A.CommunityId = ${communityId}
+                  AND   A.isDelete = FALSE
+            )	Z
+      WHERE	Z.parentId = ${parentId}
+      `;
+
+    const list = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ list: list[0] });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("댓글 정보를 불러올 수 없습니다.");
+  }
+});
+
+router.post("/comment/create", isLoggedIn, async (req, res, next) => {
+  const { content, communityId, parent, parentId } = req.body;
+
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
+  try {
+    const exCommunity = await Community.findOne({
+      where: { id: parseInt(communityId), isDelete: false },
+    });
+
+    if (!exCommunity) {
+      return res.status(401).send("존재하지 않는 게시글입니다.");
+    }
+
+    const createResult = await CommunityComment.create({
+      content,
+      parent: parseInt(parent) === 0 ? 0 : parseInt(parent),
+      parentId: parentId ? parentId : null,
+      CommunityId: parseInt(communityId),
+      UserId: parseInt(req.user.id),
+    });
+
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    }
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("댓글을 작성할 수 없습니다.");
+  }
+});
+
+router.post("/comment/update", isLoggedIn, async (req, res, next) => {
+  const { id, content } = req.body;
+
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
+  try {
+    const exCommunityCom = await CommunityComment.findOne({
+      where: { id: parseInt(id), isDelete: false },
+    });
+
+    if (!exCommunityCom) {
+      return res.status(401).send("존재하지 않는 게시글입니다.");
+    }
+
+    if (exCommunityCom.UserId !== req.user.id) {
+      return res.status(401).send("자신의 댓글만 수정할 수 있습니다.");
+    }
+
+    const updateResult = await Community.update(
+      {
+        content,
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("댓글을 작성할 수 없습니다.");
+  }
+});
+
+router.delete(
+  "/comment/delete/:commentId",
+  isLoggedIn,
+  async (req, res, next) => {
+    const { commentId } = req.params;
+
+    if (!req.user) {
+      return res.status(403).send("로그인 후 이용 가능합니다.");
+    }
+
+    if (isNanCheck(commentId)) {
+      return res.status(401).send("잘못된 요청입니다.");
+    }
+
+    try {
+      const exCommunityCom = await CommunityComment.findOne({
+        where: { id: parseInt(commentId), isDelete: false },
+      });
+
+      if (!exCommunityCom) {
+        return res.status(401).send("존재하지 않는 댓글입니다.");
+      }
+
+      if (req.user.level > 3) {
+        const deleteResult = await CommunityComment.update(
+          {
+            isDelete: true,
+            deletedAt: new Date(),
+          },
+          {
+            where: { id: parseInt(commentId) },
+          }
+        );
+
+        if (deleteResult[0] > 0) {
+          return res.status(200).json({ result: true });
+        } else {
+          return res.status(200).json({ result: false });
+        }
+      }
+
+      if (req.user.level < 3) {
+        if (exCommunityCom.UserId !== req.user.id) {
+          return res.status(401).send("자신의 댓글만 삭제할 수 있습니다.");
+        }
+
+        const deleteResult = await CommunityComment.update(
+          {
+            isDelete: true,
+            deletedAt: new Date(),
+          },
+          {
+            where: { id: parseInt(commentId) },
+          }
+        );
+
+        if (deleteResult[0] > 0) {
+          return res.status(200).json({ result: true });
+        } else {
+          return res.status(200).json({ result: false });
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(401).send("댓글을 작성할 수 없습니다.");
+    }
+  }
+);
 
 module.exports = router;
