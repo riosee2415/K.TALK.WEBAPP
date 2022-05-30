@@ -1785,7 +1785,7 @@ const Student = () => {
                         key={data.id}
                         dr={`row`}
                         ju={`space-between`}
-                        padding={`25px`}
+                        padding={width < 1100 ? `20px 10px` : `25px`}
                         borderTop={idx === 0 && `1px solid ${Theme.grey_C}`}
                         borderBottom={`1px solid ${Theme.grey_C}`}
                       >
