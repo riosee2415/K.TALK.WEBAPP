@@ -2795,7 +2795,7 @@ const Index = () => {
                             fontSize={width < 700 ? `14px` : `16px`}
                             display={width < 700 ? `none` : `block`}
                           >
-                            파일 업로드
+                            파일 다운로드
                           </Text>
                         </CustomWrapper>
 

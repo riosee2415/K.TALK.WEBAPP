@@ -697,8 +697,6 @@ const DetailClass = () => {
   );
 
   const onClicStuHandler = useCallback(() => {
-    console.log(moment(stuChangeDate), "만기일");
-
     if ((moment(stuChangeDate) < moment(stuChangeDetail.createdAt), "시작일")) {
       return message.error("만기일은 시작일보다 과거일 수 없습니다.");
     }
@@ -849,7 +847,6 @@ const DetailClass = () => {
       } else {
         setMemoCreateModal(true);
         if (data) {
-          console.log(`123123`);
           setTimeout(() => {
             updateMemoForm.setFieldsValue({
               title: data.title,
@@ -2875,7 +2872,6 @@ const DetailClass = () => {
             </Text>
             &nbsp; &nbsp; &nbsp;
             <Text>
-              {console.log(stuChangeDetail && stuChangeDetail.endDate)}
               만기일:&nbsp;
               <DatePicker
                 value={

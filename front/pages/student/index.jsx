@@ -1034,8 +1034,6 @@ const Student = () => {
   const stepHanlder2 = useCallback((startDate, endDate, day) => {
     // let dir = 0;
 
-    console.log(startDate, endDate, day);
-
     // const save = Math.abs(
     //   moment.duration(moment().diff(moment(startDate, "YYYY-MM-DD"))).asDays()
     // );
@@ -1139,8 +1137,6 @@ const Student = () => {
 
     return (tempArr.length * 100) / ((data.date / 7) * data.count);
   }, []);
-
-  console.log(lectureStuCommute);
 
   const onChangeBookPage = useCallback(
     (page) => {
@@ -1394,13 +1390,6 @@ const Student = () => {
                             &nbsp;{data.endDate}
                           </Text>
                         </Wrapper>
-                        {console.log(
-                          moment(
-                            moment(lectureStuLectureList[0].endDate).format(
-                              `YYYY-MM-DD`
-                            )
-                          )
-                        )}
 
                         {moment
                           .duration(
@@ -1777,10 +1766,9 @@ const Student = () => {
                         </Button>
                       </Wrapper> */}
 
-            <Wrapper al={`flex-start`} margin={`80px 0 20px`}>
-              <CommonTitle>
-                View your homework / submit your homework
-              </CommonTitle>
+            <Wrapper dr={`row`} ju={`flex-start`} margin={`80px 0 20px`}>
+              <CommonTitle>View your homework /&nbsp;</CommonTitle>
+              <CommonTitle>submit your homework</CommonTitle>
             </Wrapper>
 
             <Wrapper margin={`0 0 40px`}>
@@ -1796,146 +1784,142 @@ const Student = () => {
                       <Wrapper
                         key={data.id}
                         dr={`row`}
-                        padding={`20px`}
-                        margin={`0 0 10px`}
+                        ju={`space-between`}
+                        padding={`25px`}
                         borderTop={idx === 0 && `1px solid ${Theme.grey_C}`}
                         borderBottom={`1px solid ${Theme.grey_C}`}
                       >
+                        {/* 30% */}
                         <Wrapper
-                          width={width < 900 ? `100%` : `55%`}
-                          margin={width < 900 && `0 0 10px`}
                           dr={`row`}
-                          ju={`flex-start`}
+                          ju={width < 1100 ? `space-between` : `flex-start`}
+                          width={width < 1100 ? `100%` : `30%`}
+                          margin={width < 1100 && `0 0 10px`}
                         >
-                          <Wrapper
-                            dr={`row`}
-                            width={width < 900 ? `100%` : `25%`}
-                            ju={`flex-start`}
-                            margin={width < 900 && `0 0 10px`}
-                          >
-                            <Image
-                              width={`22px`}
-                              margin={width < 900 ? `0 5px 0 0` : `0 16px 0 0`}
-                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png"
-                              alt="lecture_icon"
-                            />
-                            <Text fontWeight={`bold`}>{data.course}</Text>
-                          </Wrapper>
+                          <Text width={width < 1100 ? `auto` : `60%`}>
+                            <SpanText fontWeight={`700`}>Lecture :</SpanText>
+                            &nbsp;
+                            {data.course}
+                          </Text>
 
-                          <Wrapper
-                            dr={`row`}
-                            width={width < 900 ? `30%` : `25%`}
-                            ju={`flex-start`}
-                          >
-                            <Text fontSize={`14px`}>
-                              {`${data.username}님`}
-                            </Text>
-                          </Wrapper>
-
-                          <Wrapper
-                            dr={`row`}
-                            width={width < 900 ? `45%` : `50%`}
-                            ju={`flex-start`}
-                          >
-                            <Text fontSize={`14px`}>
-                              Subject : {data.title}
-                            </Text>{" "}
-                            &nbsp; &nbsp; &nbsp;
-                            <Button
-                              size={`small`}
-                              type={`primary`}
-                              onClick={() => homeworksToggle(data)}
-                            >
-                              View Content
-                            </Button>
-                          </Wrapper>
+                          <Text width={width < 1100 ? `auto` : `40%`}>
+                            <SpanText fontWeight={`700`}>Lecturer :</SpanText>
+                            &nbsp;
+                            {data.username}님
+                          </Text>
                         </Wrapper>
+
+                        {/* 21px */}
+                        {width > 1100 && (
+                          <Wrapper
+                            width={`1px`}
+                            height={`20px`}
+                            borderRight={`1px dashed ${Theme.grey_C}`}
+                            margin={`0 20px 0 0`}
+                          ></Wrapper>
+                        )}
+
+                        {/* 20% */}
                         <Wrapper
-                          width={width < 900 ? `100%` : `45%`}
+                          dr={`row`}
+                          ju={`space-between`}
+                          width={width < 1100 ? `100%` : `20%`}
+                          margin={width < 1100 && `0 0 10px`}
+                        >
+                          <Text margin={`0 30px 0 0`}>
+                            <SpanText fontWeight={`700`}>Subject :</SpanText>
+                            {data.title}
+                          </Text>
+                          <Button
+                            size={`small`}
+                            type={`primary`}
+                            onClick={() => homeworksToggle(data)}
+                          >
+                            View Content
+                          </Button>
+                        </Wrapper>
+
+                        {/* 41px */}
+                        {width > 1100 && (
+                          <Wrapper
+                            width={`1px`}
+                            height={`20px`}
+                            borderRight={`1px dashed ${Theme.grey_C}`}
+                            margin={`0 20px`}
+                          ></Wrapper>
+                        )}
+
+                        {/* 130px */}
+                        <Wrapper
+                          margin={width < 1100 && `0 0 10px`}
+                          width={`130px`}
                           dr={`row`}
                           ju={`flex-start`}
+                          onClick={() => fileDownloadHandler(data.file)}
                         >
-                          <Wrapper
-                            dr={`row`}
-                            width={width < 900 ? `100%` : `35%`}
-                            margin={width < 900 && `0 0 10px`}
-                            ju={`flex-start`}
-                            onClick={() => fileDownloadHandler(data.file)}
-                          >
-                            <Image
-                              cursor={`pointer`}
-                              width={`22px`}
-                              margin={width < 900 ? `0 5px 0 0` : `0 16px 0 0`}
-                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_download.png"
-                              alt="lecture_icon"
-                            />
-
-                            <Text cursor={`pointer`}>Download file</Text>
-                          </Wrapper>
-
-                          <Wrapper
-                            dr={`row`}
-                            width={
-                              width < 1100 ? `40%` : width < 900 ? `62%` : `35%`
-                            }
-                            ju={`flex-start`}
-                            margin={width < 900 && `0 10px 0 0`}
-                          >
-                            <Image
-                              width={`22px`}
-                              margin={width < 700 ? `0 5px 0 0` : `0 16px 0 0`}
-                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_b.png"
-                              alt="lecture_icon"
-                            />
-                            <Text>
-                              ~
-                              {moment(data.date, "YYYY/MM/DD").format(
-                                "YYYY/MM/DD"
-                              )}
-                            </Text>
-                          </Wrapper>
-
-                          <Wrapper
-                            dr={`row`}
-                            width={
-                              width < 1100 ? `25%` : width < 900 ? `28%` : `30%`
-                            }
+                          <Image
                             cursor={`pointer`}
-                          >
-                            <CustomButton
-                              color={
-                                moment
-                                  .duration(
-                                    moment(data.date, "YYYY-MM-DD").diff(
-                                      moment(new Date(), "YYYY-MM-DD")
-                                    )
-                                  )
-                                  .asDays() < -1
-                                  ? `${Theme.red_C}`
-                                  : ""
-                              }
-                              onClick={() => homeworkSubmitHanlder(data)}
-                              disabled={
-                                moment
-                                  .duration(
-                                    moment(data.date, "YYYY-MM-DD").diff(
-                                      moment(new Date(), "YYYY-MM-DD")
-                                    )
-                                  )
-                                  .asDays() < -1
-                              }
-                            >
-                              {moment
+                            width={`22px`}
+                            margin={width < 900 ? `0 5px 0 0` : `0 16px 0 0`}
+                            src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_download.png"
+                            alt="lecture_icon"
+                          />
+                          <Text cursor={`pointer`}>Download file</Text>
+                        </Wrapper>
+
+                        {/* 41px */}
+                        {width > 1100 && (
+                          <Wrapper
+                            width={`1px`}
+                            height={`20px`}
+                            borderRight={`1px dashed ${Theme.grey_C}`}
+                            margin={`0 20px`}
+                          ></Wrapper>
+                        )}
+                        <Text margin={width < 1100 && `0 0 10px`}>
+                          ~
+                          {moment(data.date, "YYYY/MM/DD").format("YYYY/MM/DD")}
+                        </Text>
+                        <Wrapper width={width < 1100 ? `100%` : `210px`}>
+                          <CustomButton
+                            type={`primary`}
+                            style={
+                              width < 1100
+                                ? { width: `100%` }
+                                : { width: `auto` }
+                            }
+                            color={
+                              moment
                                 .duration(
                                   moment(data.date, "YYYY-MM-DD").diff(
                                     moment(new Date(), "YYYY-MM-DD")
                                   )
                                 )
                                 .asDays() < -1
-                                ? "Submission period expired"
-                                : "Submit"}
-                            </CustomButton>
-                          </Wrapper>
+                                ? `${Theme.red_C}`
+                                : ""
+                            }
+                            onClick={() => homeworkSubmitHanlder(data)}
+                            disabled={
+                              moment
+                                .duration(
+                                  moment(data.date, "YYYY-MM-DD").diff(
+                                    moment(new Date(), "YYYY-MM-DD")
+                                  )
+                                )
+                                .asDays() < -1
+                            }
+                          >
+                            {moment
+                              .duration(
+                                moment(data.date, "YYYY-MM-DD").diff(
+                                  moment(new Date(), "YYYY-MM-DD")
+                                )
+                              )
+                              .asDays() < -1
+                              ? "Submission period expired"
+                              : "Submit"}
+                          </CustomButton>
                         </Wrapper>
                       </Wrapper>
                     );

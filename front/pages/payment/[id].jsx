@@ -66,7 +66,6 @@ const Index = () => {
   const dispatch = useDispatch();
 
   const {
-    paymentList,
     st_paymentListDone,
     st_paymentListError,
     st_paymentCreateDone,
@@ -711,9 +710,9 @@ export const getServerSideProps = wrapper.getServerSideProps(
       type: SEO_LIST_REQUEST,
     });
 
-    context.store.dispatch({
-      type: PAYMENT_LIST_REQUEST,
-    });
+    // context.store.dispatch({
+    //   type: PAYMENT_LIST_REQUEST,
+    // });
 
     // 구현부 종료
     context.store.dispatch(END);

@@ -317,8 +317,6 @@ const UserList = ({}) => {
 
   const updateTeacherFinish = useCallback(
     (data) => {
-      console.log(detailModalData.userId);
-      console.log(data.email);
       if (detailModalData.email === data.email) {
         dispatch({
           type: USER_ADMIN_TEACHER_UPDATE_REQUEST,
