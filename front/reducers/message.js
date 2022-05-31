@@ -13,6 +13,8 @@ export const initialState = {
   messagePartLastPage: 1,
   messageAllList: [],
   messageAllLastPage: 1,
+  messageSenderList: [],
+  messageSenderLastPage: 1,
   //
   st_messageUserListLoading: false,
   st_messageUserListDone: false,
@@ -70,6 +72,10 @@ export const initialState = {
   st_messageAllListLoading: false,
   st_messageAllListDone: false,
   st_messageAllListError: null,
+  //
+  st_messageSenderListLoading: false,
+  st_messageSenderListDone: false,
+  st_messageSenderListError: null,
 };
 
 export const MESSAGE_USER_LIST_REQUEST = "MESSAGE_USER_LIST_REQUEST";
@@ -133,6 +139,10 @@ export const MESSAGE_PART_LIST_FAILURE = "MESSAGE_PART_LIST_FAILURE";
 export const MESSAGE_ALL_LIST_REQUEST = "MESSAGE_ALL_LIST_REQUEST";
 export const MESSAGE_ALL_LIST_SUCCESS = "MESSAGE_ALL_LIST_SUCCESS";
 export const MESSAGE_ALL_LIST_FAILURE = "MESSAGE_ALL_LIST_FAILURE";
+
+export const MESSAGE_SENDER_LIST_REQUEST = "MESSAGE_SENDER_LIST_REQUEST";
+export const MESSAGE_SENDER_LIST_SUCCESS = "MESSAGE_SENDER_LIST_SUCCESS";
+export const MESSAGE_SENDER_LIST_FAILURE = "MESSAGE_SENDER_LIST_FAILURE";
 
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
@@ -425,6 +435,27 @@ const reducer = (state = initialState, action) =>
         draft.st_messageAllListLoading = false;
         draft.st_messageAllListDone = false;
         draft.st_messageAllListError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case MESSAGE_SENDER_LIST_REQUEST: {
+        draft.st_messageSenderListLoading = true;
+        draft.st_messageSenderListDone = null;
+        draft.st_messageSenderListError = false;
+        break;
+      }
+      case MESSAGE_SENDER_LIST_SUCCESS: {
+        draft.st_messageSenderListLoading = false;
+        draft.st_messageSenderListDone = true;
+        draft.messageSenderList = action.data.message;
+        draft.messageSenderLastPage = action.data.lastPage;
+        break;
+      }
+      case MESSAGE_SENDER_LIST_FAILURE: {
+        draft.st_messageSenderListLoading = false;
+        draft.st_messageSenderListDone = false;
+        draft.st_messageSenderListError = action.error;
         break;
       }
 

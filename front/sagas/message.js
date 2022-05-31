@@ -64,6 +64,10 @@ import {
   MESSAGE_ALL_LIST_REQUEST,
   MESSAGE_ALL_LIST_SUCCESS,
   MESSAGE_ALL_LIST_FAILURE,
+  //
+  MESSAGE_SENDER_LIST_REQUEST,
+  MESSAGE_SENDER_LIST_SUCCESS,
+  MESSAGE_SENDER_LIST_FAILURE,
 } from "../reducers/message";
 
 // SAGA AREA ********************************************************************************************************
@@ -404,6 +408,33 @@ function* messageAllList(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function messageSenderListAPI(data) {
+  return axios.get(`/api/message/sender/list?page=${data.page}`, data);
+}
+
+function* messageSenderList(action) {
+  try {
+    const result = yield call(messageSenderListAPI, action.data);
+
+    yield put({
+      type: MESSAGE_SENDER_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: MESSAGE_SENDER_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchMessageUserList() {
   yield takeLatest(MESSAGE_USER_LIST_REQUEST, messageUserList);
@@ -460,6 +491,9 @@ function* watchMessagePartList() {
 function* watchMessageAllList() {
   yield takeLatest(MESSAGE_ALL_LIST_REQUEST, messageAllList);
 }
+function* watchMessageSenderList() {
+  yield takeLatest(MESSAGE_SENDER_LIST_REQUEST, messageSenderList);
+}
 
 //////////////////////////////////////////////////////////////
 export default function* messagerSaga() {
@@ -478,6 +512,7 @@ export default function* messagerSaga() {
     fork(watchMessageLectureList),
     fork(watchMessagePartList),
     fork(watchMessageAllList),
+    fork(watchMessageSenderList),
     //
   ]);
 }

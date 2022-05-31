@@ -45,6 +45,7 @@ import Theme from "../../components/Theme";
 import {
   MESSAGE_CREATE_REQUEST,
   MESSAGE_FOR_ADMIN_CREATE_REQUEST,
+  MESSAGE_SENDER_LIST_REQUEST,
   MESSAGE_TEACHER_LIST_REQUEST,
   MESSAGE_USER_LIST_REQUEST,
 } from "../../reducers/message";
@@ -361,6 +362,9 @@ const Student = () => {
     messageUserLastPage,
 
     st_messageUserListError,
+
+    messageSenderList,
+    messageSenderLastPage,
   } = useSelector((state) => state.message);
 
   const {
@@ -440,6 +444,9 @@ const Student = () => {
   const [currentPage3, setCurrentPage3] = useState(1);
   const [currentPage4, setCurrentPage4] = useState(1);
   const [currentPage5, setCurrentPage5] = useState(1);
+  const [currentPage6, setCurrentPage6] = useState(1);
+
+  const [senderModal, setSenderModal] = useState(false);
 
   const [attendanceModal, setAttendanceModal] = useState(false);
   const [attendanceData, setAttendanceData] = useState(null);
@@ -526,6 +533,13 @@ const Student = () => {
 
     dispatch({
       type: NOTICE_MY_LECTURE_LIST_REQUEST,
+      data: {
+        page: 1,
+      },
+    });
+
+    dispatch({
+      type: MESSAGE_SENDER_LIST_REQUEST,
       data: {
         page: 1,
       },
@@ -724,6 +738,7 @@ const Student = () => {
     setFileName("");
     setSendMessageType(1);
     setSendMessageAnswerType(0);
+    setSenderModal(false);
   }, [fileInput]);
 
   ////// TOGGLE //////
@@ -750,11 +765,15 @@ const Student = () => {
     }
   }, []);
 
-  const messageViewModalHandler = useCallback((data) => {
+  const messageViewModalHandler = useCallback((data, isSender) => {
     setMessageViewModal((prev) => !prev);
 
     if (data.userLevel === 3 || data.userLevel === 4) {
       setSendMessageType(3);
+    }
+
+    if (isSender) {
+      setSenderModal(true);
     }
 
     setMessageDatum(data);
@@ -1016,6 +1035,17 @@ const Student = () => {
 
     dispatch({
       type: MESSAGE_USER_LIST_REQUEST,
+      data: {
+        page,
+      },
+    });
+  }, []);
+
+  const onChangeSenderMessagePage = useCallback((page) => {
+    setCurrentPage6(page);
+
+    dispatch({
+      type: MESSAGE_SENDER_LIST_REQUEST,
       data: {
         page,
       },
@@ -2195,7 +2225,7 @@ const Student = () => {
               </CommonButton>
             </Wrapper>
 
-            <Wrapper margin={`0 0 110px`}>
+            <Wrapper>
               <CustomPage
                 size="small"
                 current={currentPage3}
@@ -2267,6 +2297,93 @@ const Student = () => {
             <Wrapper margin={`0 0 110px`}>
               <CustomPage size="small" />
             </Wrapper> */}
+
+            <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
+              <CommonTitle>Message I sent </CommonTitle>
+            </Wrapper>
+
+            <Wrapper>
+              <Wrapper
+                dr={`row`}
+                textAlign={`center`}
+                padding={`20px 0`}
+                bgColor={Theme.subTheme9_C}
+                borderBottom={`1px solid ${Theme.grey_C}`}
+              >
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `15%` : `10%`}
+                >
+                  번호
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `25%` : `10%`}
+                >
+                  Date
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `45%` : `70%`}
+                >
+                  Subject
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `15%` : `10%`}
+                >
+                  Writer
+                </Text>
+              </Wrapper>
+
+              {messageSenderList &&
+                (messageSenderList.length === 0 ? (
+                  <Wrapper margin={`50px 0`}>
+                    <Empty description="No message" />
+                  </Wrapper>
+                ) : (
+                  messageSenderList.map((data, idx) => {
+                    return (
+                      <CustomTableHoverWrapper
+                        key={data.id}
+                        bgColor={idx % 2 === 0}
+                        onClick={() => messageViewModalHandler(data, true)}
+                      >
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.id}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `25%` : `10%`}>
+                          {moment(data.createdAt, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )}
+                        </Wrapper>
+                        <Wrapper
+                          width={width < 800 ? `45%` : `70%`}
+                          al={`flex-start`}
+                          padding={`0 0 0 10px`}
+                        >
+                          {data.title}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.author}
+                        </Wrapper>
+                      </CustomTableHoverWrapper>
+                    );
+                  })
+                ))}
+            </Wrapper>
+            <Wrapper margin={`50px 0 110px`}>
+              <CustomPage
+                size="small"
+                current={currentPage6}
+                total={messageSenderLastPage * 10}
+                onChange={(page) => onChangeSenderMessagePage(page)}
+              />
+            </Wrapper>
           </RsWrapper>
 
           <CustomModal
@@ -2609,13 +2726,15 @@ const Student = () => {
                     Go back
                   </CommonButton>
 
-                  <CommonButton
-                    onClick={() => messageAnswerToggleHanlder(messageDatum)}
-                    margin={`0 0 0 5px`}
-                    radius={`5px`}
-                  >
-                    Send Message
-                  </CommonButton>
+                  {!senderModal && (
+                    <CommonButton
+                      onClick={() => messageAnswerToggleHanlder(messageDatum)}
+                      margin={`0 0 0 5px`}
+                      radius={`5px`}
+                    >
+                      Send Message
+                    </CommonButton>
+                  )}
                 </Wrapper>
               </>
             )}

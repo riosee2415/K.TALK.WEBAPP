@@ -55,6 +55,7 @@ import {
 import {
   MESSAGE_ALL_LIST_REQUEST,
   MESSAGE_CREATE_REQUEST,
+  MESSAGE_SENDER_LIST_REQUEST,
   MESSAGE_USER_LIST_REQUEST,
 } from "../../reducers/message";
 import { saveAs } from "file-saver";
@@ -349,6 +350,9 @@ const Index = () => {
     messageAllLastPage,
 
     st_messageAllListError,
+
+    messageSenderList,
+    messageSenderLastPage,
   } = useSelector((state) => state.message);
 
   const {
@@ -392,9 +396,11 @@ const Index = () => {
   const [currentPage3, setCurrentPage3] = useState(1);
   const [currentPage4, setCurrentPage4] = useState(1);
   const [currentPage5, setCurrentPage5] = useState(1);
+  const [currentPage6, setCurrentPage6] = useState(1);
 
   const [zoomLinkToggle, setZoomLinkToggle] = useState(false);
   const [messageViewToggle, setMessageViewToggle] = useState(false);
+  const [senderModal, setSenderModal] = useState(false);
   const [messageAnswerModal, setMessageAnswerModal] = useState(false);
 
   const [noticeViewModal, setNoticeViewModal] = useState(false);
@@ -563,6 +569,12 @@ const Index = () => {
         page: 1,
       },
     });
+    dispatch({
+      type: MESSAGE_SENDER_LIST_REQUEST,
+      data: {
+        page: 1,
+      },
+    });
   }, [router.query]);
 
   useEffect(() => {
@@ -703,6 +715,7 @@ const Index = () => {
     setCurrentModalKinds(null);
     setCurrentModalLevel(null);
     setCurrentModalStage(null);
+    setSenderModal(false);
   }, []);
 
   const clickImageUpload = useCallback(() => {
@@ -789,6 +802,16 @@ const Index = () => {
       },
     });
   }, []);
+  const onChangeSenderMessagePage = useCallback((page) => {
+    setCurrentPage6(page);
+
+    dispatch({
+      type: MESSAGE_SENDER_LIST_REQUEST,
+      data: {
+        page,
+      },
+    });
+  }, []);
 
   const zoomLinkFinish = useCallback(
     (data) => {
@@ -813,8 +836,11 @@ const Index = () => {
     }
   };
 
-  const messageViewModalHanlder = useCallback((data) => {
+  const messageViewModalHanlder = useCallback((data, isSender) => {
     setMessageViewToggle(true);
+    if (isSender) {
+      setSenderModal(true);
+    }
 
     setMessageDatum(data);
   }, []);
@@ -1489,6 +1515,119 @@ const Index = () => {
                 onChange={(page) => onChangeMessagePage(page)}
               ></CustomPage>
             </Wrapper>
+            <Wrapper al={`flex-start`}>
+              <CommonTitle margin={`0 0 20px 0`}>내가 보낸 쪽지함</CommonTitle>
+            </Wrapper>
+
+            <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
+              <Wrapper
+                dr={`row`}
+                textAlign={`center`}
+                padding={`20px 0`}
+                bgColor={Theme.subTheme9_C}
+                borderBottom={`1px solid ${Theme.grey_C}`}
+              >
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={`15%`}
+                >
+                  글 번호
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `25%` : `15%`}
+                >
+                  날짜
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={
+                    width < 800
+                      ? `calc(100% - 25% - 15% - 15%)`
+                      : `calc(100% - 15% - 15% - 15%)`
+                  }
+                >
+                  제목
+                </Text>
+
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={`15%`}
+                >
+                  작성자
+                </Text>
+              </Wrapper>
+
+              {messageSenderList && messageSenderList.length === 0 ? (
+                <Wrapper margin={`50px 0`}>
+                  <Empty description="조회된 데이터가 없습니다." />
+                </Wrapper>
+              ) : (
+                messageSenderList &&
+                messageSenderList.map((data2, idx) => {
+                  return (
+                    <Wrapper
+                      key={data2.id}
+                      dr={`row`}
+                      textAlign={`center`}
+                      padding={`25px 0 20px`}
+                      cursor={`pointer`}
+                      borderBottom={`1px solid ${Theme.grey_C}`}
+                      bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                      onClick={() => messageViewModalHanlder(data2, true)}
+                    >
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={`15%`}
+                      >
+                        {data2.id}
+                      </Text>
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={width < 800 ? `25%` : `15%`}
+                      >
+                        {moment(data2.createdAt, "YYYY/MM/DD").format(
+                          "YYYY/MM/DD"
+                        )}
+                      </Text>
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={
+                          width < 800
+                            ? `calc(100% - 25% - 15% - 15%)`
+                            : `calc(100% - 15% - 15% - 15%)`
+                        }
+                        textAlign={`left`}
+                        isEllipsis
+                      >
+                        {data2.title}
+                      </Text>
+
+                      <Text
+                        fontSize={width < 700 ? `14px` : `16px`}
+                        width={`15%`}
+                        isEllipsis
+                      >
+                        {data2.author}
+                      </Text>
+                    </Wrapper>
+                  );
+                })
+              )}
+            </Wrapper>
+
+            <Wrapper margin={`65px 0 85px`}>
+              <CustomPage
+                defaultCurrent={1}
+                current={currentPage6}
+                total={messageSenderLastPage * 10}
+                onChange={(page) => onChangeSenderMessagePage(page)}
+              ></CustomPage>
+            </Wrapper>
 
             <Wrapper al={`flex-start`}>
               <CommonTitle margin={`0 0 20px`}>내 수업</CommonTitle>
@@ -1870,6 +2009,7 @@ const Index = () => {
                   >
                     돌아가기
                   </CommonButton>
+
                   <CommonButton
                     margin={`0 0 0 5px`}
                     radius={`5px`}
@@ -1962,13 +2102,16 @@ const Index = () => {
                 >
                   돌아가기
                 </CommonButton>
-                <CommonButton
-                  onClick={() => messageAnswerToggleHanlder(messageDatum)}
-                  margin={`0 0 0 5px`}
-                  radius={`5px`}
-                >
-                  답변하기
-                </CommonButton>
+
+                {!senderModal && (
+                  <CommonButton
+                    onClick={() => messageAnswerToggleHanlder(messageDatum)}
+                    margin={`0 0 0 5px`}
+                    radius={`5px`}
+                  >
+                    답변하기
+                  </CommonButton>
+                )}
               </Wrapper>
             </>
           )}
