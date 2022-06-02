@@ -1818,6 +1818,9 @@ const Student = () => {
                         padding={width < 1100 ? `20px 10px` : `25px`}
                         borderTop={idx === 0 && `1px solid ${Theme.grey_C}`}
                         borderBottom={`1px solid ${Theme.grey_C}`}
+                        bgColor={
+                          idx % 2 === 0 ? Theme.white_C : Theme.lightGrey_C
+                        }
                       >
                         {/* 30% */}
                         <Wrapper

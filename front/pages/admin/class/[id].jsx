@@ -692,12 +692,13 @@ const DetailClass = () => {
   const stuDateChangeHandler = useCallback(
     (data, data2) => {
       setStuChangeDate(data);
+      console.log(data);
     },
     [stuChangeDetail]
   );
 
   const onClicStuHandler = useCallback(() => {
-    if ((moment(stuChangeDate) < moment(stuChangeDetail.createdAt), "시작일")) {
+    if (moment(stuChangeDate) < moment(stuChangeDetail.createdAt)) {
       return message.error("만기일은 시작일보다 과거일 수 없습니다.");
     }
 
@@ -2875,11 +2876,14 @@ const DetailClass = () => {
               만기일:&nbsp;
               <DatePicker
                 value={
-                  stuChangeDetail &&
-                  moment(stuChangeDetail.endDate, `YYYY-MM-DD`)
+                  stuChangeDate
+                    ? stuChangeDate
+                    : stuChangeDetail &&
+                      moment(stuChangeDetail.endDate, `YYYY-MM-DD`)
                 }
                 placeholder={"변경할 만기일"}
-                onChange={stuDateChangeHandler}
+                onChange={(e) => stuDateChangeHandler(e)}
+                allowClear={false}
               />
             </Text>
           </Wrapper>

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 
 import axios from "axios";
 import wrapper from "../store/configureStore";
@@ -27,6 +27,36 @@ import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
 import { SEO_LIST_REQUEST } from "../reducers/seo";
 
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
+import styled from "styled-components";
+import { COMMUNITY_LIST_REQUEST } from "../reducers/community";
+import { Empty, Form, Input, Modal } from "antd";
+
+const Box = styled(Wrapper)`
+  align-items: flex-start;
+  justify-content: flex-start;
+  transition: 0.5s;
+  width: calc(50% - 10px);
+  padding: 20px 25px;
+  background-color: ${(props) => props.theme.lightGrey_C};
+  border-radius: 10px;
+  cursor: pointer;
+  &:hover {
+    background-color: ${(props) => props.theme.subTheme6_C};
+    & ${Text} {
+      color: ${(props) => props.theme.white_C};
+    }
+  }
+  & ${Text} {
+    color: ${(props) => props.theme.subTheme11_C};
+  }
+  &:nth-child(2n) {
+    margin: 0 20px 20px 0;
+  }
+  @media (max-width: 800px) {
+    width: 100%;
+    margin: 0 0 20px !important;
+  }
+`;
 
 const Home = ({}) => {
   const width = useWidth();
@@ -38,12 +68,16 @@ const Home = ({}) => {
   ////// HOOKS //////
   const router = useRouter();
   ////// REDUX //////
+  const { communityList } = useSelector((state) => state.community);
+  const { me } = useSelector((state) => state.user);
+  const [modalView, setModalView] = useState(false);
   ////// USEEFFECT //////
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
+
   ////// DATAVIEW //////
 
   return (
@@ -390,6 +424,53 @@ const Home = ({}) => {
                   </ATag>
                 </Wrapper>
               </Wrapper>
+
+              <Wrapper al={`flex-start`} ju={`flex-start`} margin={`110px 0 0`}>
+                <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 20px`}>
+                  <Text fontSize={`24px`} fontWeight={`700`}>
+                    BOARD<SpanText color={Theme.red_C}>.</SpanText>
+                  </Text>
+                  {me && (
+                    <CommonButton onClick={() => setModalView((prev) => !prev)}>
+                      작성하기
+                    </CommonButton>
+                  )}
+                </Wrapper>
+                <Wrapper dr={`row`} ju={`flex-start`}>
+                  {communityList && communityList.length === 0 ? (
+                    <Wrapper>
+                      <Empty description={`게시물이 없습니다.`} />
+                    </Wrapper>
+                  ) : (
+                    communityList &&
+                    communityList.map((data) => {
+                      return (
+                        <Box>
+                          <Text>No.{data.id}</Text>
+                          <Text margin={`0 0 40px`}>{data.title}</Text>
+                          <Wrapper dr={`row`} ju={`space-between`}>
+                            <Text>{data.createdAt} | 케이톡 라이브</Text>
+                            <Text>조회수 92 | 댓글 199개</Text>
+                          </Wrapper>
+                        </Box>
+                      );
+                    })
+                  )}
+                </Wrapper>
+              </Wrapper>
+              <Modal title={`게시판 작성하기`} visible={modalView}>
+                <Form>
+                  <Form.Item name={`title`}>
+                    <Input />
+                  </Form.Item>
+                  <Form.Item name={`content`}>
+                    <Input />
+                  </Form.Item>
+                  <Form.Item name={`type`}>
+                    <Input />
+                  </Form.Item>
+                </Form>
+              </Modal>
             </RsWrapper>
           </Wrapper>
           <Popup />
@@ -416,6 +497,9 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: SEO_LIST_REQUEST,
+    });
+    context.store.dispatch({
+      type: COMMUNITY_LIST_REQUEST,
     });
 
     // 구현부 종료
