@@ -167,7 +167,7 @@ router.delete("/type/delete/:typeId", isAdminCheck, async (req, res, next) => {
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-router.post("/list", isLoggedIn, async (req, res, next) => {
+router.post("/list", async (req, res, next) => {
   const { searchTitle, searchName, level, typeId, page } = req.body;
 
   if (!req.user) {
@@ -277,7 +277,7 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.get("/detail/:communityId", isLoggedIn, async (req, res, next) => {
+router.get("/detail/:communityId", async (req, res, next) => {
   const { communityId } = req.params;
 
   if (isNanCheck(communityId)) {
@@ -570,7 +570,7 @@ router.delete("/delete/:communityId", isLoggedIn, async (req, res, next) => {
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-router.post("/comment/detail", isLoggedIn, async (req, res, next) => {
+router.post("/comment/detail", async (req, res, next) => {
   const { parentId, communityId } = req.body;
 
   if (!req.user) {
