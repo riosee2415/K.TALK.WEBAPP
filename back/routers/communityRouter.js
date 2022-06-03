@@ -660,7 +660,7 @@ router.post("/comment/detail", isLoggedIn, async (req, res, next) => {
 });
 
 router.post("/comment/create", isLoggedIn, async (req, res, next) => {
-  const { content, communityId, parent, parentId } = req.body;
+  const { content, communityId, parentId } = req.body;
 
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
@@ -675,9 +675,21 @@ router.post("/comment/create", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 게시글입니다.");
     }
 
+    let dataJson = {};
+
+    if (parentId !== null) {
+      dataJson = await CommunityComment.findOne({
+        where: { id: parseInt(parentId) },
+      });
+
+      if (!dataJson) {
+        return res.status(401).send("잠시후 다시 시도하여 주십시오.");
+      }
+    }
+
     const createResult = await CommunityComment.create({
       content,
-      parent: parseInt(parent) === 0 ? 0 : parseInt(parent),
+      parent: parentId === null ? 0 : parseInt(dataJson.parent) + 1,
       parentId: parentId ? parentId : null,
       CommunityId: parseInt(communityId),
       UserId: parseInt(req.user.id),
