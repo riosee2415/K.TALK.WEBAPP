@@ -123,6 +123,10 @@ const AdminMenu = () => {
           <MenuName>입금 관리</MenuName>
         </Menu.Item>
 
+        <Menu.Item key="/admin/application/list">
+          <MenuName>Application Form</MenuName>
+        </Menu.Item>
+
         <Menu.Item key="/admin/board/bookFolder/book">
           <MenuName>교재 관리</MenuName>
         </Menu.Item>
@@ -133,10 +137,6 @@ const AdminMenu = () => {
 
         <Menu.Item key="/admin/board/message/list">
           <MenuName>쪽지 관리</MenuName>
-        </Menu.Item>
-
-        <Menu.Item key="/admin/application/list">
-          <MenuName>Application Form</MenuName>
         </Menu.Item>
 
         {/* <Menu.Item key="/admin/processApply/list">

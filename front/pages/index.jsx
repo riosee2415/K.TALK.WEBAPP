@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import axios from "axios";
 import wrapper from "../store/configureStore";
@@ -6,7 +6,7 @@ import { END } from "redux-saga";
 import Head from "next/head";
 
 import ClientLayout from "../components/ClientLayout";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Popup from "../components/popup/popup";
 import {
   Text,
@@ -28,8 +28,12 @@ import { SEO_LIST_REQUEST } from "../reducers/seo";
 
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import styled from "styled-components";
-import { COMMUNITY_LIST_REQUEST } from "../reducers/community";
-import { Empty, Form, Input, Modal } from "antd";
+import {
+  COMMUNITY_CREATE_REQUEST,
+  COMMUNITY_LIST_REQUEST,
+  COMMUNITY_TYPE_LIST_REQUEST,
+} from "../reducers/community";
+import { Empty, Form, Input, message, Modal, Select } from "antd";
 
 const Box = styled(Wrapper)`
   align-items: flex-start;
@@ -50,8 +54,9 @@ const Box = styled(Wrapper)`
     color: ${(props) => props.theme.subTheme11_C};
   }
   &:nth-child(2n) {
-    margin: 0 20px 20px 0;
+    margin: 0 0 20px 20px;
   }
+  margin: 0 0 20px;
   @media (max-width: 800px) {
     width: 100%;
     margin: 0 0 20px !important;
@@ -68,15 +73,55 @@ const Home = ({}) => {
   ////// HOOKS //////
   const router = useRouter();
   ////// REDUX //////
+  const dispatch = useDispatch();
+  const [form] = Form.useForm();
   const { communityList } = useSelector((state) => state.community);
   const { me } = useSelector((state) => state.user);
   const [modalView, setModalView] = useState(false);
+
+  const { communityTypes, st_communityCreateDone, st_communityCreateError } =
+    useSelector((state) => state.community);
   ////// USEEFFECT //////
+  useEffect(() => {
+    if (st_communityCreateDone) {
+      message.success(`게시판이 작성되었습니다.`);
+      dispatch({
+        type: COMMUNITY_LIST_REQUEST,
+      });
+      modalClose();
+    }
+  }, [st_communityCreateDone]);
+
+  useEffect(() => {
+    if (st_communityCreateError) {
+      message.error(st_communityCreateError);
+    }
+  }, [st_communityCreateError]);
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
+
+  const formFinishBoard = useCallback(() => {
+    form.submit();
+  }, [form]);
+
+  const onSubmitBoard = useCallback((data) => {
+    dispatch({
+      type: COMMUNITY_CREATE_REQUEST,
+      data: {
+        title: data.title,
+        content: data.content,
+        type: data.type,
+      },
+    });
+  }, []);
+
+  const modalClose = useCallback(() => {
+    setModalView(false);
+    form.resetFields();
+  }, [form]);
 
   ////// DATAVIEW //////
 
@@ -425,13 +470,13 @@ const Home = ({}) => {
                 </Wrapper>
               </Wrapper>
 
-              <Wrapper al={`flex-start`} ju={`flex-start`} margin={`110px 0 0`}>
+              {/* <Wrapper al={`flex-start`} ju={`flex-start`} margin={`110px 0 0`}>
                 <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 20px`}>
                   <Text fontSize={`24px`} fontWeight={`700`}>
                     BOARD<SpanText color={Theme.red_C}>.</SpanText>
                   </Text>
                   {me && (
-                    <CommonButton onClick={() => setModalView((prev) => !prev)}>
+                    <CommonButton onClick={() => setModalView(true)}>
                       작성하기
                     </CommonButton>
                   )}
@@ -445,11 +490,15 @@ const Home = ({}) => {
                     communityList &&
                     communityList.map((data) => {
                       return (
-                        <Box>
+                        <Box
+                          onClick={() => moveLinkHandler(`/board/${data.id}`)}
+                        >
                           <Text>No.{data.id}</Text>
                           <Text margin={`0 0 40px`}>{data.title}</Text>
                           <Wrapper dr={`row`} ju={`space-between`}>
-                            <Text>{data.createdAt} | 케이톡 라이브</Text>
+                            <Text>
+                              {data.createdAt} | {data.username}
+                            </Text>
                             <Text>조회수 92 | 댓글 199개</Text>
                           </Wrapper>
                         </Box>
@@ -457,17 +506,36 @@ const Home = ({}) => {
                     })
                   )}
                 </Wrapper>
-              </Wrapper>
-              <Modal title={`게시판 작성하기`} visible={modalView}>
-                <Form>
-                  <Form.Item name={`title`}>
+              </Wrapper> */}
+              <Modal
+                title={`게시판 작성하기`}
+                visible={modalView}
+                onOk={formFinishBoard}
+                onCancel={modalClose}
+              >
+                <Form
+                  form={form}
+                  labelCol={{ span: 4 }}
+                  wrapperCol={{ span: 20 }}
+                  onFinish={onSubmitBoard}
+                >
+                  <Form.Item label={`Subject`} name={`title`}>
                     <Input />
                   </Form.Item>
-                  <Form.Item name={`content`}>
+                  <Form.Item label={`Content`} name={`content`}>
                     <Input />
                   </Form.Item>
-                  <Form.Item name={`type`}>
-                    <Input />
+                  <Form.Item label={`Type`} name={`type`}>
+                    <Select>
+                      {communityTypes &&
+                        communityTypes.map((data) => {
+                          return (
+                            <Select.Option value={data.id}>
+                              {data.value}
+                            </Select.Option>
+                          );
+                        })}
+                    </Select>
                   </Form.Item>
                 </Form>
               </Modal>
@@ -500,6 +568,9 @@ export const getServerSideProps = wrapper.getServerSideProps(
     });
     context.store.dispatch({
       type: COMMUNITY_LIST_REQUEST,
+    });
+    context.store.dispatch({
+      type: COMMUNITY_TYPE_LIST_REQUEST,
     });
 
     // 구현부 종료

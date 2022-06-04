@@ -811,6 +811,12 @@ const AdminHome = () => {
                   onChange={(e) => setCurrentTeacher(e)}
                   allowClear
                   value={currentTeacher}
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  showSearch
                 >
                   <Select.Option value={null}>전체</Select.Option>
                   {teachers &&
@@ -834,9 +840,16 @@ const AdminHome = () => {
 
                 <Wrapper width={`auto`} margin={`0 10px 0 0`}>
                   <Select
+                    style={{ width: `200px` }}
                     placeholder={`학생을 선택해주세요.`}
                     onChange={(e) => setSearchStuName(e)}
                     allowClear
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                    showSearch
                   >
                     <Select.Option value={""}>선택안함</Select.Option>
 

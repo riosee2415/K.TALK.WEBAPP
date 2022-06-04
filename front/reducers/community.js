@@ -4,6 +4,8 @@ export const initialState = {
   communityTypes: [],
   communityList: [],
   communityDetail: null,
+  communityComment: null,
+
   communityCommentDetail: null,
   filePath: null,
 
@@ -236,8 +238,8 @@ const reducer = (state = initialState, action) =>
         break;
       }
       case COMMUNITY_LIST_SUCCESS: {
-        draft.st_communityTypeListLoading = false;
-        draft.st_communityTypeListDone = true;
+        draft.st_communityListLoading = false;
+        draft.st_communityListDone = true;
         draft.communityList = action.data.community;
         break;
       }
@@ -258,6 +260,7 @@ const reducer = (state = initialState, action) =>
         draft.st_communityDetailLoading = false;
         draft.st_communityDetailDone = true;
         draft.communityDetail = action.data.detailData;
+        draft.communityComment = action.data.comments;
         break;
       }
       case COMMUNITY_DETAIL_FAILURE: {

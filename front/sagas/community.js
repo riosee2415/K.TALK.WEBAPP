@@ -211,7 +211,7 @@ function* communityTypeDelete(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function communityListAPI(data) {
-  return axios.get(`/api/community/list`, data);
+  return axios.post(`/api/community/list`, data);
 }
 
 function* communityList(action) {
@@ -238,7 +238,7 @@ function* communityList(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function communityDetailAPI(data) {
-  return axios.post(`/api/community/detail/${data.communityId}`, data);
+  return axios.get(`/api/community/detail/${data.communityId}`, data);
 }
 
 function* communityDetail(action) {

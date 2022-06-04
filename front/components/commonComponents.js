@@ -345,6 +345,15 @@ export const CommonButton = styled(Button)`
     props.kindOf === `subTheme3` &&
     `border : 1px solid ${props.theme.subTheme10_C};`}
 
+  ${(props) =>
+    props.kindOf === `subTheme12` &&
+    `background : ${props.theme.subTheme12_C};`}
+  ${(props) =>
+    props.kindOf === `subTheme12` && `color : ${props.theme.white_C};`}
+  ${(props) =>
+    props.kindOf === `subTheme12` &&
+    `border : 1px solid ${props.theme.subTheme12_C};`}
+
 
 &:hover {
     background: ${(props) => props.theme.white_C};
@@ -391,6 +400,14 @@ export const CommonButton = styled(Button)`
   ${(props) =>
       props.kindOf === `subTheme3` &&
       `border : 1px solid ${props.theme.subTheme10_C};`}
+
+${(props) =>
+      props.kindOf === `subTheme12` && `background : ${props.theme.white_C};`}
+  ${(props) =>
+      props.kindOf === `subTheme12` && `color : ${props.theme.subTheme12_C};`}
+  ${(props) =>
+      props.kindOf === `subTheme12` &&
+      `border : 1px solid ${props.theme.subTheme12_C};`}
   }
 `;
 

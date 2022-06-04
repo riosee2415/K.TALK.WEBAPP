@@ -12,6 +12,7 @@ export default {
   subTheme9_C: "#F8F9FB",
   subTheme10_C: "#3C4468",
   subTheme11_C: "#161515",
+  subTheme12_C: "#000b39",
 
   kakao_C: "#FAE100",
   naver_C: "#00C73C",
@@ -21,6 +22,7 @@ export default {
   black_C: "#0F1010",
   black_2C: "#161515",
   black_3C: "#000000",
+  black_4C: "#2d2d2d",
   // red
   red_C: "#e74c3c",
   // grey
@@ -28,5 +30,7 @@ export default {
   grey2_C: "#707070",
   grey3_C: "#A8A8A8",
   lightGrey_C: "#FBFBFB",
+  lightGrey2_C: "#F8F9FB",
+  lightGrey3_C: "#EBEBEB",
   darkGrey_C: "#2D2D2D",
 };
