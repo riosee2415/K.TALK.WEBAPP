@@ -700,19 +700,54 @@ const AdminHome = () => {
               <Wrapper al={`flex-start`} width={`49%`}>
                 <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
                   <Text
+                    width={`auto`}
                     fontSize={`18px`}
                     fontWeight={`bold`}
                     margin={`0 20px 0 0`}
                   >
                     전체 게시판
                   </Text>
-                  <Button
-                    size={`small`}
-                    type={`primary`}
-                    onClick={() => moveLinkHandler(`/admin/board/notice/list`)}
-                  >
-                    게시판 관리 페이지로 이동
-                  </Button>
+                  <Wrapper dr={`row`} ju={`flex-start`} width={`auto`}>
+                    <Button
+                      size={`small`}
+                      type={`primary`}
+                      onClick={() =>
+                        moveLinkHandler(`/admin/board/notice/list?type=stu`)
+                      }
+                    >
+                      학생 게시판
+                    </Button>
+                    &nbsp;
+                    <Button
+                      size={`small`}
+                      type={`primary`}
+                      onClick={() =>
+                        moveLinkHandler(`/admin/board/notice/list?type=tea`)
+                      }
+                    >
+                      강사 게시판
+                    </Button>
+                    &nbsp;
+                    <Button
+                      size={`small`}
+                      type={`primary`}
+                      onClick={() =>
+                        moveLinkHandler(`/admin/board/notice/list?type=lec`)
+                      }
+                    >
+                      강의 게시판
+                    </Button>
+                    &nbsp;
+                    <Button
+                      size={`small`}
+                      type={`primary`}
+                      onClick={() =>
+                        moveLinkHandler(`/admin/board/notice/list?type=all`)
+                      }
+                    >
+                      전체 이용자 게시판
+                    </Button>
+                  </Wrapper>
                 </Wrapper>
 
                 <Table
@@ -737,13 +772,37 @@ const AdminHome = () => {
                   >
                     전체 쪽지 목록
                   </Text>
-                  <Button
-                    size={`small`}
-                    type={`primary`}
-                    onClick={() => moveLinkHandler(`/admin/board/message/list`)}
-                  >
-                    쪽지 관리 페이지로 이동
-                  </Button>
+                  <Wrapper width={`auto`} dr={`row`}>
+                    <Button
+                      size={`small`}
+                      type={`primary`}
+                      onClick={() =>
+                        moveLinkHandler(`/admin/board/message/list?type=all`)
+                      }
+                    >
+                      모든 쪽지
+                    </Button>
+                    &nbsp;
+                    <Button
+                      size={`small`}
+                      type={`primary`}
+                      onClick={() =>
+                        moveLinkHandler(`/admin/board/message/list?type=stu`)
+                      }
+                    >
+                      학생에게 보낸 쪽지
+                    </Button>
+                    &nbsp;
+                    <Button
+                      size={`small`}
+                      type={`primary`}
+                      onClick={() =>
+                        moveLinkHandler(`/admin/board/message/list?type=tea`)
+                      }
+                    >
+                      강사에게 보낸 쪽지
+                    </Button>
+                  </Wrapper>
                 </Wrapper>
 
                 <Table

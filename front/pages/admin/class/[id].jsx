@@ -692,7 +692,6 @@ const DetailClass = () => {
   const stuDateChangeHandler = useCallback(
     (data, data2) => {
       setStuChangeDate(data);
-      console.log(data);
     },
     [stuChangeDetail]
   );
@@ -836,6 +835,7 @@ const DetailClass = () => {
   const changeModalClose = useCallback(() => {
     setStuChangeModal(false);
     setStuChangeDetail(null);
+    setStuChangeDate("");
   }, []);
 
   const memoCreateToggle = useCallback(
@@ -988,7 +988,7 @@ const DetailClass = () => {
     },
 
     {
-      title: "학생 참여일",
+      title: "만기일 수정",
       render: (data) => (
         <Button
           size={`small`}
@@ -1112,23 +1112,23 @@ const DetailClass = () => {
         </Button>
       ),
     },
-    {
-      title: "수업료 수정",
-      render: (data) => {
-        const findData = partAdminList.price.find(
-          (value) => value.UserId === data.UserId
-        );
-        return (
-          <Button
-            size={`small`}
-            type={`primary`}
-            onClick={() => findData && priceChangeModalToggle(findData.price)}
-          >
-            수정
-          </Button>
-        );
-      },
-    },
+    // {
+    //   title: "수업료 수정",
+    //   render: (data) => {
+    //     const findData = partAdminList.price.find(
+    //       (value) => value.UserId === data.UserId
+    //     );
+    //     return (
+    //       <Button
+    //         size={`small`}
+    //         type={`primary`}
+    //         onClick={() => findData && priceChangeModalToggle(findData.price)}
+    //       >
+    //         수정
+    //       </Button>
+    //     );
+    //   },
+    // },
   ];
 
   const lectureColumns = [
@@ -1179,13 +1179,24 @@ const DetailClass = () => {
     {
       title: "수정",
       render: (data) => (
-        <Button
-          size={`small`}
-          type={`primary`}
-          onClick={() => memoCreateToggle(data)}
-        >
-          UPDATE
-        </Button>
+        <Wrapper dr={`row`}>
+          <Text
+            width={`calc(100% -  10px - 70px)`}
+            margin={`0 10px 0 0`}
+            ellipsis
+          >
+            {data.content.length > 15
+              ? data.content.slice(0, 15) + "..."
+              : data.content}
+          </Text>
+          <Button
+            size={`small`}
+            type={`primary`}
+            onClick={() => memoCreateToggle(data)}
+          >
+            UPDATE
+          </Button>
+        </Wrapper>
       ),
     },
     {

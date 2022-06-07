@@ -192,6 +192,20 @@ const List = ({ router }) => {
   ////// USEEFFECT //////
 
   useEffect(() => {
+    if (router.query.type) {
+      if (router.query.type === "all") {
+        listTypeHandler(3);
+      }
+      if (router.query.type === "stu") {
+        listTypeHandler(1);
+      }
+      if (router.query.type === "tea") {
+        listTypeHandler(2);
+      }
+    }
+  }, [router.query]);
+
+  useEffect(() => {
     if (st_lectureAllListError) {
       return message.error(st_lectureAllListError);
     }

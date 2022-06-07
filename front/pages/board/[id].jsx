@@ -192,6 +192,92 @@ const BoardDetail = () => {
 
   ////// REDUX //////
 
+  const CommentTree = () => {
+    return (
+      <>
+        {communityComment && communityComment.length === 0 ? (
+          <Wrapper>
+            <Empty description={`댓글이 없습니다.`} />
+          </Wrapper>
+        ) : (
+          communityComment &&
+          communityComment.map((data) => {
+            return (
+              <>
+                <Wrapper
+                  al={`flex-start`}
+                  padding={`30px 10px`}
+                  borderTop={`1px solid ${Theme.lightGrey3_C}`}
+                  borderBottom={`1px solid ${Theme.lightGrey3_C}`}
+                  cursor={`pointer`}
+                >
+                  <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 13px`}>
+                    <Text fontSize={`18px`} fontWeight={`700`}>
+                      {data.username}
+                      <SpanText
+                        fontSize={`16px`}
+                        fontWeight={`400`}
+                        color={Theme.grey2_C}
+                        margin={`0 0 0 15px`}
+                      >
+                        {data.createdAt}
+                      </SpanText>
+                    </Text>
+                    <Wrapper dr={`row`} width={`auto`}>
+                      <HoverText
+                        onClick={() =>
+                          setCurrentComment((prev) => (prev ? null : data.id))
+                        }
+                      >
+                        답글 쓰기
+                      </HoverText>
+                      &nbsp;|&nbsp;
+                      <HoverText
+                        onClick={() =>
+                          setCurrentShow((prev) => (prev ? null : data.id))
+                        }
+                      >
+                        대댓글 보기
+                      </HoverText>
+                    </Wrapper>
+                  </Wrapper>
+                  {data.content}
+                </Wrapper>
+                {currentShow === data.id && <Wrapper>asdasdasd</Wrapper>}
+                {currentComment === data.id && (
+                  <Wrapper>
+                    <FormTag
+                      form={childCommentForm}
+                      onFinish={childCommentSubmit}
+                    >
+                      <Wrapper
+                        al={`flex-start`}
+                        ju={`flex-start`}
+                        margin={`0 0 50px`}
+                      >
+                        <FormItem name={`comment`}>
+                          <TextArea width={`100%`} height={`80px`} />
+                        </FormItem>
+                        <Wrapper al={`flex-end`}>
+                          <CommonButton
+                            htmlType={`submit`}
+                            width={`100px`}
+                            height={`40px`}
+                          >
+                            작성하기
+                          </CommonButton>
+                        </Wrapper>
+                      </Wrapper>
+                    </FormTag>
+                  </Wrapper>
+                )}
+              </>
+            );
+          })
+        )}
+      </>
+    );
+  };
   ////// USEEFFECT //////
   //   useEffect(() => {
   //     window.scrollTo(0, 0);
@@ -211,7 +297,7 @@ const BoardDetail = () => {
       dispatch({
         type: COMMUNITY_COMMENT_DETAIL_REQUEST,
         data: {
-          parentId,
+          parentId: currentShow,
         },
       });
     }
@@ -381,92 +467,7 @@ const BoardDetail = () => {
               </Wrapper>
             </FormTag>
             {/* 댓글 */}
-            {communityComment && communityComment.length === 0 ? (
-              <Wrapper>
-                <Empty description={`댓글이 없습니다.`} />
-              </Wrapper>
-            ) : (
-              communityComment &&
-              communityComment.map((data) => {
-                return (
-                  <>
-                    <Wrapper
-                      al={`flex-start`}
-                      padding={`30px 10px`}
-                      borderTop={`1px solid ${Theme.lightGrey3_C}`}
-                      borderBottom={`1px solid ${Theme.lightGrey3_C}`}
-                      cursor={`pointer`}
-                    >
-                      <Wrapper
-                        dr={`row`}
-                        ju={`space-between`}
-                        margin={`0 0 13px`}
-                      >
-                        <Text fontSize={`18px`} fontWeight={`700`}>
-                          {data.username}
-                          <SpanText
-                            fontSize={`16px`}
-                            fontWeight={`400`}
-                            color={Theme.grey2_C}
-                            margin={`0 0 0 15px`}
-                          >
-                            {data.createdAt}
-                          </SpanText>
-                        </Text>
-                        <Wrapper dr={`row`} width={`auto`}>
-                          <HoverText
-                            onClick={() =>
-                              setCurrentComment((prev) =>
-                                prev ? null : data.id
-                              )
-                            }
-                          >
-                            답글 쓰기
-                          </HoverText>
-                          &nbsp;|&nbsp;
-                          <HoverText
-                            onClick={() =>
-                              setCurrentShow((prev) => (prev ? null : data.id))
-                            }
-                          >
-                            대댓글 보기
-                          </HoverText>
-                        </Wrapper>
-                      </Wrapper>
-                      {data.content}
-                    </Wrapper>
-                    {currentShow === data.id && <Wrapper>asdasdasd</Wrapper>}
-                    {currentComment === data.id && (
-                      <Wrapper>
-                        <FormTag
-                          form={childCommentForm}
-                          onFinish={childCommentSubmit}
-                        >
-                          <Wrapper
-                            al={`flex-start`}
-                            ju={`flex-start`}
-                            margin={`0 0 50px`}
-                          >
-                            <FormItem name={`comment`}>
-                              <TextArea width={`100%`} height={`80px`} />
-                            </FormItem>
-                            <Wrapper al={`flex-end`}>
-                              <CommonButton
-                                htmlType={`submit`}
-                                width={`100px`}
-                                height={`40px`}
-                              >
-                                작성하기
-                              </CommonButton>
-                            </Wrapper>
-                          </Wrapper>
-                        </FormTag>
-                      </Wrapper>
-                    )}
-                  </>
-                );
-              })
-            )}
+            <CommentTree />
 
             {/*  */}
           </RsWrapper>

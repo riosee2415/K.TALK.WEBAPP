@@ -470,7 +470,7 @@ const Home = ({}) => {
                 </Wrapper>
               </Wrapper>
 
-              {/* <Wrapper al={`flex-start`} ju={`flex-start`} margin={`110px 0 0`}>
+              <Wrapper al={`flex-start`} ju={`flex-start`} margin={`110px 0 0`}>
                 <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 20px`}>
                   <Text fontSize={`24px`} fontWeight={`700`}>
                     BOARD<SpanText color={Theme.red_C}>.</SpanText>
@@ -506,7 +506,7 @@ const Home = ({}) => {
                     })
                   )}
                 </Wrapper>
-              </Wrapper> */}
+              </Wrapper>
               <Modal
                 title={`게시판 작성하기`}
                 visible={modalView}
