@@ -608,6 +608,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
         time: "",
         startLv: "",
         studentName: "",
+        listType: 2,
       },
     });
 

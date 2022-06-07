@@ -1169,38 +1169,38 @@ const DetailClass = () => {
     },
     {
       title: "제목",
-      render: (data) => <div>{data.title}</div>,
+
+      render: (data) => (
+        <Text width={`300px`} isEllipsis>
+          {data.title}
+        </Text>
+      ),
     },
+
     {
       title: "작성일",
-      render: (data) => <div>{data.createdAt.slice(0, 10)}</div>,
+
+      render: (data) => <div>{data.createdAt.slice(0, 15)}</div>,
     },
 
     {
       title: "수정",
+
       render: (data) => (
-        <Wrapper dr={`row`}>
-          <Text
-            width={`calc(100% -  10px - 70px)`}
-            margin={`0 10px 0 0`}
-            ellipsis
-          >
-            {data.content.length > 15
-              ? data.content.slice(0, 15) + "..."
-              : data.content}
-          </Text>
-          <Button
-            size={`small`}
-            type={`primary`}
-            onClick={() => memoCreateToggle(data)}
-          >
-            UPDATE
-          </Button>
-        </Wrapper>
+        <Text
+          width={`600px`}
+          margin={`0 10px 0 0`}
+          onClick={() => memoCreateToggle(data)}
+          cursor={`pointer`}
+          isEllipsis
+        >
+          {data.content}
+        </Text>
       ),
     },
     {
       title: "삭제",
+
       render: (data) => (
         <Popconfirm
           placement="bottomRight"

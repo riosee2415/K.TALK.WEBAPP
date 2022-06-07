@@ -51,7 +51,15 @@ import {
   LECTURE_UPDATE_REQUEST,
 } from "../../reducers/lecture";
 import { MESSAGE_ADMIN_MAIN_LIST_REQUEST } from "../../reducers/message";
-import { NOTICE_ADMIN_MAIN_LIST_REQUEST } from "../../reducers/notice";
+import {
+  CREATE_MODAL_CLOSE_REQUEST,
+  CREATE_MODAL_OPEN_REQUEST,
+  NOTICE_ADMIN_MAIN_LIST_REQUEST,
+  NOTICE_UPDATE_REQUEST,
+  NOTICE_UPLOAD_REQUEST,
+} from "../../reducers/notice";
+import ToastEditorComponent4 from "../../components/editor/ToastEditorComponent4";
+import ToastEditorComponent3 from "../../components/editor/ToastEditorComponent3";
 
 // let Line;
 
@@ -60,6 +68,13 @@ import { NOTICE_ADMIN_MAIN_LIST_REQUEST } from "../../reducers/notice";
 
 //   Line = prevLine;
 // }
+
+const FileBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+`;
 
 const WordbreakText = styled(Text)`
   width: 100%;
@@ -120,8 +135,9 @@ const AdminHome = () => {
   const [deleteId, setDeleteId] = useState(null);
 
   const [updateData, setUpdateData] = useState(null);
-  const formRef = useRef();
+
   const [form] = Form.useForm();
+  const [noticeUpdateform] = Form.useForm();
 
   const [currentTeacher, setCurrentTeacher] = useState(null);
   const [searchLevel, setSearchLevel] = useState("");
@@ -147,6 +163,8 @@ const AdminHome = () => {
   const inputPw = useInput("");
   const inputCnt = useInput();
   const inputStartDate = useInput();
+  const fileRef = useRef();
+  const formRef = useRef();
 
   const router = useRouter();
 
@@ -177,12 +195,22 @@ const AdminHome = () => {
     st_userStuListError,
   } = useSelector((state) => state.user);
 
-  const { noticeAdminMain, noticeAdminMainMaxPage } = useSelector(
-    (state) => state.notice
-  );
+  const {
+    noticeAdminMain,
+    noticeAdminMainMaxPage,
+    uploadPath,
+    st_noticeUpdateError,
+    st_noticeUpdateDone,
+    createModal,
+  } = useSelector((state) => state.notice);
   const { messageAdminMainList, messageAdminMainMaxPage } = useSelector(
     (state) => state.message
   );
+
+  const [noticeData, setNoticeData] = useState(null);
+
+  const [contentData, setContentData] = useState("");
+  const filename = useInput(null);
 
   ////// USEEFFECT //////
 
@@ -389,7 +417,58 @@ const AdminHome = () => {
     setCurrentTeacher(router.query.teacher);
   }, [router.query]);
 
+  useEffect(() => {
+    if (noticeData) {
+      setTimeout(() => {
+        onFillNotice(noticeData);
+      }, 500);
+    }
+  }, [noticeData]);
+
+  useEffect(() => {
+    if (st_noticeUpdateError) {
+      return message.error(st_noticeUpdateError);
+    }
+  }, [st_noticeUpdateError]);
+  useEffect(() => {
+    if (st_noticeUpdateDone) {
+      message.success("게시글이 수정되었습니다.");
+
+      dispatch({
+        type: NOTICE_ADMIN_MAIN_LIST_REQUEST,
+        data: {
+          level: 1,
+        },
+      });
+      noticeUpdateModalToggle(null);
+    }
+  }, [st_noticeUpdateDone]);
+
   ////// HANDLER ///////
+
+  const onFillNotice = useCallback((data) => {
+    const type = data.LectureId
+      ? "강의 게시판"
+      : data.level === 2
+      ? "강사 게시판"
+      : data.level === 1
+      ? "학생 게시판"
+      : "전체 이용자 게시판";
+
+    const lecture = data.LectureId && data.LectureId;
+
+    noticeUpdateform.setFieldsValue({
+      title: data.title,
+      content: data.content,
+      type,
+      author: data.author,
+      lecture,
+    });
+  }, []);
+
+  const fileUploadClick = useCallback(() => {
+    fileRef.current.click();
+  }, [fileRef.current]);
 
   const noticeModalToggle = useCallback((data) => {
     setNoticeDetailData(data);
@@ -613,6 +692,52 @@ const AdminHome = () => {
     listType,
   ]);
 
+  const noticeUpdateModalToggle = useCallback(
+    (data) => {
+      setNoticeData(data);
+      if (!createModal) {
+        dispatch({
+          type: CREATE_MODAL_OPEN_REQUEST,
+        });
+      } else {
+        dispatch({
+          type: CREATE_MODAL_CLOSE_REQUEST,
+        });
+      }
+    },
+    [createModal]
+  );
+
+  const createModalOk = useCallback(() => {
+    noticeUpdateform.submit();
+  }, []);
+
+  const onSubmitNoticeUpdate = useCallback(
+    (value) => {
+      if (!contentData || contentData.trim() === "") {
+        return LoadNotification(
+          "ADMIN SYSTEM ERROR",
+          "작성하기 버튼을 눌러주세요."
+        );
+      }
+
+      dispatch({
+        type: NOTICE_UPDATE_REQUEST,
+        data: {
+          id: noticeData.id,
+          title: value.title,
+          content: contentData,
+          file: uploadPath,
+        },
+      });
+    },
+    [uploadPath, noticeData, contentData]
+  );
+
+  const getEditContent = (contentValue) => {
+    setContentData(contentValue);
+  };
+
   const noticeColumns = [
     {
       title: "번호",
@@ -620,7 +745,18 @@ const AdminHome = () => {
     },
     {
       title: "제목",
-      dataIndex: "title",
+      render: (data) => {
+        return (
+          <Text
+            width={`200px`}
+            cursor={`pointer`}
+            onClick={() => noticeModalToggle(data)}
+            isEllipsis
+          >
+            {data.title}
+          </Text>
+        );
+      },
     },
     {
       title: "작성자",
@@ -630,18 +766,37 @@ const AdminHome = () => {
       title: "생성일",
       render: (data) => <div>{data.createdAt.substring(0, 13)}</div>,
     },
+
     {
-      title: "상세보기",
+      title: "기능",
       render: (data) => (
-        <Button
-          type="primary"
-          size="small"
-          onClick={() => noticeModalToggle(data)}
-        >
-          상세보기
-        </Button>
+        <Wrapper dr={`row`}>
+          <Button
+            type="primary"
+            size="small"
+            onClick={() => noticeUpdateModalToggle(data)}
+          >
+            수정
+          </Button>
+          &nbsp;
+          <Button type="danger" size="small" onClick={() => {}}>
+            삭제
+          </Button>
+        </Wrapper>
       ),
     },
+    // {
+    //   title: "상세보기",
+    //   render: (data) => (
+    //     <Button
+    //       type="primary"
+    //       size="small"
+    //       onClick={() => noticeModalToggle(data)}
+    //     >
+    //       상세보기
+    //     </Button>
+    //   ),
+    // },
   ];
 
   const columns = [
@@ -651,7 +806,18 @@ const AdminHome = () => {
     },
     {
       title: "제목",
-      dataIndex: "title",
+      render: (data) => {
+        return (
+          <Text
+            width={`250px`}
+            isEllipsis
+            cursor={`pointer`}
+            onClick={() => messageModalToggle(data)}
+          >
+            {data.title}
+          </Text>
+        );
+      },
     },
 
     {
@@ -663,20 +829,34 @@ const AdminHome = () => {
       title: "생성일",
       render: (data) => <div>{data.createdAt.substring(0, 14)}</div>,
     },
-    {
-      title: "상세보기",
-      render: (data) => (
-        <Button
-          type="primary"
-          size="small"
-          onClick={() => messageModalToggle(data)}
-        >
-          상세보기
-        </Button>
-      ),
-    },
+
+    // {
+    //   title: "상세보기",
+    //   render: (data) => (
+    //     <Button
+    //       type="primary"
+    //       size="small"
+    //       onClick={() => messageModalToggle(data)}
+    //     >
+    //       상세보기
+    //     </Button>
+    //   ),
+    // },
   ];
 
+  const fileChangeHandler = useCallback((e) => {
+    const formData = new FormData();
+    filename.setValue(e.target.files[0].name);
+
+    [].forEach.call(e.target.files, (file) => {
+      formData.append("file", file);
+    });
+
+    dispatch({
+      type: NOTICE_UPLOAD_REQUEST,
+      data: formData,
+    });
+  }, []);
   return (
     <>
       {me && me.level >= 3 ? (
@@ -1548,6 +1728,114 @@ const AdminHome = () => {
                     </SpanText>
                   );
                 })}
+            </Wrapper>
+          </Modal>
+          {/* title={`쪽지 상세보기`}
+            visible={messageDetailModal}
+            footer={null}
+            onCancel={() => messageModalToggle(null)} */}
+          <Modal
+            title={`공지사항 수정`}
+            visible={createModal}
+            onCancel={noticeUpdateModalToggle}
+            onOk={createModalOk}
+          >
+            <Wrapper padding={`10px`}>
+              <Form
+                style={{ width: `100%` }}
+                onFinish={onSubmitNoticeUpdate}
+                form={noticeUpdateform}
+              >
+                <Form.Item
+                  name={"title"}
+                  label="제목"
+                  rules={[{ required: true, message: "제목을 입력해 주세요" }]}
+                >
+                  <Input allowClear placeholder="Title..." />
+                </Form.Item>
+
+                <Form.Item
+                  name={"type"}
+                  label="유형"
+                  rules={[
+                    { required: true, message: "메세지 유형을 선택해 주세요." },
+                  ]}
+                >
+                  <Select
+                    disabled={updateData ? true : false}
+                    showSearch
+                    onChange={(e) => noticeTypeChangeHandler(e)}
+                    style={{ width: 200 }}
+                    placeholder="Select a Type"
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
+                    <Select.Option value="강사 게시판">
+                      강사 게시판
+                    </Select.Option>
+                    <Select.Option value="학생 게시판">
+                      학생 게시판
+                    </Select.Option>
+                    <Select.Option value="강의 게시판">
+                      강의 게시판
+                    </Select.Option>
+                    <Select.Option value="전체 이용자 게시판">
+                      전체 이용자 게시판
+                    </Select.Option>
+                  </Select>
+                </Form.Item>
+
+                <Form.Item
+                  name={"content"}
+                  label="본문"
+                  rules={[{ required: true, message: "본문을 입력해 주세요." }]}
+                >
+                  {/* <Input.TextArea
+                allowClear
+                placeholder="Content..."
+                autoSize={{ minRows: 10, maxRows: 10 }}
+              /> */}
+
+                  <ToastEditorComponent3
+                    action={getEditContent}
+                    updateData={noticeData}
+                  />
+                </Form.Item>
+
+                <Form.Item>
+                  <FileBox>
+                    <input
+                      type="file"
+                      name="file"
+                      hidden
+                      ref={fileRef}
+                      onChange={fileChangeHandler}
+                    />
+                    <Text>
+                      {updateData
+                        ? `첨부파일`
+                        : filename.value
+                        ? filename.value
+                        : `파일을 선택해주세요.`}
+                    </Text>
+                    <Button type="primary" onClick={fileUploadClick}>
+                      FILE UPLOAD
+                    </Button>
+                  </FileBox>
+                </Form.Item>
+
+                {/* {updateData && (
+            <Form.Item>
+              <FileBox>
+                <Button onClick={onFill}>불러오기</Button>
+              </FileBox>
+            </Form.Item>
+          )} */}
+              </Form>
             </Wrapper>
           </Modal>
         </AdminLayout>
