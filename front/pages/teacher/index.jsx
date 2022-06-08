@@ -914,8 +914,8 @@ const Index = () => {
       formData.append("image", file);
     });
 
-    if (e.target.files[0].size > 5242880) {
-      message.error("파일 용량 제한 (최대 5MB)");
+    if (e.target.files[0].size > 104857600) {
+      message.error("파일 용량 제한 (최대 100MB)");
       return;
     }
 

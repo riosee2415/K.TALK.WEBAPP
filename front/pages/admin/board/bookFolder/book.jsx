@@ -325,6 +325,11 @@ const Book = ({}) => {
   }, []);
 
   const fileChangeHandler = useCallback((e) => {
+    if (e.target.files[0].size > 104857600) {
+      message.error("파일 용량 제한 (최대 100MB)");
+      return;
+    }
+
     const formData = new FormData();
     filename.setValue(e.target.files[0].name);
 
