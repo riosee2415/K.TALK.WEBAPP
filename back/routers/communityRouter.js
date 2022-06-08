@@ -317,75 +317,27 @@ router.get("/detail/:communityId", async (req, res, next) => {
     const detailData = await models.sequelize.query(selectQuery);
 
     const commentQuery = `
-    SELECT	Z.id,
-            Z.leaf,
-            Z.content,
-            Z.parent,
-            Z.parentId,
-            DATE_FORMAT(Z.createdAt, "%Y-%m-%d")		AS createdAt,
-       		DATE_FORMAT(Z.updatedAt, "%Y-%m-%d") 		AS updatedAt,
-            Z.innerCount,
-            Z.userId,
-            Z.profileImage,
-            Z.username,
-            Z.level 
-      FROM	(
-                 SELECT  A.id,
-                         CASE
-                            WHEN	A.parent = 0 	THEN  ""
-                            WHEN	A.parent = 1 	THEN  "-"
-                            WHEN	A.parent = 2 	THEN  "--"
-                            WHEN	A.parent = 3 	THEN  "---"
-                            WHEN	A.parent = 4 	THEN  "----"
-                            WHEN	A.parent = 5 	THEN  "-----"
-                            WHEN	A.parent = 6 	THEN  "------"
-                            WHEN	A.parent = 7 	THEN  "-------"
-                            WHEN	A.parent = 8 	THEN  "--------"
-                            WHEN	A.parent = 9 	THEN  "---------"
-                            WHEN	A.parent = 10   THEN  "----------"
-                            WHEN	A.parent = 11   THEN  "-----------"
-                            WHEN	A.parent = 12   THEN  "------------"
-                            WHEN	A.parent = 13   THEN  "-------------"
-                            WHEN	A.parent = 14   THEN  "--------------"
-                            WHEN	A.parent = 15   THEN  "---------------"
-                            WHEN	A.parent = 16   THEN  "----------------"
-                            WHEN	A.parent = 17   THEN  "-----------------"
-                            WHEN	A.parent = 18   THEN  "------------------"
-                            WHEN	A.parent = 19   THEN  "-------------------"
-                            WHEN	A.parent = 20   THEN  "--------------------"
-                            WHEN	A.parent = 21   THEN  "---------------------"
-                            WHEN	A.parent = 22	THEN  "----------------------"
-                            WHEN	A.parent = 23	THEN  "-----------------------"
-                            WHEN	A.parent = 24	THEN  "------------------------"
-                            WHEN	A.parent = 25	THEN  "-------------------------"
-                            WHEN	A.parent = 26	THEN  "--------------------------"
-                            WHEN	A.parent = 27	THEN  "---------------------------"
-                            WHEN	A.parent = 28	THEN  "----------------------------"
-                            WHEN	A.parent = 29	THEN  "-----------------------------"
-                            WHEN	A.parent = 30	THEN  "------------------------------"
-                         END					 AS leaf,
-                         A.content,
-                         A.parent,
-                         A.parentId,
-                         A.createdAt,
-                         A.updatedAt,
-                         (
-                            SELECT	COUNT(id)
-                              FROM	communityComments
-                             WHERE	parentId = A.id
-                         )		AS  innerCount,
-                         B.userId,
-                         B.profileImage,
-                         B.username,
-                         B.level 
-                FROM	 communityComments	    A
-               INNER
-                JOIN	 users					B
-                  ON	 A.UserId = B.id 
-                WHERE	 A.CommunityId = ${communityId}
-                 AND	 A.parent = 0
-                  AND    A.isDelete = FALSE
-            )	Z;
+    SELECT	A.id,
+            A.content,
+            A.isDelete,
+            A.deletedAt,
+            A.parent,
+            A.parentId,
+            DATE_FORMAT(A.createdAt, '%Y-%m-%d')  AS createdAt,
+            DATE_FORMAT(A.updatedAt, '%Y-%m-%d')  AS updatedAt,
+            A.CommunityId,
+            A.UserId,
+            B.userId,
+            B.profileImage,
+            B.username,
+            B.level
+      FROM	communityComments		A
+     INNER
+      JOIN	users 					B
+        ON	A.UserId = B.id
+     WHERE	A.isDelete = FALSE
+       AND	A.parentId  IS NULL
+       AND  A.CommunityId = ${communityId}
     `;
 
     const comments = await models.sequelize.query(commentQuery);
@@ -571,7 +523,7 @@ router.delete("/delete/:communityId", isLoggedIn, async (req, res, next) => {
 ///////////////////////////////////////////////////////////////////////////
 
 router.post("/comment/detail", async (req, res, next) => {
-  const { parentId, communityId } = req.body;
+  const { commentId, communityId } = req.body;
 
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
@@ -579,75 +531,49 @@ router.post("/comment/detail", async (req, res, next) => {
 
   try {
     const selectQuery = `
-    SELECT	Z.id,
-            Z.leaf,
-            Z.content,
-            Z.parent,
-            Z.parentId,
-            DATE_FORMAT(Z.createdAt, "%Y-%m-%d")		AS createdAt,
-       		DATE_FORMAT(Z.updatedAt, "%Y-%m-%d") 		AS updatedAt,
-            Z.innerCount,
-            Z.userId,
-            Z.profileImage,
-            Z.username,
-            Z.level 
+    SELECT	*
       FROM	(
-                SELECT	A.id,
-                        CASE
-                            WHEN	A.parent = 0 	THEN  ""
-                            WHEN	A.parent = 1 	THEN  "-"
-                            WHEN	A.parent = 2 	THEN  "--"
-                            WHEN	A.parent = 3 	THEN  "---"
-                            WHEN	A.parent = 4 	THEN  "----"
-                            WHEN	A.parent = 5 	THEN  "-----"
-                            WHEN	A.parent = 6 	THEN  "------"
-                            WHEN	A.parent = 7 	THEN  "-------"
-                            WHEN	A.parent = 8 	THEN  "--------"
-                            WHEN	A.parent = 9 	THEN  "---------"
-                            WHEN	A.parent = 10   THEN  "----------"
-                            WHEN	A.parent = 11   THEN  "-----------"
-                            WHEN	A.parent = 12   THEN  "------------"
-                            WHEN	A.parent = 13   THEN  "-------------"
-                            WHEN	A.parent = 14   THEN  "--------------"
-                            WHEN	A.parent = 15   THEN  "---------------"
-                            WHEN	A.parent = 16   THEN  "----------------"
-                            WHEN	A.parent = 17   THEN  "-----------------"
-                            WHEN	A.parent = 18   THEN  "------------------"
-                            WHEN	A.parent = 19   THEN  "-------------------"
-                            WHEN	A.parent = 20   THEN  "--------------------"
-                            WHEN	A.parent = 21   THEN  "---------------------"
-                            WHEN	A.parent = 22   THEN  "----------------------"
-                            WHEN	A.parent = 23   THEN  "-----------------------"
-                            WHEN	A.parent = 24   THEN  "------------------------"
-                            WHEN	A.parent = 25   THEN  "-------------------------"
-                            WHEN	A.parent = 26   THEN  "--------------------------"
-                            WHEN	A.parent = 27   THEN  "---------------------------"
-                            WHEN	A.parent = 28   THEN  "----------------------------"
-                            WHEN	A.parent = 29	THEN  "-----------------------------"
-                            WHEN	A.parent = 30	THEN  "------------------------------"
-                        END						 AS leaf,
-                        A.content,
+              WITH RECURSIVE comments_hire AS (
+                SELECT	1				AS	lev,
+                        CC.id,
+                        CC.content,
+                        CC.parent,
+                        CC.parentId,
+                        CC.createdAt,
+                        CC.CommunityId,
+                        US.userId,
+                        US.profileImage,
+                        US.username,
+                        US.level,
+                        US.username		as paths
+                  FROM	communityComments		CC
+                 INNER
+                  JOIN	users					US
+                    ON	CC.UserId = US.id 
+                 WHERE	CC.isDelete = 0
+                   AND	CC.CommunityId = ${communityId}
+                   AND 	CC.id = ${commentId}
+                 UNION	ALL
+                SELECT	B.lev + 1			AS 	lev,
+                        A.id,
+                        CONCAT(LPAD('', 2 * (B.lev) ,' '), 'ㄴ', A.content),
                         A.parent,
                         A.parentId,
                         A.createdAt,
-                        A.updatedAt,
-                        (
-                            SELECT	COUNT(id)
-                            FROM	communityComments
-                            WHERE	parentId = A.id
-                        )		AS  innerCount,
+                        A.CommunityId,
                         B.userId,
                         B.profileImage,
                         B.username,
-                        B.level 
-                 FROM	communityComments	        A
-                INNER
-                 JOIN	users					    B
-                   ON	A.UserId = B.id 
-                WHERE	A.CommunityId = ${communityId}
-                  AND   A.isDelete = FALSE
-            )	Z
-      WHERE	Z.parentId = ${parentId}
+                        B.level,
+                        CONCAT(B.paths, A.id,'-', 	B.username, A.id)	AS paths
+                  FROM	communityComments		AS 	A
+                 INNER
+                  JOIN	comments_hire		AS	B
+                    ON	A.parentId = B.id
+            ) 
+          SELECT * FROM comments_hire
+        )	X
+      ORDER	BY X.paths
       `;
 
     const list = await models.sequelize.query(selectQuery);
