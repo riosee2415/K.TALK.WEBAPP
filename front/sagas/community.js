@@ -352,7 +352,7 @@ function* communityDelete(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function communityCommentDetailAPI(data) {
-  return axios.post(`/api/community/comment/detail/${data.communityId}`, data);
+  return axios.post(`/api/community/comment/detail`, data);
 }
 
 function* communityCommentDetail(action) {

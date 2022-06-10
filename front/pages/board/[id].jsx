@@ -8,6 +8,7 @@ import {
   Form,
   InputNumber,
   message,
+  Modal,
   Select,
 } from "antd";
 import { CalendarOutlined, CaretDownOutlined } from "@ant-design/icons";
@@ -176,7 +177,12 @@ const BoardDetail = () => {
     (state) => state.app
   );
 
-  const { communityComment } = useSelector((state) => state.community);
+  const {
+    communityComment,
+    communityCommentDetail,
+    st_communityCommentCreateDone,
+    st_communityCommentCreateError,
+  } = useSelector((state) => state.community);
 
   ////// HOOKS //////
 
@@ -188,96 +194,12 @@ const BoardDetail = () => {
   const [childCommentForm] = Form.useForm();
 
   const [currentComment, setCurrentComment] = useState(null);
-  const [currentShow, setCurrentShow] = useState(null);
+
+  const [repleToggle, setRepleToggle] = useState(false); // 댓글쓰기 모달 토글
+  const [currentData, setCurrentData] = useState(null); // 댓글의 정보 보관
 
   ////// REDUX //////
 
-  const CommentTree = () => {
-    return (
-      <>
-        {communityComment && communityComment.length === 0 ? (
-          <Wrapper>
-            <Empty description={`댓글이 없습니다.`} />
-          </Wrapper>
-        ) : (
-          communityComment &&
-          communityComment.map((data) => {
-            return (
-              <>
-                <Wrapper
-                  al={`flex-start`}
-                  padding={`30px 10px`}
-                  borderTop={`1px solid ${Theme.lightGrey3_C}`}
-                  borderBottom={`1px solid ${Theme.lightGrey3_C}`}
-                  cursor={`pointer`}
-                >
-                  <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 13px`}>
-                    <Text fontSize={`18px`} fontWeight={`700`}>
-                      {data.username}
-                      <SpanText
-                        fontSize={`16px`}
-                        fontWeight={`400`}
-                        color={Theme.grey2_C}
-                        margin={`0 0 0 15px`}
-                      >
-                        {data.createdAt}
-                      </SpanText>
-                    </Text>
-                    <Wrapper dr={`row`} width={`auto`}>
-                      <HoverText
-                        onClick={() =>
-                          setCurrentComment((prev) => (prev ? null : data.id))
-                        }
-                      >
-                        답글 쓰기
-                      </HoverText>
-                      &nbsp;|&nbsp;
-                      <HoverText
-                        onClick={() =>
-                          setCurrentShow((prev) => (prev ? null : data.id))
-                        }
-                      >
-                        대댓글 보기
-                      </HoverText>
-                    </Wrapper>
-                  </Wrapper>
-                  {data.content}
-                </Wrapper>
-                {currentShow === data.id && <Wrapper>asdasdasd</Wrapper>}
-                {currentComment === data.id && (
-                  <Wrapper>
-                    <FormTag
-                      form={childCommentForm}
-                      onFinish={childCommentSubmit}
-                    >
-                      <Wrapper
-                        al={`flex-start`}
-                        ju={`flex-start`}
-                        margin={`0 0 50px`}
-                      >
-                        <FormItem name={`comment`}>
-                          <TextArea width={`100%`} height={`80px`} />
-                        </FormItem>
-                        <Wrapper al={`flex-end`}>
-                          <CommonButton
-                            htmlType={`submit`}
-                            width={`100px`}
-                            height={`40px`}
-                          >
-                            작성하기
-                          </CommonButton>
-                        </Wrapper>
-                      </Wrapper>
-                    </FormTag>
-                  </Wrapper>
-                )}
-              </>
-            );
-          })
-        )}
-      </>
-    );
-  };
   ////// USEEFFECT //////
   //   useEffect(() => {
   //     window.scrollTo(0, 0);
@@ -293,15 +215,29 @@ const BoardDetail = () => {
   }, [router.query]);
 
   useEffect(() => {
-    if (currentShow) {
+    if (st_communityCommentCreateDone) {
+      commentForm.resetFields();
+      childCommentForm.resetFields();
+
       dispatch({
         type: COMMUNITY_COMMENT_DETAIL_REQUEST,
         data: {
-          parentId: currentShow,
+          communityId: router.query.id,
+          commentId: currentData.id,
         },
       });
+
+      openRecommentToggle(null);
+
+      return message.success("댓글이 등록되었습니다.");
     }
-  }, [currentShow]);
+  }, [st_communityCommentCreateDone]);
+
+  useEffect(() => {
+    if (st_communityCommentCreateError) {
+      return message.error(st_communityCommentCreateError);
+    }
+  }, [st_communityCommentCreateError]);
 
   ////// TOGGLE //////
 
@@ -312,7 +248,6 @@ const BoardDetail = () => {
         data: {
           content: data.comment,
           communityId: router.query.id,
-          parent: 0,
           parentId: null,
         },
       });
@@ -322,16 +257,26 @@ const BoardDetail = () => {
 
   const childCommentSubmit = useCallback(
     (data) => {
-      dispatch({
-        type: COMMUNITY_COMMENT_CREATE_REQUEST,
-        data: {
-          content: data.comment,
-          communityId: router.query.id,
-          parentId: currentComment,
-        },
-      });
+      if (currentData) {
+        dispatch({
+          type: COMMUNITY_COMMENT_CREATE_REQUEST,
+          data: {
+            content: data.comment,
+            communityId: router.query.id,
+            parentId: currentData.id,
+          },
+        });
+      }
     },
-    [router.query, currentComment]
+    [router.query, currentData]
+  );
+
+  const openRecommentToggle = useCallback(
+    (data) => {
+      setRepleToggle(!repleToggle);
+      setCurrentData(data);
+    },
+    [repleToggle]
   );
 
   ////// HANDLER //////
@@ -339,6 +284,19 @@ const BoardDetail = () => {
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
+
+  const getCommentHandler = useCallback(
+    (id) => {
+      dispatch({
+        type: COMMUNITY_COMMENT_DETAIL_REQUEST,
+        data: {
+          communityId: router.query.id,
+          commentId: id,
+        },
+      });
+    },
+    [router.query]
+  );
 
   ////// DATAVIEW //////
 
@@ -467,10 +425,143 @@ const BoardDetail = () => {
               </Wrapper>
             </FormTag>
             {/* 댓글 */}
-            <CommentTree />
 
-            {/*  */}
+            {communityComment && communityComment.length === 0 ? (
+              <Wrapper>
+                <Empty description={`댓글이 없습니다.`} />
+              </Wrapper>
+            ) : (
+              communityComment &&
+              communityComment.map((data) => {
+                return (
+                  <>
+                    <Wrapper
+                      al={`flex-start`}
+                      padding={`30px 10px`}
+                      borderTop={`1px solid ${Theme.lightGrey3_C}`}
+                      borderBottom={`1px solid ${Theme.lightGrey3_C}`}
+                      cursor={`pointer`}
+                      key={data.id}
+                    >
+                      <Wrapper
+                        dr={`row`}
+                        ju={`space-between`}
+                        margin={`0 0 13px`}
+                      >
+                        <Text fontSize={`18px`} fontWeight={`700`}>
+                          {data.username}
+                          <SpanText
+                            fontSize={`16px`}
+                            fontWeight={`400`}
+                            color={Theme.grey2_C}
+                            margin={`0 0 0 15px`}
+                          >
+                            {data.createdAt}
+                          </SpanText>
+                        </Text>
+                        <Wrapper dr={`row`} width={`auto`}>
+                          <HoverText onClick={() => openRecommentToggle(data)}>
+                            답글 쓰기
+                          </HoverText>
+                          &nbsp;|&nbsp;
+                          <HoverText onClick={() => getCommentHandler(data.id)}>
+                            대댓글 보기
+                          </HoverText>
+                        </Wrapper>
+                      </Wrapper>
+                      {data.content}
+                    </Wrapper>
+
+                    {/* 대댓글 영역 */}
+
+                    {communityCommentDetail &&
+                      communityCommentDetail[0].id === data.id &&
+                      communityCommentDetail.slice(1).map((v) => {
+                        return (
+                          <Wrapper
+                            key={v.id}
+                            padding={
+                              width < 900
+                                ? `10px 0 10px ${v.lev * 10}px`
+                                : `10px 0 10px ${v.lev * 20}px`
+                            }
+                            al={`flex-start`}
+                            borderTop={`1px solid ${Theme.lightGrey_C}`}
+                          >
+                            <Wrapper
+                              dr={`row`}
+                              ju={`space-between`}
+                              margin={`0 0 10px`}
+                              width={`calc(100% - 15px)`}
+                            >
+                              <Wrapper
+                                dr={`row`}
+                                ju={`flex-start`}
+                                width={`auto`}
+                              >
+                                <Text fontSize={`18px`} fontWeight={`700`}>
+                                  {data.username}
+                                </Text>
+                                <Text
+                                  fontSize={`16px`}
+                                  margin={`0 15px`}
+                                  color={Theme.grey2_C}
+                                >
+                                  {moment(data.createdAt).format("YYYY-MM-DD")}
+                                </Text>
+                              </Wrapper>
+                              <HoverText onClick={() => openRecommentToggle(v)}>
+                                답글 쓰기
+                              </HoverText>
+                            </Wrapper>
+
+                            <Wrapper al={`flex-start`} margin={`0 0 15px`}>
+                              <Text>{v.content.split("ㄴ")[1]}</Text>
+                            </Wrapper>
+                          </Wrapper>
+                        );
+                      })}
+                  </>
+                );
+              })
+            )}
           </RsWrapper>
+
+          <Modal
+            width={`800px`}
+            title="댓글쓰기"
+            footer={null}
+            visible={repleToggle}
+            onCancel={() => openRecommentToggle(null)}
+            onOk={() => openRecommentToggle(null)}
+          >
+            {currentData && (
+              <Wrapper padding={`10px`}>
+                <FormItem label="댓글내용">
+                  <Text>{currentData.content.split("ㄴ")[1]}</Text>
+                </FormItem>
+
+                <FormTag form={childCommentForm} onFinish={childCommentSubmit}>
+                  <FormItem label="댓글" name={`comment`}>
+                    <TextArea
+                      width={`100%`}
+                      height={`115px`}
+                      placeholder="댓글을 작성해주세요."
+                    />
+                  </FormItem>
+                  <Wrapper al={`flex-end`}>
+                    <CommonButton
+                      htmlType={`submit`}
+                      width={`140px`}
+                      height={`50px`}
+                    >
+                      작성하기
+                    </CommonButton>
+                  </Wrapper>
+                </FormTag>
+              </Wrapper>
+            )}
+          </Modal>
         </WholeWrapper>
       </ClientLayout>
     </>
