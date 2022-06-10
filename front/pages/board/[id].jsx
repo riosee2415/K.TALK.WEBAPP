@@ -500,14 +500,14 @@ const BoardDetail = () => {
                                 width={`auto`}
                               >
                                 <Text fontSize={`18px`} fontWeight={`700`}>
-                                  {data.username}
+                                  {v.username}
                                 </Text>
                                 <Text
                                   fontSize={`16px`}
                                   margin={`0 15px`}
                                   color={Theme.grey2_C}
                                 >
-                                  {moment(data.createdAt).format("YYYY-MM-DD")}
+                                  {moment(v.createdAt).format("YYYY-MM-DD")}
                                 </Text>
                               </Wrapper>
                               <HoverText onClick={() => openRecommentToggle(v)}>
