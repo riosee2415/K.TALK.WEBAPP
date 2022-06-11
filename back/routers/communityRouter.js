@@ -190,10 +190,11 @@ router.post("/list", async (req, res, next) => {
 
   try {
     const lengthQuery = `
-  SELECT	A.id,
+    SELECT	A.id,
             A.title,
             A.content,
             A.file,
+            A.hit,
             A.isDelete,
             DATE_FORMAT(A.deletedAt, "%Y-%m-%d")		AS deletedAt,
             DATE_FORMAT(A.createdAt, "%Y-%m-%d")		AS createdAt,
@@ -204,7 +205,13 @@ router.post("/list", async (req, res, next) => {
             C.userId,
             C.profileImage,
             C.username,
-            C.level
+            C.level,
+            (
+            	SELECT  COUNT(id)
+            	  FROM  communityComments cc
+            	 WHERE  cc.CommunityId = A.id
+            	   AND	cc.isDelete = FALSE
+            )                                       AS commentCnt
     FROM	communitys					A
    INNER		
     JOIN	communityTypes				B
@@ -223,10 +230,11 @@ router.post("/list", async (req, res, next) => {
     `;
 
     const selectQuery = `
-  SELECT	A.id,
+    SELECT	A.id,
             A.title,
             A.content,
             A.file,
+            A.hit,
             A.isDelete,
             DATE_FORMAT(A.deletedAt, "%Y-%m-%d")		AS deletedAt,
             DATE_FORMAT(A.createdAt, "%Y-%m-%d")		AS createdAt,
@@ -237,7 +245,13 @@ router.post("/list", async (req, res, next) => {
             C.userId,
             C.profileImage,
             C.username,
-            C.level
+            C.level,
+            (
+            	SELECT  COUNT(id)
+            	  FROM  communityComments cc
+            	 WHERE  cc.CommunityId = A.id
+            	   AND	cc.isDelete = FALSE
+            )                                       AS commentCnt
     FROM	communitys					A
    INNER		
     JOIN	communityTypes				B
@@ -290,6 +304,7 @@ router.get("/detail/:communityId", async (req, res, next) => {
             A.title,
             A.content,
             A.file,
+            A.hit,
             A.isDelete,
             DATE_FORMAT(A.deletedAt, "%Y-%m-%d")		AS deletedAt,
             DATE_FORMAT(A.createdAt, "%Y-%m-%d")		AS createdAt,
@@ -301,12 +316,12 @@ router.get("/detail/:communityId", async (req, res, next) => {
             C.profileImage,
             C.username,
             C.level
-    FROM	communitys					A
+    FROM	communitys					  A
    INNER		
     JOIN	communityTypes				B
       ON	A.CommunityTypeId = B.id
    INNER
-    JOIN	users						C
+    JOIN	users						      C
       ON	A.UserId = C.id
    WHERE    1 = 1
      AND    A.isDelete = FALSE
@@ -338,13 +353,31 @@ router.get("/detail/:communityId", async (req, res, next) => {
      WHERE	A.isDelete = FALSE
        AND	A.parentId  IS NULL
        AND  A.CommunityId = ${communityId}
+     ORDER  BY A.createdAt DESC
     `;
 
     const comments = await models.sequelize.query(commentQuery);
 
-    return res
-      .status(200)
-      .json({ detailData: detailData[0][0], comments: comments[0] });
+    const commentsLen = await CommunityComment.findAll({
+      where: { isDelete: false, CommunityId: parseInt(communityId) },
+    });
+
+    const nextHit = detailData[0][0].hit;
+
+    await Community.update(
+      {
+        hit: nextHit + 1,
+      },
+      {
+        where: { id: parseInt(communityId) },
+      }
+    );
+
+    return res.status(200).json({
+      detailData: detailData[0][0],
+      comments: comments[0],
+      commentsLen: commentsLen.length,
+    });
   } catch (error) {
     console.error(error);
     return res.status(401).send("게시글 상세정보를 불러올 수 없습니다.");

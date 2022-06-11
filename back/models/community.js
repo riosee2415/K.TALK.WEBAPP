@@ -18,6 +18,11 @@ module.exports = class Community extends Model {
           type: DataTypes.STRING(600),
           allowNull: true,
         },
+        hit: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          defaultValue: 0,
+        },
         isDelete: {
           type: DataTypes.BOOLEAN,
           allowNull: false,
