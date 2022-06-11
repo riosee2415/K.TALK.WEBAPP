@@ -481,6 +481,9 @@ function* watchCommunityTypeDelete() {
 function* watchCommunityList() {
   yield takeLatest(COMMUNITY_LIST_REQUEST, communityList);
 }
+function* watchCommunityDetail() {
+  yield takeLatest(COMMUNITY_DETAIL_REQUEST, communityDetail);
+}
 function* watchCommunityCreate() {
   yield takeLatest(COMMUNITY_CREATE_REQUEST, communityCreate);
 }
@@ -516,6 +519,7 @@ export default function* communitySaga() {
     fork(watchCommunityTypeDelete),
     //
     fork(watchCommunityList),
+    fork(watchCommunityDetail),
     fork(watchCommunityCreate),
     fork(watchCommunityUpdate),
     fork(watchCommunityDelete),

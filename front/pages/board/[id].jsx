@@ -183,6 +183,7 @@ const BoardDetail = () => {
     communityCommentDetail,
     st_communityCommentCreateDone,
     st_communityCommentCreateError,
+    communityCommentsLen,
   } = useSelector((state) => state.community);
 
   ////// HOOKS //////
@@ -444,7 +445,7 @@ const BoardDetail = () => {
             </CommonButton>
             <FormTag form={commentForm} onFinish={commentSubmit}>
               <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 50px`}>
-                <Text>댓글 86개</Text>
+                <Text>댓글&nbsp;{communityCommentsLen}</Text>
                 <FormItem name={`comment`}>
                   <TextArea
                     width={`100%`}

@@ -570,7 +570,10 @@ const Home = ({}) => {
                             <Text>
                               {data.createdAt} | {data.username}
                             </Text>
-                            <Text>조회수 92 | 댓글 199개</Text>
+                            <Text>
+                              조회수&nbsp;{data.hit}
+                              {/* | 댓글 199개 */}
+                            </Text>
                           </Wrapper>
                         </Box>
                       );

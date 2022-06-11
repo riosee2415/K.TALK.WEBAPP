@@ -71,6 +71,7 @@ export const initialState = {
   st_communityCommentDeleteDone: false,
   st_communityCommentDeleteError: null,
   //
+  communityCommentsLen: 0,
   createModal: false,
 };
 export const CREATE_MODAL_OPEN_REQUEST = "CREATE_MODAL_OPEN_REQUEST";
@@ -249,6 +250,7 @@ const reducer = (state = initialState, action) =>
         draft.st_communityListDone = true;
         draft.communityList = action.data.community;
         draft.communityMaxLength = action.data.lastPage;
+
         break;
       }
       case COMMUNITY_LIST_FAILURE: {
@@ -269,6 +271,7 @@ const reducer = (state = initialState, action) =>
         draft.st_communityDetailDone = true;
         draft.communityDetail = action.data.detailData;
         draft.communityComment = action.data.comments;
+        draft.communityCommentsLen = action.data.commentsLen;
         break;
       }
       case COMMUNITY_DETAIL_FAILURE: {
