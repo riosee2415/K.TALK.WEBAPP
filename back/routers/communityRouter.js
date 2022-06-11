@@ -170,9 +170,9 @@ router.delete("/type/delete/:typeId", isAdminCheck, async (req, res, next) => {
 router.post("/list", async (req, res, next) => {
   const { searchTitle, searchName, level, typeId, page } = req.body;
 
-  if (!req.user) {
-    return res.status(403).send("로그인 후 이용 가능합니다.");
-  }
+  // if (!req.user) {
+  //   return res.status(403).send("로그인 후 이용 가능합니다.");
+  // }
 
   const LIMIT = 10;
 
@@ -525,9 +525,9 @@ router.delete("/delete/:communityId", isLoggedIn, async (req, res, next) => {
 router.post("/comment/detail", async (req, res, next) => {
   const { commentId, communityId } = req.body;
 
-  if (!req.user) {
-    return res.status(403).send("로그인 후 이용 가능합니다.");
-  }
+  // if (!req.user) {
+  //   return res.status(403).send("로그인 후 이용 가능합니다.");
+  // }
 
   try {
     const selectQuery = `

@@ -146,6 +146,8 @@ export const COMMUNITY_COMMENT_DELETE_SUCCESS =
 export const COMMUNITY_COMMENT_DELETE_FAILURE =
   "COMMUNITY_COMMENT_DELETE_FAILURE";
 
+export const FILE_INIT = "FILE_INIT";
+
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
@@ -402,6 +404,28 @@ const reducer = (state = initialState, action) =>
         break;
       }
       //////////////////////////////////////////////
+      case COMMUNITY_UPLOAD_REQUEST: {
+        draft.st_communityUploadLoading = true;
+        draft.st_communityUploadDone = null;
+        draft.st_communityUploadError = false;
+        break;
+      }
+      case COMMUNITY_UPLOAD_SUCCESS: {
+        draft.st_communityUploadLoading = false;
+        draft.st_communityUploadDone = true;
+        draft.filePath = action.data.path;
+        break;
+      }
+      case COMMUNITY_UPLOAD_FAILURE: {
+        draft.st_communityUploadLoading = false;
+        draft.st_communityUploadDone = false;
+        draft.st_communityUploadError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+      case FILE_INIT: {
+        draft.filePath = null;
+      }
       default:
         break;
     }

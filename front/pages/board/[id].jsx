@@ -178,6 +178,7 @@ const BoardDetail = () => {
   );
 
   const {
+    communityDetail,
     communityComment,
     communityCommentDetail,
     st_communityCommentCreateDone,
@@ -223,7 +224,14 @@ const BoardDetail = () => {
         type: COMMUNITY_COMMENT_DETAIL_REQUEST,
         data: {
           communityId: router.query.id,
-          commentId: currentData.id,
+          commentId: currentData && currentData.id,
+        },
+      });
+
+      dispatch({
+        type: COMMUNITY_DETAIL_REQUEST,
+        data: {
+          communityId: router.query.id,
         },
       });
 
@@ -273,7 +281,12 @@ const BoardDetail = () => {
 
   const openRecommentToggle = useCallback(
     (data) => {
-      setRepleToggle(!repleToggle);
+      console.log(data);
+      if (data === null) {
+        setRepleToggle(false);
+      } else {
+        setRepleToggle(!repleToggle);
+      }
       setCurrentData(data);
     },
     [repleToggle]
@@ -369,7 +382,7 @@ const BoardDetail = () => {
                 fontWeight={`700`}
                 color={Theme.subTheme11_C}
               >
-                제목
+                {communityDetail && communityDetail.title}
               </Text>
               <Wrapper
                 dr={`row`}
@@ -377,21 +390,47 @@ const BoardDetail = () => {
                 color={Theme.subTheme11_C}
                 ju={`flex-start`}
               >
-                <Text margin={`0 20px 0 0`}>작성자 : 케이톡</Text>
-                <Text margin={`0 20px 0 0`}>작성일 : 2022-03-12</Text>
-                <Text>조회수 : 35</Text>
+                <Text margin={`0 20px 0 0`}>
+                  작성자 :&nbsp;{communityDetail && communityDetail.username}
+                </Text>
+                <Text margin={`0 20px 0 0`}>
+                  작성일 :&nbsp;
+                  {communityDetail &&
+                    moment(communityDetail.createdAt).format("YYYY-MM-DD")}
+                </Text>
+                <Text>
+                  조회수 :&nbsp;{communityDetail && communityDetail.hit}
+                </Text>
               </Wrapper>
             </Wrapper>
             <Wrapper>
-              <Image src={`https://via.placeholder.com/1350x476`} />
+              {communityDetail &&
+                communityDetail.profileImage &&
+                communityDetail.profileImage !== "" && (
+                  <Image src={communityDetail.profileImage} />
+                )}
               <Wrapper
-                margin={`60px 0 80px`}
+                margin={
+                  communityDetail &&
+                  communityDetail.profileImage &&
+                  communityDetail.profileImage !== ""
+                    ? `60px 0 80px`
+                    : `0px 0 80px`
+                }
                 al={`flex-start`}
                 ju={`flex-start`}
                 color={Theme.black_2C}
                 minHeight={`120px`}
               >
-                asdasdasdasjhcgasdfjsdjfhbasdlf asfkjhgf{" "}
+                {communityDetail &&
+                  communityDetail.content.split(`\n`).map((data) => {
+                    return (
+                      <SpanText>
+                        {data}
+                        <br />
+                      </SpanText>
+                    );
+                  })}
               </Wrapper>
             </Wrapper>
             <CommonButton
@@ -456,7 +495,7 @@ const BoardDetail = () => {
                             color={Theme.grey2_C}
                             margin={`0 0 0 15px`}
                           >
-                            {data.createdAt}
+                            {moment(data.createdAt).format("YYYY-MM-DD")}
                           </SpanText>
                         </Text>
                         <Wrapper dr={`row`} width={`auto`}>
@@ -473,8 +512,9 @@ const BoardDetail = () => {
                     </Wrapper>
 
                     {/* 대댓글 영역 */}
-
+                    {console.log(communityCommentDetail)}
                     {communityCommentDetail &&
+                      communityCommentDetail.length !== 0 &&
                       communityCommentDetail[0].id === data.id &&
                       communityCommentDetail.slice(1).map((v) => {
                         return (
@@ -538,7 +578,11 @@ const BoardDetail = () => {
             {currentData && (
               <Wrapper padding={`10px`}>
                 <FormItem label="댓글내용">
-                  <Text>{currentData.content.split("ㄴ")[1]}</Text>
+                  <Text>
+                    {currentData.parent === 0
+                      ? currentData.content
+                      : currentData.content.split("ㄴ")[1]}
+                  </Text>
                 </FormItem>
 
                 <FormTag form={childCommentForm} onFinish={childCommentSubmit}>

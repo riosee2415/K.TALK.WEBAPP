@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import axios from "axios";
 import wrapper from "../store/configureStore";
@@ -32,8 +32,10 @@ import {
   COMMUNITY_CREATE_REQUEST,
   COMMUNITY_LIST_REQUEST,
   COMMUNITY_TYPE_LIST_REQUEST,
+  COMMUNITY_UPLOAD_REQUEST,
+  FILE_INIT,
 } from "../reducers/community";
-import { Empty, Form, Input, message, Modal, Select } from "antd";
+import { Button, Empty, Form, Input, message, Modal, Select } from "antd";
 
 const Box = styled(Wrapper)`
   align-items: flex-start;
@@ -72,6 +74,7 @@ const Home = ({}) => {
 
   ////// HOOKS //////
   const router = useRouter();
+  const fileRef = useRef();
   ////// REDUX //////
   const dispatch = useDispatch();
   const [form] = Form.useForm();
@@ -79,18 +82,37 @@ const Home = ({}) => {
   const { me } = useSelector((state) => state.user);
   const [modalView, setModalView] = useState(false);
 
-  const { communityTypes, st_communityCreateDone, st_communityCreateError } =
-    useSelector((state) => state.community);
+  const {
+    communityTypes,
+    st_communityCreateDone,
+    st_communityCreateError,
+    filePath,
+  } = useSelector((state) => state.community);
   ////// USEEFFECT //////
   useEffect(() => {
     if (st_communityCreateDone) {
       message.success(`게시판이 작성되었습니다.`);
       dispatch({
         type: COMMUNITY_LIST_REQUEST,
+        data: {
+          typeId: 2,
+        },
+      });
+      dispatch({
+        type: FILE_INIT,
       });
       modalClose();
     }
   }, [st_communityCreateDone]);
+
+  useEffect(() => {
+    dispatch({
+      type: COMMUNITY_LIST_REQUEST,
+      data: {
+        typeId: 2,
+      },
+    });
+  }, [router.query]);
 
   useEffect(() => {
     if (st_communityCreateError) {
@@ -113,7 +135,7 @@ const Home = ({}) => {
       data: {
         title: data.title,
         content: data.content,
-        type: data.type,
+        type: 2,
       },
     });
   }, []);
@@ -123,6 +145,27 @@ const Home = ({}) => {
     form.resetFields();
   }, [form]);
 
+  const fileUploadClick = useCallback(() => {
+    fileRef.current.click();
+  }, [fileRef.current]);
+
+  const fileChangeHandler = useCallback(
+    (e) => {
+      const formData = new FormData();
+
+      [].forEach.call(e.target.files, (file) => {
+        formData.append("file", file);
+      });
+
+      dispatch({
+        type: COMMUNITY_UPLOAD_REQUEST,
+        data: formData,
+      });
+
+      fileRef.current.value = "";
+    },
+    [fileRef]
+  );
   ////// DATAVIEW //////
 
   return (
@@ -525,7 +568,7 @@ const Home = ({}) => {
                   <Form.Item label={`Content`} name={`content`}>
                     <Input />
                   </Form.Item>
-                  <Form.Item label={`Type`} name={`type`}>
+                  {/* <Form.Item label={`Type`} name={`type`}>
                     <Select>
                       {communityTypes &&
                         communityTypes.map((data) => {
@@ -536,7 +579,31 @@ const Home = ({}) => {
                           );
                         })}
                     </Select>
+                  </Form.Item> */}
+                  {/* review 고정 */}
+                  <Form.Item label={`file`}>
+                    <input
+                      type="file"
+                      name="file"
+                      accept=".png, .jpg"
+                      hidden
+                      ref={fileRef}
+                      onChange={fileChangeHandler}
+                    />
+
+                    <Button
+                      type={`primary`}
+                      size={`small`}
+                      onClick={fileUploadClick}
+                    >
+                      FILE UPLOAD
+                    </Button>
                   </Form.Item>
+                  {filePath && (
+                    <Form.Item label={`이미지`}>
+                      <Image width={`100px`} src={filePath} />
+                    </Form.Item>
+                  )}
                 </Form>
               </Modal>
             </RsWrapper>
@@ -566,9 +633,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
     context.store.dispatch({
       type: SEO_LIST_REQUEST,
     });
-    context.store.dispatch({
-      type: COMMUNITY_LIST_REQUEST,
-    });
+
     context.store.dispatch({
       type: COMMUNITY_TYPE_LIST_REQUEST,
     });
