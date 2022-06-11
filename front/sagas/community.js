@@ -319,7 +319,7 @@ function* communityUpdate(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function communityDeleteAPI(data) {
-  return axios.delete(`/api/community/delete${data.typeId}`, data);
+  return axios.delete(`/api/community/delete/${data.communityId}`, data);
 }
 
 function* communityDelete(action) {
@@ -482,13 +482,13 @@ function* watchCommunityList() {
   yield takeLatest(COMMUNITY_LIST_REQUEST, communityList);
 }
 function* watchCommunityCreate() {
-  yield takeLatest(COMMUNITY_DETAIL_REQUEST, communityDetail);
-}
-function* watchCommunityUpdate() {
   yield takeLatest(COMMUNITY_CREATE_REQUEST, communityCreate);
 }
-function* watchCommunityDelete() {
+function* watchCommunityUpdate() {
   yield takeLatest(COMMUNITY_UPDATE_REQUEST, communityUpdate);
+}
+function* watchCommunityDelete() {
+  yield takeLatest(COMMUNITY_DELETE_REQUEST, communityDelete);
 }
 
 //comment

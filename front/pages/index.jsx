@@ -35,7 +35,16 @@ import {
   COMMUNITY_UPLOAD_REQUEST,
   FILE_INIT,
 } from "../reducers/community";
-import { Button, Empty, Form, Input, message, Modal, Select } from "antd";
+import {
+  Button,
+  Empty,
+  Form,
+  Input,
+  message,
+  Modal,
+  Pagination,
+  Select,
+} from "antd";
 
 const Box = styled(Wrapper)`
   align-items: flex-start;
@@ -78,9 +87,12 @@ const Home = ({}) => {
   ////// REDUX //////
   const dispatch = useDispatch();
   const [form] = Form.useForm();
-  const { communityList } = useSelector((state) => state.community);
+  const { communityList, communityMaxLength } = useSelector(
+    (state) => state.community
+  );
   const { me } = useSelector((state) => state.user);
   const [modalView, setModalView] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const {
     communityTypes,
@@ -129,16 +141,20 @@ const Home = ({}) => {
     form.submit();
   }, [form]);
 
-  const onSubmitBoard = useCallback((data) => {
-    dispatch({
-      type: COMMUNITY_CREATE_REQUEST,
-      data: {
-        title: data.title,
-        content: data.content,
-        type: 2,
-      },
-    });
-  }, []);
+  const onSubmitBoard = useCallback(
+    (data) => {
+      dispatch({
+        type: COMMUNITY_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          content: data.content,
+          type: 2,
+          file: filePath,
+        },
+      });
+    },
+    [filePath]
+  );
 
   const modalClose = useCallback(() => {
     setModalView(false);
@@ -166,6 +182,18 @@ const Home = ({}) => {
     },
     [fileRef]
   );
+
+  const otherPageCall = useCallback((changePage) => {
+    setCurrentPage(changePage);
+
+    dispatch({
+      type: COMMUNITY_LIST_REQUEST,
+      data: {
+        page: changePage,
+        typeId: 2,
+      },
+    });
+  }, []);
   ////// DATAVIEW //////
 
   return (
@@ -548,6 +576,14 @@ const Home = ({}) => {
                       );
                     })
                   )}
+                </Wrapper>
+                <Wrapper>
+                  <Pagination
+                    defaultCurrent={1}
+                    current={parseInt(currentPage)}
+                    onChange={(page) => otherPageCall(page)}
+                    total={communityMaxLength * 10}
+                  />
                 </Wrapper>
               </Wrapper>
               <Modal

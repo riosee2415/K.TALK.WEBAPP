@@ -51,6 +51,8 @@ export const initialState = {
   st_communityDeleteLoading: false,
   st_communityDeleteDone: false,
   st_communityDeleteError: null,
+  //
+  communityMaxLength: null,
 
   //comment
   st_communityCommentDetailLoading: false,
@@ -68,8 +70,11 @@ export const initialState = {
   st_communityCommentDeleteLoading: false,
   st_communityCommentDeleteDone: false,
   st_communityCommentDeleteError: null,
+  //
+  createModal: false,
 };
-
+export const CREATE_MODAL_OPEN_REQUEST = "CREATE_MODAL_OPEN_REQUEST";
+export const CREATE_MODAL_CLOSE_REQUEST = "CREATE_MODAL_CLOSE_REQUEST";
 ////////// FILE //////////
 export const COMMUNITY_UPLOAD_REQUEST = "COMMUNITY_UPLOAD_REQUEST";
 export const COMMUNITY_UPLOAD_SUCCESS = "COMMUNITY_UPLOAD_SUCCESS";
@@ -243,6 +248,7 @@ const reducer = (state = initialState, action) =>
         draft.st_communityListLoading = false;
         draft.st_communityListDone = true;
         draft.communityList = action.data.community;
+        draft.communityMaxLength = action.data.lastPage;
         break;
       }
       case COMMUNITY_LIST_FAILURE: {
@@ -425,7 +431,18 @@ const reducer = (state = initialState, action) =>
       //////////////////////////////////////////////
       case FILE_INIT: {
         draft.filePath = null;
+        break;
       }
+      case CREATE_MODAL_OPEN_REQUEST: {
+        draft.createModal = true;
+        break;
+      }
+
+      case CREATE_MODAL_CLOSE_REQUEST: {
+        draft.createModal = false;
+        break;
+      }
+
       default:
         break;
     }

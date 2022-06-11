@@ -405,15 +405,15 @@ const BoardDetail = () => {
             </Wrapper>
             <Wrapper>
               {communityDetail &&
-                communityDetail.profileImage &&
-                communityDetail.profileImage !== "" && (
-                  <Image src={communityDetail.profileImage} />
+                communityDetail.file &&
+                communityDetail.file !== "" && (
+                  <Image src={communityDetail.file} />
                 )}
               <Wrapper
                 margin={
                   communityDetail &&
-                  communityDetail.profileImage &&
-                  communityDetail.profileImage !== ""
+                  communityDetail.file &&
+                  communityDetail.file !== ""
                     ? `60px 0 80px`
                     : `0px 0 80px`
                 }
@@ -512,7 +512,7 @@ const BoardDetail = () => {
                     </Wrapper>
 
                     {/* 대댓글 영역 */}
-                    {console.log(communityCommentDetail)}
+
                     {communityCommentDetail &&
                       communityCommentDetail.length !== 0 &&
                       communityCommentDetail[0].id === data.id &&

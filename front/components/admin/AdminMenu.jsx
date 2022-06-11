@@ -139,6 +139,10 @@ const AdminMenu = () => {
           <MenuName>쪽지 관리</MenuName>
         </Menu.Item>
 
+        <Menu.Item key="/admin/board/community/list">
+          <MenuName>자유게시판 관리</MenuName>
+        </Menu.Item>
+
         {/* <Menu.Item key="/admin/processApply/list">
           <MenuName>설명회 참가신청서</MenuName>
         </Menu.Item>
