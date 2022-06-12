@@ -388,7 +388,7 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
   const { title, content, file, type } = req.body;
 
   if (!req.user) {
-    return res.status(403).send("로그인 후 이용 가능합니다.");
+    return res.status(403).send("Please log in");
   }
 
   try {
@@ -622,7 +622,7 @@ router.post("/comment/create", isLoggedIn, async (req, res, next) => {
   const { content, communityId, parentId } = req.body;
 
   if (!req.user) {
-    return res.status(403).send("로그인 후 이용 가능합니다.");
+    return res.status(403).send("Please log in");
   }
 
   try {

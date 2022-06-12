@@ -100,6 +100,9 @@ const AppHeader = ({ width }) => {
 
   useEffect(() => {
     if (st_loginDone && me) {
+      if (me.level >= 3) {
+        return;
+      }
       moveLinkHandler(
         me.level === 1
           ? "/student"

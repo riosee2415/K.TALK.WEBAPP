@@ -568,11 +568,17 @@ const Home = ({}) => {
                           <Text margin={`0 0 40px`}>{data.title}</Text>
                           <Wrapper dr={`row`} ju={`space-between`}>
                             <Text>
-                              {data.createdAt} | {data.username}
+                              {data.createdAt} | {data.username}(
+                              {data.level === 1
+                                ? `Student`
+                                : data.level === 2
+                                ? `Teacher`
+                                : `admin`}
+                              )
                             </Text>
                             <Text>
-                              조회수&nbsp;{data.hit}
-                              {/* | 댓글 199개 */}
+                              View&nbsp;{data.hit}&nbsp;| Comments&nbsp;
+                              {data.commentCnt}
                             </Text>
                           </Wrapper>
                         </Box>

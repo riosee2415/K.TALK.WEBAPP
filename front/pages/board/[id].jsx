@@ -46,6 +46,23 @@ import {
   COMMUNITY_DETAIL_REQUEST,
 } from "../../reducers/community";
 
+const Icon = styled(Wrapper)`
+  height: 1px;
+  background: ${Theme.darkGrey_C};
+  position: relative;
+
+  &:before {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    right: 4px;
+    width: 1px;
+    height: 10px;
+    background: ${Theme.darkGrey_C};
+    transform: rotate(-60deg);
+  }
+`;
+
 const HoverText = styled(Text)`
   cursor: pointer;
   &:hover {
@@ -392,15 +409,15 @@ const BoardDetail = () => {
                 ju={`flex-start`}
               >
                 <Text margin={`0 20px 0 0`}>
-                  작성자 :&nbsp;{communityDetail && communityDetail.username}
+                  Writer :&nbsp;{communityDetail && communityDetail.username}
                 </Text>
                 <Text margin={`0 20px 0 0`}>
-                  작성일 :&nbsp;
+                  Date time :&nbsp;
                   {communityDetail &&
                     moment(communityDetail.createdAt).format("YYYY-MM-DD")}
                 </Text>
                 <Text>
-                  조회수 :&nbsp;{communityDetail && communityDetail.hit}
+                  View :&nbsp;{communityDetail && communityDetail.hit}
                 </Text>
               </Wrapper>
             </Wrapper>
@@ -441,16 +458,24 @@ const BoardDetail = () => {
               fontSize={`18px`}
               onClick={() => moveLinkHandler(`/`)}
             >
-              목록
+              Go back
             </CommonButton>
             <FormTag form={commentForm} onFinish={commentSubmit}>
               <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 50px`}>
-                <Text>댓글&nbsp;{communityCommentsLen}</Text>
+                <Text
+                  fontSize={width < 900 ? `15px` : `18px`}
+                  color={Theme.red_C}
+                  fontWeight={`700`}
+                  margin={`0 0 10px`}
+                >
+                  Comments&nbsp;{communityCommentsLen}
+                </Text>
                 <FormItem name={`comment`}>
                   <TextArea
                     width={`100%`}
                     height={`115px`}
                     margin={`0 0 20px`}
+                    placeholder={`Please write a comment.`}
                   />
                 </FormItem>
                 <Wrapper al={`flex-end`}>
@@ -459,7 +484,7 @@ const BoardDetail = () => {
                     width={`140px`}
                     height={`50px`}
                   >
-                    작성하기
+                    Write
                   </CommonButton>
                 </Wrapper>
               </Wrapper>
@@ -468,7 +493,7 @@ const BoardDetail = () => {
 
             {communityComment && communityComment.length === 0 ? (
               <Wrapper>
-                <Empty description={`댓글이 없습니다.`} />
+                <Empty description={`No comment`} />
               </Wrapper>
             ) : (
               communityComment &&
@@ -501,11 +526,11 @@ const BoardDetail = () => {
                         </Text>
                         <Wrapper dr={`row`} width={`auto`}>
                           <HoverText onClick={() => openRecommentToggle(data)}>
-                            답글 쓰기
+                            Reple
                           </HoverText>
                           &nbsp;|&nbsp;
                           <HoverText onClick={() => getCommentHandler(data.id)}>
-                            대댓글 보기
+                            More comments +
                           </HoverText>
                         </Wrapper>
                       </Wrapper>
@@ -540,6 +565,18 @@ const BoardDetail = () => {
                                 ju={`flex-start`}
                                 width={`auto`}
                               >
+                                <Wrapper
+                                  width={`auto`}
+                                  margin={`0 10px 0 0`}
+                                  al={`flex-start`}
+                                >
+                                  <Wrapper
+                                    width={`1px`}
+                                    height={`15px`}
+                                    bgColor={Theme.darkGrey_C}
+                                  ></Wrapper>
+                                  <Icon width={`${v.lev * 10}px`}></Icon>
+                                </Wrapper>
                                 <Text fontSize={`18px`} fontWeight={`700`}>
                                   {v.username}
                                 </Text>
@@ -552,7 +589,7 @@ const BoardDetail = () => {
                                 </Text>
                               </Wrapper>
                               <HoverText onClick={() => openRecommentToggle(v)}>
-                                답글 쓰기
+                                Reple
                               </HoverText>
                             </Wrapper>
 
@@ -570,7 +607,7 @@ const BoardDetail = () => {
 
           <Modal
             width={`800px`}
-            title="댓글쓰기"
+            title="Reple"
             footer={null}
             visible={repleToggle}
             onCancel={() => openRecommentToggle(null)}
@@ -578,7 +615,7 @@ const BoardDetail = () => {
           >
             {currentData && (
               <Wrapper padding={`10px`}>
-                <FormItem label="댓글내용">
+                <FormItem label="comment">
                   <Text>
                     {currentData.parent === 0
                       ? currentData.content
@@ -587,11 +624,11 @@ const BoardDetail = () => {
                 </FormItem>
 
                 <FormTag form={childCommentForm} onFinish={childCommentSubmit}>
-                  <FormItem label="댓글" name={`comment`}>
+                  <FormItem label="reple" name={`comment`}>
                     <TextArea
                       width={`100%`}
                       height={`115px`}
-                      placeholder="댓글을 작성해주세요."
+                      placeholder="Please write a comment."
                     />
                   </FormItem>
                   <Wrapper al={`flex-end`}>
@@ -600,7 +637,7 @@ const BoardDetail = () => {
                       width={`140px`}
                       height={`50px`}
                     >
-                      작성하기
+                      Write
                     </CommonButton>
                   </Wrapper>
                 </FormTag>
