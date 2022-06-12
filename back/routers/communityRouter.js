@@ -574,6 +574,7 @@ router.post("/comment/detail", async (req, res, next) => {
                         CC.parentId,
                         CC.createdAt,
                         CC.CommunityId,
+                        CC.isDelete,
                         US.userId,
                         US.profileImage,
                         US.username,
@@ -594,6 +595,7 @@ router.post("/comment/detail", async (req, res, next) => {
                         A.parentId,
                         A.createdAt,
                         A.CommunityId,
+                        A.isDelete,
                         B.userId,
                         B.profileImage,
                         B.username,
@@ -606,6 +608,7 @@ router.post("/comment/detail", async (req, res, next) => {
             ) 
           SELECT * FROM comments_hire
         )	X
+      WHERE X.isDelete = FALSE
       ORDER	BY X.paths
       `;
 
@@ -685,7 +688,7 @@ router.post("/comment/update", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("자신의 댓글만 수정할 수 있습니다.");
     }
 
-    const updateResult = await Community.update(
+    const updateResult = await CommunityComment.update(
       {
         content,
       },
