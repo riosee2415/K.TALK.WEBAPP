@@ -608,7 +608,6 @@ router.post("/comment/detail", async (req, res, next) => {
             ) 
           SELECT * FROM comments_hire
         )	X
-      WHERE X.isDelete = FALSE
       ORDER	BY X.paths
       `;
 
