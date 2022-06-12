@@ -2,13 +2,16 @@ import React, { useState, useCallback, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import {
+  Button,
   Calendar,
   Checkbox,
   Empty,
   Form,
+  Input,
   InputNumber,
   message,
   Modal,
+  Popconfirm,
   Select,
 } from "antd";
 import { CalendarOutlined, CaretDownOutlined } from "@ant-design/icons";
@@ -42,8 +45,14 @@ import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 import { APP_CREATE_REQUEST } from "../../reducers/application";
 import {
   COMMUNITY_COMMENT_CREATE_REQUEST,
+  COMMUNITY_COMMENT_DELETE_REQUEST,
   COMMUNITY_COMMENT_DETAIL_REQUEST,
+  COMMUNITY_COMMENT_UPDATE_REQUEST,
+  COMMUNITY_DELETE_REQUEST,
   COMMUNITY_DETAIL_REQUEST,
+  COMMUNITY_UPDATE_REQUEST,
+  COMMUNITY_UPLOAD_REQUEST,
+  FILE_INIT,
 } from "../../reducers/community";
 
 const Icon = styled(Wrapper)`
@@ -201,6 +210,16 @@ const BoardDetail = () => {
     st_communityCommentCreateDone,
     st_communityCommentCreateError,
     communityCommentsLen,
+    //
+    st_communityUpdateDone,
+    st_communityUpdateError,
+    st_communityDeleteDone,
+    st_communityDeleteError,
+    st_communityCommentUpdateDone,
+    st_communityCommentUpdateError,
+    st_communityCommentDeleteDone,
+    st_communityCommentDeleteError,
+    filePath,
   } = useSelector((state) => state.community);
 
   ////// HOOKS //////
@@ -212,11 +231,19 @@ const BoardDetail = () => {
   const [commentForm] = Form.useForm();
   const [childCommentForm] = Form.useForm();
 
-  const [currentComment, setCurrentComment] = useState(null);
+  const [updateCommentForm] = Form.useForm();
+  const [updateForm] = Form.useForm();
 
   const [repleToggle, setRepleToggle] = useState(false); // 댓글쓰기 모달 토글
   const [currentData, setCurrentData] = useState(null); // 댓글의 정보 보관
 
+  const [updateModal, setUpdateModal] = useState(false); // 게시물 수정
+  const [updateData, setUpdateData] = useState(false);
+
+  const [updateCommentModal, setUpdateCommentModal] = useState(false); // 댓글 수정
+  const [updateCommentData, setUpdateCommentData] = useState(false);
+
+  const fileRef = useRef();
   ////// REDUX //////
 
   ////// USEEFFECT //////
@@ -260,10 +287,142 @@ const BoardDetail = () => {
   }, [st_communityCommentCreateDone]);
 
   useEffect(() => {
+    if (st_communityUpdateDone) {
+      commentForm.resetFields();
+      childCommentForm.resetFields();
+
+      dispatch({
+        type: COMMUNITY_COMMENT_DETAIL_REQUEST,
+        data: {
+          communityId: router.query.id,
+          commentId: currentData && currentData.id,
+        },
+      });
+
+      dispatch({
+        type: COMMUNITY_DETAIL_REQUEST,
+        data: {
+          communityId: router.query.id,
+        },
+      });
+
+      openRecommentToggle(null);
+      updateToggle(null);
+
+      return message.success("수정되었습니다.");
+    }
+  }, [st_communityUpdateDone]);
+
+  useEffect(() => {
+    if (st_communityDeleteDone) {
+      commentForm.resetFields();
+      childCommentForm.resetFields();
+
+      dispatch({
+        type: COMMUNITY_COMMENT_DETAIL_REQUEST,
+        data: {
+          communityId: router.query.id,
+          commentId: currentData && currentData.id,
+        },
+      });
+
+      dispatch({
+        type: COMMUNITY_DETAIL_REQUEST,
+        data: {
+          communityId: router.query.id,
+        },
+      });
+
+      openRecommentToggle(null);
+      updateToggle(null);
+
+      router.push(`/`);
+      return message.success("삭제되었습니다.");
+    }
+  }, [st_communityDeleteDone]);
+
+  useEffect(() => {
+    if (st_communityCommentUpdateDone) {
+      commentForm.resetFields();
+      childCommentForm.resetFields();
+
+      dispatch({
+        type: COMMUNITY_COMMENT_DETAIL_REQUEST,
+        data: {
+          communityId: router.query.id,
+          commentId: currentData && currentData.id,
+        },
+      });
+
+      dispatch({
+        type: COMMUNITY_DETAIL_REQUEST,
+        data: {
+          communityId: router.query.id,
+        },
+      });
+
+      openRecommentToggle(null);
+      updateCommentToggle(null);
+
+      return message.success("댓글이 수정되었습니다.");
+    }
+  }, [st_communityCommentUpdateDone]);
+
+  useEffect(() => {
+    if (st_communityCommentDeleteDone) {
+      commentForm.resetFields();
+      childCommentForm.resetFields();
+
+      dispatch({
+        type: COMMUNITY_COMMENT_DETAIL_REQUEST,
+        data: {
+          communityId: router.query.id,
+          commentId: currentData && currentData.id,
+        },
+      });
+
+      dispatch({
+        type: COMMUNITY_DETAIL_REQUEST,
+        data: {
+          communityId: router.query.id,
+        },
+      });
+
+      openRecommentToggle(null);
+
+      return message.success("댓글이 삭제되었습니다.");
+    }
+  }, [st_communityCommentDeleteDone]);
+
+  useEffect(() => {
     if (st_communityCommentCreateError) {
       return message.error(st_communityCommentCreateError);
     }
   }, [st_communityCommentCreateError]);
+
+  useEffect(() => {
+    if (st_communityUpdateError) {
+      return message.error(st_communityUpdateError);
+    }
+  }, [st_communityUpdateError]);
+
+  useEffect(() => {
+    if (st_communityDeleteError) {
+      return message.error(st_communityDeleteError);
+    }
+  }, [st_communityDeleteError]);
+
+  useEffect(() => {
+    if (st_communityCommentUpdateError) {
+      return message.error(st_communityCommentUpdateError);
+    }
+  }, [st_communityCommentUpdateError]);
+
+  useEffect(() => {
+    if (st_communityCommentDeleteError) {
+      return message.error(st_communityCommentDeleteError);
+    }
+  }, [st_communityCommentDeleteError]);
 
   ////// TOGGLE //////
 
@@ -312,6 +471,40 @@ const BoardDetail = () => {
 
   ////// HANDLER //////
 
+  const fileUploadClick = useCallback(() => {
+    fileRef.current.click();
+  }, [fileRef.current]);
+
+  const fileChangeHandler = useCallback(
+    (e) => {
+      const formData = new FormData();
+
+      [].forEach.call(e.target.files, (file) => {
+        formData.append("file", file);
+      });
+
+      dispatch({
+        type: COMMUNITY_UPLOAD_REQUEST,
+        data: formData,
+      });
+
+      fileRef.current.value = "";
+    },
+    [fileRef]
+  );
+
+  const onFill = useCallback((data, isV) => {
+    if (isV) {
+      updateCommentForm.setFieldsValue({
+        content: data.content.split(`ㄴ`)[1],
+      });
+    } else {
+      updateCommentForm.setFieldsValue({
+        content: data.content,
+      });
+    }
+  }, []);
+
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
@@ -328,6 +521,82 @@ const BoardDetail = () => {
     },
     [router.query]
   );
+
+  const updateCommentToggle = useCallback(
+    (data, isV) => {
+      setUpdateModal((prev) => !prev);
+      setUpdateCommentData(data);
+      if (!updateModal) {
+        setTimeout(() => {
+          onFill(data, isV);
+        }, 500);
+      }
+    },
+    [updateModal]
+  );
+
+  const updateToggle = useCallback((data) => {
+    setUpdateCommentModal((prev) => !prev);
+    setUpdateData(data);
+    dispatch({
+      type: FILE_INIT,
+    });
+  }, []);
+
+  const updateCommentFormSubmit = useCallback(() => {
+    updateCommentForm.submit();
+  }, []);
+
+  const updateCommentFormFinish = useCallback(
+    (data) => {
+      dispatch({
+        type: COMMUNITY_COMMENT_UPDATE_REQUEST,
+        data: {
+          id: updateCommentData.id,
+          content: data.content,
+        },
+      });
+    },
+    [updateCommentData]
+  );
+
+  const updateFormSubmit = useCallback(() => {
+    updateForm.submit();
+  }, []);
+
+  const updateFormFinish = useCallback(
+    (data) => {
+      dispatch({
+        type: COMMUNITY_UPDATE_REQUEST,
+        data: {
+          id: updateData.id,
+          title: data.title,
+          content: data.content,
+          file: filePath ? filePath : updateData.file,
+          type: updateData.CommunityTypeId,
+        },
+      });
+    },
+    [updateData, filePath]
+  );
+
+  const deleteCommentHandler = useCallback((data) => {
+    dispatch({
+      type: COMMUNITY_COMMENT_DELETE_REQUEST,
+      data: {
+        commentId: data.id,
+      },
+    });
+  }, []);
+
+  const deleteHandler = useCallback((data) => {
+    dispatch({
+      type: COMMUNITY_DELETE_REQUEST,
+      data: {
+        communityId: data.id,
+      },
+    });
+  }, []);
 
   ////// DATAVIEW //////
 
@@ -402,23 +671,51 @@ const BoardDetail = () => {
               >
                 {communityDetail && communityDetail.title}
               </Text>
-              <Wrapper
-                dr={`row`}
-                fontSize={`16px`}
-                color={Theme.subTheme11_C}
-                ju={`flex-start`}
-              >
-                <Text margin={`0 20px 0 0`}>
-                  Writer :&nbsp;{communityDetail && communityDetail.username}
-                </Text>
-                <Text margin={`0 20px 0 0`}>
-                  Date time :&nbsp;
-                  {communityDetail &&
-                    moment(communityDetail.createdAt).format("YYYY-MM-DD")}
-                </Text>
-                <Text>
-                  View :&nbsp;{communityDetail && communityDetail.hit}
-                </Text>
+              <Wrapper dr={`row`} ju={`space-between`}>
+                <Wrapper
+                  dr={`row`}
+                  width={`auto`}
+                  fontSize={`16px`}
+                  color={Theme.subTheme11_C}
+                  ju={`flex-start`}
+                >
+                  <Text margin={`0 20px 0 0`}>
+                    Writer :&nbsp;{communityDetail && communityDetail.username}
+                  </Text>
+                  <Text margin={`0 20px 0 0`}>
+                    Date time :&nbsp;
+                    {communityDetail &&
+                      moment(communityDetail.createdAt).format("YYYY-MM-DD")}
+                  </Text>
+                  <Text>
+                    View :&nbsp;{communityDetail && communityDetail.hit}
+                  </Text>
+                </Wrapper>
+                <Wrapper dr={`row`} width={`auto`} padding={`0 10px 0 0`}>
+                  {communityDetail && (
+                    <Button
+                      size={`small`}
+                      type={`primary`}
+                      onClick={() => updateToggle(communityDetail)}
+                    >
+                      edit
+                    </Button>
+                  )}
+                  &nbsp;
+                  {communityDetail && (
+                    <Popconfirm
+                      placement="bottomRight"
+                      title={`삭제하시겠습니까?`}
+                      okText="Delete"
+                      cancelText="Cancel"
+                      onConfirm={() => deleteHandler(communityDetail)}
+                    >
+                      <Button size={`small`} type={`danger`}>
+                        delete
+                      </Button>
+                    </Popconfirm>
+                  )}
+                </Wrapper>
               </Wrapper>
             </Wrapper>
             <Wrapper>
@@ -524,14 +821,41 @@ const BoardDetail = () => {
                             {moment(data.createdAt).format("YYYY-MM-DD")}
                           </SpanText>
                         </Text>
-                        <Wrapper dr={`row`} width={`auto`}>
-                          <HoverText onClick={() => openRecommentToggle(data)}>
-                            Reple
-                          </HoverText>
-                          &nbsp;|&nbsp;
-                          <HoverText onClick={() => getCommentHandler(data.id)}>
-                            More comments +
-                          </HoverText>
+                        <Wrapper width={`auto`} al={`flex-end`}>
+                          <Wrapper
+                            dr={`row`}
+                            width={`auto`}
+                            margin={`0 0 10px`}
+                          >
+                            <HoverText
+                              onClick={() => openRecommentToggle(data)}
+                            >
+                              Reple
+                            </HoverText>
+                            &nbsp;|&nbsp;
+                            <HoverText
+                              onClick={() => getCommentHandler(data.id)}
+                            >
+                              More comments +
+                            </HoverText>
+                          </Wrapper>
+                          <Wrapper dr={`row`} width={`auto`}>
+                            <HoverText
+                              onClick={() => updateCommentToggle(data)}
+                            >
+                              Edit
+                            </HoverText>
+                            &nbsp;|&nbsp;
+                            <Popconfirm
+                              placement="bottomRight"
+                              title={`삭제하시겠습니까?`}
+                              okText="Delete"
+                              cancelText="Cancel"
+                              onConfirm={() => deleteCommentHandler(data)}
+                            >
+                              <HoverText>Delete</HoverText>
+                            </Popconfirm>
+                          </Wrapper>
                         </Wrapper>
                       </Wrapper>
                       {data.content}
@@ -553,6 +877,7 @@ const BoardDetail = () => {
                             }
                             al={`flex-start`}
                             borderTop={`1px solid ${Theme.lightGrey_C}`}
+                            bgColor={v.isDelete === 1 && Theme.lightGrey3_C}
                           >
                             <Wrapper
                               dr={`row`}
@@ -588,13 +913,43 @@ const BoardDetail = () => {
                                   {moment(v.createdAt).format("YYYY-MM-DD")}
                                 </Text>
                               </Wrapper>
-                              <HoverText onClick={() => openRecommentToggle(v)}>
-                                Reple
-                              </HoverText>
+                              <Wrapper width={`auto`} al={`flex-end`}>
+                                <HoverText
+                                  margin={`0 0 10px`}
+                                  onClick={() => openRecommentToggle(v)}
+                                >
+                                  Reple
+                                </HoverText>
+                                {v.isDelete === 0 && (
+                                  <Wrapper dr={`row`} width={`auto`}>
+                                    <HoverText
+                                      onClick={() =>
+                                        updateCommentToggle(v, true)
+                                      }
+                                    >
+                                      Edit
+                                    </HoverText>
+                                    &nbsp;|&nbsp;
+                                    <Popconfirm
+                                      placement="bottomRight"
+                                      title={`삭제하시겠습니까?`}
+                                      okText="Delete"
+                                      cancelText="Cancel"
+                                      onConfirm={() => deleteCommentHandler(v)}
+                                    >
+                                      <HoverText>Delete</HoverText>
+                                    </Popconfirm>
+                                  </Wrapper>
+                                )}
+                              </Wrapper>
                             </Wrapper>
 
-                            <Wrapper al={`flex-start`} margin={`0 0 15px`}>
-                              <Text>{v.content.split("ㄴ")[1]}</Text>
+                            <Wrapper al={`flex-start`} margin={`0 0 15px 15px`}>
+                              {v.isDelete === 1 ? (
+                                <Text>삭제된 댓글입니다.</Text>
+                              ) : (
+                                <Text>{v.content.split("ㄴ")[1]}</Text>
+                              )}
                             </Wrapper>
                           </Wrapper>
                         );
@@ -643,6 +998,88 @@ const BoardDetail = () => {
                 </FormTag>
               </Wrapper>
             )}
+          </Modal>
+          <Modal
+            title={`update comment`}
+            visible={updateModal}
+            onCancel={updateCommentToggle}
+            onOk={updateCommentFormSubmit}
+          >
+            <Form form={updateCommentForm} onFinish={updateCommentFormFinish}>
+              <Form.Item
+                label={`Content`}
+                name={`content`}
+                rules={[{ required: true, message: "본문을 입력해 주세요." }]}
+              >
+                <Input.TextArea />
+              </Form.Item>
+            </Form>
+          </Modal>
+
+          <Modal
+            title={`update review`}
+            visible={updateCommentModal}
+            onCancel={updateToggle}
+            onOk={updateFormSubmit}
+          >
+            <Form
+              labelCol={{ span: 4 }}
+              wrapperCol={{ span: 20 }}
+              form={updateForm}
+              onFinish={updateFormFinish}
+            >
+              <Form.Item
+                label={`Subject`}
+                name={`title`}
+                rules={[{ required: true, message: "제목을 입력해 주세요." }]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label={`Content`}
+                name={`content`}
+                rules={[{ required: true, message: "본문을 입력해 주세요." }]}
+              >
+                <Input />
+              </Form.Item>
+              {/* <Form.Item label={`Type`} name={`type`}>
+                    <Select>
+                      {communityTypes &&
+                        communityTypes.map((data) => {
+                          return (
+                            <Select.Option value={data.id}>
+                              {data.value}
+                            </Select.Option>
+                          );
+                        })}
+                    </Select>
+                  </Form.Item> */}
+              {/* review 고정 */}
+              <Form.Item label={`file`}>
+                <input
+                  type="file"
+                  name="file"
+                  accept=".png, .jpg"
+                  hidden
+                  ref={fileRef}
+                  onChange={fileChangeHandler}
+                />
+
+                <Button
+                  type={`primary`}
+                  size={`small`}
+                  onClick={fileUploadClick}
+                >
+                  FILE UPLOAD
+                </Button>
+              </Form.Item>
+              <Form.Item label={`image`}>
+                <Image
+                  width={`100px`}
+                  src={filePath ? filePath : updateData && updateData.file}
+                />
+              </Form.Item>
+            </Form>
           </Modal>
         </WholeWrapper>
       </ClientLayout>
