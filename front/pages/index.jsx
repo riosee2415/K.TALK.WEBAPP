@@ -572,9 +572,6 @@ const Home = ({}) => {
                 <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 20px`}>
                   <Text fontSize={`24px`} fontWeight={`700`}>
                     Student's Review
-                    <SpanText col or={Theme.red_C}>
-                      .
-                    </SpanText>
                   </Text>
                   {me && <CommonButton onClick={modalOpen}>Write</CommonButton>}
                 </Wrapper>
@@ -612,7 +609,7 @@ const Home = ({}) => {
                     })
                   )}
                 </Wrapper>
-                <Wrapper>
+                <Wrapper margin={`20px 0 0`}>
                   <Pagination
                     defaultCurrent={1}
                     current={parseInt(currentPage)}
@@ -622,11 +619,11 @@ const Home = ({}) => {
                 </Wrapper>
               </Wrapper>
               <Modal
-                title={`게시판 작성하기`}
+                title={`Write`}
                 visible={createModal}
                 onOk={formFinishBoard}
                 onCancel={modalClose}
-                width={`700px`}
+                width={`900px`}
               >
                 <Form
                   form={form}
@@ -640,7 +637,7 @@ const Home = ({}) => {
                   <Form.Item label={`Content`} name={`content`}>
                     <ToastEditorComponent6
                       action={getEditContent}
-                      placeholder="내용을 입력해주세요."
+                      placeholder="Please write a comment."
                     />
                   </Form.Item>
                   {/* <Form.Item label={`Type`} name={`type`}>
@@ -656,7 +653,7 @@ const Home = ({}) => {
                     </Select>
                   </Form.Item> */}
                   {/* review 고정 */}
-                  <Form.Item label={`file`}>
+                  <Form.Item label={`File`}>
                     <input
                       type="file"
                       name="file"
