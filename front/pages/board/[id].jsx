@@ -198,6 +198,7 @@ const BoardDetail = () => {
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
   );
+  const { me } = useSelector((state) => state.user);
 
   const { st_appCreateDone, st_appCreateError } = useSelector(
     (state) => state.app
@@ -424,6 +425,10 @@ const BoardDetail = () => {
     }
   }, [st_communityCommentDeleteError]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [router.query]);
+
   ////// TOGGLE //////
 
   const commentSubmit = useCallback(
@@ -535,13 +540,25 @@ const BoardDetail = () => {
     [updateModal]
   );
 
-  const updateToggle = useCallback((data) => {
-    setUpdateCommentModal((prev) => !prev);
-    setUpdateData(data);
-    dispatch({
-      type: FILE_INIT,
-    });
-  }, []);
+  const updateToggle = useCallback(
+    (data) => {
+      setUpdateCommentModal((prev) => !prev);
+      setUpdateData(data);
+
+      dispatch({
+        type: FILE_INIT,
+      });
+      if (!updateCommentModal) {
+        setTimeout(() => {
+          updateForm.setFieldsValue({
+            title: data.title,
+            content: data.content,
+          });
+        }, 500);
+      }
+    },
+    [updateCommentModal]
+  );
 
   const updateCommentFormSubmit = useCallback(() => {
     updateCommentForm.submit();
@@ -672,50 +689,122 @@ const BoardDetail = () => {
                 {communityDetail && communityDetail.title}
               </Text>
               <Wrapper dr={`row`} ju={`space-between`}>
-                <Wrapper
-                  dr={`row`}
-                  width={`auto`}
-                  fontSize={`16px`}
-                  color={Theme.subTheme11_C}
-                  ju={`flex-start`}
-                >
-                  <Text margin={`0 20px 0 0`}>
-                    Writer :&nbsp;{communityDetail && communityDetail.username}
-                  </Text>
-                  <Text margin={`0 20px 0 0`}>
-                    Date time :&nbsp;
-                    {communityDetail &&
-                      moment(communityDetail.createdAt).format("YYYY-MM-DD")}
-                  </Text>
-                  <Text>
-                    View :&nbsp;{communityDetail && communityDetail.hit}
-                  </Text>
-                </Wrapper>
-                <Wrapper dr={`row`} width={`auto`} padding={`0 10px 0 0`}>
-                  {communityDetail && (
-                    <Button
-                      size={`small`}
-                      type={`primary`}
-                      onClick={() => updateToggle(communityDetail)}
-                    >
-                      edit
-                    </Button>
+                {width > 800 ? (
+                  <Wrapper
+                    dr={`row`}
+                    width={`auto`}
+                    fontSize={`16px`}
+                    color={Theme.subTheme11_C}
+                    ju={`flex-start`}
+                  >
+                    <Text margin={`0 20px 0 0`}>
+                      Writer :&nbsp;
+                      {communityDetail && communityDetail.username}
+                    </Text>
+                    <Text margin={`0 20px 0 0`}>
+                      Date time :&nbsp;
+                      {communityDetail &&
+                        moment(communityDetail.createdAt).format("YYYY-MM-DD")}
+                    </Text>
+                    <Text>
+                      View :&nbsp;{communityDetail && communityDetail.hit}
+                    </Text>
+                  </Wrapper>
+                ) : (
+                  <Wrapper
+                    fontSize={`16px`}
+                    color={Theme.subTheme11_C}
+                    ju={`flex-start`}
+                  >
+                    <Wrapper dr={`row`} margin={`0 0 10px`}>
+                      <Wrapper width={`50%`} al={`flex-start`}>
+                        Writer :&nbsp;
+                        {communityDetail && communityDetail.username}
+                      </Wrapper>
+                      <Wrapper width={`50%`} al={`flex-start`}>
+                        {" "}
+                        Date time :&nbsp;
+                        {communityDetail &&
+                          moment(communityDetail.createdAt).format(
+                            "YYYY-MM-DD"
+                          )}
+                      </Wrapper>
+                    </Wrapper>
+                    <Wrapper dr={`row`}>
+                      <Wrapper width={`50%`} al={`flex-start`}>
+                        {" "}
+                        View :&nbsp;{communityDetail && communityDetail.hit}
+                      </Wrapper>
+                      <Wrapper width={`50%`} al={`flex-start`}>
+                        {communityDetail &&
+                          me &&
+                          communityDetail.UserId == me.id && (
+                            <Wrapper
+                              dr={`row`}
+                              width={`auto`}
+                              padding={`0 10px 0 0`}
+                            >
+                              {communityDetail && (
+                                <Button
+                                  size={`small`}
+                                  type={`primary`}
+                                  onClick={() => updateToggle(communityDetail)}
+                                >
+                                  edit
+                                </Button>
+                              )}
+                              &nbsp;
+                              {communityDetail && (
+                                <Popconfirm
+                                  placement="bottomRight"
+                                  title={`삭제하시겠습니까?`}
+                                  okText="Delete"
+                                  cancelText="Cancel"
+                                  onConfirm={() =>
+                                    deleteHandler(communityDetail)
+                                  }
+                                >
+                                  <Button size={`small`} type={`danger`}>
+                                    delete
+                                  </Button>
+                                </Popconfirm>
+                              )}
+                            </Wrapper>
+                          )}
+                      </Wrapper>
+                    </Wrapper>
+                  </Wrapper>
+                )}
+                {width > 800 &&
+                  communityDetail &&
+                  me &&
+                  communityDetail.UserId == me.id && (
+                    <Wrapper dr={`row`} width={`auto`} padding={`0 10px 0 0`}>
+                      {communityDetail && (
+                        <Button
+                          size={`small`}
+                          type={`primary`}
+                          onClick={() => updateToggle(communityDetail)}
+                        >
+                          edit
+                        </Button>
+                      )}
+                      &nbsp;
+                      {communityDetail && (
+                        <Popconfirm
+                          placement="bottomRight"
+                          title={`삭제하시겠습니까?`}
+                          okText="Delete"
+                          cancelText="Cancel"
+                          onConfirm={() => deleteHandler(communityDetail)}
+                        >
+                          <Button size={`small`} type={`danger`}>
+                            delete
+                          </Button>
+                        </Popconfirm>
+                      )}
+                    </Wrapper>
                   )}
-                  &nbsp;
-                  {communityDetail && (
-                    <Popconfirm
-                      placement="bottomRight"
-                      title={`삭제하시겠습니까?`}
-                      okText="Delete"
-                      cancelText="Cancel"
-                      onConfirm={() => deleteHandler(communityDetail)}
-                    >
-                      <Button size={`small`} type={`danger`}>
-                        delete
-                      </Button>
-                    </Popconfirm>
-                  )}
-                </Wrapper>
               </Wrapper>
             </Wrapper>
             <Wrapper>
@@ -724,36 +813,64 @@ const BoardDetail = () => {
                 communityDetail.file !== "" && (
                   <Image src={communityDetail.file} />
                 )}
-              <Wrapper
-                margin={
-                  communityDetail &&
-                  communityDetail.file &&
-                  communityDetail.file !== ""
-                    ? `60px 0 80px`
-                    : `0px 0 80px`
-                }
-                al={`flex-start`}
-                ju={`flex-start`}
-                color={Theme.black_2C}
-                minHeight={`120px`}
-              >
-                {communityDetail &&
-                  communityDetail.content.split(`\n`).map((data) => {
-                    return (
-                      <SpanText>
-                        {data}
-                        <br />
-                      </SpanText>
-                    );
-                  })}
-              </Wrapper>
+              {width < 800 ? (
+                <Wrapper
+                  margin={
+                    communityDetail &&
+                    communityDetail.file &&
+                    communityDetail.file !== ""
+                      ? `20px 0 30px`
+                      : `0px 0 30px`
+                  }
+                  al={`flex-start`}
+                  ju={`flex-start`}
+                  color={Theme.black_2C}
+                  minHeight={`120px`}
+                >
+                  {communityDetail &&
+                    communityDetail.content.split(`\n`).map((data) => {
+                      return (
+                        <SpanText>
+                          {data}
+                          <br />
+                        </SpanText>
+                      );
+                    })}
+                </Wrapper>
+              ) : (
+                <Wrapper
+                  margin={
+                    communityDetail &&
+                    communityDetail.file &&
+                    communityDetail.file !== ""
+                      ? `60px 0 80px`
+                      : `0px 0 80px`
+                  }
+                  al={`flex-start`}
+                  ju={`flex-start`}
+                  color={Theme.black_2C}
+                  minHeight={`120px`}
+                >
+                  {communityDetail &&
+                    communityDetail.content.split(`\n`).map((data) => {
+                      return (
+                        <SpanText>
+                          {data}
+                          <br />
+                        </SpanText>
+                      );
+                    })}
+                </Wrapper>
+              )}
             </Wrapper>
             <CommonButton
               kindOf={`subTheme12`}
-              width={`140px`}
-              height={`50px`}
-              fontSize={`18px`}
+              width={width < 800 ? `80px` : `140px`}
+              height={width < 800 ? `30px` : `50px`}
+              fontSize={width < 800 ? `14px` : `18px`}
+              padding={`0`}
               onClick={() => moveLinkHandler(`/`)}
+              margin={`0 0 30px`}
             >
               Go back
             </CommonButton>
@@ -771,15 +888,16 @@ const BoardDetail = () => {
                   <TextArea
                     width={`100%`}
                     height={`115px`}
-                    margin={`0 0 20px`}
                     placeholder={`Please write a comment.`}
                   />
                 </FormItem>
                 <Wrapper al={`flex-end`}>
                   <CommonButton
                     htmlType={`submit`}
-                    width={`140px`}
-                    height={`50px`}
+                    width={width < 800 ? `80px` : `140px`}
+                    height={width < 800 ? `30px` : `50px`}
+                    fontSize={width < 800 ? `14px` : `18px`}
+                    padding={`0`}
                   >
                     Write
                   </CommonButton>
@@ -827,35 +945,41 @@ const BoardDetail = () => {
                             width={`auto`}
                             margin={`0 0 10px`}
                           >
-                            <HoverText
-                              onClick={() => openRecommentToggle(data)}
-                            >
-                              Reple
-                            </HoverText>
-                            &nbsp;|&nbsp;
+                            {me && (
+                              <>
+                                <HoverText
+                                  onClick={() => openRecommentToggle(data)}
+                                >
+                                  Reple
+                                </HoverText>
+                                &nbsp;|&nbsp;
+                              </>
+                            )}
                             <HoverText
                               onClick={() => getCommentHandler(data.id)}
                             >
                               More comments +
                             </HoverText>
                           </Wrapper>
-                          <Wrapper dr={`row`} width={`auto`}>
-                            <HoverText
-                              onClick={() => updateCommentToggle(data)}
-                            >
-                              Edit
-                            </HoverText>
-                            &nbsp;|&nbsp;
-                            <Popconfirm
-                              placement="bottomRight"
-                              title={`삭제하시겠습니까?`}
-                              okText="Delete"
-                              cancelText="Cancel"
-                              onConfirm={() => deleteCommentHandler(data)}
-                            >
-                              <HoverText>Delete</HoverText>
-                            </Popconfirm>
-                          </Wrapper>
+                          {me && data.UserId === me.id && (
+                            <Wrapper dr={`row`} width={`auto`}>
+                              <HoverText
+                                onClick={() => updateCommentToggle(data)}
+                              >
+                                Edit
+                              </HoverText>
+                              &nbsp;|&nbsp;
+                              <Popconfirm
+                                placement="bottomRight"
+                                title={`삭제하시겠습니까?`}
+                                okText="Delete"
+                                cancelText="Cancel"
+                                onConfirm={() => deleteCommentHandler(data)}
+                              >
+                                <HoverText>Delete</HoverText>
+                              </Popconfirm>
+                            </Wrapper>
+                          )}
                         </Wrapper>
                       </Wrapper>
                       {data.content}
@@ -914,33 +1038,40 @@ const BoardDetail = () => {
                                 </Text>
                               </Wrapper>
                               <Wrapper width={`auto`} al={`flex-end`}>
-                                <HoverText
-                                  margin={`0 0 10px`}
-                                  onClick={() => openRecommentToggle(v)}
-                                >
-                                  Reple
-                                </HoverText>
-                                {v.isDelete === 0 && (
-                                  <Wrapper dr={`row`} width={`auto`}>
-                                    <HoverText
-                                      onClick={() =>
-                                        updateCommentToggle(v, true)
-                                      }
-                                    >
-                                      Edit
-                                    </HoverText>
-                                    &nbsp;|&nbsp;
-                                    <Popconfirm
-                                      placement="bottomRight"
-                                      title={`삭제하시겠습니까?`}
-                                      okText="Delete"
-                                      cancelText="Cancel"
-                                      onConfirm={() => deleteCommentHandler(v)}
-                                    >
-                                      <HoverText>Delete</HoverText>
-                                    </Popconfirm>
-                                  </Wrapper>
+                                {me && (
+                                  <HoverText
+                                    margin={`0 0 10px`}
+                                    onClick={() => openRecommentToggle(v)}
+                                  >
+                                    Reple
+                                  </HoverText>
                                 )}
+
+                                {v.isDelete === 0 &&
+                                  me &&
+                                  v.idOfUser === me.id && (
+                                    <Wrapper dr={`row`} width={`auto`}>
+                                      <HoverText
+                                        onClick={() =>
+                                          updateCommentToggle(v, true)
+                                        }
+                                      >
+                                        Edit
+                                      </HoverText>
+                                      &nbsp;|&nbsp;
+                                      <Popconfirm
+                                        placement="bottomRight"
+                                        title={`삭제하시겠습니까?`}
+                                        okText="Delete"
+                                        cancelText="Cancel"
+                                        onConfirm={() =>
+                                          deleteCommentHandler(v)
+                                        }
+                                      >
+                                        <HoverText>Delete</HoverText>
+                                      </Popconfirm>
+                                    </Wrapper>
+                                  )}
                               </Wrapper>
                             </Wrapper>
 
