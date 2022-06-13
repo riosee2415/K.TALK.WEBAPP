@@ -904,6 +904,7 @@ const BoardDetail = () => {
                 </Wrapper>
               </Wrapper>
             </FormTag>
+
             {/* 댓글 */}
 
             {communityComment && communityComment.length === 0 ? (
