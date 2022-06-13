@@ -24,7 +24,7 @@ const AppFooter = () => {
             K-talk Live
           </Text>
           <Text fontSize={width < 800 ? `15px` : `18px`} fontWeight={`300`}>
-            Powered by Jeju Korean Language School
+            Powered by Jeju Korean Language Center
           </Text>
           <Text fontWeight={`300`} margin={`20px 0 0`}>
             Original page : jejuklc.com

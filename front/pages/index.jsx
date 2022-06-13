@@ -34,6 +34,8 @@ import {
   COMMUNITY_TYPE_LIST_REQUEST,
   COMMUNITY_UPLOAD_REQUEST,
   FILE_INIT,
+  CREATE_MODAL_CLOSE_REQUEST,
+  CREATE_MODAL_OPEN_REQUEST,
 } from "../reducers/community";
 import {
   Button,
@@ -42,9 +44,11 @@ import {
   Input,
   message,
   Modal,
+  notification,
   Pagination,
   Select,
 } from "antd";
+import ToastEditorComponent6 from "../components/editor/ToastEditorComponent6";
 
 const Box = styled(Wrapper)`
   align-items: flex-start;
@@ -74,6 +78,14 @@ const Box = styled(Wrapper)`
   }
 `;
 
+const LoadNotification = (msg, content) => {
+  notification.open({
+    message: msg,
+    description: content,
+    onClick: () => {},
+  });
+};
+
 const Home = ({}) => {
   const width = useWidth();
   ////// GLOBAL STATE //////
@@ -87,13 +99,14 @@ const Home = ({}) => {
   ////// REDUX //////
   const dispatch = useDispatch();
   const [form] = Form.useForm();
-  const { communityList, communityMaxLength } = useSelector(
+  const { communityList, communityMaxLength, createModal } = useSelector(
     (state) => state.community
   );
   const { me } = useSelector((state) => state.user);
   const [modalView, setModalView] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
+  const [contentData, setContentData] = useState("");
   const {
     communityTypes,
     st_communityCreateDone,
@@ -132,6 +145,18 @@ const Home = ({}) => {
     }
   }, [st_communityCreateError]);
   ////// TOGGLE //////
+
+  const modalOpen = useCallback(() => {
+    dispatch({
+      type: CREATE_MODAL_OPEN_REQUEST,
+    });
+  }, []);
+  const modalClose = useCallback(() => {
+    dispatch({
+      type: CREATE_MODAL_CLOSE_REQUEST,
+    });
+    form.resetFields();
+  }, []);
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
@@ -143,23 +168,21 @@ const Home = ({}) => {
 
   const onSubmitBoard = useCallback(
     (data) => {
+      if (!contentData || contentData.trim() === "") {
+        return message.error("Please click the Save button");
+      }
       dispatch({
         type: COMMUNITY_CREATE_REQUEST,
         data: {
           title: data.title,
-          content: data.content,
+          content: contentData,
           type: 2,
           file: filePath,
         },
       });
     },
-    [filePath]
+    [filePath, contentData]
   );
-
-  const modalClose = useCallback(() => {
-    setModalView(false);
-    form.resetFields();
-  }, [form]);
 
   const fileUploadClick = useCallback(() => {
     fileRef.current.click();
@@ -194,6 +217,10 @@ const Home = ({}) => {
       },
     });
   }, []);
+
+  const getEditContent = (contentValue) => {
+    setContentData(contentValue);
+  };
   ////// DATAVIEW //////
 
   return (
@@ -416,7 +443,7 @@ const Home = ({}) => {
                     >
                       |
                     </SpanText>
-                    US $162 for 4 weeks (12 sessions over 4 weeks)
+                    US $144 for 4 weeks (12 sessions over 4 weeks)
                     <SpanText
                       fontSize={width < 800 ? `12px` : `15px`}
                       margin={`0 10px`}
@@ -544,13 +571,12 @@ const Home = ({}) => {
               <Wrapper al={`flex-start`} ju={`flex-start`} margin={`110px 0 0`}>
                 <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 20px`}>
                   <Text fontSize={`24px`} fontWeight={`700`}>
-                    BOARD<SpanText color={Theme.red_C}>.</SpanText>
+                    Student's Review
+                    <SpanText col or={Theme.red_C}>
+                      .
+                    </SpanText>
                   </Text>
-                  {me && (
-                    <CommonButton onClick={() => setModalView(true)}>
-                      작성하기
-                    </CommonButton>
-                  )}
+                  {me && <CommonButton onClick={modalOpen}>Write</CommonButton>}
                 </Wrapper>
                 <Wrapper dr={`row`} ju={`flex-start`}>
                   {communityList && communityList.length === 0 ? (
@@ -597,9 +623,10 @@ const Home = ({}) => {
               </Wrapper>
               <Modal
                 title={`게시판 작성하기`}
-                visible={modalView}
+                visible={createModal}
                 onOk={formFinishBoard}
                 onCancel={modalClose}
+                width={`700px`}
               >
                 <Form
                   form={form}
@@ -607,11 +634,14 @@ const Home = ({}) => {
                   wrapperCol={{ span: 20 }}
                   onFinish={onSubmitBoard}
                 >
-                  <Form.Item label={`Subject`} name={`title`}>
+                  <Form.Item label={`Title`} name={`title`}>
                     <Input />
                   </Form.Item>
                   <Form.Item label={`Content`} name={`content`}>
-                    <Input />
+                    <ToastEditorComponent6
+                      action={getEditContent}
+                      placeholder="내용을 입력해주세요."
+                    />
                   </Form.Item>
                   {/* <Form.Item label={`Type`} name={`type`}>
                     <Select>

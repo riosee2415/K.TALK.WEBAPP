@@ -46,6 +46,8 @@ import {
   FILE_INIT,
   COMMUNITY_DELETE_REQUEST,
 } from "../../../../reducers/community";
+import ToastEditorComponent5 from "../../../../components/editor/ToastEditorComponent5";
+import ToastEditorComponent6 from "../../../../components/editor/ToastEditorComponent6";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -325,17 +327,23 @@ const NoticeList = ({ router }) => {
 
   const onSubmit = useCallback(
     (value) => {
+      if (!contentData || contentData.trim() === "") {
+        return LoadNotification(
+          "ADMIN SYSTEM ERROR",
+          "작성하기 버튼을 눌러주세요."
+        );
+      }
       dispatch({
         type: COMMUNITY_CREATE_REQUEST,
         data: {
           title: value.title,
-          content: value.content,
+          content: contentData,
           file: filePath,
           type: value.type,
         },
       });
     },
-    [filePath]
+    [filePath, contentData]
   );
 
   const onSubmitUpdate = useCallback(
@@ -345,13 +353,13 @@ const NoticeList = ({ router }) => {
         data: {
           id: updateData.id,
           title: value.title,
-          content: value.content,
+          content: contentData,
           file: filePath ? filePath : updateData.file,
           type: value.type,
         },
       });
     },
-    [filePath, updateData]
+    [filePath, updateData, contentData]
   );
 
   const createModalOk = useCallback(() => {
@@ -412,6 +420,11 @@ const NoticeList = ({ router }) => {
     },
     [currentListType]
   );
+
+  const getEditContent = (contentValue) => {
+    setContentData(contentValue);
+  };
+
   ////// DATAVIEW //////
   const columns = [
     {
@@ -564,11 +577,17 @@ const NoticeList = ({ router }) => {
               label="본문"
               rules={[{ required: true, message: "본문을 입력해 주세요." }]}
             >
-              <Input.TextArea
-                allowClear
-                placeholder="Content..."
-                autoSize={{ minRows: 10, maxRows: 10 }}
-              />
+              {updateData ? (
+                <ToastEditorComponent5
+                  action={getEditContent}
+                  updateData={updateData}
+                />
+              ) : (
+                <ToastEditorComponent6
+                  action={getEditContent}
+                  placeholder="내용을 입력해주세요."
+                />
+              )}
             </Form.Item>
 
             <Form.Item>

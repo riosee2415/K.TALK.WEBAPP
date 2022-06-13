@@ -1,0 +1,124 @@
+import React, {
+  useState,
+  forwardRef,
+  useRef,
+  useCallback,
+  useEffect,
+} from "react";
+import dynamic from "next/dynamic";
+import "@toast-ui/editor/dist/toastui-editor.css";
+import { Button } from "antd";
+import { Wrapper } from "../commonComponents";
+import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import backURL from "../../config/config";
+import axios from "axios";
+
+const EditorWrapper = styled(Wrapper)`
+  & > div {
+    width: 100%;
+  }
+
+  & > div {
+    height: 500px !important;
+  }
+`;
+
+const Editor = dynamic(() => import("./WrappedEditor"), { ssr: false });
+// 2. Pass down to child components using forwardRef
+const EditorWithForwardedRef = React.forwardRef((props, ref) => (
+  <Editor {...props} forwardedRef={ref} />
+));
+
+const ToastEditorComponent5 = (props) => {
+  const dispatch = useDispatch();
+  const { heightMin, onChange } = props;
+  const { createModal } = useSelector((state) => state.community);
+
+  const [value, setValue] = useState(null);
+
+  const editorRef = useRef(null);
+
+  useEffect(() => {
+    if (createModal) {
+      setTimeout(() => {
+        setValue(props.updateData.content);
+      }, 500);
+    }
+    if (!createModal) {
+      setValue(null);
+    }
+  }, [props.updateData, value, createModal]);
+
+  const handleChange = useCallback(() => {
+    if (!editorRef.current) {
+      return;
+    }
+
+    const instance = editorRef.current.getInstance();
+    onChange(instance.getHTML()); // maximum call stack error at the moment(2021.07.02)
+  }, [editorRef, onChange]);
+
+  const uploadImage = useCallback(async (blob) => {
+    const formData = new FormData();
+
+    formData.append("image", blob);
+    formData.append("path", "issue");
+
+    const result = await axios.post(`${backURL}/api/edit/image`, formData);
+
+    return result.data.path;
+  }, []);
+
+  const getContentInEditor = () => {
+    props.action(editorRef.current.getInstance().getHTML());
+    return editorRef.current.getInstance().getHTML();
+  };
+
+  return (
+    <>
+      <EditorWrapper margin="20px 0px">
+        {value ? (
+          <EditorWithForwardedRef
+            {...props}
+            placeholder={props.placeholder || "내용을 입력해주세요."}
+            previewStyle="vertical"
+            setHeight="600px"
+            initialEditType="wysiwyg"
+            //   initialEditType="markdown"
+            useCommandShortcut={true}
+            ref={editorRef}
+            hideModeSwitch={true}
+            initialValue={value}
+            hooks={{
+              addImageBlobHook: async (blob, callback) => {
+                const uploadedImageURL = await uploadImage(blob);
+                callback(uploadedImageURL, "alt text");
+                return false;
+              },
+            }}
+            events={{
+              load: function (param) {
+                setEditor(param);
+              },
+              change: handleChange,
+              keydown: function (editorType, event) {
+                if (event.which === 13 && tributeRef.current.isActive) {
+                  return false;
+                }
+              },
+            }}
+          />
+        ) : null}
+      </EditorWrapper>
+
+      <Wrapper margin="10px 0px" dr="row" ju="flex-end">
+        <Button type="primary" onClick={getContentInEditor}>
+          SAVE
+        </Button>
+      </Wrapper>
+    </>
+  );
+};
+
+export default ToastEditorComponent5;

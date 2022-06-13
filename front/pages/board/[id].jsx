@@ -52,8 +52,11 @@ import {
   COMMUNITY_DETAIL_REQUEST,
   COMMUNITY_UPDATE_REQUEST,
   COMMUNITY_UPLOAD_REQUEST,
+  CREATE_MODAL_CLOSE_REQUEST,
+  CREATE_MODAL_OPEN_REQUEST,
   FILE_INIT,
 } from "../../reducers/community";
+import ToastEditorComponent5 from "../../components/editor/ToastEditorComponent5";
 
 const Icon = styled(Wrapper)`
   height: 1px;
@@ -193,6 +196,11 @@ const FormItem = styled(Form.Item)`
   width: 100%;
 `;
 
+const WordbreakText = styled(Text)`
+  width: 100%;
+  word-wrap: break-all;
+`;
+
 const BoardDetail = () => {
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
@@ -221,6 +229,7 @@ const BoardDetail = () => {
     st_communityCommentDeleteDone,
     st_communityCommentDeleteError,
     filePath,
+    createModal,
   } = useSelector((state) => state.community);
 
   ////// HOOKS //////
@@ -243,6 +252,7 @@ const BoardDetail = () => {
 
   const [updateCommentModal, setUpdateCommentModal] = useState(false); // 댓글 수정
   const [updateCommentData, setUpdateCommentData] = useState(false);
+  const [contentData, setContentData] = useState("");
 
   const fileRef = useRef();
   ////// REDUX //////
@@ -476,6 +486,10 @@ const BoardDetail = () => {
 
   ////// HANDLER //////
 
+  const getEditContent = (contentValue) => {
+    setContentData(contentValue);
+  };
+
   const fileUploadClick = useCallback(() => {
     fileRef.current.click();
   }, [fileRef.current]);
@@ -548,16 +562,23 @@ const BoardDetail = () => {
       dispatch({
         type: FILE_INIT,
       });
-      if (!updateCommentModal) {
+      if (!createModal) {
         setTimeout(() => {
           updateForm.setFieldsValue({
             title: data.title,
             content: data.content,
           });
         }, 500);
+        dispatch({
+          type: CREATE_MODAL_OPEN_REQUEST,
+        });
+      } else {
+        dispatch({
+          type: CREATE_MODAL_CLOSE_REQUEST,
+        });
       }
     },
-    [updateCommentModal]
+    [createModal]
   );
 
   const updateCommentFormSubmit = useCallback(() => {
@@ -583,18 +604,21 @@ const BoardDetail = () => {
 
   const updateFormFinish = useCallback(
     (data) => {
+      if (!contentData || contentData.trim() === "") {
+        return message.error("Please click the Save button");
+      }
       dispatch({
         type: COMMUNITY_UPDATE_REQUEST,
         data: {
           id: updateData.id,
           title: data.title,
-          content: data.content,
+          content: contentData,
           file: filePath ? filePath : updateData.file,
           type: updateData.CommunityTypeId,
         },
       });
     },
-    [updateData, filePath]
+    [updateData, filePath, contentData]
   );
 
   const deleteCommentHandler = useCallback((data) => {
@@ -851,15 +875,11 @@ const BoardDetail = () => {
                   color={Theme.black_2C}
                   minHeight={`120px`}
                 >
-                  {communityDetail &&
-                    communityDetail.content.split(`\n`).map((data) => {
-                      return (
-                        <SpanText>
-                          {data}
-                          <br />
-                        </SpanText>
-                      );
-                    })}
+                  <WordbreakText
+                    dangerouslySetInnerHTML={{
+                      __html: communityDetail && communityDetail.content,
+                    }}
+                  ></WordbreakText>
                 </Wrapper>
               )}
             </Wrapper>
@@ -1150,7 +1170,7 @@ const BoardDetail = () => {
 
           <Modal
             title={`update review`}
-            visible={updateCommentModal}
+            visible={createModal}
             onCancel={updateToggle}
             onOk={updateFormSubmit}
           >
@@ -1161,7 +1181,7 @@ const BoardDetail = () => {
               onFinish={updateFormFinish}
             >
               <Form.Item
-                label={`Subject`}
+                label={`Title`}
                 name={`title`}
                 rules={[{ required: true, message: "제목을 입력해 주세요." }]}
               >
@@ -1172,7 +1192,10 @@ const BoardDetail = () => {
                 name={`content`}
                 rules={[{ required: true, message: "본문을 입력해 주세요." }]}
               >
-                <Input />
+                <ToastEditorComponent5
+                  action={getEditContent}
+                  updateData={updateData}
+                />
               </Form.Item>
               {/* <Form.Item label={`Type`} name={`type`}>
                     <Select>

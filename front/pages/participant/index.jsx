@@ -641,7 +641,7 @@ const Index = () => {
                   fontSize={width < 1100 ? `12px` : `17px`}
                   margin={width < 1100 ? `0 0 10px` : `0`}
                 >
-                  U$162 / 4 weeks (12 sessions over 4 weeks)
+                  U$144 / 4 weeks (12 sessions over 4 weeks)
                 </Text>
                 {width > 1100 && (
                   <Wrapper
