@@ -952,7 +952,13 @@ const BoardDetail = () => {
                         margin={`0 0 13px`}
                       >
                         <Text fontSize={`18px`} fontWeight={`700`}>
-                          {data.username}
+                          {data.username}(
+                          {data.level === 1
+                            ? `student`
+                            : data.level === 2
+                            ? `teacher`
+                            : `admin`}
+                          )
                           <SpanText
                             fontSize={`16px`}
                             fontWeight={`400`}
