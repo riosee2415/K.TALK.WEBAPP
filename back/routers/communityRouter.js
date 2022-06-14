@@ -345,7 +345,12 @@ router.get("/detail/:communityId", async (req, res, next) => {
             B.userId,
             B.profileImage,
             B.username,
-            B.level
+            B.level,
+            (
+              SELECT	COUNT(cc.id)
+                FROM	communityComments	cc
+               WHERE	cc.parentId = A.id
+            )   AS commentCnt
       FROM	communityComments		A
      INNER
       JOIN	users 					B

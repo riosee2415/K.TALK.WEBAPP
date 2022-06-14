@@ -979,7 +979,7 @@ const BoardDetail = () => {
                               </>
                             )}
                             {console.log(data)}
-                            {data.commentLength === 0 && (
+                            {data.commentCnt !== 0 && (
                               <HoverText
                                 onClick={() => getCommentHandler(data.id)}
                               >
