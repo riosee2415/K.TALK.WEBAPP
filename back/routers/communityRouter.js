@@ -355,6 +355,7 @@ router.get("/detail/:communityId", async (req, res, next) => {
               SELECT	COUNT(cc.id)
                 FROM	communityComments	cc
                WHERE	cc.grantparentId = A.id
+                 AND  cc.isDelete = FALSE
             )   AS commentCnt
       FROM	communityComments		A
      INNER
