@@ -710,9 +710,8 @@ const BoardDetail = () => {
               al={`flex-start`}
               bgColor={Theme.lightGrey2_C}
               borderTop={`2px solid ${Theme.black_4C} `}
-              padding={`0 0 0 30px`}
+              padding={`30px 0 30px 30px`}
               margin={`0 0 40px`}
-              height={`140px`}
             >
               <Text
                 margin={`0 0 20px`}
@@ -861,15 +860,11 @@ const BoardDetail = () => {
                   color={Theme.black_2C}
                   minHeight={`120px`}
                 >
-                  {communityDetail &&
-                    communityDetail.content.split(`\n`).map((data) => {
-                      return (
-                        <SpanText>
-                          {data}
-                          <br />
-                        </SpanText>
-                      );
-                    })}
+                  <WordbreakText
+                    dangerouslySetInnerHTML={{
+                      __html: communityDetail && communityDetail.content,
+                    }}
+                  ></WordbreakText>
                 </Wrapper>
               ) : (
                 <Wrapper
@@ -994,7 +989,7 @@ const BoardDetail = () => {
                                 &nbsp;|&nbsp;
                               </>
                             )}
-                            {console.log(data.commentCnt)}
+
                             {data.commentCnt !== 0 && (
                               <HoverText
                                 onClick={() => getCommentHandler(data.id)}
