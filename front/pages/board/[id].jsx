@@ -963,7 +963,7 @@ const BoardDetail = () => {
                             : data.level === 2
                             ? `teacher`
                             : `admin`}
-                          ){data.id}
+                          )
                           <SpanText
                             fontSize={`16px`}
                             fontWeight={`400`}
