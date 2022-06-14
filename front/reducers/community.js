@@ -152,6 +152,8 @@ export const COMMUNITY_COMMENT_DELETE_SUCCESS =
 export const COMMUNITY_COMMENT_DELETE_FAILURE =
   "COMMUNITY_COMMENT_DELETE_FAILURE";
 
+export const COMMUNITY_COMMENT_LIST_INIT = "COMMUNITY_COMMENT_LIST_INIT";
+
 export const FILE_INIT = "FILE_INIT";
 
 const reducer = (state = initialState, action) =>
@@ -434,6 +436,10 @@ const reducer = (state = initialState, action) =>
       //////////////////////////////////////////////
       case FILE_INIT: {
         draft.filePath = null;
+        break;
+      }
+      case COMMUNITY_COMMENT_LIST_INIT: {
+        draft.communityCommentDetail = null;
         break;
       }
       case CREATE_MODAL_OPEN_REQUEST: {

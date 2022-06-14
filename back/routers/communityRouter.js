@@ -678,7 +678,7 @@ router.post("/comment/create", isLoggedIn, async (req, res, next) => {
       content,
       parent: parentId === null ? 0 : parseInt(dataJson.parent) + 1,
       parentId: parentId ? parentId : null,
-      grantparentId: grantparentId ? grantparentId : null,
+      grantparentId: parseInt(grantparentId),
       CommunityId: parseInt(communityId),
       UserId: parseInt(req.user.id),
     });

@@ -42,11 +42,12 @@ import { useRouter } from "next/router";
 
 import { SEO_LIST_REQUEST } from "../../reducers/seo";
 import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
-import { APP_CREATE_REQUEST } from "../../reducers/application";
+
 import {
   COMMUNITY_COMMENT_CREATE_REQUEST,
   COMMUNITY_COMMENT_DELETE_REQUEST,
   COMMUNITY_COMMENT_DETAIL_REQUEST,
+  COMMUNITY_COMMENT_LIST_INIT,
   COMMUNITY_COMMENT_UPDATE_REQUEST,
   COMMUNITY_DELETE_REQUEST,
   COMMUNITY_DETAIL_REQUEST,
@@ -253,6 +254,8 @@ const BoardDetail = () => {
   const [updateCommentModal, setUpdateCommentModal] = useState(false); // 댓글 수정
   const [updateCommentData, setUpdateCommentData] = useState(false);
   const [contentData, setContentData] = useState("");
+  const [grandData, setGrandData] = useState(null);
+  const [cocommentToggle, setCocommentToggle] = useState(null);
 
   const fileRef = useRef();
   ////// REDUX //////
@@ -292,7 +295,10 @@ const BoardDetail = () => {
       });
 
       openRecommentToggle(null);
-
+      dispatch({
+        type: COMMUNITY_COMMENT_LIST_INIT,
+      });
+      setCocommentToggle(false);
       return message.success("댓글이 등록되었습니다.");
     }
   }, [st_communityCommentCreateDone]);
@@ -449,6 +455,7 @@ const BoardDetail = () => {
           content: data.comment,
           communityId: router.query.id,
           parentId: null,
+          grantparentId: 0,
         },
       });
     },
@@ -464,16 +471,17 @@ const BoardDetail = () => {
             content: data.comment,
             communityId: router.query.id,
             parentId: currentData.id,
+            grantparentId:
+              currentData.parent === 0 ? currentData.id : grandData,
           },
         });
       }
     },
-    [router.query, currentData]
+    [router.query, currentData, grandData]
   );
 
   const openRecommentToggle = useCallback(
     (data) => {
-      console.log(data);
       if (data === null) {
         setRepleToggle(false);
       } else {
@@ -530,6 +538,8 @@ const BoardDetail = () => {
 
   const getCommentHandler = useCallback(
     (id) => {
+      setCocommentToggle(true);
+      setGrandData(id);
       dispatch({
         type: COMMUNITY_COMMENT_DETAIL_REQUEST,
         data: {
@@ -958,7 +968,7 @@ const BoardDetail = () => {
                             : data.level === 2
                             ? `teacher`
                             : `admin`}
-                          )
+                          ){data.id}
                           <SpanText
                             fontSize={`16px`}
                             fontWeight={`400`}
@@ -984,7 +994,7 @@ const BoardDetail = () => {
                                 &nbsp;|&nbsp;
                               </>
                             )}
-
+                            {console.log(data.commentCnt)}
                             {data.commentCnt !== 0 && (
                               <HoverText
                                 onClick={() => getCommentHandler(data.id)}
@@ -1019,7 +1029,8 @@ const BoardDetail = () => {
 
                     {/* 대댓글 영역 */}
 
-                    {communityCommentDetail &&
+                    {cocommentToggle &&
+                      communityCommentDetail &&
                       communityCommentDetail.length !== 0 &&
                       communityCommentDetail[0].id === data.id &&
                       communityCommentDetail.slice(1).map((v) => {
