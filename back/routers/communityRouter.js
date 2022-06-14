@@ -331,6 +331,10 @@ router.get("/detail/:communityId", async (req, res, next) => {
 
     const detailData = await models.sequelize.query(selectQuery);
 
+    if (detailData[0].length === 0) {
+      return res.status(401).send("존재하지 않는 게시글입니다.");
+    }
+
     const commentQuery = `
     SELECT	A.id,
             A.content,
@@ -367,7 +371,7 @@ router.get("/detail/:communityId", async (req, res, next) => {
       where: { isDelete: false, CommunityId: parseInt(communityId) },
     });
 
-    const nextHit = detailData[0][0].hit;
+    const nextHit = detailData[0].hit;
 
     await Community.update(
       {
