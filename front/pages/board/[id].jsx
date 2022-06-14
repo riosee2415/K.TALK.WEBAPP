@@ -197,9 +197,12 @@ const FormItem = styled(Form.Item)`
   width: 100%;
 `;
 
-const WordbreakText = styled(Text)`
+const WordbreakText = styled(Wrapper)`
   width: 100%;
   word-wrap: break-all;
+  & img {
+    max-width: 100%;
+  }
 `;
 
 const BoardDetail = () => {
@@ -701,21 +704,48 @@ const BoardDetail = () => {
 
       <ClientLayout>
         <WholeWrapper
-          bgColor={Theme.subTheme_C}
           padding={`80px 0`}
           margin={width < 700 ? `50px 0 0` : `100px 0 0`}
         >
           <RsWrapper>
+            <Wrapper al={`flex-end`} margin={`0 0 10px`}>
+              {communityDetail && me && communityDetail.UserId == me.id && (
+                <Wrapper dr={`row`} width={`auto`} padding={`0 10px 0 0`}>
+                  {communityDetail && (
+                    <Button
+                      size={`small`}
+                      type={`primary`}
+                      onClick={() => updateToggle(communityDetail)}
+                    >
+                      edit
+                    </Button>
+                  )}
+                  &nbsp;
+                  {communityDetail && (
+                    <Popconfirm
+                      placement="bottomRight"
+                      title={`삭제하시겠습니까?`}
+                      okText="Delete"
+                      cancelText="Cancel"
+                      onConfirm={() => deleteHandler(communityDetail)}
+                    >
+                      <Button size={`small`} type={`danger`}>
+                        delete
+                      </Button>
+                    </Popconfirm>
+                  )}
+                </Wrapper>
+              )}
+            </Wrapper>
             <Wrapper
               al={`flex-start`}
               bgColor={Theme.lightGrey2_C}
-              borderTop={`2px solid ${Theme.black_4C} `}
-              padding={`30px 0 30px 30px`}
-              margin={`0 0 40px`}
+              borderTop={`2px solid ${Theme.subTheme7_C}`}
+              margin={`0 0 20px`}
             >
               <Text
-                margin={`0 0 20px`}
-                fontSize={`24px`}
+                padding={`20px`}
+                fontSize={width < 900 ? `16px` : `24px`}
                 fontWeight={`700`}
                 color={Theme.subTheme11_C}
               >
@@ -725,119 +755,158 @@ const BoardDetail = () => {
                 {width > 800 ? (
                   <Wrapper
                     dr={`row`}
-                    width={`auto`}
-                    fontSize={`16px`}
+                    fontSize={width < 900 ? `13px` : `16px`}
                     color={Theme.subTheme11_C}
                     ju={`flex-start`}
+                    borderTop={`1px solid ${Theme.lightGrey3_C}`}
                   >
-                    <Text margin={`0 20px 0 0`}>
-                      Writer :&nbsp;
-                      {communityDetail && communityDetail.username}
-                    </Text>
-                    <Text margin={`0 20px 0 0`}>
-                      Date time :&nbsp;
-                      {communityDetail &&
-                        moment(communityDetail.createdAt).format("YYYY-MM-DD")}
-                    </Text>
-                    <Text>
-                      View :&nbsp;{communityDetail && communityDetail.hit}
-                    </Text>
-                  </Wrapper>
-                ) : (
-                  <Wrapper
-                    fontSize={`16px`}
-                    color={Theme.subTheme11_C}
-                    ju={`flex-start`}
-                  >
-                    <Wrapper dr={`row`} margin={`0 0 10px`}>
-                      <Wrapper width={`50%`} al={`flex-start`}>
-                        Writer :&nbsp;
-                        {communityDetail && communityDetail.username}
+                    <Wrapper
+                      dr={`row`}
+                      width={width < 900 ? `100%` : `calc(100% / 3)`}
+                    >
+                      <Wrapper
+                        width={`120px`}
+                        padding={width < 900 ? `10px 0` : `15px 0`}
+                        bgColor={Theme.lightGrey3_C}
+                      >
+                        Writer
                       </Wrapper>
-                      <Wrapper width={`50%`} al={`flex-start`}>
-                        {" "}
-                        Date time :&nbsp;
+                      <Text width={`calc(100% - 120px)`} padding={`0 0 0 15px`}>
+                        {communityDetail && communityDetail.username}
+                      </Text>
+                    </Wrapper>
+                    <Wrapper
+                      dr={`row`}
+                      width={width < 900 ? `100%` : `calc(100% / 3)`}
+                    >
+                      <Wrapper
+                        width={`120px`}
+                        padding={width < 900 ? `10px 0` : `15px 0`}
+                        bgColor={Theme.lightGrey3_C}
+                      >
+                        Date time
+                      </Wrapper>
+                      <Text width={`calc(100% - 120px)`} padding={`0 0 0 15px`}>
                         {communityDetail &&
                           moment(communityDetail.createdAt).format(
                             "YYYY-MM-DD"
                           )}
-                      </Wrapper>
+                      </Text>
                     </Wrapper>
-                    <Wrapper dr={`row`}>
-                      <Wrapper width={`50%`} al={`flex-start`}>
-                        {" "}
-                        View :&nbsp;{communityDetail && communityDetail.hit}
+                    <Wrapper
+                      dr={`row`}
+                      width={width < 900 ? `100%` : `calc(100% / 3)`}
+                    >
+                      <Wrapper
+                        width={`120px`}
+                        padding={width < 900 ? `10px 0` : `15px 0`}
+                        bgColor={Theme.lightGrey3_C}
+                      >
+                        View
                       </Wrapper>
-                      <Wrapper width={`50%`} al={`flex-start`}>
-                        {communityDetail &&
-                          me &&
-                          communityDetail.UserId == me.id && (
-                            <Wrapper
-                              dr={`row`}
-                              width={`auto`}
-                              padding={`0 10px 0 0`}
-                            >
-                              {communityDetail && (
-                                <Button
-                                  size={`small`}
-                                  type={`primary`}
-                                  onClick={() => updateToggle(communityDetail)}
-                                >
-                                  edit
-                                </Button>
-                              )}
-                              &nbsp;
-                              {communityDetail && (
-                                <Popconfirm
-                                  placement="bottomRight"
-                                  title={`삭제하시겠습니까?`}
-                                  okText="Delete"
-                                  cancelText="Cancel"
-                                  onConfirm={() =>
-                                    deleteHandler(communityDetail)
-                                  }
-                                >
-                                  <Button size={`small`} type={`danger`}>
-                                    delete
-                                  </Button>
-                                </Popconfirm>
-                              )}
-                            </Wrapper>
-                          )}
+                      <Text width={`calc(100% - 120px)`} padding={`0 0 0 15px`}>
+                        {communityDetail && communityDetail.hit}
+                      </Text>
+                    </Wrapper>
+                  </Wrapper>
+                ) : (
+                  <Wrapper
+                    fontSize={`14px`}
+                    color={Theme.subTheme11_C}
+                    ju={`flex-start`}
+                    borderTop={`1px solid ${Theme.lightGrey3_C}`}
+                  >
+                    <Wrapper dr={`row`} margin={`0 0 10px`}>
+                      <Wrapper
+                        dr={`row`}
+                        width={width < 900 ? `100%` : `calc(100% / 3)`}
+                      >
+                        <Wrapper
+                          width={`120px`}
+                          padding={width < 900 ? `10px 0` : `15px 0`}
+                          bgColor={Theme.lightGrey3_C}
+                        >
+                          Writer
+                        </Wrapper>
+                        <Text
+                          width={`calc(100% - 120px)`}
+                          padding={`0 0 0 15px`}
+                        >
+                          {communityDetail && communityDetail.username}
+                        </Text>
+                      </Wrapper>
+                      <Wrapper
+                        dr={`row`}
+                        width={width < 900 ? `100%` : `calc(100% / 3)`}
+                      >
+                        <Wrapper
+                          width={`120px`}
+                          padding={width < 900 ? `10px 0` : `15px 0`}
+                          bgColor={Theme.lightGrey3_C}
+                        >
+                          Date time
+                        </Wrapper>
+                        <Text
+                          width={`calc(100% - 120px)`}
+                          padding={`0 0 0 15px`}
+                        >
+                          {communityDetail &&
+                            moment(communityDetail.createdAt).format(
+                              "YYYY-MM-DD"
+                            )}
+                        </Text>
+                      </Wrapper>
+                      <Wrapper
+                        dr={`row`}
+                        width={width < 900 ? `100%` : `calc(100% / 3)`}
+                      >
+                        <Wrapper
+                          width={`120px`}
+                          padding={width < 900 ? `10px 0` : `15px 0`}
+                          bgColor={Theme.lightGrey3_C}
+                        >
+                          View
+                        </Wrapper>
+                        <Text
+                          width={`calc(100% - 120px)`}
+                          padding={`0 0 0 15px`}
+                        >
+                          {communityDetail && communityDetail.hit}
+                        </Text>
                       </Wrapper>
                     </Wrapper>
                   </Wrapper>
                 )}
-                {width > 800 &&
-                  communityDetail &&
-                  me &&
-                  communityDetail.UserId == me.id && (
-                    <Wrapper dr={`row`} width={`auto`} padding={`0 10px 0 0`}>
-                      {communityDetail && (
-                        <Button
-                          size={`small`}
-                          type={`primary`}
-                          onClick={() => updateToggle(communityDetail)}
-                        >
-                          edit
+                {/* {width > 800 &&
+                communityDetail &&
+                me &&
+                communityDetail.UserId == me.id && (
+                  <Wrapper dr={`row`} width={`auto`} padding={`0 10px 0 0`}>
+                    {communityDetail && (
+                      <Button
+                        size={`small`}
+                        type={`primary`}
+                        onClick={() => updateToggle(communityDetail)}
+                      >
+                        edit
+                      </Button>
+                    )}
+                    &nbsp;
+                    {communityDetail && (
+                      <Popconfirm
+                        placement="bottomRight"
+                        title={`삭제하시겠습니까?`}
+                        okText="Delete"
+                        cancelText="Cancel"
+                        onConfirm={() => deleteHandler(communityDetail)}
+                      >
+                        <Button size={`small`} type={`danger`}>
+                          delete
                         </Button>
-                      )}
-                      &nbsp;
-                      {communityDetail && (
-                        <Popconfirm
-                          placement="bottomRight"
-                          title={`삭제하시겠습니까?`}
-                          okText="Delete"
-                          cancelText="Cancel"
-                          onConfirm={() => deleteHandler(communityDetail)}
-                        >
-                          <Button size={`small`} type={`danger`}>
-                            delete
-                          </Button>
-                        </Popconfirm>
-                      )}
-                    </Wrapper>
-                  )}
+                      </Popconfirm>
+                    )}
+                  </Wrapper>
+                )} */}
               </Wrapper>
             </Wrapper>
             <Wrapper>
@@ -861,6 +930,8 @@ const BoardDetail = () => {
                   minHeight={`120px`}
                 >
                   <WordbreakText
+                    al={`flex-start`}
+                    ju={`flex-start`}
                     dangerouslySetInnerHTML={{
                       __html: communityDetail && communityDetail.content,
                     }}
@@ -881,6 +952,8 @@ const BoardDetail = () => {
                   minHeight={`120px`}
                 >
                   <WordbreakText
+                    al={`flex-start`}
+                    ju={`flex-start`}
                     dangerouslySetInnerHTML={{
                       __html: communityDetail && communityDetail.content,
                     }}
@@ -954,18 +1027,22 @@ const BoardDetail = () => {
                       <Wrapper
                         dr={`row`}
                         ju={`space-between`}
+                        al={width < 900 ? `center` : `flex-start`}
                         margin={`0 0 13px`}
                       >
-                        <Text fontSize={`18px`} fontWeight={`700`}>
+                        <Text
+                          fontSize={width < 900 ? `15px` : `18px`}
+                          fontWeight={`700`}
+                        >
                           {data.username}(
                           {data.level === 1
-                            ? `student`
+                            ? "student"
                             : data.level === 2
-                            ? `teacher`
-                            : `admin`}
+                            ? "teacher"
+                            : "admin"}
                           )
                           <SpanText
-                            fontSize={`16px`}
+                            fontSize={width < 900 ? `13px` : `16px`}
                             fontWeight={`400`}
                             color={Theme.grey2_C}
                             margin={`0 0 0 15px`}
@@ -979,19 +1056,6 @@ const BoardDetail = () => {
                             width={`auto`}
                             margin={`0 0 10px`}
                           >
-                            {me && (
-                              <>
-                                <HoverText
-                                  onClick={() => openRecommentToggle(data)}
-                                >
-                                  Reple
-                                </HoverText>
-                                {data.commentCnt !== 0 && (
-                                  <Text>&nbsp;|&nbsp;</Text>
-                                )}
-                              </>
-                            )}
-
                             {data.commentCnt !== 0 && (
                               <HoverText
                                 onClick={() => getCommentHandler(data.id)}
@@ -999,10 +1063,22 @@ const BoardDetail = () => {
                                 More comments +
                               </HoverText>
                             )}
+                            {me && (
+                              <CommonButton
+                                padding={`0 10px`}
+                                kindOf={`black`}
+                                margin={`0 0 0 10px`}
+                                fontSize={`14px`}
+                                onClick={() => openRecommentToggle(data)}
+                              >
+                                Reple
+                              </CommonButton>
+                            )}
                           </Wrapper>
                           {me && data.UserId === me.id && (
                             <Wrapper dr={`row`} width={`auto`}>
                               <HoverText
+                                color={Theme.basicTheme_C}
                                 onClick={() => updateCommentToggle(data)}
                               >
                                 Edit
@@ -1015,7 +1091,9 @@ const BoardDetail = () => {
                                 cancelText="Cancel"
                                 onConfirm={() => deleteCommentHandler(data)}
                               >
-                                <HoverText>Delete</HoverText>
+                                <HoverText color={Theme.red_C}>
+                                  Delete
+                                </HoverText>
                               </Popconfirm>
                             </Wrapper>
                           )}
@@ -1066,17 +1144,20 @@ const BoardDetail = () => {
                                   ></Wrapper>
                                   <Icon width={`${v.lev * 10}px`}></Icon>
                                 </Wrapper>
-                                <Text fontSize={`18px`} fontWeight={`700`}>
+                                <Text
+                                  fontSize={width < 900 ? `15px` : `18px`}
+                                  fontWeight={`700`}
+                                >
                                   {v.username}(
                                   {v.level === 1
-                                    ? `student`
+                                    ? "student"
                                     : v.level === 2
-                                    ? `teacher`
-                                    : `admin`}
+                                    ? "teacher"
+                                    : "admin"}
                                   )
                                 </Text>
                                 <Text
-                                  fontSize={`16px`}
+                                  fontSize={width < 900 ? `13px` : `16px`}
                                   margin={`0 15px`}
                                   color={Theme.grey2_C}
                                 >
@@ -1149,9 +1230,7 @@ const BoardDetail = () => {
               <Wrapper padding={`10px`}>
                 <FormItem label="comment">
                   <Text>
-                    {currentData.isDelete === 1
-                      ? `삭제된 댓글입니다.`
-                      : currentData.parent === 0
+                    {currentData.parent === 0
                       ? currentData.content
                       : currentData.content.split("ㄴ")[1]}
                   </Text>
@@ -1225,17 +1304,17 @@ const BoardDetail = () => {
                 />
               </Form.Item>
               {/* <Form.Item label={`Type`} name={`type`}>
-                    <Select>
-                      {communityTypes &&
-                        communityTypes.map((data) => {
-                          return (
-                            <Select.Option value={data.id}>
-                              {data.value}
-                            </Select.Option>
-                          );
-                        })}
-                    </Select>
-                  </Form.Item> */}
+                  <Select>
+                    {communityTypes &&
+                      communityTypes.map((data) => {
+                        return (
+                          <Select.Option value={data.id}>
+                            {data.value}
+                          </Select.Option>
+                        );
+                      })}
+                  </Select>
+                </Form.Item> */}
               {/* review 고정 */}
               <Form.Item label={`file`}>
                 <input
