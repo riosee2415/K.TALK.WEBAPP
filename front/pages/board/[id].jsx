@@ -986,7 +986,9 @@ const BoardDetail = () => {
                                 >
                                   Reple
                                 </HoverText>
-                                &nbsp;|&nbsp;
+                                {data.commentCnt !== 0 && (
+                                  <Text>&nbsp;|&nbsp;</Text>
+                                )}
                               </>
                             )}
 
