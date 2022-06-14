@@ -883,17 +883,19 @@ const BoardDetail = () => {
                 </Wrapper>
               )}
             </Wrapper>
-            <CommonButton
-              kindOf={`subTheme12`}
-              width={width < 800 ? `80px` : `140px`}
-              height={width < 800 ? `30px` : `50px`}
-              fontSize={width < 800 ? `14px` : `18px`}
-              padding={`0`}
-              onClick={() => moveLinkHandler(`/`)}
-              margin={`0 0 30px`}
-            >
-              Go back
-            </CommonButton>
+            <Wrapper al={`flex-end`}>
+              <CommonButton
+                kindOf={`subTheme12`}
+                width={width < 800 ? `80px` : `140px`}
+                height={width < 800 ? `30px` : `50px`}
+                fontSize={width < 800 ? `14px` : `18px`}
+                padding={`0`}
+                onClick={() => moveLinkHandler(`/`)}
+                margin={`0 0 30px`}
+              >
+                Go back
+              </CommonButton>
+            </Wrapper>
             <FormTag form={commentForm} onFinish={commentSubmit}>
               <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 50px`}>
                 <Text
@@ -976,11 +978,14 @@ const BoardDetail = () => {
                                 &nbsp;|&nbsp;
                               </>
                             )}
-                            <HoverText
-                              onClick={() => getCommentHandler(data.id)}
-                            >
-                              More comments +
-                            </HoverText>
+                            {console.log(data)}
+                            {data.commentLength !== 0 && (
+                              <HoverText
+                                onClick={() => getCommentHandler(data.id)}
+                              >
+                                More comments +
+                              </HoverText>
+                            )}
                           </Wrapper>
                           {me && data.UserId === me.id && (
                             <Wrapper dr={`row`} width={`auto`}>
@@ -1048,7 +1053,13 @@ const BoardDetail = () => {
                                   <Icon width={`${v.lev * 10}px`}></Icon>
                                 </Wrapper>
                                 <Text fontSize={`18px`} fontWeight={`700`}>
-                                  {v.username}
+                                  {v.username}(
+                                  {v.level === 1
+                                    ? `student`
+                                    : v.level === 2
+                                    ? `teacher`
+                                    : `admin`}
+                                  )
                                 </Text>
                                 <Text
                                   fontSize={`16px`}
@@ -1124,7 +1135,9 @@ const BoardDetail = () => {
               <Wrapper padding={`10px`}>
                 <FormItem label="comment">
                   <Text>
-                    {currentData.parent === 0
+                    {currentData.isDelete === 1
+                      ? `삭제된 댓글입니다.`
+                      : currentData.parent === 0
                       ? currentData.content
                       : currentData.content.split("ㄴ")[1]}
                   </Text>
