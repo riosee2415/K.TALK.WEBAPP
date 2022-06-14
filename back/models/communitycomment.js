@@ -29,6 +29,11 @@ module.exports = class CommunityComment extends Model {
           type: DataTypes.INTEGER,
           allowNull: true,
         },
+        grantparentId: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          defaultValue: 0,
+        },
       },
       {
         modelName: "CommunityComment",

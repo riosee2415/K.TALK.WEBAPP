@@ -345,6 +345,7 @@ router.get("/detail/:communityId", async (req, res, next) => {
             DATE_FORMAT(A.createdAt, '%Y-%m-%d')  AS createdAt,
             DATE_FORMAT(A.updatedAt, '%Y-%m-%d')  AS updatedAt,
             A.CommunityId,
+            A.grantparentId,
             A.UserId,
             B.userId,
             B.profileImage,
@@ -353,7 +354,7 @@ router.get("/detail/:communityId", async (req, res, next) => {
             (
               SELECT	COUNT(cc.id)
                 FROM	communityComments	cc
-               WHERE	cc.parentId = A.id
+               WHERE	cc.grantparentId = A.id
             )   AS commentCnt
       FROM	communityComments		A
      INNER
@@ -584,6 +585,7 @@ router.post("/comment/detail", async (req, res, next) => {
                         CC.createdAt,
                         CC.CommunityId,
                         CC.isDelete,
+                        CC.grantparentId,
                         US.id			AS idOfUser,
                         US.userId,
                         US.profileImage,
@@ -606,6 +608,7 @@ router.post("/comment/detail", async (req, res, next) => {
                         A.createdAt,
                         A.CommunityId,
                         A.isDelete,
+                        A.grantparentId,
                         B.idOfUser,
                         B.userId,
                         B.profileImage,
@@ -632,7 +635,7 @@ router.post("/comment/detail", async (req, res, next) => {
 });
 
 router.post("/comment/create", isLoggedIn, async (req, res, next) => {
-  const { content, communityId, parentId } = req.body;
+  const { content, communityId, parentId, grantparentId } = req.body;
 
   if (!req.user) {
     return res.status(403).send("Please log in");
@@ -659,10 +662,23 @@ router.post("/comment/create", isLoggedIn, async (req, res, next) => {
       }
     }
 
+    let dataJson2 = {};
+
+    if (parentId !== null) {
+      dataJson2 = await CommunityComment.findOne({
+        where: { id: parseInt(grantparentId) },
+      });
+
+      if (!dataJson2) {
+        return res.status(401).send("잠시후 다시 시도하여 주십시오.");
+      }
+    }
+
     const createResult = await CommunityComment.create({
       content,
       parent: parentId === null ? 0 : parseInt(dataJson.parent) + 1,
       parentId: parentId ? parentId : null,
+      grantparentId: grantparentId ? grantparentId : null,
       CommunityId: parseInt(communityId),
       UserId: parseInt(req.user.id),
     });
