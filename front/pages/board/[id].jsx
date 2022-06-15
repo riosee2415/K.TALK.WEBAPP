@@ -58,7 +58,7 @@ import {
   FILE_INIT,
 } from "../../reducers/community";
 import ToastEditorComponent5 from "../../components/editor/ToastEditorComponent5";
-
+import { saveAs } from "file-saver";
 const Icon = styled(Wrapper)`
   height: 1px;
   background: ${Theme.darkGrey_C};
@@ -652,6 +652,21 @@ const BoardDetail = () => {
     });
   }, []);
 
+  const fileDownloadHandler = useCallback(async (filePath) => {
+    let blob = await fetch(filePath).then((r) => r.blob());
+
+    const file = new Blob([blob]);
+
+    const ext = filePath.substring(
+      filePath.lastIndexOf(".") + 1,
+      filePath.length
+    );
+
+    const originName = `첨부파일.${ext}`;
+
+    saveAs(file, originName);
+  }, []);
+
   ////// DATAVIEW //////
 
   return (
@@ -741,16 +756,26 @@ const BoardDetail = () => {
               al={`flex-start`}
               bgColor={Theme.lightGrey2_C}
               borderTop={`2px solid ${Theme.subTheme7_C}`}
-              margin={`0 0 20px`}
             >
-              <Text
-                padding={`20px`}
-                fontSize={width < 900 ? `16px` : `24px`}
-                fontWeight={`700`}
-                color={Theme.subTheme11_C}
-              >
-                {communityDetail && communityDetail.title}
-              </Text>
+              <Wrapper dr={`row`} ju={`space-between`} wrap={`nowrap`}>
+                <Text
+                  padding={`20px`}
+                  fontSize={width < 900 ? `16px` : `24px`}
+                  fontWeight={`700`}
+                  color={Theme.subTheme11_C}
+                >
+                  {communityDetail && communityDetail.title}
+                </Text>
+                {communityDetail && communityDetail.file && (
+                  <CommonButton
+                    kindOf={`black`}
+                    fontSize={`14px`}
+                    margin={`0 20px 0 0`}
+                  >
+                    <a href={communityDetail.file}>File download</a>
+                  </CommonButton>
+                )}
+              </Wrapper>
               <Wrapper dr={`row`} ju={`space-between`}>
                 {width > 800 ? (
                   <Wrapper
@@ -877,6 +902,7 @@ const BoardDetail = () => {
                     </Wrapper>
                   </Wrapper>
                 )}
+
                 {/* {width > 800 &&
                 communityDetail &&
                 me &&
@@ -909,12 +935,8 @@ const BoardDetail = () => {
                 )} */}
               </Wrapper>
             </Wrapper>
+
             <Wrapper>
-              {communityDetail &&
-                communityDetail.file &&
-                communityDetail.file !== "" && (
-                  <Image src={communityDetail.file} />
-                )}
               {width < 800 ? (
                 <Wrapper
                   margin={

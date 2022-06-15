@@ -58,9 +58,9 @@ import {
   NOTICE_UPDATE_REQUEST,
   NOTICE_UPLOAD_REQUEST,
 } from "../../reducers/notice";
-import ToastEditorComponent4 from "../../components/editor/ToastEditorComponent4";
-import ToastEditorComponent3 from "../../components/editor/ToastEditorComponent3";
 
+import ToastEditorComponent3 from "../../components/editor/ToastEditorComponent3";
+import { saveAs } from "file-saver";
 // let Line;
 
 // if (typeof window !== "undefined") {
@@ -619,6 +619,21 @@ const AdminHome = () => {
     },
     [inputStartDate, allUsers]
   );
+
+  const fileDownloadHandler = useCallback(async (filePath) => {
+    let blob = await fetch(filePath).then((r) => r.blob());
+
+    const file = new Blob([blob]);
+
+    const ext = filePath.substring(
+      filePath.lastIndexOf(".") + 1,
+      filePath.length
+    );
+
+    const originName = `첨부파일.${ext}`;
+
+    saveAs(file, originName);
+  }, []);
 
   ////// TOGGLE ///////
   const updateModalOpen = useCallback(

@@ -49,6 +49,7 @@ import {
   Select,
 } from "antd";
 import ToastEditorComponent6 from "../components/editor/ToastEditorComponent6";
+import { FileTextOutlined } from "@ant-design/icons";
 
 const Box = styled(Wrapper)`
   align-items: flex-start;
@@ -588,7 +589,17 @@ const Home = ({}) => {
                           onClick={() => moveLinkHandler(`/board/${data.id}`)}
                         >
                           <Text>No.{data.id}</Text>
-                          <Text margin={`0 0 40px`}>{data.title}</Text>
+                          <Text margin={`0 0 40px`} width={`100%`} isEllipsis>
+                            {data.file && (
+                              <>
+                                <FileTextOutlined
+                                  style={{ color: Theme.basicTheme_C }}
+                                />
+                                &nbsp;
+                              </>
+                            )}
+                            {data.title}
+                          </Text>
                           <Wrapper dr={`row`} ju={`space-between`}>
                             <Text>
                               {data.createdAt} | {data.username}(
@@ -657,7 +668,6 @@ const Home = ({}) => {
                     <input
                       type="file"
                       name="file"
-                      accept=".png, .jpg"
                       hidden
                       ref={fileRef}
                       onChange={fileChangeHandler}
