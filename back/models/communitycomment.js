@@ -5,6 +5,18 @@ module.exports = class CommunityComment extends Model {
   static init(sequelize) {
     return super.init(
       {
+        name: {
+          type: DataTypes.STRING(100),
+          allowNull: false,
+        },
+        level: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+        },
+        UserId: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+        },
         content: {
           type: DataTypes.STRING(2000), // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
           allowNull: false, // 필수
@@ -31,8 +43,7 @@ module.exports = class CommunityComment extends Model {
         },
         grantparentId: {
           type: DataTypes.INTEGER,
-          allowNull: false,
-          defaultValue: 0,
+          allowNull: true,
         },
       },
       {
@@ -46,6 +57,5 @@ module.exports = class CommunityComment extends Model {
   }
   static associate(db) {
     db.CommunityComment.belongsTo(db.Community);
-    db.CommunityComment.belongsTo(db.User);
   }
 };

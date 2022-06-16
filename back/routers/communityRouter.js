@@ -347,10 +347,8 @@ router.get("/detail/:communityId", async (req, res, next) => {
             A.CommunityId,
             A.grantparentId,
             A.UserId,
-            B.userId,
-            B.profileImage,
-            B.username,
-            B.level,
+            A.name,
+            A.level,
             (
               SELECT	COUNT(cc.id)
                 FROM	communityComments	cc
@@ -358,9 +356,6 @@ router.get("/detail/:communityId", async (req, res, next) => {
                  AND  cc.isDelete = FALSE
             )   AS commentCnt
       FROM	communityComments		A
-     INNER
-      JOIN	users 					B
-        ON	A.UserId = B.id
      WHERE	A.isDelete = FALSE
        AND	A.parentId  IS NULL
        AND  A.CommunityId = ${communityId}
@@ -373,7 +368,7 @@ router.get("/detail/:communityId", async (req, res, next) => {
       where: { isDelete: false, CommunityId: parseInt(communityId) },
     });
 
-    const nextHit = detailData[0].hit;
+    const nextHit = detailData[0][0].hit;
 
     await Community.update(
       {
@@ -577,53 +572,46 @@ router.post("/comment/detail", async (req, res, next) => {
     const selectQuery = `
     SELECT	*
       FROM	(
-              WITH RECURSIVE comments_hire AS (
-                SELECT	1				AS	lev,
-                        CC.id,
-                        CC.content,
-                        CC.parent,
-                        CC.parentId,
-                        CC.createdAt,
-                        CC.CommunityId,
-                        CC.isDelete,
-                        CC.grantparentId,
-                        US.id			AS idOfUser,
-                        US.userId,
-                        US.profileImage,
-                        US.username,
-                        US.level,
-                        US.username		as paths
-                  FROM	communityComments		CC
-                 INNER
-                  JOIN	users					US
-                    ON	CC.UserId = US.id 
-                 WHERE	CC.isDelete = 0
-                   AND	CC.CommunityId = ${communityId}
-                   AND 	CC.id = ${commentId}
-                 UNION	ALL
-                SELECT	B.lev + 1			AS 	lev,
-                        A.id,
-                        CONCAT(LPAD('', 2 * (B.lev) ,' '), 'ㄴ', A.content),
-                        A.parent,
-                        A.parentId,
-                        A.createdAt,
-                        A.CommunityId,
-                        A.isDelete,
-                        A.grantparentId,
-                        B.idOfUser,
-                        B.userId,
-                        B.profileImage,
-                        B.username,
-                        B.level,
-                        CONCAT(B.paths, A.id,'-', 	B.username, A.id)	AS paths
-                  FROM	communityComments		AS 	A
-                 INNER
-                  JOIN	comments_hire		AS	B
-                    ON	A.parentId = B.id
+            WITH RECURSIVE comments_hire AS (
+              SELECT	1				AS	lev,
+                      id,
+                      content,
+                      parent,
+                      parentId,
+                      createdAt,
+                      CommunityId,
+                      isDelete,
+                      grantparentId,
+                      UserId,
+                      name,
+                      level,
+                      name		as paths
+                FROM	communityComments		
+               WHERE	isDelete = 0
+                 AND	CommunityId = ${communityId}
+                 AND id = ${commentId}
+              UNION	ALL
+              SELECT	B.lev + 1			AS 	lev,
+                      A.id,
+                      CONCAT(LPAD('', 2 * (B.lev) ,' '), 'ㄴ', A.content),
+                      A.parent,
+                      A.parentId,
+                      A.createdAt,
+                      A.CommunityId,
+                      A.isDelete,
+                      A.grantparentId,
+                      A.UserId,
+                      A.name,
+                      A.level,
+                      CONCAT(B.paths, A.id,'-', A.name, A.id)	AS paths
+                FROM	communityComments		AS 	A
+               INNER
+                JOIN	comments_hire		    AS	B
+                  ON	A.parentId = B.id
             ) 
-          SELECT * FROM comments_hire
-        )	X
-      ORDER	BY X.paths
+            SELECT * FROM comments_hire
+          )	X
+    ORDER	BY X.paths
       `;
 
     const list = await models.sequelize.query(selectQuery);
@@ -665,7 +653,7 @@ router.post("/comment/create", isLoggedIn, async (req, res, next) => {
 
     let dataJson2 = {};
 
-    if (parentId !== null) {
+    if (grantparentId !== null) {
       dataJson2 = await CommunityComment.findOne({
         where: { id: parseInt(grantparentId) },
       });
@@ -679,9 +667,11 @@ router.post("/comment/create", isLoggedIn, async (req, res, next) => {
       content,
       parent: parentId === null ? 0 : parseInt(dataJson.parent) + 1,
       parentId: parentId ? parentId : null,
-      grantparentId: parseInt(grantparentId),
+      grantparentId: grantparentId ? grantparentId : null,
       CommunityId: parseInt(communityId),
       UserId: parseInt(req.user.id),
+      name: req.user.username,
+      level: parseInt(req.user.level),
     });
 
     if (!createResult) {
