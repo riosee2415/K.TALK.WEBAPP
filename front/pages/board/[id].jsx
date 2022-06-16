@@ -458,7 +458,7 @@ const BoardDetail = () => {
           content: data.comment,
           communityId: router.query.id,
           parentId: null,
-          grantparentId: 0,
+          grantparentId: null,
         },
       });
     },
@@ -1056,7 +1056,7 @@ const BoardDetail = () => {
                           fontSize={width < 900 ? `15px` : `18px`}
                           fontWeight={`700`}
                         >
-                          {data.username}(
+                          {data.name}(
                           {data.level === 1
                             ? "student"
                             : data.level === 2
@@ -1170,7 +1170,7 @@ const BoardDetail = () => {
                                   fontSize={width < 900 ? `15px` : `18px`}
                                   fontWeight={`700`}
                                 >
-                                  {v.username}(
+                                  {v.name}(
                                   {v.level === 1
                                     ? "student"
                                     : v.level === 2
@@ -1196,31 +1196,27 @@ const BoardDetail = () => {
                                   </HoverText>
                                 )}
 
-                                {v.isDelete === 0 &&
-                                  me &&
-                                  v.idOfUser === me.id && (
-                                    <Wrapper dr={`row`} width={`auto`}>
-                                      <HoverText
-                                        onClick={() =>
-                                          updateCommentToggle(v, true)
-                                        }
-                                      >
-                                        Edit
-                                      </HoverText>
-                                      &nbsp;|&nbsp;
-                                      <Popconfirm
-                                        placement="bottomRight"
-                                        title={`삭제하시겠습니까?`}
-                                        okText="Delete"
-                                        cancelText="Cancel"
-                                        onConfirm={() =>
-                                          deleteCommentHandler(v)
-                                        }
-                                      >
-                                        <HoverText>Delete</HoverText>
-                                      </Popconfirm>
-                                    </Wrapper>
-                                  )}
+                                {v.isDelete === 0 && me && v.UserId === me.id && (
+                                  <Wrapper dr={`row`} width={`auto`}>
+                                    <HoverText
+                                      onClick={() =>
+                                        updateCommentToggle(v, true)
+                                      }
+                                    >
+                                      Edit
+                                    </HoverText>
+                                    &nbsp;|&nbsp;
+                                    <Popconfirm
+                                      placement="bottomRight"
+                                      title={`삭제하시겠습니까?`}
+                                      okText="Delete"
+                                      cancelText="Cancel"
+                                      onConfirm={() => deleteCommentHandler(v)}
+                                    >
+                                      <HoverText>Delete</HoverText>
+                                    </Popconfirm>
+                                  </Wrapper>
+                                )}
                               </Wrapper>
                             </Wrapper>
 
@@ -1252,7 +1248,9 @@ const BoardDetail = () => {
               <Wrapper padding={`10px`}>
                 <FormItem label="comment">
                   <Text>
-                    {currentData.parent === 0
+                    {currentData.isDelete === 1
+                      ? "삭제된 댓글입니다."
+                      : currentData.parent === 0
                       ? currentData.content
                       : currentData.content.split("ㄴ")[1]}
                   </Text>
