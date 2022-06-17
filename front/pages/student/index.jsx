@@ -1243,17 +1243,6 @@ const Student = () => {
 
             <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 40px`}>
               <CommonTitle>My Class</CommonTitle>
-
-              <SpanText
-                textDecoration={`underLine`}
-                color={Theme.basicTheme_C}
-                fontSize={`18px`}
-                margin={`0 0 0 25px`}
-                cursor={`pointer`}
-                onClick={() => moveLinkHandler(`student/lectureAll`)}
-              >
-                All See
-              </SpanText>
             </Wrapper>
 
             {lectureStuLectureList && lectureStuLectureList.length === 0 ? (
@@ -1262,7 +1251,7 @@ const Student = () => {
               </Wrapper>
             ) : (
               lectureStuLectureList &&
-              lectureStuLectureList.slice(0, 1).map((data, idx) => {
+              lectureStuLectureList.map((data, idx) => {
                 return (
                   <Wrapper
                     // padding={`0 0 10px`}
@@ -1302,8 +1291,12 @@ const Student = () => {
                             fontSize={width < 800 ? `14px` : `16px`}
                             margin={`0 0 10px`}
                           >
-                            {data.course}&nbsp;
+                            {data.course}
                           </Text>
+
+                          <Button type={`primary`} size={`small`}>
+                            Go To Notice
+                          </Button>
 
                           <Wrapper
                             dr={width < 800 ? `column` : `row`}
