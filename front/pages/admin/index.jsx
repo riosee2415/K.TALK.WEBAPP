@@ -60,7 +60,14 @@ import {
 } from "../../reducers/notice";
 
 import ToastEditorComponent3 from "../../components/editor/ToastEditorComponent3";
+import ToastEditorComponentMix from "../../components/editor/ToastEditorComponentMix";
 import { saveAs } from "file-saver";
+import {
+  NORMAL_NOTICE_ADMIN_CREATE_REQUEST,
+  NORMAL_NOTICE_ADMIN_LIST_REQUEST,
+  NORMAL_NOTICE_MODAL_TOGGLE,
+} from "../../reducers/normalNotice";
+import { setContext } from "redux-saga/effects";
 // let Line;
 
 // if (typeof window !== "undefined") {
@@ -173,12 +180,14 @@ const AdminHome = () => {
 
   const {
     allLectures,
+    //
     st_lectureDeleteDone,
     st_lectureDeleteError,
     updateModal,
+    //
     st_lectureUpdateDone,
     st_lectureUpdateError,
-
+    //
     st_lectureAllListDone,
     st_lectureAllListError,
   } = useSelector((state) => state.lecture);
@@ -187,10 +196,11 @@ const AdminHome = () => {
     me,
     allUsers,
     teachers,
+    userStuList,
+    //
     st_loginAdminError,
     st_loginAdminDone,
-
-    userStuList,
+    //
     st_userStuListDone,
     st_userStuListError,
   } = useSelector((state) => state.user);
@@ -199,15 +209,34 @@ const AdminHome = () => {
     noticeAdminMain,
     noticeAdminMainMaxPage,
     uploadPath,
+    createModal,
+    ///
     st_noticeUpdateError,
     st_noticeUpdateDone,
-    createModal,
   } = useSelector((state) => state.notice);
+
   const { messageAdminMainList, messageAdminMainMaxPage } = useSelector(
     (state) => state.message
   );
 
+  // NORMAL SELECTOR
+  const {
+    normalNoticeAdminList,
+    //
+    normalNoticeModal,
+    //
+    normalNoticeAdminCreateLoading,
+    normalNoticeAdminCreateDone,
+    normalNoticeAdminCreateError,
+  } = useSelector((state) => state.normalNotice);
+
   const [noticeData, setNoticeData] = useState(null);
+
+  // NORMAL NOTICE SELECT
+  const [normalNoticeType, setNormalNoticeType] = useState(null);
+  const [normalNoticeUser, setNormalNoticeUser] = useState(null);
+
+  const [normalNoticeForm] = Form.useForm();
 
   const [contentData, setContentData] = useState("");
   const filename = useInput(null);
@@ -325,6 +354,26 @@ const AdminHome = () => {
       message.error(st_lectureUpdateError);
     }
   }, [st_lectureUpdateError]);
+
+  // NORMAL CREATE USEEFFECT
+  useEffect(() => {
+    if (normalNoticeAdminCreateDone) {
+      dispatch({
+        type: NORMAL_NOTICE_ADMIN_LIST_REQUEST,
+      });
+
+      normalNoticeModalToggle(null);
+
+      return message.success("일반게시판이 추가되었습니다.");
+    }
+  }, [normalNoticeAdminCreateError]);
+
+  useEffect(() => {
+    if (normalNoticeAdminCreateError) {
+      message.error(normalNoticeAdminCreateError);
+    }
+  }, [normalNoticeAdminCreateError]);
+  // NORMAL CREATE USEEFFECT END
 
   useEffect(() => {
     if (updateData) {
@@ -444,7 +493,44 @@ const AdminHome = () => {
     }
   }, [st_noticeUpdateDone]);
 
+  ////// TOGGLE //////
+
+  const normalNoticeModalToggle = useCallback(
+    (data) => {
+      if (data) {
+      } else {
+        normalNoticeForm.resetFields();
+        setNormalNoticeType(null);
+        setNormalNoticeUser(null);
+        setContentData(null);
+      }
+
+      dispatch({
+        type: NORMAL_NOTICE_MODAL_TOGGLE,
+      });
+    },
+    [normalNoticeModal, normalNoticeType, normalNoticeUser, contentData]
+  );
+
   ////// HANDLER ///////
+
+  const normalNoticeTypeChnageHandler = useCallback(
+    (type) => {
+      normalNoticeForm.setFieldsValue({
+        userId: null,
+      });
+      setNormalNoticeUser(null);
+      setNormalNoticeType(type);
+    },
+    [normalNoticeType, normalNoticeUser]
+  );
+
+  const normalNoticeUserChangeHandler = useCallback(
+    (user) => {
+      setNormalNoticeUser(user);
+    },
+    [normalNoticeUser]
+  );
 
   const onFillNotice = useCallback((data) => {
     const type = data.LectureId
@@ -749,9 +835,44 @@ const AdminHome = () => {
     [uploadPath, noticeData, contentData]
   );
 
-  const getEditContent = (contentValue) => {
-    setContentData(contentValue);
-  };
+  // 일반게시판 추가
+  const normalNoticeAdminCreate = useCallback(
+    (data) => {
+      console.log(data);
+      console.log(normalNoticeType);
+      console.log(uploadPath);
+      dispatch({
+        type: NORMAL_NOTICE_ADMIN_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          content: contentData,
+          author: "관리자",
+          level: me.level,
+          file: uploadPath,
+          receiverId: data.userId,
+          createType:
+            normalNoticeType === "강사개인"
+              ? 1
+              : normalNoticeType === "학생개인"
+              ? 2
+              : normalNoticeType === "학생 및 강사 전체"
+              ? 3
+              : 4,
+        },
+      });
+    },
+    [normalNoticeType, uploadPath, me, contentData]
+  );
+  // 일반게시판 추가
+
+  const getEditContent = useCallback(
+    (contentValue) => {
+      normalNoticeForm.submit();
+
+      setContentData(contentValue);
+    },
+    [contentData]
+  );
 
   const noticeColumns = [
     {
@@ -859,6 +980,14 @@ const AdminHome = () => {
     // },
   ];
 
+  const normalSelectArr = [
+    "강사개인",
+    "강사전체",
+    "학생개인",
+    "학생전체",
+    "학생 및 강사 전체",
+  ];
+
   const fileChangeHandler = useCallback((e) => {
     const formData = new FormData();
     filename.setValue(e.target.files[0].name);
@@ -907,56 +1036,22 @@ const AdminHome = () => {
                     <Button
                       size={`small`}
                       type={`primary`}
-                      onClick={() =>
-                        moveLinkHandler(`/admin/board/notice/list?type=stu`)
-                      }
+                      loading={normalNoticeAdminCreateLoading}
+                      onClick={() => normalNoticeModalToggle(null)}
                     >
-                      학생 게시판
-                    </Button>
-                    &nbsp;
-                    <Button
-                      size={`small`}
-                      type={`primary`}
-                      onClick={() =>
-                        moveLinkHandler(`/admin/board/notice/list?type=tea`)
-                      }
-                    >
-                      강사 게시판
-                    </Button>
-                    &nbsp;
-                    <Button
-                      size={`small`}
-                      type={`primary`}
-                      onClick={() =>
-                        moveLinkHandler(`/admin/board/notice/list?type=lec`)
-                      }
-                    >
-                      강의 게시판
-                    </Button>
-                    &nbsp;
-                    <Button
-                      size={`small`}
-                      type={`primary`}
-                      onClick={() =>
-                        moveLinkHandler(`/admin/board/notice/list?type=all`)
-                      }
-                    >
-                      전체 이용자 게시판
+                      일반 게시판 작성
                     </Button>
                   </Wrapper>
                 </Wrapper>
 
                 <Table
                   rowKey="id"
-                  dataSource={noticeAdminMain ? noticeAdminMain : []}
+                  dataSource={
+                    normalNoticeAdminList ? normalNoticeAdminList : []
+                  }
                   size="small"
                   columns={noticeColumns}
                   style={{ width: `100%` }}
-                  pagination={{
-                    current: currentPage1,
-                    total: noticeAdminMainMaxPage * 10,
-                    onChange: (page) => setCurrentPage1(page),
-                  }}
                 />
               </Wrapper>
 
@@ -1862,6 +1957,125 @@ const AdminHome = () => {
               </Form>
             </Wrapper>
           </Modal>
+
+          {/* NORMAL NOTICE MODAL */}
+          <Modal
+            width={`1000px`}
+            title="일반게시판 관리"
+            visible={normalNoticeModal}
+            onCancel={() => normalNoticeModalToggle(null)}
+            footer={null}
+          >
+            <Wrapper padding={`10px`}>
+              <Form
+                form={normalNoticeForm}
+                style={{ width: `100%` }}
+                onFinish={normalNoticeAdminCreate}
+              >
+                <Form.Item
+                  name={"type"}
+                  label="유형"
+                  rules={[{ required: true, message: "유형을 선택해 주세요." }]}
+                >
+                  <Select
+                    showSearch
+                    style={{ width: `100%` }}
+                    placeholder="유형을 선택해 주세요."
+                    onChange={normalNoticeTypeChnageHandler}
+                  >
+                    {normalSelectArr &&
+                      normalSelectArr.map((data) => (
+                        <Select.Option value={data}>{data}</Select.Option>
+                      ))}
+                  </Select>
+                </Form.Item>
+
+                {normalNoticeType &&
+                  (normalNoticeType === "강사개인" ||
+                    normalNoticeType === "학생개인") && (
+                    <Form.Item
+                      label={normalNoticeType === "강사개인" ? "강사" : "학생"}
+                      name="userId"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${
+                            normalNoticeType === "강사개인" ? "강사" : "학생"
+                          }를 선택해주세요.`,
+                        },
+                      ]}
+                    >
+                      <Select
+                        showSearch
+                        style={{ width: `100%` }}
+                        placeholder={`${
+                          normalNoticeType === "강사개인" ? "강사" : "학생"
+                        }를 선택해주세요.`}
+                        value={normalNoticeUser}
+                        onChange={normalNoticeUserChangeHandler}
+                      >
+                        {normalNoticeType === "강사개인"
+                          ? teachers &&
+                            teachers.map((data) => (
+                              <Select.Option value={data.id} key={data.id}>
+                                {data.username}
+                              </Select.Option>
+                            ))
+                          : normalNoticeType === "학생개인" &&
+                            userStuList &&
+                            userStuList.map((data) => (
+                              <Select.Option value={data.id} key={data.id}>
+                                {data.username}
+                              </Select.Option>
+                            ))}
+                      </Select>
+                    </Form.Item>
+                  )}
+
+                <Form.Item
+                  name={"title"}
+                  label="제목"
+                  rules={[{ required: true, message: "제목을 입력해 주세요" }]}
+                >
+                  <Input allowClear placeholder="제목을 입력해주세요." />
+                </Form.Item>
+
+                <Form.Item
+                  name={"content"}
+                  label="본문"
+                  rules={[{ required: true, message: "본문을 입력해 주세요." }]}
+                >
+                  <ToastEditorComponentMix
+                    action={getEditContent}
+                    initialValue={updateData ? updateData.content : null}
+                    placeholder="본문을 입력해주세요."
+                    buttonText={updateData ? "수정" : "추가"}
+                  />
+                </Form.Item>
+
+                <FileBox>
+                  <input
+                    type="file"
+                    name="file"
+                    hidden
+                    ref={fileRef}
+                    onChange={fileChangeHandler}
+                  />
+                  <Text margin={`0 10px 0 0`}>
+                    {updateData
+                      ? `첨부파일`
+                      : filename.value
+                      ? filename.value
+                      : `파일을 선택해주세요.`}
+                  </Text>
+                  <Button size="small" type="primary" onClick={fileUploadClick}>
+                    FILE UPLOAD
+                  </Button>
+                </FileBox>
+              </Form>
+            </Wrapper>
+          </Modal>
+          {/* NORMAL NOTICE MODAL END */}
         </AdminLayout>
       ) : (
         <>
@@ -1965,6 +2179,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
     });
     context.store.dispatch({
       type: USER_TEACHER_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: NORMAL_NOTICE_ADMIN_LIST_REQUEST,
     });
 
     // 구현부 종료

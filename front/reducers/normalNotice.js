@@ -7,6 +7,9 @@ export const initialState = {
   //
   normalNoticeAdminList: null,
 
+  // modal
+  normalNoticeModal: false,
+
   // status
   normalNoticeListLoading: false, // 회원 일반게시판 가져오기
   normalNoticeListDone: false,
@@ -15,6 +18,10 @@ export const initialState = {
   normalNoticeAdminListLoading: false, // 관리자 일반게시판 가져오기
   normalNoticeAdminListDone: false,
   normalNoticeAdminListError: false,
+
+  normalNoticeAdminCreateLoading: false, // 관리자 게시판 생성
+  normalNoticeAdminCreateDone: false,
+  normalNoticeAdminCreateError: false,
 };
 
 export const NORMAL_NOTICE_LIST_REQUEST = "NORMAL_NOTICE_LIST_REQUEST";
@@ -27,6 +34,15 @@ export const NORMAL_NOTICE_ADMIN_LIST_SUCCESS =
   "NORMAL_NOTICE_ADMIN_LIST_SUCCESS";
 export const NORMAL_NOTICE_ADMIN_LIST_FAILURE =
   "NORMAL_NOTICE_ADMIN_LIST_FAILURE";
+
+export const NORMAL_NOTICE_ADMIN_CREATE_REQUEST =
+  "NORMAL_NOTICE_ADMIN_CREATE_REQUEST";
+export const NORMAL_NOTICE_ADMIN_CREATE_SUCCESS =
+  "NORMAL_NOTICE_ADMIN_CREATE_SUCCESS";
+export const NORMAL_NOTICE_ADMIN_CREATE_FAILURE =
+  "NORMAL_NOTICE_ADMIN_CREATE_FAILURE";
+
+export const NORMAL_NOTICE_MODAL_TOGGLE = "NORMAL_NOTICE_MODAL_TOGGLE";
 
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
@@ -71,6 +87,33 @@ const reducer = (state = initialState, action) =>
         draft.normalNoticeAdminListLoading = false;
         draft.normalNoticeAdminListDone = false;
         draft.normalNoticeAdminListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+      case NORMAL_NOTICE_ADMIN_CREATE_REQUEST: {
+        draft.normalNoticeAdminCreateLoading = true;
+        draft.normalNoticeAdminCreateDone = false;
+        draft.normalNoticeAdminCreateError = null;
+        break;
+      }
+      case NORMAL_NOTICE_ADMIN_CREATE_SUCCESS: {
+        draft.normalNoticeAdminCreateLoading = false;
+        draft.normalNoticeAdminCreateDone = true;
+        draft.normalNoticeAdminCreateError = null;
+        break;
+      }
+      case NORMAL_NOTICE_ADMIN_CREATE_FAILURE: {
+        draft.normalNoticeAdminCreateLoading = false;
+        draft.normalNoticeAdminCreateDone = false;
+        draft.normalNoticeAdminCreateError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case NORMAL_NOTICE_MODAL_TOGGLE: {
+        draft.normalNoticeModal = !draft.normalNoticeModal;
         break;
       }
 

@@ -9,6 +9,10 @@ import {
   NORMAL_NOTICE_ADMIN_LIST_REQUEST,
   NORMAL_NOTICE_ADMIN_LIST_SUCCESS,
   NORMAL_NOTICE_ADMIN_LIST_FAILURE,
+  ///////////////////////////////// 관리자 일반게시판 생성하기
+  NORMAL_NOTICE_ADMIN_CREATE_REQUEST,
+  NORMAL_NOTICE_ADMIN_CREATE_SUCCESS,
+  NORMAL_NOTICE_ADMIN_CREATE_FAILURE,
 } from "../reducers/normalNotice";
 
 // ******************************************************************************************************************
@@ -69,6 +73,35 @@ function* normalNoticeAdminList(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+
+async function normalNoticeAdminCreateAPI(data) {
+  return await axios.post(`/api/normalNotice/admin/create`, data);
+}
+
+function* normalNoticeAdminCreate(action) {
+  try {
+    const result = yield call(normalNoticeAdminCreateAPI, action.data);
+
+    yield put({
+      type: NORMAL_NOTICE_ADMIN_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: NORMAL_NOTICE_ADMIN_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchNormalNoticeList() {
   yield takeLatest(NORMAL_NOTICE_LIST_REQUEST, normalNoticeList);
@@ -78,11 +111,16 @@ function* watchNormalNoticeAdminList() {
   yield takeLatest(NORMAL_NOTICE_ADMIN_LIST_REQUEST, normalNoticeAdminList);
 }
 
+function* watchNormalNoticeAdminCreate() {
+  yield takeLatest(NORMAL_NOTICE_ADMIN_CREATE_REQUEST, normalNoticeAdminCreate);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* normalNoticeSaga() {
   yield all([
     fork(watchNormalNoticeList),
     fork(watchNormalNoticeAdminList),
+    fork(watchNormalNoticeAdminCreate),
     //
   ]);
 }
