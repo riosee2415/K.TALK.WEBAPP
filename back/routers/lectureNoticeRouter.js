@@ -103,7 +103,8 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
    INNER
     JOIN    lectures            B
       ON    A.LectureId = B.id
-   WHERE    A.LectureId = ${LectureId}
+   WHERE    1 = 1
+            AND A.LectureId = ${LectureId}
             AND A.isDelete = FALSE
             AND B.isDelete = FALSE
             ${req.user.level === 1 ? `AND A.TeacherId IS NULL` : ``}
@@ -130,11 +131,12 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
    INNER
     JOIN    lectures            B
       ON    A.LectureId = B.id
-   WHERE    A.LectureId = ${LectureId}
+   WHERE    1 = 1
+            AND A.LectureId = ${LectureId}
             ${req.user.level === 1 ? `AND A.TeacherId IS NULL` : ``}
             AND A.isDelete = FALSE
             AND B.isDelete = FALSE
-   ORDER    BY A.createdAt DESC
+   ORDER    BY A.id DESC
    LIMIT    ${LIMIT}
   OFFSET    ${OFFSET}
     `;
@@ -204,7 +206,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
      ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
      AND    A.isDelete = FALSE
      AND    B.isDelete = FALSE
-   ORDER    BY A.createdAt DESC
+   ORDER    BY A.id DESC
     `;
 
     const notice = await models.sequelize.query(selectQuery);

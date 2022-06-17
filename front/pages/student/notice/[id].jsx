@@ -40,6 +40,7 @@ import {
   LECTURE_NOTICE_LIST_REQUEST,
   LECTURE_NOTICE_MODAL_TOGGLE,
   LECTURE_NOTICE_UPLOAD_REQUEST,
+  RESET_LECTURE_NOTICE_PATH,
 } from "../../../reducers/lectureNotice";
 import ToastEditorLectureNotice from "../../../components/editor/ToastEditorLectureNotice";
 import { LECTURE_DETAIL_REQUEST } from "../../../reducers/lecture";
@@ -193,6 +194,10 @@ const Notice = ({}) => {
           LectureId: router.query && router.query.id,
           page: currentPage,
         },
+      });
+
+      dispatch({
+        type: RESET_LECTURE_NOTICE_PATH,
       });
 
       lectureNoticeModalToggle(null);
