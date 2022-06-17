@@ -322,10 +322,6 @@ router.post("/teacher/create", isLoggedIn, async (req, res, next) => {
     return res.status(403).send("로그인 후 이용 가능합니다.");
   }
 
-  if (!Array.isArray(receiverId)) {
-    return res.status(401).send("잘못된 요청입니다.");
-  }
-
   if (parseInt(createType) > 3) {
     return res.status(401).send("잘못된 요청입니다.");
   }
@@ -380,6 +376,10 @@ router.post("/teacher/create", isLoggedIn, async (req, res, next) => {
 
     // 강사가 강사 개인에게
     if (parseInt(createType) === 3) {
+      if (!Array.isArray(receiverId)) {
+        return res.status(401).send("잘못된 요청입니다.");
+      }
+
       await Promise.all(
         receiverId.map(async (data) => {
           await NormalNotice.create({
@@ -412,10 +412,6 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
   }
 
   if (parseInt(createType) > 4) {
-    return res.status(401).send("잘못된 요청입니다.");
-  }
-
-  if (!Array.isArray(receiverId)) {
     return res.status(401).send("잘못된 요청입니다.");
   }
 
@@ -516,6 +512,10 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
     }
     // 지정해서 보내기
     if (parseInt(createType) === 4) {
+      if (!Array.isArray(receiverId)) {
+        return res.status(401).send("잘못된 요청입니다.");
+      }
+
       await Promise.all(
         receiverId.map(async (data) => {
           await NormalNotice.create({
