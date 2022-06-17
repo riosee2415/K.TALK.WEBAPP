@@ -96,7 +96,7 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
             UserId
     FROM	normalNotices
    WHERE    receiverId = ${req.user.id}
-   ORDER    BY createdAt DESC
+   ORDER    BY id DESC
    LIMIT    ${LIMIT}
   OFFSET    ${OFFSET}
     `;
@@ -151,6 +151,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
             receiverId,
             isAdmin,
             file,
+            hit,
             isDelete,
             DATE_FORMAT(deletedAt, '%Y-%m-%d')  AS deletedAt,
             DATE_FORMAT(createdAt, '%Y-%m-%d')  AS createdAt,
@@ -165,12 +166,12 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
            : _listType === 2
            ? `AND level = 2`
            : _listType === 3
-           ? `author = "admin"`
+           ? `AND author = "admin"`
            : _listType === 4
            ? ``
            : ``
        }
-     ORDER  BY createdAt DESC
+     ORDER  BY id DESC
     `;
 
     const notice = await models.sequelize.query(selectQuery);
