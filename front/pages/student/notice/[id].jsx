@@ -35,6 +35,14 @@ import {
   Wrapper,
 } from "../../../components/commonComponents";
 import Theme from "../../../components/Theme";
+import {
+  LECTURE_NOTICE_CREATE_REQUEST,
+  LECTURE_NOTICE_LIST_REQUEST,
+  LECTURE_NOTICE_MODAL_TOGGLE,
+  LECTURE_NOTICE_UPLOAD_REQUEST,
+} from "../../../reducers/lectureNotice";
+import ToastEditorLectureNotice from "../../../components/editor/ToastEditorLectureNotice";
+import { LECTURE_DETAIL_REQUEST } from "../../../reducers/lecture";
 
 const CustomTableHoverWrapper = styled(Wrapper)`
   flex-direction: row;
@@ -101,13 +109,27 @@ const CustomPage = styled(Pagination)`
   }
 `;
 
-const Notice = () => {
+const Notice = ({}) => {
   ////// GLOBAL STATE //////
 
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
   );
   const { me } = useSelector((state) => state.user);
+
+  const { lectureDetail } = useSelector((state) => state.lecture);
+
+  const {
+    lectureNotices,
+    maxPage,
+    uploadLectureNoticePath,
+    lectureNoticeModal,
+    //
+    st_lectureNoticeListError,
+    //
+    st_lectureNoticeCreateDone,
+    st_lectureNoticeCreateError,
+  } = useSelector((state) => state.lectureNotice);
 
   ////// HOOKS //////
   const width = useWidth();
@@ -116,13 +138,205 @@ const Notice = () => {
 
   const dispatch = useDispatch();
 
+  const fileRef = useRef();
+
+  const [lectureNoticeForm] = Form.useForm();
+
+  const [updateData, setUpdateData] = useState(null);
+  const [inputContent, setInputContent] = useState(null);
+  const [valueChange, setValueChange] = useState(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (!me) {
+      message.error("Please log in");
+      return router.push(`/`);
+    } else if (me.level !== 1) {
+      message.error("Access denied");
+      return router.push(`/`);
+    }
+  }, [me]);
+
+  useEffect(() => {
+    if (router.query) {
+      dispatch({
+        type: LECTURE_NOTICE_LIST_REQUEST,
+        data: {
+          LectureId: router.query.id,
+          page: currentPage,
+        },
+      });
+
+      dispatch({
+        type: LECTURE_DETAIL_REQUEST,
+        data: {
+          LectureId: router.query.id,
+        },
+      });
+    }
+  }, [router.query, currentPage]);
+
+  useEffect(() => {
+    if (st_lectureNoticeListError) {
+      return message.error(st_lectureNoticeListError);
+    }
+  }, [st_lectureNoticeListError]);
+
+  useEffect(() => {
+    if (st_lectureNoticeCreateDone) {
+      dispatch({
+        type: LECTURE_NOTICE_LIST_REQUEST,
+        data: {
+          LectureId: router.query && router.query.id,
+          page: currentPage,
+        },
+      });
+
+      lectureNoticeModalToggle(null);
+
+      return message.success("게시판이 등록되었습니다.");
+    }
+  }, [st_lectureNoticeCreateDone]);
+
+  useEffect(() => {
+    if (st_lectureNoticeCreateError) {
+      return message.error(st_lectureNoticeCreateError);
+    }
+  }, [st_lectureNoticeCreateError]);
 
   ////// TOGGLE //////
 
+  const lectureNoticeModalToggle = useCallback(
+    (data) => {
+      if (data) {
+        setUpdateData(data);
+      } else {
+        setUpdateData(null);
+      }
+
+      setInputContent(null);
+      lectureNoticeForm.resetFields();
+
+      dispatch({
+        type: LECTURE_NOTICE_MODAL_TOGGLE,
+      });
+    },
+    [lectureNoticeForm, inputContent]
+  );
+
   ////// HANDLER //////
+  const otherPageCall = useCallback(
+    (changePage) => {
+      setCurrentPage(changePage);
+
+      dispatch({
+        type: LECTURE_NOTICE_LIST_REQUEST,
+        data: {
+          LectureId: router.query && router.query.id,
+          page: changePage,
+        },
+      });
+    },
+    [router.query]
+  );
+
+  const userValueChange = useCallback(
+    (data) => {
+      if (data === "강사") {
+        setValueChange(lectureDetail[0].TeacherId);
+      } else if (data === "반전체") {
+        setValueChange(router.query.id);
+      }
+    },
+    [lectureDetail, router.query]
+  );
+
+  // 게시판 등록
+
+  const onSubmit = useCallback(
+    (data) => {
+      if (
+        !inputContent ||
+        inputContent.indexOf("Please write a comment.") === 72
+      ) {
+        return message.error("Please write a comment.");
+      }
+
+      if (data.lSend === "강사") {
+        dispatch({
+          type: LECTURE_NOTICE_CREATE_REQUEST,
+          data: {
+            title: data.lTitle,
+            content: inputContent,
+            author: me.username,
+            level: me.level,
+            LectureId: router.query.id,
+            TeacherId: valueChange,
+            StudentId: null,
+            file: uploadLectureNoticePath,
+          },
+        });
+      }
+
+      if (data.lSend === "반전체") {
+        dispatch({
+          type: LECTURE_NOTICE_CREATE_REQUEST,
+          data: {
+            title: data.lTitle,
+            content: inputContent,
+            author: me.username,
+            level: me.level,
+            LectureId: router.query.id,
+            TeacherId: null,
+            StudentId: null,
+            file: uploadLectureNoticePath,
+          },
+        });
+      }
+    },
+    [me, router.query, inputContent, uploadLectureNoticePath, valueChange]
+  );
+
+  const getEditContent = useCallback(
+    (contentValue) => {
+      if (contentValue) {
+        lectureNoticeForm.submit();
+
+        setInputContent(contentValue);
+      }
+    },
+    [inputContent, lectureNoticeForm, updateData]
+  );
+
+  const fileUploadClick = useCallback(() => {
+    fileRef.current.click();
+  }, [fileRef.current]);
+
+  const fileChangeHandler = useCallback(
+    (e) => {
+      const formData = new FormData();
+
+      [].forEach.call(e.target.files, (file) => {
+        formData.append("file", file);
+      });
+
+      dispatch({
+        type: LECTURE_NOTICE_UPLOAD_REQUEST,
+        data: formData,
+      });
+
+      fileRef.current.value = "";
+    },
+    [fileRef]
+  );
 
   ////// DATAVIEW //////
+
+  //   console.log(me);
+  console.log(lectureNotices);
 
   return (
     <>
@@ -148,7 +362,6 @@ const Notice = () => {
               : seo_desc[0].content
           }
         />
-        {/* <!-- OG tag  --> */}
         <meta
           property="og:title"
           content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
@@ -220,7 +433,13 @@ const Notice = () => {
               al={`flex-start`}
               margin={`50px 0 20px 0`}
             >
-              <CommonTitle>Class / Bulletin Board</CommonTitle>
+              <CommonTitle>Class / Board</CommonTitle>
+            </Wrapper>
+
+            <Wrapper al={`flex-end`} margin={`0 0 20px`}>
+              <CommonButton onClick={() => lectureNoticeModalToggle(null)}>
+                Write
+              </CommonButton>
             </Wrapper>
 
             <Wrapper
@@ -259,29 +478,103 @@ const Notice = () => {
                 Writer
               </Text>
             </Wrapper>
-
-            <CustomTableHoverWrapper>
-              <Wrapper width={width < 800 ? `15%` : `10%`}>1</Wrapper>
-              <Wrapper width={width < 800 ? `25%` : `10%`}>2022-06-16</Wrapper>
-              <Wrapper
-                width={width < 800 ? `45%` : `70%`}
-                al={`flex-start`}
-                padding={`0 0 0 10px`}
-              >
-                hi
-              </Wrapper>
-              <Wrapper width={width < 800 ? `15%` : `10%`}>작성자</Wrapper>
-            </CustomTableHoverWrapper>
+            {lectureNotices &&
+              (lectureNotices.length === 0 ? (
+                <Wrapper margin={`50px 0`}>
+                  <Empty description="No announcement" />
+                </Wrapper>
+              ) : (
+                lectureNotices.map((data, idx) => {
+                  return (
+                    <CustomTableHoverWrapper>
+                      <Wrapper width={width < 800 ? `15%` : `10%`}>1</Wrapper>
+                      <Wrapper width={width < 800 ? `25%` : `10%`}>
+                        2022-06-16
+                      </Wrapper>
+                      <Wrapper
+                        width={width < 800 ? `45%` : `70%`}
+                        al={`flex-start`}
+                        padding={`0 0 0 10px`}
+                      >
+                        hi
+                      </Wrapper>
+                      <Wrapper width={width < 800 ? `15%` : `10%`}>
+                        작성자
+                      </Wrapper>
+                    </CustomTableHoverWrapper>
+                  );
+                })
+              ))}
 
             <Wrapper margin={`50px 0`}>
               <CustomPage
                 size="small"
-                current={1}
-                total={1 * 10}
-                //   onChange={(page) => noticeLectureChangePage(page)}
+                current={currentPage}
+                total={maxPage * 10}
+                onChange={(page) => otherPageCall(page)}
               />
             </Wrapper>
           </RsWrapper>
+
+          {/* NOTICE CREATE MODAL */}
+
+          <Modal
+            title={`Notice Write`}
+            visible={lectureNoticeModal}
+            onCancel={() => lectureNoticeModalToggle(null)}
+            width={`900px`}
+            footer={null}
+          >
+            <Form
+              form={lectureNoticeForm}
+              labelCol={{ span: 3 }}
+              wrapperCol={{ span: 21 }}
+              onFinish={onSubmit}
+            >
+              <Form.Item label={`Send`} name={`lSend`}>
+                <Select onChange={(data) => userValueChange(data)}>
+                  <Select.Option value={"강사"}>강사</Select.Option>
+                  <Select.Option value={"반전체"}>반전체</Select.Option>
+                </Select>
+              </Form.Item>
+
+              <Form.Item label={`Title`} name={`lTitle`}>
+                <Input placeholder="Please write a title." />
+              </Form.Item>
+
+              <Form.Item label={`File`}>
+                <input
+                  type="file"
+                  name="file"
+                  hidden
+                  ref={fileRef}
+                  onChange={fileChangeHandler}
+                />
+
+                <Button
+                  type={`primary`}
+                  size={`small`}
+                  onClick={fileUploadClick}
+                >
+                  FILE UPLOAD
+                </Button>
+              </Form.Item>
+              {uploadLectureNoticePath && (
+                <Form.Item label={`이미지`}>
+                  <Image width={`100px`} src={uploadLectureNoticePath} />
+                </Form.Item>
+              )}
+
+              <Form.Item label={`Content`} name={`lContent`}>
+                <ToastEditorLectureNotice
+                  action={getEditContent}
+                  initialValue={updateData ? updateData.lContent : null}
+                  placeholder="Please write a content."
+                  buttonText={updateData ? "UPDATE" : "CREATE"}
+                />
+              </Form.Item>
+            </Form>
+          </Modal>
         </WholeWrapper>
       </ClientLayout>
     </>

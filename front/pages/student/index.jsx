@@ -1294,9 +1294,19 @@ const Student = () => {
                             {data.course}
                           </Text>
 
-                          <Button type={`primary`} size={`small`}>
+                          <Button
+                            type={`primary`}
+                            size={`small`}
+                            onClick={() =>
+                              moveLinkHandler(
+                                `/student/notice/${data.LectureId}`
+                              )
+                            }
+                          >
                             Go To Notice
                           </Button>
+
+                          {console.log(data)}
 
                           <Wrapper
                             dr={width < 800 ? `column` : `row`}
