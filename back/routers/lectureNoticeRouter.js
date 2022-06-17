@@ -103,7 +103,8 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
    INNER
     JOIN    lectures            B
       ON    A.LectureId = B.id
-   WHERE    A.LectureId = ${LectureId}
+   WHERE    1 = 1
+            AND A.LectureId = ${LectureId}
             AND A.isDelete = FALSE
             AND B.isDelete = FALSE
             ${req.user.level === 1 ? `AND A.TeacherId IS NULL` : ``}
@@ -130,7 +131,8 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
    INNER
     JOIN    lectures            B
       ON    A.LectureId = B.id
-   WHERE    A.LectureId = ${LectureId}
+   WHERE    1 = 1
+            AND A.LectureId = ${LectureId}
             ${req.user.level === 1 ? `AND A.TeacherId IS NULL` : ``}
             AND A.isDelete = FALSE
             AND B.isDelete = FALSE
