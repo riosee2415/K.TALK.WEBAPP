@@ -70,20 +70,20 @@ const reducer = (state = initialState, action) =>
       }
 
       //////////////////////////////////////////////    관리자 일반게시판 가져오기
-      case NORMAL_NOTICE_LIST_REQUEST: {
+      case NORMAL_NOTICE_ADMIN_LIST_REQUEST: {
         draft.normalNoticeAdminListLoading = true;
         draft.normalNoticeAdminListDone = false;
         draft.normalNoticeAdminListError = null;
         break;
       }
-      case NORMAL_NOTICE_LIST_SUCCESS: {
+      case NORMAL_NOTICE_ADMIN_LIST_SUCCESS: {
         draft.normalNoticeAdminListLoading = false;
         draft.normalNoticeAdminListDone = true;
         draft.normalNoticeAdminListError = null;
         draft.normalNoticeAdminList = action.data.notice;
         break;
       }
-      case NORMAL_NOTICE_LIST_FAILURE: {
+      case NORMAL_NOTICE_ADMIN_LIST_FAILURE: {
         draft.normalNoticeAdminListLoading = false;
         draft.normalNoticeAdminListDone = false;
         draft.normalNoticeAdminListError = action.error;

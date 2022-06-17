@@ -13,6 +13,7 @@ import {
   Text,
   TextInput,
   SpanText,
+  ModalBtn,
 } from "../../components/commonComponents";
 import {
   Button,
@@ -234,7 +235,8 @@ const AdminHome = () => {
 
   // NORMAL NOTICE SELECT
   const [normalNoticeType, setNormalNoticeType] = useState(null);
-  const [normalNoticeUser, setNormalNoticeUser] = useState(null);
+  const [normalNoticeUser, setNormalNoticeUser] = useState([]);
+  const [normalNoticeListType, setNormalNoticeListType] = useState(4);
 
   const [normalNoticeForm] = Form.useForm();
 
@@ -263,6 +265,17 @@ const AdminHome = () => {
   //   },
   // });
   // }, [router.query]);
+
+  useEffect(() => {
+    if (me) {
+      dispatch({
+        type: NORMAL_NOTICE_ADMIN_LIST_REQUEST,
+        data: {
+          listType: normalNoticeListType,
+        },
+      });
+    }
+  }, [me, normalNoticeListType]);
 
   useEffect(() => {
     if (st_loginAdminDone) {
@@ -356,17 +369,21 @@ const AdminHome = () => {
   }, [st_lectureUpdateError]);
 
   // NORMAL CREATE USEEFFECT
+
   useEffect(() => {
     if (normalNoticeAdminCreateDone) {
       dispatch({
         type: NORMAL_NOTICE_ADMIN_LIST_REQUEST,
+        data: {
+          listType: 4,
+        },
       });
 
       normalNoticeModalToggle(null);
 
       return message.success("일반게시판이 추가되었습니다.");
     }
-  }, [normalNoticeAdminCreateError]);
+  }, [normalNoticeAdminCreateDone]);
 
   useEffect(() => {
     if (normalNoticeAdminCreateError) {
@@ -501,7 +518,7 @@ const AdminHome = () => {
       } else {
         normalNoticeForm.resetFields();
         setNormalNoticeType(null);
-        setNormalNoticeUser(null);
+        setNormalNoticeUser([]);
         setContentData(null);
       }
 
@@ -517,9 +534,9 @@ const AdminHome = () => {
   const normalNoticeTypeChnageHandler = useCallback(
     (type) => {
       normalNoticeForm.setFieldsValue({
-        userId: null,
+        userId: [],
       });
-      setNormalNoticeUser(null);
+      setNormalNoticeUser([]);
       setNormalNoticeType(type);
     },
     [normalNoticeType, normalNoticeUser]
@@ -838,22 +855,19 @@ const AdminHome = () => {
   // 일반게시판 추가
   const normalNoticeAdminCreate = useCallback(
     (data) => {
-      console.log(data);
-      console.log(normalNoticeType);
-      console.log(uploadPath);
       dispatch({
         type: NORMAL_NOTICE_ADMIN_CREATE_REQUEST,
         data: {
           title: data.title,
           content: contentData,
-          author: "관리자",
+          author: "admin",
           level: me.level,
           file: uploadPath,
           receiverId: data.userId,
           createType:
-            normalNoticeType === "강사개인"
+            normalNoticeType === "강사전체"
               ? 1
-              : normalNoticeType === "학생개인"
+              : normalNoticeType === "학생전체"
               ? 2
               : normalNoticeType === "학생 및 강사 전체"
               ? 3
@@ -863,7 +877,13 @@ const AdminHome = () => {
     },
     [normalNoticeType, uploadPath, me, contentData]
   );
-  // 일반게시판 추가
+  // 일반게시판 리스트타입 수정
+  const normalNoticeListTypeChangeHandler = useCallback(
+    (type) => {
+      setNormalNoticeListType(type);
+    },
+    [normalNoticeListType]
+  );
 
   const getEditContent = useCallback(
     (contentValue) => {
@@ -1032,18 +1052,54 @@ const AdminHome = () => {
                   >
                     일반 게시판
                   </Text>
-                  <Wrapper dr={`row`} ju={`flex-start`} width={`auto`}>
-                    <Button
-                      size={`small`}
-                      type={`primary`}
-                      loading={normalNoticeAdminCreateLoading}
-                      onClick={() => normalNoticeModalToggle(null)}
-                    >
-                      일반 게시판 작성
-                    </Button>
+                  <Wrapper
+                    dr={`row`}
+                    ju={`space-between`}
+                    width={`calc(100% - 110px)`}
+                  >
+                    <Wrapper width={`auto`} dr={`row`}>
+                      <Button
+                        size={`small`}
+                        type={normalNoticeListType === 4 && `primary`}
+                        onClick={() => normalNoticeListTypeChangeHandler(4)}
+                      >
+                        전체
+                      </Button>
+                      <ModalBtn
+                        size={`small`}
+                        type={normalNoticeListType === 1 && `primary`}
+                        onClick={() => normalNoticeListTypeChangeHandler(1)}
+                      >
+                        햑생
+                      </ModalBtn>
+                      <ModalBtn
+                        size={`small`}
+                        type={normalNoticeListType === 2 && `primary`}
+                        onClick={() => normalNoticeListTypeChangeHandler(2)}
+                      >
+                        강사
+                      </ModalBtn>
+                      <ModalBtn
+                        size={`small`}
+                        type={normalNoticeListType === 3 && `primary`}
+                        onClick={() => normalNoticeListTypeChangeHandler(3)}
+                      >
+                        관리자
+                      </ModalBtn>
+                    </Wrapper>
+                    <Wrapper width={`auto`}>
+                      <Button
+                        size={`small`}
+                        type={`primary`}
+                        loading={normalNoticeAdminCreateLoading}
+                        onClick={() => normalNoticeModalToggle(null)}
+                      >
+                        일반 게시판 작성
+                      </Button>
+                    </Wrapper>
                   </Wrapper>
                 </Wrapper>
-
+                {console.log(normalNoticeAdminList)}
                 <Table
                   rowKey="id"
                   dataSource={
@@ -1052,6 +1108,9 @@ const AdminHome = () => {
                   size="small"
                   columns={noticeColumns}
                   style={{ width: `100%` }}
+                  pagination={{
+                    pageSize: 5,
+                  }}
                 />
               </Wrapper>
 
@@ -2006,6 +2065,7 @@ const AdminHome = () => {
                       ]}
                     >
                       <Select
+                        mode="multiple"
                         showSearch
                         style={{ width: `100%` }}
                         placeholder={`${
@@ -2183,6 +2243,9 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: NORMAL_NOTICE_ADMIN_LIST_REQUEST,
+      // data: {
+      //   listType: 4,
+      // },
     });
 
     // 구현부 종료

@@ -49,6 +49,7 @@ function* normalNoticeList(action) {
 // ******************************************************************************************************************
 
 async function normalNoticeAdminListAPI(data) {
+  console.log("listType", data);
   return await axios.post(`/api/normalNotice/admin/list`, data);
 }
 
