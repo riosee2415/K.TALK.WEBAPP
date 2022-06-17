@@ -892,6 +892,7 @@ const AdminHome = () => {
               al={`flex-start`}
               margin={`0 0 30px`}
             >
+              {/* NOMARL BOARD */}
               <Wrapper al={`flex-start`} width={`49%`}>
                 <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
                   <Text
@@ -900,7 +901,7 @@ const AdminHome = () => {
                     fontWeight={`bold`}
                     margin={`0 20px 0 0`}
                   >
-                    전체 게시판
+                    일반 게시판
                   </Text>
                   <Wrapper dr={`row`} ju={`flex-start`} width={`auto`}>
                     <Button
@@ -958,6 +959,10 @@ const AdminHome = () => {
                   }}
                 />
               </Wrapper>
+
+              {/* NOMARL BOARD END */}
+
+              {/* MESSAGE TABLE */}
               <Wrapper al={`flex-start`} width={`49%`}>
                 <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
                   <Text
@@ -1014,7 +1019,9 @@ const AdminHome = () => {
                 />
               </Wrapper>
             </Wrapper>
+            {/* MESSAGE TABLE END */}
 
+            {/* CLASS LIST */}
             <Wrapper al={`flex-start`} margin={`0 0 10px`}>
               <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 16px`}>
                 <Text
@@ -1195,6 +1202,7 @@ const AdminHome = () => {
                 </Wrapper>
               </Wrapper>
             </Wrapper>
+
             <Wrapper dr={`row`} ju={`flex-start`}>
               {allLectureList &&
                 (allLectureList.length === 0 ? (
@@ -1374,6 +1382,7 @@ const AdminHome = () => {
                   })
                 ))}
             </Wrapper>
+            {/* CLASS LIST END */}
           </AdminContent>
 
           {/* DELETE MODAL */}
