@@ -21,6 +21,7 @@ import payClassSaga from "./payClass";
 import teacherPaySaga from "./teacherPay";
 import lectureMemoSaga from "./lectureMemo";
 import communitySaga from "./community";
+import normalNoticeSaga from "./normalNotice";
 //
 import axios from "axios";
 import backURL from "../config/config";
@@ -52,5 +53,6 @@ export default function* rootSaga() {
     fork(teacherPaySaga),
     fork(lectureMemoSaga),
     fork(communitySaga),
+    fork(normalNoticeSaga),
   ]);
 }

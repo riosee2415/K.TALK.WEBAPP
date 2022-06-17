@@ -22,6 +22,7 @@ import payClass from "./payClass";
 import teacherpay from "./teacherpay";
 import lectureMemo from "./lectureMemo";
 import community from "./community";
+import normalNotice from "./normalNotice";
 
 const rootReducer = (state, action) => {
   switch (action.type) {
@@ -52,6 +53,7 @@ const rootReducer = (state, action) => {
         teacherpay,
         lectureMemo,
         community,
+        normalNotice,
       });
       return combinedReducer(state, action);
     }

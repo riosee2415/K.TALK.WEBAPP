@@ -892,7 +892,7 @@ const AdminHome = () => {
               al={`flex-start`}
               margin={`0 0 30px`}
             >
-              {/* NOMARL BOARD */}
+              {/* NORMAL BOARD */}
               <Wrapper al={`flex-start`} width={`49%`}>
                 <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
                   <Text
@@ -960,7 +960,7 @@ const AdminHome = () => {
                 />
               </Wrapper>
 
-              {/* NOMARL BOARD END */}
+              {/* NORMAL BOARD END */}
 
               {/* MESSAGE TABLE */}
               <Wrapper al={`flex-start`} width={`49%`}>
