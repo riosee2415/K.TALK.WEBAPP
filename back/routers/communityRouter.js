@@ -225,7 +225,6 @@ router.post("/list", async (req, res, next) => {
      ${_searchTitle !== `` ? `AND A.title LIKE '%${_searchTitle}%'` : ``}
      ${_searchName !== `` ? `AND C.username LIKE '%${_searchName}%'` : ``}
      ${_level !== `` ? `AND C.level = ${_level}` : ``}
-     ${_level !== `` ? `AND C.level = ${_level}` : ``}
      ${_typeId ? `AND A.CommunityTypeId = ${_typeId}` : ``}
     `;
 
@@ -264,7 +263,6 @@ router.post("/list", async (req, res, next) => {
      AND    B.isDelete = FALSE
     ${_searchTitle !== `` ? `AND A.title LIKE '%${_searchTitle}%'` : ``}
     ${_searchName !== `` ? `AND C.username LIKE '%${_searchName}%'` : ``}
-    ${_level !== `` ? `AND C.level = ${_level}` : ``}
     ${_level !== `` ? `AND C.level = ${_level}` : ``}
     ${_typeId ? `AND A.CommunityTypeId = ${_typeId}` : ``} 
    ORDER    BY A.createdAt DESC
@@ -721,7 +719,7 @@ router.post("/comment/update", isLoggedIn, async (req, res, next) => {
     }
   } catch (error) {
     console.error(error);
-    return res.status(401).send("댓글을 작성할 수 없습니다.");
+    return res.status(401).send("댓글을 삭제할 수 없습니다.");
   }
 });
 
@@ -789,7 +787,7 @@ router.delete(
       }
     } catch (error) {
       console.error(error);
-      return res.status(401).send("댓글을 작성할 수 없습니다.");
+      return res.status(401).send("댓글을 삭제할 수 없습니다.");
     }
   }
 );

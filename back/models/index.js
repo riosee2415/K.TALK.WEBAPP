@@ -31,6 +31,8 @@ const lecturememo = require("./lecturememo");
 const communitytype = require("./communitytype");
 const community = require("./community");
 const communitycomment = require("./communitycomment");
+const lecturenotice = require("./lecturenotice");
+const lecturenoticecomment = require("./lecturenoticecomment");
 
 const env = process.env.NODE_ENV || "development";
 const config = require("../config/config")[env];
@@ -74,6 +76,8 @@ db.LectureMemo = lecturememo;
 db.CommunityType = communitytype;
 db.Community = community;
 db.CommunityComment = communitycomment;
+db.LectureNotice = lecturenotice;
+db.LectureNoticeComment = lecturenoticecomment;
 
 Object.keys(db).forEach((modelName) => {
   db[modelName].init(sequelize);
