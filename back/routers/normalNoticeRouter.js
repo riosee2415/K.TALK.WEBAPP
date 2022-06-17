@@ -174,7 +174,7 @@ router.post("/detail", isLoggedIn, async (req, res, next) => {
         .send("삭제된 게시글입니다. 확인 후 다시 시도하여 주십시오.");
     }
 
-    const selectQuery = `
+    const detailQuery = `
     SELECT	id,
             title,
             content,

@@ -51,6 +51,7 @@ const router = express.Router();
 router.post("/file", upload.single("file"), async (req, res, next) => {
   return res.json({ path: req.file.location });
 });
+
 // 게시판 리스트 (전체 게시판)
 router.post("/list", isLoggedIn, async (req, res, next) => {
   const { LectureId, page } = req.body;
@@ -99,6 +100,8 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
             hit
     FROM	lectureNotices
    WHERE    LectureId = ${LectureId}
+            AND isDelete = FALSE
+            ${req.user.level === 1 ? `AND TeacherId IS NULL` : ``}
     `;
 
     const selectQuery = `
@@ -119,6 +122,7 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
             hit
     FROM	lectureNotices
    WHERE    LectureId = ${LectureId}
+            ${req.user.level === 1 ? `AND TeacherId IS NULL` : ``}
             AND isDelete = FALSE
    ORDER    BY createdAt DESC
    LIMIT    ${LIMIT}
@@ -318,6 +322,10 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
 
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
+  if (req.user.level > 3) {
+    return res.status(401).send("관리자는 게시글을 작성할 수 없습니다.");
   }
 
   try {
