@@ -200,7 +200,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
    INNER
     JOIN    lectures            B
       ON    A.LectureId = B.id
-   WHERE    A.LectureId = ${LectureId}
+   WHERE    1 = 1
      ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
      AND    A.isDelete = FALSE
      AND    B.isDelete = FALSE
@@ -414,7 +414,7 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
         return res.status(201).json({ result: true });
       }
     }
-
+    // 강사 OR 관리자
     if (req.user.level !== 1) {
       //  학생 전체
       if (!StudentId) {
@@ -438,21 +438,25 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
       }
       // 학생 개인
       if (StudentId) {
-        const createResult = await LectureNotice.create({
-          title,
-          content,
-          author,
-          level,
-          LectureId: parseInt(LectureId),
-          TeacherId: null,
-          StudentId: parseInt(StudentId),
-          file,
-          UserId: parseInt(req.user.id),
-        });
-
-        if (!createResult) {
-          return res.status(401).send("처리중 문제가 발생하였습니다.");
+        if (!Array.isArray(StudentId)) {
+          return res.status(403).send("잘못된 요청입니다.");
         }
+
+        await Promise.all(
+          StudentId.map(async (data) => {
+            await LectureNotice.create({
+              title,
+              content,
+              author,
+              level,
+              LectureId: parseInt(LectureId),
+              TeacherId: null,
+              StudentId: parseInt(data),
+              file,
+              UserId: parseInt(req.user.id),
+            });
+          })
+        );
 
         return res.status(201).json({ result: true });
       }

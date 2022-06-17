@@ -119,8 +119,26 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
 });
 
 router.post("/admin/list", isAdminCheck, async (req, res, next) => {
+  const { listType } = req.body;
+
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
+  let nanFlag = isNaN(listType);
+
+  if (!listType) {
+    nanFlag = false;
+  }
+
+  if (nanFlag) {
+    return res.status(400).send("잘못된 요청 입니다.");
+  }
+
+  let _listType = Number(listType);
+
+  if (_listType > 4 || !listType) {
+    _listType = 4;
   }
 
   try {
@@ -138,9 +156,21 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
             DATE_FORMAT(createdAt, '%Y-%m-%d')  AS createdAt,
             DATE_FORMAT(updatedAt, '%Y-%m-%d')  AS updatedAt,
             UserId
-    FROM	normalNotices
-   WHERE    isAdmin = TRUE
-   ORDER    BY createdAt DESC
+      FROM	normalNotices
+     WHERE  1 = 1
+       AND isAdmin = TRUE
+       ${
+         _listType === 1
+           ? `AND level = 1`
+           : _listType === 2
+           ? `AND level = 2`
+           : _listType === 3
+           ? `author = "admin"`
+           : _listType === 4
+           ? ``
+           : ``
+       }
+     ORDER  BY createdAt DESC
     `;
 
     const notice = await models.sequelize.query(selectQuery);
@@ -189,7 +219,7 @@ router.post("/detail", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(createdAt, '%Y-%m-%d')  AS createdAt,
             DATE_FORMAT(updatedAt, '%Y-%m-%d')  AS updatedAt,
             UserId
-    FROM	normalNotices
+    FROM  	normalNotices
    WHERE    id = ${NormalNoticeId}
     `;
 
@@ -292,6 +322,10 @@ router.post("/teacher/create", isLoggedIn, async (req, res, next) => {
     return res.status(403).send("로그인 후 이용 가능합니다.");
   }
 
+  if (!Array.isArray(receiverId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+
   if (parseInt(createType) > 3) {
     return res.status(401).send("잘못된 요청입니다.");
   }
@@ -324,6 +358,7 @@ router.post("/teacher/create", isLoggedIn, async (req, res, next) => {
       return res.status(201).json({ result: true });
     }
 
+    // 강사가 관리자한테
     if (parseInt(createType) === 2) {
       const createResult = await NormalNotice.create({
         title,
@@ -345,32 +380,20 @@ router.post("/teacher/create", isLoggedIn, async (req, res, next) => {
 
     // 강사가 강사 개인에게
     if (parseInt(createType) === 3) {
-      const exUser = await User.findOne({
-        where: { id: parseInt(receiverId), isFire: false, level: 2 },
-      });
-
-      if (!exUser) {
-        return res
-          .status(401)
-          .send(
-            "강사 정보가 존재하지 않습니다. 확인 후 다시 시도하여 주십시오."
-          );
-      }
-
-      const createResult = await NormalNotice.create({
-        title,
-        content,
-        author,
-        level: parseInt(req.user.level),
-        receiverId: parseInt(receiverId),
-        isAdmin: false,
-        file,
-        UserId: parseInt(req.user.id),
-      });
-
-      if (!createResult) {
-        return res.status(401).send("처리중 문제가 발생하였습니다.");
-      }
+      await Promise.all(
+        receiverId.map(async (data) => {
+          await NormalNotice.create({
+            title,
+            content,
+            author,
+            level: parseInt(req.user.level),
+            receiverId: parseInt(data),
+            isAdmin: false,
+            file,
+            UserId: parseInt(req.user.id),
+          });
+        })
+      );
 
       return res.status(201).json({ result: true });
     }
@@ -392,13 +415,17 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
     return res.status(401).send("잘못된 요청입니다.");
   }
 
+  if (!Array.isArray(receiverId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+
   // createType === 1 강사전체
   //                2 학생 전체
   //                3 강사 & 학생 전체
-  //                4 한명에게 보내기
+  //                4 지정해서 보내기 (여러명)
 
   try {
-    // 관리자가 학생 전체에게 작성
+    // 관리자가 강사 전체에게 작성
     if (parseInt(createType) === 1) {
       const teacherList = await User.findAll({
         where: { level: 2, isFire: false },
@@ -418,13 +445,14 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
             file,
             receiverId: parseInt(data.id),
             UserId: parseInt(req.user.id),
+            isAdmin: true,
           });
         })
       );
 
       return res.status(201).json({ result: true });
     }
-
+    // 학생 전체
     if (parseInt(createType) === 2) {
       const allStudents = await User.findAll({
         where: { level: 1 },
@@ -444,6 +472,7 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
             file,
             receiverId: parseInt(data.id),
             UserId: parseInt(req.user.id),
+            isAdmin: true,
           });
         })
       );
@@ -451,6 +480,7 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
       return res.status(201).json({ result: true });
     }
 
+    // 강사랑 학생 전체
     if (parseInt(createType) === 3) {
       const selectQuery = `
       SELECT	*
@@ -477,27 +507,28 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
             file,
             receiverId: parseInt(data.id),
             UserId: parseInt(req.user.id),
+            isAdmin: true,
           });
         })
       );
 
       return res.status(201).json({ result: true });
     }
-
+    // 지정해서 보내기
     if (parseInt(createType) === 4) {
-      const createResult = await NormalNotice.create({
-        title,
-        content,
-        author,
-        level,
-        file,
-        receiverId: parseInt(receiverId),
-        isAdmin: false,
-      });
-
-      if (!createResult) {
-        return res.status(401).send("처리중 문제가 발생하였습니다.");
-      }
+      await Promise.all(
+        receiverId.map(async (data) => {
+          await NormalNotice.create({
+            title,
+            content,
+            author,
+            level,
+            file,
+            receiverId: parseInt(data),
+            isAdmin: true,
+          });
+        })
+      );
 
       return res.status(201).json({ result: true });
     }
