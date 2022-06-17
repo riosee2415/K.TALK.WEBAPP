@@ -41,11 +41,11 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
 });
 
+const router = express.Router();
+
 router.post("/file", upload.single("file"), async (req, res, next) => {
   return res.json({ path: req.file.location });
 });
-
-const router = express.Router();
 
 router.post("/list", isLoggedIn, async (req, res, next) => {
   const { page } = req.body;
@@ -118,6 +118,40 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.post("/admin/list", isAdminCheck, async (req, res, next) => {
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
+  try {
+    const selectQuery = `
+    SELECT	id,
+            title,
+            content,
+            author,
+            level,
+            receiverId,
+            isAdmin,
+            file,
+            isDelete,
+            DATE_FORMAT(deletedAt, '%Y-%m-%d')  AS deletedAt,
+            DATE_FORMAT(createdAt, '%Y-%m-%d')  AS createdAt,
+            DATE_FORMAT(updatedAt, '%Y-%m-%d')  AS updatedAt,
+            UserId
+    FROM	normalNotices
+   WHERE    isAdmin = TRUE
+   ORDER    BY createdAt DESC
+    `;
+
+    const notice = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ notice: notice[0] });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("게시글 목록을 불러올 수 없습니다.");
+  }
+});
+
 router.post("/detail", isLoggedIn, async (req, res, next) => {
   const { NormalNoticeId } = req.body;
 
@@ -126,6 +160,94 @@ router.post("/detail", isLoggedIn, async (req, res, next) => {
   }
 
   try {
+    const exNormal = await NormalNotice.findOne({
+      where: { id: parseInt(NormalNoticeId) },
+    });
+
+    if (!exNormal) {
+      return res.status(401).send("존재하지 않는 게시글 입니다.");
+    }
+
+    if (exNormal.isDelete) {
+      return res
+        .status(401)
+        .send("삭제된 게시글입니다. 확인 후 다시 시도하여 주십시오.");
+    }
+
+    const selectQuery = `
+    SELECT	id,
+            title,
+            content,
+            author,
+            level,
+            receiverId,
+            isAdmin,
+            file,
+            hit,
+            isDelete,
+            DATE_FORMAT(deletedAt, '%Y-%m-%d')  AS deletedAt,
+            DATE_FORMAT(createdAt, '%Y-%m-%d')  AS createdAt,
+            DATE_FORMAT(updatedAt, '%Y-%m-%d')  AS updatedAt,
+            UserId
+    FROM	normalNotices
+   WHERE    id = ${NormalNoticeId}
+    `;
+
+    const detailData = await models.sequelize.query(detailQuery);
+
+    if (detailData[0].length === 0) {
+      return res.status(401).send("존재하지 않는 게시글입니다.");
+    }
+
+    const commentQuery = `
+    SELECT	A.id,
+            A.content,
+            A.isDelete,
+            A.deletedAt,
+            A.parent,
+            A.parentId,
+            DATE_FORMAT(A.createdAt, '%Y-%m-%d')  AS createdAt,
+            DATE_FORMAT(A.updatedAt, '%Y-%m-%d')  AS updatedAt,
+            A.NormalNoticeId,
+            A.grantparentId,
+            A.UserId,
+            A.name,
+            A.level,
+            (
+              SELECT	COUNT(nc.id)
+                FROM	normalNoticeComments	nc
+               WHERE	nc.grantparentId = A.id
+                 AND    nc.isDelete = FALSE
+            )   AS commentCnt
+      FROM	normalNoticeComments		A
+     WHERE	A.isDelete = FALSE
+       AND	A.parentId  IS NULL
+       AND  A.NormalNoticeId = ${NormalNoticeId}
+     ORDER  BY A.createdAt DESC
+    `;
+
+    const comments = await models.sequelize.query(commentQuery);
+
+    const commentsLen = await NormalNoticeComment.findAll({
+      where: { isDelete: false, NormalNoticeId: parseInt(NormalNoticeId) },
+    });
+
+    const nextHit = detailData[0][0].hit;
+
+    await NormalNotice.update(
+      {
+        hit: nextHit + 1,
+      },
+      {
+        where: { id: parseInt(NormalNoticeId) },
+      }
+    );
+
+    return res.status(200).json({
+      detailData: detailData[0][0],
+      comments: comments[0],
+      commentsLen: commentsLen.length,
+    });
   } catch (error) {
     console.error(error);
     return res.status(401).send("게시글 정보를 불러올 수 없습니다.");
