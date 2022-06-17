@@ -286,17 +286,15 @@ router.post("/student/create", isLoggedIn, async (req, res, next) => {
 });
 
 router.post("/teacher/create", isLoggedIn, async (req, res, next) => {
-  const { title, content, author, file, isTeacherAll, isAdmin } = req.body;
+  const { title, content, author, file, receiverId, isTeacherAll, isAdmin } =
+    req.body;
 
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
   }
 
-  if (!isTeacherAll && !isAdmin) {
-    return res.status(401).send("잘못된 요청입니다.");
-  }
-
   try {
+    // 강사가 강사 전체에게
     if (isTeacherAll) {
       const teacherList = await User.findAll({
         where: { level: 2, isFire: false },
@@ -323,6 +321,7 @@ router.post("/teacher/create", isLoggedIn, async (req, res, next) => {
       return res.status(201).json({ result: true });
     }
 
+    // 강사가 어드민에게
     if (isAdmin) {
       const createResult = await NormalNotice.create({
         title,
@@ -331,6 +330,38 @@ router.post("/teacher/create", isLoggedIn, async (req, res, next) => {
         level: parseInt(req.user.level),
         receiverId: null,
         isAdmin: true,
+        file,
+        UserId: parseInt(req.user.id),
+      });
+
+      if (!createResult) {
+        return res.status(401).send("처리중 문제가 발생하였습니다.");
+      }
+
+      return res.status(201).json({ result: true });
+    }
+
+    // 강사가 강사 개인에게
+    if (receiverId) {
+      const exUser = await User.findOne({
+        where: { id: parseInt(receiverId), isFire: false, level: 2 },
+      });
+
+      if (!exUser) {
+        return res
+          .status(401)
+          .send(
+            "강사 정보가 존재하지 않습니다. 확인 후 다시 시도하여 주십시오."
+          );
+      }
+
+      const createResult = await NormalNotice.create({
+        title,
+        content,
+        author,
+        level: parseInt(req.user.level),
+        receiverId: parseInt(receiverId),
+        isAdmin: false,
         file,
         UserId: parseInt(req.user.id),
       });
@@ -364,11 +395,8 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
     return res.status(403).send("로그인 후 이용 가능합니다.");
   }
 
-  if (!isTeacherAll && !isStudentAll && !isAllCreate) {
-    return res.status(401).send("잘못된 요청입니다.");
-  }
-
   try {
+    // 관리자가 학생 전체에게 작성
     if (isStudentAll) {
       const allStudents = await User.findAll({
         where: { level: 1 },
@@ -394,7 +422,7 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
 
       return res.status(201).json({ result: true });
     }
-
+    // 관리자가 강사 전체에게
     if (isTeacherAll) {
       const teacherList = await User.findAll({
         where: { level: 2, isFire: false },
@@ -421,6 +449,7 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
       return res.status(201).json({ result: true });
     }
 
+    // 관리자가 강사와 학생 전체에게
     if (isAllCreate) {
       const selectQuery = `
       SELECT	*
