@@ -83,48 +83,58 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
     }
 
     const lengthQuery = `
-    SELECT	id,
-            title,
-            content,
-            author,
-            level,
-            LectureId,
-            TeacherId,
-            file,
-            isDelete,
-            DATE_FORMAT(deletedAt, '%Y-%m-%d')  AS deletedAt,
-            DATE_FORMAT(createdAt, '%Y-%m-%d')  AS createdAt,
-            DATE_FORMAT(updatedAt, '%Y-%m-%d')  AS updatedAt,
-            UserId,
-            StudentId,
-            hit
-    FROM	lectureNotices
-   WHERE    LectureId = ${LectureId}
-            AND isDelete = FALSE
-            ${req.user.level === 1 ? `AND TeacherId IS NULL` : ``}
+    SELECT	A.id,
+            A.title,
+            A.content,
+            A.author,
+            A.level,
+            A.LectureId,
+            A.TeacherId,
+            A.file,
+            A.isDelete,
+            DATE_FORMAT(A.deletedAt, '%Y-%m-%d')  AS deletedAt,
+            DATE_FORMAT(A.createdAt, '%Y-%m-%d')  AS createdAt,
+            DATE_FORMAT(A.updatedAt, '%Y-%m-%d')  AS updatedAt,
+            A.UserId,
+            A.StudentId,
+            A.hit,
+            B.course
+    FROM	  lectureNotices      A
+   INNER
+    JOIN    lectures            B
+      ON    A.LectureId = B.id
+   WHERE    A.LectureId = ${LectureId}
+            AND A.isDelete = FALSE
+            AND B.isDelete = FALSE
+            ${req.user.level === 1 ? `AND A.TeacherId IS NULL` : ``}
     `;
 
     const selectQuery = `
-    SELECT	id,
-            title,
-            content,
-            author,
-            level,
-            LectureId,
-            TeacherId,
-            file,
-            isDelete,
-            DATE_FORMAT(deletedAt, '%Y-%m-%d')  AS deletedAt,
-            DATE_FORMAT(createdAt, '%Y-%m-%d')  AS createdAt,
-            DATE_FORMAT(updatedAt, '%Y-%m-%d')  AS updatedAt,
-            UserId,
-            StudentId,
-            hit
-    FROM	lectureNotices
-   WHERE    LectureId = ${LectureId}
-            ${req.user.level === 1 ? `AND TeacherId IS NULL` : ``}
-            AND isDelete = FALSE
-   ORDER    BY createdAt DESC
+    SELECT	A.id,
+            A.title,
+            A.content,
+            A.author,
+            A.level,
+            A.LectureId,
+            A.TeacherId,
+            A.file,
+            A.isDelete,
+            DATE_FORMAT(A.deletedAt, '%Y-%m-%d')  AS deletedAt,
+            DATE_FORMAT(A.createdAt, '%Y-%m-%d')  AS createdAt,
+            DATE_FORMAT(A.updatedAt, '%Y-%m-%d')  AS updatedAt,
+            A.UserId,
+            A.StudentId,
+            A.hit,
+            B.course
+    FROM	  lectureNotices      A
+   INNER
+    JOIN    lectures            B
+      ON    A.LectureId = B.id
+   WHERE    A.LectureId = ${LectureId}
+            ${req.user.level === 1 ? `AND A.TeacherId IS NULL` : ``}
+            AND A.isDelete = FALSE
+            AND B.isDelete = FALSE
+   ORDER    BY A.createdAt DESC
    LIMIT    ${LIMIT}
   OFFSET    ${OFFSET}
     `;
@@ -170,28 +180,31 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
     }
 
     const selectQuery = `
-    SELECT	id,
-            title,
-            content,
-            author,
-            level,
-            LectureId,
-            TeacherId,
-            file,
-            isDelete,
-            DATE_FORMAT(deletedAt, '%Y-%m-%d')  AS deletedAt,
-            DATE_FORMAT(createdAt, '%Y-%m-%d')  AS createdAt,
-            DATE_FORMAT(updatedAt, '%Y-%m-%d')  AS updatedAt,
-            UserId,
-            StudentId,
-            hit
-    FROM	lectureNotices
-   WHERE    1 = 1
-     ${_LectureId ? `AND LectureId = ${_LectureId}` : ``}
-     AND    isDelete = FALSE
-   ORDER    BY createdAt DESC
-   LIMIT    ${LIMIT}
-  OFFSET    ${OFFSET}
+    SELECT	A.id,
+            A.title,
+            A.content,
+            A.author,
+            A.level,
+            A.LectureId,
+            A.TeacherId,
+            A.file,
+            A.isDelete,
+            DATE_FORMAT(A.deletedAt, '%Y-%m-%d')  AS deletedAt,
+            DATE_FORMAT(A.createdAt, '%Y-%m-%d')  AS createdAt,
+            DATE_FORMAT(A.updatedAt, '%Y-%m-%d')  AS updatedAt,
+            A.UserId,
+            A.StudentId,
+            A.hit,
+            B.course
+    FROM	  lectureNotices      A
+   INNER
+    JOIN    lectures            B
+      ON    A.LectureId = B.id
+   WHERE    A.LectureId = ${LectureId}
+     ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
+     AND    A.isDelete = FALSE
+     AND    B.isDelete = FALSE
+   ORDER    BY A.createdAt DESC
     `;
 
     const notice = await models.sequelize.query(selectQuery);
