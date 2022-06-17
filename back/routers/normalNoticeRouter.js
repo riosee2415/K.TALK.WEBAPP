@@ -379,51 +379,25 @@ router.post("/teacher/create", isLoggedIn, async (req, res, next) => {
 });
 
 router.post("/admin/create", isAdminCheck, async (req, res, next) => {
-  const {
-    title,
-    content,
-    author,
-    level,
-    file,
-    receiverId,
-    isStudentAll,
-    isTeacherAll,
-    isAllCreate,
-  } = req.body;
+  const { title, content, author, level, file, receiverId, createType } =
+    req.body;
 
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
   }
 
+  if (parseInt(createType) > 4) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+
+  // createType === 1 강사전체
+  //              2 학생 전체
+  //              3 강사 & 학생 전체
+  //              4 한명에게 보내기
+
   try {
     // 관리자가 학생 전체에게 작성
-    if (isStudentAll) {
-      const allStudents = await User.findAll({
-        where: { level: 1 },
-      });
-
-      if (allStudents.length === 0) {
-        return res.status(401).send("학생이 존재하지 않습니다.");
-      }
-
-      await Promise.all(
-        allStudents.map(async (data) => {
-          await NormalNotice.create({
-            title,
-            content,
-            author,
-            level,
-            file,
-            receiverId: parseInt(data.id),
-            UserId: parseInt(req.user.id),
-          });
-        })
-      );
-
-      return res.status(201).json({ result: true });
-    }
-    // 관리자가 강사 전체에게
-    if (isTeacherAll) {
+    if (parseInt(createType) === 1) {
       const teacherList = await User.findAll({
         where: { level: 2, isFire: false },
       });
@@ -449,8 +423,33 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
       return res.status(201).json({ result: true });
     }
 
-    // 관리자가 강사와 학생 전체에게
-    if (isAllCreate) {
+    if (parseInt(createType) === 2) {
+      const allStudents = await User.findAll({
+        where: { level: 1 },
+      });
+
+      if (allStudents.length === 0) {
+        return res.status(401).send("학생이 존재하지 않습니다.");
+      }
+
+      await Promise.all(
+        allStudents.map(async (data) => {
+          await NormalNotice.create({
+            title,
+            content,
+            author,
+            level,
+            file,
+            receiverId: parseInt(data.id),
+            UserId: parseInt(req.user.id),
+          });
+        })
+      );
+
+      return res.status(201).json({ result: true });
+    }
+
+    if (parseInt(createType) === 3) {
       const selectQuery = `
       SELECT	*
         FROM	users
@@ -483,21 +482,23 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
       return res.status(201).json({ result: true });
     }
 
-    const createResult = await NormalNotice.create({
-      title,
-      content,
-      author,
-      level,
-      file,
-      receiverId: parseInt(receiverId),
-      isAdmin: false,
-    });
+    if (parseInt(createType) === 4) {
+      const createResult = await NormalNotice.create({
+        title,
+        content,
+        author,
+        level,
+        file,
+        receiverId: parseInt(receiverId),
+        isAdmin: false,
+      });
 
-    if (!createResult) {
-      return res.status(401).send("처리중 문제가 발생하였습니다.");
+      if (!createResult) {
+        return res.status(401).send("처리중 문제가 발생하였습니다.");
+      }
+
+      return res.status(201).json({ result: true });
     }
-
-    return res.status(201).json({ result: true });
   } catch (error) {
     console.error(error);
     return res.status(401).send("게시글을 작성할 수 없습니다.");
