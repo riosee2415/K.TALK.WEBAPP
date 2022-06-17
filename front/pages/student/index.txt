@@ -502,6 +502,21 @@ const Student = () => {
     });
 
     dispatch({
+      type: MESSAGE_TEACHER_LIST_REQUEST,
+    });
+
+    dispatch({
+      type: MESSAGE_TEACHER_LIST_REQUEST,
+    });
+
+    dispatch({
+      type: MESSAGE_USER_LIST_REQUEST,
+      data: {
+        page: 1,
+      },
+    });
+
+    dispatch({
       type: NOTICE_LIST_REQUEST,
       data: {
         page: 1,
@@ -734,6 +749,44 @@ const Student = () => {
     });
   }, [meUpdateModal]);
 
+  const messageAnswerToggleHanlder = useCallback((data) => {
+    if (data.userLevel >= 3) {
+      setSendMessageAnswerType(3);
+    } else {
+      setSendMessageAnswerType(1);
+    }
+  }, []);
+
+  const messageSendModalHandler = useCallback((data, num) => {
+    setMessageSendModal((prev) => !prev);
+
+    if (num === 1) {
+      setSendMessageType(3);
+    }
+  }, []);
+
+  const messageViewModalHandler = useCallback((data, isSender) => {
+    setMessageViewModal((prev) => !prev);
+
+    if (data.userLevel === 3 || data.userLevel === 4) {
+      setSendMessageType(3);
+    }
+
+    if (isSender) {
+      setSenderModal(true);
+    }
+
+    setMessageDatum(data);
+  }, []);
+
+  const sendMessageTypeHandler = useCallback((num) => {
+    setSendMessageType(num);
+  }, []);
+
+  const sendMessageAnswerTypeHandler = useCallback((num) => {
+    setSendMessageAnswerType(num);
+  }, []);
+
   const homeworkSubmitHanlder = useCallback((data) => {
     setHomeWorkData(data);
     setHomeWorkModalToggle(true);
@@ -802,6 +855,114 @@ const Student = () => {
     [userProfilePath]
   );
 
+  const sendMessageFinishHandler = useCallback(
+    (data) => {
+      let lectureStuLectureData = JSON.parse(data.lectureStuLectureList);
+
+      dispatch({
+        type: MESSAGE_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          author: me.username,
+          senderId: me.id,
+          receiverId: lectureStuLectureData.TeacherId,
+          content: data.content,
+          level: lectureStuLectureData.level,
+        },
+      });
+    },
+    [me]
+  );
+
+  const sendMessageLectureFinishHanlder = useCallback(
+    (data) => {
+      let lectureStuLectureData = JSON.parse(data.lectureStuLectureList);
+
+      dispatch({
+        type: MESSAGE_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          author: me.username,
+          senderId: me.id,
+          receiverId: lectureStuLectureData.TeacherId,
+          receiveLectureId: lectureStuLectureData.LectureId,
+          content: data.content,
+          level: lectureStuLectureData.level,
+        },
+      });
+    },
+
+    [me]
+  );
+
+  const sendMessageAdminFinishHandler = useCallback(
+    (data) => {
+      dispatch({
+        type: MESSAGE_FOR_ADMIN_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          author: me.username,
+          content: data.content,
+        },
+      });
+    },
+    [me]
+  );
+
+  const sendMessageAnswerAdminFinish = useCallback(
+    (data) => {
+      dispatch({
+        type: MESSAGE_FOR_ADMIN_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          author: me.username,
+          content: data.content,
+        },
+      });
+    },
+    [me]
+  );
+
+  const answerFinishHandler = useCallback(
+    (data) => {
+      let lectureStuLectureData = JSON.parse(data.lectureStuLectureList);
+
+      dispatch({
+        type: MESSAGE_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          author: me.username,
+          senderId: me.id,
+          receiverId: lectureStuLectureData.TeacherId,
+          content: data.content,
+          level: lectureStuLectureData.level,
+        },
+      });
+    },
+    [me]
+  );
+
+  const answerLectureFinishHanlder = useCallback(
+    (data) => {
+      let lectureStuLectureData = JSON.parse(data.lectureStuLectureList);
+
+      dispatch({
+        type: MESSAGE_CREATE_REQUEST,
+        data: {
+          title: data.title,
+          author: me.username,
+          senderId: me.id,
+          receiverId: lectureStuLectureData.TeacherId,
+          receiveLectureId: lectureStuLectureData.LectureId,
+          content: data.content,
+          level: lectureStuLectureData.level,
+        },
+      });
+    },
+
+    [me, messageDatum]
+  );
+
   const homeWorkFinishHandler = useCallback(() => {
     if (fileName) {
       dispatch({
@@ -835,6 +996,28 @@ const Student = () => {
     saveAs(file, originName);
   }, []);
 
+  const noticeChangePage = useCallback((page) => {
+    setCurrentPage1(page);
+
+    dispatch({
+      type: NOTICE_LIST_REQUEST,
+      data: {
+        page,
+      },
+    });
+  }, []);
+
+  const noticeLectureChangePage = useCallback((page) => {
+    setCurrentPage4(page);
+
+    dispatch({
+      type: NOTICE_MY_LECTURE_LIST_REQUEST,
+      data: {
+        page,
+      },
+    });
+  }, []);
+
   const onChangeHomeworkPage = useCallback((page) => {
     setCurrentPage2(page);
 
@@ -845,6 +1028,33 @@ const Student = () => {
         search: "",
       },
     });
+  }, []);
+
+  const onChangeMessagePage = useCallback((page) => {
+    setCurrentPage3(page);
+
+    dispatch({
+      type: MESSAGE_USER_LIST_REQUEST,
+      data: {
+        page,
+      },
+    });
+  }, []);
+
+  const onChangeSenderMessagePage = useCallback((page) => {
+    setCurrentPage6(page);
+
+    dispatch({
+      type: MESSAGE_SENDER_LIST_REQUEST,
+      data: {
+        page,
+      },
+    });
+  }, []);
+
+  const onClickNoticeHandler = useCallback((data) => {
+    setNoticeViewDatum(data);
+    setNoticeViewModal(true);
   }, []);
 
   const moveLinkHandler = useCallback((link) => {
@@ -884,6 +1094,17 @@ const Student = () => {
     }
 
     return add;
+  }, []);
+
+  const detailBookOpen = useCallback((data) => {
+    setBookDetail(data);
+
+    dispatch({
+      type: BOOK_LIST_REQUEST,
+      data: {
+        LectureId: data.LectureId,
+      },
+    });
   }, []);
 
   const detailBookClose = useCallback(() => {
@@ -935,6 +1156,16 @@ const Student = () => {
     });
 
     return textSave;
+  }, []);
+
+  const slideValue = useCallback((lectureStuCommute, data) => {
+    const tempArr =
+      lectureStuCommute &&
+      lectureStuCommute.filter((commute, idx) => {
+        return commute.LectureId === data.LectureId;
+      });
+
+    return (tempArr.length * 100) / ((data.date / 7) * data.count);
   }, []);
 
   const onChangeBookPage = useCallback(
@@ -1047,8 +1278,6 @@ const Student = () => {
       </Head>
       <ClientLayout>
         <WholeWrapper margin={width < 900 ? `52px 0 0` : `100px 0 0`}>
-          {/* 상단배너 */}
-
           <Wrapper
             bgImg={`url("https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/student/subBanner.png")`}
             padding={width < 700 ? `30px 0` : `60px 0 140px 0`}
@@ -1098,8 +1327,6 @@ const Student = () => {
           </Wrapper>
 
           <RsWrapper margin={width < 800 ? `0` : `-94px 0 0`}>
-            {/* my schedule */}
-
             <Wrapper
               padding={width < 700 ? `15px 10px 10px` : `40px 30px 35px`}
               dr={`row`}
@@ -1239,8 +1466,6 @@ const Student = () => {
               )}
             </Wrapper>
 
-            {/* my class */}
-
             <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 40px`}>
               <CommonTitle>My Class</CommonTitle>
 
@@ -1302,7 +1527,14 @@ const Student = () => {
                             fontSize={width < 800 ? `14px` : `16px`}
                             margin={`0 0 10px`}
                           >
-                            {data.course}&nbsp;
+                            {data.course}&nbsp;{" "}
+                            <Button
+                              size={`small`}
+                              type={`primary`}
+                              onClick={() => messageSendModalHandler(data)}
+                            >
+                              Send message
+                            </Button>
                           </Text>
 
                           <Wrapper
@@ -1346,6 +1578,107 @@ const Student = () => {
                             </Button>
                           </Wrapper>
                         </Wrapper>
+
+                        {/* 
+                  <Wrapper
+                    margin={`10px 0 0 0`}
+                    dr={`row`}
+                    ju={`flex-start`}
+                    color={Theme.grey2_C}
+                    fontSize={width < 800 ? `12px` : `16px`}
+                    lineHeight={`1.19`}
+                  >
+                    {`${data.startLv}`}
+
+                    <Text fontSize={width < 700 ? `14px` : `16px`}>
+                      {stepHanlder2(
+                        moment(data.PartCreatedAt).format("YYYY-MM-DD"),
+                        data.endDate,
+                        data.day
+                      ) -
+                        (data.date / 7) * data.count <=
+                        0 && (
+                        <SpanText
+                          fontWeight={`bold`}
+                          color={Theme.red_C}
+                          margin={`0 0 0 15px`}
+                        >
+                          {Math.abs(
+                            stepHanlder2(
+                              moment(data.PartCreatedAt).format(
+                                "YYYY-MM-DD"
+                              ),
+                              data.endDate,
+                              data.day
+                            ) - Math.floor((data.date / 7) * data.count)
+                          )}
+                          회
+                        </SpanText>
+                      )}
+                    </Text>
+                  </Wrapper> */}
+
+                        <Wrapper>
+                          {/* <Wrapper
+                            dr={`row`}
+                            ju={`flex-start`}
+                            margin={`10px 0`}>
+                            <Text width={width < 800 ? `100%` : `15%`}>
+                              <SpanText color={Theme.basicTheme_C}>
+                                ●
+                              </SpanText>
+                              &nbsp; 수업 진도
+                            </Text>
+                            <Wrapper width={width < 800 ? `80%` : `75%`}>
+                              <CustomSlide
+                                value={stepHanlder(
+                                  data.startDate,
+                                  data.endDate,
+                                  data.count,
+                                  data.lecDate,
+                                  data.day
+                                )}
+                                disabled={true}
+                                draggableTrack={true}
+                                bgColor={Theme.basicTheme_C}
+                              />
+                            </Wrapper>
+                            <Text
+                              width={`10%`}
+                              color={Theme.grey2_C}
+                              padding={`0 0 0 10px`}>
+                              {`( ${stepHanlder(
+                                data.startDate,
+                                data.endDate,
+                                data.count,
+                                data.lecDate,
+                                data.day
+                              )}%)`}
+                            </Text>
+                          </Wrapper> */}
+                          {/* <Wrapper dr={`row`} ju={`flex-start`}>
+                            <Text width={width < 800 ? `100%` : `15%`}>
+                              <SpanText color={Theme.subTheme6_C}>
+                                ●
+                              </SpanText>
+                              &nbsp; 성취도
+                            </Text>
+                            <Wrapper width={width < 800 ? `80%` : `75%`}>
+                              <CustomSlide
+                                defaultValue={100}
+                                disabled={true}
+                                draggableTrack={true}
+                                bgColor={Theme.subTheme6_C}
+                              />
+                            </Wrapper>
+                            <Text
+                              width={`10%`}
+                              color={Theme.grey2_C}
+                              padding={`0 0 0 10px`}>
+                              (100%)
+                            </Text>
+                          </Wrapper> */}
+                        </Wrapper>
                       </Wrapper>
                     </Wrapper>
                     <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
@@ -1386,8 +1719,82 @@ const Student = () => {
                 );
               })
             )}
+            {/* <Wrapper
+                        display={width < 1100 && `none`}
+                        width={`1px`}
+                        height={`190px`}
+                        margin={`0 20px`}
+                        borderRight={
+                          width < 1100 ? `0` : `1px dashed ${Theme.grey_C}`
+                        }
+                      /> */}
+            {/* 쪽지 버튼들 */}
 
-            {/* View your homework */}
+            {/* <Wrapper
+                        al={`flex-start`}
+                        width={width < 1100 ? `100%` : `calc(30% - 80px)`}
+                        margin={
+                          width < 1100 && width < 800 ? `10px 0 0` : `20px 0 0`
+                        }
+                      >
+                        <Wrapper
+                          borderBottom={`1px dashed ${Theme.grey_C}`}
+                          dr={`row`}
+                          al={`flex-start`}
+                          ju={`flex-start`}
+                          padding={width < 800 ? `8px 0` : `16px 0`}
+                        >
+                          <Text
+                            cursor={`pointer`}
+                            onClick={() => messageSendModalHandler(data)}
+                          >
+                            수료증 신청
+                          </Text>
+                          <Text> | </Text>
+                          <Text
+                            cursor={`pointer`}
+                            onClick={() => messageSendModalHandler(data)}
+                          >
+                            강의수 늘리기 요청
+                          </Text>
+                        </Wrapper>
+                        <Wrapper
+                          borderBottom={`1px dashed ${Theme.grey_C}`}
+                          al={`flex-start`}
+                          ju={`flex-start`}
+                          dr={`row`}
+                          padding={width < 800 ? `8px 0` : `16px 0`}
+                        >
+                          <Text
+                            cursor={`pointer`}
+                            onClick={() => messageSendModalHandler(data)}
+                          >
+                            결석 예고
+                          </Text>
+                          <Text> | </Text>
+                          <Text
+                            cursor={`pointer`}
+                            onClick={() => messageSendModalHandler(data, 1)}
+                          >
+                            반이동 요청
+                          </Text>
+                          <Text> | </Text>
+                          <Text
+                            cursor={`pointer`}
+                            onClick={() => messageSendModalHandler(data)}
+                          >
+                            줌 상담신청
+                          </Text>
+                        </Wrapper>
+                        <Button
+                          type={`primary`}
+                          size={`small`}
+                          style={{ marginTop: 10 }}
+                          onClick={() => detailBookOpen(data)}
+                        >
+                          교재 리스트
+                        </Button>
+                      </Wrapper> */}
 
             <Wrapper dr={`row`} ju={`flex-start`} margin={`80px 0 20px`}>
               <CommonTitle>View your homework /&nbsp;</CommonTitle>
@@ -1558,9 +1965,783 @@ const Student = () => {
               total={lectureHomeworkStuLastPage * 10}
               onChange={(page) => onChangeHomeworkPage(page)}
             />
+
+            <Wrapper
+              dr={width < 700 ? ` column` : `row`}
+              ju={width < 700 ? `center` : `space-between`}
+              al={`flex-start`}
+              margin={`50px 0 20px 0`}
+            >
+              <CommonTitle>Class / Bulletin Board</CommonTitle>
+            </Wrapper>
+
+            <Wrapper margin={`0 0 40px`}>
+              <Wrapper
+                dr={`row`}
+                textAlign={`center`}
+                padding={`20px 0`}
+                bgColor={Theme.subTheme9_C}
+                borderBottom={`1px solid ${Theme.grey_C}`}
+              >
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `15%` : `10%`}
+                >
+                  No
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `25%` : `10%`}
+                >
+                  Date
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `45%` : `70%`}
+                >
+                  Subject
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `15%` : `10%`}
+                >
+                  Writer
+                </Text>
+              </Wrapper>
+              {noticeMyLectureList &&
+                (noticeMyLectureList.length === 0 ? (
+                  <Wrapper margin={`50px 0`}>
+                    <Empty description="No announcement" />
+                  </Wrapper>
+                ) : (
+                  noticeMyLectureList.map((data, idx) => {
+                    return (
+                      <CustomTableHoverWrapper
+                        onClick={() => onClickNoticeHandler(data)}
+                        key={data.id}
+                        bgColor={idx % 2 === 0}
+                      >
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.id}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `25%` : `10%`}>
+                          {moment(data.createdAt, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )}
+                        </Wrapper>
+                        <Wrapper
+                          width={width < 800 ? `45%` : `70%`}
+                          al={`flex-start`}
+                          padding={`0 0 0 10px`}
+                        >
+                          {data.title}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.author}
+                        </Wrapper>
+                      </CustomTableHoverWrapper>
+                    );
+                  })
+                ))}
+            </Wrapper>
+            <CustomPage
+              size="small"
+              current={currentPage4}
+              total={noticeMyLectureLastPage * 10}
+              onChange={(page) => noticeLectureChangePage(page)}
+            />
+
+            <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
+              <CommonTitle>School / Bulletin Board</CommonTitle>
+            </Wrapper>
+
+            <Wrapper
+              dr={`row`}
+              textAlign={`center`}
+              padding={`20px 0`}
+              bgColor={Theme.subTheme9_C}
+              borderBottom={`1px solid ${Theme.grey_C}`}
+            >
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`Bold`}
+                width={width < 800 ? `15%` : `10%`}
+              >
+                No
+              </Text>
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`Bold`}
+                width={width < 800 ? `25%` : `10%`}
+              >
+                Date
+              </Text>
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`Bold`}
+                width={width < 800 ? `45%` : `70%`}
+              >
+                Subject
+              </Text>
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`Bold`}
+                width={width < 800 ? `15%` : `10%`}
+              >
+                Writer
+              </Text>
+            </Wrapper>
+            <Wrapper margin={`0 0 40px`}>
+              {noticeList &&
+                (noticeList.length === 0 ? (
+                  <Wrapper margin={`50px 0`}>
+                    <Empty description="No announcement" />
+                  </Wrapper>
+                ) : (
+                  noticeList.map((data, idx) => {
+                    return (
+                      <CustomTableHoverWrapper
+                        onClick={() => onClickNoticeHandler(data)}
+                        key={data.id}
+                        bgColor={idx % 2 === 0}
+                      >
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.id}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `25%` : `10%`}>
+                          {moment(data.createdAt, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )}
+                        </Wrapper>
+                        <Wrapper
+                          width={width < 800 ? `45%` : `70%`}
+                          al={`flex-start`}
+                          padding={`0 0 0 10px`}
+                        >
+                          {data.title}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.author}
+                        </Wrapper>
+                      </CustomTableHoverWrapper>
+                    );
+                  })
+                ))}
+            </Wrapper>
+
+            <CustomPage
+              size="small"
+              current={currentPage1}
+              total={noticeLastPage * 10}
+              onChange={(page) => noticeChangePage(page)}
+            />
+
+            <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
+              <CommonTitle>Message to / from my teacher / admin </CommonTitle>
+            </Wrapper>
+
+            <Wrapper>
+              <Wrapper
+                dr={`row`}
+                textAlign={`center`}
+                padding={`20px 0`}
+                bgColor={Theme.subTheme9_C}
+                borderBottom={`1px solid ${Theme.grey_C}`}
+              >
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `15%` : `10%`}
+                >
+                  번호
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `25%` : `10%`}
+                >
+                  Date
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `45%` : `70%`}
+                >
+                  Subject
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `15%` : `10%`}
+                >
+                  Writer
+                </Text>
+              </Wrapper>
+
+              {messageUserList &&
+                (messageUserList.length === 0 ? (
+                  <Wrapper margin={`50px 0`}>
+                    <Empty description="No message" />
+                  </Wrapper>
+                ) : (
+                  messageUserList.map((data, idx) => {
+                    return (
+                      <CustomTableHoverWrapper
+                        key={data.id}
+                        bgColor={idx % 2 === 0}
+                        onClick={() => messageViewModalHandler(data)}
+                      >
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.id}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `25%` : `10%`}>
+                          {moment(data.createdAt, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )}
+                        </Wrapper>
+                        <Wrapper
+                          width={width < 800 ? `45%` : `70%`}
+                          al={`flex-start`}
+                          padding={`0 0 0 10px`}
+                        >
+                          {data.title}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.author}
+                        </Wrapper>
+                      </CustomTableHoverWrapper>
+                    );
+                  })
+                ))}
+            </Wrapper>
+
+            <Wrapper al={`flex-end`} margin={`20px 0 40px`}>
+              <CommonButton
+                radius={`5px`}
+                onClick={() => messageSendModalHandler()}
+              >
+                Send message
+              </CommonButton>
+            </Wrapper>
+
+            <Wrapper>
+              <CustomPage
+                size="small"
+                current={currentPage3}
+                total={messageUserLastPage * 10}
+                onChange={(page) => onChangeMessagePage(page)}
+              />
+            </Wrapper>
+
+            {/* <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
+              <Text
+                fontSize={width < 800 ? `18px` : `22px`}
+                fontWeight={`bold`}>
+                자습하기
+              </Text>
+            </Wrapper> */}
+
+            {/* <Wrapper radius={`10px`} shadow={`0px 2px 4px rgba(0, 0, 0, 0.16)`}>
+              <Wrapper
+                dr={`row`}
+                fontWeight={`bold`}
+                padding={`20px 0`}
+                fontSize={width < 800 ? `14px` : `18px`}>
+                <Wrapper width={width < 800 ? `15%` : `10%`}>번호</Wrapper>
+                <Wrapper width={width < 800 ? `45%` : `70%`}>자료명</Wrapper>
+                <Wrapper width={width < 800 ? `15%` : `10%`}>자료</Wrapper>
+                <Wrapper width={width < 800 ? `25%` : `10%`}>Date</Wrapper>
+              </Wrapper>
+              {preparationArr &&
+                (preparationArr.length === 0 ? (
+                  <Wrapper>
+                    <Empty description="No announcement" />
+                  </Wrapper>
+                ) : (
+                  preparationArr.map((data, idx) => {
+                    return (
+                      <CustomTableHoverWrapper
+                        key={data.id}
+                        bgColor={idx % 2 === 0}>
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.id}
+                        </Wrapper>
+                        <Wrapper
+                          width={width < 800 ? `45%` : `70%`}
+                          al={`flex-start`}
+                          padding={`0 0 0 10px`}>
+                          {data.title}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {width < 800 ? (
+                            <Image
+                              width={`22px`}
+                              margin={width < 700 ? `0 5px 0 0` : `0 16px 0 0`}
+                              src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_download.png"
+                              alt="lecture_icon"
+                            />
+                          ) : (
+                            "자료 다운로드"
+                          )}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `25%` : `10%`}>
+                          {data.createdAt}
+                        </Wrapper>
+                      </CustomTableHoverWrapper>
+                    );
+                  })
+                ))}
+            </Wrapper>
+            <Wrapper al={`flex-end`} margin={`20px 0 40px`}></Wrapper>
+            <Wrapper margin={`0 0 110px`}>
+              <CustomPage size="small" />
+            </Wrapper> */}
+
+            <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
+              <CommonTitle>Message I sent </CommonTitle>
+            </Wrapper>
+
+            <Wrapper>
+              <Wrapper
+                dr={`row`}
+                textAlign={`center`}
+                padding={`20px 0`}
+                bgColor={Theme.subTheme9_C}
+                borderBottom={`1px solid ${Theme.grey_C}`}
+              >
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `15%` : `10%`}
+                >
+                  번호
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `25%` : `10%`}
+                >
+                  Date
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `45%` : `70%`}
+                >
+                  Subject
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`Bold`}
+                  width={width < 800 ? `15%` : `10%`}
+                >
+                  Writer
+                </Text>
+              </Wrapper>
+
+              {messageSenderList &&
+                (messageSenderList.length === 0 ? (
+                  <Wrapper margin={`50px 0`}>
+                    <Empty description="No message" />
+                  </Wrapper>
+                ) : (
+                  messageSenderList.map((data, idx) => {
+                    return (
+                      <CustomTableHoverWrapper
+                        key={data.id}
+                        bgColor={idx % 2 === 0}
+                        onClick={() => messageViewModalHandler(data, true)}
+                      >
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.id}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `25%` : `10%`}>
+                          {moment(data.createdAt, "YYYY/MM/DD").format(
+                            "YYYY/MM/DD"
+                          )}
+                        </Wrapper>
+                        <Wrapper
+                          width={width < 800 ? `45%` : `70%`}
+                          al={`flex-start`}
+                          padding={`0 0 0 10px`}
+                        >
+                          {data.title}
+                        </Wrapper>
+                        <Wrapper width={width < 800 ? `15%` : `10%`}>
+                          {data.author}
+                        </Wrapper>
+                      </CustomTableHoverWrapper>
+                    );
+                  })
+                ))}
+            </Wrapper>
+            <Wrapper margin={`50px 0 110px`}>
+              <CustomPage
+                size="small"
+                current={currentPage6}
+                total={messageSenderLastPage * 10}
+                onChange={(page) => onChangeSenderMessagePage(page)}
+              />
+            </Wrapper>
           </RsWrapper>
 
-          {/* Upload My ID picture Modal START */}
+          <CustomModal
+            visible={noticeViewModal}
+            width={`900px`}
+            title="Announcement"
+            footer={null}
+            closable={false}
+          >
+            <Wrapper
+              dr={`row`}
+              ju={`space-between`}
+              margin={`0 0 35px`}
+              fontSize={width < 700 ? "14px" : "16px"}
+            >
+              <Text margin={`0 54px 0 0`}>
+                {`Writer: ${noticeViewDatum && noticeViewDatum.author}`}
+              </Text>
+              <Wrapper width={`auto`}>
+                <Text>
+                  <CalendarOutlined style={{ color: Theme.basicTheme_C }} />
+                  &nbsp;
+                  {`${moment(
+                    noticeViewDatum && noticeViewDatum.createdAt,
+                    "YYYY/MM/DD"
+                  ).format("YYYY/MM/DD")}`}
+                </Text>
+              </Wrapper>
+            </Wrapper>
+
+            {noticeViewDatum && noticeViewDatum.file && (
+              <Wrapper dr={`row`} ju={`flex-end`}>
+                <Text margin={`0 10px 0 0`} fontSize={`15px`}>
+                  Attachments
+                </Text>
+
+                <CommonButton
+                  size={`small`}
+                  radius={`5px`}
+                  fontSize={`14px`}
+                  onClick={() => fileDownloadHandler(noticeViewDatum.file)}
+                >
+                  Download
+                </CommonButton>
+              </Wrapper>
+            )}
+
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              Subject
+            </Text>
+            <Wrapper
+              padding={`10px`}
+              bgColor={Theme.subTheme9_C}
+              margin={`5px 0 10px`}
+            >
+              <WordbreakText fontSize={width < 700 ? "14px" : "16px"}>
+                {noticeViewDatum && noticeViewDatum.title}
+              </WordbreakText>
+            </Wrapper>
+
+            <Text fontSize={`18px`} fontWeight={`bold`}>
+              Content
+            </Text>
+            <Wrapper padding={`10px`} bgColor={Theme.subTheme9_C}>
+              <WordbreakText
+                fontSize={width < 700 ? "14px" : "16px"}
+                dangerouslySetInnerHTML={{
+                  __html: noticeViewDatum && noticeViewDatum.content,
+                }}
+              ></WordbreakText>
+            </Wrapper>
+
+            <Wrapper margin={`20px 0 0`}>
+              <CommonButton
+                onClick={() => onReset()}
+                kindOf={`grey`}
+                color={Theme.darkGrey_C}
+                radius={`5px`}
+              >
+                Go back
+              </CommonButton>
+            </Wrapper>
+          </CustomModal>
+
+          <CustomModal
+            visible={messageViewModal}
+            width={`900px`}
+            title={
+              sendMessageAnswerType === 0
+                ? "쪽지 보기"
+                : sendMessageAnswerType === 1
+                ? "Message to my teacher"
+                : sendMessageAnswerType === 2
+                ? "Message to my lecture"
+                : sendMessageAnswerType === 3 && "Message to admin"
+            }
+            footer={null}
+            closable={false}
+          >
+            <CustomForm
+              form={answerform}
+              onFinish={(data) =>
+                sendMessageAnswerType === 1
+                  ? answerFinishHandler(data)
+                  : sendMessageAnswerType === 2
+                  ? answerLectureFinishHanlder(data, messageTeacherList)
+                  : sendMessageAnswerType === 3 &&
+                    sendMessageAnswerAdminFinish(data)
+              }
+            >
+              {sendMessageAnswerType !== 0 && (
+                <Wrapper dr={`row`} ju={`flex-end`}>
+                  <CommonButton
+                    margin={`0 0 0 5px`}
+                    radius={`5px`}
+                    width={`100px`}
+                    height={`32px`}
+                    size="small"
+                    onClick={() => sendMessageAnswerTypeHandler(1)}
+                  >
+                    {"to my teacher"}
+                  </CommonButton>
+
+                  {/* <CommonButton
+                    margin={`0 0 0 5px`}
+                    radius={`5px`}
+                    width={`100px`}
+                    height={`32px`}
+                    size="small"
+                    onClick={() => sendMessageAnswerTypeHandler(2)}
+                  >
+                    {"수업"}
+                  </CommonButton> */}
+
+                  <CommonButton
+                    margin={`0 0 0 5px`}
+                    radius={`5px`}
+                    width={`100px`}
+                    height={`32px`}
+                    size="small"
+                    onClick={() => sendMessageAnswerTypeHandler(3)}
+                  >
+                    {"to admin"}
+                  </CommonButton>
+                </Wrapper>
+              )}
+
+              {sendMessageAnswerType === 1 && (
+                <>
+                  <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
+                    My classes
+                  </Text>
+
+                  <Form.Item
+                    name="lectureStuLectureList"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Choose your class.",
+                      },
+                    ]}
+                  >
+                    <Select style={{ width: `100%` }}>
+                      {lectureStuLectureList &&
+                      lectureStuLectureList.length === 0 ? (
+                        <Option value="No class found">No class found</Option>
+                      ) : (
+                        lectureStuLectureList &&
+                        lectureStuLectureList.map((data, idx) => {
+                          return (
+                            <Option
+                              key={`${data.id}${idx}`}
+                              value={JSON.stringify(data)}
+                            >
+                              {`${data.course} | ${data.username}`}
+                            </Option>
+                          );
+                        })
+                      )}
+                    </Select>
+                  </Form.Item>
+                  <Text
+                    fontSize={`14px`}
+                    color={Theme.grey2_C}
+                    margin={`0 0 20px`}
+                  >
+                    This message will be sent to your teacher.
+                  </Text>
+                </>
+              )}
+
+              {sendMessageAnswerType === 2 && (
+                <>
+                  <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
+                    My classes
+                  </Text>
+
+                  <Form.Item
+                    name="lectureStuLectureList"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Choose your class.",
+                      },
+                    ]}
+                  >
+                    <Select style={{ width: `100%` }}>
+                      {lectureStuLectureList &&
+                      lectureStuLectureList.length === 0 ? (
+                        <Option value="No class found">No class found</Option>
+                      ) : (
+                        lectureStuLectureList &&
+                        lectureStuLectureList.map((data, idx) => {
+                          return (
+                            <Option
+                              key={`${data.id}${idx}`}
+                              value={JSON.stringify(data)}
+                            >
+                              {`${data.course} | ${data.username}`}
+                            </Option>
+                          );
+                        })
+                      )}
+                    </Select>
+                  </Form.Item>
+                  <Text
+                    fontSize={`14px`}
+                    color={Theme.grey2_C}
+                    margin={`0 0 20px`}
+                  >
+                    This message will be sent to your teacher
+                  </Text>
+                </>
+              )}
+              {sendMessageAnswerType !== 0 && (
+                <>
+                  <Text fontSize={`18px`} fontWeight={`bold`}>
+                    Subject
+                  </Text>
+                  <Form.Item
+                    name="title"
+                    rules={[
+                      { required: true, message: "제목을 입력해주세요." },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Text fontSize={`18px`} fontWeight={`bold`}>
+                    Content
+                  </Text>
+                  <Form.Item
+                    name="content"
+                    rules={[
+                      { required: true, message: "내용을 입력해주세요." },
+                    ]}
+                  >
+                    <Input.TextArea style={{ height: `360px` }} />
+                  </Form.Item>
+                  <Wrapper dr={`row`}>
+                    <CommonButton
+                      margin={`0 5px 0 0`}
+                      kindOf={`grey`}
+                      color={Theme.darkGrey_C}
+                      radius={`5px`}
+                      onClick={() => onReset()}
+                    >
+                      Go back
+                    </CommonButton>
+                    <CommonButton
+                      margin={`0 0 0 5px`}
+                      radius={`5px`}
+                      htmlType="submit"
+                    >
+                      Send message
+                    </CommonButton>
+                  </Wrapper>
+                </>
+              )}
+            </CustomForm>
+
+            {sendMessageAnswerType === 0 && (
+              <>
+                <Wrapper
+                  dr={`row`}
+                  ju={`space-between`}
+                  margin={`0 0 35px`}
+                  fontSize={width < 700 ? "14px" : "16px"}
+                >
+                  <Text margin={`0 54px 0 0`}>
+                    {`Writer: ${messageDatum && messageDatum.author}`}
+                  </Text>
+                  <Text>{`Date ${
+                    messageDatum &&
+                    moment(messageDatum.createdAt, "YYYY/MM/DD").format(
+                      "YYYY/MM/DD"
+                    )
+                  }`}</Text>
+                </Wrapper>
+                <Text fontSize={`18px`} fontWeight={`bold`}>
+                  Subject
+                </Text>
+                <Wrapper
+                  padding={`10px`}
+                  al={`flex-start`}
+                  fontSize={width < 700 ? "14px" : "16px"}
+                  bgColor={Theme.subTheme9_C}
+                  margin={`5px 0 10px`}
+                >
+                  <Text>{messageDatum && messageDatum.title}</Text>
+                </Wrapper>
+                <Text fontSize={`18px`} fontWeight={`bold`}>
+                  Content
+                </Text>
+                <Wrapper
+                  padding={`10px`}
+                  al={`flex-start`}
+                  fontSize={width < 700 ? "14px" : "16px"}
+                  bgColor={Theme.subTheme9_C}
+                >
+                  <Text minHeight={`150px`}>
+                    {messageDatum &&
+                      messageDatum.content.split("\n").map((data, idx) => {
+                        return (
+                          <Text key={`${data}${idx}`}>
+                            {data}
+                            <br />
+                          </Text>
+                        );
+                      })}
+                  </Text>
+                </Wrapper>
+                <Wrapper dr={`row`}>
+                  <CommonButton
+                    margin={`0 5px 0 0`}
+                    kindOf={`grey`}
+                    color={Theme.darkGrey_C}
+                    radius={`5px`}
+                    onClick={() => onReset()}
+                  >
+                    Go back
+                  </CommonButton>
+
+                  {!senderModal && (
+                    <CommonButton
+                      onClick={() => messageAnswerToggleHanlder(messageDatum)}
+                      margin={`0 0 0 5px`}
+                      radius={`5px`}
+                    >
+                      Send Message
+                    </CommonButton>
+                  )}
+                </Wrapper>
+              </>
+            )}
+          </CustomModal>
 
           <CustomModal
             width={`700px`}
@@ -1624,8 +2805,6 @@ const Student = () => {
               </Wrapper>
             </CustomForm>
           </CustomModal>
-
-          {/* Upload My ID picture Modal END */}
 
           <CustomModal
             visible={homeWorkModalToggle}
@@ -1715,6 +2894,198 @@ const Student = () => {
             </CustomForm>
           </CustomModal>
 
+          <CustomModal
+            visible={messageSendModal}
+            width={`900px`}
+            className={`messageModal`}
+            title={
+              <Wrapper
+                dr={`row`}
+                ju={`space-between`}
+                height={width < 800 ? `80px` : `100px`}
+                padding={width < 800 ? `0 10px` : `0 50px`}
+                bgColor={Theme.basicTheme_C}
+              >
+                <Text fontSize={width < 800 ? `14px` : `20px`}>
+                  {sendMessageType === 1
+                    ? "Message to my teacher"
+                    : sendMessageType === 2
+                    ? "Message to my lecture"
+                    : sendMessageType === 3 && "Message to admin"}
+                </Text>
+                <Wrapper dr={`row`} width={`auto`}>
+                  <MessageSelectButton
+                    className={sendMessageType === 1 && `active`}
+                    size="small"
+                    onClick={() => sendMessageTypeHandler(1)}
+                  >
+                    {"to my teacher"}
+                  </MessageSelectButton>
+
+                  {/* <MessageSelectButton
+                    className={sendMessageType === 2 && `active`}
+                    margin={width < 800 ? `0 0 0 5px` : `0 0 0 8px`}
+                    size="small"
+                    onClick={() => sendMessageTypeHandler(2)}
+                  >
+                    {"수업"}
+                  </MessageSelectButton> */}
+
+                  <MessageSelectButton
+                    className={sendMessageType === 3 && `active`}
+                    margin={width < 800 ? `0 10px 0 5px` : `0 40px 0 8px`}
+                    size="small"
+                    onClick={() => sendMessageTypeHandler(3)}
+                  >
+                    {"to admin"}
+                  </MessageSelectButton>
+                  <CloseOutlined
+                    onClick={onReset}
+                    style={{ fontSize: `20px`, color: Theme.white_C }}
+                  />
+                </Wrapper>
+              </Wrapper>
+            }
+            footer={null}
+            closable={false}
+          >
+            <CustomForm
+              form={sendform}
+              onFinish={(data) =>
+                sendMessageType === 1
+                  ? sendMessageFinishHandler(data)
+                  : sendMessageType === 2
+                  ? sendMessageLectureFinishHanlder(data)
+                  : sendMessageType === 3 && sendMessageAdminFinishHandler(data)
+              }
+            >
+              {sendMessageType === 1 && (
+                <>
+                  <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
+                    My classes
+                  </Text>
+
+                  <Form.Item
+                    name="lectureStuLectureList"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Choose your class.",
+                      },
+                    ]}
+                  >
+                    <MessageModalSelect style={{ width: `100%` }}>
+                      {lectureStuLectureList &&
+                      lectureStuLectureList.length === 0 ? (
+                        <Option value="No class found">No class found</Option>
+                      ) : (
+                        lectureStuLectureList &&
+                        lectureStuLectureList.map((data, idx) => {
+                          return (
+                            <Option
+                              key={`${data.id}${idx}`}
+                              value={JSON.stringify(data)}
+                            >
+                              {`${data.course} | ${data.username}`}
+                            </Option>
+                          );
+                        })
+                      )}
+                    </MessageModalSelect>
+                  </Form.Item>
+                  <Text
+                    fontSize={`14px`}
+                    color={Theme.grey2_C}
+                    margin={`0 0 20px`}
+                  >
+                    This message will be sent to your teacher.
+                  </Text>
+                </>
+              )}
+
+              {sendMessageType === 2 && (
+                <>
+                  <Text fontSize={`18px`} fontWeight={`bold`} margin={`10px 0`}>
+                    My classes
+                  </Text>
+
+                  <Form.Item
+                    name="lectureStuLectureList"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Choose your class.",
+                      },
+                    ]}
+                  >
+                    <MessageModalSelect>
+                      {lectureStuLectureList &&
+                      lectureStuLectureList.length === 0 ? (
+                        <Option value="No class found">No class found</Option>
+                      ) : (
+                        lectureStuLectureList &&
+                        lectureStuLectureList.map((data, idx) => {
+                          return (
+                            <Option
+                              key={`${data.id}${idx}`}
+                              value={JSON.stringify(data)}
+                            >
+                              {`${data.course} | ${data.username}`}
+                            </Option>
+                          );
+                        })
+                      )}
+                    </MessageModalSelect>
+                  </Form.Item>
+                  <Text
+                    fontSize={`14px`}
+                    color={Theme.grey2_C}
+                    margin={`0 0 20px`}
+                  >
+                    This message will be sent to your teacher
+                  </Text>
+                </>
+              )}
+
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                Subject
+              </Text>
+              <Form.Item
+                name="title"
+                rules={[{ required: true, message: "제목을 입력해주세요." }]}
+              >
+                <Input />
+              </Form.Item>
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                Content
+              </Text>
+              <Form.Item
+                name="content"
+                rules={[{ required: true, message: "내용을 입력해주세요." }]}
+              >
+                <Input.TextArea style={{ height: `360px` }} />
+              </Form.Item>
+              <Wrapper dr={`row`}>
+                <CommonButton
+                  margin={`0 5px 0 0`}
+                  kindOf={`grey`}
+                  color={Theme.darkGrey_C}
+                  radius={`5px`}
+                  onClick={() => onReset()}
+                >
+                  Go back
+                </CommonButton>
+                <CommonButton
+                  margin={`0 0 0 5px`}
+                  radius={`5px`}
+                  htmlType="submit"
+                >
+                  Send message
+                </CommonButton>
+              </Wrapper>
+            </CustomForm>
+          </CustomModal>
+
           <Modal
             visible={bookModal}
             footer={null}
@@ -1741,9 +3112,6 @@ const Student = () => {
               </Wrapper>
             </Wrapper>
           </Modal>
-
-          {/* My Attandance Modal START */}
-
           <Modal
             visible={attendanceModal}
             onCancel={() => attendanceToggle(null)}
@@ -1758,10 +3126,6 @@ const Student = () => {
               columns={commuteColumns}
             />
           </Modal>
-
-          {/* My Attandance Modal END */}
-
-          {/* Homework Content Modal START */}
 
           <CustomModal
             visible={homeworkModal}
@@ -1823,11 +3187,6 @@ const Student = () => {
               </CommonButton>
             </Wrapper>
           </CustomModal>
-
-          {/* Homework Content Modal END */}
-
-          {/* 추가 결제 Modal START */}
-
           <Modal
             title={`추가 결제`}
             visible={payModal}
@@ -1959,6 +3318,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: SEO_LIST_REQUEST,
     });
 
     // 구현부 종료
