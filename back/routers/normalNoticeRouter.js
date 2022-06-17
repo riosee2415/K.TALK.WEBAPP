@@ -286,16 +286,19 @@ router.post("/student/create", isLoggedIn, async (req, res, next) => {
 });
 
 router.post("/teacher/create", isLoggedIn, async (req, res, next) => {
-  const { title, content, author, file, receiverId, isTeacherAll, isAdmin } =
-    req.body;
+  const { title, content, author, file, receiverId, createType } = req.body;
 
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
   }
 
+  if (parseInt(createType) > 3) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+
   try {
     // 강사가 강사 전체에게
-    if (isTeacherAll) {
+    if (parseInt(createType) === 1) {
       const teacherList = await User.findAll({
         where: { level: 2, isFire: false },
       });
@@ -321,8 +324,7 @@ router.post("/teacher/create", isLoggedIn, async (req, res, next) => {
       return res.status(201).json({ result: true });
     }
 
-    // 강사가 어드민에게
-    if (isAdmin) {
+    if (parseInt(createType) === 2) {
       const createResult = await NormalNotice.create({
         title,
         content,
@@ -342,7 +344,7 @@ router.post("/teacher/create", isLoggedIn, async (req, res, next) => {
     }
 
     // 강사가 강사 개인에게
-    if (receiverId) {
+    if (parseInt(createType) === 3) {
       const exUser = await User.findOne({
         where: { id: parseInt(receiverId), isFire: false, level: 2 },
       });
@@ -391,9 +393,9 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
   }
 
   // createType === 1 강사전체
-  //              2 학생 전체
-  //              3 강사 & 학생 전체
-  //              4 한명에게 보내기
+  //                2 학생 전체
+  //                3 강사 & 학생 전체
+  //                4 한명에게 보내기
 
   try {
     // 관리자가 학생 전체에게 작성
