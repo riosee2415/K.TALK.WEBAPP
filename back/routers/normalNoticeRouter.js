@@ -76,7 +76,7 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
             DATE_FORMAT(createdAt, '%Y-%m-%d')  AS createdAt,
             DATE_FORMAT(updatedAt, '%Y-%m-%d')  AS updatedAt,
             UserId
-    FROM	normalNotices
+    FROM	  normalNotices
    WHERE    receiverId = ${req.user.id}
     `;
 
