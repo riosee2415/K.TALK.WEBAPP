@@ -150,6 +150,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
             level,
             receiverId,
             isAdmin,
+            hit,
             file,
             isDelete,
             DATE_FORMAT(deletedAt, '%Y-%m-%d')  AS deletedAt,
@@ -165,15 +166,17 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
            : _listType === 2
            ? `AND level = 2`
            : _listType === 3
-           ? `author = "admin"`
+           ? `AND author = "admin"`
            : _listType === 4
            ? ``
            : ``
        }
-     ORDER  BY createdAt DESC
-    `;
+          ORDER  BY id DESC
+          `;
 
     const notice = await models.sequelize.query(selectQuery);
+
+    console.log(notice[0]);
 
     return res.status(200).json({ notice: notice[0] });
   } catch (error) {
