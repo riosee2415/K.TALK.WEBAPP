@@ -18,12 +18,17 @@ module.exports = class NormalNotice extends Model {
           allowNull: false,
         },
         level: {
-          type: DataTypes.INTEGER, // 권한 [1 : 일반학생, 2 : 강사, 3 : 전체]
-          allowNull: true,
-        },
-        LectureId: {
           type: DataTypes.INTEGER,
           allowNull: true,
+        },
+        receiverId: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+        },
+        isAdmin: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
         },
         file: {
           type: DataTypes.STRING(600),

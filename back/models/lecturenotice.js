@@ -18,7 +18,7 @@ module.exports = class LectureNotice extends Model {
           allowNull: false,
         },
         level: {
-          type: DataTypes.INTEGER, // 권한 [1 : 일반학생, 2 : 강사, 3 : 전체]
+          type: DataTypes.INTEGER,
           allowNull: true,
         },
         LectureId: {

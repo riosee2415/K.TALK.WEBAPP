@@ -719,7 +719,7 @@ router.post("/comment/update", isLoggedIn, async (req, res, next) => {
     }
   } catch (error) {
     console.error(error);
-    return res.status(401).send("댓글을 삭제할 수 없습니다.");
+    return res.status(401).send("댓글을 수정할 수 없습니다.");
   }
 });
 

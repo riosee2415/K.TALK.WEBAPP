@@ -7,6 +7,7 @@ const {
   Participant,
   LectureNoticeComment,
 } = require("../models");
+const models = require("../models");
 const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
@@ -142,7 +143,7 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
 });
 
 // 관리자 리스트 (조회만 가능)
-router.post("/admin/list", isLoggedIn, async (req, res, next) => {
+router.post("/admin/list", isAdminCheck, async (req, res, next) => {
   const { LectureId } = req.body;
 
   const _LectureId = LectureId || null;
@@ -200,6 +201,10 @@ router.post("/admin/list", isLoggedIn, async (req, res, next) => {
 
 router.post("/detail", isLoggedIn, async (req, res, next) => {
   const { LectureNoticeId } = req.body;
+
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
 
   try {
     const exLecture = await LectureNotice.findOne({
