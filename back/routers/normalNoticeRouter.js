@@ -69,42 +69,48 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
 
   try {
     const lengthQuery = `
-    SELECT	id,
-            title,
-            content,
-            author,
-            level,
-            receiverId,
-            isAdmin,
-            file,
-            isDelete,
-            DATE_FORMAT(deletedAt, '%Y-%m-%d')  AS deletedAt,
-            DATE_FORMAT(createdAt, '%Y-%m-%d')  AS createdAt,
-            DATE_FORMAT(updatedAt, '%Y-%m-%d')  AS updatedAt,
-            UserId
-    FROM	  normalNotices
-   WHERE    receiverId = ${req.user.id}
+    SELECT	A.isAdmin				                              AS connectIsAdmin,
+            A.NormalNoticeId		                          AS connectNoticeId,
+            A.UserId				                              AS connectUserId,
+            B.id					                                AS noticeId,
+            B.title 				                              AS noticeTitle,
+            B.content 				                            AS noticeContent,
+            B.author 				                              AS noticeAuthor,
+            B.level 				                              AS noticeLevel,
+            B.file 					                              AS noticeFile,
+            B.hit 					                              AS noticeHit,
+            DATE_FORMAT(B.createdAt, "%Y-%m-%d %H:%m:s")	AS noticeCreatedAt,
+            B.UserId 				                              AS writeUserId
+      FROM	normalConnects			A
+     INNER
+      JOIN	normalNotices			  B
+        ON	A.NormalNoticeId  = B.id
+     WHERE	A.UserId = ${req.user.id}
+       AND  B.UserId = ${req.user.id}
     `;
 
     const selectQuery = `
-    SELECT	id,
-            title,
-            content,
-            author,
-            level,
-            receiverId,
-            isAdmin,
-            file,
-            isDelete,
-            DATE_FORMAT(deletedAt, '%Y-%m-%d')  AS deletedAt,
-            DATE_FORMAT(createdAt, '%Y-%m-%d')  AS createdAt,
-            DATE_FORMAT(updatedAt, '%Y-%m-%d')  AS updatedAt,
-            UserId
-    FROM	normalNotices
-   WHERE    receiverId = ${req.user.id}
-   ORDER    BY id DESC
-   LIMIT    ${LIMIT}
-  OFFSET    ${OFFSET}
+   SELECT	  A.isAdmin				                              AS connectIsAdmin,
+            A.NormalNoticeId		                          AS connectNoticeId,
+            A.UserId				                              AS connectUserId,
+            B.id					                                AS noticeId,
+            B.title 				                              AS noticeTitle,
+            B.content 				                            AS noticeContent,
+            B.author 				                              AS noticeAuthor,
+            B.level 				                              AS noticeLevel,
+            B.file 					                              AS noticeFile,
+            B.hit 					                              AS noticeHit,
+            DATE_FORMAT(B.createdAt, "%Y-%m-%d %H:%m:s")	AS noticeCreatedAt,
+            B.UserId 				                              AS writeUserId
+      FROM	normalConnects			A
+     INNER
+      JOIN	normalNotices			  B
+        ON	A.NormalNoticeId  = B.id
+     WHERE	A.UserId = ${req.user.id}
+       AND  B.UserId = ${req.user.id}
+     ORDER  BY id DESC
+     LIMIT  ${LIMIT}
+    OFFSET  ${OFFSET}
     `;
 
     const length = await models.sequelize.query(lengthQuery);
@@ -214,22 +220,23 @@ router.post("/detail", isLoggedIn, async (req, res, next) => {
     }
 
     const detailQuery = `
-    SELECT	id,
-            title,
-            content,
-            author,
-            level,
-            receiverId,
-            isAdmin,
-            file,
-            hit,
-            isDelete,
-            DATE_FORMAT(deletedAt, '%Y-%m-%d')  AS deletedAt,
-            DATE_FORMAT(createdAt, '%Y-%m-%d')  AS createdAt,
-            DATE_FORMAT(updatedAt, '%Y-%m-%d')  AS updatedAt,
-            UserId
-    FROM  	normalNotices
-   WHERE    id = ${NormalNoticeId}
+    SELECT	A.isAdmin				                              AS connectIsAdmin,
+            A.NormalNoticeId		                          AS connectNoticeId,
+            A.UserId				                              AS connectUserId,
+            B.id					                                AS noticeId,
+            B.title 				                              AS noticeTitle,
+            B.content 				                            AS noticeContent,
+            B.author 				                              AS noticeAuthor,
+            B.level 				                              AS noticeLevel,
+            B.file 					                              AS noticeFile,
+            B.hit 					                              AS noticeHit,
+            DATE_FORMAT(B.createdAt, "%Y-%m-%d %H:%m:s")	AS noticeCreatedAt,
+            B.UserId 				                              AS writeUserId
+      FROM	normalConnects			A
+     INNER
+      JOIN	normalNotices			  B
+        ON	A.NormalNoticeId  = B.id
+     WHERE  B.id = ${NormalNoticeId}
     `;
 
     const detailData = await models.sequelize.query(detailQuery);
