@@ -185,9 +185,8 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
     }
 
     const selectQuery = `
-    SELECT	A.LectureNoticeId			                        AS connectNoticeId,
-            A.UserId 					                            AS connectUserId,
-            B.title,
+    SELECT	DISTINCT
+            A.LectureNoticeId			                        AS connectNoticeId,
             B.id					                                AS noticeId,
             B.title 				                              AS noticeTitle,
             B.content 			                              AS noticeContent,

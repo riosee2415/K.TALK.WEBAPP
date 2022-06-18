@@ -154,10 +154,10 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
   }
 
   try {
-    const selectQuery = `
-    SELECT	A.isAdmin				                              AS connectIsAdmin,
+    const selectQuery = `  
+    SELECT	DISTINCT
+            A.isAdmin				                              AS connectIsAdmin,
             A.NormalNoticeId		                          AS connectNoticeId,
-            A.UserId				                              AS connectUserId,
             B.id					                                AS noticeId,
             B.title 				                              AS noticeTitle,
             B.content 				                            AS noticeContent,
@@ -171,6 +171,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
      INNER
       JOIN	normalNotices			  B
         ON	A.NormalNoticeId  = B.id
+     GROUP  BY B.id
      WHERE	A.isAdmin = TRUE
             ${
               _listType === 1
