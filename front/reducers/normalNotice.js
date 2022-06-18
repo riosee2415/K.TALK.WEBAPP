@@ -19,9 +19,13 @@ export const initialState = {
   normalNoticeAdminListDone: false,
   normalNoticeAdminListError: false,
 
-  normalNoticeAdminCreateLoading: false, // 관리자 게시판 생성
+  normalNoticeAdminCreateLoading: false, // 관리자 일반게시판 생성
   normalNoticeAdminCreateDone: false,
   normalNoticeAdminCreateError: false,
+
+  normalNoticeUpdateLoading: false, // 일반게시판 수정
+  normalNoticeUpdateDone: false,
+  normalNoticeUpdateError: false,
 };
 
 export const NORMAL_NOTICE_LIST_REQUEST = "NORMAL_NOTICE_LIST_REQUEST";
@@ -41,6 +45,10 @@ export const NORMAL_NOTICE_ADMIN_CREATE_SUCCESS =
   "NORMAL_NOTICE_ADMIN_CREATE_SUCCESS";
 export const NORMAL_NOTICE_ADMIN_CREATE_FAILURE =
   "NORMAL_NOTICE_ADMIN_CREATE_FAILURE";
+
+export const NORMAL_NOTICE_UPDATE_REQUEST = "NORMAL_NOTICE_UPDATE_REQUEST";
+export const NORMAL_NOTICE_UPDATE_SUCCESS = "NORMAL_NOTICE_UPDATE_SUCCESS";
+export const NORMAL_NOTICE_UPDATE_FAILURE = "NORMAL_NOTICE_UPDATE_FAILURE";
 
 export const NORMAL_NOTICE_MODAL_TOGGLE = "NORMAL_NOTICE_MODAL_TOGGLE";
 
@@ -107,6 +115,26 @@ const reducer = (state = initialState, action) =>
         draft.normalNoticeAdminCreateLoading = false;
         draft.normalNoticeAdminCreateDone = false;
         draft.normalNoticeAdminCreateError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+      case NORMAL_NOTICE_UPDATE_REQUEST: {
+        draft.normalNoticeUpdateLoading = true;
+        draft.normalNoticeUpdateDone = false;
+        draft.normalNoticeUpdateError = null;
+        break;
+      }
+      case NORMAL_NOTICE_UPDATE_SUCCESS: {
+        draft.normalNoticeUpdateLoading = false;
+        draft.normalNoticeUpdateDone = true;
+        draft.normalNoticeUpdateError = null;
+        break;
+      }
+      case NORMAL_NOTICE_UPDATE_FAILURE: {
+        draft.normalNoticeUpdateLoading = false;
+        draft.normalNoticeUpdateDone = false;
+        draft.normalNoticeUpdateError = action.error;
         break;
       }
 

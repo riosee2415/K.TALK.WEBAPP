@@ -67,6 +67,7 @@ import {
   NORMAL_NOTICE_ADMIN_CREATE_REQUEST,
   NORMAL_NOTICE_ADMIN_LIST_REQUEST,
   NORMAL_NOTICE_MODAL_TOGGLE,
+  NORMAL_NOTICE_UPDATE_REQUEST,
 } from "../../reducers/normalNotice";
 import { setContext } from "redux-saga/effects";
 // let Line;
@@ -229,6 +230,10 @@ const AdminHome = () => {
     normalNoticeAdminCreateLoading,
     normalNoticeAdminCreateDone,
     normalNoticeAdminCreateError,
+    //
+    normalNoticeUpdateLoading,
+    normalNoticeUpdateDone,
+    normalNoticeUpdateError,
   } = useSelector((state) => state.normalNotice);
 
   const [noticeData, setNoticeData] = useState(null);
@@ -237,6 +242,7 @@ const AdminHome = () => {
   const [normalNoticeType, setNormalNoticeType] = useState(null);
   const [normalNoticeUser, setNormalNoticeUser] = useState([]);
   const [normalNoticeListType, setNormalNoticeListType] = useState(4);
+  const [normalNoticeUpdateData, setNormalNoticeUpdateData] = useState(null);
 
   const [normalNoticeForm] = Form.useForm();
 
@@ -340,7 +346,7 @@ const AdminHome = () => {
 
   useEffect(() => {
     if (st_lectureDeleteError) {
-      message.error(st_lectureDeleteError);
+      return message.error(st_lectureDeleteError);
     }
   }, [st_lectureDeleteError]);
 
@@ -364,7 +370,7 @@ const AdminHome = () => {
 
   useEffect(() => {
     if (st_lectureUpdateError) {
-      message.error(st_lectureUpdateError);
+      return message.error(st_lectureUpdateError);
     }
   }, [st_lectureUpdateError]);
 
@@ -387,9 +393,32 @@ const AdminHome = () => {
 
   useEffect(() => {
     if (normalNoticeAdminCreateError) {
-      message.error(normalNoticeAdminCreateError);
+      return message.error(normalNoticeAdminCreateError);
     }
   }, [normalNoticeAdminCreateError]);
+
+  // NORMAL CREATE USEEFFECT
+
+  useEffect(() => {
+    if (normalNoticeUpdateDone) {
+      dispatch({
+        type: NORMAL_NOTICE_ADMIN_LIST_REQUEST,
+        data: {
+          listType: 4,
+        },
+      });
+
+      normalNoticeModalToggle(null);
+
+      return message.success("일반게시판이 수정되었습니다.");
+    }
+  }, [normalNoticeUpdateDone]);
+
+  useEffect(() => {
+    if (normalNoticeUpdateError) {
+      return message.error(normalNoticeUpdateError);
+    }
+  }, [normalNoticeUpdateError]);
   // NORMAL CREATE USEEFFECT END
 
   useEffect(() => {
@@ -510,13 +539,24 @@ const AdminHome = () => {
     }
   }, [st_noticeUpdateDone]);
 
+  useEffect(() => {
+    if (normalNoticeUpdateData) {
+      normalNoticeForm.setFieldsValue({
+        title: normalNoticeUpdateData.noticeTitle,
+        content: normalNoticeUpdateData.noticeContent,
+      });
+    }
+  }, [normalNoticeUpdateData]);
+
   ////// TOGGLE //////
 
   const normalNoticeModalToggle = useCallback(
     (data) => {
       if (data) {
+        setNormalNoticeUpdateData(data);
       } else {
         normalNoticeForm.resetFields();
+        setNormalNoticeUpdateData(null);
         setNormalNoticeType(null);
         setNormalNoticeUser([]);
         setContentData(null);
@@ -526,7 +566,13 @@ const AdminHome = () => {
         type: NORMAL_NOTICE_MODAL_TOGGLE,
       });
     },
-    [normalNoticeModal, normalNoticeType, normalNoticeUser, contentData]
+    [
+      normalNoticeModal,
+      normalNoticeType,
+      normalNoticeUser,
+      contentData,
+      normalNoticeUpdateData,
+    ]
   );
 
   ////// HANDLER ///////
@@ -877,6 +923,25 @@ const AdminHome = () => {
     },
     [normalNoticeType, uploadPath, me, contentData]
   );
+  // 일반게시판 수정
+  const normalNoticeAdminUpdate = useCallback(
+    (data) => {
+      console.log(data);
+      console.log(contentData);
+      console.log(normalNoticeUpdateData.noticeId);
+      dispatch({
+        type: NORMAL_NOTICE_UPDATE_REQUEST,
+        data: {
+          id: normalNoticeUpdateData.noticeId,
+          title: data.title,
+          content: contentData,
+          author: normalNoticeUpdateData.noticeAuthor,
+          file: uploadPath,
+        },
+      });
+    },
+    [normalNoticeUpdateData, uploadPath, contentData]
+  );
   // 일반게시판 리스트타입 수정
   const normalNoticeListTypeChangeHandler = useCallback(
     (type) => {
@@ -887,9 +952,11 @@ const AdminHome = () => {
 
   const getEditContent = useCallback(
     (contentValue) => {
-      normalNoticeForm.submit();
+      if (contentValue) {
+        normalNoticeForm.submit();
 
-      setContentData(contentValue);
+        setContentData(contentValue);
+      }
     },
     [contentData]
   );
@@ -897,7 +964,7 @@ const AdminHome = () => {
   const noticeColumns = [
     {
       title: "번호",
-      dataIndex: "id",
+      dataIndex: "noticeId",
     },
     {
       title: "제목",
@@ -909,18 +976,18 @@ const AdminHome = () => {
             onClick={() => noticeModalToggle(data)}
             isEllipsis
           >
-            {data.title}
+            {data.noticeTitle}
           </Text>
         );
       },
     },
     {
       title: "작성자",
-      dataIndex: "author",
+      dataIndex: "noticeAuthor",
     },
     {
       title: "생성일",
-      render: (data) => <div>{data.createdAt.substring(0, 13)}</div>,
+      dataIndex: "noticeCreatedAt",
     },
 
     {
@@ -930,7 +997,8 @@ const AdminHome = () => {
           <Button
             type="primary"
             size="small"
-            onClick={() => noticeUpdateModalToggle(data)}
+            onClick={() => normalNoticeModalToggle(data)}
+            loading={normalNoticeUpdateLoading}
           >
             수정
           </Button>
@@ -1099,7 +1167,6 @@ const AdminHome = () => {
                     </Wrapper>
                   </Wrapper>
                 </Wrapper>
-                {console.log(normalNoticeAdminList)}
                 <Table
                   rowKey="id"
                   dataSource={
@@ -2029,25 +2096,33 @@ const AdminHome = () => {
               <Form
                 form={normalNoticeForm}
                 style={{ width: `100%` }}
-                onFinish={normalNoticeAdminCreate}
+                onFinish={
+                  normalNoticeUpdateData
+                    ? normalNoticeAdminUpdate
+                    : normalNoticeAdminCreate
+                }
               >
-                <Form.Item
-                  name={"type"}
-                  label="유형"
-                  rules={[{ required: true, message: "유형을 선택해 주세요." }]}
-                >
-                  <Select
-                    showSearch
-                    style={{ width: `100%` }}
-                    placeholder="유형을 선택해 주세요."
-                    onChange={normalNoticeTypeChnageHandler}
+                {!normalNoticeUpdateData && (
+                  <Form.Item
+                    name={"type"}
+                    label="유형"
+                    rules={[
+                      { required: true, message: "유형을 선택해 주세요." },
+                    ]}
                   >
-                    {normalSelectArr &&
-                      normalSelectArr.map((data) => (
-                        <Select.Option value={data}>{data}</Select.Option>
-                      ))}
-                  </Select>
-                </Form.Item>
+                    <Select
+                      showSearch
+                      style={{ width: `100%` }}
+                      placeholder="유형을 선택해 주세요."
+                      onChange={normalNoticeTypeChnageHandler}
+                    >
+                      {normalSelectArr &&
+                        normalSelectArr.map((data) => (
+                          <Select.Option value={data}>{data}</Select.Option>
+                        ))}
+                    </Select>
+                  </Form.Item>
+                )}
 
                 {normalNoticeType &&
                   (normalNoticeType === "강사개인" ||
@@ -2093,23 +2168,27 @@ const AdminHome = () => {
                   )}
 
                 <Form.Item
-                  name={"title"}
                   label="제목"
+                  name="title"
                   rules={[{ required: true, message: "제목을 입력해 주세요" }]}
                 >
                   <Input allowClear placeholder="제목을 입력해주세요." />
                 </Form.Item>
 
                 <Form.Item
-                  name={"content"}
                   label="본문"
+                  name="content"
                   rules={[{ required: true, message: "본문을 입력해 주세요." }]}
                 >
                   <ToastEditorComponentMix
                     action={getEditContent}
-                    initialValue={updateData ? updateData.content : null}
+                    initialValue={
+                      normalNoticeUpdateData
+                        ? normalNoticeUpdateData.noticeContent
+                        : ""
+                    }
                     placeholder="본문을 입력해주세요."
-                    buttonText={updateData ? "수정" : "추가"}
+                    buttonText={normalNoticeUpdateData ? "수정" : "추가"}
                   />
                 </Form.Item>
 
