@@ -554,6 +554,7 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
           await NormalConnect.create({
             NormalNoticeId: parseInt(createResult.id),
             UserId: parseInt(data),
+            isAdmin: true,
           });
         })
       );
