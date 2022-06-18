@@ -6,6 +6,7 @@ const {
   LectureNotice,
   Participant,
   LectureNoticeComment,
+  LectureConnect,
 } = require("../models");
 const models = require("../models");
 const fs = require("fs");
@@ -83,62 +84,64 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
     }
 
     const lengthQuery = `
-    SELECT	A.id,
-            A.title,
-            A.content,
-            A.author,
-            A.level,
-            A.LectureId,
-            A.TeacherId,
-            A.file,
-            A.isDelete,
-            DATE_FORMAT(A.deletedAt, '%Y-%m-%d')  AS deletedAt,
-            DATE_FORMAT(A.createdAt, '%Y-%m-%d')  AS createdAt,
-            DATE_FORMAT(A.updatedAt, '%Y-%m-%d')  AS updatedAt,
-            A.UserId,
-            A.StudentId,
-            A.hit,
-            B.course
-    FROM	  lectureNotices      A
-   INNER
-    JOIN    lectures            B
-      ON    A.LectureId = B.id
-   WHERE    1 = 1
-            AND A.LectureId = ${LectureId}
-            AND A.isDelete = FALSE
-            AND B.isDelete = FALSE
-            ${req.user.level === 1 ? `AND A.TeacherId IS NULL` : ``}
+    SELECT	A.LectureNoticeId			                        AS connectNoticeId,
+            A.UserId 					                            AS connectUserId,
+            B.title,
+            B.id					                                AS noticeId,
+            B.title 				                              AS noticeTitle,
+            B.content 			                              AS noticeContent,
+            B.author 				                              AS noticeAuthor,
+            B.level 				                              AS noticeLevel,
+            B.file 					                              AS noticeFile,
+            B.hit 					                              AS noticeHit,
+            DATE_FORMAT(B.createdAt, "%Y-%m-%d %H:%m:s")	AS noticeCreatedAt,
+            B.UserId 				                              AS writeUserId,
+            C.number				                              AS lectureNumber,
+            C.course				                              AS lectureName
+      FROM	lectureConnects				A
+     INNER
+      JOIN	lectureNotices 				B
+        ON	A.LectureNoticeId = B.id
+     INNER
+      JOIN	lectures					    C
+        ON	B.LectureId = C.id
+     WHERE	1 = 1
+       AND A.UserId = ${req.user.id}
+       AND  B.LectureId = ${LectureId}
+       AND  B.isDelete = FALSE
+       AND	C.isDelete = FALSE
     `;
 
     const selectQuery = `
-    SELECT	A.id,
-            A.title,
-            A.content,
-            A.author,
-            A.level,
-            A.LectureId,
-            A.TeacherId,
-            A.file,
-            A.isDelete,
-            DATE_FORMAT(A.deletedAt, '%Y-%m-%d')  AS deletedAt,
-            DATE_FORMAT(A.createdAt, '%Y-%m-%d')  AS createdAt,
-            DATE_FORMAT(A.updatedAt, '%Y-%m-%d')  AS updatedAt,
-            A.UserId,
-            A.StudentId,
-            A.hit,
-            B.course
-    FROM	  lectureNotices      A
-   INNER
-    JOIN    lectures            B
-      ON    A.LectureId = B.id
-   WHERE    1 = 1
-            AND A.LectureId = ${LectureId}
-            ${req.user.level === 1 ? `AND A.TeacherId IS NULL` : ``}
-            AND A.isDelete = FALSE
-            AND B.isDelete = FALSE
-   ORDER    BY A.id DESC
-   LIMIT    ${LIMIT}
-  OFFSET    ${OFFSET}
+    SELECT	A.LectureNoticeId			                        AS connectNoticeId,
+            A.UserId 					                            AS connectUserId,
+            B.title,
+            B.id					                                AS noticeId,
+            B.title 				                              AS noticeTitle,
+            B.content 			                              AS noticeContent,
+            B.author 				                              AS noticeAuthor,
+            B.level 				                              AS noticeLevel,
+            B.file 					                              AS noticeFile,
+            B.hit 					                              AS noticeHit,
+            DATE_FORMAT(B.createdAt, "%Y-%m-%d %H:%m:s")	AS noticeCreatedAt,
+            B.UserId 				                              AS writeUserId,
+            C.number				                              AS lectureNumber,
+            C.course				                              AS lectureName
+      FROM	lectureConnects				A
+     INNER
+      JOIN	lectureNotices 				B
+        ON	A.LectureNoticeId = B.id
+     INNER
+      JOIN	lectures					    C
+        ON	B.LectureId = C.id
+      WHERE	1 = 1
+        AND A.UserId = ${req.user.id}
+        AND B.LectureId = ${LectureId}
+        AND B.isDelete = FALSE
+        AND	C.isDelete = FALSE
+      ORDER BY A.id DESC
+      LIMIT ${LIMIT}
+     OFFSET ${OFFSET}
     `;
 
     const length = await models.sequelize.query(lengthQuery);
@@ -182,31 +185,31 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
     }
 
     const selectQuery = `
-    SELECT	A.id,
-            A.title,
-            A.content,
-            A.author,
-            A.level,
-            A.LectureId,
-            A.TeacherId,
-            A.file,
-            A.isDelete,
-            DATE_FORMAT(A.deletedAt, '%Y-%m-%d')  AS deletedAt,
-            DATE_FORMAT(A.createdAt, '%Y-%m-%d')  AS createdAt,
-            DATE_FORMAT(A.updatedAt, '%Y-%m-%d')  AS updatedAt,
-            A.UserId,
-            A.StudentId,
-            A.hit,
-            B.course
-    FROM	  lectureNotices      A
-   INNER
-    JOIN    lectures            B
-      ON    A.LectureId = B.id
-   WHERE    1 = 1
-     ${_LectureId ? `AND A.LectureId = ${_LectureId}` : ``}
-     AND    A.isDelete = FALSE
-     AND    B.isDelete = FALSE
-   ORDER    BY A.id DESC
+    SELECT	A.LectureNoticeId			                        AS connectNoticeId,
+            A.UserId 					                            AS connectUserId,
+            B.title,
+            B.id					                                AS noticeId,
+            B.title 				                              AS noticeTitle,
+            B.content 			                              AS noticeContent,
+            B.author 				                              AS noticeAuthor,
+            B.level 				                              AS noticeLevel,
+            B.file 					                              AS noticeFile,
+            B.hit 					                              AS noticeHit,
+            DATE_FORMAT(B.createdAt, "%Y-%m-%d %H:%m:s")	AS noticeCreatedAt,
+            B.UserId 				                              AS writeUserId,
+            C.number				                              AS lectureNumber,
+            C.course				                              AS lectureName
+      FROM	lectureConnects				A
+     INNER
+      JOIN	lectureNotices 				B
+        ON	A.LectureNoticeId = B.id
+     INNER
+      JOIN	lectures					    C
+        ON	B.LectureId = C.id
+     WHERE	1 = 1
+       ${_LectureId ? `AND B.LectureId = ${_LectureId}` : ``}
+       AND  B.isDelete = FALSE
+       AND	C.isDelete = FALSE
     `;
 
     const notice = await models.sequelize.query(selectQuery);
@@ -241,25 +244,32 @@ router.post("/detail", isLoggedIn, async (req, res, next) => {
     }
 
     const detailQuery = `
-    SELECT	id,
-            title,
-            content,
-            author,
-            level,
-            LectureId,
-            TeacherId,
-            file,
-            isDelete,
-            DATE_FORMAT(deletedAt, '%Y-%m-%d')  AS deletedAt,
-            DATE_FORMAT(createdAt, '%Y-%m-%d')  AS createdAt,
-            DATE_FORMAT(updatedAt, '%Y-%m-%d')  AS updatedAt,
-            UserId,
-            StudentId,
-            hit
-    FROM	lectureNotices
-   WHERE    1 = 1
-     AND    id = ${LectureNoticeId}
-     AND    isDelete = FALSE
+    SELECT	A.LectureNoticeId			                        AS connectNoticeId,
+            A.UserId 					                            AS connectUserId,
+            B.title,
+            B.id					                                AS noticeId,
+            B.title 				                              AS noticeTitle,
+            B.content 			                              AS noticeContent,
+            B.author 				                              AS noticeAuthor,
+            B.level 				                              AS noticeLevel,
+            B.file 					                              AS noticeFile,
+            B.hit 					                              AS noticeHit,
+            DATE_FORMAT(B.createdAt, "%Y-%m-%d %H:%m:s")	AS noticeCreatedAt,
+            B.UserId 				                              AS writeUserId,
+            C.number				                              AS lectureNumber,
+            C.course				                              AS lectureName
+      FROM	lectureConnects				A
+     INNER
+      JOIN	lectureNotices 				B
+        ON	A.LectureNoticeId = B.id
+     INNER
+      JOIN	lectures					    C
+        ON	B.LectureId = C.id
+     WHERE	1 = 1
+       AND  B.id = ${LectureNoticeId}
+       AND  A.UserId = ${req.user.id}
+       AND  B.isDelete = FALSE
+       AND	C.isDelete = FALSE
     `;
 
     const detailData = await models.sequelize.query(detailQuery);
@@ -324,16 +334,8 @@ router.post("/detail", isLoggedIn, async (req, res, next) => {
 });
 
 router.post("/create", isLoggedIn, async (req, res, next) => {
-  const {
-    title,
-    content,
-    author,
-    level,
-    LectureId,
-    TeacherId,
-    StudentId,
-    file,
-  } = req.body;
+  const { title, content, author, level, LectureId, receiverId, file } =
+    req.body;
 
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
@@ -341,6 +343,10 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
 
   if (req.user.level > 3) {
     return res.status(401).send("관리자는 게시글을 작성할 수 없습니다.");
+  }
+
+  if (!Array.isArray(receiverId)) {
+    return res.status(401).send("잘못된 요청입니다.");
   }
 
   try {
@@ -358,111 +364,31 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
         .send("삭제된 강의입니다. 확인 후 다시 시도하여 주십시오.");
     }
 
-    if (req.user.level === 1) {
-      const exPart = await Participant.findOne({
-        where: {
-          UserId: parseInt(req.user.id),
-          LectureId: parseInt(LectureId),
-          isDelete: false,
-          isChange: false,
-        },
-      });
+    const createResult = await LectureNotice.create({
+      title,
+      content,
+      author,
+      level,
+      file,
+      LectureId: parseInt(LectureId),
+      UserId: parseInt(req.user.id),
+    });
 
-      if (!exPart) {
-        return res
-          .status(401)
-          .send(
-            "현재 해당 강의에 참여하고 있지 않은 사용자는 게시글을 작성할 수 없습니다."
-          );
-      }
-      // 강사에게 CREATE
-      if (TeacherId) {
-        const createResult = await LectureNotice.create({
-          title,
-          content,
-          author,
-          level,
-          LectureId: parseInt(LectureId),
-          TeacherId: parseInt(TeacherId),
-          StudentId: null,
-          file,
-          UserId: parseInt(req.user.id),
-        });
-
-        if (!createResult) {
-          return res.status(401).send("처리중 문제가 발생하였습니다.");
-        }
-
-        return res.status(201).json({ result: true });
-      }
-      // 반 전체 CREATE
-      if (!TeacherId) {
-        const createResult = await LectureNotice.create({
-          title,
-          content,
-          author,
-          level,
-          LectureId: parseInt(LectureId),
-          TeacherId: null,
-          StudentId: null,
-          file,
-          UserId: parseInt(req.user.id),
-        });
-
-        if (!createResult) {
-          return res.status(401).send("처리중 문제가 발생하였습니다.");
-        }
-
-        return res.status(201).json({ result: true });
-      }
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
     }
-    // 강사 OR 관리자
-    if (req.user.level !== 1) {
-      //  학생 전체
-      if (!StudentId) {
-        const createResult = await LectureNotice.create({
-          title,
-          content,
-          author,
-          level,
-          LectureId: parseInt(LectureId),
-          TeacherId: null,
-          StudentId: null,
-          file,
-          UserId: parseInt(req.user.id),
+
+    // 받을사람 ID를 배열로 보내주시면 됩니다 -> receiverId
+    await Promise.all(
+      receiverId.map(async (data) => {
+        await LectureConnect.create({
+          UserId: parseInt(data),
+          LectureNoticeId: parseInt(createResult.id),
         });
+      })
+    );
 
-        if (!createResult) {
-          return res.status(401).send("처리중 문제가 발생하였습니다.");
-        }
-
-        return res.status(201).json({ result: true });
-      }
-      // 학생 개인
-      if (StudentId) {
-        if (!Array.isArray(StudentId)) {
-          return res.status(403).send("잘못된 요청입니다.");
-        }
-
-        await Promise.all(
-          StudentId.map(async (data) => {
-            await LectureNotice.create({
-              title,
-              content,
-              author,
-              level,
-              LectureId: parseInt(LectureId),
-              TeacherId: null,
-              StudentId: parseInt(data),
-              file,
-              UserId: parseInt(req.user.id),
-            });
-          })
-        );
-
-        return res.status(201).json({ result: true });
-      }
-    }
+    return res.status(201).json({ result: true });
   } catch (error) {
     console.error(error);
     return res.status(401).send("게시글을 등록할 수 없습니다.");

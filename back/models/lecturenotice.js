@@ -21,18 +21,6 @@ module.exports = class LectureNotice extends Model {
           type: DataTypes.INTEGER,
           allowNull: true,
         },
-        LectureId: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        TeacherId: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        StudentId: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
         file: {
           type: DataTypes.STRING(600),
           allowNull: true,
@@ -63,5 +51,6 @@ module.exports = class LectureNotice extends Model {
   }
   static associate(db) {
     db.LectureNotice.belongsTo(db.User);
+    db.LectureNotice.belongsTo(db.Lecture);
   }
 };
