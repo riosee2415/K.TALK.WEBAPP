@@ -21,15 +21,6 @@ module.exports = class NormalNotice extends Model {
           type: DataTypes.INTEGER,
           allowNull: true,
         },
-        receiverId: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        isAdmin: {
-          type: DataTypes.BOOLEAN,
-          allowNull: false,
-          defaultValue: false,
-        },
         file: {
           type: DataTypes.STRING(600),
           allowNull: true,

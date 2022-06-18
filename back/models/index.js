@@ -34,6 +34,7 @@ const communitycomment = require("./communitycomment");
 const lecturenotice = require("./lecturenotice");
 const lecturenoticecomment = require("./lecturenoticecomment");
 const normalnotice = require("./normalnotice");
+const normalconnect = require("./normalconnect");
 const normalnoticecomment = require("./normalnoticecomment");
 
 const env = process.env.NODE_ENV || "development";
@@ -81,6 +82,7 @@ db.CommunityComment = communitycomment;
 db.LectureNotice = lecturenotice;
 db.LectureNoticeComment = lecturenoticecomment;
 db.NormalNotice = normalnotice;
+db.NormalConnect = normalconnect;
 db.NormalNoticeComment = normalnoticecomment;
 
 Object.keys(db).forEach((modelName) => {

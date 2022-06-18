@@ -1,6 +1,11 @@
 const express = require("express");
 const isLoggedIn = require("../middlewares/isLoggedIn");
-const { NormalNotice, NormalNoticeComment, User } = require("../models");
+const {
+  NormalNotice,
+  NormalNoticeComment,
+  User,
+  NormalConnect,
+} = require("../models");
 const models = require("../models");
 const fs = require("fs");
 const multer = require("multer");
@@ -9,6 +14,7 @@ const AWS = require("aws-sdk");
 const multerS3 = require("multer-s3");
 const isNanCheck = require("../middlewares/isNanCheck");
 const isAdminCheck = require("../middlewares/isAdminCheck");
+const { Op } = require("sequelize");
 
 try {
   fs.accessSync("uploads");
@@ -143,35 +149,35 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
 
   try {
     const selectQuery = `
-    SELECT	id,
-            title,
-            content,
-            author,
-            level,
-            receiverId,
-            isAdmin,
-            file,
-            hit,
-            isDelete,
-            DATE_FORMAT(deletedAt, '%Y-%m-%d')  AS deletedAt,
-            DATE_FORMAT(createdAt, '%Y-%m-%d')  AS createdAt,
-            DATE_FORMAT(updatedAt, '%Y-%m-%d')  AS updatedAt,
-            UserId
-      FROM	normalNotices
-     WHERE  1 = 1
-       AND isAdmin = TRUE
-       ${
-         _listType === 1
-           ? `AND level = 1`
-           : _listType === 2
-           ? `AND level = 2`
-           : _listType === 3
-           ? `AND author = "admin"`
-           : _listType === 4
-           ? ``
-           : ``
-       }
-     ORDER  BY id DESC
+    SELECT	A.isAdmin				                              AS connectIsAdmin,
+            A.NormalNoticeId		                          AS connectNoticeId,
+            A.UserId				                              AS connectUserId,
+            B.id					                                AS noticeId,
+            B.title 				                              AS noticeTitle,
+            B.content 				                            AS noticeContent,
+            B.author 				                              AS noticeAuthor,
+            B.level 				                              AS noticeLevel,
+            B.file 					                              AS noticeFile,
+            B.hit 					                              AS noticeHit,
+            DATE_FORMAT(B.createdAt, "%Y-%m-%d %H:%m:s")	AS noticeCreatedAt,
+            B.UserId 				                              AS writeUserId
+      FROM	normalConnects			A
+     INNER
+      JOIN	normalNotices			  B
+        ON	A.NormalNoticeId  = B.id
+     WHERE	A.isAdmin = TRUE
+            ${
+              _listType === 1
+                ? `AND B.level = 1`
+                : _listType === 2
+                ? `AND B.level = 2`
+                : _listType === 3
+                ? `AND B.level = 4`
+                : _listType === 4
+                ? ``
+                : ``
+            }
+     ORDER  BY B.id DESC
     `;
 
     const notice = await models.sequelize.query(selectQuery);
@@ -298,9 +304,7 @@ router.post("/student/create", isLoggedIn, async (req, res, next) => {
       title,
       content,
       author,
-      level: parseInt(req.user.level),
-      receiverId: null,
-      isAdmin: true,
+      level,
       file,
       UserId: parseInt(req.user.id),
     });
@@ -308,6 +312,11 @@ router.post("/student/create", isLoggedIn, async (req, res, next) => {
     if (!createResult) {
       return res.status(401).send("처리중 문제가 발생하였습니다.");
     }
+
+    await NormalConnect.create({
+      isAdmin: true,
+      NormalNoticeId: parseInt(createResult.id),
+    });
 
     return res.status(201).json({ result: true });
   } catch (error) {
@@ -328,26 +337,41 @@ router.post("/teacher/create", isLoggedIn, async (req, res, next) => {
   }
 
   try {
+    const createResult = await NormalNotice.create({
+      title,
+      content,
+      author,
+      level,
+      file,
+      UserId: parseInt(req.user.id),
+    });
+
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    }
+
     // 강사가 강사 전체에게
     if (parseInt(createType) === 1) {
-      const teacherList = await User.findAll({
-        where: { level: 2, isFire: false },
-      });
+      const selectQuery = `
+      SELECT	*
+        FROM	users
+       WHERE	level = 2
+         AND  isFire = FALSE
+        `;
 
-      if (teacherList.length === 0) {
-        return res.status(401).send("강사가 존재하지 않습니다.");
+      const allUserList = await models.sequelize.query(selectQuery);
+
+      if (allUserList[0].length === 0) {
+        return res
+          .status(401)
+          .send("정보가 존재하지 않습니다. 확인 후 다시 시도하여 주십시오.");
       }
 
       await Promise.all(
-        teacherList.map(async (data) => {
-          await NormalNotice.create({
-            title,
-            content,
-            author,
-            file,
-            receiverId: parseInt(data.id),
-            isAdmin: false,
-            UserId: parseInt(req.user.id),
+        allUserList[0].map(async (data) => {
+          await NormalConnect.create({
+            NormalNoticeId: parseInt(createResult.id),
+            UserId: parseInt(data.id),
           });
         })
       );
@@ -357,20 +381,10 @@ router.post("/teacher/create", isLoggedIn, async (req, res, next) => {
 
     // 강사가 관리자한테
     if (parseInt(createType) === 2) {
-      const createResult = await NormalNotice.create({
-        title,
-        content,
-        author,
-        level: parseInt(req.user.level),
-        receiverId: null,
+      await NormalConnect.create({
+        NormalNoticeId: parseInt(createResult.id),
         isAdmin: true,
-        file,
-        UserId: parseInt(req.user.id),
       });
-
-      if (!createResult) {
-        return res.status(401).send("처리중 문제가 발생하였습니다.");
-      }
 
       return res.status(201).json({ result: true });
     }
@@ -383,15 +397,10 @@ router.post("/teacher/create", isLoggedIn, async (req, res, next) => {
 
       await Promise.all(
         receiverId.map(async (data) => {
-          await NormalNotice.create({
-            title,
-            content,
-            author,
-            level: parseInt(req.user.level),
-            receiverId: parseInt(data),
-            isAdmin: false,
-            file,
-            UserId: parseInt(req.user.id),
+          await NormalConnect.create({
+            NormalNoticeId: parseInt(createResult.id),
+            UserId: parseInt(data),
+            isAdmin: true,
           });
         })
       );
@@ -422,26 +431,40 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
   //                4 지정해서 보내기 (여러명)
 
   try {
-    // 관리자가 강사 전체에게 작성
+    const createResult = await NormalNotice.create({
+      title,
+      content,
+      author,
+      level,
+      file,
+      UserId: parseInt(req.user.id),
+    });
+
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    }
+
     if (parseInt(createType) === 1) {
-      const teacherList = await User.findAll({
-        where: { level: 2, isFire: false },
-      });
+      const selectQuery = `
+      SELECT	*
+        FROM	users
+       WHERE	level = 2
+         AND  isFire = FALSE
+        `;
 
-      if (teacherList.length === 0) {
-        return res.status(401).send("강사가 존재하지 않습니다.");
+      const allUserList = await models.sequelize.query(selectQuery);
+
+      if (allUserList[0].length === 0) {
+        return res
+          .status(401)
+          .send("정보가 존재하지 않습니다. 확인 후 다시 시도하여 주십시오.");
       }
 
       await Promise.all(
-        teacherList.map(async (data) => {
-          await NormalNotice.create({
-            title,
-            content,
-            author,
-            level,
-            file,
-            receiverId: parseInt(data.id),
-            UserId: parseInt(req.user.id),
+        allUserList[0].map(async (data) => {
+          await NormalConnect.create({
+            NormalNoticeId: parseInt(createResult.id),
+            UserId: parseInt(data.id),
             isAdmin: true,
           });
         })
@@ -449,26 +472,26 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
 
       return res.status(201).json({ result: true });
     }
-    // 학생 전체
     if (parseInt(createType) === 2) {
-      const allStudents = await User.findAll({
-        where: { level: 1 },
-      });
+      const selectQuery = `
+      SELECT	*
+        FROM	users
+       WHERE	level = 1
+        `;
 
-      if (allStudents.length === 0) {
-        return res.status(401).send("학생이 존재하지 않습니다.");
+      const allUserList = await models.sequelize.query(selectQuery);
+
+      if (allUserList[0].length === 0) {
+        return res
+          .status(401)
+          .send("정보가 존재하지 않습니다. 확인 후 다시 시도하여 주십시오.");
       }
 
       await Promise.all(
-        allStudents.map(async (data) => {
-          await NormalNotice.create({
-            title,
-            content,
-            author,
-            level,
-            file,
-            receiverId: parseInt(data.id),
-            UserId: parseInt(req.user.id),
+        allUserList[0].map(async (data) => {
+          await NormalConnect.create({
+            NormalNoticeId: parseInt(createResult.id),
+            UserId: parseInt(data.id),
             isAdmin: true,
           });
         })
@@ -477,7 +500,6 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
       return res.status(201).json({ result: true });
     }
 
-    // 강사랑 학생 전체
     if (parseInt(createType) === 3) {
       const selectQuery = `
       SELECT	*
@@ -496,14 +518,9 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
 
       await Promise.all(
         allUserList[0].map(async (data) => {
-          await NormalNotice.create({
-            title,
-            content,
-            author,
-            level,
-            file,
-            receiverId: parseInt(data.id),
-            UserId: parseInt(req.user.id),
+          await NormalConnect.create({
+            NormalNoticeId: parseInt(createResult.id),
+            UserId: parseInt(data.id),
             isAdmin: true,
           });
         })
@@ -511,22 +528,23 @@ router.post("/admin/create", isAdminCheck, async (req, res, next) => {
 
       return res.status(201).json({ result: true });
     }
-    // 지정해서 보내기
+
     if (parseInt(createType) === 4) {
       if (!Array.isArray(receiverId)) {
         return res.status(401).send("잘못된 요청입니다.");
       }
 
+      if (receiverId.length === 0) {
+        return res
+          .status(401)
+          .send("정보가 존재하지 않습니다. 확인 후 다시 시도하여 주십시오.");
+      }
+
       await Promise.all(
         receiverId.map(async (data) => {
-          await NormalNotice.create({
-            title,
-            content,
-            author,
-            level,
-            file,
-            receiverId: parseInt(data),
-            isAdmin: true,
+          await NormalConnect.create({
+            NormalNoticeId: parseInt(createResult.id),
+            UserId: parseInt(data),
           });
         })
       );
