@@ -171,7 +171,6 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
      INNER
       JOIN	normalNotices			  B
         ON	A.NormalNoticeId  = B.id
-     GROUP  BY B.id
      WHERE	A.isAdmin = TRUE
             ${
               _listType === 1
