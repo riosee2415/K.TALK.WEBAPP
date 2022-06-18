@@ -473,7 +473,7 @@ const Notice = ({}) => {
                 fontWeight={`Bold`}
                 width={width < 800 ? `45%` : `70%`}
               >
-                Subject
+                Title
               </Text>
               <Text
                 fontSize={width < 700 ? `14px` : `18px`}
@@ -492,19 +492,21 @@ const Notice = ({}) => {
                 lectureNotices.map((data, idx) => {
                   return (
                     <CustomTableHoverWrapper>
-                      <Wrapper width={width < 800 ? `15%` : `10%`}>1</Wrapper>
+                      <Wrapper width={width < 800 ? `15%` : `10%`}>
+                        {data.id}
+                      </Wrapper>
                       <Wrapper width={width < 800 ? `25%` : `10%`}>
-                        2022-06-16
+                        {data.createdAt}
                       </Wrapper>
                       <Wrapper
                         width={width < 800 ? `45%` : `70%`}
                         al={`flex-start`}
                         padding={`0 0 0 10px`}
                       >
-                        hi
+                        {data.title}
                       </Wrapper>
                       <Wrapper width={width < 800 ? `15%` : `10%`}>
-                        작성자
+                        {data.author}
                       </Wrapper>
                     </CustomTableHoverWrapper>
                   );

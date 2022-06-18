@@ -1306,8 +1306,6 @@ const Student = () => {
                             Go To Notice
                           </Button>
 
-                          {console.log(data)}
-
                           <Wrapper
                             dr={width < 800 ? `column` : `row`}
                             ju={width < 800 ? `center` : `flex-start`}

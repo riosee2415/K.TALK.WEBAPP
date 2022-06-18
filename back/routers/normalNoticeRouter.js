@@ -182,6 +182,8 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
 
     const notice = await models.sequelize.query(selectQuery);
 
+    console.log(notice[0]);
+
     return res.status(200).json({ notice: notice[0] });
   } catch (error) {
     console.error(error);
