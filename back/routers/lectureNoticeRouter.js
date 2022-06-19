@@ -194,7 +194,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
             B.level 				                              AS noticeLevel,
             B.file 					                              AS noticeFile,
             B.hit 					                              AS noticeHit,
-            DATE_FORMAT(B.createdAt, "%Y-%m-%d %H:%m:s")	AS noticeCreatedAt,
+            DATE_FORMAT(B.createdAt, "%Y-%m-%d")	        AS noticeCreatedAt,
             B.UserId 				                              AS writeUserId,
             C.number				                              AS lectureNumber,
             C.course				                              AS lectureName

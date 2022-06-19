@@ -1806,7 +1806,9 @@ const DetailClass = () => {
               margin={`0 6px`}
               kindOf={`white`}
               padding={`0`}
-              onClick={() => moveLinkHandler(`/admin/board/notice/list`)}
+              onClick={() =>
+                moveLinkHandler(`/admin/board/notice/${router.query.id}`)
+              }
             >
               게시판
             </CommonButton>

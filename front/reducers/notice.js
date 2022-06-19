@@ -23,6 +23,7 @@ export const initailState = {
 
   createModal: false,
   detailModal: false,
+  guideModal: false,
   //
   st_noticeLectureListLoading: false, //
   st_noticeLectureListDone: false,
@@ -149,6 +150,8 @@ export const CREATE_MODAL_CLOSE_REQUEST = "CREATE_MODAL_CLOSE_REQUEST";
 
 export const DETAIL_MODAL_OPEN_REQUEST = "DETAIL_MODAL_OPEN_REQUEST";
 export const DETAIL_MODAL_CLOSE_REQUEST = "DETAIL_MODAL_CLOSE_REQUEST";
+
+export const GUIDE_MODAL = "GUIDE_MODAL";
 
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
@@ -391,17 +394,12 @@ const reducer = (state = initailState, action) =>
         draft.st_noticePrevDone = true;
         break;
       }
-      case NOTICE_PREV_FAILURE:
-        {
-          draft.st_noticePrevLoading = false;
-          draft.st_noticePrevDone = false;
-          draft.st_noticePrevError = action.error;
-          break;
-        }
-
-        ///////////////////////////////////////////////////////
-
-        x;
+      case NOTICE_PREV_FAILURE: {
+        draft.st_noticePrevLoading = false;
+        draft.st_noticePrevDone = false;
+        draft.st_noticePrevError = action.error;
+        break;
+      }
 
       case NOTICE_DELETE_REQUEST: {
         draft.st_noticeDeleteLoading = true;
@@ -460,6 +458,10 @@ const reducer = (state = initailState, action) =>
 
       case DETAIL_MODAL_CLOSE_REQUEST:
         draft.detailModal = false;
+        break;
+
+      case GUIDE_MODAL:
+        draft.guideModal = !draft.guideModal;
         break;
       ///////////////////////////////////////////////////////
       case NOTICE_FILE_INIT:
