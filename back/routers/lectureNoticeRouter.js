@@ -255,6 +255,7 @@ router.post("/detail", isLoggedIn, async (req, res, next) => {
             B.hit 					                              AS noticeHit,
             DATE_FORMAT(B.createdAt, "%Y-%m-%d")	        AS noticeCreatedAt,
             B.UserId 				                              AS writeUserId,
+            C.id                                          AS lectureId,
             C.number				                              AS lectureNumber,
             C.course				                              AS lectureName
       FROM	lectureConnects				A
