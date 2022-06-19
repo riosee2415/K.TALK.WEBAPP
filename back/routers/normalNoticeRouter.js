@@ -623,7 +623,7 @@ router.patch("/delete", isLoggedIn, async (req, res, next) => {
   }
 
   try {
-    const exNormalNotice = await NorexNormalNotice.findOne({
+    const exNormalNotice = await NormalNotice.findOne({
       where: { id: parseInt(id) },
     });
 
@@ -641,7 +641,7 @@ router.patch("/delete", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("자신이 작성한 게시글만 삭제할 수 있습니다.");
     }
 
-    const deleteResult = await NorexNormalNotice.update(
+    const deleteResult = await NormalNotice.update(
       {
         isDelete: true,
         deletedAt: new Date(),
