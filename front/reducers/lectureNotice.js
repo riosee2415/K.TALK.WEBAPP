@@ -8,10 +8,13 @@ export const initailState = {
 
   lectureNoticeDetail: null, // 디테일 데이터
   lectureNoticeComment: null, // 댓글
-  commentMaxPage: 1, // 댓글 갯수
+  commentLen: null, // 댓글 갯수
+
+  lecNoticeCommentDetails: null, // 대댓글 데이터
 
   lectureNoticeModal: false,
-  //
+
+  ////////////////////////////// NOTICE //////////////////////////////
   st_lectureNoticeListLoading: false, // 강의 게시판 가져오기
   st_lectureNoticeListDone: false,
   st_lectureNoticeListError: null,
@@ -35,9 +38,26 @@ export const initailState = {
   st_lectureNoticeDeleteLoading: false, // 강의 게시판 삭제
   st_lectureNoticeDeleteDone: false,
   st_lectureNoticeDeleteError: null,
+
+  ////////////////////////////// COMMENT //////////////////////////////
+  st_lecNoticeCommentDetailLoading: false, // 강의 게시판 대댓글 가져오기
+  st_lecNoticeCommentDetailDone: false,
+  st_lecNoticeCommentDetailError: null,
   //
+  st_lecNoticeCommentCreateLoading: false, // 강의 게시판 댓글 작성
+  st_lecNoticeCommentCreateDone: false,
+  st_lecNoticeCommentCreateError: null,
+  //
+  st_lecNoticeCommentUpdateLoading: false, // 강의 게시판 대댓글 수정
+  st_lecNoticeCommentUpdateDone: false,
+  st_lecNoticeCommentUpdateError: null,
+  //
+  st_lecNoticeCommentDeleteLoading: false, // 강의 게시판 대댓글 삭제
+  st_lecNoticeCommentDeleteDone: false,
+  st_lecNoticeCommentDeleteError: null,
 };
 
+////////////////////////////// NOTICE //////////////////////////////
 export const LECTURE_NOTICE_LIST_REQUEST = "LECTURE_NOTICE_LIST_REQUEST";
 export const LECTURE_NOTICE_LIST_SUCCESS = "LECTURE_NOTICE_LIST_SUCCESS";
 export const LECTURE_NOTICE_LIST_FAILURE = "LECTURE_NOTICE_LIST_FAILURE";
@@ -72,15 +92,49 @@ export const LECTURE_NOTICE_DELETE_REQUEST = "LECTURE_NOTICE_DELETE_REQUEST";
 export const LECTURE_NOTICE_DELETE_SUCCESS = "LECTURE_NOTICE_DELETE_SUCCESS";
 export const LECTURE_NOTICE_DELETE_FAILURE = "LECTURE_NOTICE_DELETE_FAILURE";
 
+////////////////////////////// COMMENT //////////////////////////////
+export const LECNOTICE_COMMENT_DETAIL_REQUEST =
+  "LECNOTICE_COMMENT_DETAIL_REQUEST";
+export const LECNOTICE_COMMENT_DETAIL_SUCCESS =
+  "LECNOTICE_COMMENT_DETAIL_SUCCESS";
+export const LECNOTICE_COMMENT_DETAIL_FAILURE =
+  "LECNOTICE_COMMENT_DETAIL_FAILURE";
+
+export const LECNOTICE_COMMENT_CREATE_REQUEST =
+  "LECNOTICE_COMMENT_CREATE_REQUEST";
+export const LECNOTICE_COMMENT_CREATE_SUCCESS =
+  "LECNOTICE_COMMENT_CREATE_SUCCESS";
+export const LECNOTICE_COMMENT_CREATE_FAILURE =
+  "LECNOTICE_COMMENT_CREATE_FAILURE";
+
+export const LECNOTICE_COMMENT_UPDATE_REQUEST =
+  "LECNOTICE_COMMENT_UPDATE_REQUEST";
+export const LECNOTICE_COMMENT_UPDATE_SUCCESS =
+  "LECNOTICE_COMMENT_UPDATE_SUCCESS";
+export const LECNOTICE_COMMENT_UPDATE_FAILURE =
+  "LECNOTICE_COMMENT_UPDATE_FAILURE";
+
+export const LECNOTICE_COMMENT_DELETE_REQUEST =
+  "LECNOTICE_COMMENT_DELETE_REQUEST";
+export const LECNOTICE_COMMENT_DELETE_SUCCESS =
+  "LECNOTICE_COMMENT_DELETE_SUCCESS";
+export const LECNOTICE_COMMENT_DELETE_FAILURE =
+  "LECNOTICE_COMMENT_DELETE_FAILURE";
+
+/////////////////////////////////////////////////////////////////////
+
 export const LECTURE_NOTICE_MODAL_TOGGLE = "LECTURE_NOTICE_MODAL_TOGGLE";
 
 export const UPDATE_LECTURE_NOTICE_PATH = "UPDATE_LECTURE_NOTICE_PATH";
 
 export const RESET_LECTURE_NOTICE_PATH = "RESET_LECTURE_NOTICE_PATH";
 
+export const LECNOTICE_COMMENT_LIST_INIT = "LECNOTICE_COMMENT_LIST_INIT";
+
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
+      ////////////////////////////// NOTICE //////////////////////////////
       case LECTURE_NOTICE_LIST_REQUEST: {
         draft.st_lectureNoticeListLoading = true;
         draft.st_lectureNoticeListDone = false;
@@ -138,7 +192,7 @@ const reducer = (state = initailState, action) =>
         draft.st_lectureNoticeDetailListError = null;
         draft.lectureNoticeDetail = action.data.detailData;
         draft.lectureNoticeComment = action.data.comments;
-        draft.commentMaxPage = action.data.commentsLen;
+        draft.commentLen = action.data.commentsLen;
 
         break;
       }
@@ -228,6 +282,87 @@ const reducer = (state = initailState, action) =>
         draft.st_lectureNoticeDeleteError = action.error;
         break;
       }
+      ////////////////////////////// COMMENT //////////////////////////////
+      case LECNOTICE_COMMENT_DETAIL_REQUEST: {
+        draft.st_lecNoticeCommentDetailLoading = true;
+        draft.st_lecNoticeCommentDetailDone = false;
+        draft.st_lecNoticeCommentDetailError = null;
+        break;
+      }
+      case LECNOTICE_COMMENT_DETAIL_SUCCESS: {
+        draft.st_lecNoticeCommentDetailLoading = false;
+        draft.st_lecNoticeCommentDetailDone = true;
+        draft.st_lecNoticeCommentDetailError = null;
+        draft.lecNoticeCommentDetails = action.data.list;
+        break;
+      }
+      case LECNOTICE_COMMENT_DETAIL_FAILURE: {
+        draft.st_lecNoticeCommentDetailLoading = false;
+        draft.st_lecNoticeCommentDetailDone = false;
+        draft.st_lecNoticeCommentDetailError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case LECNOTICE_COMMENT_CREATE_REQUEST: {
+        draft.st_lecNoticeCommentCreateLoading = true;
+        draft.st_lecNoticeCommentCreateDone = false;
+        draft.st_lecNoticeCommentCreateError = null;
+        break;
+      }
+      case LECNOTICE_COMMENT_CREATE_SUCCESS: {
+        draft.st_lecNoticeCommentCreateLoading = false;
+        draft.st_lecNoticeCommentCreateDone = true;
+        draft.st_lecNoticeCommentCreateError = null;
+        break;
+      }
+      case LECNOTICE_COMMENT_CREATE_FAILURE: {
+        draft.st_lecNoticeCommentCreateLoading = false;
+        draft.st_lecNoticeCommentCreateDone = false;
+        draft.st_lecNoticeCommentCreateError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case LECNOTICE_COMMENT_UPDATE_REQUEST: {
+        draft.st_lecNoticeCommentUpdateLoading = true;
+        draft.st_lecNoticeCommentUpdateDone = false;
+        draft.st_lecNoticeCommentUpdateError = null;
+        break;
+      }
+      case LECNOTICE_COMMENT_UPDATE_SUCCESS: {
+        draft.st_lecNoticeCommentUpdateLoading = false;
+        draft.st_lecNoticeCommentUpdateDone = true;
+        draft.st_lecNoticeCommentUpdateError = null;
+        break;
+      }
+      case LECNOTICE_COMMENT_UPDATE_FAILURE: {
+        draft.st_lecNoticeCommentUpdateLoading = false;
+        draft.st_lecNoticeCommentUpdateDone = false;
+        draft.st_lecNoticeCommentUpdateError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case LECNOTICE_COMMENT_DELETE_REQUEST: {
+        draft.st_lecNoticeCommentDeleteLoading = true;
+        draft.st_lecNoticeCommentDeleteDone = false;
+        draft.st_lecNoticeCommentDeleteError = null;
+        break;
+      }
+      case LECNOTICE_COMMENT_DELETE_SUCCESS: {
+        draft.st_lecNoticeCommentDeleteLoading = false;
+        draft.st_lecNoticeCommentDeleteDone = true;
+        draft.st_lecNoticeCommentDeleteError = null;
+        break;
+      }
+      case LECNOTICE_COMMENT_DELETE_FAILURE: {
+        draft.st_lecNoticeCommentDeleteLoading = false;
+        draft.st_lecNoticeCommentDeleteDone = false;
+        draft.st_lecNoticeCommentDeleteError = action.error;
+        break;
+      }
+
       ///////////////////////////////////////////////////////
       ///////////////////////////////////////////////////////
       ///////////////////////////////////////////////////////
@@ -243,6 +378,11 @@ const reducer = (state = initailState, action) =>
       case RESET_LECTURE_NOTICE_PATH:
         draft.uploadLectureNoticePath = null;
         break;
+
+      case LECNOTICE_COMMENT_LIST_INIT: {
+        draft.lecNoticeCommentDetails = null;
+        break;
+      }
 
       default:
         break;

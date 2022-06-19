@@ -941,6 +941,10 @@ const Index = () => {
 
   ////// HANDLER //////
 
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
+  }, []);
+
   const homeworksToggle = useCallback((data) => {
     setHomework(data);
     setHomeworkModal((prev) => !prev);
@@ -1743,114 +1747,6 @@ const Index = () => {
                 onChange={(page) => onChangeNoticePage(page)}
               ></CustomPage>
             </Wrapper>
-            {/* ////////////////////////////////// 강의 쪽지함 ///////////////////////////////////////// */}
-
-            {/* <Wrapper al={`flex-start`} margin={`86px 0 20px`}>
-              <CommonTitle>쪽지함</CommonTitle>
-            </Wrapper>
-
-            <Wrapper>
-              <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
-                <Wrapper
-                  dr={`row`}
-                  textAlign={`center`}
-                  padding={`20px 0`}
-                  bgColor={Theme.subTheme9_C}
-                  borderBottom={`1px solid ${Theme.grey_C}`}
-                >
-                  <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
-                    fontWeight={`Bold`}
-                    width={`15%`}
-                  >
-                    글 번호
-                  </Text>
-                  <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
-                    fontWeight={`Bold`}
-                    width={`calc(100% - 15% - 15% - 25%)`}
-                  >
-                    제목
-                  </Text>
-
-                  <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
-                    fontWeight={`Bold`}
-                    width={`15%`}
-                  >
-                    작성자
-                  </Text>
-
-                  <Text
-                    fontSize={width < 700 ? `14px` : `18px`}
-                    fontWeight={`Bold`}
-                    width={`25%`}
-                  >
-                    날짜
-                  </Text>
-                </Wrapper>
-
-                {messageLectureList && messageLectureList.length === 0 ? (
-                  <Wrapper margin={`50px 0`}>
-                    <Empty description="조회된 데이터가 없습니다." />
-                  </Wrapper>
-                ) : (
-                  messageLectureList &&
-                  messageLectureList.map((data2, idx) => {
-                    return (
-                      <Wrapper
-                        key={data2.id}
-                        dr={`row`}
-                        textAlign={`center`}
-                        padding={`25px 0 20px`}
-                        cursor={`pointer`}
-                        bgColor={idx % 2 === 1 && Theme.subTheme_C}
-                        borderBottom={`1px solid ${Theme.grey_C}`}
-                        onClick={() => messageViewModalHanlder(data2)}
-                      >
-                        <Text
-                          fontSize={width < 700 ? `14px` : `16px`}
-                          width={`15%`}
-                        >
-                          {data2.id}
-                        </Text>
-                        <Text
-                          fontSize={width < 700 ? `14px` : `16px`}
-                          width={`calc(100% - 15% - 15% - 25%)`}
-                          textAlign={`left`}
-                        >
-                          {data2.title}
-                        </Text>
-
-                        <Text
-                          fontSize={width < 700 ? `14px` : `16px`}
-                          width={`15%`}
-                        >
-                          {data2.author}
-                        </Text>
-                        <Text
-                          fontSize={width < 700 ? `14px` : `16px`}
-                          width={`25%`}
-                        >
-                          {moment(data2.createdAt, "YYYY/MM/DD").format(
-                            "YYYY/MM/DD"
-                          )}
-                        </Text>
-                      </Wrapper>
-                    );
-                  })
-                )}
-              </Wrapper>
-
-              <Wrapper margin={`80px 0 100px`}>
-                <CustomPage
-                  current={currentPage2}
-                  total={messageLectureLastPage * 10}
-                  onChange={(page) => onChangeMessagePage(page)}
-                ></CustomPage>
-              </Wrapper>
-            </Wrapper> */}
-            {/* /////////////////////////////////////////////////////////////////////////// */}
 
             <Wrapper margin={`86px 0 0`}>
               {lectureDetail && lectureDetail.length === 0
@@ -1978,6 +1874,21 @@ const Index = () => {
                               borderRightBool={false}
                             >
                               {`${data.course}`}
+                            </CustomText2>
+
+                            <CustomText2
+                              color={Theme.black_2C}
+                              fontWeight={`normal`}
+                              fontSize={width < 700 ? `14px` : `18px`}
+                              borderRightBool={false}
+                              cursor={`pointer`}
+                              onClick={() =>
+                                moveLinkHandler(
+                                  `/teacher/notice/${router.query.id}`
+                                )
+                              }
+                            >
+                              강의 게시판 가기
                             </CustomText2>
 
                             {/* <Text

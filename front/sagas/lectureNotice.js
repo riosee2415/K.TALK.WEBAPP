@@ -1,6 +1,7 @@
 import { all, call, delay, fork, put, takeLatest } from "redux-saga/effects";
 import axios from "axios";
 import {
+  ////////////////////////////// NOTICE //////////////////////////////
   LECTURE_NOTICE_LIST_REQUEST,
   LECTURE_NOTICE_LIST_SUCCESS,
   LECTURE_NOTICE_LIST_FAILURE,
@@ -28,7 +29,28 @@ import {
   LECTURE_NOTICE_DELETE_REQUEST,
   LECTURE_NOTICE_DELETE_SUCCESS,
   LECTURE_NOTICE_DELETE_FAILURE,
+
+  ////////////////////////////// COMMENT //////////////////////////////
+  LECNOTICE_COMMENT_DETAIL_REQUEST,
+  LECNOTICE_COMMENT_DETAIL_SUCCESS,
+  LECNOTICE_COMMENT_DETAIL_FAILURE,
+  //
+  LECNOTICE_COMMENT_CREATE_REQUEST,
+  LECNOTICE_COMMENT_CREATE_SUCCESS,
+  LECNOTICE_COMMENT_CREATE_FAILURE,
+  //
+  LECNOTICE_COMMENT_UPDATE_REQUEST,
+  LECNOTICE_COMMENT_UPDATE_SUCCESS,
+  LECNOTICE_COMMENT_UPDATE_FAILURE,
+  //
+  LECNOTICE_COMMENT_DELETE_REQUEST,
+  LECNOTICE_COMMENT_DELETE_SUCCESS,
+  LECNOTICE_COMMENT_DELETE_FAILURE,
 } from "../reducers/lectureNotice";
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////// NOTICE //////////////////////////////
+////////////////////////////////////////////////////////////////////
 
 // ******************************************************************************************************************
 // SAGA AREA ********************************************************************************************************
@@ -226,7 +248,130 @@ function* lectureNoticeDelete(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+/////////////////////////////////////////////////////////////////////
+////////////////////////////// COMMENT //////////////////////////////
+/////////////////////////////////////////////////////////////////////
+
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function lecNoticeCommentDetailAPI(data) {
+  return await axios.post(`/api/lectureNotice/comment/detail`, data);
+}
+
+function* lecNoticeCommentDetail(action) {
+  try {
+    const result = yield call(lecNoticeCommentDetailAPI, action.data);
+
+    yield put({
+      type: LECNOTICE_COMMENT_DETAIL_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECNOTICE_COMMENT_DETAIL_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function lecNoticeCommentCreateAPI(data) {
+  return await axios.post(`/api/lectureNotice/comment/create`, data);
+}
+
+function* lecNoticeCommentCreate(action) {
+  try {
+    const result = yield call(lecNoticeCommentCreateAPI, action.data);
+
+    yield put({
+      type: LECNOTICE_COMMENT_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECNOTICE_COMMENT_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function lecNoticeCommentUpdateAPI(data) {
+  return await axios.post(`/api/lectureNotice/comment/update`, data);
+}
+
+function* lecNoticeCommentUpdate(action) {
+  try {
+    const result = yield call(lecNoticeCommentUpdateAPI, action.data);
+
+    yield put({
+      type: LECNOTICE_COMMENT_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECNOTICE_COMMENT_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function lecNoticeCommentDeleteAPI(data) {
+  return await axios.delete(
+    `/api/lectureNotice/comment/delete/${data.commentId}`,
+    data
+  );
+}
+
+function* lecNoticeCommentDelete(action) {
+  try {
+    const result = yield call(lecNoticeCommentDeleteAPI, action.data);
+
+    yield put({
+      type: LECNOTICE_COMMENT_DELETE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECNOTICE_COMMENT_DELETE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////// NOTICE //////////////////////////////
+////////////////////////////////////////////////////////////////////
 
 function* watchLectureNoticeList() {
   yield takeLatest(LECTURE_NOTICE_LIST_REQUEST, lectureNoticeList);
@@ -256,9 +401,32 @@ function* watchLectureNoticeDelete() {
   yield takeLatest(LECTURE_NOTICE_DELETE_REQUEST, lectureNoticeDelete);
 }
 
+/////////////////////////////////////////////////////////////////////
+////////////////////////////// COMMENT //////////////////////////////
+/////////////////////////////////////////////////////////////////////
+
+function* watchLecNoticeCommentDetail() {
+  yield takeLatest(LECNOTICE_COMMENT_DETAIL_REQUEST, lecNoticeCommentDetail);
+}
+
+function* watchLecNoticeCommentCreate() {
+  yield takeLatest(LECNOTICE_COMMENT_CREATE_REQUEST, lecNoticeCommentCreate);
+}
+
+function* watchLecNoticeCommentUpdate() {
+  yield takeLatest(LECNOTICE_COMMENT_UPDATE_REQUEST, lecNoticeCommentUpdate);
+}
+
+function* watchLecNoticeCommentDelete() {
+  yield takeLatest(LECNOTICE_COMMENT_DELETE_REQUEST, lecNoticeCommentDelete);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* lectureNoticeSaga() {
   yield all([
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////// NOTICE //////////////////////////////
+    ////////////////////////////////////////////////////////////////////
     fork(watchLectureNoticeList),
     fork(watchLectureNoticeAdminList),
     fork(watchLectureNoticeDetailList),
@@ -266,6 +434,13 @@ export default function* lectureNoticeSaga() {
     fork(watchLectureNoticeCreate),
     fork(watchLectureNoticeUpdate),
     fork(watchLectureNoticeDelete),
-    //
+
+    /////////////////////////////////////////////////////////////////////
+    ////////////////////////////// COMMENT //////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+    fork(watchLecNoticeCommentDetail),
+    fork(watchLecNoticeCommentCreate),
+    fork(watchLecNoticeCommentUpdate),
+    fork(watchLecNoticeCommentDelete),
   ]);
 }

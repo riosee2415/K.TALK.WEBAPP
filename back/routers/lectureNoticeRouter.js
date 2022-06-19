@@ -687,7 +687,7 @@ router.delete(
         return res.status(401).send("자신의 댓글만 삭제할 수 있습니다.");
       }
 
-      const deleteResult = await CommunityComment.update(
+      const deleteResult = await LectureNoticeComment.update(
         {
           isDelete: true,
           deletedAt: new Date(),

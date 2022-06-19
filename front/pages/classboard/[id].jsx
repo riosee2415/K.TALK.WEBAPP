@@ -1,19 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
-import {
-  Button,
-  Calendar,
-  Checkbox,
-  Empty,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Modal,
-  Popconfirm,
-  Select,
-} from "antd";
+import { Empty, Form, Input, message, Modal, Popconfirm, Select } from "antd";
 
 import { END } from "redux-saga";
 import Head from "next/head";
@@ -42,19 +30,14 @@ import { useRouter } from "next/router";
 import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 
 import {
-  COMMUNITY_COMMENT_CREATE_REQUEST,
-  COMMUNITY_COMMENT_DELETE_REQUEST,
-  COMMUNITY_COMMENT_DETAIL_REQUEST,
-  COMMUNITY_COMMENT_LIST_INIT,
-  COMMUNITY_COMMENT_UPDATE_REQUEST,
-  COMMUNITY_DELETE_REQUEST,
-  COMMUNITY_DETAIL_REQUEST,
-  COMMUNITY_UPDATE_REQUEST,
-  COMMUNITY_UPLOAD_REQUEST,
-  CREATE_MODAL_CLOSE_REQUEST,
-  CREATE_MODAL_OPEN_REQUEST,
-  FILE_INIT,
-} from "../../reducers/community";
+  LECNOTICE_COMMENT_CREATE_REQUEST,
+  LECNOTICE_COMMENT_DELETE_REQUEST,
+  LECNOTICE_COMMENT_DETAIL_REQUEST,
+  LECNOTICE_COMMENT_LIST_INIT,
+  LECNOTICE_COMMENT_UPDATE_REQUEST,
+  LECTURE_NOTICE_DETAIL_LIST_REQUEST,
+} from "../../reducers/lectureNotice";
+
 const Icon = styled(Wrapper)`
   height: 1px;
   background: ${Theme.darkGrey_C};
@@ -104,20 +87,24 @@ const Classboard = () => {
   const { me } = useSelector((state) => state.user);
 
   const {
-    communityDetail,
-    communityComment,
-    communityCommentDetail,
-    st_communityCommentCreateDone,
-    st_communityCommentCreateError,
-    communityCommentsLen,
-    //
-    st_communityCommentUpdateDone,
-    st_communityCommentUpdateError,
-    st_communityCommentDeleteDone,
-    st_communityCommentDeleteError,
+    lectureNoticeDetail,
+    lectureNoticeComment,
+    commentLen,
 
-    createModal,
-  } = useSelector((state) => state.community);
+    lecNoticeCommentDetails,
+
+    //
+    st_lecNoticeCommentDetailError,
+    //
+    st_lecNoticeCommentCreateDone,
+    st_lecNoticeCommentCreateError,
+    //
+    st_lecNoticeCommentUpdateDone,
+    st_lecNoticeCommentUpdateError,
+    //
+    st_lecNoticeCommentDeleteDone,
+    st_lecNoticeCommentDeleteError,
+  } = useSelector((state) => state.lectureNotice);
 
   ////// HOOKS //////
   const width = useWidth();
@@ -130,15 +117,12 @@ const Classboard = () => {
   const [childCommentForm] = Form.useForm();
 
   const [updateCommentForm] = Form.useForm();
-  const [updateForm] = Form.useForm();
 
   const [repleToggle, setRepleToggle] = useState(false); // 댓글쓰기 모달 토글
   const [currentData, setCurrentData] = useState(null); // 댓글의 정보 보관
 
   const [updateModal, setUpdateModal] = useState(false); // 게시물 수정
-  const [updateData, setUpdateData] = useState(false);
 
-  const [updateCommentModal, setUpdateCommentModal] = useState(false); // 댓글 수정
   const [updateCommentData, setUpdateCommentData] = useState(false);
   const [grandData, setGrandData] = useState(null);
   const [cocommentToggle, setCocommentToggle] = useState(null);
@@ -151,60 +135,71 @@ const Classboard = () => {
   }, [router.query]);
 
   useEffect(() => {
-    dispatch({
-      type: COMMUNITY_DETAIL_REQUEST,
-      data: {
-        communityId: router.query.id,
-      },
-    });
+    if (!me) {
+      message.error("Please log in");
+      return router.push(`/`);
+    }
+  }, [me]);
+
+  useEffect(() => {
+    if (router.query) {
+      dispatch({
+        type: LECTURE_NOTICE_DETAIL_LIST_REQUEST,
+        data: {
+          LectureNoticeId: router.query.id,
+        },
+      });
+    }
   }, [router.query]);
 
   useEffect(() => {
-    if (st_communityCommentCreateDone) {
+    if (st_lecNoticeCommentCreateDone) {
       commentForm.resetFields();
       childCommentForm.resetFields();
 
       dispatch({
-        type: COMMUNITY_COMMENT_DETAIL_REQUEST,
+        type: LECNOTICE_COMMENT_DETAIL_REQUEST,
         data: {
-          communityId: router.query.id,
+          lectureNoticeId: router.query.id,
           commentId: currentData && currentData.id,
         },
       });
 
       dispatch({
-        type: COMMUNITY_DETAIL_REQUEST,
+        type: LECTURE_NOTICE_DETAIL_LIST_REQUEST,
         data: {
-          communityId: router.query.id,
+          LectureNoticeId: router.query.id,
         },
+      });
+
+      dispatch({
+        type: LECNOTICE_COMMENT_LIST_INIT,
       });
 
       openRecommentToggle(null);
-      dispatch({
-        type: COMMUNITY_COMMENT_LIST_INIT,
-      });
       setCocommentToggle(false);
+
       return message.success("댓글이 등록되었습니다.");
     }
-  }, [st_communityCommentCreateDone]);
+  }, [st_lecNoticeCommentCreateDone]);
 
   useEffect(() => {
-    if (st_communityCommentUpdateDone) {
+    if (st_lecNoticeCommentUpdateDone) {
       commentForm.resetFields();
       childCommentForm.resetFields();
 
       dispatch({
-        type: COMMUNITY_COMMENT_DETAIL_REQUEST,
+        type: LECNOTICE_COMMENT_DETAIL_REQUEST,
         data: {
-          communityId: router.query.id,
+          lectureNoticeId: router.query.id,
           commentId: currentData && currentData.id,
         },
       });
 
       dispatch({
-        type: COMMUNITY_DETAIL_REQUEST,
+        type: LECTURE_NOTICE_DETAIL_LIST_REQUEST,
         data: {
-          communityId: router.query.id,
+          LectureNoticeId: router.query.id,
         },
       });
 
@@ -213,25 +208,25 @@ const Classboard = () => {
 
       return message.success("댓글이 수정되었습니다.");
     }
-  }, [st_communityCommentUpdateDone]);
+  }, [st_lecNoticeCommentUpdateDone]);
 
   useEffect(() => {
-    if (st_communityCommentDeleteDone) {
+    if (st_lecNoticeCommentDeleteDone) {
       commentForm.resetFields();
       childCommentForm.resetFields();
 
       dispatch({
-        type: COMMUNITY_COMMENT_DETAIL_REQUEST,
+        type: LECNOTICE_COMMENT_DETAIL_REQUEST,
         data: {
-          communityId: router.query.id,
+          lectureNoticeId: router.query.id,
           commentId: currentData && currentData.id,
         },
       });
 
       dispatch({
-        type: COMMUNITY_DETAIL_REQUEST,
+        type: LECTURE_NOTICE_DETAIL_LIST_REQUEST,
         data: {
-          communityId: router.query.id,
+          LectureNoticeId: router.query.id,
         },
       });
 
@@ -239,60 +234,33 @@ const Classboard = () => {
 
       return message.success("댓글이 삭제되었습니다.");
     }
-  }, [st_communityCommentDeleteDone]);
+  }, [st_lecNoticeCommentDeleteDone]);
 
   useEffect(() => {
-    if (st_communityCommentCreateError) {
-      return message.error(st_communityCommentCreateError);
+    if (st_lecNoticeCommentDetailError) {
+      return message.error(st_lecNoticeCommentDetailError);
     }
-  }, [st_communityCommentCreateError]);
+  }, [st_lecNoticeCommentDetailError]);
 
   useEffect(() => {
-    if (st_communityCommentUpdateError) {
-      return message.error(st_communityCommentUpdateError);
+    if (st_lecNoticeCommentCreateError) {
+      return message.error(st_lecNoticeCommentCreateError);
     }
-  }, [st_communityCommentUpdateError]);
+  }, [st_lecNoticeCommentCreateError]);
 
   useEffect(() => {
-    if (st_communityCommentDeleteError) {
-      return message.error(st_communityCommentDeleteError);
+    if (st_lecNoticeCommentUpdateError) {
+      return message.error(st_lecNoticeCommentUpdateError);
     }
-  }, [st_communityCommentDeleteError]);
+  }, [st_lecNoticeCommentUpdateError]);
+
+  useEffect(() => {
+    if (st_lecNoticeCommentDeleteError) {
+      return message.error(st_lecNoticeCommentDeleteError);
+    }
+  }, [st_lecNoticeCommentDeleteError]);
 
   ////// TOGGLE //////
-
-  const commentSubmit = useCallback(
-    (data) => {
-      dispatch({
-        type: COMMUNITY_COMMENT_CREATE_REQUEST,
-        data: {
-          content: data.comment,
-          communityId: router.query.id,
-          parentId: null,
-          grantparentId: null,
-        },
-      });
-    },
-    [router.query]
-  );
-
-  const childCommentSubmit = useCallback(
-    (data) => {
-      if (currentData) {
-        dispatch({
-          type: COMMUNITY_COMMENT_CREATE_REQUEST,
-          data: {
-            content: data.comment,
-            communityId: router.query.id,
-            parentId: currentData.id,
-            grantparentId:
-              currentData.parent === 0 ? currentData.id : grandData,
-          },
-        });
-      }
-    },
-    [router.query, currentData, grandData]
-  );
 
   const openRecommentToggle = useCallback(
     (data) => {
@@ -304,6 +272,19 @@ const Classboard = () => {
       setCurrentData(data);
     },
     [repleToggle]
+  );
+
+  const updateCommentToggle = useCallback(
+    (data, isV) => {
+      setUpdateModal((prev) => !prev);
+      setUpdateCommentData(data);
+      if (!updateModal) {
+        setTimeout(() => {
+          onFill(data, isV);
+        }, 500);
+      }
+    },
+    [updateModal]
   );
 
   ////// HANDLER //////
@@ -324,59 +305,57 @@ const Classboard = () => {
     router.push(link);
   }, []);
 
-  const getCommentHandler = useCallback(
-    (id) => {
-      setCocommentToggle(true);
-      setGrandData(id);
+  //   댓글 작성
+  const commentSubmit = useCallback(
+    (data) => {
       dispatch({
-        type: COMMUNITY_COMMENT_DETAIL_REQUEST,
+        type: LECNOTICE_COMMENT_CREATE_REQUEST,
         data: {
-          communityId: router.query.id,
-          commentId: id,
+          content: data.comment,
+          lectureNoticeId: router.query.id,
+          parentId: null,
+          grantparentId: null,
         },
       });
     },
     [router.query]
   );
 
-  const updateCommentToggle = useCallback(
-    (data, isV) => {
-      setUpdateModal((prev) => !prev);
-      setUpdateCommentData(data);
-      if (!updateModal) {
-        setTimeout(() => {
-          onFill(data, isV);
-        }, 500);
+  //   대댓글 작성
+
+  const childCommentSubmit = useCallback(
+    (data) => {
+      if (currentData) {
+        dispatch({
+          type: LECNOTICE_COMMENT_CREATE_REQUEST,
+          data: {
+            content: data.comment,
+            lectureNoticeId: router.query.id,
+            parentId: currentData.id,
+            grantparentId:
+              currentData.parent === 0 ? currentData.id : grandData,
+          },
+        });
       }
     },
-    [updateModal]
+    [router.query, currentData, grandData]
   );
 
-  const updateToggle = useCallback(
-    (data) => {
-      setUpdateCommentModal((prev) => !prev);
-      setUpdateData(data);
+  // 대댓글 뷰
 
+  const getCommentHandler = useCallback(
+    (id) => {
+      setCocommentToggle(true);
+      setGrandData(id);
       dispatch({
-        type: FILE_INIT,
+        type: LECNOTICE_COMMENT_DETAIL_REQUEST,
+        data: {
+          lectureNoticeId: router.query.id,
+          commentId: id,
+        },
       });
-      if (!createModal) {
-        setTimeout(() => {
-          updateForm.setFieldsValue({
-            title: data.title,
-            content: data.content,
-          });
-        }, 500);
-        dispatch({
-          type: CREATE_MODAL_OPEN_REQUEST,
-        });
-      } else {
-        dispatch({
-          type: CREATE_MODAL_CLOSE_REQUEST,
-        });
-      }
     },
-    [createModal]
+    [router.query]
   );
 
   const updateCommentFormSubmit = useCallback(() => {
@@ -386,7 +365,7 @@ const Classboard = () => {
   const updateCommentFormFinish = useCallback(
     (data) => {
       dispatch({
-        type: COMMUNITY_COMMENT_UPDATE_REQUEST,
+        type: LECNOTICE_COMMENT_UPDATE_REQUEST,
         data: {
           id: updateCommentData.id,
           content: data.content,
@@ -398,7 +377,7 @@ const Classboard = () => {
 
   const deleteCommentHandler = useCallback((data) => {
     dispatch({
-      type: COMMUNITY_COMMENT_DELETE_REQUEST,
+      type: LECNOTICE_COMMENT_DELETE_REQUEST,
       data: {
         commentId: data.id,
       },
@@ -406,6 +385,10 @@ const Classboard = () => {
   }, []);
 
   ////// DATAVIEW //////
+
+  if (!lectureNoticeDetail) {
+    return null;
+  }
 
   return (
     <>
@@ -473,18 +456,19 @@ const Classboard = () => {
                   fontWeight={`700`}
                   color={Theme.subTheme11_C}
                 >
-                  {communityDetail && communityDetail.title}
+                  {lectureNoticeDetail && lectureNoticeDetail.noticeTitle}
                 </Text>
-                {communityDetail && communityDetail.file && (
+                {lectureNoticeDetail && lectureNoticeDetail.noticeFile && (
                   <CommonButton
                     kindOf={`black`}
                     fontSize={`14px`}
                     margin={`0 20px 0 0`}
                   >
-                    <a href={communityDetail.file}>File download</a>
+                    <a href={lectureNoticeDetail.noticeFile}>File download</a>
                   </CommonButton>
                 )}
               </Wrapper>
+
               <Wrapper dr={`row`} ju={`space-between`}>
                 {width > 800 ? (
                   <Wrapper
@@ -506,9 +490,11 @@ const Classboard = () => {
                         Writer
                       </Wrapper>
                       <Text width={`calc(100% - 120px)`} padding={`0 0 0 15px`}>
-                        {communityDetail && communityDetail.username}
+                        {lectureNoticeDetail &&
+                          lectureNoticeDetail.noticeAuthor}
                       </Text>
                     </Wrapper>
+
                     <Wrapper
                       dr={`row`}
                       width={width < 900 ? `100%` : `calc(100% / 3)`}
@@ -521,12 +507,11 @@ const Classboard = () => {
                         Date time
                       </Wrapper>
                       <Text width={`calc(100% - 120px)`} padding={`0 0 0 15px`}>
-                        {communityDetail &&
-                          moment(communityDetail.createdAt).format(
-                            "YYYY-MM-DD"
-                          )}
+                        {lectureNoticeDetail &&
+                          lectureNoticeDetail.noticeCreatedAt}
                       </Text>
                     </Wrapper>
+
                     <Wrapper
                       dr={`row`}
                       width={width < 900 ? `100%` : `calc(100% / 3)`}
@@ -539,7 +524,7 @@ const Classboard = () => {
                         View
                       </Wrapper>
                       <Text width={`calc(100% - 120px)`} padding={`0 0 0 15px`}>
-                        {communityDetail && communityDetail.hit}
+                        {lectureNoticeDetail && lectureNoticeDetail.noticeHit}
                       </Text>
                     </Wrapper>
                   </Wrapper>
@@ -566,9 +551,11 @@ const Classboard = () => {
                           width={`calc(100% - 120px)`}
                           padding={`0 0 0 15px`}
                         >
-                          {communityDetail && communityDetail.username}
+                          {lectureNoticeDetail &&
+                            lectureNoticeDetail.noticeAuthor}
                         </Text>
                       </Wrapper>
+
                       <Wrapper
                         dr={`row`}
                         width={width < 900 ? `100%` : `calc(100% / 3)`}
@@ -584,12 +571,11 @@ const Classboard = () => {
                           width={`calc(100% - 120px)`}
                           padding={`0 0 0 15px`}
                         >
-                          {communityDetail &&
-                            moment(communityDetail.createdAt).format(
-                              "YYYY-MM-DD"
-                            )}
+                          {lectureNoticeDetail &&
+                            lectureNoticeDetail.noticeCreatedAt}
                         </Text>
                       </Wrapper>
+
                       <Wrapper
                         dr={`row`}
                         width={width < 900 ? `100%` : `calc(100% / 3)`}
@@ -605,43 +591,12 @@ const Classboard = () => {
                           width={`calc(100% - 120px)`}
                           padding={`0 0 0 15px`}
                         >
-                          {communityDetail && communityDetail.hit}
+                          {lectureNoticeDetail && lectureNoticeDetail.noticeHit}
                         </Text>
                       </Wrapper>
                     </Wrapper>
                   </Wrapper>
                 )}
-
-                {/* {width > 800 &&
-                communityDetail &&
-                me &&
-                communityDetail.UserId == me.id && (
-                  <Wrapper dr={`row`} width={`auto`} padding={`0 10px 0 0`}>
-                    {communityDetail && (
-                      <Button
-                        size={`small`}
-                        type={`primary`}
-                        onClick={() => updateToggle(communityDetail)}
-                      >
-                        edit
-                      </Button>
-                    )}
-                    &nbsp;
-                    {communityDetail && (
-                      <Popconfirm
-                        placement="bottomRight"
-                        title={`삭제하시겠습니까?`}
-                        okText="Delete"
-                        cancelText="Cancel"
-                        onConfirm={() => deleteHandler(communityDetail)}
-                      >
-                        <Button size={`small`} type={`danger`}>
-                          delete
-                        </Button>
-                      </Popconfirm>
-                    )}
-                  </Wrapper>
-                )} */}
               </Wrapper>
             </Wrapper>
 
@@ -649,9 +604,9 @@ const Classboard = () => {
               {width < 800 ? (
                 <Wrapper
                   margin={
-                    communityDetail &&
-                    communityDetail.file &&
-                    communityDetail.file !== ""
+                    lectureNoticeDetail &&
+                    lectureNoticeDetail.noticeFile &&
+                    lectureNoticeDetail.noticeFile !== ""
                       ? `20px 0 30px`
                       : `0px 0 30px`
                   }
@@ -664,16 +619,18 @@ const Classboard = () => {
                     al={`flex-start`}
                     ju={`flex-start`}
                     dangerouslySetInnerHTML={{
-                      __html: communityDetail && communityDetail.content,
+                      __html:
+                        lectureNoticeDetail &&
+                        lectureNoticeDetail.noticeContent,
                     }}
                   ></WordbreakText>
                 </Wrapper>
               ) : (
                 <Wrapper
                   margin={
-                    communityDetail &&
-                    communityDetail.file &&
-                    communityDetail.file !== ""
+                    lectureNoticeDetail &&
+                    lectureNoticeDetail.noticeFile &&
+                    lectureNoticeDetail.noticeFile !== ""
                       ? `60px 0 80px`
                       : `0px 0 80px`
                   }
@@ -686,25 +643,55 @@ const Classboard = () => {
                     al={`flex-start`}
                     ju={`flex-start`}
                     dangerouslySetInnerHTML={{
-                      __html: communityDetail && communityDetail.content,
+                      __html:
+                        lectureNoticeDetail &&
+                        lectureNoticeDetail.noticeContent,
                     }}
                   ></WordbreakText>
                 </Wrapper>
               )}
             </Wrapper>
-            <Wrapper al={`flex-end`}>
-              <CommonButton
-                kindOf={`subTheme12`}
-                width={width < 800 ? `80px` : `140px`}
-                height={width < 800 ? `30px` : `50px`}
-                fontSize={width < 800 ? `14px` : `18px`}
-                padding={`0`}
-                onClick={() => moveLinkHandler(`/student/notice`)}
-                margin={`0 0 30px`}
-              >
-                Go back
-              </CommonButton>
-            </Wrapper>
+
+            {me && me.level === 1 && (
+              <Wrapper al={`flex-end`}>
+                <CommonButton
+                  kindOf={`subTheme12`}
+                  width={width < 800 ? `80px` : `140px`}
+                  height={width < 800 ? `30px` : `50px`}
+                  fontSize={width < 800 ? `14px` : `18px`}
+                  padding={`0`}
+                  onClick={() =>
+                    moveLinkHandler(
+                      `/student/notice/${lectureNoticeDetail.lectureId}`
+                    )
+                  }
+                  margin={`0 0 30px`}
+                >
+                  Go back
+                </CommonButton>
+              </Wrapper>
+            )}
+
+            {me && me.level === 2 && (
+              <Wrapper al={`flex-end`}>
+                <CommonButton
+                  kindOf={`subTheme12`}
+                  width={width < 800 ? `80px` : `140px`}
+                  height={width < 800 ? `30px` : `50px`}
+                  fontSize={width < 800 ? `14px` : `18px`}
+                  padding={`0`}
+                  onClick={() =>
+                    moveLinkHandler(
+                      `/teacher/notice/${lectureNoticeDetail.lectureId}`
+                    )
+                  }
+                  margin={`0 0 30px`}
+                >
+                  Go back
+                </CommonButton>
+              </Wrapper>
+            )}
+
             <FormTag form={commentForm} onFinish={commentSubmit}>
               <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 50px`}>
                 <Text
@@ -713,7 +700,7 @@ const Classboard = () => {
                   fontWeight={`700`}
                   margin={`0 0 10px`}
                 >
-                  Comments&nbsp;{communityCommentsLen}
+                  Comments&nbsp;{commentLen}
                 </Text>
                 <FormItem name={`comment`}>
                   <TextArea
@@ -738,13 +725,13 @@ const Classboard = () => {
 
             {/* 댓글 */}
 
-            {communityComment && communityComment.length === 0 ? (
+            {lectureNoticeComment && lectureNoticeComment.length === 0 ? (
               <Wrapper>
                 <Empty description={`No comment`} />
               </Wrapper>
             ) : (
-              communityComment &&
-              communityComment.map((data) => {
+              lectureNoticeComment &&
+              lectureNoticeComment.map((data) => {
                 return (
                   <>
                     <Wrapper
@@ -781,6 +768,7 @@ const Classboard = () => {
                             {moment(data.createdAt).format("YYYY-MM-DD")}
                           </SpanText>
                         </Text>
+
                         <Wrapper width={`auto`} al={`flex-end`}>
                           <Wrapper
                             dr={`row`}
@@ -836,10 +824,10 @@ const Classboard = () => {
                     {/* 대댓글 영역 */}
 
                     {cocommentToggle &&
-                      communityCommentDetail &&
-                      communityCommentDetail.length !== 0 &&
-                      communityCommentDetail[0].id === data.id &&
-                      communityCommentDetail.slice(1).map((v) => {
+                      lecNoticeCommentDetails &&
+                      lecNoticeCommentDetails.length !== 0 &&
+                      lecNoticeCommentDetails[0].id === data.id &&
+                      lecNoticeCommentDetails.slice(1).map((v) => {
                         return (
                           <Wrapper
                             key={v.id}
@@ -945,6 +933,8 @@ const Classboard = () => {
             )}
           </RsWrapper>
 
+          {/* 대댓글 작성 */}
+
           <Modal
             width={`800px`}
             title="Reple"
@@ -987,6 +977,7 @@ const Classboard = () => {
             )}
           </Modal>
 
+          {/* 댓글 수정 */}
           <Modal
             title={`update comment`}
             visible={updateModal}
