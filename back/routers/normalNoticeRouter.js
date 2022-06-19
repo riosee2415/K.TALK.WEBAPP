@@ -87,6 +87,7 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
         ON	A.NormalNoticeId  = B.id
      WHERE	A.UserId = ${req.user.id}
        AND  B.UserId = ${req.user.id}
+       AND  B.isDelete = FALSE
     `;
 
     const selectQuery = `
@@ -108,6 +109,7 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
         ON	A.NormalNoticeId  = B.id
      WHERE	A.UserId = ${req.user.id}
        AND  B.UserId = ${req.user.id}
+       AND  B.isDelete = FALSE
      ORDER  BY id DESC
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
@@ -172,6 +174,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
       JOIN	normalNotices			  B
         ON	A.NormalNoticeId  = B.id
      WHERE	A.isAdmin = TRUE
+       AND  B.isDelete = FALSE
             ${
               _listType === 1
                 ? `AND B.level = 1`
@@ -237,6 +240,7 @@ router.post("/detail", isLoggedIn, async (req, res, next) => {
       JOIN	normalNotices			  B
         ON	A.NormalNoticeId  = B.id
      WHERE  B.id = ${NormalNoticeId}
+       AND  B.isDelete = FALSE
     `;
 
     const detailData = await models.sequelize.query(detailQuery);
