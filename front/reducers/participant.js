@@ -14,6 +14,8 @@ export const initialState = {
   partUserCurrentList: [],
   partUserLimitList: [],
   partLastDateList: [],
+
+  studentLists: null, // 학생이 학생목록 조회
   //
   st_participantListLoading: false,
   st_participantListDone: false,
@@ -62,6 +64,10 @@ export const initialState = {
   st_ParticipantUpdateLoading: false,
   st_ParticipantUpdateDone: false,
   st_ParticipantUpdateError: null,
+  //
+  st_participantStudentListLoading: false, // 학생이 학생목록 조회
+  st_participantStudentListDone: false,
+  st_participantStudentListError: null,
 };
 
 export const PARTICIPANT_LIST_REQUEST = "PARTICIPANT_LIST_REQUEST";
@@ -132,6 +138,13 @@ export const PARTICIPANT_LASTDATE_LIST_FAILURE =
 export const PARTICIPANT_UPDATE_REQUEST = "PARTICIPANT_UPDATE_REQUEST";
 export const PARTICIPANT_UPDATE_SUCCESS = "PARTICIPANT_UPDATE_SUCCESS";
 export const PARTICIPANT_UPDATE_FAILURE = "PARTICIPANT_UPDATE_FAILURE";
+
+export const PARTICIPANT_STUDENT_LIST_REQUEST =
+  "PARTICIPANT_STUDENT_LIST_REQUEST";
+export const PARTICIPANT_STUDENT_LIST_SUCCESS =
+  "PARTICIPANT_STUDENT_LIST_SUCCESS";
+export const PARTICIPANT_STUDENT_LIST_FAILURE =
+  "PARTICIPANT_STUDENT_LIST_FAILURE";
 
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
@@ -382,6 +395,28 @@ const reducer = (state = initialState, action) =>
         draft.st_participantUpdateLoading = false;
         draft.st_participantUpdateDone = false;
         draft.st_participantUpdateError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case PARTICIPANT_STUDENT_LIST_REQUEST: {
+        draft.st_participantStudentListLoading = true;
+        draft.st_participantStudentListDone = false;
+        draft.st_participantStudentListError = null;
+        break;
+      }
+      case PARTICIPANT_STUDENT_LIST_SUCCESS: {
+        draft.st_participantStudentListLoading = false;
+        draft.st_participantStudentListDone = true;
+        draft.st_participantStudentListError = null;
+        draft.studentLists = action.data.list;
+        break;
+      }
+      case PARTICIPANT_STUDENT_LIST_FAILURE: {
+        draft.st_participantStudentListLoading = false;
+        draft.st_participantStudentListDone = false;
+        draft.st_participantStudentListError = action.error;
         break;
       }
 
