@@ -278,7 +278,7 @@ router.post("/detail", isLoggedIn, async (req, res, next) => {
       where: { isDelete: false, NormalNoticeId: parseInt(NormalNoticeId) },
     });
 
-    const nextHit = detailData[0][0].hit;
+    const nextHit = detailData[0][0].noticeHit;
 
     await NormalNotice.update(
       {

@@ -311,7 +311,7 @@ router.post("/detail", isLoggedIn, async (req, res, next) => {
       where: { isDelete: false, LectureNoticeId: parseInt(LectureNoticeId) },
     });
 
-    const nextHit = detailData[0][0].hit;
+    const nextHit = detailData[0][0].noticeHit;
 
     await LectureNotice.update(
       {
