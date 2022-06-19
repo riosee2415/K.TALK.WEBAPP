@@ -9,6 +9,7 @@ export const initialState = {
 
   // modal
   normalNoticeModal: false,
+  normalNoticeDetailModal: false,
 
   // status
   normalNoticeListLoading: false, // 회원 일반게시판 가져오기
@@ -26,6 +27,10 @@ export const initialState = {
   normalNoticeUpdateLoading: false, // 일반게시판 수정
   normalNoticeUpdateDone: false,
   normalNoticeUpdateError: false,
+
+  normalNoticeDeleteLoading: false, // 일반게시판 삭제
+  normalNoticeDeleteDone: false,
+  normalNoticeDeleteError: false,
 };
 
 export const NORMAL_NOTICE_LIST_REQUEST = "NORMAL_NOTICE_LIST_REQUEST";
@@ -50,7 +55,14 @@ export const NORMAL_NOTICE_UPDATE_REQUEST = "NORMAL_NOTICE_UPDATE_REQUEST";
 export const NORMAL_NOTICE_UPDATE_SUCCESS = "NORMAL_NOTICE_UPDATE_SUCCESS";
 export const NORMAL_NOTICE_UPDATE_FAILURE = "NORMAL_NOTICE_UPDATE_FAILURE";
 
+export const NORMAL_NOTICE_DELETE_REQUEST = "NORMAL_NOTICE_DELETE_REQUEST";
+export const NORMAL_NOTICE_DELETE_SUCCESS = "NORMAL_NOTICE_DELETE_SUCCESS";
+export const NORMAL_NOTICE_DELETE_FAILURE = "NORMAL_NOTICE_DELETE_FAILURE";
+
 export const NORMAL_NOTICE_MODAL_TOGGLE = "NORMAL_NOTICE_MODAL_TOGGLE";
+
+export const NORMAL_NOTICE_DETAIL_MODAL_TOGGLE =
+  "NORMAL_NOTICE_DETAIL_MODAL_TOGGLE";
 
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
@@ -98,7 +110,7 @@ const reducer = (state = initialState, action) =>
         break;
       }
 
-      //////////////////////////////////////////////
+      //////////////////////////////////////////////    관리자 일반게시판 작성하기
       case NORMAL_NOTICE_ADMIN_CREATE_REQUEST: {
         draft.normalNoticeAdminCreateLoading = true;
         draft.normalNoticeAdminCreateDone = false;
@@ -118,7 +130,7 @@ const reducer = (state = initialState, action) =>
         break;
       }
 
-      //////////////////////////////////////////////
+      //////////////////////////////////////////////    일반게시판 수정하기
       case NORMAL_NOTICE_UPDATE_REQUEST: {
         draft.normalNoticeUpdateLoading = true;
         draft.normalNoticeUpdateDone = false;
@@ -138,10 +150,37 @@ const reducer = (state = initialState, action) =>
         break;
       }
 
-      //////////////////////////////////////////////
+      //////////////////////////////////////////////    일반게시판 삭제하기
+      case NORMAL_NOTICE_DELETE_REQUEST: {
+        draft.normalNoticeDeleteLoading = true;
+        draft.normalNoticeDeleteDone = false;
+        draft.normalNoticeDeleteError = null;
+        break;
+      }
+      case NORMAL_NOTICE_DELETE_SUCCESS: {
+        draft.normalNoticeDeleteLoading = false;
+        draft.normalNoticeDeleteDone = true;
+        draft.normalNoticeDeleteError = null;
+        break;
+      }
+      case NORMAL_NOTICE_DELETE_FAILURE: {
+        draft.normalNoticeDeleteLoading = false;
+        draft.normalNoticeDeleteDone = false;
+        draft.normalNoticeDeleteError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////    일반게시판 모델
 
       case NORMAL_NOTICE_MODAL_TOGGLE: {
         draft.normalNoticeModal = !draft.normalNoticeModal;
+        break;
+      }
+
+      //////////////////////////////////////////////    일반게시판 모델
+
+      case NORMAL_NOTICE_DETAIL_MODAL_TOGGLE: {
+        draft.normalNoticeDetailModal = !draft.normalNoticeDetailModal;
         break;
       }
 

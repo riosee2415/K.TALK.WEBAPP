@@ -13,10 +13,14 @@ import {
   NORMAL_NOTICE_ADMIN_CREATE_REQUEST,
   NORMAL_NOTICE_ADMIN_CREATE_SUCCESS,
   NORMAL_NOTICE_ADMIN_CREATE_FAILURE,
-  ///////////////////////////////// 관리자 일반게시판 수정하기
+  ///////////////////////////////// 일반게시판 수정하기
   NORMAL_NOTICE_UPDATE_REQUEST,
   NORMAL_NOTICE_UPDATE_SUCCESS,
   NORMAL_NOTICE_UPDATE_FAILURE,
+  ///////////////////////////////// 일반게시판 삭제하기
+  NORMAL_NOTICE_DELETE_REQUEST,
+  NORMAL_NOTICE_DELETE_SUCCESS,
+  NORMAL_NOTICE_DELETE_FAILURE,
 } from "../reducers/normalNotice";
 
 // ******************************************************************************************************************
@@ -111,13 +115,13 @@ function* normalNoticeAdminCreate(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 
-async function normalNoticeAdminUpdateAPI(data) {
+async function normalNoticeUpdateAPI(data) {
   return await axios.patch(`/api/normalNotice/update`, data);
 }
 
-function* normalNoticeAdminUpdate(action) {
+function* normalNoticeUpdate(action) {
   try {
-    const result = yield call(normalNoticeAdminUpdateAPI, action.data);
+    const result = yield call(normalNoticeUpdateAPI, action.data);
 
     yield put({
       type: NORMAL_NOTICE_UPDATE_SUCCESS,
@@ -127,6 +131,35 @@ function* normalNoticeAdminUpdate(action) {
     console.error(err);
     yield put({
       type: NORMAL_NOTICE_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+
+async function normalNoticeDeleteAPI(data) {
+  return await axios.patch(`/api/normalNotice/delete`, data);
+}
+
+function* normalNoticeDelete(action) {
+  try {
+    const result = yield call(normalNoticeDeleteAPI, action.data);
+
+    yield put({
+      type: NORMAL_NOTICE_DELETE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: NORMAL_NOTICE_DELETE_FAILURE,
       error: err.response.data,
     });
   }
@@ -149,8 +182,12 @@ function* watchNormalNoticeAdminCreate() {
   yield takeLatest(NORMAL_NOTICE_ADMIN_CREATE_REQUEST, normalNoticeAdminCreate);
 }
 
-function* watchNormalNoticeAdminUpdate() {
-  yield takeLatest(NORMAL_NOTICE_UPDATE_REQUEST, normalNoticeAdminUpdate);
+function* watchNormalNoticeUpdate() {
+  yield takeLatest(NORMAL_NOTICE_UPDATE_REQUEST, normalNoticeUpdate);
+}
+
+function* watchNormalNoticeDelete() {
+  yield takeLatest(NORMAL_NOTICE_DELETE_REQUEST, normalNoticeDelete);
 }
 
 //////////////////////////////////////////////////////////////
@@ -159,7 +196,8 @@ export default function* normalNoticeSaga() {
     fork(watchNormalNoticeList),
     fork(watchNormalNoticeAdminList),
     fork(watchNormalNoticeAdminCreate),
-    fork(watchNormalNoticeAdminUpdate),
+    fork(watchNormalNoticeUpdate),
+    fork(watchNormalNoticeDelete),
     //
   ]);
 }

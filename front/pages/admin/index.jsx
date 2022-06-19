@@ -25,6 +25,7 @@ import {
   Modal,
   notification,
   Pagination,
+  Popconfirm,
   Select,
   Table,
   TimePicker,
@@ -66,6 +67,8 @@ import { saveAs } from "file-saver";
 import {
   NORMAL_NOTICE_ADMIN_CREATE_REQUEST,
   NORMAL_NOTICE_ADMIN_LIST_REQUEST,
+  NORMAL_NOTICE_DELETE_REQUEST,
+  NORMAL_NOTICE_DETAIL_MODAL_TOGGLE,
   NORMAL_NOTICE_MODAL_TOGGLE,
   NORMAL_NOTICE_UPDATE_REQUEST,
 } from "../../reducers/normalNotice";
@@ -226,6 +229,7 @@ const AdminHome = () => {
     normalNoticeAdminList,
     //
     normalNoticeModal,
+    normalNoticeDetailModal,
     //
     normalNoticeAdminCreateLoading,
     normalNoticeAdminCreateDone,
@@ -234,6 +238,10 @@ const AdminHome = () => {
     normalNoticeUpdateLoading,
     normalNoticeUpdateDone,
     normalNoticeUpdateError,
+    //
+    normalNoticeDeleteLoading,
+    normalNoticeDeleteDone,
+    normalNoticeDeleteError,
   } = useSelector((state) => state.normalNotice);
 
   const [noticeData, setNoticeData] = useState(null);
@@ -375,7 +383,6 @@ const AdminHome = () => {
   }, [st_lectureUpdateError]);
 
   // NORMAL CREATE USEEFFECT
-
   useEffect(() => {
     if (normalNoticeAdminCreateDone) {
       dispatch({
@@ -397,8 +404,7 @@ const AdminHome = () => {
     }
   }, [normalNoticeAdminCreateError]);
 
-  // NORMAL CREATE USEEFFECT
-
+  // NORMAL UPDATE USEEFFECT
   useEffect(() => {
     if (normalNoticeUpdateDone) {
       dispatch({
@@ -419,7 +425,26 @@ const AdminHome = () => {
       return message.error(normalNoticeUpdateError);
     }
   }, [normalNoticeUpdateError]);
-  // NORMAL CREATE USEEFFECT END
+
+  // NORMAL DELETE USEEFFECT
+  useEffect(() => {
+    if (normalNoticeDeleteDone) {
+      dispatch({
+        type: NORMAL_NOTICE_ADMIN_LIST_REQUEST,
+        data: {
+          listType: 4,
+        },
+      });
+
+      return message.success("일반게시판이 삭제되었습니다.");
+    }
+  }, [normalNoticeDeleteDone]);
+
+  useEffect(() => {
+    if (normalNoticeDeleteError) {
+      return message.error(normalNoticeDeleteError);
+    }
+  }, [normalNoticeDeleteError]);
 
   useEffect(() => {
     if (updateData) {
@@ -619,10 +644,15 @@ const AdminHome = () => {
     fileRef.current.click();
   }, [fileRef.current]);
 
-  const noticeModalToggle = useCallback((data) => {
-    setNoticeDetailData(data);
-    setNoticeDetailModal((prev) => !prev);
-  }, []);
+  const noticeModalToggle = useCallback(
+    (data) => {
+      setNoticeDetailData(data);
+      dispatch({
+        type: NORMAL_NOTICE_DETAIL_MODAL_TOGGLE,
+      });
+    },
+    [noticeDetailData, normalNoticeDetailModal]
+  );
 
   const messageModalToggle = useCallback((data) => {
     setMessageDetailData(data);
@@ -926,9 +956,6 @@ const AdminHome = () => {
   // 일반게시판 수정
   const normalNoticeAdminUpdate = useCallback(
     (data) => {
-      console.log(data);
-      console.log(contentData);
-      console.log(normalNoticeUpdateData.noticeId);
       dispatch({
         type: NORMAL_NOTICE_UPDATE_REQUEST,
         data: {
@@ -937,6 +964,18 @@ const AdminHome = () => {
           content: contentData,
           author: normalNoticeUpdateData.noticeAuthor,
           file: uploadPath,
+        },
+      });
+    },
+    [normalNoticeUpdateData, uploadPath, contentData]
+  );
+  // 일반게시판 삭제
+  const normalNoticeAdminDelete = useCallback(
+    (data) => {
+      dispatch({
+        type: NORMAL_NOTICE_DELETE_REQUEST,
+        data: {
+          id: data.noticeId,
         },
       });
     },
@@ -961,17 +1000,20 @@ const AdminHome = () => {
     [contentData]
   );
 
-  const noticeColumns = [
+  //  NORMAL_NOTICE_COLUMN
+  const normalNoticeColumn = [
     {
       title: "번호",
+      width: `5%`,
       dataIndex: "noticeId",
     },
     {
       title: "제목",
+      width: `50%`,
       render: (data) => {
         return (
           <Text
-            width={`200px`}
+            width={`100%`}
             cursor={`pointer`}
             onClick={() => noticeModalToggle(data)}
             isEllipsis
@@ -983,15 +1025,24 @@ const AdminHome = () => {
     },
     {
       title: "작성자",
+      width: `15%`,
       dataIndex: "noticeAuthor",
     },
     {
+      title: "조회수",
+      width: `10%`,
+      dataIndex: "noticeHit",
+    },
+
+    {
       title: "생성일",
+      width: `10%`,
       dataIndex: "noticeCreatedAt",
     },
 
     {
       title: "기능",
+      width: `10%`,
       render: (data) => (
         <Wrapper dr={`row`}>
           <Button
@@ -1002,25 +1053,25 @@ const AdminHome = () => {
           >
             수정
           </Button>
-          &nbsp;
-          <Button type="danger" size="small" onClick={() => {}}>
-            삭제
-          </Button>
+
+          <Popconfirm
+            title="삭젬하시겠습니까?"
+            okText="삭제"
+            cancelText="취소"
+            placement="topRight"
+            onConfirm={() => normalNoticeAdminDelete(data)}
+          >
+            <ModalBtn
+              type="danger"
+              size="small"
+              loading={normalNoticeDeleteLoading}
+            >
+              삭제
+            </ModalBtn>
+          </Popconfirm>
         </Wrapper>
       ),
     },
-    // {
-    //   title: "상세보기",
-    //   render: (data) => (
-    //     <Button
-    //       type="primary"
-    //       size="small"
-    //       onClick={() => noticeModalToggle(data)}
-    //     >
-    //       상세보기
-    //     </Button>
-    //   ),
-    // },
   ];
 
   const columns = [
@@ -1053,19 +1104,6 @@ const AdminHome = () => {
       title: "생성일",
       render: (data) => <div>{data.createdAt.substring(0, 14)}</div>,
     },
-
-    // {
-    //   title: "상세보기",
-    //   render: (data) => (
-    //     <Button
-    //       type="primary"
-    //       size="small"
-    //       onClick={() => messageModalToggle(data)}
-    //     >
-    //       상세보기
-    //     </Button>
-    //   ),
-    // },
   ];
 
   const normalSelectArr = [
@@ -1110,7 +1148,7 @@ const AdminHome = () => {
               margin={`0 0 30px`}
             >
               {/* NORMAL BOARD */}
-              <Wrapper al={`flex-start`} width={`49%`}>
+              <Wrapper al={`flex-start`}>
                 <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
                   <Text
                     width={`auto`}
@@ -1173,7 +1211,7 @@ const AdminHome = () => {
                     normalNoticeAdminList ? normalNoticeAdminList : []
                   }
                   size="small"
-                  columns={noticeColumns}
+                  columns={normalNoticeColumn}
                   style={{ width: `100%` }}
                   pagination={{
                     pageSize: 5,
@@ -1184,7 +1222,7 @@ const AdminHome = () => {
               {/* NORMAL BOARD END */}
 
               {/* MESSAGE TABLE */}
-              <Wrapper al={`flex-start`} width={`49%`}>
+              {/* <Wrapper al={`flex-start`} width={`49%`}>
                 <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
                   <Text
                     fontSize={`18px`}
@@ -1238,7 +1276,7 @@ const AdminHome = () => {
                     onChange: (page) => setCurrentPage2(page),
                   }}
                 />
-              </Wrapper>
+              </Wrapper> */}
             </Wrapper>
             {/* MESSAGE TABLE END */}
 
@@ -1850,10 +1888,12 @@ const AdminHome = () => {
               </Wrapper>
             </Form>
           </Modal>
+          {console.log(noticeDetailData)}
           {/* NOTICE MODAL */}
           <Modal
+            width={`1000px`}
             title={`게시판 상세보기`}
-            visible={noticeDetailModal}
+            visible={normalNoticeDetailModal}
             footer={null}
             onCancel={() => noticeModalToggle(null)}
           >
@@ -1863,32 +1903,21 @@ const AdminHome = () => {
               margin={`0 0 35px`}
               fontSize={width < 700 ? `14px` : `16px`}
             >
-              <Text margin={`0 54px 0 0`}>
-                {`작성자: ${noticeDetailData && noticeDetailData.author}`}
+              <Text>
+                {`작성자: ${noticeDetailData && noticeDetailData.noticeAuthor}`}
               </Text>
-              <Wrapper width={`auto`}>
-                <Text>
-                  {`작성일: ${moment(
-                    noticeDetailData && noticeDetailData.createdAt,
-                    "YYYY/MM/DD"
-                  ).format("YYYY/MM/DD")}`}
-                </Text>
-
-                <Text>
-                  {`수정일: ${moment(
-                    noticeDetailData && noticeDetailData.updatedAt,
-                    "YYYY/MM/DD"
-                  ).format("YYYY/MM/DD")}`}
-                </Text>
-              </Wrapper>
+              <Text>
+                {`작성일: ${
+                  noticeDetailData && noticeDetailData.noticeCreatedAt
+                }`}
+              </Text>
             </Wrapper>
 
-            {noticeDetailData && noticeDetailData.file && (
-              <Wrapper dr={`row`} ju={`flex-end`}>
-                <Text margin={`0 10px 0 0`} fontSize={`15px`}>
-                  첨부파일
-                </Text>
-
+            <Wrapper dr={`row`} ju={`flex-end`}>
+              <Text margin={`0 10px 0 0`} fontSize={`15px`}>
+                첨부파일
+              </Text>
+              {noticeDetailData && noticeDetailData.file ? (
                 <CommonButton
                   size={`small`}
                   radius={`5px`}
@@ -1897,191 +1926,33 @@ const AdminHome = () => {
                 >
                   다운로드
                 </CommonButton>
-              </Wrapper>
-            )}
+              ) : (
+                <Text>첨부파일이 없습니다.</Text>
+              )}
+            </Wrapper>
 
             <Text fontSize={`18px`} fontWeight={`bold`}>
               제목
             </Text>
             <Wrapper padding={`10px`} fontSize={width < 700 ? `14px` : `16px`}>
               <WordbreakText>
-                {noticeDetailData && noticeDetailData.title}
+                {noticeDetailData && noticeDetailData.noticeTitle}
               </WordbreakText>
             </Wrapper>
 
             <Text fontSize={`18px`} fontWeight={`bold`}>
               내용
             </Text>
-            <Wrapper padding={`10px`} fontSize={width < 700 ? `14px` : `16px`}>
-              <WordbreakText
+            {noticeDetailData && (
+              <Wrapper
+                padding={`10px`}
+                fontSize={width < 700 ? `14px` : `16px`}
+                al={`flex-start`}
                 dangerouslySetInnerHTML={{
-                  __html: noticeDetailData && noticeDetailData.content,
+                  __html: noticeDetailData.noticeContent,
                 }}
-              ></WordbreakText>
-            </Wrapper>
-          </Modal>
-          {/* MESSAGE MODAL */}
-          <Modal
-            title={`쪽지 상세보기`}
-            visible={messageDetailModal}
-            footer={null}
-            onCancel={() => messageModalToggle(null)}
-          >
-            <Wrapper
-              dr={`row`}
-              ju={`space-between`}
-              margin={`0 0 35px`}
-              fontSize={width < 700 ? `14px` : `16px`}
-            >
-              <Text margin={`0 54px 0 0`}>
-                {`작성자: ${messageDetailData && messageDetailData.author}`}
-              </Text>
-              <Wrapper width={`auto`}>
-                <Text>
-                  {`작성일: ${moment(
-                    messageDetailData && messageDetailData.createdAt,
-                    "YYYY/MM/DD"
-                  ).format("YYYY/MM/DD")}`}
-                </Text>
-              </Wrapper>
-            </Wrapper>
-
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              제목
-            </Text>
-            <Wrapper padding={`10px`} fontSize={width < 700 ? `14px` : `16px`}>
-              <WordbreakText>
-                {messageDetailData && messageDetailData.title}
-              </WordbreakText>
-            </Wrapper>
-
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              내용
-            </Text>
-            <Wrapper
-              padding={`10px`}
-              al={`flex-start`}
-              ju={`flex-start`}
-              fontSize={width < 700 ? `14px` : `16px`}
-            >
-              {messageDetailData &&
-                messageDetailData.content.split(`\n`).map((data) => {
-                  return (
-                    <SpanText>
-                      {data}
-                      <br />
-                    </SpanText>
-                  );
-                })}
-            </Wrapper>
-          </Modal>
-          {/* title={`쪽지 상세보기`}
-            visible={messageDetailModal}
-            footer={null}
-            onCancel={() => messageModalToggle(null)} */}
-          <Modal
-            title={`공지사항 수정`}
-            visible={createModal}
-            onCancel={noticeUpdateModalToggle}
-            onOk={createModalOk}
-          >
-            <Wrapper padding={`10px`}>
-              <Form
-                style={{ width: `100%` }}
-                onFinish={onSubmitNoticeUpdate}
-                form={noticeUpdateform}
-              >
-                <Form.Item
-                  name={"title"}
-                  label="제목"
-                  rules={[{ required: true, message: "제목을 입력해 주세요" }]}
-                >
-                  <Input allowClear placeholder="Title..." />
-                </Form.Item>
-
-                <Form.Item
-                  name={"type"}
-                  label="유형"
-                  rules={[
-                    { required: true, message: "메세지 유형을 선택해 주세요." },
-                  ]}
-                >
-                  <Select
-                    disabled={updateData ? true : false}
-                    showSearch
-                    onChange={(e) => noticeTypeChangeHandler(e)}
-                    style={{ width: 200 }}
-                    placeholder="Select a Type"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      option.children
-                        .toLowerCase()
-                        .indexOf(input.toLowerCase()) >= 0
-                    }
-                  >
-                    <Select.Option value="강사 게시판">
-                      강사 게시판
-                    </Select.Option>
-                    <Select.Option value="학생 게시판">
-                      학생 게시판
-                    </Select.Option>
-                    <Select.Option value="강의 게시판">
-                      강의 게시판
-                    </Select.Option>
-                    <Select.Option value="전체 이용자 게시판">
-                      전체 이용자 게시판
-                    </Select.Option>
-                  </Select>
-                </Form.Item>
-
-                <Form.Item
-                  name={"content"}
-                  label="본문"
-                  rules={[{ required: true, message: "본문을 입력해 주세요." }]}
-                >
-                  {/* <Input.TextArea
-                allowClear
-                placeholder="Content..."
-                autoSize={{ minRows: 10, maxRows: 10 }}
-              /> */}
-
-                  <ToastEditorComponent3
-                    action={getEditContent}
-                    updateData={noticeData}
-                  />
-                </Form.Item>
-
-                <Form.Item>
-                  <FileBox>
-                    <input
-                      type="file"
-                      name="file"
-                      hidden
-                      ref={fileRef}
-                      onChange={fileChangeHandler}
-                    />
-                    <Text>
-                      {updateData
-                        ? `첨부파일`
-                        : filename.value
-                        ? filename.value
-                        : `파일을 선택해주세요.`}
-                    </Text>
-                    <Button type="primary" onClick={fileUploadClick}>
-                      FILE UPLOAD
-                    </Button>
-                  </FileBox>
-                </Form.Item>
-
-                {/* {updateData && (
-            <Form.Item>
-              <FileBox>
-                <Button onClick={onFill}>불러오기</Button>
-              </FileBox>
-            </Form.Item>
-          )} */}
-              </Form>
-            </Wrapper>
+              />
+            )}
           </Modal>
 
           {/* NORMAL NOTICE MODAL */}
