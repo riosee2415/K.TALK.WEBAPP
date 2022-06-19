@@ -364,6 +364,49 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
   }
 });
 
+router.post("/student/notice/list", isLoggedIn, async (req, res, next) => {
+  const { LectureId } = req.body;
+
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
+  try {
+    const exPart = await Participant.findOne({
+      where: {
+        UserId: parseInt(req.user.id),
+        LectureId: parseInt(LectureId),
+        isChange: false,
+        isDelete: false,
+      },
+    });
+
+    if (!exPart) {
+      return res.status(401).send("해당 강의에 참여하고 있지 않습니다.");
+    }
+
+    const selectQuery = `
+      SELECT  B.id,
+              B.username,
+              B.level
+        FROM  participants    A
+       INNER
+        JOIN  users           B
+          ON  A.UserId = B.id
+       WHERE  A.isDelete = FALSE
+         AND  A.isChange = FALSE
+         AND  A.LectureId = ${LectureId}
+    `;
+
+    const list = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ list: list[0] });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("해당 강의의 학생 목록을 불러올 수 없습니다.");
+  }
+});
+
 router.patch("/update", isAdminCheck, async (req, res, next) => {
   const { partId, createdAt, endDate } = req.body;
   try {
