@@ -84,60 +84,71 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
     }
 
     const lengthQuery = `
-    SELECT	DISTINCT
-            A.LectureNoticeId			                        AS connectNoticeId,
-            B.title,
-            B.id					                                AS noticeId,
-            B.title 				                              AS noticeTitle,
-            B.content 			                              AS noticeContent,
-            B.author 				                              AS noticeAuthor,
-            B.level 				                              AS noticeLevel,
-            B.file 					                              AS noticeFile,
-            B.hit 					                              AS noticeHit,
-            DATE_FORMAT(B.createdAt, "%Y-%m-%d")	        AS noticeCreatedAt,
-            B.UserId 				                              AS writeUserId,
-            C.number				                              AS lectureNumber,
-            C.course				                              AS lectureName
-      FROM	lectureConnects				A
-     INNER
-      JOIN	lectureNotices 				B
-        ON	A.LectureNoticeId = B.id
-     INNER
-      JOIN	lectures					    C
-        ON	B.LectureId = C.id
-     WHERE	A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}
-       AND  B.LectureId = ${LectureId}
-       AND  B.isDelete = FALSE
-       AND	C.isDelete = FALSE
+    SELECT	 *
+      FROM   (
+                SELECT	A.LectureNoticeId 									              AS connectLectureId,
+                        B.title,
+                        B.id					                                    AS noticeId,
+                        B.title 				                                  AS noticeTitle,
+                        B.content 			                                  AS noticeContent,
+                        B.author 				                                  AS noticeAuthor,
+                        B.level 				                                  AS noticeLevel,
+                        B.file 					                                  AS noticeFile,
+                        B.hit 					                                  AS noticeHit,
+                        B.isDelete 											                  AS noticeIsDelete,
+                        DATE_FORMAT(B.createdAt, "%Y-%m-%d")        	    AS noticeCreatedAt,
+                        B.UserId 				                                  AS writeUserId,
+                        C.number				                                  AS lectureNumber,
+                        C.course				                                  AS lectureName
+                  FROM	lectureConnects				A
+                 INNER
+                  JOIN	lectureNotices 				B
+                    ON	A.LectureNoticeId = B.id
+                 INNER
+                  JOIN	lectures					    C
+                    ON	B.LectureId = C.id
+                 WHERE	A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}
+                   AND  B.LectureId = ${LectureId}
+                   AND  B.isDelete = FALSE
+                   AND  C.isDelete  = FALSE
+                 GROUP 	BY A.LectureNoticeId
+              )	X
+     WHERE	X.noticeIsDelete = FALSE 
+     ORDER	BY X.noticeId DESC
     `;
 
     const selectQuery = `
-    SELECT	DISTINCT
-            A.LectureNoticeId			                        AS connectNoticeId,
-            B.title,
-            B.id					                                AS noticeId,
-            B.title 				                              AS noticeTitle,
-            B.content 			                              AS noticeContent,
-            B.author 				                              AS noticeAuthor,
-            B.level 				                              AS noticeLevel,
-            B.file 					                              AS noticeFile,
-            B.hit 					                              AS noticeHit,
-            DATE_FORMAT(B.createdAt, "%Y-%m-%d")        	AS noticeCreatedAt,
-            B.UserId 				                              AS writeUserId,
-            C.number				                              AS lectureNumber,
-            C.course				                              AS lectureName
-      FROM	lectureConnects				A
-     INNER
-      JOIN	lectureNotices 				B
-        ON	A.LectureNoticeId = B.id
-     INNER
-      JOIN	lectures					    C
-        ON	B.LectureId = C.id
-     WHERE	A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}
-       AND  B.LectureId = ${LectureId}
-       AND  B.isDelete = FALSE
-       AND	C.isDelete = FALSE
-     ORDER  BY B.id DESC
+    SELECT	 *
+      FROM   (
+                SELECT	A.LectureNoticeId 									              AS connectLectureId,
+                        B.title,
+                        B.id					                                    AS noticeId,
+                        B.title 				                                  AS noticeTitle,
+                        B.content 			                                  AS noticeContent,
+                        B.author 				                                  AS noticeAuthor,
+                        B.level 				                                  AS noticeLevel,
+                        B.file 					                                  AS noticeFile,
+                        B.hit 					                                  AS noticeHit,
+                        B.isDelete 											                  AS noticeIsDelete,
+                        DATE_FORMAT(B.createdAt, "%Y-%m-%d")        	    AS noticeCreatedAt,
+                        B.UserId 				                                  AS writeUserId,
+                        C.number				                                  AS lectureNumber,
+                        C.course				                                  AS lectureName
+                  FROM	lectureConnects				A
+                INNER
+                  JOIN	lectureNotices 				B
+                    ON	A.LectureNoticeId = B.id
+                INNER
+                  JOIN	lectures					    C
+                    ON	B.LectureId = C.id
+                 WHERE	A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}
+                   AND  B.LectureId = ${LectureId}
+                   AND  B.isDelete = FALSE
+                   AND  C.isDelete  = FALSE
+                 GROUP  BY A.LectureNoticeId
+              )	X
+     WHERE	X.noticeIsDelete = FALSE 
+     ORDER	BY X.noticeId DESC
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
     `;
