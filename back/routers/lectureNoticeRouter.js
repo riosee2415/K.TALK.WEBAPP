@@ -94,7 +94,7 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
             B.level 				                              AS noticeLevel,
             B.file 					                              AS noticeFile,
             B.hit 					                              AS noticeHit,
-            DATE_FORMAT(B.createdAt, "%Y-%m-%d %H:%m:s")	AS noticeCreatedAt,
+            DATE_FORMAT(B.createdAt, "%Y-%m-%d")	        AS noticeCreatedAt,
             B.UserId 				                              AS writeUserId,
             C.number				                              AS lectureNumber,
             C.course				                              AS lectureName
@@ -105,8 +105,7 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
      INNER
       JOIN	lectures					    C
         ON	B.LectureId = C.id
-     WHERE	1 = 1
-       AND A.UserId = ${req.user.id}
+     WHERE	A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}
        AND  B.LectureId = ${LectureId}
        AND  B.isDelete = FALSE
        AND	C.isDelete = FALSE
@@ -134,14 +133,13 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
      INNER
       JOIN	lectures					    C
         ON	B.LectureId = C.id
-      WHERE	1 = 1
-        AND A.UserId = ${req.user.id}
-        AND B.LectureId = ${LectureId}
-        AND B.isDelete = FALSE
-        AND	C.isDelete = FALSE
-      ORDER BY A.id DESC
-      LIMIT ${LIMIT}
-     OFFSET ${OFFSET}
+     WHERE	A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}
+       AND  B.LectureId = ${LectureId}
+       AND  B.isDelete = FALSE
+       AND	C.isDelete = FALSE
+     ORDER  BY A.id DESC
+     LIMIT  ${LIMIT}
+    OFFSET  ${OFFSET}
     `;
 
     const length = await models.sequelize.query(lengthQuery);
