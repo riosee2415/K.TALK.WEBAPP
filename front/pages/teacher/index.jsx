@@ -1362,7 +1362,7 @@ const Index = () => {
                   normalNoticeList &&
                   (normalNoticeList.length === 0 ? (
                     <Wrapper margin={`30px 0`}>
-                      <Empty description="조회된 공지사항 리스트가 없습니다." />
+                      <Empty description="조회된 일반게시판이 없습니다." />
                     </Wrapper>
                   ) : (
                     normalNoticeList.map((data, idx) => {
