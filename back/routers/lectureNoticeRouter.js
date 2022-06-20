@@ -112,7 +112,8 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
     `;
 
     const selectQuery = `
-    SELECT	A.LectureNoticeId			                        AS connectNoticeId,
+    SELECT	DISTINCT
+            A.LectureNoticeId			                        AS connectNoticeId,
             B.title,
             B.id					                                AS noticeId,
             B.title 				                              AS noticeTitle,
@@ -136,7 +137,7 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
        AND  B.LectureId = ${LectureId}
        AND  B.isDelete = FALSE
        AND	C.isDelete = FALSE
-     ORDER  BY A.id DESC
+     ORDER  BY B.id DESC
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
     `;
