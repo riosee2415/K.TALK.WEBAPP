@@ -84,8 +84,8 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
     }
 
     const lengthQuery = `
-    SELECT	A.LectureNoticeId			                        AS connectNoticeId,
-            A.UserId 					                            AS connectUserId,
+    SELECT	DISTINCT
+            A.LectureNoticeId			                        AS connectNoticeId,
             B.title,
             B.id					                                AS noticeId,
             B.title 				                              AS noticeTitle,
@@ -113,7 +113,6 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
 
     const selectQuery = `
     SELECT	A.LectureNoticeId			                        AS connectNoticeId,
-            A.UserId 					                            AS connectUserId,
             B.title,
             B.id					                                AS noticeId,
             B.title 				                              AS noticeTitle,
