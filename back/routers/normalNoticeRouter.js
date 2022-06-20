@@ -85,8 +85,7 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
      INNER
       JOIN	normalNotices			  B
         ON	A.NormalNoticeId  = B.id
-     WHERE	A.UserId = ${req.user.id}
-       AND  B.UserId = ${req.user.id}
+     WHERE	A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}
        AND  B.isDelete = FALSE
     `;
 
@@ -107,10 +106,10 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
      INNER
       JOIN	normalNotices			  B
         ON	A.NormalNoticeId  = B.id
-     WHERE	A.UserId = ${req.user.id}
-       AND  B.UserId = ${req.user.id}
+     WHERE	A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}
        AND  B.isDelete = FALSE
-     ORDER  BY id DESC
+       AND  B.isDelete = FALSE
+     ORDER  BY B.id DESC
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
     `;
@@ -306,7 +305,7 @@ router.post("/detail", isLoggedIn, async (req, res, next) => {
 
 // 학생이 관리자한테 글 작성
 router.post("/student/create", isLoggedIn, async (req, res, next) => {
-  const { title, content, author, file } = req.body;
+  const { title, content, author, level, file } = req.body;
 
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
@@ -339,7 +338,8 @@ router.post("/student/create", isLoggedIn, async (req, res, next) => {
 });
 
 router.post("/teacher/create", isLoggedIn, async (req, res, next) => {
-  const { title, content, author, file, receiverId, createType } = req.body;
+  const { title, content, author, file, receiverId, level, createType } =
+    req.body;
 
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
