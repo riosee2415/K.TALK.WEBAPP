@@ -24,6 +24,14 @@ export const initialState = {
   normalNoticeAdminCreateDone: false,
   normalNoticeAdminCreateError: false,
 
+  normalNoticeStuCreateLoading: false, // 학생 일반게시판 생성
+  normalNoticeStuCreateDone: false,
+  normalNoticeStuCreateError: false,
+
+  normalNoticeTeacherCreateLoading: false, // 선생 일반게시판 생성
+  normalNoticeTeacherCreateDone: false,
+  normalNoticeTeacherCreateError: false,
+
   normalNoticeUpdateLoading: false, // 일반게시판 수정
   normalNoticeUpdateDone: false,
   normalNoticeUpdateError: false,
@@ -50,6 +58,20 @@ export const NORMAL_NOTICE_ADMIN_CREATE_SUCCESS =
   "NORMAL_NOTICE_ADMIN_CREATE_SUCCESS";
 export const NORMAL_NOTICE_ADMIN_CREATE_FAILURE =
   "NORMAL_NOTICE_ADMIN_CREATE_FAILURE";
+
+export const NORMAL_NOTICE_STU_CREATE_REQUEST =
+  "NORMAL_NOTICE_STU_CREATE_REQUEST";
+export const NORMAL_NOTICE_STU_CREATE_SUCCESS =
+  "NORMAL_NOTICE_STU_CREATE_SUCCESS";
+export const NORMAL_NOTICE_STU_CREATE_FAILURE =
+  "NORMAL_NOTICE_STU_CREATE_FAILURE";
+
+export const NORMAL_NOTICE_TEACHER_CREATE_REQUEST =
+  "NORMAL_NOTICE_TEACHER_CREATE_REQUEST";
+export const NORMAL_NOTICE_TEACHER_CREATE_SUCCESS =
+  "NORMAL_NOTICE_TEACHER_CREATE_SUCCESS";
+export const NORMAL_NOTICE_TEACHER_CREATE_FAILURE =
+  "NORMAL_NOTICE_TEACHER_CREATE_FAILURE";
 
 export const NORMAL_NOTICE_UPDATE_REQUEST = "NORMAL_NOTICE_UPDATE_REQUEST";
 export const NORMAL_NOTICE_UPDATE_SUCCESS = "NORMAL_NOTICE_UPDATE_SUCCESS";
@@ -127,6 +149,46 @@ const reducer = (state = initialState, action) =>
         draft.normalNoticeAdminCreateLoading = false;
         draft.normalNoticeAdminCreateDone = false;
         draft.normalNoticeAdminCreateError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////    학생 일반게시판 작성하기
+      case NORMAL_NOTICE_STU_CREATE_REQUEST: {
+        draft.normalNoticeStuCreateLoading = true;
+        draft.normalNoticeStuCreateDone = false;
+        draft.normalNoticeStuCreateError = null;
+        break;
+      }
+      case NORMAL_NOTICE_STU_CREATE_SUCCESS: {
+        draft.normalNoticeStuCreateLoading = false;
+        draft.normalNoticeStuCreateDone = true;
+        draft.normalNoticeStuCreateError = null;
+        break;
+      }
+      case NORMAL_NOTICE_STU_CREATE_FAILURE: {
+        draft.normalNoticeStuCreateLoading = false;
+        draft.normalNoticeStuCreateDone = false;
+        draft.normalNoticeStuCreateError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////    선생 일반게시판 작성하기
+      case NORMAL_NOTICE_TEACHER_CREATE_REQUEST: {
+        draft.normalNoticeTeacherCreateLoading = true;
+        draft.normalNoticeTeacherCreateDone = false;
+        draft.normalNoticeTeacherCreateError = null;
+        break;
+      }
+      case NORMAL_NOTICE_TEACHER_CREATE_SUCCESS: {
+        draft.normalNoticeTeacherCreateLoading = false;
+        draft.normalNoticeTeacherCreateDone = true;
+        draft.normalNoticeTeacherCreateError = null;
+        break;
+      }
+      case NORMAL_NOTICE_TEACHER_CREATE_FAILURE: {
+        draft.normalNoticeTeacherCreateLoading = false;
+        draft.normalNoticeTeacherCreateDone = false;
+        draft.normalNoticeTeacherCreateError = action.error;
         break;
       }
 

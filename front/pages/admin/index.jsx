@@ -246,7 +246,7 @@ const AdminHome = () => {
 
   const [noticeData, setNoticeData] = useState(null);
 
-  // NORMAL NOTICE SELECT
+  // NORMAL NOTICE STATE
   const [normalNoticeType, setNormalNoticeType] = useState(null);
   const [normalNoticeUser, setNormalNoticeUser] = useState([]);
   const [normalNoticeListType, setNormalNoticeListType] = useState(4);
@@ -602,7 +602,7 @@ const AdminHome = () => {
 
   ////// HANDLER ///////
 
-  const normalNoticeTypeChnageHandler = useCallback(
+  const normalNoticeTypeChangeHandler = useCallback(
     (type) => {
       normalNoticeForm.setFieldsValue({
         userId: [],
@@ -900,32 +900,6 @@ const AdminHome = () => {
       }
     },
     [createModal]
-  );
-
-  const createModalOk = useCallback(() => {
-    noticeUpdateform.submit();
-  }, []);
-
-  const onSubmitNoticeUpdate = useCallback(
-    (value) => {
-      if (!contentData || contentData.trim() === "") {
-        return LoadNotification(
-          "ADMIN SYSTEM ERROR",
-          "작성하기 버튼을 눌러주세요."
-        );
-      }
-
-      dispatch({
-        type: NOTICE_UPDATE_REQUEST,
-        data: {
-          id: noticeData.id,
-          title: value.title,
-          content: contentData,
-          file: uploadPath,
-        },
-      });
-    },
-    [uploadPath, noticeData, contentData]
   );
 
   // 일반게시판 추가
@@ -1985,7 +1959,7 @@ const AdminHome = () => {
                       showSearch
                       style={{ width: `100%` }}
                       placeholder="유형을 선택해 주세요."
-                      onChange={normalNoticeTypeChnageHandler}
+                      onChange={normalNoticeTypeChangeHandler}
                     >
                       {normalSelectArr &&
                         normalSelectArr.map((data) => (
