@@ -357,7 +357,7 @@ const Notice = ({}) => {
         setValueChange(tempArr2);
       }
     },
-    [lectureDetail, studentLists, router.query]
+    [lectureDetail, studentLists]
   );
 
   // 게시판 등록

@@ -175,7 +175,10 @@ const Notice = ({}) => {
 
   const [updateData, setUpdateData] = useState(null);
   const [inputContent, setInputContent] = useState(null);
-  const [valueChange, setValueChange] = useState([]);
+
+  const [valueChange, setValueChange] = useState([]); // 학생전체일때 저장하는 스테이트
+  const [stuValue, setStuValue] = useState([]); // 학생선택해서 보여주는 스테이트
+  const [stuChioce, setStuChioce] = useState([]); // 학생선택해서 저장하는 스테이트
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -258,6 +261,10 @@ const Notice = ({}) => {
       dispatch({
         type: RESET_LECTURE_NOTICE_PATH,
       });
+
+      setValueChange([]);
+      setStuValue([]);
+      setStuChioce([]);
 
       lectureNoticeModalToggle(null);
 
@@ -362,8 +369,8 @@ const Notice = ({}) => {
   );
 
   const userValueChange = useCallback(
-    (data) => {
-      if (data === "학생전체") {
+    (type) => {
+      if (type === "학생전체") {
         const tempArr2 = [];
 
         partLectureList.map((data) => {
@@ -372,14 +379,31 @@ const Notice = ({}) => {
 
         setValueChange(tempArr2);
       } else {
+        // 학생 이름 넣는곳
+        const index = stuValue.indexOf(type);
+        let tempArr = stuValue.map((data) => data);
+
+        if (index !== -1) {
+          tempArr = tempArr.filter((data) => data !== type);
+        } else {
+          tempArr.push(type);
+        }
+
+        setStuValue(tempArr);
+
+        // 학생아이디값 넣는곳
         const tempArr1 = [];
 
-        tempArr1.push(data);
+        partLectureList.map((data) => {
+          if (tempArr.includes(data.username)) {
+            tempArr1.push(data.UserId);
+          }
+        });
 
-        setValueChange(tempArr1);
+        setStuChioce(tempArr1);
       }
     },
-    [lectureDetail, partLectureList, router.query]
+    [partLectureList, stuValue, valueChange, stuChioce]
   );
 
   // 게시판 등록
@@ -393,20 +417,42 @@ const Notice = ({}) => {
         return message.error("Please write a comment.");
       }
 
-      dispatch({
-        type: LECTURE_NOTICE_CREATE_REQUEST,
-        data: {
-          title: data.lTitle,
-          content: inputContent,
-          author: me.username,
-          level: me.level,
-          LectureId: router.query.id,
-          receiverId: valueChange,
-          file: uploadLectureNoticePath,
-        },
-      });
+      if (data.lSend === "학생전체") {
+        dispatch({
+          type: LECTURE_NOTICE_CREATE_REQUEST,
+          data: {
+            title: data.lTitle,
+            content: inputContent,
+            author: me.username,
+            level: me.level,
+            LectureId: router.query.id,
+            receiverId: valueChange,
+            file: uploadLectureNoticePath,
+          },
+        });
+      } else {
+        dispatch({
+          type: LECTURE_NOTICE_CREATE_REQUEST,
+          data: {
+            title: data.lTitle,
+            content: inputContent,
+            author: me.username,
+            level: me.level,
+            LectureId: router.query.id,
+            receiverId: stuChioce,
+            file: uploadLectureNoticePath,
+          },
+        });
+      }
     },
-    [me, router.query, inputContent, uploadLectureNoticePath, valueChange]
+    [
+      me,
+      router.query,
+      inputContent,
+      uploadLectureNoticePath,
+      valueChange,
+      stuChioce,
+    ]
   );
 
   const getEditContent = useCallback(
@@ -702,7 +748,7 @@ const Notice = ({}) => {
           {/* NOTICE CREATE && UPDATE MODAL */}
 
           <Modal
-            title={updateData ? `Notice Update` : `Notice Write`}
+            title={updateData ? `게시글 수정` : `게시글 등록`}
             visible={lectureNoticeModal}
             onCancel={() => lectureNoticeModalToggle(null)}
             width={`900px`}
@@ -717,26 +763,40 @@ const Notice = ({}) => {
               {updateData ? (
                 <></>
               ) : (
-                <Form.Item label={`Send`} name={`lSend`}>
-                  <Select onChange={(data) => userValueChange(data)}>
-                    <Select.Option value={"학생전체"}>학생전체</Select.Option>
-                    {partLectureList &&
-                      partLectureList.map((stu) => {
+                <>
+                  <Form.Item label={`보내기`} name={`lSend`}>
+                    <Select onChange={(data) => userValueChange(data)}>
+                      <Select.Option value={"학생전체"}>학생전체</Select.Option>
+                      {partLectureList &&
+                        partLectureList.map((stu) => {
+                          return (
+                            <Select.Option key={stu.id} value={stu.username}>
+                              {stu.username}
+                            </Select.Option>
+                          );
+                        })}
+                    </Select>
+                  </Form.Item>
+
+                  <Form.Item label={`받는 학생`}>
+                    <Wrapper dr={`row`} ju={`flex-start`}>
+                      {stuValue.map((data) => {
                         return (
-                          <Select.Option key={stu.id} value={stu.UserId}>
-                            {stu.username}
-                          </Select.Option>
+                          <Text key={data} margin={`0 10px 0 0`}>
+                            {data}
+                          </Text>
                         );
                       })}
-                  </Select>
-                </Form.Item>
+                    </Wrapper>
+                  </Form.Item>
+                </>
               )}
 
-              <Form.Item label={`Title`} name={`lTitle`}>
+              <Form.Item label={`제목`} name={`lTitle`}>
                 <Input placeholder="Please write a title." />
               </Form.Item>
 
-              <Form.Item label={`File`}>
+              <Form.Item label={`파일 첨부`}>
                 <input
                   type="file"
                   name="file"
@@ -765,12 +825,12 @@ const Notice = ({}) => {
                 />
               </Form.Item>
 
-              <Form.Item label={`Content`} name={`lContent`}>
+              <Form.Item label={`내용`} name={`lContent`}>
                 <ToastEditorLectureNotice
                   action={getEditContent}
                   initialValue={updateData ? updateData.noticeContent : null}
-                  placeholder="Please write a content."
-                  buttonText={updateData ? "UPDATE" : "CREATE"}
+                  placeholder="내용을 입력해주세요."
+                  buttonText={updateData ? "수정" : "등록"}
                 />
               </Form.Item>
             </Form>

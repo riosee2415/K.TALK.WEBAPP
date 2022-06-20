@@ -28,7 +28,10 @@ import {
   Text,
 } from "../../../../components/commonComponents";
 import { LOAD_MY_INFO_REQUEST } from "../../../../reducers/user";
-import { LECTURE_NOTICE_ADMIN_LIST_REQUEST } from "../../../../reducers/lectureNotice";
+import {
+  LECTURE_NOTICE_ADMIN_LIST_REQUEST,
+  LECTURE_NOTICE_DETAIL_LIST_REQUEST,
+} from "../../../../reducers/lectureNotice";
 import { GUIDE_MODAL } from "../../../../reducers/notice";
 import { saveAs } from "file-saver";
 import Theme from "../../../../components/Theme";
@@ -64,9 +67,8 @@ const NoticeClass = ({}) => {
 
   const { guideModal } = useSelector((state) => state.notice);
 
-  const { adminLectureNotices, lecNoticeCommentDetails } = useSelector(
-    (state) => state.lectureNotice
-  );
+  const { adminLectureNotices, lectureNoticeDetail, lecNoticeCommentDetails } =
+    useSelector((state) => state.lectureNotice);
 
   const [viewModal, setViewModal] = useState(false);
   const [viewData, setViewData] = useState(null);
@@ -97,10 +99,23 @@ const NoticeClass = ({}) => {
     (data) => {
       setViewData(data);
 
+      console.log(data);
+
+      // if (data) {
+      //   dispatch({
+      //     type: LECTURE_NOTICE_DETAIL_LIST_REQUEST,
+      //     data: {
+      //       LectureNoticeId: data.noticeId,
+      //     },
+      //   });
+      // }
+
       setViewModal(!viewModal);
     },
     [viewModal]
   );
+
+  console.log(lectureNoticeDetail);
 
   const commentModalToggle = useCallback(
     (data) => {
