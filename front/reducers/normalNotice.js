@@ -6,44 +6,80 @@ export const initialState = {
   normalNoticeLastPage: 1,
   //
   normalNoticeAdminList: null,
+  //
+  normalCommentList: null,
+  //
+  normalNoticeDetailData: null,
+  normalComments: null,
+  normalCommentsLen: 0,
+  //
+  normalNoticeFilePath: null,
 
   // modal
   normalNoticeModal: false,
   normalNoticeDetailModal: false,
 
   // status
-  normalNoticeListLoading: false, // 회원 일반게시판 가져오기
+  normalNoticeListLoading: false, // 일반게시판 가져오기
   normalNoticeListDone: false,
-  normalNoticeListError: false,
+  normalNoticeListError: null,
+
+  normalNoticeDetailLoading: false, // 일반게시판 상세 가져오기
+  normalNoticeDetailDone: false,
+  normalNoticeDetailError: null,
 
   normalNoticeAdminListLoading: false, // 관리자 일반게시판 가져오기
   normalNoticeAdminListDone: false,
-  normalNoticeAdminListError: false,
+  normalNoticeAdminListError: null,
 
   normalNoticeAdminCreateLoading: false, // 관리자 일반게시판 생성
   normalNoticeAdminCreateDone: false,
-  normalNoticeAdminCreateError: false,
+  normalNoticeAdminCreateError: null,
 
   normalNoticeStuCreateLoading: false, // 학생 일반게시판 생성
   normalNoticeStuCreateDone: false,
-  normalNoticeStuCreateError: false,
+  normalNoticeStuCreateError: null,
 
   normalNoticeTeacherCreateLoading: false, // 선생 일반게시판 생성
   normalNoticeTeacherCreateDone: false,
-  normalNoticeTeacherCreateError: false,
+  normalNoticeTeacherCreateError: null,
 
   normalNoticeUpdateLoading: false, // 일반게시판 수정
   normalNoticeUpdateDone: false,
-  normalNoticeUpdateError: false,
+  normalNoticeUpdateError: null,
 
   normalNoticeDeleteLoading: false, // 일반게시판 삭제
   normalNoticeDeleteDone: false,
-  normalNoticeDeleteError: false,
+  normalNoticeDeleteError: null,
+
+  normalCommentListLoading: false, // 대댓글 가져오기
+  normalCommentListDone: false,
+  normalCommentListError: null,
+
+  normalCommentCreateLoading: false, // 대댓글 생성
+  normalCommentCreateDone: false,
+  normalCommentCreateError: null,
+
+  normalCommentUpdateLoading: false, // 대댓글 수정
+  normalCommentUpdateDone: false,
+  normalCommentUpdateError: null,
+
+  normalCommentDeleteLoading: false, // 대댓글 삭제
+  normalCommentDeleteDone: false,
+  normalCommentDeleteError: null,
+
+  normalNoticeFileUploadLoading: false, // 파일 업로드
+  normalNoticeFileUploadDone: false,
+  normalNoticeFileUploadError: null,
 };
 
 export const NORMAL_NOTICE_LIST_REQUEST = "NORMAL_NOTICE_LIST_REQUEST";
 export const NORMAL_NOTICE_LIST_SUCCESS = "NORMAL_NOTICE_LIST_SUCCESS";
 export const NORMAL_NOTICE_LIST_FAILURE = "NORMAL_NOTICE_LIST_FAILURE";
+
+export const NORMAL_NOTICE_DETAIL_REQUEST = "NORMAL_NOTICE_DETAIL_REQUEST";
+export const NORMAL_NOTICE_DETAIL_SUCCESS = "NORMAL_NOTICE_DETAIL_SUCCESS";
+export const NORMAL_NOTICE_DETAIL_FAILURE = "NORMAL_NOTICE_DETAIL_FAILURE";
 
 export const NORMAL_NOTICE_ADMIN_LIST_REQUEST =
   "NORMAL_NOTICE_ADMIN_LIST_REQUEST";
@@ -81,6 +117,26 @@ export const NORMAL_NOTICE_DELETE_REQUEST = "NORMAL_NOTICE_DELETE_REQUEST";
 export const NORMAL_NOTICE_DELETE_SUCCESS = "NORMAL_NOTICE_DELETE_SUCCESS";
 export const NORMAL_NOTICE_DELETE_FAILURE = "NORMAL_NOTICE_DELETE_FAILURE";
 
+export const NORMAL_COMMENT_LIST_REQUEST = "NORMAL_COMMENT_LIST_REQUEST";
+export const NORMAL_COMMENT_LIST_SUCCESS = "NORMAL_COMMENT_LIST_SUCCESS";
+export const NORMAL_COMMENT_LIST_FAILURE = "NORMAL_COMMENT_LIST_FAILURE";
+
+export const NORMAL_COMMENT_CREATE_REQUEST = "NORMAL_COMMENT_CREATE_REQUEST";
+export const NORMAL_COMMENT_CREATE_SUCCESS = "NORMAL_COMMENT_CREATE_SUCCESS";
+export const NORMAL_COMMENT_CREATE_FAILURE = "NORMAL_COMMENT_CREATE_FAILURE";
+
+export const NORMAL_COMMENT_UPDATE_REQUEST = "NORMAL_COMMENT_UPDATE_REQUEST";
+export const NORMAL_COMMENT_UPDATE_SUCCESS = "NORMAL_COMMENT_UPDATE_SUCCESS";
+export const NORMAL_COMMENT_UPDATE_FAILURE = "NORMAL_COMMENT_UPDATE_FAILURE";
+
+export const NORMAL_COMMENT_DELETE_REQUEST = "NORMAL_COMMENT_DELETE_REQUEST";
+export const NORMAL_COMMENT_DELETE_SUCCESS = "NORMAL_COMMENT_DELETE_SUCCESS";
+export const NORMAL_COMMENT_DELETE_FAILURE = "NORMAL_COMMENT_DELETE_FAILURE";
+
+export const NORMAL_FILE_UPLOAD_REQUEST = "NORMAL_FILE_UPLOAD_REQUEST";
+export const NORMAL_FILE_UPLOAD_SUCCESS = "NORMAL_FILE_UPLOAD_SUCCESS";
+export const NORMAL_FILE_UPLOAD_FAILURE = "NORMAL_FILE_UPLOAD_FAILURE";
+
 export const NORMAL_NOTICE_MODAL_TOGGLE = "NORMAL_NOTICE_MODAL_TOGGLE";
 
 export const NORMAL_NOTICE_DETAIL_MODAL_TOGGLE =
@@ -89,7 +145,7 @@ export const NORMAL_NOTICE_DETAIL_MODAL_TOGGLE =
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
-      //////////////////////////////////////////////    회원 일반게시판 가져오기
+      //////////////////////////////////////////////    일반게시판 가져오기
       case NORMAL_NOTICE_LIST_REQUEST: {
         draft.normalNoticeListLoading = true;
         draft.normalNoticeListDone = false;
@@ -108,6 +164,29 @@ const reducer = (state = initialState, action) =>
         draft.normalNoticeListLoading = false;
         draft.normalNoticeListDone = false;
         draft.normalNoticeListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////    일반게시판 상세 가져오기
+      case NORMAL_NOTICE_DETAIL_REQUEST: {
+        draft.normalNoticeDetailLoading = true;
+        draft.normalNoticeDetailDone = false;
+        draft.normalNoticeDetailError = null;
+        break;
+      }
+      case NORMAL_NOTICE_DETAIL_SUCCESS: {
+        draft.normalNoticeDetailLoading = false;
+        draft.normalNoticeDetailDone = true;
+        draft.normalNoticeDetailError = null;
+        draft.normalNoticeDetailData = action.data.detailData;
+        draft.normalComments = action.data.comments;
+        draft.normalCommentsLen = action.data.commentsLen;
+        break;
+      }
+      case NORMAL_NOTICE_DETAIL_FAILURE: {
+        draft.normalNoticeDetailLoading = false;
+        draft.normalNoticeDetailDone = false;
+        draft.normalNoticeDetailError = action.error;
         break;
       }
 
@@ -229,6 +308,107 @@ const reducer = (state = initialState, action) =>
         draft.normalNoticeDeleteLoading = false;
         draft.normalNoticeDeleteDone = false;
         draft.normalNoticeDeleteError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////    대댓글 가져오기
+      case NORMAL_COMMENT_LIST_REQUEST: {
+        draft.normalCommentListLoading = true;
+        draft.normalCommentListDone = false;
+        draft.normalCommentListError = null;
+        break;
+      }
+      case NORMAL_COMMENT_LIST_SUCCESS: {
+        draft.normalCommentListLoading = false;
+        draft.normalCommentListDone = true;
+        draft.normalCommentListError = null;
+        draft.normalCommentList = action.data.list;
+        break;
+      }
+      case NORMAL_COMMENT_LIST_FAILURE: {
+        draft.normalCommentListLoading = false;
+        draft.normalCommentListDone = false;
+        draft.normalCommentListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////    대댓글 생성
+      case NORMAL_COMMENT_CREATE_REQUEST: {
+        draft.normalCommentCreateLoading = true;
+        draft.normalCommentCreateDone = false;
+        draft.normalCommentCreateError = null;
+        break;
+      }
+      case NORMAL_COMMENT_CREATE_SUCCESS: {
+        draft.normalCommentCreateLoading = false;
+        draft.normalCommentCreateDone = true;
+        draft.normalCommentCreateError = null;
+        break;
+      }
+      case NORMAL_COMMENT_CREATE_FAILURE: {
+        draft.normalCommentCreateLoading = false;
+        draft.normalCommentCreateDone = false;
+        draft.normalCommentCreateError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////    대댓글 수정
+      case NORMAL_COMMENT_UPDATE_REQUEST: {
+        draft.normalCommentUpdateLoading = true;
+        draft.normalCommentUpdateDone = false;
+        draft.normalCommentUpdateError = null;
+        break;
+      }
+      case NORMAL_COMMENT_UPDATE_SUCCESS: {
+        draft.normalCommentUpdateLoading = false;
+        draft.normalCommentUpdateDone = true;
+        draft.normalCommentUpdateError = null;
+        break;
+      }
+      case NORMAL_COMMENT_UPDATE_FAILURE: {
+        draft.normalCommentUpdateLoading = false;
+        draft.normalCommentUpdateDone = false;
+        draft.normalCommentUpdateError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////    대댓글 삭제하기
+      case NORMAL_COMMENT_DELETE_REQUEST: {
+        draft.normalCommentDeleteLoading = true;
+        draft.normalCommentDeleteDone = false;
+        draft.normalCommentDeleteError = null;
+        break;
+      }
+      case NORMAL_COMMENT_DELETE_SUCCESS: {
+        draft.normalCommentDeleteLoading = false;
+        draft.normalCommentDeleteDone = true;
+        draft.normalCommentDeleteError = null;
+        break;
+      }
+      case NORMAL_COMMENT_DELETE_FAILURE: {
+        draft.normalCommentDeleteLoading = false;
+        draft.normalCommentDeleteDone = false;
+        draft.normalCommentDeleteError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////    파일 업로드
+      case NORMAL_FILE_UPLOAD_REQUEST: {
+        draft.normalNoticeFileUploadLoading = true;
+        draft.normalNoticeFileUploadDone = false;
+        draft.normalNoticeFileUploadError = null;
+        break;
+      }
+      case NORMAL_FILE_UPLOAD_SUCCESS: {
+        draft.normalNoticeFileUploadLoading = false;
+        draft.normalNoticeFileUploadDone = true;
+        draft.normalNoticeFileUploadError = null;
+        draft.normalNoticeFilePath = action.data.path;
+        break;
+      }
+      case NORMAL_FILE_UPLOAD_FAILURE: {
+        draft.normalNoticeFileUploadLoading = false;
+        draft.normalNoticeFileUploadDone = false;
+        draft.normalNoticeFileUploadError = action.error;
         break;
       }
 

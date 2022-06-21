@@ -1,10 +1,14 @@
 import { all, call, delay, fork, put, takeLatest } from "redux-saga/effects";
 import axios from "axios";
 import {
-  ///////////////////////////////// 회원 일반게시판 가져오기
+  ///////////////////////////////// 일반게시판 가져오기
   NORMAL_NOTICE_LIST_REQUEST,
   NORMAL_NOTICE_LIST_SUCCESS,
   NORMAL_NOTICE_LIST_FAILURE,
+  ///////////////////////////////// 일반게시판 상세 가져오기
+  NORMAL_NOTICE_DETAIL_REQUEST,
+  NORMAL_NOTICE_DETAIL_SUCCESS,
+  NORMAL_NOTICE_DETAIL_FAILURE,
   ///////////////////////////////// 관리자 일반게시판 가져오기
   NORMAL_NOTICE_ADMIN_LIST_REQUEST,
   NORMAL_NOTICE_ADMIN_LIST_SUCCESS,
@@ -29,6 +33,26 @@ import {
   NORMAL_NOTICE_DELETE_REQUEST,
   NORMAL_NOTICE_DELETE_SUCCESS,
   NORMAL_NOTICE_DELETE_FAILURE,
+  ///////////////////////////////// 대댓글 삭제하기
+  NORMAL_COMMENT_LIST_REQUEST,
+  NORMAL_COMMENT_LIST_SUCCESS,
+  NORMAL_COMMENT_LIST_FAILURE,
+  ///////////////////////////////// 대댓글 삭제하기
+  NORMAL_COMMENT_CREATE_REQUEST,
+  NORMAL_COMMENT_CREATE_SUCCESS,
+  NORMAL_COMMENT_CREATE_FAILURE,
+  ///////////////////////////////// 대댓글 삭제하기
+  NORMAL_COMMENT_UPDATE_REQUEST,
+  NORMAL_COMMENT_UPDATE_SUCCESS,
+  NORMAL_COMMENT_UPDATE_FAILURE,
+  ///////////////////////////////// 대댓글 삭제하기
+  NORMAL_COMMENT_DELETE_REQUEST,
+  NORMAL_COMMENT_DELETE_SUCCESS,
+  NORMAL_COMMENT_DELETE_FAILURE,
+  ///////////////////////////////// 파일 업로드
+  NORMAL_FILE_UPLOAD_REQUEST,
+  NORMAL_FILE_UPLOAD_SUCCESS,
+  NORMAL_FILE_UPLOAD_FAILURE,
 } from "../reducers/normalNotice";
 
 // ******************************************************************************************************************
@@ -51,6 +75,35 @@ function* normalNoticeList(action) {
     console.error(err);
     yield put({
       type: NORMAL_NOTICE_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+
+async function normalNoticeDetailAPI(data) {
+  return await axios.post(`/api/normalNotice/detail`, data);
+}
+
+function* normalNoticeDetail(action) {
+  try {
+    const result = yield call(normalNoticeDetailAPI, action.data);
+
+    yield put({
+      type: NORMAL_NOTICE_DETAIL_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: NORMAL_NOTICE_DETAIL_FAILURE,
       error: err.response.data,
     });
   }
@@ -235,9 +288,160 @@ function* normalNoticeDelete(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+
+async function normalCommentListAPI(data) {
+  return await axios.post(`/api/normalNotice/comment/detail`, data);
+}
+
+function* normalCommentList(action) {
+  try {
+    const result = yield call(normalCommentListAPI, action.data);
+
+    yield put({
+      type: NORMAL_COMMENT_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: NORMAL_COMMENT_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+
+async function normalCommentCreateAPI(data) {
+  return await axios.post(`/api/normalNotice/comment/create`, data);
+}
+
+function* normalCommentCreate(action) {
+  try {
+    const result = yield call(normalCommentCreateAPI, action.data);
+
+    yield put({
+      type: NORMAL_COMMENT_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: NORMAL_COMMENT_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+
+async function normalCommentUpdateAPI(data) {
+  return await axios.post(`/api/normalNotice/comment/update`, data);
+}
+
+function* normalCommentUpdate(action) {
+  try {
+    const result = yield call(normalCommentUpdateAPI, action.data);
+
+    yield put({
+      type: NORMAL_COMMENT_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: NORMAL_COMMENT_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+
+async function normalCommentDeleteAPI(data) {
+  return await axios.delete(
+    `/api/normalNotice/comment/delete/${data.commentId}`
+  );
+}
+
+function* normalCommentDelete(action) {
+  try {
+    const result = yield call(normalCommentDeleteAPI, action.data);
+
+    yield put({
+      type: NORMAL_COMMENT_DELETE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: NORMAL_COMMENT_DELETE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+
+async function normalNoticeFileUploadAPI(data) {
+  return await axios.post(`/api/normalNotice/file`, data);
+}
+
+function* normalNoticeFileUpload(action) {
+  try {
+    const result = yield call(normalNoticeFileUploadAPI, action.data);
+
+    yield put({
+      type: NORMAL_FILE_UPLOAD_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: NORMAL_FILE_UPLOAD_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchNormalNoticeList() {
   yield takeLatest(NORMAL_NOTICE_LIST_REQUEST, normalNoticeList);
+}
+
+function* watchNormalNoticeDetail() {
+  yield takeLatest(NORMAL_NOTICE_DETAIL_REQUEST, normalNoticeDetail);
 }
 
 function* watchNormalNoticeAdminList() {
@@ -267,16 +471,42 @@ function* watchNormalNoticeDelete() {
   yield takeLatest(NORMAL_NOTICE_DELETE_REQUEST, normalNoticeDelete);
 }
 
+function* watchNormalCommentList() {
+  yield takeLatest(NORMAL_COMMENT_LIST_REQUEST, normalCommentList);
+}
+
+function* watchNormalCommentCreate() {
+  yield takeLatest(NORMAL_COMMENT_CREATE_REQUEST, normalCommentCreate);
+}
+
+function* watchNormalCommentUpdate() {
+  yield takeLatest(NORMAL_COMMENT_UPDATE_REQUEST, normalCommentUpdate);
+}
+
+function* watchNormalCommentDelete() {
+  yield takeLatest(NORMAL_COMMENT_DELETE_REQUEST, normalCommentDelete);
+}
+
+function* watchNormalNoticeFileUpload() {
+  yield takeLatest(NORMAL_FILE_UPLOAD_REQUEST, normalNoticeFileUpload);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* normalNoticeSaga() {
   yield all([
     fork(watchNormalNoticeList),
+    fork(watchNormalNoticeDetail),
     fork(watchNormalNoticeAdminList),
     fork(watchNormalNoticeAdminCreate),
     fork(watchNormalNoticeStuCreate),
     fork(watchNormalNoticeTeacherCreate),
     fork(watchNormalNoticeUpdate),
     fork(watchNormalNoticeDelete),
+    fork(watchNormalCommentList),
+    fork(watchNormalCommentCreate),
+    fork(watchNormalCommentUpdate),
+    fork(watchNormalCommentDelete),
+    fork(watchNormalNoticeFileUpload),
     //
   ]);
 }

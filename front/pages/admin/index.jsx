@@ -14,6 +14,7 @@ import {
   TextInput,
   SpanText,
   ModalBtn,
+  TextArea,
 } from "../../components/commonComponents";
 import {
   Button,
@@ -65,10 +66,16 @@ import ToastEditorComponent3 from "../../components/editor/ToastEditorComponent3
 import ToastEditorComponentMix from "../../components/editor/ToastEditorComponentMix";
 import { saveAs } from "file-saver";
 import {
+  NORMAL_COMMENT_CREATE_REQUEST,
+  NORMAL_COMMENT_DELETE_REQUEST,
+  NORMAL_COMMENT_LIST_REQUEST,
+  NORMAL_COMMENT_UPDATE_REQUEST,
+  NORMAL_FILE_UPLOAD_REQUEST,
   NORMAL_NOTICE_ADMIN_CREATE_REQUEST,
   NORMAL_NOTICE_ADMIN_LIST_REQUEST,
   NORMAL_NOTICE_DELETE_REQUEST,
   NORMAL_NOTICE_DETAIL_MODAL_TOGGLE,
+  NORMAL_NOTICE_DETAIL_REQUEST,
   NORMAL_NOTICE_MODAL_TOGGLE,
   NORMAL_NOTICE_UPDATE_REQUEST,
 } from "../../reducers/normalNotice";
@@ -139,6 +146,35 @@ const TimeInput = styled(TimePicker)`
   }
 `;
 
+const FormTag = styled(Form)`
+  width: 100%;
+`;
+
+const HoverText = styled(Text)`
+  cursor: pointer;
+  &:hover {
+    font-weight: 700;
+  }
+  transition: 0.2s;
+`;
+
+const Icon = styled(Wrapper)`
+  height: 1px;
+  background: ${Theme.darkGrey_C};
+  position: relative;
+
+  &:before {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    right: 4px;
+    width: 1px;
+    height: 10px;
+    background: ${Theme.darkGrey_C};
+    transform: rotate(-60deg);
+  }
+`;
+
 const AdminHome = () => {
   ////// HOOKS //////
   const width = useWidth();
@@ -176,6 +212,7 @@ const AdminHome = () => {
   const inputCnt = useInput();
   const inputStartDate = useInput();
   const fileRef = useRef();
+  const normalNoticeFileRef = useRef();
   const formRef = useRef();
 
   const router = useRouter();
@@ -227,21 +264,37 @@ const AdminHome = () => {
   // NORMAL SELECTOR
   const {
     normalNoticeAdminList,
+    normalNoticeDetailData,
+    normalComments,
+    normalCommentsLen,
+    normalNoticeFilePath,
+    normalCommentList,
     //
     normalNoticeModal,
     normalNoticeDetailModal,
-    //
+    // 일반 게시판 생성
     normalNoticeAdminCreateLoading,
     normalNoticeAdminCreateDone,
     normalNoticeAdminCreateError,
-    //
+    // 일반 게시판 수정
     normalNoticeUpdateLoading,
     normalNoticeUpdateDone,
     normalNoticeUpdateError,
-    //
+    // 일반 게시판 삭제
     normalNoticeDeleteLoading,
     normalNoticeDeleteDone,
     normalNoticeDeleteError,
+    // 대댓글 가져오기
+    normalCommentListError,
+    // 대댓글 생성
+    normalCommentCreateDone,
+    normalCommentCreateError,
+    // 대댓글 수정
+    normalCommentUpdateDone,
+    normalCommentUpdateError,
+    // 대댓글 삭제
+    normalCommentDeleteDone,
+    normalCommentDeleteError,
   } = useSelector((state) => state.normalNotice);
 
   const [noticeData, setNoticeData] = useState(null);
@@ -253,9 +306,20 @@ const AdminHome = () => {
   const [normalNoticeUpdateData, setNormalNoticeUpdateData] = useState(null);
 
   const [normalNoticeForm] = Form.useForm();
+  const [commentForm] = Form.useForm();
+  const [updateCommentForm] = Form.useForm();
+  const [childCommentForm] = Form.useForm();
 
   const [contentData, setContentData] = useState("");
   const filename = useInput(null);
+
+  const [repleToggle, setRepleToggle] = useState(false); // 댓글쓰기 모달 토글
+  const [commentUpdateModal, setCommentUpdateModal] = useState(false); // 댓글 수정 모달 토글
+  const [currentData, setCurrentData] = useState(null); // 댓글의 정보 보관
+
+  const [updateCommentData, setUpdateCommentData] = useState(false);
+  const [grandData, setGrandData] = useState(null);
+  const [cocommentToggle, setCocommentToggle] = useState(null);
 
   ////// USEEFFECT //////
 
@@ -446,6 +510,112 @@ const AdminHome = () => {
     }
   }, [normalNoticeDeleteError]);
 
+  // NORMAL COMMENT LIST USEEFFECT
+  useEffect(() => {
+    if (normalCommentListError) {
+      return message.error(normalCommentListError);
+    }
+  }, [normalCommentListError]);
+
+  // NORMAL COMMENT CREATE USEEFFECT
+  useEffect(() => {
+    if (normalCommentCreateDone) {
+      dispatch({
+        type: NORMAL_NOTICE_DETAIL_REQUEST,
+        data: {
+          NormalNoticeId: noticeDetailData.noticeId,
+        },
+      });
+
+      dispatch({
+        type: NORMAL_COMMENT_LIST_REQUEST,
+        data: {
+          normalNoticeId: noticeDetailData.noticeId,
+          commentId: grandData,
+        },
+      });
+
+      if (currentData) {
+        openRecommentToggle(null);
+        setCurrentData(null);
+      }
+
+      commentForm.resetFields();
+
+      return message.success("댓글이 생성되었습니다.");
+    }
+  }, [normalCommentCreateDone]);
+
+  useEffect(() => {
+    if (normalCommentCreateError) {
+      return message.error(normalCommentCreateError);
+    }
+  }, [normalCommentCreateError]);
+
+  // NORMAL COMMENT UPDATE USEEFFECT
+  useEffect(() => {
+    if (normalCommentUpdateDone) {
+      dispatch({
+        type: NORMAL_NOTICE_DETAIL_REQUEST,
+        data: {
+          NormalNoticeId: noticeDetailData.noticeId,
+        },
+      });
+
+      dispatch({
+        type: NORMAL_COMMENT_LIST_REQUEST,
+        data: {
+          normalNoticeId: noticeDetailData.noticeId,
+          commentId: grandData,
+        },
+      });
+
+      setCommentUpdateModal(false);
+      return message.success("댓글이 수정되었습니다.");
+    }
+  }, [normalCommentUpdateDone]);
+
+  useEffect(() => {
+    if (normalCommentUpdateError) {
+      return message.error(normalCommentUpdateError);
+    }
+  }, [normalCommentUpdateError]);
+
+  // NORMAL COMMENT DELETE USEEFFECT
+  useEffect(() => {
+    if (normalCommentDeleteDone) {
+      dispatch({
+        type: NORMAL_NOTICE_DETAIL_REQUEST,
+        data: {
+          NormalNoticeId: noticeDetailData.noticeId,
+        },
+      });
+
+      dispatch({
+        type: NORMAL_COMMENT_LIST_REQUEST,
+        data: {
+          normalNoticeId: noticeDetailData.noticeId,
+          commentId: grandData,
+        },
+      });
+
+      // if (currentData) {
+      //   openRecommentToggle(null);
+      //   setCurrentData(null);
+      // }
+
+      // commentForm.resetFields();
+
+      return message.success("댓글이 삭제되었습니다.");
+    }
+  }, [normalCommentDeleteDone]);
+
+  useEffect(() => {
+    if (normalCommentDeleteError) {
+      return message.error(normalCommentDeleteError);
+    }
+  }, [normalCommentDeleteError]);
+
   useEffect(() => {
     if (updateData) {
       setTimeout(() => {
@@ -510,14 +680,6 @@ const AdminHome = () => {
       },
     });
   }, [currentPage2]);
-
-  // useEffect(() => {
-  //   if (me) {
-  //     moveLinkHandler(`/admin?login=true`);
-  //   } else {
-  //     moveLinkHandler(`/admin?login=false`);
-  //   }
-  // }, [me])
 
   useEffect(() => {
     setCurrentTeacher(router.query.teacher);
@@ -600,6 +762,18 @@ const AdminHome = () => {
     ]
   );
 
+  const openRecommentToggle = useCallback(
+    (data) => {
+      if (data) {
+        setCurrentData(data);
+      } else {
+        setCurrentData(null);
+      }
+      setRepleToggle(!repleToggle);
+    },
+    [repleToggle, currentData]
+  );
+
   ////// HANDLER ///////
 
   const normalNoticeTypeChangeHandler = useCallback(
@@ -640,18 +814,28 @@ const AdminHome = () => {
     });
   }, []);
 
-  const fileUploadClick = useCallback(() => {
-    fileRef.current.click();
-  }, [fileRef.current]);
-
   const noticeModalToggle = useCallback(
     (data) => {
       setNoticeDetailData(data);
+      if (data) {
+        dispatch({
+          type: NORMAL_NOTICE_DETAIL_REQUEST,
+          data: {
+            NormalNoticeId: data.noticeId,
+          },
+        });
+      }
       dispatch({
         type: NORMAL_NOTICE_DETAIL_MODAL_TOGGLE,
       });
     },
-    [noticeDetailData, normalNoticeDetailModal]
+    [
+      noticeDetailData,
+      normalNoticeDetailModal,
+      normalNoticeDetailData,
+      normalComments,
+      normalCommentsLen,
+    ]
   );
 
   const messageModalToggle = useCallback((data) => {
@@ -721,10 +905,6 @@ const AdminHome = () => {
 
   const updateModalOk = useCallback(() => {
     formRef.current.submit();
-  }, []);
-
-  const comboChangeHandler = useCallback((e) => {
-    setCurrentSort(e);
   }, []);
 
   const deleteClassHandler = useCallback(() => {
@@ -937,11 +1117,11 @@ const AdminHome = () => {
           title: data.title,
           content: contentData,
           author: normalNoticeUpdateData.noticeAuthor,
-          file: uploadPath,
+          file: normalNoticeFilePath,
         },
       });
     },
-    [normalNoticeUpdateData, uploadPath, contentData]
+    [normalNoticeUpdateData, uploadPath, contentData, normalNoticeFilePath]
   );
   // 일반게시판 삭제
   const normalNoticeAdminDelete = useCallback(
@@ -974,8 +1154,131 @@ const AdminHome = () => {
     [contentData]
   );
 
+  // 일반 게시판 파일 업로드
+  const normalNoticeFileUploadHandler = useCallback((e) => {
+    const formData = new FormData();
+    filename.setValue(e.target.files[0].name);
+
+    [].forEach.call(e.target.files, (file) => {
+      formData.append("file", file);
+    });
+
+    dispatch({
+      type: NORMAL_FILE_UPLOAD_REQUEST,
+      data: formData,
+    });
+  }, []);
+
+  // 일반 게시판 파일 업로드
+  const normalNoticeFileClickHandler = useCallback(() => {
+    normalNoticeFileRef.current.click();
+  }, [normalNoticeFileRef.current]);
+
+  //   댓글 작성
+  const commentSubmit = useCallback(
+    (data) => {
+      dispatch({
+        type: NORMAL_COMMENT_CREATE_REQUEST,
+        data: {
+          content: data.comment,
+          normalNoticeId: normalNoticeDetailData.noticeId,
+          parentId: null,
+          grantparentId: null,
+        },
+      });
+    },
+    [normalNoticeDetailData]
+  );
+
+  //   대댓글 작성
+  const childCommentSubmit = useCallback(
+    (data) => {
+      if (currentData) {
+        dispatch({
+          type: NORMAL_COMMENT_CREATE_REQUEST,
+          data: {
+            content: data.comment,
+            normalNoticeId: normalNoticeDetailData.noticeId,
+            parentId: currentData.id,
+            grantparentId:
+              currentData.parent === 0 ? currentData.id : grandData,
+          },
+        });
+      }
+    },
+    [normalNoticeDetailData, currentData, grandData]
+  );
+
+  // 대댓글 뷰
+  const getCommentHandler = useCallback(
+    (id) => {
+      setCocommentToggle(true);
+      setGrandData(id);
+      dispatch({
+        type: NORMAL_COMMENT_LIST_REQUEST,
+        data: {
+          normalNoticeId: normalNoticeDetailData.noticeId,
+          commentId: id,
+        },
+      });
+    },
+    [normalNoticeDetailData]
+  );
+
+  const updateCommentFormSubmit = useCallback(() => {
+    updateCommentForm.submit();
+  }, []);
+
+  const updateCommentFormFinish = useCallback(
+    (data) => {
+      dispatch({
+        type: NORMAL_COMMENT_UPDATE_REQUEST,
+        data: {
+          id: updateCommentData.id,
+          content: data.content,
+        },
+      });
+    },
+    [updateCommentData]
+  );
+
+  const deleteCommentHandler = useCallback((data) => {
+    dispatch({
+      type: NORMAL_COMMENT_DELETE_REQUEST,
+      data: {
+        commentId: data.id,
+      },
+    });
+  }, []);
+
+  const updateCommentToggle = useCallback(
+    (data, isV) => {
+      setCommentUpdateModal((prev) => !prev);
+      setUpdateCommentData(data);
+
+      if (normalNoticeDetailData) {
+        setTimeout(() => {
+          commentOnFill(data, isV);
+        }, 500);
+      }
+    },
+    [commentUpdateModal, updateCommentData]
+  );
+
+  const commentOnFill = useCallback((data, isV) => {
+    if (isV) {
+      updateCommentForm.setFieldsValue({
+        content: data.content.split(`ㄴ`)[1],
+      });
+    } else {
+      updateCommentForm.setFieldsValue({
+        content: data.content,
+      });
+    }
+  }, []);
+
   //  NORMAL_NOTICE_COLUMN
-  const normalNoticeColumn = [
+  const normalNoticeAdminColumn = [
     {
       title: "번호",
       width: `5%`,
@@ -1048,35 +1351,43 @@ const AdminHome = () => {
     },
   ];
 
-  const columns = [
+  const normalNoticeColumn = [
     {
       title: "번호",
-      dataIndex: "id",
+      width: `5%`,
+      dataIndex: "noticeId",
     },
     {
       title: "제목",
+      width: `50%`,
       render: (data) => {
         return (
           <Text
-            width={`250px`}
-            isEllipsis
+            width={`100%`}
             cursor={`pointer`}
-            onClick={() => messageModalToggle(data)}
+            onClick={() => noticeModalToggle(data)}
+            isEllipsis
           >
-            {data.title}
+            {data.noticeTitle}
           </Text>
         );
       },
     },
-
     {
       title: "작성자",
-      dataIndex: "author",
+      width: `15%`,
+      dataIndex: "noticeAuthor",
+    },
+    {
+      title: "조회수",
+      width: `15%`,
+      dataIndex: "noticeHit",
     },
 
     {
       title: "생성일",
-      render: (data) => <div>{data.createdAt.substring(0, 14)}</div>,
+      width: `15%`,
+      dataIndex: "noticeCreatedAt",
     },
   ];
 
@@ -1088,19 +1399,6 @@ const AdminHome = () => {
     "학생 및 강사 전체",
   ];
 
-  const fileChangeHandler = useCallback((e) => {
-    const formData = new FormData();
-    filename.setValue(e.target.files[0].name);
-
-    [].forEach.call(e.target.files, (file) => {
-      formData.append("file", file);
-    });
-
-    dispatch({
-      type: NOTICE_UPLOAD_REQUEST,
-      data: formData,
-    });
-  }, []);
   return (
     <>
       {me && me.level >= 3 ? (
@@ -1185,7 +1483,11 @@ const AdminHome = () => {
                     normalNoticeAdminList ? normalNoticeAdminList : []
                   }
                   size="small"
-                  columns={normalNoticeColumn}
+                  columns={
+                    normalNoticeListType === 3
+                      ? normalNoticeAdminColumn
+                      : normalNoticeColumn
+                  }
                   style={{ width: `100%` }}
                   pagination={{
                     pageSize: 5,
@@ -1862,7 +2164,6 @@ const AdminHome = () => {
               </Wrapper>
             </Form>
           </Modal>
-          {console.log(noticeDetailData)}
           {/* NOTICE MODAL */}
           <Modal
             width={`1000px`}
@@ -1891,12 +2192,14 @@ const AdminHome = () => {
               <Text margin={`0 10px 0 0`} fontSize={`15px`}>
                 첨부파일
               </Text>
-              {noticeDetailData && noticeDetailData.file ? (
+              {noticeDetailData && noticeDetailData.noticeFile ? (
                 <CommonButton
                   size={`small`}
                   radius={`5px`}
                   fontSize={`14px`}
-                  onClick={() => fileDownloadHandler(noticeDetailData.file)}
+                  onClick={() =>
+                    fileDownloadHandler(noticeDetailData.noticeFile)
+                  }
                 >
                   다운로드
                 </CommonButton>
@@ -1922,11 +2225,269 @@ const AdminHome = () => {
                 padding={`10px`}
                 fontSize={width < 700 ? `14px` : `16px`}
                 al={`flex-start`}
+                ju={`flex-start`}
+                minHeight={`300px`}
                 dangerouslySetInnerHTML={{
                   __html: noticeDetailData.noticeContent,
                 }}
               />
             )}
+            {/* 
+normalNoticeDetailData
+normalComments
+normalCommentsLen */}
+            <FormTag form={commentForm} onFinish={commentSubmit}>
+              <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 50px`}>
+                <Text
+                  fontSize={width < 900 ? `15px` : `18px`}
+                  color={Theme.red_C}
+                  fontWeight={`700`}
+                  margin={`0 0 10px`}
+                >
+                  댓글&nbsp;{normalCommentsLen}
+                </Text>
+                <FormItem
+                  width={`100%`}
+                  name={`comment`}
+                  rules={[{ required: true, message: "댓글을 입력해주세요." }]}
+                >
+                  <TextArea
+                    width={`100%`}
+                    height={`115px`}
+                    placeholder={`댓글을 입력해주세요.`}
+                  />
+                </FormItem>
+                <Wrapper al={`flex-end`}>
+                  <CommonButton
+                    htmlType={`submit`}
+                    width={`100px`}
+                    height={`35px`}
+                    fontSize={`18px`}
+                    padding={`0`}
+                  >
+                    작성
+                  </CommonButton>
+                </Wrapper>
+              </Wrapper>
+            </FormTag>
+
+            {/* 댓글 */}
+
+            {normalComments &&
+              (normalComments.length === 0 ? (
+                <Wrapper>
+                  <Empty description={`댓글이 없습니다.`} />
+                </Wrapper>
+              ) : (
+                normalComments.map((data) => {
+                  return (
+                    <>
+                      <Wrapper
+                        al={`flex-start`}
+                        padding={`30px 10px`}
+                        borderTop={`1px solid ${Theme.lightGrey3_C}`}
+                        borderBottom={`1px solid ${Theme.lightGrey3_C}`}
+                        cursor={`pointer`}
+                        key={data.id}
+                      >
+                        <Wrapper
+                          dr={`row`}
+                          ju={`space-between`}
+                          al={width < 900 ? `center` : `flex-start`}
+                          margin={`0 0 13px`}
+                        >
+                          <Text
+                            fontSize={width < 900 ? `15px` : `18px`}
+                            fontWeight={`700`}
+                          >
+                            {data.name}(
+                            {data.level === 1
+                              ? "student"
+                              : data.level === 2
+                              ? "teacher"
+                              : "admin"}
+                            )
+                            <SpanText
+                              fontSize={width < 900 ? `13px` : `16px`}
+                              fontWeight={`400`}
+                              color={Theme.grey2_C}
+                              margin={`0 0 0 15px`}
+                            >
+                              {moment(data.createdAt).format("YYYY-MM-DD")}
+                            </SpanText>
+                          </Text>
+
+                          <Wrapper width={`auto`} al={`flex-end`}>
+                            <Wrapper
+                              dr={`row`}
+                              width={`auto`}
+                              margin={`0 0 10px`}
+                            >
+                              {data.commentCnt !== 0 && (
+                                <HoverText
+                                  onClick={() => getCommentHandler(data.id)}
+                                >
+                                  모든 댓글 +
+                                </HoverText>
+                              )}
+                              {me && (
+                                <CommonButton
+                                  padding={`0 10px`}
+                                  kindOf={`black`}
+                                  margin={`0 0 0 10px`}
+                                  fontSize={`14px`}
+                                  onClick={() => openRecommentToggle(data)}
+                                >
+                                  대댓글 작성
+                                </CommonButton>
+                              )}
+                            </Wrapper>
+                            {me && data.UserId === me.id && (
+                              <Wrapper dr={`row`} width={`auto`}>
+                                <HoverText
+                                  color={Theme.basicTheme_C}
+                                  onClick={() => updateCommentToggle(data)}
+                                >
+                                  수정
+                                </HoverText>
+                                &nbsp;|&nbsp;
+                                <Popconfirm
+                                  placement="bottomRight"
+                                  title={`삭제하시겠습니까?`}
+                                  okText="Delete"
+                                  cancelText="Cancel"
+                                  onConfirm={() => deleteCommentHandler(data)}
+                                >
+                                  <HoverText color={Theme.red_C}>
+                                    삭제
+                                  </HoverText>
+                                </Popconfirm>
+                              </Wrapper>
+                            )}
+                          </Wrapper>
+                        </Wrapper>
+                        {data.content}
+                      </Wrapper>
+
+                      {/* 대댓글 영역 */}
+                      {normalCommentList &&
+                        normalCommentList.length > 0 &&
+                        normalCommentList[0].id === data.id &&
+                        normalCommentList.slice(1).map((v) => {
+                          return (
+                            <Wrapper
+                              key={v.id}
+                              padding={
+                                width < 900
+                                  ? `10px 0 10px ${v.lev * 5}px`
+                                  : `30px 0 30px ${v.lev * 15}px`
+                              }
+                              al={`flex-start`}
+                              borderTop={`1px solid ${Theme.lightGrey_C}`}
+                              bgColor={
+                                v.lev === 2
+                                  ? Theme.lightGrey4_C
+                                  : Theme.lightGrey2_C
+                              }
+                            >
+                              <Wrapper
+                                dr={`row`}
+                                ju={`space-between`}
+                                margin={`0 0 10px`}
+                                width={`calc(100% - 15px)`}
+                              >
+                                <Wrapper
+                                  dr={`row`}
+                                  ju={`flex-start`}
+                                  width={`auto`}
+                                >
+                                  <Wrapper
+                                    width={`auto`}
+                                    margin={`0 10px 0 0`}
+                                    al={`flex-start`}
+                                  >
+                                    <Wrapper
+                                      width={`1px`}
+                                      height={`15px`}
+                                      bgColor={Theme.darkGrey_C}
+                                    ></Wrapper>
+                                    <Icon width={`${v.lev * 10}px`}></Icon>
+                                  </Wrapper>
+                                  <Text
+                                    fontSize={width < 900 ? `15px` : `18px`}
+                                    fontWeight={`700`}
+                                  >
+                                    {v.name}(
+                                    {v.level === 1
+                                      ? "student"
+                                      : v.level === 2
+                                      ? "teacher"
+                                      : "admin"}
+                                    )
+                                  </Text>
+                                  <Text
+                                    fontSize={width < 900 ? `13px` : `16px`}
+                                    margin={`0 15px`}
+                                    color={Theme.grey2_C}
+                                  >
+                                    {moment(v.createdAt).format("YYYY-MM-DD")}
+                                  </Text>
+                                </Wrapper>
+                                <Wrapper width={`auto`} al={`flex-end`}>
+                                  {me && (
+                                    <HoverText
+                                      margin={`0 0 10px`}
+                                      onClick={() => openRecommentToggle(v)}
+                                    >
+                                      대댓글 작성
+                                    </HoverText>
+                                  )}
+
+                                  {v.isDelete === 0 &&
+                                    me &&
+                                    v.UserId === me.id && (
+                                      <Wrapper dr={`row`} width={`auto`}>
+                                        <HoverText
+                                          onClick={() =>
+                                            updateCommentToggle(v, true)
+                                          }
+                                        >
+                                          수정
+                                        </HoverText>
+                                        &nbsp;|&nbsp;
+                                        <Popconfirm
+                                          placement="bottomRight"
+                                          title={`삭제하시겠습니까?`}
+                                          okText="Delete"
+                                          cancelText="Cancel"
+                                          onConfirm={() =>
+                                            deleteCommentHandler(v)
+                                          }
+                                        >
+                                          <HoverText>삭제</HoverText>
+                                        </Popconfirm>
+                                      </Wrapper>
+                                    )}
+                                </Wrapper>
+                              </Wrapper>
+
+                              <Wrapper
+                                al={`flex-start`}
+                                margin={`0 0 15px 15px`}
+                              >
+                                {v.isDelete === 1 ? (
+                                  <Text>삭제된 댓글입니다.</Text>
+                                ) : (
+                                  <Text>{v.content.split("ㄴ")[1]}</Text>
+                                )}
+                              </Wrapper>
+                            </Wrapper>
+                          );
+                        })}
+                    </>
+                  );
+                })
+              ))}
           </Modal>
 
           {/* NORMAL NOTICE MODAL */}
@@ -2042,17 +2603,21 @@ const AdminHome = () => {
                     type="file"
                     name="file"
                     hidden
-                    ref={fileRef}
-                    onChange={fileChangeHandler}
+                    ref={normalNoticeFileRef}
+                    onChange={normalNoticeFileUploadHandler}
                   />
                   <Text margin={`0 10px 0 0`}>
-                    {updateData
+                    {normalNoticeUpdateData && normalNoticeUpdateData.noticeFile
                       ? `첨부파일`
                       : filename.value
                       ? filename.value
                       : `파일을 선택해주세요.`}
                   </Text>
-                  <Button size="small" type="primary" onClick={fileUploadClick}>
+                  <Button
+                    size="small"
+                    type="primary"
+                    onClick={normalNoticeFileClickHandler}
+                  >
                     FILE UPLOAD
                   </Button>
                 </FileBox>
@@ -2060,6 +2625,73 @@ const AdminHome = () => {
             </Wrapper>
           </Modal>
           {/* NORMAL NOTICE MODAL END */}
+          {/* 댓글 수정 */}
+          <Modal
+            width={`700px`}
+            title={`댓글 수정`}
+            visible={commentUpdateModal}
+            onCancel={updateCommentToggle}
+            onOk={updateCommentFormSubmit}
+            okText="수정"
+            cancelText="취소"
+          >
+            <FormTag
+              form={updateCommentForm}
+              onFinish={updateCommentFormFinish}
+            >
+              <FormItem
+                width={`100%`}
+                label={`댓글 내용`}
+                name={`content`}
+                rules={[{ required: true, message: "본문을 입력해 주세요." }]}
+              >
+                <TextArea width={`100%`} />
+              </FormItem>
+            </FormTag>
+          </Modal>
+
+          {/* 대댓글 작성 */}
+          <Modal
+            width={`800px`}
+            title="대댓글 작성"
+            footer={null}
+            visible={repleToggle}
+            onCancel={() => openRecommentToggle(null)}
+            onOk={() => openRecommentToggle(null)}
+          >
+            {currentData && (
+              <Wrapper padding={`10px`}>
+                <FormItem label="대댓글">
+                  <Text>
+                    {currentData.isDelete === 1
+                      ? "삭제된 댓글입니다."
+                      : currentData.parent === 0
+                      ? currentData.content
+                      : currentData.content.split("ㄴ")[1]}
+                  </Text>
+                </FormItem>
+
+                <FormTag form={childCommentForm} onFinish={childCommentSubmit}>
+                  <FormItem label="댓글" name={`comment`}>
+                    <TextArea
+                      width={`100%`}
+                      height={`115px`}
+                      placeholder="댓글을 입력해주세요."
+                    />
+                  </FormItem>
+                  <Wrapper al={`flex-end`}>
+                    <CommonButton
+                      htmlType={`submit`}
+                      width={`140px`}
+                      height={`50px`}
+                    >
+                      작성
+                    </CommonButton>
+                  </Wrapper>
+                </FormTag>
+              </Wrapper>
+            )}
+          </Modal>
         </AdminLayout>
       ) : (
         <>
