@@ -74,6 +74,7 @@ import {
   LECTURE_MEMO_UDPATE_REQUEST,
 } from "../../../reducers/lectureMemo";
 import { PRICE_UPDATE_REQUEST } from "../../../reducers/payment";
+import ClassNotice from "../../../components/admin/ClassNotice";
 
 const CustomTextArea = styled(Input.TextArea)`
   width: ${(props) => props.width || `250px`};
@@ -1800,18 +1801,7 @@ const DetailClass = () => {
             >
               강의 목록
             </CommonButton>
-            <CommonButton
-              radius={`5px`}
-              width={`130px`}
-              margin={`0 6px`}
-              kindOf={`white`}
-              padding={`0`}
-              onClick={() =>
-                moveLinkHandler(`/admin/board/notice/${router.query.id}`)
-              }
-            >
-              게시판
-            </CommonButton>
+
             <CommonButton
               radius={`5px`}
               width={`130px`}
@@ -1982,49 +1972,14 @@ const DetailClass = () => {
           dataSource={lectureDiaryAdminList}
         />
 
-        <Wrapper
-          dr={`row`}
-          ju={`space-between`}
-          al={`flex-start`}
-          margin={`30px 0 0`}
-        >
-          <Wrapper width={`100%`} al={`flex-start`}>
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              게시판
-            </Text>
+        <Wrapper width={`100%`} al={`flex-start`}>
+          <Text fontSize={`18px`} fontWeight={`bold`}>
+            게시판
+          </Text>
 
-            <Table
-              columns={noticeColumns}
-              style={{ width: `100%` }}
-              dataSource={noticeLectureList ? noticeLectureList : []}
-              pagination={{
-                defaultCurrent: 1,
-                current: parseInt(currentNoticePage),
-                onChange: (page) => setCurrentNoticePage(page),
-                total: noticeLectureLastPage * 10,
-              }}
-              size={`small`}
-            />
-          </Wrapper>
-          {/* <Wrapper width={`49%`} al={`flex-start`}>
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              쪽지
-            </Text>
-
-            <Table
-              size={`small`}
-              columns={messageColumns}
-              style={{ width: `100%` }}
-              dataSource={messageLectureList ? messageLectureList : []}
-              pagination={{
-                defaultCurrent: 1,
-                current: parseInt(currentMessagePage),
-                onChange: (page) => setCurrentMessagePage(page),
-                total: messageLectureLastPage * 10,
-              }}
-            />
-          </Wrapper> */}
+          <ClassNotice />
         </Wrapper>
+
         <Wrapper dr={`row`} ju={`flex-start`}>
           <Text fontSize={`18px`} fontWeight={`bold`}>
             강의 메모
