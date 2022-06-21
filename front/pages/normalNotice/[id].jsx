@@ -639,6 +639,7 @@ const NormalNoticeDetail = () => {
                   ju={`flex-start`}
                   color={Theme.black_2C}
                   minHeight={`120px`}
+                  padding={`10px`}
                 >
                   <WordbreakText
                     al={`flex-start`}
@@ -663,6 +664,7 @@ const NormalNoticeDetail = () => {
                   ju={`flex-start`}
                   color={Theme.black_2C}
                   minHeight={`120px`}
+                  padding={`10px`}
                 >
                   <WordbreakText
                     al={`flex-start`}

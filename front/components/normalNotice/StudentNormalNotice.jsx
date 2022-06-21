@@ -428,7 +428,7 @@ const StudentNormalNotice = () => {
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`Bold`}
-              width={width < 800 ? `35%` : `60%`}
+              width={width < 800 ? `35%` : `58%`}
             >
               Title
             </Text>
@@ -442,7 +442,7 @@ const StudentNormalNotice = () => {
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`Bold`}
-              width={width < 800 ? `15%` : `10%`}
+              width={width < 800 ? `15%` : `12%`}
             >
               Update&nbsp;|&nbsp;Delete
             </Text>
@@ -498,7 +498,7 @@ const StudentNormalNotice = () => {
                     </Text>
                     <Text
                       fontSize={width < 700 ? `14px` : `16px`}
-                      width={width < 800 ? `35%` : `60%`}
+                      width={width < 800 ? `35%` : `58%`}
                       onClick={() =>
                         moveLinkHandler(
                           `/normalNotice/${data.noticeId}?type=stu`
@@ -520,11 +520,12 @@ const StudentNormalNotice = () => {
                     >
                       {data.noticeAuthor}
                     </Text>
-                    <Wrapper width={width < 800 ? `15%` : `10%`}>
+                    <Wrapper width={width < 800 ? `15%` : `12%`}>
                       {me && me.id === data.writeUserId ? (
-                        <>
+                        <Wrapper dr={`row`}>
                           <CommonButton
-                            width={`100%`}
+                            width={`50%`}
+                            fontSize={`13px`}
                             onClick={() => normalNoticeUpdateModalToggle(data)}
                             loading={normalNoticeUpdateLoading}
                           >
@@ -538,11 +539,15 @@ const StudentNormalNotice = () => {
                             onConfirm={() => normalNoticeDelete(data)}
                             loading={normalNoticeDeleteLoading}
                           >
-                            <CommonButton width={`100%`} kindOf={`delete`}>
+                            <CommonButton
+                              width={`50%`}
+                              fontSize={`13px`}
+                              kindOf={`delete`}
+                            >
                               Delete
                             </CommonButton>
                           </Popconfirm>
-                        </>
+                        </Wrapper>
                       ) : (
                         <Text>You do not have permission.</Text>
                       )}

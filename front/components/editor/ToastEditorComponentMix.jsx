@@ -23,6 +23,16 @@ const EditorWrapper = styled(Wrapper)`
   & > div {
     height: 300px !important;
   }
+
+  @media (max-width: 900px) {
+    & > div {
+      width: 100%;
+    }
+
+    & > div {
+      height: 300px !important;
+    }
+  }
 `;
 
 const Editor = dynamic(() => import("./WrappedEditor"), { ssr: false });

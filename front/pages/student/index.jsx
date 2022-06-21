@@ -163,18 +163,18 @@ const GuideWrapper = styled.section`
   margin-bottom: 10px;
 
   border-radius: 3px;
-  background-color: #eeeeee;
+  background-color: rgb(238, 238, 238);
 `;
 
 const GuideText = styled.div`
   font-size: 13.5px;
-  color: #5e5e5e;
+  color: rgb(94, 94, 94);
   font-weight: 700;
 `;
 
 const PreviewGuide = styled.p`
   font-weight: 700;
-  color: #b1b1b1;
+  color: rgb(177, 177, 177);
 `;
 
 const CustomSlide = styled(Slider)`
@@ -243,28 +243,6 @@ const CustomPage = styled(Pagination)`
   }
 `;
 
-const CustomTableHoverWrapper = styled(Wrapper)`
-  flex-direction: row;
-  text-align: center;
-  height: 80px;
-  font-size: 16px;
-  border-bottom: 1px solid ${Theme.grey_C};
-  background-color: ${Theme.white_C};
-  cursor: pointer;
-  &:hover {
-    background-color: ${Theme.lightGrey_C};
-  }
-
-  @media (max-width: 800px) {
-    font-size: 14px;
-  }
-`;
-
-const WordbreakText = styled(Text)`
-  width: 100%;
-  word-wrap: break-all;
-`;
-
 const CustomModal = styled(Modal)`
   & .ant-modal-header,
   & .ant-modal-content {
@@ -291,40 +269,6 @@ const CustomForm = styled(Form)`
   & .ant-form-item {
     width: 100%;
   }
-`;
-
-const MessageSelectButton = styled(Button)`
-  width: 120px;
-  height: 40px;
-
-  @media (max-width: 800px) {
-    width: 90px;
-    height: 30px;
-    line-height: 30px;
-    font-size: 12px;
-  }
-  background-color: ${Theme.basicTheme_C};
-  border: 1px solid ${Theme.white_C};
-  color: ${Theme.white_C};
-  border-radius: 5px;
-  font-size: 16px;
-  font-weight: bold;
-  line-height: 40px;
-  margin: ${(props) => props.margin};
-  &.active {
-    background-color: ${Theme.white_C};
-    border: 1px solid ${Theme.white_C};
-    color: ${Theme.black_C};
-  }
-  &:hover {
-    background-color: ${Theme.white_C};
-    border: 1px solid ${Theme.white_C};
-    color: ${Theme.black_C};
-  }
-`;
-
-const MessageModalSelect = styled(Select)`
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
 `;
 
 const Student = () => {
@@ -1047,7 +991,7 @@ const Student = () => {
         />
       </Head>
       <ClientLayout>
-        <WholeWrapper margin={width < 900 ? `52px 0 0` : `100px 0 0`}>
+        <WholeWrapper margin={width < 900 ? `52px 0` : `100px 0`}>
           {/* 상단배너 */}
 
           <Wrapper

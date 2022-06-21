@@ -426,7 +426,7 @@ const TeacherNormalNotice = () => {
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`Bold`}
-              width={width < 800 ? `40%` : `60%`}
+              width={width < 800 ? `40%` : `58%`}
             >
               제목
             </Text>
@@ -440,7 +440,7 @@ const TeacherNormalNotice = () => {
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`Bold`}
-              width={width < 800 ? `12%` : `10%`}
+              width={width < 800 ? `12%` : `12%`}
             >
               기능
             </Text>
@@ -496,7 +496,7 @@ const TeacherNormalNotice = () => {
                     </Text>
                     <Text
                       fontSize={width < 700 ? `14px` : `16px`}
-                      width={width < 800 ? `40%` : `60%`}
+                      width={width < 800 ? `40%` : `58%`}
                       onClick={() =>
                         moveLinkHandler(
                           `/normalNotice/${data.noticeId}?type=teacher`
@@ -518,11 +518,12 @@ const TeacherNormalNotice = () => {
                     >
                       {data.noticeAuthor}
                     </Text>
-                    <Wrapper width={width < 800 ? `12%` : `10%`}>
+                    <Wrapper width={width < 800 ? `12%` : `12%`}>
                       {me.id === data.writeUserId ? (
-                        <>
+                        <Wrapper dr={`row`}>
                           <CommonButton
-                            width={`100%`}
+                            width={`50%`}
+                            fontSize={`13px`}
                             onClick={() => normalNoticeUpdateModalToggle(data)}
                             loading={normalNoticeUpdateLoading}
                           >
@@ -536,11 +537,15 @@ const TeacherNormalNotice = () => {
                             onConfirm={() => normalNoticeDelete(data)}
                             loading={normalNoticeDeleteLoading}
                           >
-                            <CommonButton width={`100%`} kindOf={`delete`}>
+                            <CommonButton
+                              width={`50%`}
+                              fontSize={`13px`}
+                              kindOf={`delete`}
+                            >
                               삭제
                             </CommonButton>
                           </Popconfirm>
-                        </>
+                        </Wrapper>
                       ) : (
                         <Text>권한이 없습니다.</Text>
                       )}

@@ -73,6 +73,7 @@ const FormItem = styled(Form.Item)`
 const WordbreakText = styled(Wrapper)`
   width: 100%;
   word-wrap: break-all;
+
   & img {
     max-width: 100%;
   }
@@ -621,6 +622,7 @@ const Classboard = () => {
                   ju={`flex-start`}
                   color={Theme.black_2C}
                   minHeight={`120px`}
+                  padding={`10px`}
                 >
                   <WordbreakText
                     al={`flex-start`}
@@ -645,6 +647,7 @@ const Classboard = () => {
                   ju={`flex-start`}
                   color={Theme.black_2C}
                   minHeight={`120px`}
+                  padding={`10px`}
                 >
                   <WordbreakText
                     al={`flex-start`}
