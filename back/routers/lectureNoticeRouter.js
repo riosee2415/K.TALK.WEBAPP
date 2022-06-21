@@ -342,6 +342,118 @@ router.post("/detail", isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.post("/admin/detail", isAdminCheck, async (req, res, next) => {
+  const { LectureNoticeId } = req.body;
+
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
+  try {
+    const exLecture = await LectureNotice.findOne({
+      where: { id: parseInt(LectureNoticeId) },
+    });
+
+    if (!exLecture) {
+      return res.status(401).send("존재하지 않는 강의 게시글 입니다.");
+    }
+
+    if (exLecture.isDelete) {
+      return res
+        .status(401)
+        .send("삭제된 강의 게시글입니다. 확인 후 다시 시도하여 주십시오.");
+    }
+
+    const detailQuery = `
+    SELECT	A.LectureNoticeId			                        AS connectNoticeId,
+            A.UserId 					                            AS connectUserId,
+            B.title,
+            B.id					                                AS noticeId,
+            B.title 				                              AS noticeTitle,
+            B.content 			                              AS noticeContent,
+            B.author 				                              AS noticeAuthor,
+            B.level 				                              AS noticeLevel,
+            B.file 					                              AS noticeFile,
+            B.hit 					                              AS noticeHit,
+            DATE_FORMAT(B.createdAt, "%Y-%m-%d")	        AS noticeCreatedAt,
+            B.UserId 				                              AS writeUserId,
+            C.id                                          AS lectureId,
+            C.number				                              AS lectureNumber,
+            C.course				                              AS lectureName
+      FROM	lectureConnects				A
+     INNER
+      JOIN	lectureNotices 				B
+        ON	A.LectureNoticeId = B.id
+     INNER
+      JOIN	lectures					    C
+        ON	B.LectureId = C.id
+     WHERE	1 = 1
+       AND  B.id = ${LectureNoticeId}
+       AND  B.isDelete = FALSE
+       AND	C.isDelete = FALSE
+    `;
+
+    const detailData = await models.sequelize.query(detailQuery);
+
+    if (detailData[0].length === 0) {
+      return res.status(401).send("존재하지 않는 게시글입니다.");
+    }
+
+    const commentQuery = `
+    SELECT	A.id,
+            A.content,
+            A.isDelete,
+            A.deletedAt,
+            A.parent,
+            A.parentId,
+            DATE_FORMAT(A.createdAt, '%Y-%m-%d')  AS createdAt,
+            DATE_FORMAT(A.updatedAt, '%Y-%m-%d')  AS updatedAt,
+            A.LectureNoticeId,
+            A.grantparentId,
+            A.UserId,
+            A.name,
+            A.level,
+            (
+              SELECT	COUNT(lc.id)
+                FROM	lectureNoticeComments	lc
+               WHERE	lc.grantparentId = A.id
+                 AND    lc.isDelete = FALSE
+            )   AS commentCnt
+      FROM	lectureNoticeComments		A
+     WHERE	A.isDelete = FALSE
+       AND	A.parentId  IS NULL
+       AND  A.LectureNoticeId = ${LectureNoticeId}
+     ORDER  BY A.createdAt DESC
+    `;
+
+    const comments = await models.sequelize.query(commentQuery);
+
+    const commentsLen = await LectureNoticeComment.findAll({
+      where: { isDelete: false, LectureNoticeId: parseInt(LectureNoticeId) },
+    });
+
+    const nextHit = detailData[0][0].noticeHit;
+
+    await LectureNotice.update(
+      {
+        hit: nextHit + 1,
+      },
+      {
+        where: { id: parseInt(LectureNoticeId) },
+      }
+    );
+
+    return res.status(200).json({
+      detailData: detailData[0][0],
+      comments: comments[0],
+      commentsLen: commentsLen.length,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("강의실 게시판 목록을 불러올 수 없습니다.");
+  }
+});
+
 router.post("/create", isLoggedIn, async (req, res, next) => {
   const { title, content, author, level, LectureId, receiverId, file } =
     req.body;
