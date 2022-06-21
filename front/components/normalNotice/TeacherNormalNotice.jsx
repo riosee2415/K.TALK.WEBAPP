@@ -13,12 +13,25 @@ import { END } from "redux-saga";
 import wrapper from "../../store/configureStore";
 import {
   NORMAL_FILE_UPLOAD_REQUEST,
+  NORMAL_NOTICE_DELETE_REQUEST,
+  NORMAL_NOTICE_EDITOR_RENDER,
   NORMAL_NOTICE_LIST_REQUEST,
   NORMAL_NOTICE_MODAL_TOGGLE,
   NORMAL_NOTICE_TEACHER_CREATE_REQUEST,
+  NORMAL_NOTICE_UPDATE_REQUEST,
 } from "../../reducers/normalNotice";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Form, Input, message, Modal, Pagination, Select } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Modal,
+  Pagination,
+  Popconfirm,
+  Select,
+  Spin,
+} from "antd";
 import styled from "styled-components";
 import Theme from "../Theme";
 import useWidth from "../../hooks/useWidth";
@@ -118,6 +131,14 @@ const TeacherNormalNotice = () => {
     normalNoticeTeacherCreateLoading,
     normalNoticeTeacherCreateDone,
     normalNoticeTeacherCreateError,
+    //
+    normalNoticeUpdateLoading,
+    normalNoticeUpdateDone,
+    normalNoticeUpdateError,
+    //
+    normalNoticeDeleteLoading,
+    normalNoticeDeleteDone,
+    normalNoticeDeleteError,
   } = useSelector((state) => state.normalNotice);
 
   ////// HOOKS //////
@@ -146,6 +167,7 @@ const TeacherNormalNotice = () => {
     }
   }, [normalNoticeListError]);
 
+  // CREATE EFFECT
   useEffect(() => {
     if (normalNoticeTeacherCreateDone) {
       dispatch({
@@ -155,7 +177,7 @@ const TeacherNormalNotice = () => {
         },
       });
 
-      normalNoticeModalToggle();
+      normalNoticeCreateModalToggle();
 
       return message.success("일반게시판이 작성됬습니다.");
     }
@@ -167,9 +189,57 @@ const TeacherNormalNotice = () => {
     }
   }, [normalNoticeTeacherCreateError]);
 
+  // UPDATE EFFECT
+  useEffect(() => {
+    if (normalNoticeUpdateDone) {
+      dispatch({
+        type: NORMAL_NOTICE_LIST_REQUEST,
+        data: {
+          page: currentPage,
+        },
+      });
+
+      normalNoticeUpdateModalToggle(null);
+
+      return message.success("일반게시판이 수정됬습니다.");
+    }
+  }, [normalNoticeUpdateDone]);
+
+  useEffect(() => {
+    if (normalNoticeUpdateError) {
+      return message.error(normalNoticeUpdateError);
+    }
+  }, [normalNoticeUpdateError]);
+
+  // DELETE EFFECT
+  useEffect(() => {
+    if (normalNoticeDeleteDone) {
+      dispatch({
+        type: NORMAL_NOTICE_LIST_REQUEST,
+        data: {
+          page: currentPage,
+        },
+      });
+
+      return message.success("일반게시판이 삭제됬습니다.");
+    }
+  }, [normalNoticeDeleteDone]);
+
+  useEffect(() => {
+    if (normalNoticeDeleteError) {
+      return message.error(normalNoticeDeleteError);
+    }
+  }, [normalNoticeDeleteError]);
+
   ////// TOGGLE //////
 
-  const normalNoticeModalToggle = useCallback(() => {
+  // CREATE MODAL TOGGLE
+  const normalNoticeCreateModalToggle = useCallback(() => {
+    dispatch({
+      type: NORMAL_NOTICE_EDITOR_RENDER,
+      data: "create",
+    });
+    setUpdateData(null);
     normalNoticeForm.resetFields();
     setNormalNoticeType(null);
     setContentData(null);
@@ -177,11 +247,45 @@ const TeacherNormalNotice = () => {
     dispatch({
       type: NORMAL_NOTICE_MODAL_TOGGLE,
     });
-  }, [normalNoticeModal, normalNoticeType, contentData]);
+  }, [normalNoticeModal, normalNoticeType, contentData, updateData]);
+
+  // UPDATE MODAL TOGGLE
+  const normalNoticeUpdateModalToggle = useCallback(
+    (data) => {
+      if (data) {
+        setUpdateData(data);
+        setContentData(data.noticeContent);
+
+        normalNoticeForm.setFieldsValue({
+          title: data.noticeTitle,
+          content: data.noticeContent,
+        });
+
+        dispatch({
+          type: NORMAL_NOTICE_EDITOR_RENDER,
+          data: data.noticeContent,
+        });
+      } else {
+        dispatch({
+          type: NORMAL_NOTICE_EDITOR_RENDER,
+          data: null,
+        });
+        setUpdateData(null);
+        normalNoticeForm.resetFields();
+        setNormalNoticeType(null);
+        setContentData(null);
+      }
+
+      dispatch({
+        type: NORMAL_NOTICE_MODAL_TOGGLE,
+      });
+    },
+    [normalNoticeModal, normalNoticeType, contentData, updateData]
+  );
 
   ////// HANDLER //////
 
-  // NORMAL NOTICE CHNAGE PAGE
+  // 일반게시판 페이지 네이션
   const onChangeNormalNoticePage = useCallback(
     (page) => {
       setCurrentPage(page);
@@ -197,7 +301,7 @@ const TeacherNormalNotice = () => {
   );
 
   // 일반게시판 추가
-  const normalNoticeAdminCreate = useCallback(
+  const normalNoticeCreate = useCallback(
     (data) => {
       dispatch({
         type: NORMAL_NOTICE_TEACHER_CREATE_REQUEST,
@@ -213,6 +317,34 @@ const TeacherNormalNotice = () => {
     },
     [normalNoticeType, normalNoticeFilePath, me, contentData]
   );
+
+  // 일반게시판 수정
+  const normalNoticeUpdate = useCallback(
+    (data) => {
+      dispatch({
+        type: NORMAL_NOTICE_UPDATE_REQUEST,
+        data: {
+          id: updateData.noticeId,
+          title: data.title,
+          content: contentData,
+          author: me.username,
+          level: me.level,
+          file: normalNoticeFilePath,
+        },
+      });
+    },
+    [normalNoticeFilePath, me, contentData, updateData]
+  );
+
+  // 일반게시판 수정
+  const normalNoticeDelete = useCallback((data) => {
+    dispatch({
+      type: NORMAL_NOTICE_DELETE_REQUEST,
+      data: {
+        id: data.noticeId,
+      },
+    });
+  }, []);
 
   // 에디터 추가
   const getEditContent = useCallback(
@@ -269,7 +401,7 @@ const TeacherNormalNotice = () => {
         <Wrapper dr={`row`} ju={`space-between`}>
           <CommonTitle margin={`0 0 20px`}>일반게시판</CommonTitle>
           <CommonButton
-            onClick={normalNoticeModalToggle}
+            onClick={normalNoticeCreateModalToggle}
             loading={normalNoticeTeacherCreateLoading}
           >
             작성하기
@@ -287,7 +419,7 @@ const TeacherNormalNotice = () => {
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`Bold`}
-              width={width < 800 ? `15%` : `10%`}
+              width={width < 800 ? `10%` : `10%`}
             >
               번호
             </Text>
@@ -301,16 +433,23 @@ const TeacherNormalNotice = () => {
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`Bold`}
-              width={width < 800 ? `45%` : `70%`}
+              width={width < 800 ? `40%` : `60%`}
             >
               제목
             </Text>
             <Text
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`Bold`}
-              width={width < 800 ? `15%` : `10%`}
+              width={width < 800 ? `13%` : `10%`}
             >
               작성자
+            </Text>
+            <Text
+              fontSize={width < 700 ? `14px` : `18px`}
+              fontWeight={`Bold`}
+              width={width < 800 ? `12%` : `10%`}
+            >
+              기능
             </Text>
           </Wrapper>
           {normalNoticeListLoading ? (
@@ -336,20 +475,27 @@ const TeacherNormalNotice = () => {
                     cursor={`pointer`}
                     bgColor={idx % 2 === 1 && Theme.subTheme_C}
                     borderBottom={`1px solid ${Theme.grey_C}`}
-                    onClick={() =>
-                      moveLinkHandler(`/teacher/normalNotice/${data.noticeId}`)
-                    }
                   >
                     <Text
                       fontSize={width < 700 ? `14px` : `16px`}
-                      width={width < 800 ? `15%` : `10%`}
+                      width={width < 800 ? `10%` : `10%`}
                       wordBreak={`break-word`}
+                      onClick={() =>
+                        moveLinkHandler(
+                          `/teacher/normalNotice/${data.noticeId}`
+                        )
+                      }
                     >
                       {data.noticeId}
                     </Text>
                     <Text
                       fontSize={width < 700 ? `14px` : `16px`}
                       width={width < 800 ? `25%` : `10%`}
+                      onClick={() =>
+                        moveLinkHandler(
+                          `/teacher/normalNotice/${data.noticeId}`
+                        )
+                      }
                     >
                       {moment(data.noticeCreatedAt, "YYYY/MM/DD").format(
                         "YYYY/MM/DD"
@@ -357,7 +503,12 @@ const TeacherNormalNotice = () => {
                     </Text>
                     <Text
                       fontSize={width < 700 ? `14px` : `16px`}
-                      width={width < 800 ? `45%` : `70%`}
+                      width={width < 800 ? `40%` : `60%`}
+                      onClick={() =>
+                        moveLinkHandler(
+                          `/teacher/normalNotice/${data.noticeId}`
+                        )
+                      }
                       textAlign={`left`}
                       isEllipsis
                     >
@@ -365,10 +516,40 @@ const TeacherNormalNotice = () => {
                     </Text>
                     <Text
                       fontSize={width < 700 ? `14px` : `16px`}
-                      width={width < 800 ? `15%` : `10%`}
+                      width={width < 800 ? `13%` : `10%`}
+                      onClick={() =>
+                        moveLinkHandler(
+                          `/teacher/normalNotice/${data.noticeId}`
+                        )
+                      }
                     >
                       {data.noticeAuthor}
                     </Text>
+                    <Wrapper width={width < 800 ? `12%` : `10%`}>
+                      {me.id === data.writeUserId && (
+                        <>
+                          <CommonButton
+                            width={`100%`}
+                            onClick={() => normalNoticeUpdateModalToggle(data)}
+                            loading={normalNoticeUpdateLoading}
+                          >
+                            수정
+                          </CommonButton>
+                          <Popconfirm
+                            title="삭제하시겠습니까?"
+                            okText="삭제"
+                            cancelText="취소"
+                            placement="topRight"
+                            onConfirm={() => normalNoticeDelete(data)}
+                            loading={normalNoticeDeleteLoading}
+                          >
+                            <CommonButton width={`100%`} kindOf={`delete`}>
+                              삭제
+                            </CommonButton>
+                          </Popconfirm>
+                        </>
+                      )}
+                    </Wrapper>
                   </Wrapper>
                 );
               })
@@ -388,34 +569,36 @@ const TeacherNormalNotice = () => {
       {/* NORMAL NOTICE MODAL */}
       <CustomModal
         width={`1000px`}
-        title="일반게시판 작성하기"
+        title={updateData ? "일반게시판 수정하기" : "일반게시판 작성하기"}
         visible={normalNoticeModal}
-        onCancel={normalNoticeModalToggle}
+        onCancel={() => normalNoticeUpdateModalToggle(null)}
         footer={null}
       >
         <Wrapper padding={`10px`}>
           <Form
             form={normalNoticeForm}
             style={{ width: `100%` }}
-            onFinish={normalNoticeAdminCreate}
+            onFinish={updateData ? normalNoticeUpdate : normalNoticeCreate}
           >
-            <Form.Item
-              name="type"
-              label="유형"
-              rules={[{ required: true, message: "유형을 선택해 주세요." }]}
-            >
-              <Select
-                showSearch
-                style={{ width: `100%` }}
-                placeholder="유형을 선택해 주세요."
-                onChange={normalNoticeTypeChangeHandler}
+            {!updateData && (
+              <Form.Item
+                name="type"
+                label="유형"
+                rules={[{ required: true, message: "유형을 선택해 주세요." }]}
               >
-                {normalSelectArr &&
-                  normalSelectArr.map((data) => (
-                    <Select.Option value={data}>{data}</Select.Option>
-                  ))}
-              </Select>
-            </Form.Item>
+                <Select
+                  showSearch
+                  style={{ width: `100%` }}
+                  placeholder="유형을 선택해 주세요."
+                  onChange={normalNoticeTypeChangeHandler}
+                >
+                  {normalSelectArr &&
+                    normalSelectArr.map((data) => (
+                      <Select.Option value={data}>{data}</Select.Option>
+                    ))}
+                </Select>
+              </Form.Item>
+            )}
 
             <Form.Item
               label="제목"
@@ -432,9 +615,9 @@ const TeacherNormalNotice = () => {
             >
               <ToastEditorComponentMix
                 action={getEditContent}
-                initialValue={""}
+                initialValue={contentData ? contentData : ""}
                 placeholder="본문을 입력해주세요."
-                buttonText={"작성"}
+                buttonText={updateData ? "수정" : "작성"}
               />
             </Form.Item>
 

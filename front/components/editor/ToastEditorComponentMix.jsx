@@ -35,6 +35,8 @@ const ToastEditorComponent = (props) => {
   const dispatch = useDispatch();
   const { heightMin, onChange, initialValue, buttonText } = props;
 
+  const { editorRender } = useSelector((state) => state.normalNotice);
+
   const editorRef = useRef(null);
 
   const handleChange = useCallback(() => {
@@ -64,38 +66,46 @@ const ToastEditorComponent = (props) => {
 
   return (
     <>
-      <EditorWrapper margin="20px 0px">
-        <EditorWithForwardedRef
-          {...props}
-          initialValue={initialValue ? initialValue : ""}
-          placeholder={props.placeholder || "내용을 입력해주세요."}
-          previewStyle="vertical"
-          setHeight="600px"
-          initialEditType="wysiwyg"
-          //   initialEditType="markdown"
-          useCommandShortcut={true}
-          ref={editorRef}
-          hideModeSwitch={true}
-          hooks={{
-            addImageBlobHook: async (blob, callback) => {
-              const uploadedImageURL = await uploadImage(blob);
-              callback(uploadedImageURL, "alt text");
-              return false;
-            },
-          }}
-          events={{
-            load: function (param) {
-              setEditor(param);
-            },
-            change: handleChange,
-            keydown: function (editorType, event) {
-              if (event.which === 13 && tributeRef.current.isActive) {
+      {editorRender && (
+        <EditorWrapper margin="20px 0px">
+          <EditorWithForwardedRef
+            {...props}
+            initialValue={
+              editorRender
+                ? editorRender === "create"
+                  ? ""
+                  : editorRender
+                : ""
+            }
+            placeholder={props.placeholder || "내용을 입력해주세요."}
+            previewStyle="vertical"
+            setHeight="600px"
+            initialEditType="wysiwyg"
+            //   initialEditType="markdown"
+            useCommandShortcut={true}
+            ref={editorRef}
+            hideModeSwitch={true}
+            hooks={{
+              addImageBlobHook: async (blob, callback) => {
+                const uploadedImageURL = await uploadImage(blob);
+                callback(uploadedImageURL, "alt text");
                 return false;
-              }
-            },
-          }}
-        />
-      </EditorWrapper>
+              },
+            }}
+            events={{
+              load: function (param) {
+                setEditor(param);
+              },
+              change: handleChange,
+              keydown: function (editorType, event) {
+                if (event.which === 13 && tributeRef.current.isActive) {
+                  return false;
+                }
+              },
+            }}
+          />
+        </EditorWrapper>
+      )}
 
       <Wrapper margin="10px 0px" dr="row" ju="flex-end">
         <Button size="small" type="primary" onClick={getContentInEditor}>

@@ -459,17 +459,19 @@ const Classboard = () => {
                 >
                   {normalNoticeDetailData && normalNoticeDetailData.noticeTitle}
                 </Text>
-                {normalNoticeDetailData && normalNoticeDetailData.noticeFile && (
-                  <CommonButton
-                    kindOf={`black`}
-                    fontSize={`14px`}
-                    margin={`0 20px 0 0`}
-                  >
-                    <a href={normalNoticeDetailData.noticeFile}>
-                      첨부파일 다운로드
-                    </a>
-                  </CommonButton>
-                )}
+                <Wrapper width={`auto`} dr={`row`}>
+                  {normalNoticeDetailData && normalNoticeDetailData.noticeFile && (
+                    <CommonButton
+                      kindOf={`black`}
+                      fontSize={`14px`}
+                      margin={`0 20px 0 0`}
+                    >
+                      <a href={normalNoticeDetailData.noticeFile}>
+                        첨부파일 다운로드
+                      </a>
+                    </CommonButton>
+                  )}
+                </Wrapper>
               </Wrapper>
 
               <Wrapper dr={`row`} ju={`space-between`}>
@@ -790,7 +792,7 @@ const Classboard = () => {
                                 fontSize={`14px`}
                                 onClick={() => openRecommentToggle(data)}
                               >
-                                대댓글 작성
+                                댓글 작성
                               </CommonButton>
                             )}
                           </Wrapper>
@@ -887,7 +889,7 @@ const Classboard = () => {
                                     margin={`0 0 10px`}
                                     onClick={() => openRecommentToggle(v)}
                                   >
-                                    수정
+                                    댓글 작성
                                   </HoverText>
                                 )}
 
@@ -898,7 +900,7 @@ const Classboard = () => {
                                         updateCommentToggle(v, true)
                                       }
                                     >
-                                      Edit
+                                      수정
                                     </HoverText>
                                     &nbsp;|&nbsp;
                                     <Popconfirm
@@ -908,7 +910,7 @@ const Classboard = () => {
                                       cancelText="Cancel"
                                       onConfirm={() => deleteCommentHandler(v)}
                                     >
-                                      <HoverText>Delete</HoverText>
+                                      <HoverText>삭제</HoverText>
                                     </Popconfirm>
                                   </Wrapper>
                                 )}

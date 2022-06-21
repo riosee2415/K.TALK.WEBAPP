@@ -14,6 +14,8 @@ export const initialState = {
   normalCommentsLen: 0,
   //
   normalNoticeFilePath: null,
+  //
+  editorRender: null,
 
   // modal
   normalNoticeModal: false,
@@ -138,6 +140,8 @@ export const NORMAL_FILE_UPLOAD_SUCCESS = "NORMAL_FILE_UPLOAD_SUCCESS";
 export const NORMAL_FILE_UPLOAD_FAILURE = "NORMAL_FILE_UPLOAD_FAILURE";
 
 export const NORMAL_NOTICE_MODAL_TOGGLE = "NORMAL_NOTICE_MODAL_TOGGLE";
+
+export const NORMAL_NOTICE_EDITOR_RENDER = "NORMAL_NOTICE_EDITOR_RENDER";
 
 export const NORMAL_NOTICE_DETAIL_MODAL_TOGGLE =
   "NORMAL_NOTICE_DETAIL_MODAL_TOGGLE";
@@ -423,6 +427,13 @@ const reducer = (state = initialState, action) =>
 
       case NORMAL_NOTICE_DETAIL_MODAL_TOGGLE: {
         draft.normalNoticeDetailModal = !draft.normalNoticeDetailModal;
+        break;
+      }
+
+      //////////////////////////////////////////////    에디터 랜더링
+
+      case NORMAL_NOTICE_EDITOR_RENDER: {
+        draft.editorRender = action.data;
         break;
       }
 
