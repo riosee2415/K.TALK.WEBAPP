@@ -768,6 +768,7 @@ const AdminHome = () => {
         setCurrentData(data);
       } else {
         setCurrentData(null);
+        childCommentForm.resetFields();
       }
       setRepleToggle(!repleToggle);
     },
@@ -2661,7 +2662,7 @@ normalCommentsLen */}
           >
             {currentData && (
               <Wrapper padding={`10px`}>
-                <FormItem label="대댓글">
+                <FormItem width={`100%`} label="대댓글">
                   <Text>
                     {currentData.isDelete === 1
                       ? "삭제된 댓글입니다."
@@ -2672,7 +2673,14 @@ normalCommentsLen */}
                 </FormItem>
 
                 <FormTag form={childCommentForm} onFinish={childCommentSubmit}>
-                  <FormItem label="댓글" name={`comment`}>
+                  <FormItem
+                    width={`100%`}
+                    label="댓글"
+                    name={`comment`}
+                    rules={[
+                      { required: true, message: "대댓글이 작성되었습니다." },
+                    ]}
+                  >
                     <TextArea
                       width={`100%`}
                       height={`115px`}
@@ -2682,8 +2690,10 @@ normalCommentsLen */}
                   <Wrapper al={`flex-end`}>
                     <CommonButton
                       htmlType={`submit`}
-                      width={`140px`}
-                      height={`50px`}
+                      width={`100px`}
+                      height={`35px`}
+                      fontSize={`18px`}
+                      padding={`0`}
                     >
                       작성
                     </CommonButton>
