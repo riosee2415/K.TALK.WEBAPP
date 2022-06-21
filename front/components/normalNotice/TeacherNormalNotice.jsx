@@ -496,7 +496,7 @@ const TeacherNormalNotice = () => {
                     </Text>
                     <Text
                       fontSize={width < 700 ? `14px` : `16px`}
-                      width={width < 800 ? `40%` : `58%`}
+                      width={width < 800 ? `35%` : `58%`}
                       onClick={() =>
                         moveLinkHandler(
                           `/normalNotice/${data.noticeId}?type=teacher`
@@ -509,7 +509,7 @@ const TeacherNormalNotice = () => {
                     </Text>
                     <Text
                       fontSize={width < 700 ? `14px` : `16px`}
-                      width={width < 800 ? `13%` : `10%`}
+                      width={width < 800 ? `15%` : `10%`}
                       onClick={() =>
                         moveLinkHandler(
                           `/normalNotice/${data.noticeId}?type=teacher`
@@ -524,11 +524,11 @@ const TeacherNormalNotice = () => {
                         : "관리자"}
                       )
                     </Text>
-                    <Wrapper width={width < 800 ? `12%` : `12%`}>
-                      {me.id === data.writeUserId ? (
-                        <Wrapper dr={`row`}>
+                    <Wrapper width={width < 800 ? `15%` : `12%`}>
+                      {me && me.id === data.writeUserId ? (
+                        <Wrapper dr={width < 800 ? `column` : `row`}>
                           <CommonButton
-                            width={`50%`}
+                            width={width < 800 ? `100%` : `50%`}
                             fontSize={`13px`}
                             onClick={() => normalNoticeUpdateModalToggle(data)}
                             loading={normalNoticeUpdateLoading}
@@ -544,7 +544,7 @@ const TeacherNormalNotice = () => {
                             loading={normalNoticeDeleteLoading}
                           >
                             <CommonButton
-                              width={`50%`}
+                              width={width < 800 ? `100%` : `50%`}
                               fontSize={`13px`}
                               kindOf={`delete`}
                             >

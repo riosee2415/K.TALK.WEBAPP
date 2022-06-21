@@ -82,6 +82,10 @@ const CustomPage = styled(Pagination)`
   }
 `;
 
+const WordbreakText = styled(Text)`
+  word-break: break-all;
+`;
+
 const CustomModal = styled(Modal)`
   & .ant-modal-header,
   & .ant-modal-content {
@@ -411,41 +415,41 @@ const StudentNormalNotice = () => {
             bgColor={Theme.subTheme9_C}
             borderBottom={`1px solid ${Theme.grey_C}`}
           >
-            <Text
+            <WordbreakText
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`Bold`}
-              width={width < 800 ? `15%` : `10%`}
+              width={`10%`}
             >
               No
-            </Text>
-            <Text
+            </WordbreakText>
+            <WordbreakText
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`Bold`}
               width={width < 800 ? `25%` : `10%`}
             >
               Date
-            </Text>
-            <Text
+            </WordbreakText>
+            <WordbreakText
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`Bold`}
               width={width < 800 ? `35%` : `58%`}
             >
               Title
-            </Text>
-            <Text
+            </WordbreakText>
+            <WordbreakText
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`Bold`}
               width={width < 800 ? `15%` : `10%`}
             >
               Writer
-            </Text>
-            <Text
+            </WordbreakText>
+            <WordbreakText
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`Bold`}
               width={width < 800 ? `15%` : `12%`}
             >
               Update&nbsp;|&nbsp;Delete
-            </Text>
+            </WordbreakText>
           </Wrapper>
           {normalNoticeListLoading ? (
             <Wrapper>
@@ -471,9 +475,9 @@ const StudentNormalNotice = () => {
                     bgColor={idx % 2 === 1 && Theme.subTheme_C}
                     borderBottom={`1px solid ${Theme.grey_C}`}
                   >
-                    <Text
+                    <WordbreakText
                       fontSize={width < 700 ? `14px` : `16px`}
-                      width={width < 800 ? `15%` : `10%`}
+                      width={`10%`}
                       wordBreak={`break-word`}
                       onClick={() =>
                         moveLinkHandler(
@@ -482,8 +486,8 @@ const StudentNormalNotice = () => {
                       }
                     >
                       {data.noticeId}
-                    </Text>
-                    <Text
+                    </WordbreakText>
+                    <WordbreakText
                       fontSize={width < 700 ? `14px` : `16px`}
                       width={width < 800 ? `25%` : `10%`}
                       onClick={() =>
@@ -495,8 +499,8 @@ const StudentNormalNotice = () => {
                       {moment(data.noticeCreatedAt, "YYYY/MM/DD").format(
                         "YYYY/MM/DD"
                       )}
-                    </Text>
-                    <Text
+                    </WordbreakText>
+                    <WordbreakText
                       fontSize={width < 700 ? `14px` : `16px`}
                       width={width < 800 ? `35%` : `58%`}
                       onClick={() =>
@@ -508,8 +512,8 @@ const StudentNormalNotice = () => {
                       isEllipsis
                     >
                       {data.noticeTitle}
-                    </Text>
-                    <Text
+                    </WordbreakText>
+                    <WordbreakText
                       fontSize={width < 700 ? `14px` : `16px`}
                       width={width < 800 ? `15%` : `10%`}
                       onClick={() =>
@@ -526,12 +530,12 @@ const StudentNormalNotice = () => {
                           ? "teacher"
                           : "admin"
                       })`}
-                    </Text>
+                    </WordbreakText>
                     <Wrapper width={width < 800 ? `15%` : `12%`}>
                       {me && me.id === data.writeUserId ? (
-                        <Wrapper dr={`row`}>
+                        <Wrapper dr={width < 800 ? `column` : `row`}>
                           <CommonButton
-                            width={`50%`}
+                            width={width < 800 ? `100%` : `50%`}
                             fontSize={`13px`}
                             onClick={() => normalNoticeUpdateModalToggle(data)}
                             loading={normalNoticeUpdateLoading}
@@ -547,7 +551,7 @@ const StudentNormalNotice = () => {
                             loading={normalNoticeDeleteLoading}
                           >
                             <CommonButton
-                              width={`50%`}
+                              width={width < 800 ? `100%` : `50%`}
                               fontSize={`13px`}
                               kindOf={`delete`}
                             >
@@ -556,7 +560,9 @@ const StudentNormalNotice = () => {
                           </Popconfirm>
                         </Wrapper>
                       ) : (
-                        <Text>You do not have permission.</Text>
+                        <WordbreakText>
+                          You do not have permission.
+                        </WordbreakText>
                       )}
                     </Wrapper>
                   </Wrapper>
