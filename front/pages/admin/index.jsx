@@ -2364,10 +2364,10 @@ const AdminHome = () => {
                           >
                             {data.name}(
                             {data.level === 1
-                              ? "student"
+                              ? "학생"
                               : data.level === 2
-                              ? "teacher"
-                              : "admin"}
+                              ? "강사"
+                              : "관리자"}
                             )
                             <SpanText
                               fontSize={width < 900 ? `13px` : `16px`}
@@ -2481,10 +2481,10 @@ const AdminHome = () => {
                                   >
                                     {v.name}(
                                     {v.level === 1
-                                      ? "student"
+                                      ? "학생"
                                       : v.level === 2
-                                      ? "teacher"
-                                      : "admin"}
+                                      ? "강사"
+                                      : "관리자"}
                                     )
                                   </Text>
                                   <Text
