@@ -418,37 +418,38 @@ const StudentNormalNotice = () => {
             <WordbreakText
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`Bold`}
-              width={`10%`}
+              width={width < 800 ? `15%` : `10%`}
+              display={width < 900 ? `none` : `block`}
             >
               No
             </WordbreakText>
             <WordbreakText
-              fontSize={width < 700 ? `14px` : `18px`}
+              fontSize={width < 700 ? `12px` : `18px`}
               fontWeight={`Bold`}
-              width={width < 800 ? `25%` : `10%`}
+              width={width < 800 ? `18%` : `10%`}
             >
               Date
             </WordbreakText>
             <WordbreakText
-              fontSize={width < 700 ? `14px` : `18px`}
+              fontSize={width < 700 ? `12px` : `18px`}
               fontWeight={`Bold`}
-              width={width < 800 ? `35%` : `58%`}
+              width={width < 800 ? `30%` : `53%`}
             >
               Title
             </WordbreakText>
             <WordbreakText
-              fontSize={width < 700 ? `14px` : `18px`}
+              fontSize={width < 700 ? `12px` : `18px`}
               fontWeight={`Bold`}
-              width={width < 800 ? `15%` : `10%`}
+              width={width < 800 ? `20%` : `15%`}
             >
               Writer
             </WordbreakText>
             <WordbreakText
-              fontSize={width < 700 ? `14px` : `18px`}
+              fontSize={width < 700 ? `12px` : `18px`}
               fontWeight={`Bold`}
-              width={width < 800 ? `15%` : `12%`}
+              width={width < 800 ? `27%` : `12%`}
             >
-              {width < 800 ? `Update` : `Update | Delete`}
+              Update | Delete
             </WordbreakText>
           </Wrapper>
           {normalNoticeListLoading ? (
@@ -477,7 +478,8 @@ const StudentNormalNotice = () => {
                   >
                     <WordbreakText
                       fontSize={width < 700 ? `14px` : `16px`}
-                      width={`10%`}
+                      width={width < 800 ? `15%` : `10%`}
+                      display={width < 900 ? `none` : `flex`}
                       wordBreak={`break-word`}
                       onClick={() =>
                         moveLinkHandler(
@@ -489,8 +491,8 @@ const StudentNormalNotice = () => {
                       {data.noticeId}
                     </WordbreakText>
                     <WordbreakText
-                      fontSize={width < 700 ? `14px` : `16px`}
-                      width={width < 800 ? `25%` : `10%`}
+                      width={width < 800 ? `18%` : `10%`}
+                      fontSize={width < 700 && `12px`}
                       onClick={() =>
                         moveLinkHandler(
                           `/normalNotice/${data.noticeId}?type=stu`
@@ -503,8 +505,10 @@ const StudentNormalNotice = () => {
                       )}
                     </WordbreakText>
                     <WordbreakText
-                      fontSize={width < 700 ? `14px` : `16px`}
-                      width={width < 800 ? `35%` : `58%`}
+                      width={width < 800 ? `30%` : `53%`}
+                      al={`flex-start`}
+                      padding={`0 0 0 10px`}
+                      fontSize={width < 700 && `12px`}
                       onClick={() =>
                         moveLinkHandler(
                           `/normalNotice/${data.noticeId}?type=stu`
@@ -516,14 +520,13 @@ const StudentNormalNotice = () => {
                       {data.noticeTitle}
                     </WordbreakText>
                     <WordbreakText
-                      fontSize={width < 700 ? `14px` : `16px`}
-                      width={width < 800 ? `15%` : `10%`}
+                      width={width < 800 ? `20%` : `15%`}
+                      fontSize={width < 800 ? `12px` : `14px`}
                       onClick={() =>
                         moveLinkHandler(
                           `/normalNotice/${data.noticeId}?type=stu`
                         )
                       }
-                      isEllipsis
                     >
                       {data.noticeAuthor}
                       {`(${
@@ -534,7 +537,7 @@ const StudentNormalNotice = () => {
                           : "admin"
                       })`}
                     </WordbreakText>
-                    <Wrapper width={width < 800 ? `15%` : `12%`}>
+                    <Wrapper width={width < 800 ? `27%` : `12%`}>
                       {me && me.id === data.writeUserId ? (
                         <Wrapper dr={width < 800 ? `column` : `row`}>
                           <CommonButton
