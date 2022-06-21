@@ -519,6 +519,13 @@ const StudentNormalNotice = () => {
                       }
                     >
                       {data.noticeAuthor}
+                      {`(${
+                        data.noticeLevel === 1
+                          ? "student"
+                          : data.noticeLevel === 2
+                          ? "teacher"
+                          : "admin"
+                      })`}
                     </Text>
                     <Wrapper width={width < 800 ? `15%` : `12%`}>
                       {me && me.id === data.writeUserId ? (
