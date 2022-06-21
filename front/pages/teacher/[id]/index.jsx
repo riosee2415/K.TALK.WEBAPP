@@ -82,6 +82,7 @@ import {
   COMMUTE_LIST_REQUEST,
 } from "../../../reducers/commute";
 import { saveAs } from "file-saver";
+import TeacherNotice from "../../../components/lectureNotice/TecherNotice";
 
 const CustomInput = styled(TextInput)`
   width: ${(props) => props.width || `100%`};
@@ -1646,109 +1647,10 @@ const Index = () => {
             </RsWrapper>
           </Wrapper>
           <RsWrapper margin={`0`}>
-            <Wrapper al={`flex-start`}>
-              <CommonTitle margin={`86px 0 20px`}>공지사항</CommonTitle>
-            </Wrapper>
+            {/* 강의 게시판 */}
+            <TeacherNotice />
 
-            <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
-              <Wrapper
-                dr={`row`}
-                textAlign={`center`}
-                padding={`20px 0`}
-                bgColor={Theme.subTheme9_C}
-                borderBottom={`1px solid ${Theme.grey_C}`}
-              >
-                <Text
-                  fontSize={width < 700 ? `14px` : `18px`}
-                  fontWeight={`Bold`}
-                  width={`15%`}
-                >
-                  글번호
-                </Text>
-                <Text
-                  fontSize={width < 700 ? `14px` : `18px`}
-                  fontWeight={`Bold`}
-                  width={`60%`}
-                >
-                  제목
-                </Text>
-                <Text
-                  fontSize={width < 700 ? `14px` : `18px`}
-                  fontWeight={`Bold`}
-                  width={`25%`}
-                >
-                  날짜
-                </Text>
-              </Wrapper>
-
-              {noticeLectureList && noticeLectureList.length === 0 ? (
-                <Wrapper margin={`50px 0`}>
-                  <Empty description="조회된 데이터가 없습니다." />
-                </Wrapper>
-              ) : (
-                noticeLectureList &&
-                noticeLectureList.map((data, idx) => {
-                  return (
-                    <Wrapper
-                      key={data.id}
-                      onClick={() => onClickNoticeHandler(data)}
-                      dr={`row`}
-                      textAlign={`center`}
-                      ju={`flex-start`}
-                      padding={`25px 0 20px`}
-                      cursor={`pointer`}
-                      bgColor={idx % 2 === 1 && Theme.subTheme_C}
-                      borderBottom={`1px solid ${Theme.grey_C}`}
-                    >
-                      <Text
-                        fontSize={width < 700 ? `14px` : `16px`}
-                        width={`15%`}
-                        wordBreak={`break-word`}
-                      >
-                        {data.id}
-                      </Text>
-                      <Text
-                        fontSize={width < 700 ? `14px` : `16px`}
-                        width={`60%`}
-                        textAlign={`left`}
-                      >
-                        {data.title}
-                      </Text>
-                      <Text
-                        fontSize={width < 700 ? `14px` : `16px`}
-                        width={`25%`}
-                      >
-                        {moment(data.createdAt, "YYYY/MM/DD").format(
-                          "YYYY/MM/DD"
-                        )}
-                      </Text>
-                    </Wrapper>
-                  );
-                })
-              )}
-            </Wrapper>
-
-            <Wrapper al={`flex-end`} margin={`20px 0 40px`}>
-              <CommonButton
-                radius={`5px`}
-                width={width < 700 ? `90px` : `110px`}
-                height={width < 700 ? `32px` : `38px`}
-                fontSize={width < 700 ? `14px` : `14px`}
-                onClick={() => setNoticeModalToggle(true)}
-              >
-                작성하기
-              </CommonButton>
-            </Wrapper>
-
-            <Wrapper>
-              <CustomPage
-                total={noticeLectureLastPage * 10}
-                current={currentPage3}
-                onChange={(page) => onChangeNoticePage(page)}
-              ></CustomPage>
-            </Wrapper>
-
-            <Wrapper margin={`86px 0 0`}>
+            <Wrapper margin={`46px 0 0`}>
               {lectureDetail && lectureDetail.length === 0
                 ? ""
                 : lectureDetail &&
@@ -2478,30 +2380,6 @@ const Index = () => {
                 ju={width < 700 ? `center` : `flex-end`}
                 margin={`20px 0 0 0`}
               >
-                <CommonButton
-                  radius={`5px`}
-                  width={width < 700 ? `40%` : `150px`}
-                  height={width < 700 ? `32px` : `38px`}
-                  padding={`0`}
-                  margin={width < 900 ? `5px` : `0 5px 0 0`}
-                  fontSize={`14px`}
-                  onClick={() => messageSendModalHandler()}
-                >
-                  학생에게 쪽지 보내기
-                </CommonButton>
-
-                <CommonButton
-                  radius={`5px`}
-                  width={width < 700 ? `40%` : `150px`}
-                  height={width < 700 ? `32px` : `38px`}
-                  padding={`0`}
-                  margin={width < 900 ? `5px` : `0 5px 0 0`}
-                  fontSize={`14px`}
-                  onClick={() => adminMessageModal()}
-                >
-                  관리자에게 쪽지 보내기
-                </CommonButton>
-
                 <CommonButton
                   radius={`5px`}
                   width={width < 700 ? `40%` : `150px`}
