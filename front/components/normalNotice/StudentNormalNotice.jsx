@@ -479,14 +479,13 @@ const StudentNormalNotice = () => {
                     <WordbreakText
                       fontSize={width < 700 ? `14px` : `16px`}
                       width={width < 800 ? `15%` : `10%`}
-                      display={width < 900 ? `none` : `flex`}
+                      display={width < 900 ? `none` : `block`}
                       wordBreak={`break-word`}
                       onClick={() =>
                         moveLinkHandler(
                           `/normalNotice/${data.noticeId}?type=stu`
                         )
                       }
-                      isEllipsis
                     >
                       {data.noticeId}
                     </WordbreakText>

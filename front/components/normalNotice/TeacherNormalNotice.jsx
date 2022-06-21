@@ -477,7 +477,7 @@ const TeacherNormalNotice = () => {
                     <WordbreakText
                       fontSize={width < 700 ? `14px` : `16px`}
                       width={width < 800 ? `15%` : `10%`}
-                      display={width < 900 ? `none` : `flex`}
+                      display={width < 900 ? `none` : `block`}
                       wordBreak={`break-word`}
                       onClick={() =>
                         moveLinkHandler(
@@ -485,7 +485,6 @@ const TeacherNormalNotice = () => {
                           rmalNotice/${data.noticeId}?type=teacher`
                         )
                       }
-                      isEllipsis
                     >
                       {data.noticeId}
                     </WordbreakText>
