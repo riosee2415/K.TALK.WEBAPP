@@ -1459,7 +1459,6 @@ const AdminHome = () => {
             subTitle={`클래스의 목록을 살펴볼 수 있고 클래스별 상세 설정을 할 수 있습니다.`}
           /> */}
 
-          {console.log(normalNoticeAdminList)}
           <AdminContent>
             <Text fontSize={`24px`} fontWeight={`bold`} margin={`0 0 30px`}>
               관리자 메인페이지
