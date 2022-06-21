@@ -2376,7 +2376,7 @@ const AdminHome = () => {
                                   fontSize={`14px`}
                                   onClick={() => openRecommentToggle(data)}
                                 >
-                                  대댓글 작성
+                                  댓글 작성
                                 </CommonButton>
                               )}
                             </Wrapper>
@@ -2477,7 +2477,7 @@ const AdminHome = () => {
                                       margin={`0 0 10px`}
                                       onClick={() => openRecommentToggle(v)}
                                     >
-                                      대댓글 작성
+                                      댓글 작성
                                     </HoverText>
                                   )}
 
@@ -2691,7 +2691,7 @@ const AdminHome = () => {
           {/* 대댓글 작성 */}
           <Modal
             width={`800px`}
-            title="대댓글 작성"
+            title="댓글 작성"
             footer={null}
             visible={repleToggle}
             onCancel={() => openRecommentToggle(null)}
@@ -2699,7 +2699,7 @@ const AdminHome = () => {
           >
             {currentData && (
               <Wrapper padding={`10px`}>
-                <FormItem width={`100%`} label="대댓글">
+                <FormItem width={`100%`} label="댓글">
                   <Text>
                     {currentData.isDelete === 1
                       ? "삭제된 댓글입니다."
@@ -2715,7 +2715,7 @@ const AdminHome = () => {
                     label="댓글"
                     name={`comment`}
                     rules={[
-                      { required: true, message: "대댓글이 작성되었습니다." },
+                      { required: true, message: "댓글을 작성해주세요." },
                     ]}
                   >
                     <TextArea
