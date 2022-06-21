@@ -2,13 +2,16 @@ import produce from "../util/produce";
 
 export const initailState = {
   lectureNotices: null,
-  adminLectureNotices: null, // 관리자용
-  uploadLectureNoticePath: null,
-  maxPage: 1, // 게시판 갯수
-
   lectureNoticeDetail: null, // 디테일 데이터
   lectureNoticeComment: null, // 댓글
   commentLen: null, // 댓글 갯수
+
+  adminLectureNotices: null, // 관리자용
+  adminLecNoticeDetail: null, // 관리자 디테일 데이터
+  adminLecNoticeComment: null, // 관리자 댓글
+
+  uploadLectureNoticePath: null,
+  maxPage: 1, // 게시판 갯수
 
   lecNoticeCommentDetails: null, // 대댓글 데이터
 
@@ -19,13 +22,17 @@ export const initailState = {
   st_lectureNoticeListDone: false,
   st_lectureNoticeListError: null,
   //
+  st_lectureNoticeDetailListLoading: false, // 강의 게시판 디테일 가져오기
+  st_lectureNoticeDetailListDone: false,
+  st_lectureNoticeDetailListError: null,
+  //
   st_lectureNoticeAdminListLoading: false, // 관리자 강의 게시판 가져오기
   st_lectureNoticeAdminListDone: false,
   st_lectureNoticeAdminListError: null,
   //
-  st_lectureNoticeDetailListLoading: false, // 강의 게시판 디테일 가져오기
-  st_lectureNoticeDetailListDone: false,
-  st_lectureNoticeDetailListError: null,
+  st_lecNoticeAdminDetailLoading: false, // 관리자 강의 게시판 디테일 가져오기
+  st_lecNoticeAdminDetailDone: false,
+  st_lecNoticeAdminDetailError: null,
   //
   st_lectureNoticeCreateLoading: false, // 강의 게시판 만들기
   st_lectureNoticeCreateDone: false,
@@ -62,6 +69,13 @@ export const LECTURE_NOTICE_LIST_REQUEST = "LECTURE_NOTICE_LIST_REQUEST";
 export const LECTURE_NOTICE_LIST_SUCCESS = "LECTURE_NOTICE_LIST_SUCCESS";
 export const LECTURE_NOTICE_LIST_FAILURE = "LECTURE_NOTICE_LIST_FAILURE";
 
+export const LECTURE_NOTICE_DETAIL_LIST_REQUEST =
+  "LECTURE_NOTICE_DETAIL_LIST_REQUEST";
+export const LECTURE_NOTICE_DETAIL_LIST_SUCCESS =
+  "LECTURE_NOTICE_DETAIL_LIST_SUCCESS";
+export const LECTURE_NOTICE_DETAIL_LIST_FAILURE =
+  "LECTURE_NOTICE_DETAIL_LIST_FAILURE";
+
 export const LECTURE_NOTICE_ADMIN_LIST_REQUEST =
   "LECTURE_NOTICE_ADMIN_LIST_REQUEST";
 export const LECTURE_NOTICE_ADMIN_LIST_SUCCESS =
@@ -69,12 +83,9 @@ export const LECTURE_NOTICE_ADMIN_LIST_SUCCESS =
 export const LECTURE_NOTICE_ADMIN_LIST_FAILURE =
   "LECTURE_NOTICE_ADMIN_LIST_FAILURE";
 
-export const LECTURE_NOTICE_DETAIL_LIST_REQUEST =
-  "LECTURE_NOTICE_DETAIL_LIST_REQUEST";
-export const LECTURE_NOTICE_DETAIL_LIST_SUCCESS =
-  "LECTURE_NOTICE_DETAIL_LIST_SUCCESS";
-export const LECTURE_NOTICE_DETAIL_LIST_FAILURE =
-  "LECTURE_NOTICE_DETAIL_LIST_FAILURE";
+export const LECNOTICE_ADMIN_DETAIL_REQUEST = "LECNOTICE_ADMIN_DETAIL_REQUEST";
+export const LECNOTICE_ADMIN_DETAIL_SUCCESS = "LECNOTICE_ADMIN_DETAIL_SUCCESS";
+export const LECNOTICE_ADMIN_DETAIL_FAILURE = "LECNOTICE_ADMIN_DETAIL_FAILURE";
 
 export const LECTURE_NOTICE_UPLOAD_REQUEST = "LECTURE_NOTICE_UPLOAD_REQUEST";
 export const LECTURE_NOTICE_UPLOAD_SUCCESS = "LECTURE_NOTICE_UPLOAD_SUCCESS";
@@ -158,6 +169,30 @@ const reducer = (state = initailState, action) =>
 
       //////////////////////////////////////////////
 
+      case LECTURE_NOTICE_DETAIL_LIST_REQUEST: {
+        draft.st_lectureNoticeDetailListLoading = true;
+        draft.st_lectureNoticeDetailListDone = false;
+        draft.st_lectureNoticeDetailListError = null;
+        break;
+      }
+      case LECTURE_NOTICE_DETAIL_LIST_SUCCESS: {
+        draft.st_lectureNoticeDetailListLoading = false;
+        draft.st_lectureNoticeDetailListDone = true;
+        draft.st_lectureNoticeDetailListError = null;
+        draft.lectureNoticeDetail = action.data.detailData;
+        draft.lectureNoticeComment = action.data.comments;
+        draft.commentLen = action.data.commentsLen;
+        break;
+      }
+      case LECTURE_NOTICE_DETAIL_LIST_FAILURE: {
+        draft.st_lectureNoticeDetailListLoading = false;
+        draft.st_lectureNoticeDetailListDone = false;
+        draft.st_lectureNoticeDetailListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
       case LECTURE_NOTICE_ADMIN_LIST_REQUEST: {
         draft.st_lectureNoticeAdminListLoading = true;
         draft.st_lectureNoticeAdminListDone = false;
@@ -180,26 +215,24 @@ const reducer = (state = initailState, action) =>
 
       //////////////////////////////////////////////
 
-      case LECTURE_NOTICE_DETAIL_LIST_REQUEST: {
-        draft.st_lectureNoticeDetailListLoading = true;
-        draft.st_lectureNoticeDetailListDone = false;
-        draft.st_lectureNoticeDetailListError = null;
+      case LECNOTICE_ADMIN_DETAIL_REQUEST: {
+        draft.st_lecNoticeAdminDetailLoading = true;
+        draft.st_lecNoticeAdminDetailDone = false;
+        draft.st_lecNoticeAdminDetailError = null;
         break;
       }
-      case LECTURE_NOTICE_DETAIL_LIST_SUCCESS: {
-        draft.st_lectureNoticeDetailListLoading = false;
-        draft.st_lectureNoticeDetailListDone = true;
-        draft.st_lectureNoticeDetailListError = null;
-        draft.lectureNoticeDetail = action.data.detailData;
-        draft.lectureNoticeComment = action.data.comments;
-        draft.commentLen = action.data.commentsLen;
-
+      case LECNOTICE_ADMIN_DETAIL_SUCCESS: {
+        draft.st_lecNoticeAdminDetailLoading = false;
+        draft.st_lecNoticeAdminDetailDone = true;
+        draft.st_lecNoticeAdminDetailError = null;
+        draft.adminLecNoticeDetail = action.data.detailData;
+        draft.adminLecNoticeComment = action.data.comments;
         break;
       }
-      case LECTURE_NOTICE_DETAIL_LIST_FAILURE: {
-        draft.st_lectureNoticeDetailListLoading = false;
-        draft.st_lectureNoticeDetailListDone = false;
-        draft.st_lectureNoticeDetailListError = action.error;
+      case LECNOTICE_ADMIN_DETAIL_FAILURE: {
+        draft.st_lecNoticeAdminDetailLoading = false;
+        draft.st_lecNoticeAdminDetailDone = false;
+        draft.st_lecNoticeAdminDetailError = action.error;
         break;
       }
 

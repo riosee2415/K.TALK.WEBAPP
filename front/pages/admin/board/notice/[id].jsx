@@ -11,6 +11,7 @@ import {
   notification,
   message,
   Form,
+  Empty,
 } from "antd";
 
 import { useRouter, withRouter } from "next/router";
@@ -26,15 +27,18 @@ import {
   GuideUl,
   GuideLi,
   Text,
+  SpanText,
 } from "../../../../components/commonComponents";
 import { LOAD_MY_INFO_REQUEST } from "../../../../reducers/user";
 import {
+  LECNOTICE_ADMIN_DETAIL_REQUEST,
+  LECNOTICE_COMMENT_DETAIL_REQUEST,
   LECTURE_NOTICE_ADMIN_LIST_REQUEST,
-  LECTURE_NOTICE_DETAIL_LIST_REQUEST,
 } from "../../../../reducers/lectureNotice";
 import { GUIDE_MODAL } from "../../../../reducers/notice";
 import { saveAs } from "file-saver";
 import Theme from "../../../../components/Theme";
+import moment from "moment";
 
 const LoadNotification = (msg, content) => {
   notification.open({
@@ -43,6 +47,31 @@ const LoadNotification = (msg, content) => {
     onClick: () => {},
   });
 };
+
+const Icon = styled(Wrapper)`
+  height: 1px;
+  background: ${Theme.darkGrey_C};
+  position: relative;
+
+  &:before {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    right: 4px;
+    width: 1px;
+    height: 10px;
+    background: ${Theme.darkGrey_C};
+    transform: rotate(-60deg);
+  }
+`;
+
+const HoverText = styled(Text)`
+  cursor: pointer;
+  &:hover {
+    font-weight: 700;
+  }
+  transition: 0.2s;
+`;
 
 const NoticeClass = ({}) => {
   const { st_loadMyInfoDone, me } = useSelector((state) => state.user);
@@ -67,14 +96,16 @@ const NoticeClass = ({}) => {
 
   const { guideModal } = useSelector((state) => state.notice);
 
-  const { adminLectureNotices, lectureNoticeDetail, lecNoticeCommentDetails } =
-    useSelector((state) => state.lectureNotice);
+  const {
+    adminLectureNotices,
+    adminLecNoticeDetail,
+    adminLecNoticeComment,
+    lecNoticeCommentDetails,
+  } = useSelector((state) => state.lectureNotice);
 
   const [viewModal, setViewModal] = useState(false);
-  const [viewData, setViewData] = useState(null);
 
-  const [commentModal, setCommentModal] = useState(false);
-  const [commentData, setCommentData] = useState(null);
+  const [commentToggle, setCommentToggle] = useState(null);
 
   ////// USEEFFECT //////
   useEffect(() => {
@@ -97,29 +128,14 @@ const NoticeClass = ({}) => {
 
   const viewModalToggle = useCallback(
     (data) => {
-      setViewData(data);
-
-      console.log(data);
-
-      // if (data) {
-      //   dispatch({
-      //     type: LECTURE_NOTICE_DETAIL_LIST_REQUEST,
-      //     data: {
-      //       LectureNoticeId: data.noticeId,
-      //     },
-      //   });
-      // }
-
-      setViewModal(!viewModal);
-    },
-    [viewModal]
-  );
-
-  console.log(lectureNoticeDetail);
-
-  const commentModalToggle = useCallback(
-    (data) => {
-      setViewData(data);
+      if (data) {
+        dispatch({
+          type: LECNOTICE_ADMIN_DETAIL_REQUEST,
+          data: {
+            LectureNoticeId: data.noticeId,
+          },
+        });
+      }
 
       setViewModal(!viewModal);
     },
@@ -141,6 +157,20 @@ const NoticeClass = ({}) => {
 
     saveAs(file, originName);
   }, []);
+
+  const getCommentHandler = useCallback(
+    (id) => {
+      setCommentToggle(true);
+      dispatch({
+        type: LECNOTICE_COMMENT_DETAIL_REQUEST,
+        data: {
+          lectureNoticeId: adminLecNoticeDetail.noticeId,
+          commentId: id,
+        },
+      });
+    },
+    [router.query, adminLecNoticeDetail]
+  );
 
   ////// DATAVIEW //////
 
@@ -173,18 +203,6 @@ const NoticeClass = ({}) => {
       ),
     },
 
-    // {
-    //   title: "게시글 댓글",
-    //   render: (data) => (
-    //     <Button
-    //       type="primary"
-    //       size="small"
-    //       onClick={() => viewModalToggle(data)}
-    //     >
-    //       댓글보기
-    //     </Button>
-    //   ),
-    // },
     {
       title: "생성일",
       dataIndex: "noticeCreatedAt",
@@ -243,27 +261,27 @@ const NoticeClass = ({}) => {
 
       <Modal
         visible={viewModal}
-        width="700px"
+        width="900px"
         onOk={() => viewModalToggle(null)}
         onCancel={() => viewModalToggle(null)}
         title="게시글 상세보기"
       >
-        {viewData && (
+        {adminLecNoticeDetail && (
           <Form labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}>
             <Form.Item label="강의명">
-              <Text>{viewData.lectureName}</Text>
+              <Text>{adminLecNoticeDetail.lectureName}</Text>
             </Form.Item>
 
             <Form.Item label="제목">
-              <Text>{viewData.noticeTitle}</Text>
+              <Text>{adminLecNoticeDetail.noticeTitle}</Text>
             </Form.Item>
 
             <Form.Item label="작성자">
-              <Text>{viewData.noticeAuthor}</Text>
+              <Text>{adminLecNoticeDetail.noticeAuthor}</Text>
             </Form.Item>
 
             <Form.Item label="작성일">
-              <Text>{viewData.noticeCreatedAt}</Text>
+              <Text>{adminLecNoticeDetail.noticeCreatedAt}</Text>
             </Form.Item>
 
             <Form.Item label="게시판 내용">
@@ -271,28 +289,154 @@ const NoticeClass = ({}) => {
                 al={`flex-start`}
                 ju={`flex-start`}
                 dangerouslySetInnerHTML={{
-                  __html: viewData && viewData.noticeContent,
+                  __html:
+                    adminLecNoticeDetail && adminLecNoticeDetail.noticeContent,
                 }}
               ></Wrapper>
             </Form.Item>
 
-            {viewData.noticeFile && (
+            {adminLecNoticeDetail.noticeFile && (
               <Form.Item label="첨부파일">
                 <Wrapper
                   width={`120px`}
                   height={`30px`}
-                  bgColor={Theme.grey_C}
+                  bgColor={Theme.basicTheme_C}
                   radius={`5px`}
                   margin={`0 10px 0 0`}
                   cursor={`pointer`}
                   color={Theme.white_C}
-                  onClick={() => fileDownloadHandler(updateData.noticeFile)}
+                  onClick={() =>
+                    fileDownloadHandler(adminLecNoticeDetail.noticeFile)
+                  }
                 >
                   첨부파일 1
                 </Wrapper>
               </Form.Item>
             )}
           </Form>
+        )}
+
+        {adminLecNoticeComment && adminLecNoticeComment.length === 0 ? (
+          <Wrapper margin={`50px 0`}>
+            <Empty description={`등록된 댓글이 없습니다.`} />
+          </Wrapper>
+        ) : (
+          adminLecNoticeComment &&
+          adminLecNoticeComment.map((data) => {
+            return (
+              <>
+                <Wrapper
+                  al={`flex-start`}
+                  padding={`30px 10px`}
+                  borderTop={`1px solid ${Theme.lightGrey3_C}`}
+                  borderBottom={`1px solid ${Theme.lightGrey3_C}`}
+                  cursor={`pointer`}
+                  key={data.id}
+                >
+                  <Wrapper
+                    dr={`row`}
+                    ju={`space-between`}
+                    al={`flex-start`}
+                    margin={`0 0 13px`}
+                  >
+                    <Text fontSize={`18px`} fontWeight={`700`}>
+                      {data.name}(
+                      {data.level === 1
+                        ? "student"
+                        : data.level === 2
+                        ? "teacher"
+                        : "admin"}
+                      )
+                      <SpanText
+                        fontSize={`16px`}
+                        fontWeight={`400`}
+                        color={Theme.grey2_C}
+                        margin={`0 0 0 15px`}
+                      >
+                        {moment(data.createdAt).format("YYYY-MM-DD")}
+                      </SpanText>
+                    </Text>
+
+                    <Wrapper width={`auto`} al={`flex-end`}>
+                      <Wrapper dr={`row`} width={`auto`} margin={`0 0 10px`}>
+                        {data.commentCnt !== 0 && (
+                          <HoverText onClick={() => getCommentHandler(data.id)}>
+                            More comments +
+                          </HoverText>
+                        )}
+                      </Wrapper>
+                    </Wrapper>
+                  </Wrapper>
+                  {data.content}
+                </Wrapper>
+
+                {/* 대댓글 영역 */}
+
+                {commentToggle &&
+                  lecNoticeCommentDetails &&
+                  lecNoticeCommentDetails.length !== 0 &&
+                  lecNoticeCommentDetails[0].id === data.id &&
+                  lecNoticeCommentDetails.slice(1).map((v) => {
+                    return (
+                      <Wrapper
+                        key={v.id}
+                        padding={`10px 0 10px ${v.lev * 20}px`}
+                        al={`flex-start`}
+                        borderTop={`1px solid ${Theme.lightGrey_C}`}
+                        bgColor={v.isDelete === 1 && Theme.lightGrey3_C}
+                      >
+                        <Wrapper
+                          dr={`row`}
+                          ju={`space-between`}
+                          margin={`0 0 10px`}
+                          width={`calc(100% - 15px)`}
+                        >
+                          <Wrapper dr={`row`} ju={`flex-start`} width={`auto`}>
+                            <Wrapper
+                              width={`auto`}
+                              margin={`0 10px 0 0`}
+                              al={`flex-start`}
+                            >
+                              <Wrapper
+                                width={`1px`}
+                                height={`15px`}
+                                bgColor={Theme.darkGrey_C}
+                              ></Wrapper>
+                              <Icon width={`${v.lev * 10}px`}></Icon>
+                            </Wrapper>
+                            <Text fontSize={`18px`} fontWeight={`700`}>
+                              {v.name}(
+                              {v.level === 1
+                                ? "student"
+                                : v.level === 2
+                                ? "teacher"
+                                : "admin"}
+                              )
+                            </Text>
+                            <Text
+                              fontSize={`16px`}
+                              margin={`0 15px`}
+                              color={Theme.grey2_C}
+                            >
+                              {moment(v.createdAt).format("YYYY-MM-DD")}
+                            </Text>
+                          </Wrapper>
+                          <Wrapper width={`auto`} al={`flex-end`}></Wrapper>
+                        </Wrapper>
+
+                        <Wrapper al={`flex-start`} margin={`0 0 15px 15px`}>
+                          {v.isDelete === 1 ? (
+                            <Text>삭제된 댓글입니다.</Text>
+                          ) : (
+                            <Text>{v.content.split("ㄴ")[1]}</Text>
+                          )}
+                        </Wrapper>
+                      </Wrapper>
+                    );
+                  })}
+              </>
+            );
+          })
         )}
       </Modal>
     </AdminLayout>

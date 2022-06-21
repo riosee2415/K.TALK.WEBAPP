@@ -6,13 +6,17 @@ import {
   LECTURE_NOTICE_LIST_SUCCESS,
   LECTURE_NOTICE_LIST_FAILURE,
   //
+  LECTURE_NOTICE_DETAIL_LIST_REQUEST,
+  LECTURE_NOTICE_DETAIL_LIST_SUCCESS,
+  LECTURE_NOTICE_DETAIL_LIST_FAILURE,
+  //
   LECTURE_NOTICE_ADMIN_LIST_REQUEST,
   LECTURE_NOTICE_ADMIN_LIST_SUCCESS,
   LECTURE_NOTICE_ADMIN_LIST_FAILURE,
   //
-  LECTURE_NOTICE_DETAIL_LIST_REQUEST,
-  LECTURE_NOTICE_DETAIL_LIST_SUCCESS,
-  LECTURE_NOTICE_DETAIL_LIST_FAILURE,
+  LECNOTICE_ADMIN_DETAIL_REQUEST,
+  LECNOTICE_ADMIN_DETAIL_SUCCESS,
+  LECNOTICE_ADMIN_DETAIL_FAILURE,
   //
   LECTURE_NOTICE_UPLOAD_REQUEST,
   LECTURE_NOTICE_UPLOAD_SUCCESS,
@@ -83,6 +87,34 @@ function* lectureNoticeList(action) {
 // ******************************************************************************************************************
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
+async function lectureNoticeDetailListAPI(data) {
+  return await axios.post(`/api/lectureNotice/detail`, data);
+}
+
+function* lectureNoticeDetailList(action) {
+  try {
+    const result = yield call(lectureNoticeDetailListAPI, action.data);
+
+    yield put({
+      type: LECTURE_NOTICE_DETAIL_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_NOTICE_DETAIL_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
 async function lectureNoticeAdminListAPI(data) {
   return await axios.post(`/api/lectureNotice/admin/list`, data);
 }
@@ -111,22 +143,22 @@ function* lectureNoticeAdminList(action) {
 // ******************************************************************************************************************
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-async function lectureNoticeDetailListAPI(data) {
-  return await axios.post(`/api/lectureNotice/detail`, data);
+async function lecNoticeAdminDetailAPI(data) {
+  return await axios.post(`/api/lectureNotice/admin/detail`, data);
 }
 
-function* lectureNoticeDetailList(action) {
+function* lecNoticeAdminDetail(action) {
   try {
-    const result = yield call(lectureNoticeDetailListAPI, action.data);
+    const result = yield call(lecNoticeAdminDetailAPI, action.data);
 
     yield put({
-      type: LECTURE_NOTICE_DETAIL_LIST_SUCCESS,
+      type: LECNOTICE_ADMIN_DETAIL_SUCCESS,
       data: result.data,
     });
   } catch (err) {
     console.error(err);
     yield put({
-      type: LECTURE_NOTICE_DETAIL_LIST_FAILURE,
+      type: LECNOTICE_ADMIN_DETAIL_FAILURE,
       error: err.response.data,
     });
   }
@@ -377,12 +409,16 @@ function* watchLectureNoticeList() {
   yield takeLatest(LECTURE_NOTICE_LIST_REQUEST, lectureNoticeList);
 }
 
+function* watchLectureNoticeDetailList() {
+  yield takeLatest(LECTURE_NOTICE_DETAIL_LIST_REQUEST, lectureNoticeDetailList);
+}
+
 function* watchLectureNoticeAdminList() {
   yield takeLatest(LECTURE_NOTICE_ADMIN_LIST_REQUEST, lectureNoticeAdminList);
 }
 
-function* watchLectureNoticeDetailList() {
-  yield takeLatest(LECTURE_NOTICE_DETAIL_LIST_REQUEST, lectureNoticeDetailList);
+function* watchLecNoticeAdminDetail() {
+  yield takeLatest(LECNOTICE_ADMIN_DETAIL_REQUEST, lecNoticeAdminDetail);
 }
 
 function* watchLectureNoticeUpload() {
@@ -428,8 +464,9 @@ export default function* lectureNoticeSaga() {
     ////////////////////////////// NOTICE //////////////////////////////
     ////////////////////////////////////////////////////////////////////
     fork(watchLectureNoticeList),
-    fork(watchLectureNoticeAdminList),
     fork(watchLectureNoticeDetailList),
+    fork(watchLectureNoticeAdminList),
+    fork(watchLecNoticeAdminDetail),
     fork(watchLectureNoticeUpload),
     fork(watchLectureNoticeCreate),
     fork(watchLectureNoticeUpdate),
