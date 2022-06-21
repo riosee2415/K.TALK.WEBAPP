@@ -516,7 +516,13 @@ const TeacherNormalNotice = () => {
                         )
                       }
                     >
-                      {data.noticeAuthor}
+                      {data.noticeAuthor} (
+                      {data.noticeLevel === 1
+                        ? "학생"
+                        : data.noticeLevel === 2
+                        ? "강사"
+                        : "관리자"}
+                      )
                     </Text>
                     <Wrapper width={width < 800 ? `12%` : `10%`}>
                       {me.id === data.writeUserId ? (
