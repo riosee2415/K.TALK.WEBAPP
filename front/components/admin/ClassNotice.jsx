@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import AdminLayout from "../../../../components/AdminLayout";
-import PageHeader from "../../../../components/admin/PageHeader";
+import AdminLayout from "../AdminLayout";
+import PageHeader from "../admin/PageHeader";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -15,7 +15,7 @@ import {
 } from "antd";
 
 import { useRouter, withRouter } from "next/router";
-import wrapper from "../../../../store/configureStore";
+import wrapper from "../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
 import {
@@ -28,16 +28,16 @@ import {
   GuideLi,
   Text,
   SpanText,
-} from "../../../../components/commonComponents";
-import { LOAD_MY_INFO_REQUEST } from "../../../../reducers/user";
+} from "../commonComponents";
+import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 import {
   LECNOTICE_ADMIN_DETAIL_REQUEST,
   LECNOTICE_COMMENT_DETAIL_REQUEST,
   LECTURE_NOTICE_ADMIN_LIST_REQUEST,
-} from "../../../../reducers/lectureNotice";
-import { GUIDE_MODAL } from "../../../../reducers/notice";
+} from "../../reducers/lectureNotice";
+import { GUIDE_MODAL } from "../../reducers/notice";
 import { saveAs } from "file-saver";
-import Theme from "../../../../components/Theme";
+import Theme from "../Theme";
 import moment from "moment";
 
 const LoadNotification = (msg, content) => {
@@ -210,38 +210,14 @@ const NoticeClass = ({}) => {
   ];
 
   return (
-    <AdminLayout>
-      <PageHeader
-        breadcrumbs={["게시판 관리", "게시판"]}
-        title={`게시판 목록`}
-        subTitle={`강의 게시판을 확인할 수 있습니다.`}
+    <>
+      <Table
+        style={{ width: `100%` }}
+        rowKey="noticeId"
+        columns={columns}
+        dataSource={adminLectureNotices ? adminLectureNotices : []}
+        size="small"
       />
-
-      <AdminContent>
-        <Wrapper margin="0px 0px 20px 0px" dr="row" ju="flex-end">
-          <ModalBtn
-            type="primary"
-            size="small"
-            onClick={() => moveLinkHandler(`/admin/class/${router.query.id}`)}
-          >
-            해당 강의로 가기
-          </ModalBtn>
-          <ModalBtn
-            type="danger"
-            size="small"
-            onClick={() => guideModalToggle()}
-          >
-            주의사항
-          </ModalBtn>
-        </Wrapper>
-
-        <Table
-          rowKey="noticeId"
-          columns={columns}
-          dataSource={adminLectureNotices ? adminLectureNotices : []}
-          size="small"
-        />
-      </AdminContent>
 
       {/* 주의사항 */}
       <Modal
@@ -439,7 +415,7 @@ const NoticeClass = ({}) => {
           })
         )}
       </Modal>
-    </AdminLayout>
+    </>
   );
 };
 

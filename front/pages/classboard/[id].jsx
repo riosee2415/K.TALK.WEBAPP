@@ -697,9 +697,7 @@ const Classboard = () => {
                   fontSize={width < 800 ? `14px` : `18px`}
                   padding={`0`}
                   onClick={() =>
-                    moveLinkHandler(
-                      `/teacher/notice/${lectureNoticeDetail.lectureId}`
-                    )
+                    moveLinkHandler(`/teacher/${lectureNoticeDetail.lectureId}`)
                   }
                   margin={`0 0 30px`}
                 >
