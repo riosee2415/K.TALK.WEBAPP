@@ -69,47 +69,56 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
 
   try {
     const lengthQuery = `
-    SELECT	A.isAdmin				                              AS connectIsAdmin,
-            A.NormalNoticeId		                          AS connectNoticeId,
-            A.UserId				                              AS connectUserId,
-            B.id					                                AS noticeId,
-            B.title 				                              AS noticeTitle,
-            B.content 				                            AS noticeContent,
-            B.author 				                              AS noticeAuthor,
-            B.level 				                              AS noticeLevel,
-            B.file 					                              AS noticeFile,
-            B.hit 					                              AS noticeHit,
-            DATE_FORMAT(B.createdAt, "%Y-%m-%d")	        AS noticeCreatedAt,
-            B.UserId 				                              AS writeUserId
-      FROM	normalConnects			A
-     INNER
-      JOIN	normalNotices			  B
-        ON	A.NormalNoticeId  = B.id
-     WHERE	A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}
-       AND  B.isDelete = FALSE
+    SELECT  *
+      FROM (
+          SELECT	DISTINCT
+                  A.isAdmin				                              AS connectIsAdmin,
+                  A.NormalNoticeId		                          AS connectNoticeId,
+                  B.id					                                AS noticeId,
+                  B.title 				                              AS noticeTitle,
+                  B.content 				                            AS noticeContent,
+                  B.author 				                              AS noticeAuthor,
+                  B.level 				                              AS noticeLevel,
+                  B.file 					                              AS noticeFile,
+                  B.hit 					                              AS noticeHit,
+                  B.isDelete 												AS	noticeIsDelete,
+                  DATE_FORMAT(B.createdAt, "%Y-%m-%d")	        AS noticeCreatedAt,
+                  B.UserId 				                              AS writeUserId
+            FROM	normalConnects			A
+           INNER
+            JOIN	normalNotices			  B
+              ON	A.NormalNoticeId  = B.id
+           WHERE	A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}
+             AND  B.isDelete = FALSE
+           )	X
+      WHERE	X.noticeIsDelete = FALSE 
     `;
 
     const selectQuery = `
-   SELECT	  A.isAdmin				                              AS connectIsAdmin,
-            A.NormalNoticeId		                          AS connectNoticeId,
-            A.UserId				                              AS connectUserId,
-            B.id					                                AS noticeId,
-            B.title 				                              AS noticeTitle,
-            B.content 				                            AS noticeContent,
-            B.author 				                              AS noticeAuthor,
-            B.level 				                              AS noticeLevel,
-            B.file 					                              AS noticeFile,
-            B.hit 					                              AS noticeHit,
-            DATE_FORMAT(B.createdAt, "%Y-%m-%d")	        AS noticeCreatedAt,
-            B.UserId 				                              AS writeUserId
-      FROM	normalConnects			A
-     INNER
-      JOIN	normalNotices			  B
-        ON	A.NormalNoticeId  = B.id
-     WHERE	A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}
-       AND  B.isDelete = FALSE
-       AND  B.isDelete = FALSE
-     ORDER  BY B.id DESC
+    SELECT  *
+      FROM (
+            SELECT	DISTINCT
+                    A.isAdmin				                              AS connectIsAdmin,
+                    A.NormalNoticeId		                          AS connectNoticeId,
+                    B.id					                                AS noticeId,
+                    B.title 				                              AS noticeTitle,
+                    B.content 				                            AS noticeContent,
+                    B.author 				                              AS noticeAuthor,
+                    B.level 				                              AS noticeLevel,
+                    B.file 					                              AS noticeFile,
+                    B.hit 					                              AS noticeHit,
+                    B.isDelete 												            AS	noticeIsDelete,
+                    DATE_FORMAT(B.createdAt, "%Y-%m-%d")	        AS noticeCreatedAt,
+                    B.UserId 				                              AS writeUserId
+              FROM	normalConnects			A
+             INNER
+              JOIN	normalNotices			  B
+                ON	A.NormalNoticeId  = B.id
+             WHERE	A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}
+               AND  B.isDelete = FALSE
+           )	X
+     WHERE	X.noticeIsDelete = FALSE 
+     ORDER	BY X.noticeId DESC
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
     `;
