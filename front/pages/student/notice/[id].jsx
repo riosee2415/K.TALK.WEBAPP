@@ -642,7 +642,7 @@ const Notice = ({}) => {
                         {data.noticeCreatedAt}
                       </Wrapper>
                       <Wrapper
-                        width={width < 800 ? `35%` : `58%`}
+                        width={width < 800 ? `30%` : `53%`}
                         al={`flex-start`}
                         padding={`0 0 0 10px`}
                         onClick={() =>
