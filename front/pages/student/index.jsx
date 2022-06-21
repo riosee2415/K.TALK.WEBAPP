@@ -70,6 +70,7 @@ import { saveAs } from "file-saver";
 import { BOOK_LIST_REQUEST } from "../../reducers/book";
 import { CalendarOutlined } from "@ant-design/icons";
 import { PAY_CLASS_LEC_DETAIL_REQUEST } from "../../reducers/payClass";
+import StudentNormalNotice from "../../components/normalNotice/StudentNormalNotice";
 
 const PROFILE_WIDTH = `150`;
 const PROFILE_HEIGHT = `150`;
@@ -1387,6 +1388,8 @@ const Student = () => {
                 );
               })
             )}
+
+            <StudentNormalNotice />
 
             {/* View your homework */}
 

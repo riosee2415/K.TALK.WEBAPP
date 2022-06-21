@@ -76,6 +76,7 @@ import {
   NORMAL_NOTICE_DELETE_REQUEST,
   NORMAL_NOTICE_DETAIL_MODAL_TOGGLE,
   NORMAL_NOTICE_DETAIL_REQUEST,
+  NORMAL_NOTICE_EDITOR_RENDER,
   NORMAL_NOTICE_MODAL_TOGGLE,
   NORMAL_NOTICE_UPDATE_REQUEST,
 } from "../../reducers/normalNotice";
@@ -452,11 +453,11 @@ const AdminHome = () => {
       dispatch({
         type: NORMAL_NOTICE_ADMIN_LIST_REQUEST,
         data: {
-          listType: 4,
+          listType: normalNoticeListType,
         },
       });
 
-      normalNoticeModalToggle(null);
+      normalNoticeCreateModalToggle();
 
       return message.success("일반게시판이 추가되었습니다.");
     }
@@ -474,11 +475,11 @@ const AdminHome = () => {
       dispatch({
         type: NORMAL_NOTICE_ADMIN_LIST_REQUEST,
         data: {
-          listType: 4,
+          listType: normalNoticeListType,
         },
       });
 
-      normalNoticeModalToggle(null);
+      normalNoticeUpdateModalToggle(null);
 
       return message.success("일반게시판이 수정되었습니다.");
     }
@@ -496,7 +497,7 @@ const AdminHome = () => {
       dispatch({
         type: NORMAL_NOTICE_ADMIN_LIST_REQUEST,
         data: {
-          listType: 4,
+          listType: normalNoticeListType,
         },
       });
 
@@ -737,16 +738,49 @@ const AdminHome = () => {
 
   ////// TOGGLE //////
 
-  const normalNoticeModalToggle = useCallback(
+  const normalNoticeCreateModalToggle = useCallback(() => {
+    dispatch({
+      type: NORMAL_NOTICE_EDITOR_RENDER,
+      data: "create",
+    });
+    normalNoticeForm.resetFields();
+    setNormalNoticeUpdateData(null);
+    setNormalNoticeType(null);
+    setNormalNoticeUser([]);
+    setContentData(null);
+    filename.setValue(null);
+
+    dispatch({
+      type: NORMAL_NOTICE_MODAL_TOGGLE,
+    });
+  }, [
+    normalNoticeModal,
+    normalNoticeType,
+    normalNoticeUser,
+    contentData,
+    normalNoticeUpdateData,
+    filename.value,
+  ]);
+
+  const normalNoticeUpdateModalToggle = useCallback(
     (data) => {
       if (data) {
         setNormalNoticeUpdateData(data);
+        dispatch({
+          type: NORMAL_NOTICE_EDITOR_RENDER,
+          data: data.noticeContent,
+        });
       } else {
+        dispatch({
+          type: NORMAL_NOTICE_EDITOR_RENDER,
+          data: null,
+        });
         normalNoticeForm.resetFields();
         setNormalNoticeUpdateData(null);
         setNormalNoticeType(null);
         setNormalNoticeUser([]);
         setContentData(null);
+        filename.setValue(null);
       }
 
       dispatch({
@@ -759,6 +793,7 @@ const AdminHome = () => {
       normalNoticeUser,
       contentData,
       normalNoticeUpdateData,
+      filename.value,
     ]
   );
 
@@ -1093,7 +1128,7 @@ const AdminHome = () => {
           content: contentData,
           author: "admin",
           level: me.level,
-          file: uploadPath,
+          file: normalNoticeFilePath,
           receiverId: data.userId,
           createType:
             normalNoticeType === "강사전체"
@@ -1106,7 +1141,7 @@ const AdminHome = () => {
         },
       });
     },
-    [normalNoticeType, uploadPath, me, contentData]
+    [normalNoticeType, normalNoticeFilePath, me, contentData]
   );
   // 일반게시판 수정
   const normalNoticeAdminUpdate = useCallback(
@@ -1326,7 +1361,7 @@ const AdminHome = () => {
           <Button
             type="primary"
             size="small"
-            onClick={() => normalNoticeModalToggle(data)}
+            onClick={() => normalNoticeUpdateModalToggle(data)}
             loading={normalNoticeUpdateLoading}
           >
             수정
@@ -1471,7 +1506,7 @@ const AdminHome = () => {
                         size={`small`}
                         type={`primary`}
                         loading={normalNoticeAdminCreateLoading}
-                        onClick={() => normalNoticeModalToggle(null)}
+                        onClick={normalNoticeCreateModalToggle}
                       >
                         일반 게시판 작성
                       </Button>
@@ -2212,7 +2247,11 @@ const AdminHome = () => {
             <Text fontSize={`18px`} fontWeight={`bold`}>
               제목
             </Text>
-            <Wrapper padding={`10px`} fontSize={width < 700 ? `14px` : `16px`}>
+            <Wrapper
+              padding={`10px`}
+              fontSize={width < 700 ? `14px` : `16px`}
+              border={`1px solid ${Theme.lightGrey3_C}`}
+            >
               <WordbreakText>
                 {noticeDetailData && noticeDetailData.noticeTitle}
               </WordbreakText>
@@ -2223,6 +2262,7 @@ const AdminHome = () => {
             </Text>
             {noticeDetailData && (
               <Wrapper
+                border={`1px solid ${Theme.lightGrey3_C}`}
                 padding={`10px`}
                 fontSize={width < 700 ? `14px` : `16px`}
                 al={`flex-start`}
@@ -2233,10 +2273,7 @@ const AdminHome = () => {
                 }}
               />
             )}
-            {/* 
-normalNoticeDetailData
-normalComments
-normalCommentsLen */}
+
             <FormTag form={commentForm} onFinish={commentSubmit}>
               <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 50px`}>
                 <Text
@@ -2496,7 +2533,7 @@ normalCommentsLen */}
             width={`1000px`}
             title="일반게시판 관리"
             visible={normalNoticeModal}
-            onCancel={() => normalNoticeModalToggle(null)}
+            onCancel={() => normalNoticeUpdateModalToggle(null)}
             footer={null}
           >
             <Wrapper padding={`10px`}>
