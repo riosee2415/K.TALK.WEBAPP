@@ -588,6 +588,21 @@ const NormalNoticeDetail = () => {
                         >
                           {normalNoticeDetailData &&
                             normalNoticeDetailData.noticeAuthor}
+                          {`(${
+                            normalNoticeDetailData &&
+                            router.query &&
+                            router.query.type === "stu"
+                              ? normalNoticeDetailData.noticeLevel === 1
+                                ? "student"
+                                : normalNoticeDetailData.noticeLevel === 2
+                                ? "teacher"
+                                : "admin"
+                              : normalNoticeDetailData.noticeLevel === 1
+                              ? "학생"
+                              : normalNoticeDetailData.noticeLevel === 2
+                              ? "강사"
+                              : "관리자"
+                          })`}
                         </Text>
                       </Wrapper>
 

@@ -448,7 +448,7 @@ const StudentNormalNotice = () => {
               fontWeight={`Bold`}
               width={width < 800 ? `15%` : `12%`}
             >
-              Update&nbsp;|&nbsp;Delete
+              {width < 800 ? `Update` : `Update | Delete`}
             </WordbreakText>
           </Wrapper>
           {normalNoticeListLoading ? (
@@ -484,6 +484,7 @@ const StudentNormalNotice = () => {
                           `/normalNotice/${data.noticeId}?type=stu`
                         )
                       }
+                      isEllipsis
                     >
                       {data.noticeId}
                     </WordbreakText>
@@ -495,6 +496,7 @@ const StudentNormalNotice = () => {
                           `/normalNotice/${data.noticeId}?type=stu`
                         )
                       }
+                      isEllipsis
                     >
                       {moment(data.noticeCreatedAt, "YYYY/MM/DD").format(
                         "YYYY/MM/DD"
@@ -521,6 +523,7 @@ const StudentNormalNotice = () => {
                           `/normalNotice/${data.noticeId}?type=stu`
                         )
                       }
+                      isEllipsis
                     >
                       {data.noticeAuthor}
                       {`(${
@@ -536,6 +539,7 @@ const StudentNormalNotice = () => {
                         <Wrapper dr={width < 800 ? `column` : `row`}>
                           <CommonButton
                             width={width < 800 ? `100%` : `50%`}
+                            padding={`0`}
                             fontSize={`13px`}
                             onClick={() => normalNoticeUpdateModalToggle(data)}
                             loading={normalNoticeUpdateLoading}
@@ -552,6 +556,7 @@ const StudentNormalNotice = () => {
                           >
                             <CommonButton
                               width={width < 800 ? `100%` : `50%`}
+                              padding={`0`}
                               fontSize={`13px`}
                               kindOf={`delete`}
                             >

@@ -81,6 +81,10 @@ const CustomPage = styled(Pagination)`
   }
 `;
 
+const WordbreakText = styled(Text)`
+  word-break: break-all;
+`;
+
 const CustomModal = styled(Modal)`
   & .ant-modal-header,
   & .ant-modal-content {
@@ -409,41 +413,41 @@ const TeacherNormalNotice = () => {
             bgColor={Theme.subTheme9_C}
             borderBottom={`1px solid ${Theme.grey_C}`}
           >
-            <Text
+            <WordbreakText
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`Bold`}
-              width={width < 800 ? `10%` : `10%`}
+              width={`10%`}
             >
               번호
-            </Text>
-            <Text
+            </WordbreakText>
+            <WordbreakText
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`Bold`}
               width={width < 800 ? `25%` : `10%`}
             >
               날짜
-            </Text>
-            <Text
+            </WordbreakText>
+            <WordbreakText
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`Bold`}
-              width={width < 800 ? `40%` : `58%`}
+              width={width < 800 ? `35%` : `58%`}
             >
               제목
-            </Text>
-            <Text
+            </WordbreakText>
+            <WordbreakText
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`Bold`}
-              width={width < 800 ? `13%` : `10%`}
+              width={width < 800 ? `15%` : `10%`}
             >
               작성자
-            </Text>
-            <Text
+            </WordbreakText>
+            <WordbreakText
               fontSize={width < 700 ? `14px` : `18px`}
               fontWeight={`Bold`}
-              width={width < 800 ? `12%` : `12%`}
+              width={width < 800 ? `15%` : `12%`}
             >
               기능
-            </Text>
+            </WordbreakText>
           </Wrapper>
           {normalNoticeListLoading ? (
             <Wrapper>
@@ -469,19 +473,21 @@ const TeacherNormalNotice = () => {
                     bgColor={idx % 2 === 1 && Theme.subTheme_C}
                     borderBottom={`1px solid ${Theme.grey_C}`}
                   >
-                    <Text
+                    <WordbreakText
                       fontSize={width < 700 ? `14px` : `16px`}
-                      width={width < 800 ? `10%` : `10%`}
+                      width={`10%`}
                       wordBreak={`break-word`}
                       onClick={() =>
                         moveLinkHandler(
-                          `/normalNotice/${data.noticeId}?type=teacher`
+                          `/no
+                          rmalNotice/${data.noticeId}?type=teacher`
                         )
                       }
+                      isEllipsis
                     >
                       {data.noticeId}
-                    </Text>
-                    <Text
+                    </WordbreakText>
+                    <WordbreakText
                       fontSize={width < 700 ? `14px` : `16px`}
                       width={width < 800 ? `25%` : `10%`}
                       onClick={() =>
@@ -489,12 +495,13 @@ const TeacherNormalNotice = () => {
                           `/normalNotice/${data.noticeId}?type=teacher`
                         )
                       }
+                      isEllipsis
                     >
                       {moment(data.noticeCreatedAt, "YYYY/MM/DD").format(
                         "YYYY/MM/DD"
                       )}
-                    </Text>
-                    <Text
+                    </WordbreakText>
+                    <WordbreakText
                       fontSize={width < 700 ? `14px` : `16px`}
                       width={width < 800 ? `35%` : `58%`}
                       onClick={() =>
@@ -506,8 +513,8 @@ const TeacherNormalNotice = () => {
                       isEllipsis
                     >
                       {data.noticeTitle}
-                    </Text>
-                    <Text
+                    </WordbreakText>
+                    <WordbreakText
                       fontSize={width < 700 ? `14px` : `16px`}
                       width={width < 800 ? `15%` : `10%`}
                       onClick={() =>
@@ -515,6 +522,7 @@ const TeacherNormalNotice = () => {
                           `/normalNotice/${data.noticeId}?type=teacher`
                         )
                       }
+                      isEllipsis
                     >
                       {data.noticeAuthor} (
                       {data.noticeLevel === 1
@@ -523,7 +531,7 @@ const TeacherNormalNotice = () => {
                         ? "강사"
                         : "관리자"}
                       )
-                    </Text>
+                    </WordbreakText>
                     <Wrapper width={width < 800 ? `15%` : `12%`}>
                       {me && me.id === data.writeUserId ? (
                         <Wrapper dr={width < 800 ? `column` : `row`}>
