@@ -1339,7 +1339,14 @@ const AdminHome = () => {
     {
       title: "작성자",
       width: `15%`,
-      dataIndex: "noticeAuthor",
+      render: (data) =>
+        `${data.noticeAuthor} (${
+          data.noticeLevel === 1
+            ? "학생"
+            : data.noticeLevel === 2
+            ? "강사"
+            : "관리자"
+        })`,
     },
     {
       title: "조회수",
@@ -1412,7 +1419,14 @@ const AdminHome = () => {
     {
       title: "작성자",
       width: `15%`,
-      dataIndex: "noticeAuthor",
+      render: (data) =>
+        `${data.noticeAuthor} (${
+          data.noticeLevel === 1
+            ? "학생"
+            : data.noticeLevel === 2
+            ? "강사"
+            : "관리자"
+        })`,
     },
     {
       title: "조회수",
@@ -1445,6 +1459,7 @@ const AdminHome = () => {
             subTitle={`클래스의 목록을 살펴볼 수 있고 클래스별 상세 설정을 할 수 있습니다.`}
           /> */}
 
+          {console.log(normalNoticeAdminList)}
           <AdminContent>
             <Text fontSize={`24px`} fontWeight={`bold`} margin={`0 0 30px`}>
               관리자 메인페이지
@@ -2215,7 +2230,16 @@ const AdminHome = () => {
               fontSize={width < 700 ? `14px` : `16px`}
             >
               <Text>
-                {`작성자: ${noticeDetailData && noticeDetailData.noticeAuthor}`}
+                {`작성자: ${
+                  noticeDetailData && noticeDetailData.noticeAuthor
+                }(${
+                  noticeDetailData &&
+                  (noticeDetailData.noticeLevel === 1
+                    ? "학생"
+                    : noticeDetailData.noticeLevel === 2
+                    ? "강사"
+                    : "관리자")
+                })`}
               </Text>
               <Text>
                 {`작성일: ${
