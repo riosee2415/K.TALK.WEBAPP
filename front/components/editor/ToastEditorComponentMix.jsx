@@ -77,7 +77,7 @@ const ToastEditorComponent = (props) => {
   return (
     <>
       {editorRender && (
-        <EditorWrapper margin="20px 0px">
+        <EditorWrapper>
           <EditorWithForwardedRef
             {...props}
             initialValue={
