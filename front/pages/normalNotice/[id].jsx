@@ -97,8 +97,8 @@ const NormalNoticeDetail = () => {
     //
     normalNoticeDetailError,
     //
-    normalNoticeTeacherCreateDone,
-    normalNoticeTeacherCreateError,
+    normalCommentCreateDone,
+    normalCommentCreateError,
     //
     normalCommentUpdateDone,
     normalCommentUpdateError,
@@ -154,7 +154,7 @@ const NormalNoticeDetail = () => {
   }, [router.query]);
 
   useEffect(() => {
-    if (normalNoticeTeacherCreateDone) {
+    if (normalCommentCreateDone) {
       commentForm.resetFields();
       childCommentForm.resetFields();
 
@@ -182,7 +182,7 @@ const NormalNoticeDetail = () => {
 
       return message.success("댓글이 등록되었습니다.");
     }
-  }, [normalNoticeTeacherCreateDone]);
+  }, [normalCommentCreateDone]);
 
   useEffect(() => {
     if (normalCommentUpdateDone) {
@@ -244,10 +244,10 @@ const NormalNoticeDetail = () => {
   }, [normalNoticeDetailError]);
 
   useEffect(() => {
-    if (normalNoticeTeacherCreateError) {
-      return message.error(normalNoticeTeacherCreateError);
+    if (normalCommentCreateError) {
+      return message.error(normalCommentCreateError);
     }
-  }, [normalNoticeTeacherCreateError]);
+  }, [normalCommentCreateError]);
 
   useEffect(() => {
     if (normalCommentUpdateError) {
