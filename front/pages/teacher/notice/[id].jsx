@@ -575,7 +575,7 @@ const Notice = ({}) => {
 
           <Wrapper
             bgImg={`url("https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/student/subBanner.png")`}
-            padding={width < 700 ? `30px 0` : `60px 0 140px 0`}
+            padding={width < 700 ? `30px 0` : `60px 0`}
             color={Theme.white_C}
           >
             <RsWrapper dr={`row`} ju={width < 900 ? `center` : `flex-start`}>
@@ -646,34 +646,35 @@ const Notice = ({}) => {
                 fontSize={width < 700 ? `14px` : `18px`}
                 fontWeight={`Bold`}
                 width={width < 800 ? `15%` : `10%`}
+                display={width < 900 ? `none` : `block`}
               >
                 No
               </Text>
               <Text
-                fontSize={width < 700 ? `14px` : `18px`}
+                fontSize={width < 700 ? `12px` : `18px`}
                 fontWeight={`Bold`}
-                width={width < 800 ? `25%` : `10%`}
+                width={width < 800 ? `18%` : `10%`}
               >
                 Date
               </Text>
               <Text
-                fontSize={width < 700 ? `14px` : `18px`}
+                fontSize={width < 700 ? `12px` : `18px`}
                 fontWeight={`Bold`}
-                width={width < 800 ? `35%` : `60%`}
+                width={width < 800 ? `30%` : `53%`}
               >
                 Title
               </Text>
               <Text
-                fontSize={width < 700 ? `14px` : `18px`}
+                fontSize={width < 700 ? `12px` : `18px`}
                 fontWeight={`Bold`}
-                width={width < 800 ? `15%` : `10%`}
+                width={width < 800 ? `20%` : `15%`}
               >
                 Writer
               </Text>
               <Text
-                fontSize={width < 700 ? `14px` : `18px`}
+                fontSize={width < 700 ? `12px` : `18px`}
                 fontWeight={`Bold`}
-                width={width < 800 ? `15%` : `10%`}
+                width={width < 800 ? `27%` : `12%`}
               >
                 Update | Delete
               </Text>
@@ -687,47 +688,75 @@ const Notice = ({}) => {
                 lectureNotices.map((data) => {
                   return (
                     <CustomTableHoverWrapper key={data.noticeId}>
-                      <Wrapper width={width < 800 ? `15%` : `10%`}>
+                      <Wrapper
+                        width={width < 800 ? `15%` : `10%`}
+                        display={width < 900 ? `none` : `flex`}
+                      >
                         {data.noticeId}
                       </Wrapper>
-                      <Wrapper width={width < 800 ? `25%` : `10%`}>
+                      <Wrapper
+                        width={width < 800 ? `18%` : `10%`}
+                        fontSize={width < 700 && `12px`}
+                      >
                         {data.noticeCreatedAt}
                       </Wrapper>
                       <Wrapper
-                        width={width < 800 ? `35%` : `60%`}
+                        width={width < 800 ? `30%` : `53%`}
                         al={`flex-start`}
                         padding={`0 0 0 10px`}
+                        fontSize={width < 700 && `12px`}
                         onClick={() =>
                           moveLinkHandler(`/classboard/${data.noticeId}`)
                         }
                       >
-                        {data.title}
+                        <Text
+                          width={width < 900 ? `100px` : `400px`}
+                          textAlign={`start`}
+                          isEllipsis
+                        >
+                          {data.title}
+                        </Text>
                       </Wrapper>
-                      <Wrapper width={width < 800 ? `15%` : `10%`}>
-                        {data.noticeAuthor}
+                      <Wrapper
+                        width={width < 800 ? `20%` : `15%`}
+                        fontSize={width < 800 ? `12px` : `14px`}
+                      >
+                        {data.noticeAuthor}(
+                        {data.noticeLevel === 1
+                          ? "student"
+                          : data.noticeLevel === 2
+                          ? "teacher"
+                          : "admin"}
+                        )
                       </Wrapper>
-                      <Wrapper width={width < 800 ? `15%` : `10%`}>
+                      <Wrapper width={width < 800 ? `27%` : `12%`}>
                         {data.writeUserId === (me && me.id) ? (
-                          <>
-                            <Button
-                              type="primary"
+                          <Wrapper dr={`row`}>
+                            <CommonButton
+                              width={width < 900 ? `100%` : `50%`}
                               onClick={() => lectureNoticeModalToggle(data)}
                             >
                               Update
-                            </Button>
-                            <Button type="danger">
-                              <Popconfirm
-                                title="Are you sure you want to delete it?"
-                                okText="Delete"
-                                cancelText="Cancel"
-                                onConfirm={() => deleteHandler(data)}
+                            </CommonButton>
+                            <Popconfirm
+                              title="Are you sure you want to delete it?"
+                              okText="Delete"
+                              cancelText="Cancel"
+                              onConfirm={() => deleteHandler(data)}
+                            >
+                              <CommonButton
+                                width={width < 900 ? `100%` : `50%`}
+                                fontSize={`13px`}
+                                kindOf={`delete`}
                               >
                                 Delete
-                              </Popconfirm>
-                            </Button>
-                          </>
+                              </CommonButton>
+                            </Popconfirm>
+                          </Wrapper>
                         ) : (
-                          <Text>You do not have permission.</Text>
+                          <Text fontSize={width < 800 ? `12px` : `14px`}>
+                            You do not have permission.
+                          </Text>
                         )}
                       </Wrapper>
                     </CustomTableHoverWrapper>

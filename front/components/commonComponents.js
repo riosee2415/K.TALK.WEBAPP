@@ -409,6 +409,10 @@ ${(props) =>
       props.kindOf === `subTheme12` &&
       `border : 1px solid ${props.theme.subTheme12_C};`}
   }
+
+  @media (max-width: 800px) {
+    font-size: 13px;
+  }
 `;
 
 export const Text = styled.p`

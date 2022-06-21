@@ -492,6 +492,13 @@ const Classboard = () => {
                       <Text width={`calc(100% - 120px)`} padding={`0 0 0 15px`}>
                         {lectureNoticeDetail &&
                           lectureNoticeDetail.noticeAuthor}
+                        (
+                        {lectureNoticeDetail.noticeLevel === 1
+                          ? "student"
+                          : lectureNoticeDetail.noticeLevel === 2
+                          ? "teacher"
+                          : "admin"}
+                        )
                       </Text>
                     </Wrapper>
 
@@ -553,6 +560,13 @@ const Classboard = () => {
                         >
                           {lectureNoticeDetail &&
                             lectureNoticeDetail.noticeAuthor}
+                          (
+                          {lectureNoticeDetail.noticeLevel === 1
+                            ? "student"
+                            : lectureNoticeDetail.noticeLevel === 2
+                            ? "teacher"
+                            : "admin"}
+                          )
                         </Text>
                       </Wrapper>
 
@@ -614,6 +628,7 @@ const Classboard = () => {
                   ju={`flex-start`}
                   color={Theme.black_2C}
                   minHeight={`120px`}
+                  padding={`10px`}
                 >
                   <WordbreakText
                     al={`flex-start`}
@@ -638,6 +653,7 @@ const Classboard = () => {
                   ju={`flex-start`}
                   color={Theme.black_2C}
                   minHeight={`120px`}
+                  padding={`10px`}
                 >
                   <WordbreakText
                     al={`flex-start`}
