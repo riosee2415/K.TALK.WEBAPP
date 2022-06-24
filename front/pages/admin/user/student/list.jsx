@@ -1474,7 +1474,6 @@ const List = () => {
         </Wrapper>
         <Wrapper>
           <Wrapper
-            width={`60%`}
             al={`flex-start`}
             bgColor={Theme.lightGrey_C}
             padding={`20px 20px 0 30px`}
