@@ -433,7 +433,7 @@ const StudentNormalNotice = () => {
             <WordbreakText
               fontSize={width < 700 ? `12px` : `18px`}
               fontWeight={`Bold`}
-              width={width < 800 ? `30%` : `53%`}
+              width={width < 800 ? `25%` : `43%`}
             >
               Title
             </WordbreakText>
@@ -447,7 +447,14 @@ const StudentNormalNotice = () => {
             <WordbreakText
               fontSize={width < 700 ? `12px` : `18px`}
               fontWeight={`Bold`}
-              width={width < 800 ? `27%` : `12%`}
+              width={`10%`}
+            >
+              Comment
+            </WordbreakText>
+            <WordbreakText
+              fontSize={width < 700 ? `12px` : `18px`}
+              fontWeight={`Bold`}
+              width={width < 800 ? `22%` : `12%`}
             >
               Update | Delete
             </WordbreakText>
@@ -476,6 +483,7 @@ const StudentNormalNotice = () => {
                     bgColor={idx % 2 === 1 && Theme.subTheme_C}
                     borderBottom={`1px solid ${Theme.grey_C}`}
                   >
+                    {/* 번호 */}
                     <WordbreakText
                       fontSize={width < 700 ? `14px` : `16px`}
                       width={width < 800 ? `15%` : `10%`}
@@ -489,6 +497,7 @@ const StudentNormalNotice = () => {
                     >
                       {data.noticeId}
                     </WordbreakText>
+                    {/* 날짜 */}
                     <WordbreakText
                       width={width < 800 ? `18%` : `10%`}
                       fontSize={width < 700 && `12px`}
@@ -503,8 +512,9 @@ const StudentNormalNotice = () => {
                         "YYYY/MM/DD"
                       )}
                     </WordbreakText>
+                    {/* 제목 */}
                     <WordbreakText
-                      width={width < 800 ? `30%` : `53%`}
+                      width={width < 800 ? `25%` : `43%`}
                       al={`flex-start`}
                       padding={`0 0 0 10px`}
                       fontSize={width < 700 && `12px`}
@@ -518,6 +528,7 @@ const StudentNormalNotice = () => {
                     >
                       {data.noticeTitle}
                     </WordbreakText>
+                    {/* 작성자 */}
                     <WordbreakText
                       width={width < 800 ? `20%` : `15%`}
                       fontSize={width < 800 ? `12px` : `14px`}
@@ -536,7 +547,20 @@ const StudentNormalNotice = () => {
                           : "admin"
                       })`}
                     </WordbreakText>
-                    <Wrapper width={width < 800 ? `27%` : `12%`}>
+                    {/* 댓글수 */}
+                    <WordbreakText
+                      width={`10%`}
+                      fontSize={width < 800 ? `12px` : `14px`}
+                      onClick={() =>
+                        moveLinkHandler(
+                          `/normalNotice/${data.noticeId}?type=stu`
+                        )
+                      }
+                    >
+                      {data.commentCnt}
+                    </WordbreakText>
+                    {/* 기능 */}
+                    <Wrapper width={width < 800 ? `22%` : `12%`}>
                       {me && me.id === data.writeUserId ? (
                         <Wrapper dr={width < 800 ? `column` : `row`}>
                           <CommonButton

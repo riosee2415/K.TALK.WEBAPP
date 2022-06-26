@@ -445,7 +445,7 @@ const TeacherNormalNotice = () => {
             <WordbreakText
               fontSize={width < 700 ? `12px` : `18px`}
               fontWeight={`Bold`}
-              width={width < 800 ? `10%` : `10%`}
+              width={`10%`}
             >
               댓글수
             </WordbreakText>
@@ -547,7 +547,7 @@ const TeacherNormalNotice = () => {
                     </WordbreakText>
                     {/* 댓글수 */}
                     <WordbreakText
-                      width={width < 800 ? `10%` : `10%`}
+                      width={`10%`}
                       fontSize={width < 800 ? `12px` : `14px`}
                       onClick={() =>
                         moveLinkHandler(
