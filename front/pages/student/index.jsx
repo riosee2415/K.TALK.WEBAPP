@@ -42,13 +42,7 @@ import {
   Wrapper,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
-import {
-  MESSAGE_CREATE_REQUEST,
-  MESSAGE_FOR_ADMIN_CREATE_REQUEST,
-  MESSAGE_SENDER_LIST_REQUEST,
-  MESSAGE_TEACHER_LIST_REQUEST,
-  MESSAGE_USER_LIST_REQUEST,
-} from "../../reducers/message";
+import { MESSAGE_SENDER_LIST_REQUEST } from "../../reducers/message";
 
 import {
   NOTICE_LIST_REQUEST,
@@ -71,6 +65,7 @@ import { BOOK_LIST_REQUEST } from "../../reducers/book";
 import { CalendarOutlined } from "@ant-design/icons";
 import { PAY_CLASS_LEC_DETAIL_REQUEST } from "../../reducers/payClass";
 import StudentNormalNotice from "../../components/normalNotice/StudentNormalNotice";
+import { LECTURE_NOTICE_LIST_REQUEST } from "../../reducers/lectureNotice";
 
 const PROFILE_WIDTH = `150`;
 const PROFILE_HEIGHT = `150`;
@@ -271,6 +266,24 @@ const CustomForm = styled(Form)`
   }
 `;
 
+const CustomTableHoverWrapper = styled(Wrapper)`
+  flex-direction: row;
+  text-align: center;
+  height: 80px;
+  font-size: 16px;
+  border-bottom: 1px solid ${Theme.grey_C};
+  background-color: ${Theme.white_C};
+  margin-bottom: 20px;
+  cursor: pointer;
+  &:hover {
+    background-color: ${Theme.lightGrey_C};
+  }
+
+  @media (max-width: 800px) {
+    font-size: 14px;
+  }
+`;
+
 const Student = () => {
   ////// GLOBAL STATE //////
 
@@ -293,8 +306,6 @@ const Student = () => {
   } = useSelector((state) => state.user);
 
   const {
-    messageTeacherList,
-
     st_messageTeacherListError,
 
     st_messageCreateDone,
@@ -303,22 +314,10 @@ const Student = () => {
     st_messageForAdminCreateDone,
     st_messageForAdminCreateError,
 
-    messageUserList,
-    messageUserLastPage,
-
     st_messageUserListError,
-
-    messageSenderList,
-    messageSenderLastPage,
   } = useSelector((state) => state.message);
 
   const {
-    noticeList,
-    noticeLastPage,
-
-    noticeMyLectureList,
-    noticeMyLectureLastPage,
-
     st_noticeMyLectureListError,
 
     st_noticeListError,
@@ -348,6 +347,8 @@ const Student = () => {
   const { bookList, bookMaxLength, st_bookListDone, st_bookListError } =
     useSelector((state) => state.book);
 
+  const { lectureNotices } = useSelector((state) => state.lectureNotice);
+
   ////// HOOKS //////
   const width = useWidth();
   const router = useRouter();
@@ -368,30 +369,14 @@ const Student = () => {
   const [fileName, setFileName] = useState("");
   const [filePath, setFilePath] = useState("");
 
-  const [messageSendModal, setMessageSendModal] = useState(false);
-  const [messageViewModal, setMessageViewModal] = useState(false);
-
-  const [noticeViewModal, setNoticeViewModal] = useState(false);
-  const [noticeViewDatum, setNoticeViewDatum] = useState(null);
-
-  const [messageDatum, setMessageDatum] = useState();
-
-  const [sendMessageType, setSendMessageType] = useState(1);
-  const [sendMessageAnswerType, setSendMessageAnswerType] = useState(0);
   const [homeWorkModalToggle, setHomeWorkModalToggle] = useState(false);
   const [homeWorkData, setHomeWorkData] = useState("");
 
   const [bookModal, setBookModal] = useState(false);
   const [bookDetail, setBookDetail] = useState("");
 
-  const [currentPage1, setCurrentPage1] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
-  const [currentPage3, setCurrentPage3] = useState(1);
-  const [currentPage4, setCurrentPage4] = useState(1);
   const [currentPage5, setCurrentPage5] = useState(1);
-  const [currentPage6, setCurrentPage6] = useState(1);
-
-  const [senderModal, setSenderModal] = useState(false);
 
   const [attendanceModal, setAttendanceModal] = useState(false);
   const [attendanceData, setAttendanceData] = useState(null);
@@ -442,10 +427,6 @@ const Student = () => {
   ////// USEEFFECT //////
 
   useEffect(() => {
-    dispatch({
-      type: LECTURE_STU_LECTURE_LIST_REQUEST,
-    });
-
     dispatch({
       type: NOTICE_LIST_REQUEST,
       data: {
@@ -661,14 +642,8 @@ const Student = () => {
     sendform.resetFields();
     answerform.resetFields();
 
-    setNoticeViewModal(false);
-    setMessageSendModal(false);
-    setMessageViewModal(false);
     setHomeWorkModalToggle(false);
     setFileName("");
-    setSendMessageType(1);
-    setSendMessageAnswerType(0);
-    setSenderModal(false);
   }, [fileInput]);
 
   ////// TOGGLE //////
@@ -683,6 +658,51 @@ const Student = () => {
     setHomeWorkData(data);
     setHomeWorkModalToggle(true);
   }, []);
+
+  const onChangeBookPage = useCallback(
+    (page) => {
+      setCurrentPage5(page);
+      dispatch({
+        type: BOOK_LIST_REQUEST,
+        data: {
+          LectureId: bookDetail.LectureId,
+          page,
+        },
+      });
+    },
+    [bookDetail]
+  );
+
+  const attendanceToggle = useCallback(
+    (data) => {
+      setAttendanceModal((prev) => !prev);
+      setAttendanceData(data);
+    },
+    [attendanceModal]
+  );
+
+  const homeworksToggle = useCallback((data) => {
+    setHomework(data);
+    setHomeworkModal((prev) => !prev);
+  }, []);
+
+  const payModalToggle = useCallback(
+    (data) => {
+      if (payModal) {
+        setPayModal(false);
+        setSelectPayClass(null);
+      } else {
+        setPayModal(true);
+        dispatch({
+          type: PAY_CLASS_LEC_DETAIL_REQUEST,
+          data: {
+            LectureId: data.LectureId,
+          },
+        });
+      }
+    },
+    [payModal]
+  );
 
   ////// HANDLER //////
 
@@ -882,50 +902,19 @@ const Student = () => {
     return textSave;
   }, []);
 
-  const onChangeBookPage = useCallback(
-    (page) => {
-      setCurrentPage5(page);
+  // 강의별 게시글 확인 (2개정도)
+  const checkNoticeHandler = useCallback((data) => {
+    if (data) {
       dispatch({
-        type: BOOK_LIST_REQUEST,
+        type: LECTURE_NOTICE_LIST_REQUEST,
         data: {
-          LectureId: bookDetail.LectureId,
-          page,
+          LectureId: data,
+          page: 1,
         },
       });
-    },
-    [bookDetail]
-  );
-
-  const attendanceToggle = useCallback(
-    (data) => {
-      setAttendanceModal((prev) => !prev);
-      setAttendanceData(data);
-    },
-    [attendanceModal]
-  );
-
-  const homeworksToggle = useCallback((data) => {
-    setHomework(data);
-    setHomeworkModal((prev) => !prev);
+    }
   }, []);
 
-  const payModalToggle = useCallback(
-    (data) => {
-      if (payModal) {
-        setPayModal(false);
-        setSelectPayClass(null);
-      } else {
-        setPayModal(true);
-        dispatch({
-          type: PAY_CLASS_LEC_DETAIL_REQUEST,
-          data: {
-            LectureId: data.LectureId,
-          },
-        });
-      }
-    },
-    [payModal]
-  );
   ////// DATAVIEW //////
 
   const commuteColumns = [
@@ -1070,6 +1059,7 @@ const Student = () => {
                 lectureStuLectureList.map((data, idx) => {
                   return (
                     <Wrapper
+                      key={data.id}
                       dr={`row`}
                       ju={`space-between`}
                       borderBottom={
@@ -1082,7 +1072,7 @@ const Student = () => {
                           : `30px 0 0`
                       }
                     >
-                      <Wrapper width={`auto`} al={`flex-start`} key={data.id}>
+                      <Wrapper width={`auto`} al={`flex-start`}>
                         <Wrapper
                           dr={`row`}
                           ju={`flex-start`}
@@ -1196,139 +1186,267 @@ const Student = () => {
               </Wrapper>
             ) : (
               lectureStuLectureList &&
-              lectureStuLectureList.map((data, idx) => {
+              lectureStuLectureList.map((data) => {
                 return (
-                  <Wrapper
-                    // padding={`0 0 10px`}
-                    margin={`0 0 20px`}
-                    // borderBottom={`1px dashed ${Theme.grey}`}
-                  >
-                    <Wrapper
-                      key={data.id}
-                      width={`100%`}
-                      dr={`row`}
-                      ju={`flex-start`}
-                      margin={`0 0 30px`}
-                    >
-                      <Image
-                        top={`0`}
-                        left={`0`}
-                        width={width < 800 ? `60px` : `80px`}
-                        height={width < 800 ? `60px` : `80px`}
-                        radius={`5px`}
-                        src={
-                          data.profileImage
-                            ? data.profileImage
-                            : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile_big.png"
-                        }
-                        alt="student_thumbnail"
-                      />
+                  <>
+                    <Wrapper key={data.id} margin={`0 0 20px`}>
                       <Wrapper
-                        padding={`0 0 0 16px`}
-                        width={
-                          width < 800
-                            ? `calc(100% - 80px)`
-                            : `calc(100% - 184px)`
-                        }
+                        width={`100%`}
+                        dr={`row`}
+                        ju={`flex-start`}
+                        margin={`0 0 30px`}
                       >
-                        <Wrapper margin={`10px 0 0 0`} al={`flex-start`}>
-                          <Text
-                            fontSize={width < 800 ? `14px` : `16px`}
-                            margin={`0 0 10px`}
-                          >
-                            {data.course}
-                          </Text>
-
-                          <Button
-                            type={`primary`}
-                            size={`small`}
-                            onClick={() =>
-                              moveLinkHandler(
-                                `/student/notice/${data.LectureId}`
-                              )
-                            }
-                          >
-                            Go To Notice
-                          </Button>
-
-                          <Wrapper
-                            dr={width < 800 ? `column` : `row`}
-                            ju={width < 800 ? `center` : `flex-start`}
-                            al={width < 800 ? `flex-start` : `center`}
-                            width={`auto`}
-                            fontSize={width < 800 ? `14px` : `16px`}
-                          >
+                        <Image
+                          top={`0`}
+                          left={`0`}
+                          width={width < 800 ? `60px` : `80px`}
+                          height={width < 800 ? `60px` : `80px`}
+                          radius={`5px`}
+                          src={
+                            data.profileImage
+                              ? data.profileImage
+                              : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile_big.png"
+                          }
+                          alt="student_thumbnail"
+                        />
+                        <Wrapper
+                          padding={`0 0 0 16px`}
+                          width={
+                            width < 800
+                              ? `calc(100% - 80px)`
+                              : `calc(100% - 184px)`
+                          }
+                        >
+                          <Wrapper margin={`10px 0 0 0`} al={`flex-start`}>
                             <Text
                               fontSize={width < 800 ? `14px` : `16px`}
-                              margin={`0 10px 0 0`}
+                              margin={`0 0 10px`}
                             >
-                              Lecturer: {data.username}
+                              {data.course}
                             </Text>
-                            <Wrapper
-                              display={width < 1100 && `none`}
-                              width={`1px`}
-                              height={`20px`}
-                              margin={`0 10px`}
-                              borderRight={
-                                width < 1100
-                                  ? `0`
-                                  : `1px dashed ${Theme.grey_C}`
-                              }
-                            />
-                            <Text margin={width < 800 ? `0` : `0 20px 0 0`}>
-                              Leanrning at chapter&nbsp;
-                              {data.startLv.split(` `)[0].split(`권`)[0]} of
-                              Book&nbsp;
-                              {data.startLv.split(` `)[1].split(`단원`)[0]}
-                              &nbsp;(Page&nbsp;
-                              {data.startLv.split(` `)[2].split(`페이지`)[0]})
-                            </Text>
+
                             <Button
                               type={`primary`}
                               size={`small`}
-                              onClick={() => attendanceToggle(data)}
+                              onClick={() =>
+                                moveLinkHandler(
+                                  `/student/notice/${data.LectureId}`
+                                )
+                              }
                             >
-                              My Attendance
+                              Go To Notice
                             </Button>
+
+                            <Wrapper
+                              dr={width < 800 ? `column` : `row`}
+                              ju={width < 800 ? `center` : `flex-start`}
+                              al={width < 800 ? `flex-start` : `center`}
+                              width={`auto`}
+                              fontSize={width < 800 ? `14px` : `16px`}
+                            >
+                              <Text
+                                fontSize={width < 800 ? `14px` : `16px`}
+                                margin={`0 10px 0 0`}
+                              >
+                                Lecturer: {data.username}
+                              </Text>
+                              <Wrapper
+                                display={width < 1100 && `none`}
+                                width={`1px`}
+                                height={`20px`}
+                                margin={`0 10px`}
+                                borderRight={
+                                  width < 1100
+                                    ? `0`
+                                    : `1px dashed ${Theme.grey_C}`
+                                }
+                              />
+                              <Text margin={width < 800 ? `0` : `0 20px 0 0`}>
+                                Leanrning at chapter&nbsp;
+                                {data.startLv.split(` `)[0].split(`권`)[0]} of
+                                Book&nbsp;
+                                {data.startLv.split(` `)[1].split(`단원`)[0]}
+                                &nbsp;(Page&nbsp;
+                                {data.startLv.split(` `)[2].split(`페이지`)[0]})
+                              </Text>
+                              <Button
+                                type={`primary`}
+                                size={`small`}
+                                onClick={() => attendanceToggle(data)}
+                              >
+                                My Attendance
+                              </Button>
+                            </Wrapper>
+                          </Wrapper>
+                        </Wrapper>
+                      </Wrapper>
+                      <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
+                        <Wrapper
+                          dr={`row`}
+                          textAlign={`center`}
+                          height={`80px`}
+                          bgColor={Theme.subTheme9_C}
+                          borderBottom={`1px solid ${Theme.grey_C}`}
+                        >
+                          <Wrapper width={`50%`} dr={`row`} height={`100%`}>
+                            <Wrapper width={`50%`}>
+                              Registration Frequency
+                            </Wrapper>
+                            <Wrapper
+                              width={`50%`}
+                              bgColor={Theme.white_C}
+                              height={`100%`}
+                            >
+                              {data.stuPayCount}
+                            </Wrapper>
+                          </Wrapper>
+                          <Wrapper width={`50%`} dr={`row`} height={`100%`}>
+                            <Wrapper width={`50%`}>
+                              Date of my first lessons
+                            </Wrapper>
+                            <Wrapper
+                              width={`50%`}
+                              bgColor={Theme.white_C}
+                              height={`100%`}
+                            >
+                              {data.PartCreatedAt.slice(0, 10)}
+                            </Wrapper>
                           </Wrapper>
                         </Wrapper>
                       </Wrapper>
                     </Wrapper>
-                    <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
-                      <Wrapper
-                        dr={`row`}
-                        textAlign={`center`}
-                        height={`80px`}
-                        bgColor={Theme.subTheme9_C}
-                        borderBottom={`1px solid ${Theme.grey_C}`}
+
+                    {/* 강의별 공지사항 게시글 확인 */}
+
+                    {lectureNotices ? (
+                      <>
+                        <Wrapper
+                          dr={width < 700 ? ` column` : `row`}
+                          ju={width < 700 ? `center` : `space-between`}
+                          al={`flex-start`}
+                          margin={`20px 0`}
+                        >
+                          <CommonTitle>Class / Board</CommonTitle>
+                        </Wrapper>
+
+                        <Wrapper
+                          dr={`row`}
+                          textAlign={`center`}
+                          padding={`20px 0`}
+                          bgColor={Theme.subTheme9_C}
+                          borderBottom={`1px solid ${Theme.grey_C}`}
+                        >
+                          <Text
+                            fontSize={width < 700 ? `14px` : `18px`}
+                            fontWeight={`Bold`}
+                            width={width < 800 ? `15%` : `10%`}
+                            display={width < 900 ? `none` : `block`}
+                          >
+                            No
+                          </Text>
+                          <Text
+                            fontSize={width < 700 ? `12px` : `18px`}
+                            fontWeight={`Bold`}
+                            width={width < 800 ? `18%` : `10%`}
+                          >
+                            Date
+                          </Text>
+                          <Text
+                            fontSize={width < 700 ? `12px` : `18px`}
+                            fontWeight={`Bold`}
+                            width={width < 800 ? `30%` : `55%`}
+                          >
+                            Title
+                          </Text>
+                          <Text
+                            fontSize={width < 700 ? `12px` : `18px`}
+                            fontWeight={`Bold`}
+                            width={width < 800 ? `20%` : `10%`}
+                          >
+                            Comments
+                          </Text>
+                          <Text
+                            fontSize={width < 700 ? `12px` : `18px`}
+                            fontWeight={`Bold`}
+                            width={width < 800 ? `20%` : `15%`}
+                          >
+                            Writer
+                          </Text>
+                        </Wrapper>
+                        {lectureNotices &&
+                          (lectureNotices.length === 0 ? (
+                            <Wrapper margin={`50px 0`}>
+                              <Empty description="No announcement" />
+                            </Wrapper>
+                          ) : (
+                            lectureNotices &&
+                            lectureNotices.slice(0, 2).map((lec) => {
+                              return (
+                                <CustomTableHoverWrapper
+                                  key={lec.noticeId}
+                                  onClick={() =>
+                                    moveLinkHandler(
+                                      `/student/notice/${data.LectureId}`
+                                    )
+                                  }
+                                >
+                                  <Wrapper
+                                    width={width < 800 ? `15%` : `10%`}
+                                    display={width < 900 ? `none` : `flex`}
+                                  >
+                                    {lec.noticeId}
+                                  </Wrapper>
+                                  <Wrapper
+                                    width={width < 800 ? `18%` : `10%`}
+                                    fontSize={width < 700 && `12px`}
+                                  >
+                                    {lec.noticeCreatedAt}
+                                  </Wrapper>
+                                  <Wrapper
+                                    width={width < 800 ? `30%` : `55%`}
+                                    al={`flex-start`}
+                                    padding={`0 0 0 10px`}
+                                  >
+                                    <Text
+                                      width={width < 900 ? `100px` : `400px`}
+                                      textAlign={`start`}
+                                      isEllipsis
+                                    >
+                                      {lec.title}
+                                    </Text>
+                                  </Wrapper>
+                                  <Wrapper
+                                    width={width < 800 ? `20%` : `10%`}
+                                    fontSize={width < 800 ? `10px` : `14px`}
+                                  >
+                                    {lec.commentCnt}
+                                  </Wrapper>
+                                  <Wrapper
+                                    width={width < 800 ? `20%` : `15%`}
+                                    fontSize={width < 800 ? `10px` : `14px`}
+                                  >
+                                    {lec.noticeAuthor}(
+                                    {lec.noticeLevel === 1
+                                      ? "student"
+                                      : data.noticeLevel === 2
+                                      ? "teacher"
+                                      : "admin"}
+                                    )
+                                  </Wrapper>
+                                </CustomTableHoverWrapper>
+                              );
+                            })
+                          ))}
+                      </>
+                    ) : (
+                      <CommonButton
+                        margin={`30px 0`}
+                        onClick={() => checkNoticeHandler(data.LectureId)}
                       >
-                        <Wrapper width={`50%`} dr={`row`} height={`100%`}>
-                          <Wrapper width={`50%`}>
-                            Registration Frequency
-                          </Wrapper>
-                          <Wrapper
-                            width={`50%`}
-                            bgColor={Theme.white_C}
-                            height={`100%`}
-                          >
-                            {data.stuPayCount}
-                          </Wrapper>
-                        </Wrapper>
-                        <Wrapper width={`50%`} dr={`row`} height={`100%`}>
-                          <Wrapper width={`50%`}>
-                            Date of my first lessons
-                          </Wrapper>
-                          <Wrapper
-                            width={`50%`}
-                            bgColor={Theme.white_C}
-                            height={`100%`}
-                          >
-                            {data.PartCreatedAt.slice(0, 10)}
-                          </Wrapper>
-                        </Wrapper>
-                      </Wrapper>
-                    </Wrapper>
-                  </Wrapper>
+                        To check the announcement post
+                      </CommonButton>
+                    )}
+                  </>
                 );
               })
             )}
@@ -1907,6 +2025,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: LECTURE_STU_LECTURE_LIST_REQUEST,
     });
 
     // 구현부 종료
