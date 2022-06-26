@@ -109,7 +109,13 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
                     B.hit 					                              AS noticeHit,
                     B.isDelete 												            AS	noticeIsDelete,
                     DATE_FORMAT(B.createdAt, "%Y-%m-%d")	        AS noticeCreatedAt,
-                    B.UserId 				                              AS writeUserId
+                    B.UserId 				                              AS writeUserId,
+                    (
+                      SELECT  COUNT(id)
+                        FROM  normalNoticeComments cc
+                       WHERE  cc.NormalNoticeId = A.NormalNoticeId
+                         AND	cc.isDelete = FALSE
+                    )                                                 AS commentCnt
               FROM	normalConnects			A
              INNER
               JOIN	normalNotices			  B
@@ -176,7 +182,13 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
             B.file 					                              AS noticeFile,
             B.hit 					                              AS noticeHit,
             DATE_FORMAT(B.createdAt, "%Y-%m-%d")	        AS noticeCreatedAt,
-            B.UserId 				                              AS writeUserId
+            B.UserId 				                              AS writeUserId,
+            (
+              SELECT  COUNT(id)
+                FROM  normalNoticeComments cc
+               WHERE  cc.NormalNoticeId = A.NormalNoticeId
+                 AND	cc.isDelete = FALSE
+            )                                                 AS commentCnt
       FROM	normalConnects			A
      INNER
       JOIN	normalNotices			  B
@@ -198,8 +210,6 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
     `;
 
     const notice = await models.sequelize.query(selectQuery);
-
-    console.log(notice[0]);
 
     return res.status(200).json({ notice: notice[0] });
   } catch (error) {

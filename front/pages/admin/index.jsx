@@ -1428,15 +1428,22 @@ const AdminHome = () => {
             : "관리자"
         })`,
     },
+
+    {
+      title: "댓글수",
+      width: `10%`,
+      dataIndex: "commentCnt",
+    },
+
     {
       title: "조회수",
-      width: `15%`,
+      width: `10%`,
       dataIndex: "noticeHit",
     },
 
     {
       title: "생성일",
-      width: `15%`,
+      width: `10%`,
       dataIndex: "noticeCreatedAt",
     },
   ];
@@ -1498,7 +1505,7 @@ const AdminHome = () => {
                         type={normalNoticeListType === 1 && `primary`}
                         onClick={() => normalNoticeListTypeChangeHandler(1)}
                       >
-                        햑생
+                        학생
                       </ModalBtn>
                       <ModalBtn
                         size={`small`}
