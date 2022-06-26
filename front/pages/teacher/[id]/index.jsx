@@ -1724,21 +1724,6 @@ const Index = () => {
                               {`${data.course}`}
                             </CustomText2>
 
-                            <CustomText2
-                              color={Theme.black_2C}
-                              fontWeight={`normal`}
-                              fontSize={width < 700 ? `14px` : `18px`}
-                              borderRightBool={false}
-                              cursor={`pointer`}
-                              onClick={() =>
-                                moveLinkHandler(
-                                  `/teacher/notice/${router.query.id}`
-                                )
-                              }
-                            >
-                              강의 게시판 가기
-                            </CustomText2>
-
                             {/* <Text
                               width={`180px`}
                               color={Theme.black_2C}
