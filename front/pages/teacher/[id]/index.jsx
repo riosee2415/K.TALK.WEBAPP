@@ -922,19 +922,6 @@ const Index = () => {
     setMemoStuDetailToggle((prev) => !prev);
   }, []);
 
-  const messageSendModalHandler = useCallback(async () => {
-    let result = await checkedList.filter((data, idx) => {
-      return data.isCheck ? true : false;
-    });
-
-    if (result.length !== 0) {
-      setMessageSendModalToggle((prev) => !prev);
-      setCheckedList(result);
-    } else {
-      return message.error("체크 박스를 선택해주세요.");
-    }
-  }, [checkedList]);
-
   ////// HANDLER //////
 
   const moveLinkHandler = useCallback((link) => {
