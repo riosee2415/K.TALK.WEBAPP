@@ -99,7 +99,13 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
                         DATE_FORMAT(B.createdAt, "%Y-%m-%d")        	    AS noticeCreatedAt,
                         B.UserId 				                                  AS writeUserId,
                         C.number				                                  AS lectureNumber,
-                        C.course				                                  AS lectureName
+                        C.course				                                  AS lectureName,
+                        (
+                          SELECT  COUNT(id)
+                            FROM  lectureNoticeComments cc
+                           WHERE  cc.LectureNoticeId = A.LectureNoticeId
+                             AND	cc.isDelete = FALSE
+                        )                                                 AS commentCnt
                   FROM	lectureConnects				A
                  INNER
                   JOIN	lectureNotices 				B
@@ -133,7 +139,13 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
                         DATE_FORMAT(B.createdAt, "%Y-%m-%d")        	    AS noticeCreatedAt,
                         B.UserId 				                                  AS writeUserId,
                         C.number				                                  AS lectureNumber,
-                        C.course				                                  AS lectureName
+                        C.course				                                  AS lectureName,
+                        (
+                          SELECT  COUNT(id)
+                            FROM  lectureNoticeComments cc
+                           WHERE  cc.LectureNoticeId = A.LectureNoticeId
+                             AND	cc.isDelete = FALSE
+                        )                                                 AS commentCnt
                   FROM	lectureConnects				A
                 INNER
                   JOIN	lectureNotices 				B

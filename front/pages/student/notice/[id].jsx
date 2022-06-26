@@ -586,7 +586,7 @@ const Notice = ({}) => {
               <Text
                 fontSize={width < 700 ? `14px` : `18px`}
                 fontWeight={`Bold`}
-                width={width < 800 ? `15%` : `10%`}
+                width={width < 800 ? `15%` : `7%`}
                 display={width < 900 ? `none` : `block`}
               >
                 No
@@ -601,9 +601,16 @@ const Notice = ({}) => {
               <Text
                 fontSize={width < 700 ? `12px` : `18px`}
                 fontWeight={`Bold`}
-                width={width < 800 ? `30%` : `53%`}
+                width={width < 800 ? `30%` : `47%`}
               >
                 Title
+              </Text>
+              <Text
+                fontSize={width < 700 ? `12px` : `18px`}
+                fontWeight={`Bold`}
+                width={width < 800 ? `20%` : `9%`}
+              >
+                Comments
               </Text>
               <Text
                 fontSize={width < 700 ? `12px` : `18px`}
@@ -630,7 +637,7 @@ const Notice = ({}) => {
                   return (
                     <CustomTableHoverWrapper key={data.noticeId}>
                       <Wrapper
-                        width={width < 800 ? `15%` : `10%`}
+                        width={width < 800 ? `15%` : `7%`}
                         display={width < 900 ? `none` : `flex`}
                       >
                         {data.noticeId}
@@ -642,7 +649,7 @@ const Notice = ({}) => {
                         {data.noticeCreatedAt}
                       </Wrapper>
                       <Wrapper
-                        width={width < 800 ? `30%` : `53%`}
+                        width={width < 800 ? `30%` : `47%`}
                         al={`flex-start`}
                         padding={`0 0 0 10px`}
                         onClick={() =>
@@ -656,6 +663,12 @@ const Notice = ({}) => {
                         >
                           {data.title}
                         </Text>
+                      </Wrapper>
+                      <Wrapper
+                        width={width < 800 ? `20%` : `9%`}
+                        fontSize={width < 800 ? `10px` : `14px`}
+                      >
+                        {data.commentCnt}
                       </Wrapper>
                       <Wrapper
                         width={width < 800 ? `20%` : `15%`}
