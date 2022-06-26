@@ -191,6 +191,15 @@ const NoticeClass = ({}) => {
       dataIndex: "noticeAuthor",
     },
     {
+      title: "조회수",
+      dataIndex: "noticeHit",
+    },
+    {
+      title: "댓글수",
+      dataIndex: "commentCnt",
+    },
+
+    {
       title: "상세정보",
       render: (data) => (
         <Button
