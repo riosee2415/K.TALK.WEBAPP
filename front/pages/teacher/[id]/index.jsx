@@ -935,11 +935,6 @@ const Index = () => {
     }
   }, [checkedList]);
 
-  const adminMessageModal = useCallback(() => {
-    setMessageSendModalToggle((prev) => !prev);
-    setAdminSendMessageToggle(true);
-  }, []);
-
   ////// HANDLER //////
 
   const moveLinkHandler = useCallback((link) => {
@@ -973,11 +968,6 @@ const Index = () => {
     },
     [fileRef]
   );
-
-  const onClickNoticeHandler = useCallback((data) => {
-    setNoticeViewDatum(data);
-    setNoticeViewModal(true);
-  }, []);
 
   const dateChagneHandler = useCallback((data) => {
     const birth = data.format("YYYY-MM-DD");
@@ -1226,13 +1216,6 @@ const Index = () => {
     setCheckedList(resultAll);
   }, []);
 
-  const messageViewModalHanlder = useCallback((data) => {
-    setMessageViewToggle(true);
-
-    setMessageDatum(data);
-    // onFillAnswer(data);
-  }, []);
-
   const onFill = (data) => {
     form.setFieldsValue({
       title1: data[0] && data[0].title,
@@ -1326,30 +1309,6 @@ const Index = () => {
         LectureId: parseInt(router.query.id),
         page,
         search: "",
-      },
-    });
-  }, []);
-
-  const onChangeMessagePage = useCallback((page) => {
-    setCurrentPage2(page);
-
-    dispatch({
-      type: MESSAGE_LECTURE_LIST_REQUEST,
-      data: {
-        LectureId: router.query.id,
-        page,
-      },
-    });
-  }, []);
-
-  const onChangeNoticePage = useCallback((page) => {
-    setCurrentPage3(page);
-
-    dispatch({
-      type: NOTICE_LECTURE_LIST_REQUEST,
-      data: {
-        page,
-        LectureId: router.query.id,
       },
     });
   }, []);

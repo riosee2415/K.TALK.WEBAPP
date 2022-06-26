@@ -711,7 +711,11 @@ const Notice = ({}) => {
           ) : (
             <>
               <Form.Item label={`보내기`} name={`lSend`}>
-                <Select onChange={(data) => userValueChange(data)}>
+                <Select
+                  onChange={(data) => userValueChange(data)}
+                  showSearch
+                  placeholder="학생을 선택해 주세요."
+                >
                   <Select.Option value={"학생전체"}>학생전체</Select.Option>
                   {partLectureList &&
                     partLectureList.map((stu) => {
