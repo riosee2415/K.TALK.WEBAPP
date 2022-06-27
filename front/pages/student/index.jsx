@@ -646,6 +646,27 @@ const Student = () => {
     setFileName("");
   }, [fileInput]);
 
+  // 게시글 2개 보여주기
+  useEffect(() => {
+    if (lectureStuLectureList) {
+      const tempArr1 = [];
+
+      lectureStuLectureList.map((data) => {
+        tempArr1.push(data.LectureId);
+      });
+
+      tempArr1.map((id) => {
+        dispatch({
+          type: LECTURE_NOTICE_LIST_REQUEST,
+          data: {
+            LectureId: id,
+            page: 1,
+          },
+        });
+      });
+    }
+  }, [lectureStuLectureList]);
+
   ////// TOGGLE //////
 
   const meUpdateModalToggle = useCallback(() => {
@@ -900,19 +921,6 @@ const Student = () => {
     });
 
     return textSave;
-  }, []);
-
-  // 강의별 게시글 확인 (2개정도)
-  const checkNoticeHandler = useCallback((data) => {
-    if (data) {
-      dispatch({
-        type: LECTURE_NOTICE_LIST_REQUEST,
-        data: {
-          LectureId: data,
-          page: 1,
-        },
-      });
-    }
   }, []);
 
   ////// DATAVIEW //////
@@ -1320,134 +1328,123 @@ const Student = () => {
 
                     {/* 강의별 공지사항 게시글 확인 */}
 
-                    {lectureNotices ? (
-                      <>
-                        <Wrapper
-                          dr={width < 700 ? ` column` : `row`}
-                          ju={width < 700 ? `center` : `space-between`}
-                          al={`flex-start`}
-                          margin={`20px 0`}
-                        >
-                          <CommonTitle>Class Board</CommonTitle>
-                        </Wrapper>
+                    <Wrapper
+                      dr={width < 700 ? ` column` : `row`}
+                      ju={width < 700 ? `center` : `space-between`}
+                      al={`flex-start`}
+                      margin={`20px 0`}
+                    >
+                      <CommonTitle>Class Board</CommonTitle>
+                    </Wrapper>
 
-                        <Wrapper
-                          dr={`row`}
-                          textAlign={`center`}
-                          padding={`20px 0`}
-                          bgColor={Theme.subTheme9_C}
-                          borderBottom={`1px solid ${Theme.grey_C}`}
-                        >
-                          <Text
-                            fontSize={width < 700 ? `14px` : `18px`}
-                            fontWeight={`Bold`}
-                            width={width < 800 ? `15%` : `10%`}
-                            display={width < 900 ? `none` : `block`}
-                          >
-                            No
-                          </Text>
-                          <Text
-                            fontSize={width < 700 ? `12px` : `18px`}
-                            fontWeight={`Bold`}
-                            width={width < 800 ? `18%` : `10%`}
-                          >
-                            Date
-                          </Text>
-                          <Text
-                            fontSize={width < 700 ? `12px` : `18px`}
-                            fontWeight={`Bold`}
-                            width={width < 800 ? `30%` : `55%`}
-                          >
-                            Title
-                          </Text>
-                          <Text
-                            fontSize={width < 700 ? `12px` : `18px`}
-                            fontWeight={`Bold`}
-                            width={width < 800 ? `20%` : `10%`}
-                          >
-                            Comments
-                          </Text>
-                          <Text
-                            fontSize={width < 700 ? `12px` : `18px`}
-                            fontWeight={`Bold`}
-                            width={width < 800 ? `20%` : `15%`}
-                          >
-                            Writer
-                          </Text>
-                        </Wrapper>
-                        {lectureNotices &&
-                          (lectureNotices.length === 0 ? (
-                            <Wrapper margin={`50px 0`}>
-                              <Empty description="No announcement" />
-                            </Wrapper>
-                          ) : (
-                            lectureNotices &&
-                            lectureNotices.slice(0, 2).map((lec) => {
-                              return (
-                                <CustomTableHoverWrapper
-                                  key={lec.noticeId}
-                                  onClick={() =>
-                                    moveLinkHandler(
-                                      `/student/notice/${data.LectureId}`
-                                    )
-                                  }
-                                >
-                                  <Wrapper
-                                    width={width < 800 ? `15%` : `10%`}
-                                    display={width < 900 ? `none` : `flex`}
-                                  >
-                                    {lec.noticeId}
-                                  </Wrapper>
-                                  <Wrapper
-                                    width={width < 800 ? `18%` : `10%`}
-                                    fontSize={width < 700 && `12px`}
-                                  >
-                                    {lec.noticeCreatedAt}
-                                  </Wrapper>
-                                  <Wrapper
-                                    width={width < 800 ? `30%` : `55%`}
-                                    al={`flex-start`}
-                                    padding={`0 0 0 10px`}
-                                  >
-                                    <Text
-                                      width={width < 900 ? `100px` : `400px`}
-                                      textAlign={`start`}
-                                      isEllipsis
-                                    >
-                                      {lec.title}
-                                    </Text>
-                                  </Wrapper>
-                                  <Wrapper
-                                    width={width < 800 ? `20%` : `10%`}
-                                    fontSize={width < 800 ? `10px` : `14px`}
-                                  >
-                                    {lec.commentCnt}
-                                  </Wrapper>
-                                  <Wrapper
-                                    width={width < 800 ? `20%` : `15%`}
-                                    fontSize={width < 800 ? `10px` : `14px`}
-                                  >
-                                    {lec.noticeAuthor}(
-                                    {lec.noticeLevel === 1
-                                      ? "student"
-                                      : data.noticeLevel === 2
-                                      ? "teacher"
-                                      : "admin"}
-                                    )
-                                  </Wrapper>
-                                </CustomTableHoverWrapper>
-                              );
-                            })
-                          ))}
-                      </>
-                    ) : (
-                      <CommonButton
-                        margin={`30px 0`}
-                        onClick={() => checkNoticeHandler(data.LectureId)}
+                    <Wrapper
+                      dr={`row`}
+                      textAlign={`center`}
+                      padding={`20px 0`}
+                      bgColor={Theme.subTheme9_C}
+                      borderBottom={`1px solid ${Theme.grey_C}`}
+                    >
+                      <Text
+                        fontSize={width < 700 ? `14px` : `18px`}
+                        fontWeight={`Bold`}
+                        width={width < 800 ? `15%` : `10%`}
+                        display={width < 900 ? `none` : `block`}
                       >
-                        To check the announcement post
-                      </CommonButton>
-                    )}
+                        No
+                      </Text>
+                      <Text
+                        fontSize={width < 700 ? `12px` : `18px`}
+                        fontWeight={`Bold`}
+                        width={width < 800 ? `18%` : `10%`}
+                      >
+                        Date
+                      </Text>
+                      <Text
+                        fontSize={width < 700 ? `12px` : `18px`}
+                        fontWeight={`Bold`}
+                        width={width < 800 ? `30%` : `55%`}
+                      >
+                        Title
+                      </Text>
+                      <Text
+                        fontSize={width < 700 ? `12px` : `18px`}
+                        fontWeight={`Bold`}
+                        width={width < 800 ? `20%` : `10%`}
+                      >
+                        Comments
+                      </Text>
+                      <Text
+                        fontSize={width < 700 ? `12px` : `18px`}
+                        fontWeight={`Bold`}
+                        width={width < 800 ? `20%` : `15%`}
+                      >
+                        Writer
+                      </Text>
+                    </Wrapper>
+                    {lectureNotices &&
+                      (lectureNotices.length === 0 ? (
+                        <Wrapper margin={`50px 0`}>
+                          <Empty description="No announcement" />
+                        </Wrapper>
+                      ) : (
+                        lectureNotices &&
+                        lectureNotices.slice(0, 2).map((lec) => {
+                          return (
+                            <CustomTableHoverWrapper
+                              key={lec.noticeId}
+                              onClick={() =>
+                                moveLinkHandler(
+                                  `/student/notice/${data.LectureId}`
+                                )
+                              }
+                            >
+                              <Wrapper
+                                width={width < 800 ? `15%` : `10%`}
+                                display={width < 900 ? `none` : `flex`}
+                              >
+                                {lec.noticeId}
+                              </Wrapper>
+                              <Wrapper
+                                width={width < 800 ? `18%` : `10%`}
+                                fontSize={width < 700 && `12px`}
+                              >
+                                {lec.noticeCreatedAt}
+                              </Wrapper>
+                              <Wrapper
+                                width={width < 800 ? `30%` : `55%`}
+                                al={`flex-start`}
+                                padding={`0 0 0 10px`}
+                              >
+                                <Text
+                                  width={width < 900 ? `100px` : `400px`}
+                                  textAlign={`start`}
+                                  isEllipsis
+                                >
+                                  {lec.title}
+                                </Text>
+                              </Wrapper>
+                              <Wrapper
+                                width={width < 800 ? `20%` : `10%`}
+                                fontSize={width < 800 ? `10px` : `14px`}
+                              >
+                                {lec.commentCnt}
+                              </Wrapper>
+                              <Wrapper
+                                width={width < 800 ? `20%` : `15%`}
+                                fontSize={width < 800 ? `10px` : `14px`}
+                              >
+                                {lec.noticeAuthor}(
+                                {lec.noticeLevel === 1
+                                  ? "student"
+                                  : data.noticeLevel === 2
+                                  ? "teacher"
+                                  : "admin"}
+                                )
+                              </Wrapper>
+                            </CustomTableHoverWrapper>
+                          );
+                        })
+                      ))}
                   </>
                 );
               })
