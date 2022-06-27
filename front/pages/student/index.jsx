@@ -1235,18 +1235,6 @@ const Student = () => {
                               {data.course}
                             </Text>
 
-                            <Button
-                              type={`primary`}
-                              size={`small`}
-                              onClick={() =>
-                                moveLinkHandler(
-                                  `/student/notice/${data.LectureId}`
-                                )
-                              }
-                            >
-                              Go To Class Board
-                            </Button>
-
                             <Wrapper
                               dr={width < 800 ? `column` : `row`}
                               ju={width < 800 ? `center` : `flex-start`}
@@ -1335,6 +1323,16 @@ const Student = () => {
                       margin={`20px 0`}
                     >
                       <CommonTitle>Class Board</CommonTitle>
+
+                      <Button
+                        type={`primary`}
+                        size={`small`}
+                        onClick={() =>
+                          moveLinkHandler(`/student/notice/${data.LectureId}`)
+                        }
+                      >
+                        Go To Class Board
+                      </Button>
                     </Wrapper>
 
                     <Wrapper
@@ -1381,6 +1379,7 @@ const Student = () => {
                         Writer
                       </Text>
                     </Wrapper>
+
                     {lectureNotices &&
                       (lectureNotices.length === 0 ? (
                         <Wrapper margin={`50px 0`}>
