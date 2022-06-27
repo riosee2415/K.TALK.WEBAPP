@@ -825,7 +825,9 @@ const AdminHome = () => {
 
   const normalNoticeUserChangeHandler = useCallback(
     (user) => {
-      setNormalNoticeUser(user);
+      const userDatum = user.map((data) => JSON.parse(data).id);
+
+      setNormalNoticeUser(userDatum);
     },
     [normalNoticeUser]
   );
@@ -2626,14 +2628,26 @@ const AdminHome = () => {
                         {normalNoticeType === "강사개인"
                           ? teachers &&
                             teachers.map((data) => (
-                              <Select.Option value={data.id} key={data.id}>
+                              <Select.Option
+                                value={JSON.stringify({
+                                  id: data.id,
+                                  username: data.username,
+                                })}
+                                key={data.id}
+                              >
                                 {data.username}
                               </Select.Option>
                             ))
                           : normalNoticeType === "학생개인" &&
                             userStuList &&
                             userStuList.map((data) => (
-                              <Select.Option value={data.id} key={data.id}>
+                              <Select.Option
+                                value={JSON.stringify({
+                                  id: data.id,
+                                  username: data.username,
+                                })}
+                                key={data.id}
+                              >
                                 {data.username}
                               </Select.Option>
                             ))}
