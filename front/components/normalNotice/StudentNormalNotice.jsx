@@ -398,7 +398,7 @@ const StudentNormalNotice = () => {
     <>
       <Wrapper al={`flex-start`} margin={`40px 0 0`}>
         <Wrapper dr={`row`} ju={`space-between`}>
-          <CommonTitle margin={`0 0 20px`}>Normal Board</CommonTitle>
+          <CommonTitle margin={`0 0 20px`}>Board</CommonTitle>
           <CommonButton
             onClick={normalNoticeCreateModalToggle}
             loading={normalNoticeStuCreateLoading}

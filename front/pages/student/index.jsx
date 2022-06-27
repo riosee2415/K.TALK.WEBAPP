@@ -1174,6 +1174,8 @@ const Student = () => {
               )}
             </Wrapper>
 
+            <StudentNormalNotice />
+
             {/* my class */}
 
             <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 40px`}>
@@ -1234,7 +1236,7 @@ const Student = () => {
                                 )
                               }
                             >
-                              Go To Notice
+                              Go To Class Board
                             </Button>
 
                             <Wrapper
@@ -1263,9 +1265,9 @@ const Student = () => {
                               />
                               <Text margin={width < 800 ? `0` : `0 20px 0 0`}>
                                 Leanrning at chapter&nbsp;
-                                {data.startLv.split(` `)[0].split(`권`)[0]} of
+                                {data.startLv.split(` `)[1].split(`단원`)[0]} of
                                 Book&nbsp;
-                                {data.startLv.split(` `)[1].split(`단원`)[0]}
+                                {data.startLv.split(` `)[0].split(`권`)[0]}
                                 &nbsp;(Page&nbsp;
                                 {data.startLv.split(` `)[2].split(`페이지`)[0]})
                               </Text>
@@ -1326,7 +1328,7 @@ const Student = () => {
                           al={`flex-start`}
                           margin={`20px 0`}
                         >
-                          <CommonTitle>Class / Board</CommonTitle>
+                          <CommonTitle>Class Board</CommonTitle>
                         </Wrapper>
 
                         <Wrapper
@@ -1450,8 +1452,6 @@ const Student = () => {
                 );
               })
             )}
-
-            <StudentNormalNotice />
 
             {/* View your homework */}
 
