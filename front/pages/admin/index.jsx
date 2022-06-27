@@ -1123,6 +1123,9 @@ const AdminHome = () => {
   // 일반게시판 추가
   const normalNoticeAdminCreate = useCallback(
     (data) => {
+      const userDatum = data.userId
+        ? data.userId.map((data) => JSON.parse(data).id)
+        : null;
       dispatch({
         type: NORMAL_NOTICE_ADMIN_CREATE_REQUEST,
         data: {
@@ -1131,7 +1134,7 @@ const AdminHome = () => {
           author: "admin",
           level: me.level,
           file: normalNoticeFilePath,
-          receiverId: data.userId,
+          receiverId: userDatum,
           createType:
             normalNoticeType === "강사전체"
               ? 1
