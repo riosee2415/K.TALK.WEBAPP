@@ -44,7 +44,7 @@ const upload = multer({
       );
     },
   }),
-  limits: { fileSize: 20 * 1024 * 1024 }, // 20MB
+  // limits: { fileSize: 20 * 1024 * 1024 }, // 20MB
 });
 
 const router = express.Router();
