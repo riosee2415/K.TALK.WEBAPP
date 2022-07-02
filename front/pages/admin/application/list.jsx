@@ -382,19 +382,19 @@ const List = () => {
       let partLecture = data.paymentList && JSON.parse(data.paymentList);
       let lectureList = data.lectureList && JSON.parse(data.lectureList);
 
-      if (lectureList) {
-        if (moment() < moment(lectureList.startDate)) {
-          return message.error(
-            "수업 참여일이 수업 시작 날짜보다 과거일 수 없습니다."
-          );
-        }
-      } else if (partLecture) {
-        if (moment() < moment(partLecture.startDate.slice(0, 10))) {
-          return message.error(
-            "수업 참여일이 수업 시작 날짜보다 과거일 수 없습니다."
-          );
-        }
-      }
+      // if (lectureList) {
+      //   if (moment() < moment(lectureList.startDate)) {
+      //     return message.error(
+      //       "수업 참여일이 수업 시작 날짜보다 과거일 수 없습니다."
+      //     );
+      //   }
+      // } else if (partLecture) {
+      //   if (moment() < moment(partLecture.startDate.slice(0, 10))) {
+      //     return message.error(
+      //       "수업 참여일이 수업 시작 날짜보다 과거일 수 없습니다."
+      //     );
+      //   }
+      // }
 
       dispatch({
         type: USER_STU_CREATE_REQUEST,

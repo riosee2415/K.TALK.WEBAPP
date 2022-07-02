@@ -77,6 +77,7 @@ import {
   NORMAL_NOTICE_DETAIL_MODAL_TOGGLE,
   NORMAL_NOTICE_DETAIL_REQUEST,
   NORMAL_NOTICE_EDITOR_RENDER,
+  NORMAL_NOTICE_FILE_STATE,
   NORMAL_NOTICE_MODAL_TOGGLE,
   NORMAL_NOTICE_UPDATE_REQUEST,
 } from "../../reducers/normalNotice";
@@ -261,6 +262,7 @@ const AdminHome = () => {
   const { messageAdminMainList, messageAdminMainMaxPage } = useSelector(
     (state) => state.message
   );
+
 
   // NORMAL SELECTOR
   const {
@@ -751,6 +753,11 @@ const AdminHome = () => {
     filename.setValue(null);
 
     dispatch({
+      type: NORMAL_NOTICE_FILE_STATE,
+      data: null
+    })
+
+    dispatch({
       type: NORMAL_NOTICE_MODAL_TOGGLE,
     });
   }, [
@@ -759,8 +766,10 @@ const AdminHome = () => {
     normalNoticeUser,
     contentData,
     normalNoticeUpdateData,
+    normalNoticeFilePath,
     filename.value,
   ]);
+  console.log(normalNoticeFilePath)
 
   const normalNoticeUpdateModalToggle = useCallback(
     (data) => {
@@ -1120,6 +1129,7 @@ const AdminHome = () => {
     [createModal]
   );
 
+
   // 일반게시판 추가
   const normalNoticeAdminCreate = useCallback(
     (data) => {
@@ -1197,17 +1207,19 @@ const AdminHome = () => {
 
   // 일반 게시판 파일 업로드
   const normalNoticeFileUploadHandler = useCallback((e) => {
-    const formData = new FormData();
-    filename.setValue(e.target.files[0].name);
-
-    [].forEach.call(e.target.files, (file) => {
-      formData.append("file", file);
-    });
-
-    dispatch({
-      type: NORMAL_FILE_UPLOAD_REQUEST,
-      data: formData,
-    });
+    if(e){
+      const formData = new FormData();
+      filename.setValue(e.target.files[0].name);
+      
+      [].forEach.call(e.target.files, (file) => {
+        formData.append("file", file);
+      });
+      
+      dispatch({
+        type: NORMAL_FILE_UPLOAD_REQUEST,
+        data: formData,
+      });
+    }
   }, []);
 
   // 일반 게시판 파일 업로드

@@ -146,6 +146,8 @@ export const NORMAL_NOTICE_EDITOR_RENDER = "NORMAL_NOTICE_EDITOR_RENDER";
 export const NORMAL_NOTICE_DETAIL_MODAL_TOGGLE =
   "NORMAL_NOTICE_DETAIL_MODAL_TOGGLE";
 
+export const NORMAL_NOTICE_FILE_STATE = "NORMAL_NOTICE_FILE_STATE";
+
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
@@ -436,6 +438,14 @@ const reducer = (state = initialState, action) =>
         draft.editorRender = action.data;
         break;
       }
+
+      //////////////////////////////////////////////
+
+      case NORMAL_NOTICE_FILE_STATE: {
+        draft.normalNoticeFilePath = action.data;
+        break;
+      }
+
 
       //////////////////////////////////////////////
 
