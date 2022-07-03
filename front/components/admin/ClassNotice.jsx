@@ -99,6 +99,7 @@ const NoticeClass = ({}) => {
   const {
     adminLectureNotices,
     adminLecNoticeDetail,
+    adminLecNoticeDetailReceviers,
     adminLecNoticeComment,
     lecNoticeCommentDetails,
   } = useSelector((state) => state.lectureNotice);
@@ -267,6 +268,20 @@ const NoticeClass = ({}) => {
 
             <Form.Item label="작성일">
               <Text>{adminLecNoticeDetail.noticeCreatedAt}</Text>
+            </Form.Item>
+            <Form.Item label="전송된 사람">
+              <Wrapper dr={`row`} ju={`flex-start`}>
+
+              {adminLecNoticeDetailReceviers && (
+                adminLecNoticeDetailReceviers.length === 0 ? (
+                  <Text>admin</Text>
+                  ) : (
+                    adminLecNoticeDetailReceviers.map((data, idx) => (
+                      <Text key={data.idx}>{data.username}{idx !== adminLecNoticeDetailReceviers.length - 1 ? `, ` :``}</Text>
+                      ))
+                      )
+                      )}
+                      </Wrapper>
             </Form.Item>
 
             <Form.Item label="게시판 내용">

@@ -2281,7 +2281,7 @@ const AdminHome = () => {
                 전송된 사람:&nbsp;
               </Text>
               {normalNoticeDetailReceviers && 
-               normalNoticeDetailReceviers.length === 0 ? (
+               (normalNoticeDetailReceviers.length === 0 ? (
                 <Text>admin</Text>
                ):
               normalNoticeDetailReceviers.map((data, idx) => (
@@ -2289,7 +2289,7 @@ const AdminHome = () => {
                   {data.username}
                  {idx !== normalNoticeDetailReceviers.length-1 && ','}&nbsp;
                  </Text>
-              ))}
+              )))}
             </Wrapper>
 
             <Wrapper dr={`row`} ju={`flex-end`}>

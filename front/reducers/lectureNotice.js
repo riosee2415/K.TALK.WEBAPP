@@ -3,11 +3,13 @@ import produce from "../util/produce";
 export const initailState = {
   lectureNotices: null,
   lectureNoticeDetail: null, // 디테일 데이터
+  lecNoticeDetailReceviers: null, // 받는자
   lectureNoticeComment: null, // 댓글
   commentLen: null, // 댓글 갯수
 
   adminLectureNotices: null, // 관리자용
   adminLecNoticeDetail: null, // 관리자 디테일 데이터
+  adminLecNoticeDetailReceviers: null, // 관리자 받는자
   adminLecNoticeComment: null, // 관리자 댓글
 
   uploadLectureNoticePath: null,
@@ -180,6 +182,7 @@ const reducer = (state = initailState, action) =>
         draft.st_lectureNoticeDetailListDone = true;
         draft.st_lectureNoticeDetailListError = null;
         draft.lectureNoticeDetail = action.data.detailData;
+        draft.lecNoticeDetailReceviers = action.data.users;
         draft.lectureNoticeComment = action.data.comments;
         draft.commentLen = action.data.commentsLen;
         break;
@@ -226,6 +229,7 @@ const reducer = (state = initailState, action) =>
         draft.st_lecNoticeAdminDetailDone = true;
         draft.st_lecNoticeAdminDetailError = null;
         draft.adminLecNoticeDetail = action.data.detailData;
+        draft.adminLecNoticeDetailReceviers = action.data.users;
         draft.adminLecNoticeComment = action.data.comments;
         break;
       }

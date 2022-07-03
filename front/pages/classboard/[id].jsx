@@ -88,6 +88,7 @@ const Classboard = () => {
 
   const {
     lectureNoticeDetail,
+    lecNoticeDetailReceviers,
     lectureNoticeComment,
     commentLen,
 
@@ -534,6 +535,33 @@ const Classboard = () => {
                         {lectureNoticeDetail && lectureNoticeDetail.noticeHit}
                       </Text>
                     </Wrapper>
+                    <Wrapper
+                        dr={`row`}
+                      >
+                        <Wrapper
+                          width={`120px`}
+                          padding={width < 900 ? `10px 0` : `15px 0`}
+                          bgColor={Theme.lightGrey3_C}
+                        >
+                          reciver
+                        </Wrapper>
+                        <Wrapper
+                          width={`calc(100% - 120px)`}
+                          padding={`0 0 0 15px`}
+                          dr={`row`}
+                          ju={`flex-start`}
+                        >
+                        {lecNoticeDetailReceviers && (
+                lecNoticeDetailReceviers.length === 0 ? (
+                  <Text>admin</Text>
+                  ) : (
+                    lecNoticeDetailReceviers.map((data, idx) => (
+                      <Text key={data.idx}>{data.username}{idx !== lecNoticeDetailReceviers.length - 1 ? `, ` :``}</Text>
+                      ))
+                      )
+                      )}
+                        </Wrapper>
+                      </Wrapper>
                   </Wrapper>
                 ) : (
                   <Wrapper
@@ -607,6 +635,34 @@ const Classboard = () => {
                         >
                           {lectureNoticeDetail && lectureNoticeDetail.noticeHit}
                         </Text>
+                      </Wrapper>
+
+                      <Wrapper
+                        dr={`row`}
+                      >
+                        <Wrapper
+                          width={`120px`}
+                          padding={width < 900 ? `10px 0` : `15px 0`}
+                          bgColor={Theme.lightGrey3_C}
+                        >
+                          reciver
+                        </Wrapper>
+                        <Wrapper
+                          width={`calc(100% - 120px)`}
+                          padding={`0 0 0 15px`}
+                          dr={`row`}
+                          ju={`flex-start`}
+                        >
+                        {lecNoticeDetailReceviers && (
+                lecNoticeDetailReceviers.length === 0 ? (
+                  <Text>admin</Text>
+                  ) : (
+                    lecNoticeDetailReceviers.map((data, idx) => (
+                      <Text key={data.idx}>{data.username}{idx !== lecNoticeDetailReceviers.length - 1 ? `, ` :``}</Text>
+                      ))
+                      )
+                      )}
+                        </Wrapper>
                       </Wrapper>
                     </Wrapper>
                   </Wrapper>
