@@ -10,6 +10,7 @@ export const initialState = {
   normalCommentList: null,
   //
   normalNoticeDetailData: null,
+  normalNoticeDetailReceviers: null,
   normalComments: null,
   normalCommentsLen: 0,
   //
@@ -185,6 +186,7 @@ const reducer = (state = initialState, action) =>
         draft.normalNoticeDetailDone = true;
         draft.normalNoticeDetailError = null;
         draft.normalNoticeDetailData = action.data.detailData;
+        draft.normalNoticeDetailReceviers = action.data.receviers;
         draft.normalComments = action.data.comments;
         draft.normalCommentsLen = action.data.commentsLen;
         break;

@@ -268,6 +268,7 @@ const AdminHome = () => {
   const {
     normalNoticeAdminList,
     normalNoticeDetailData,
+    normalNoticeDetailReceviers,
     normalComments,
     normalCommentsLen,
     normalNoticeFilePath,
@@ -2249,7 +2250,7 @@ const AdminHome = () => {
             <Wrapper
               dr={`row`}
               ju={`space-between`}
-              margin={`0 0 35px`}
+              margin={`0 0 15px`}
               fontSize={width < 700 ? `14px` : `16px`}
             >
               <Text>
@@ -2269,6 +2270,26 @@ const AdminHome = () => {
                   noticeDetailData && noticeDetailData.noticeCreatedAt
                 }`}
               </Text>
+            </Wrapper>
+            <Wrapper
+              dr={`row`}
+              ju={`flex-start`}
+              margin={`0 0 35px`}
+              fontSize={width < 700 ? `14px` : `16px`}
+            >
+              <Text>
+                전송된 사람:&nbsp;
+              </Text>
+              {normalNoticeDetailReceviers && 
+               normalNoticeDetailReceviers.length === 0 ? (
+                <Text>admin</Text>
+               ):
+              normalNoticeDetailReceviers.map((data, idx) => (
+                  <Text key={idx}>
+                  {data.username}
+                 {idx !== normalNoticeDetailReceviers.length-1 && ','}&nbsp;
+                 </Text>
+              ))}
             </Wrapper>
 
             <Wrapper dr={`row`} ju={`flex-end`}>
