@@ -292,8 +292,7 @@ router.post("/detail", isLoggedIn, async (req, res, next) => {
      INNER
       JOIN	lectures					    C
         ON	B.LectureId = C.id
-     WHERE	A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}
-       AND  B.id = ${LectureNoticeId}
+     WHERE	B.id = ${LectureNoticeId}
        AND  B.isDelete = FALSE
        AND	C.isDelete = FALSE
     `;
