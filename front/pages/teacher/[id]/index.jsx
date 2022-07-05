@@ -3541,15 +3541,24 @@ const Index = () => {
                     padding={`20px`}
                     radius={`10px`}
                   >
-                    <Text
-                      width={`50%`}
-                      fontSize={width < 700 ? `14px` : `16px`}
-                    >
-                      {data.course}
-                    </Text>
+                    <Wrapper width={`50%`}>
+                      <Text
+                        width={`100%`}
+                        fontSize={width < 700 ? `14px` : `16px`}
+                      >
+                        {data.course}
+                      </Text>
+
+                      <Text
+                        width={`100%`}
+                        fontSize={width < 700 ? `14px` : `16px`}
+                      >
+                        학생명 : {data.username}
+                      </Text>
+                    </Wrapper>
 
                     <Wrapper width={`40%`} dr={width < 1100 ? `column` : `row`}>
-                      <CustomWrapper width={width < 1100 ? `100%` : `50%`}>
+                      <Wrapper width={width < 1100 ? `100%` : `50%`}>
                         <DownloadOutlined
                           onClick={() => fileDownloadHandler(data.file)}
                           style={{
@@ -3566,9 +3575,9 @@ const Index = () => {
                         >
                           파일 업로드
                         </Text>
-                      </CustomWrapper>
+                      </Wrapper>
 
-                      <CustomWrapper
+                      <Wrapper
                         width={width < 1100 ? `100%` : `50%`}
                         beforeBool={false}
                       >
@@ -3583,7 +3592,7 @@ const Index = () => {
                         <Text fontSize={width < 700 ? `14px` : `16px`}>
                           {`${data.date}까지`}
                         </Text>
-                      </CustomWrapper>
+                      </Wrapper>
                     </Wrapper>
 
                     <Wrapper width={`10%`} ju={`center`}>
