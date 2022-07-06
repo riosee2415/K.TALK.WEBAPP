@@ -1566,6 +1566,63 @@ router.post("/homework/create", async (req, res, next) => {
   }
 });
 
+router.post("/homework/update", isLoggedIn, async (req, res, next) => {
+  const { id, title, date, file, content } = req.body;
+
+  const validateQuery = `
+  SELECT	A.id,
+          A.title,
+          A.date,
+          A.file,
+          A.content,
+          A.isDelete,
+          A.createdAt,
+          A.updatedAt, 
+          A.LectureId,
+          B.number,
+          B.course,
+          C.id            AS teacherId,
+          C.username 
+    FROM	homeworks			A
+   INNER
+    JOIN	lectures			B
+      ON	A.LectureId = B.id
+   INNER
+    JOIN	users				C
+      ON	B.UserId = C.id
+   WHERE	A.id = ${id}
+  `;
+
+  const updateQuery = `
+  UPDATE  homeworks
+     SET  title = "${title}",
+          date = "${date}",
+          file = "${file}",
+          content = "${content}",
+          updatedAt = now()
+   WHERE  id = ${id}
+  `;
+
+  try {
+    const validate = await models.sequelize.query(validateQuery);
+
+    if (validate[0].length === 0) {
+      return res.status(401).send("존재하지 않는 숙제 게시글 정보입니다.");
+    }
+
+    if (validate[0][0].teacherId !== req.user.id) {
+      return res.status(401).send("자신이 등록한 게시글만 수정할 수 있습니다.");
+    }
+
+    const updateResult = await models.sequelize.query(updateQuery);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("숙제를 수정할 수 없습니다.");
+  }
+});
+
 // 강사 숙제 작성 목록 확인하기.
 router.post("/submit/list", isLoggedIn, async (req, res, next) => {
   const { LectureId, search, page } = req.body;
