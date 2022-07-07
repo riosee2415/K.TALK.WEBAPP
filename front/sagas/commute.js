@@ -12,6 +12,10 @@ import {
   COMMUTE_ADMIN_LIST_REQUEST,
   COMMUTE_ADMIN_LIST_SUCCESS,
   COMMUTE_ADMIN_LIST_FAILURE,
+  //////////////////////////
+  COMMUTE_UPDATE_REQUEST,
+  COMMUTE_UPDATE_SUCCESS,
+  COMMUTE_UPDATE_FAILURE,
 } from "../reducers/commute";
 
 // SAGA AREA ********************************************************************************************************
@@ -87,6 +91,29 @@ function* commuteAdminList(action) {
   }
 }
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function commuteUpdateAPI(data) {
+  return axios.patch(`/api/commute/update`, data);
+}
+
+function* commuteUpdate(action) {
+  try {
+    const result = yield call(commuteUpdateAPI, action.data);
+
+    yield put({
+      type: COMMUTE_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: COMMUTE_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 //////////////////////////////////////////////////////////////
 function* watchCommuteList() {
   yield takeLatest(COMMUTE_LIST_REQUEST, commuteList);
@@ -100,12 +127,17 @@ function* watchCommuteAdminList() {
   yield takeLatest(COMMUTE_ADMIN_LIST_REQUEST, commuteAdminList);
 }
 
+function* watchCommuteUpdate() {
+  yield takeLatest(COMMUTE_UPDATE_REQUEST, commuteUpdate);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* bannerSaga() {
   yield all([
     fork(watchCommuteList),
     fork(watchCommuteCreate),
     fork(watchCommuteAdminList),
+    fork(watchCommuteUpdate),
     //
   ]);
 }

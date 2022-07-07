@@ -46,6 +46,8 @@ import {
   message,
   Empty,
   Select,
+  DatePicker,
+  Radio,
 } from "antd";
 import {
   MESSAGE_CREATE_REQUEST,
@@ -82,6 +84,7 @@ import {
 import {
   COMMUTE_CREATE_REQUEST,
   COMMUTE_LIST_REQUEST,
+  COMMUTE_UPDATE_REQUEST,
 } from "../../../reducers/commute";
 import { saveAs } from "file-saver";
 import TeacherNotice from "../../../components/lectureNotice/TecherNotice";
@@ -401,6 +404,9 @@ const Index = () => {
 
     st_commuteCreateDone,
     st_commuteCreateError,
+
+    st_commuteUpdateDone, // 출석 수정
+    st_commuteUpdateError,
   } = useSelector((state) => state.commute);
 
   ////// HOOKS //////
@@ -425,6 +431,7 @@ const Index = () => {
   const [memoform] = Form.useForm();
   const [memoWriteform] = Form.useForm();
   const [homeworkUpdateForm] = Form.useForm();
+  const [commuteForm] = Form.useForm();
 
   const imageInput = useRef();
   const imageInput2 = useRef();
@@ -489,6 +496,10 @@ const Index = () => {
   const [homeworkModal, setHomeworkModal] = useState(false);
 
   const [homeworkModalType, setHomeworkModalType] = useState(false);
+
+  // 출석 수정
+  const [commuteModal, setCommuteModal] = useState(false);
+  const [commuteData, setCommuteData] = useState(null);
 
   ////// REDUX //////
 
@@ -913,7 +924,6 @@ const Index = () => {
   }, [st_messageLectureListError]);
 
   // 숙제 수정
-
   useEffect(() => {
     if (st_lectureHWUpdateDone) {
       dispatch({
@@ -937,6 +947,32 @@ const Index = () => {
       return message.error(st_lectureHWUpdateError);
     }
   }, [st_lectureHWUpdateError]);
+
+  // 출석 수정
+  useEffect(() => {
+    if (st_commuteUpdateDone) {
+      dispatch({
+        type: COMMUTE_LIST_REQUEST,
+        data: {
+          LectureId: parseInt(router.query.id),
+          page: 1,
+          search: "",
+        },
+      });
+
+      commuteForm.resetFields();
+      setCommuteModal(false);
+      setCommuteData(null);
+
+      return message.success("출석이 수정되었습니다.");
+    }
+  }, [st_commuteUpdateDone]);
+
+  useEffect(() => {
+    if (st_commuteUpdateError) {
+      return message.error(st_commuteUpdateError);
+    }
+  }, [st_commuteUpdateError]);
 
   ////// TOGGLE //////
 
@@ -978,6 +1014,22 @@ const Index = () => {
       setHomeworkModal((prev) => !prev);
     },
     [homeworkModalType, homework, homeworkModal]
+  );
+
+  // 출석 수정 모달
+  const commuteModalToggle = useCallback(
+    (data) => {
+      if (data) {
+        commuteForm.setFieldsValue({
+          status: data.status,
+        });
+        setCommuteData(data);
+      } else {
+        setCommuteData(null);
+      }
+      setCommuteModal((prev) => !prev);
+    },
+    [commuteModal, commuteData]
   );
 
   const fileUploadClick = useCallback(() => {
@@ -1585,7 +1637,7 @@ const Index = () => {
     return textSave;
   }, []);
 
-  // 숙제 업데이트 타입 변경
+  // 숙제 수정 타입 변경
   const homeworkModalTypeChange = useCallback(() => {
     homeworkUpdateForm.setFieldsValue({
       title: homework.title,
@@ -1597,8 +1649,7 @@ const Index = () => {
     setHomeworkModalType(!homeworkModalType);
   }, [homeworkModalType, homework, inputUpdateDate.value]);
 
-  // 숙제 업데이트
-
+  // 숙제 수정
   const homeworkUpdateHandler = useCallback(
     (data) => {
       dispatch({
@@ -1613,6 +1664,21 @@ const Index = () => {
       });
     },
     [homework, inputUpdateDate.value, homeWorkFilePath]
+  );
+
+  // 출석 수정
+  const commuteUpdateHandler = useCallback(
+    (data) => {
+      dispatch({
+        type: COMMUTE_UPDATE_REQUEST,
+        data: {
+          id: commuteData.id,
+          status: data.status,
+          lectureId: commuteData.LectureId,
+        },
+      });
+    },
+    [commuteData]
   );
 
   ////// DATAVIEW //////
@@ -4237,14 +4303,14 @@ const Index = () => {
               <Text
                 fontSize={width < 700 ? `14px` : `18px`}
                 fontWeight={`Bold`}
-                width={`45%`}
+                width={`40%`}
               >
                 출석일
               </Text>
               <Text
                 fontSize={width < 700 ? `14px` : `18px`}
                 fontWeight={`Bold`}
-                width={`45%`}
+                width={`40%`}
               >
                 학생명
               </Text>
@@ -4255,6 +4321,13 @@ const Index = () => {
                 width={`10%`}
               >
                 출석
+              </Text>
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`Bold`}
+                width={`10%`}
+              >
+                수정
               </Text>
             </Wrapper>
 
@@ -4278,13 +4351,13 @@ const Index = () => {
                   >
                     <Text
                       fontSize={width < 700 ? `14px` : `16px`}
-                      width={`45%`}
+                      width={`40%`}
                     >
                       {data.time}
                     </Text>
                     <Text
                       fontSize={width < 700 ? `14px` : `16px`}
-                      width={`45%`}
+                      width={`40%`}
                     >
                       {data.username}
                     </Text>
@@ -4294,11 +4367,56 @@ const Index = () => {
                     >
                       {data.status}
                     </Text>
+                    <Text
+                      fontSize={width < 700 ? `14px` : `16px`}
+                      width={`10%`}
+                    >
+                      <Button
+                        size="small"
+                        type="primary"
+                        onClick={() => commuteModalToggle(data)}
+                      >
+                        수정
+                      </Button>
+                    </Text>
                   </Wrapper>
                 );
               })
             )}
           </Wrapper>
+
+          {/* COMMUTE UPDATE */}
+          <Modal
+            width={`600px`}
+            title="출석 수정"
+            visible={commuteModal}
+            onCancel={commuteModalToggle}
+            footer={null}
+          >
+            <CustomForm form={commuteForm} onFinish={commuteUpdateHandler}>
+              <Form.Item
+                label="유형"
+                name="status"
+                rules={[{ required: true, message: "유형을 선택해주세요." }]}
+              >
+                <Radio.Group>
+                  <Radio value={"출석"}>출석</Radio>
+                  <Radio value={"결석"}>결석</Radio>
+                  <Radio value={"지각"}>지각</Radio>
+                </Radio.Group>
+              </Form.Item>
+
+              <Wrapper dr={`row`}>
+                <CommonButton
+                  htmlType="submit"
+                  margin={`0 5px 0 0`}
+                  radius={`5px`}
+                >
+                  수정하기
+                </CommonButton>
+              </Wrapper>
+            </CustomForm>
+          </Modal>
 
           <Wrapper margin={`50px 0`}>
             <CustomPage
