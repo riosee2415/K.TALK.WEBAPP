@@ -66,6 +66,7 @@ const AdminMenu = () => {
         mode="inline"
         selectedKeys={router.pathname}
         disabled={false}
+        onChange={titleClickHandler}
       >
         <Wrapper margin={`20px 0 10px`}>
           <ATag href={`/`} width={`auto`}>
