@@ -41,6 +41,7 @@ import {
   Image,
   GuideUl,
   GuideLi,
+  GuideDiv,
 } from "../../../../components/commonComponents";
 import { LECTURE_ALL_LIST_REQUEST } from "../../../../reducers/lecture";
 import {
@@ -1472,23 +1473,19 @@ const List = () => {
             </Button>
           </Wrapper>
         </Wrapper>
-        <Wrapper>
-          <Wrapper
-            al={`flex-start`}
-            bgColor={Theme.lightGrey_C}
-            padding={`20px 20px 0 30px`}
-            margin={`0 0 30px`}
-            radius={`10px`}
-            shadow={`0 0 6px rgba(0,0,0,0.16)`}
-          >
-            <GuideUl>
-              <GuideLi color={Theme.red_C} margin={`0 0 5px`} isImpo>
-                학생이 수업을 연장해서 듣게 해야하는 경우 기간이 만료된 강의를
-                먼저 수업빼기 기능을 이용해서 빼주시고 다시 수업참여 기능을
-                이용하여 재참여 시켜줘야 합니다.
-              </GuideLi>
-            </GuideUl>
-          </Wrapper>
+        <Wrapper
+          margin={`0px 0px 10px 0px`}
+          radius="5px"
+          bgColor={Theme.lightGrey_C}
+          padding="5px"
+          fontSize="15px"
+          al="flex-start"
+        >
+          <GuideDiv isImpo={true}>
+            학생이 수업을 연장해서 듣게 해야하는 경우 기간이 만료된 강의를 먼저
+            수업빼기 기능을 이용해서 빼주시고 다시 수업참여 기능을 이용하여
+            재참여 시켜줘야 합니다.
+          </GuideDiv>
         </Wrapper>
 
         <Table

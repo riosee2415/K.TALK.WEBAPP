@@ -15,6 +15,7 @@ import {
   SpanText,
   ModalBtn,
   TextArea,
+  GuideDiv,
 } from "../../components/commonComponents";
 import {
   Button,
@@ -1460,12 +1461,6 @@ const AdminHome = () => {
     <>
       {me && me.level >= 3 ? (
         <AdminLayout>
-          {/* <PageHeader
-            breadcrumbs={["클래스 관리", "클래스 목록, 검색, 정렬"]}
-            title={`클래스 목록, 검색, 정렬`}
-            subTitle={`클래스의 목록을 살펴볼 수 있고 클래스별 상세 설정을 할 수 있습니다.`}
-          /> */}
-
           <AdminContent>
             <Text fontSize={`24px`} fontWeight={`bold`} margin={`0 0 30px`}>
               관리자 메인페이지
@@ -1487,6 +1482,7 @@ const AdminHome = () => {
                   >
                     일반 게시판
                   </Text>
+
                   <Wrapper
                     dr={`row`}
                     ju={`space-between`}
@@ -1534,6 +1530,22 @@ const AdminHome = () => {
                     </Wrapper>
                   </Wrapper>
                 </Wrapper>
+                <Wrapper
+                  margin={`0px 0px 10px 0px`}
+                  radius="5px"
+                  bgColor={Theme.lightGrey_C}
+                  padding="5px"
+                  fontSize="13px"
+                  al="flex-start"
+                >
+                  <GuideDiv isImpo={true}>
+                    관리자 버튼을 누르면 수정, 삭제가 가능합니다.
+                  </GuideDiv>
+                  <GuideDiv isImpo={true}>
+                    게시판은 수정시 즉시 반영되기 때문에 수정 할 시 신중하게
+                    처리바랍니다.
+                  </GuideDiv>
+                </Wrapper>
                 <Table
                   rowKey="id"
                   dataSource={
@@ -1553,65 +1565,7 @@ const AdminHome = () => {
               </Wrapper>
 
               {/* NORMAL BOARD END */}
-
-              {/* MESSAGE TABLE */}
-              {/* <Wrapper al={`flex-start`} width={`49%`}>
-                <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
-                  <Text
-                    fontSize={`18px`}
-                    fontWeight={`bold`}
-                    margin={`0 20px 0 0`}
-                  >
-                    전체 쪽지 목록
-                  </Text>
-                  <Wrapper width={`auto`} dr={`row`}>
-                    <Button
-                      size={`small`}
-                      type={`primary`}
-                      onClick={() =>
-                        moveLinkHandler(`/admin/board/message/list?type=all`)
-                      }
-                    >
-                      모든 쪽지
-                    </Button>
-                    &nbsp;
-                    <Button
-                      size={`small`}
-                      type={`primary`}
-                      onClick={() =>
-                        moveLinkHandler(`/admin/board/message/list?type=stu`)
-                      }
-                    >
-                      학생에게 보낸 쪽지
-                    </Button>
-                    &nbsp;
-                    <Button
-                      size={`small`}
-                      type={`primary`}
-                      onClick={() =>
-                        moveLinkHandler(`/admin/board/message/list?type=tea`)
-                      }
-                    >
-                      강사에게 보낸 쪽지
-                    </Button>
-                  </Wrapper>
-                </Wrapper>
-
-                <Table
-                  rowKey="id"
-                  dataSource={messageAdminMainList ? messageAdminMainList : []}
-                  size="small"
-                  columns={columns}
-                  style={{ width: `100%` }}
-                  pagination={{
-                    current: currentPage2,
-                    total: messageAdminMainMaxPage * 10,
-                    onChange: (page) => setCurrentPage2(page),
-                  }}
-                />
-              </Wrapper> */}
             </Wrapper>
-            {/* MESSAGE TABLE END */}
 
             {/* CLASS LIST */}
             <Wrapper al={`flex-start`} margin={`0 0 10px`}>
@@ -1767,23 +1721,6 @@ const AdminHome = () => {
                     </FormItem>
                     <Text>&nbsp;단원</Text>
                   </Wrapper>
-
-                  {/* <Wrapper
-                    width={`auto`}
-                    dr={`row`}
-                    ju={`flex-start`}
-                    margin={`0 10px 0 0`}
-                  >
-                    <FormItem width={`70px`}>
-                      <Input
-                        type={`number`}
-                        num={`1`}
-                        value={searchPage}
-                        onChange={(e) => setSearchPage(e.target.value)}
-                      />
-                    </FormItem>
-                    <Text>&nbsp;페이지</Text>
-                  </Wrapper> */}
 
                   <Button
                     type="primary"

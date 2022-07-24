@@ -971,7 +971,8 @@ const BoardDetail = () => {
                   al={`flex-start`}
                   ju={`flex-start`}
                   color={Theme.black_2C}
-                  minHeight={`120px`}
+                  minHeight={`200px`}
+                  padding={`20px 10px`}
                 >
                   <WordbreakText
                     al={`flex-start`}

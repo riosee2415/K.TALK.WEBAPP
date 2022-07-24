@@ -28,6 +28,7 @@ import {
   Image,
   Text,
   TextInput,
+  GuideDiv,
 } from "../../../../components/commonComponents";
 import {
   LOAD_MY_INFO_REQUEST,
@@ -46,6 +47,7 @@ import { saveAs } from "file-saver";
 import { SearchOutlined, SolutionOutlined } from "@ant-design/icons";
 import useInput from "../../../../hooks/useInput";
 import { LECTURE_ALL_LIST_REQUEST } from "../../../../reducers/lecture";
+import Theme from "../../../../components/Theme";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -544,161 +546,164 @@ const Book = ({}) => {
       />
 
       <AdminContent>
-        {/* <SearchForm layout="inline">
-          <SearchFormItem label="사용자명" name="selectUserId">
-            <Select size="small" style={{ width: "200px" }}>
-              <Select.Option value="1">dasdasdasdd</Select.Option>
-            </Select>
-          </SearchFormItem>
-
-          <SearchFormItem>
-            <Button size="small" type="primary" htmlType="submit">
-              검색
-            </Button>
-          </SearchFormItem>
-        </SearchForm> */}
-
-        <Wrapper margin={"0px 0px 20px 0px"} dr={"row"}>
-          <Wrapper dr={`row`} ju={`space-between`}>
-            <FormTag form={searchForm} onFinish={onClickBookFolder}>
-              <FormItem name={`search`} label={`검색`}>
-                <Wrapper dr={`row`} ju={`flex-start`}>
-                  <Input size={`small`} />
-                </Wrapper>
-              </FormItem>
-              <FormItem name={`lectureId`} label={`강의`}>
+        <Wrapper margin={"0px 0px 20px 0px"} dr={"row"} ju={`space-between`}>
+          <Wrapper
+            margin={`0px 0px 10px 0px`}
+            radius="5px"
+            bgColor={Theme.lightGrey_C}
+            padding="5px"
+            fontSize="13px"
+            al="flex-start"
+          >
+            <GuideDiv isImpo={true}>
+              작성한 교재의 상세내역을 보시려면 수정버튼을 누르세요.
+            </GuideDiv>
+            <GuideDiv isImpo={true}>
+              교재 수정시 즉시 반영되기 때문에 수정 할 시 신중하게 처리바랍니다.
+            </GuideDiv>
+          </Wrapper>
+          <FormTag form={searchForm} onFinish={onClickBookFolder}>
+            <FormItem name={`search`} label={`검색`}>
+              <Wrapper dr={`row`} ju={`flex-start`}>
+                <Input size={`small`} />
+              </Wrapper>
+            </FormItem>
+            <FormItem name={`lectureId`} label={`강의`}>
+              <Select
+                size={`small`}
+                style={{ width: `200px` }}
+                defaultValue={null}
+              >
+                <Select.Option value={null} type="primary" size="small">
+                  전체
+                </Select.Option>
+                {allLectures &&
+                  allLectures.map((data, idx) => {
+                    return (
+                      <Select.Option
+                        value={data.id}
+                        key={data.id}
+                        type="primary"
+                        size="small"
+                      >
+                        {`(${data.number}) ${data.course}`}
+                      </Select.Option>
+                    );
+                  })}
+              </Select>
+            </FormItem>
+            <FormItem
+              onBlur={() =>
+                searchForm.getFieldValue(`level`) === "" &&
+                setCurrentSearchLevel(null)
+              }
+              name={`level`}
+              label={`권`}
+            >
+              {currentSearchLevel === "기타" ? (
+                <Input size={`small`} />
+              ) : (
                 <Select
                   size={`small`}
                   style={{ width: `200px` }}
                   defaultValue={null}
+                  onSelect={(e) => setCurrentSearchLevel(e)}
                 >
                   <Select.Option value={null} type="primary" size="small">
                     전체
                   </Select.Option>
-                  {allLectures &&
-                    allLectures.map((data, idx) => {
+                  <Select.Option value={`기타`}>기타</Select.Option>
+                  <Select.Option value={`1`}>1</Select.Option>
+                  <Select.Option value={`2`}>2</Select.Option>
+                  <Select.Option value={`3`}>3</Select.Option>
+                  <Select.Option value={`4`}>4</Select.Option>
+                  <Select.Option value={`5`}>5</Select.Option>
+                  <Select.Option value={`6`}>6</Select.Option>
+                </Select>
+              )}
+            </FormItem>
+            <FormItem
+              onBlur={() =>
+                searchForm.getFieldValue(`stage`) === "" &&
+                setCurrentSearchStage(null)
+              }
+              name={`stage`}
+              label={`단원`}
+            >
+              {currentSearchStage === "기타" ? (
+                <Input size={`small`} />
+              ) : (
+                <Select
+                  size={`small`}
+                  style={{ width: `200px` }}
+                  defaultValue={null}
+                  onSelect={(e) => setCurrentSearchStage(e)}
+                >
+                  <Select.Option value={null} type="primary" size="small">
+                    전체
+                  </Select.Option>
+                  <Select.Option value={`기타`}>기타</Select.Option>
+                  <Select.Option value={`1`}>1</Select.Option>
+                  <Select.Option value={`2`}>2</Select.Option>
+                  <Select.Option value={`3`}>3</Select.Option>
+                  <Select.Option value={`4`}>4</Select.Option>
+                  <Select.Option value={`5`}>5</Select.Option>
+                  <Select.Option value={`6`}>6</Select.Option>
+                  <Select.Option value={`7`}>7</Select.Option>
+                  <Select.Option value={`8`}>8</Select.Option>
+                  <Select.Option value={`9`}>9</Select.Option>
+                  <Select.Option value={`10`}>10</Select.Option>
+                  <Select.Option value={`11`}>11</Select.Option>
+                  <Select.Option value={`12`}>12</Select.Option>
+                </Select>
+              )}
+            </FormItem>
+
+            <FormItem
+              onBlur={() =>
+                searchForm.getFieldValue(`kinds`) === "" &&
+                setCurrentSearchKinds(null)
+              }
+              name={`kinds`}
+              label={`교재 종류`}
+            >
+              {currentSearchKinds === "기타" ? (
+                <Input size={`small`} />
+              ) : (
+                <Select
+                  size={`small`}
+                  style={{ width: `200px` }}
+                  defaultValue={null}
+                  onSelect={(e) => setCurrentSearchKinds(e)}
+                >
+                  <Select.Option value={null} type="primary" size="small">
+                    전체
+                  </Select.Option>
+                  {[`기타`, `교과서`, `워크북`, `듣기파일`, `토픽`].map(
+                    (data, idx) => {
                       return (
-                        <Select.Option
-                          value={data.id}
-                          key={data.id}
-                          type="primary"
-                          size="small"
-                        >
-                          {`(${data.number}) ${data.course}`}
+                        <Select.Option value={data} key={idx}>
+                          {data}
                         </Select.Option>
                       );
-                    })}
+                    }
+                  )}
                 </Select>
-              </FormItem>
-              <FormItem
-                onBlur={() =>
-                  searchForm.getFieldValue(`level`) === "" &&
-                  setCurrentSearchLevel(null)
-                }
-                name={`level`}
-                label={`권`}
-              >
-                {currentSearchLevel === "기타" ? (
-                  <Input size={`small`} />
-                ) : (
-                  <Select
-                    size={`small`}
-                    style={{ width: `200px` }}
-                    defaultValue={null}
-                    onSelect={(e) => setCurrentSearchLevel(e)}
-                  >
-                    <Select.Option value={null} type="primary" size="small">
-                      전체
-                    </Select.Option>
-                    <Select.Option value={`기타`}>기타</Select.Option>
-                    <Select.Option value={`1`}>1</Select.Option>
-                    <Select.Option value={`2`}>2</Select.Option>
-                    <Select.Option value={`3`}>3</Select.Option>
-                    <Select.Option value={`4`}>4</Select.Option>
-                    <Select.Option value={`5`}>5</Select.Option>
-                    <Select.Option value={`6`}>6</Select.Option>
-                  </Select>
-                )}
-              </FormItem>
-              <FormItem
-                onBlur={() =>
-                  searchForm.getFieldValue(`stage`) === "" &&
-                  setCurrentSearchStage(null)
-                }
-                name={`stage`}
-                label={`단원`}
-              >
-                {currentSearchStage === "기타" ? (
-                  <Input size={`small`} />
-                ) : (
-                  <Select
-                    size={`small`}
-                    style={{ width: `200px` }}
-                    defaultValue={null}
-                    onSelect={(e) => setCurrentSearchStage(e)}
-                  >
-                    <Select.Option value={null} type="primary" size="small">
-                      전체
-                    </Select.Option>
-                    <Select.Option value={`기타`}>기타</Select.Option>
-                    <Select.Option value={`1`}>1</Select.Option>
-                    <Select.Option value={`2`}>2</Select.Option>
-                    <Select.Option value={`3`}>3</Select.Option>
-                    <Select.Option value={`4`}>4</Select.Option>
-                    <Select.Option value={`5`}>5</Select.Option>
-                    <Select.Option value={`6`}>6</Select.Option>
-                    <Select.Option value={`7`}>7</Select.Option>
-                    <Select.Option value={`8`}>8</Select.Option>
-                    <Select.Option value={`9`}>9</Select.Option>
-                    <Select.Option value={`10`}>10</Select.Option>
-                    <Select.Option value={`11`}>11</Select.Option>
-                    <Select.Option value={`12`}>12</Select.Option>
-                  </Select>
-                )}
-              </FormItem>
-
-              <FormItem
-                onBlur={() =>
-                  searchForm.getFieldValue(`kinds`) === "" &&
-                  setCurrentSearchKinds(null)
-                }
-                name={`kinds`}
-                label={`교재 종류`}
-              >
-                {currentSearchKinds === "기타" ? (
-                  <Input size={`small`} />
-                ) : (
-                  <Select
-                    size={`small`}
-                    style={{ width: `200px` }}
-                    defaultValue={null}
-                    onSelect={(e) => setCurrentSearchKinds(e)}
-                  >
-                    <Select.Option value={null} type="primary" size="small">
-                      전체
-                    </Select.Option>
-                    {[`기타`, `교과서`, `워크북`, `듣기파일`, `토픽`].map(
-                      (data, idx) => {
-                        return (
-                          <Select.Option value={data} key={idx}>
-                            {data}
-                          </Select.Option>
-                        );
-                      }
-                    )}
-                  </Select>
-                )}
-              </FormItem>
-              <Wrapper width={`auto`}>
-                <Button type={`primary`} htmlType={`submit`} size={`small`}>
-                  검색
-                </Button>
-              </Wrapper>
-            </FormTag>
-            <Button size="small" onClick={() => setCreateModal(true)}>
-              자료 올리기
-            </Button>
-          </Wrapper>
+              )}
+            </FormItem>
+            <Wrapper width={`auto`}>
+              <Button type={`primary`} htmlType={`submit`} size={`small`}>
+                검색
+              </Button>
+            </Wrapper>
+          </FormTag>
+          <Button
+            size="small"
+            type={`primary`}
+            onClick={() => setCreateModal(true)}
+          >
+            자료 올리기
+          </Button>
         </Wrapper>
 
         <Table
@@ -730,6 +735,7 @@ const Book = ({}) => {
         visible={createModal}
         onCancel={updateData ? updateModalClose : () => modalClose()}
         onOk={modalOk}
+        title="교재 등록"
       >
         <Wrapper al={`flex-start`}>
           <Form

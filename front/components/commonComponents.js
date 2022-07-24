@@ -724,3 +724,7 @@ export const GuideLi = styled.li`
   margin-bottom: 5px;
   color: ${(props) => (props.isImpo ? props.theme.red_C : props.theme.grey2_C)};
 `;
+export const GuideDiv = styled.div`
+  width: 100%;
+  color: ${(props) => (props.isImpo ? props.theme.red_C : "")};
+`;
