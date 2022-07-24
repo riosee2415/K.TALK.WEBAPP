@@ -421,6 +421,7 @@ router.post("/teacher/create", isLoggedIn, async (req, res, next) => {
           await NormalConnect.create({
             NormalNoticeId: parseInt(createResult.id),
             UserId: parseInt(data.id),
+            isAdmin: true,
           });
         })
       );
