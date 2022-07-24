@@ -363,7 +363,7 @@ router.post("/student/create", isLoggedIn, async (req, res, next) => {
 
     await NormalConnect.create({
       isAdmin: true,
-      NormalNoticeId: parseInt(createResult.id)
+      NormalNoticeId: parseInt(createResult.id),
     });
 
     return res.status(201).json({ result: true });
@@ -404,7 +404,7 @@ router.post("/teacher/create", isLoggedIn, async (req, res, next) => {
       const selectQuery = `
       SELECT	*
         FROM	users
-       WHERE	level = 2
+       WHERE	level IN (2, 4)
          AND  isFire = FALSE
         `;
 
