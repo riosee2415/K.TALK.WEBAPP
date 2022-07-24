@@ -482,52 +482,6 @@ const List = () => {
     [updateData]
   );
 
-  const onFillApp = useCallback(
-    (data) => {
-      if (data) {
-        updateForm.setFieldsValue({
-          timeDiff: data.timeDiff,
-          wantStartDate: data.wantStartDate ? moment(data.wantStartDate) : "",
-          teacher: data.teacher,
-          isDiscount: data.isDiscount,
-          meetDate: data.meetDate ? moment(data.meetDate) : "",
-          level: data.level,
-          job: data.job,
-          purpose: data.purpose,
-          freeTeacher: data.freeTeacher,
-          status: data.status,
-        });
-      }
-
-      // if (data && data.wantStartDate) {
-      //   updateForm.setFieldsValue({
-      //     timeDiff: data.timeDiff,
-      //     wantStartDate: moment(data.wantStartDate),
-      //     teacher: data.teacher,
-      //     isDiscount: data.isDiscount,
-      //     meetDate: moment(data.meetDate),
-      //     level: data.level,
-      //     job: data.job,
-      //     purpose: data.purpose,
-      //     freeTeacher: data.freeTeacher,
-      //     status: data.status,
-      //   });
-      // } else {
-      //   updateForm.setFieldsValue({
-      //     timeDiff: data.timeDiff,
-      //     teacher: data.teacher,
-      //     isDiscount: data.isDiscount,
-      //     level: data.level,
-      //     job: data.job,
-      //     purpose: data.purpose,
-      //     freeTeacher: data.freeTeacher,
-      //     status: data.status,
-      //   });
-      // }
-    },
-    [updateForm]
-  );
-
   const buttonHandle = useCallback(
     (type) => {
       setIsPayment(type);
