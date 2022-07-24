@@ -264,7 +264,6 @@ const AdminHome = () => {
     (state) => state.message
   );
 
-
   // NORMAL SELECTOR
   const {
     normalNoticeAdminList,
@@ -756,8 +755,8 @@ const AdminHome = () => {
 
     dispatch({
       type: NORMAL_NOTICE_FILE_STATE,
-      data: null
-    })
+      data: null,
+    });
 
     dispatch({
       type: NORMAL_NOTICE_MODAL_TOGGLE,
@@ -771,7 +770,7 @@ const AdminHome = () => {
     normalNoticeFilePath,
     filename.value,
   ]);
-  console.log(normalNoticeFilePath)
+  console.log(normalNoticeFilePath);
 
   const normalNoticeUpdateModalToggle = useCallback(
     (data) => {
@@ -1131,7 +1130,6 @@ const AdminHome = () => {
     [createModal]
   );
 
-
   // 일반게시판 추가
   const normalNoticeAdminCreate = useCallback(
     (data) => {
@@ -1209,14 +1207,14 @@ const AdminHome = () => {
 
   // 일반 게시판 파일 업로드
   const normalNoticeFileUploadHandler = useCallback((e) => {
-    if(e){
+    if (e) {
       const formData = new FormData();
       filename.setValue(e.target.files[0].name);
-      
+
       [].forEach.call(e.target.files, (file) => {
         formData.append("file", file);
       });
-      
+
       dispatch({
         type: NORMAL_FILE_UPLOAD_REQUEST,
         data: formData,
@@ -1889,7 +1887,7 @@ const AdminHome = () => {
                         <Wrapper dr={`row`}>
                           <CommonButton
                             padding={`0`}
-                            width={`80px`}
+                            width={`100px`}
                             height={`35px`}
                             radius={`5px`}
                             margin={`0 10px 0 0`}
@@ -1902,10 +1900,9 @@ const AdminHome = () => {
                           </CommonButton>
                           <CommonButton
                             padding={`0`}
-                            width={`80px`}
+                            width={`100px`}
                             height={`35px`}
                             radius={`5px`}
-                            margin={`0 10px 0 0`}
                             fontSize={`14px`}
                             onClick={() => updateModalOpen(data)}
                           >
@@ -2214,19 +2211,19 @@ const AdminHome = () => {
               margin={`0 0 35px`}
               fontSize={width < 700 ? `14px` : `16px`}
             >
-              <Text>
-                전송된 사람:&nbsp;
-              </Text>
-              {normalNoticeDetailReceviers && 
-               (normalNoticeDetailReceviers.length === 0 ? (
-                <Text>admin</Text>
-               ):
-              normalNoticeDetailReceviers.map((data, idx) => (
-                  <Text key={idx}>
-                  {data.username}
-                 {idx !== normalNoticeDetailReceviers.length-1 && ','}&nbsp;
-                 </Text>
-              )))}
+              <Text>전송된 사람:&nbsp;</Text>
+              {normalNoticeDetailReceviers &&
+                (normalNoticeDetailReceviers.length === 0 ? (
+                  <Text>admin</Text>
+                ) : (
+                  normalNoticeDetailReceviers.map((data, idx) => (
+                    <Text key={idx}>
+                      {data.username}
+                      {idx !== normalNoticeDetailReceviers.length - 1 && ","}
+                      &nbsp;
+                    </Text>
+                  ))
+                ))}
             </Wrapper>
 
             <Wrapper dr={`row`} ju={`flex-end`}>
