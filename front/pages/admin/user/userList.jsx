@@ -19,7 +19,7 @@ import {
   Calendar,
   // DatePicker,
 } from "antd";
-import { Wrapper } from "../../../components/commonComponents";
+import { GuideDiv, Wrapper } from "../../../components/commonComponents";
 import { SearchOutlined } from "@ant-design/icons";
 
 import {
@@ -40,6 +40,7 @@ import useInput from "../../../hooks/useInput";
 import { useRouter, withRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
+import Theme from "../../../components/Theme";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -530,9 +531,24 @@ const UserList = ({}) => {
         title={`회원 리스트`}
         subTitle={`홈페이지에 가입한 회원를 확인할 수 있습니다.`}
       />
-      {/* <AdminTop createButton={true} createButtonAction={() => {})} /> */}
 
       <AdminContent>
+        <Wrapper
+          margin={`0px 0px 10px 0px`}
+          radius="5px"
+          bgColor={Theme.lightGrey_C}
+          padding="5px"
+          fontSize="13px"
+          al="flex-start"
+        >
+          <GuideDiv isImpo={true}>
+            홈페이지에 가입된 회원을 조회할 수 있습니다.
+          </GuideDiv>
+          <GuideDiv isImpo={true}>
+            학생과 강사를 따로 조회하려면 학생관리와 강사관리 메뉴를
+            사용해주세요.
+          </GuideDiv>
+        </Wrapper>
         <Input.Group compact style={{ margin: ` 0 0 10px 0` }}>
           <Select
             size="small"
@@ -546,7 +562,7 @@ const UserList = ({}) => {
           </Select>
           <Input
             size="small"
-            style={{ width: "20%" }}
+            style={{ width: "20%", margin: `0 10px` }}
             placeholder="사용자명"
             {...inputName}
           />
@@ -557,6 +573,7 @@ const UserList = ({}) => {
             {...inputEmail}
           />
           <Button
+            style={{ margin: `0 10px` }}
             size="small"
             onClick={() =>
               moveLinkHandler(
@@ -567,9 +584,6 @@ const UserList = ({}) => {
             <SearchOutlined />
             검색
           </Button>
-          {/* <Button size="small" type="primary" onClick={createModalToggle}>
-            + 회원 생성
-          </Button> */}
         </Input.Group>
 
         <Table
