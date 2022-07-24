@@ -2,15 +2,12 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
-
 import styled from "styled-components";
 import AdminLayout from "../../../components/AdminLayout";
 import PageHeader from "../../../components/admin/PageHeader";
-// import AdminTop from "../../../components/admin/AdminTop";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Button,
-  Col,
   Modal,
   Table,
   Input,
@@ -24,12 +21,11 @@ import {
   Text,
   SpanText,
   TextInput,
-  GuideUl,
-  GuideLi,
+  GuideDiv,
+  ModalBtn,
 } from "../../../components/commonComponents";
 import { ColWrapper, RowWrapper } from "../../../components/commonComponents";
 import Theme from "../../../components/Theme";
-
 import {
   UPDATE_MODAL_CLOSE_REQUEST,
   UPDATE_MODAL_OPEN_REQUEST,
@@ -43,7 +39,6 @@ import {
 } from "../../../reducers/user";
 import { PAYMENT_LIST_REQUEST } from "../../../reducers/payment";
 import { LECTURE_ALL_LIST_REQUEST } from "../../../reducers/lecture";
-
 import { useRouter } from "next/router";
 import moment from "moment";
 
@@ -300,7 +295,23 @@ const List = () => {
 
   const createModalToggle = useCallback((data) => {
     setCreateModal((prev) => !prev);
-    onFillUser(data);
+
+    if (data) {
+      let password = data.phoneNumber2.slice(-4);
+      createForm.setFieldsValue({
+        userId: data.gmailAddress,
+        password: password,
+        repassword: password,
+        username: `${data.firstName} ${data.lastName}`,
+        mobile: `${data.phoneNumber}${data.phoneNumber2}`,
+        email: data.gmailAddress,
+        stuLanguage: data.languageYouUse,
+        birth: data.dateOfBirth,
+        stuJob: data.job,
+        stuCountry: data.nationality,
+        stuLiveCon: data.countryOfResidence,
+      });
+    }
 
     dispatch({
       type: PAYMENT_LIST_REQUEST,
@@ -324,8 +335,21 @@ const List = () => {
   }, []);
 
   const updateModalOpen = useCallback((data) => {
-    onFillApp(data);
     setUpdateData(data);
+    if (data) {
+      updateForm.setFieldsValue({
+        timeDiff: data.timeDiff,
+        wantStartDate: data.wantStartDate ? moment(data.wantStartDate) : "",
+        teacher: data.teacher,
+        isDiscount: data.isDiscount,
+        meetDate: data.meetDate ? moment(data.meetDate) : "",
+        level: data.level,
+        job: data.job,
+        purpose: data.purpose,
+        freeTeacher: data.freeTeacher,
+        status: data.status,
+      });
+    }
 
     dispatch({
       type: LECTURE_ALL_LIST_REQUEST,
@@ -457,25 +481,6 @@ const List = () => {
     },
     [updateData]
   );
-
-  const onFillUser = useCallback((data) => {
-    if (data) {
-      let password = data.phoneNumber2.slice(-4);
-      createForm.setFieldsValue({
-        userId: data.gmailAddress,
-        password: password,
-        repassword: password,
-        username: `${data.firstName} ${data.lastName}`,
-        mobile: `${data.phoneNumber}${data.phoneNumber2}`,
-        email: data.gmailAddress,
-        stuLanguage: data.languageYouUse,
-        birth: data.dateOfBirth,
-        stuJob: data.job,
-        stuCountry: data.nationality,
-        stuLiveCon: data.countryOfResidence,
-      });
-    }
-  }, []);
 
   const onFillApp = useCallback(
     (data) => {
@@ -679,109 +684,87 @@ const List = () => {
       {/* <AdminTop createButton={true} createButtonAction={() => {})} /> */}
 
       <AdminContent>
+        {/* ADMIN TOP MENU */}
         <Wrapper
-          bgColor={Theme.lightGrey_C}
-          padding={`20px 20px 0 30px`}
-          radius={`10px`}
-          margin={`0 0 10px 0`}
-          dr={`row`}
-          ju={`flex-start `}
-          shadow={`0 0 6px rgba(0,0,0,0.16)`}
+          dr="row"
+          ju="flex-start"
+          margin="0px 0px 10px 0px"
+          borderBottom={`1px dashed ${Theme.lightGrey_C}`}
+          padding="5px 0px"
         >
-          <GuideUl width={`auto`}>
-            <GuideLi width={`auto`}>
-              회원을 생성하면 학생 관리에서 확인할 수 있습니다.
-            </GuideLi>
-            <GuideLi width={`auto`}>
-              줌 미팅 시간은 날짜와 시간을 선택해주시면 확인할 수 있습니다.
-            </GuideLi>
-          </GuideUl>
-        </Wrapper>
+          <ModalBtn
+            type={!router.query.type && `primary`}
+            size={`small`}
+            onClick={() => onClickAllList()}
+          >
+            전체
+          </ModalBtn>
+          {/* <ModalBtn
+            type={router.query.type === "true" && `primary`}
+            size={`small`}
+            onClick={() => moveLinkHandler(`/admin/application/list?type=true`)}
+          >
+            처리완료
+          </ModalBtn>
+          <ModalBtn
+            type={router.query.type === "false" && `primary`}
+            size={`small`}
+            onClick={() =>
+              moveLinkHandler(`/admin/application/list?type=false`)
+            }
+          >
+            미처리
+          </ModalBtn> */}
 
-        <RowWrapper margin={`0 0 10px 0`} gutter={5}>
-          <Col>
-            <Button
-              type={!router.query.type && `primary`}
-              size={`small`}
-              onClick={() => onClickAllList()}
-            >
-              전체
-            </Button>
-          </Col>
-          {/* <Col>
-            <Button
-              type={router.query.type === "true" && `primary`}
-              onClick={() =>
-                moveLinkHandler(`/admin/application/list?type=true`)
-              }>
-              처리완료
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              type={router.query.type === "false" && `primary`}
-              onClick={() =>
-                moveLinkHandler(`/admin/application/list?type=false`)
-              }>
-              미처리
-            </Button>
-          </Col> */}
+          <Select
+            onChange={(e) => setStatusType(e)}
+            style={{ width: `250px`, margin: `0 5px` }}
+            size={`small`}
+            value={statusType ? statusType : null}
+            placeholder={"등록상태를 선택해주세요. Ex) NoShow"}
+          >
+            {stateList &&
+              stateList.map((data, idx) => {
+                return (
+                  <Select.Option key={idx} value={data}>
+                    {data}
+                  </Select.Option>
+                );
+              })}
+          </Select>
 
-          <Col>
-            {/* <Text fontSize={`14px`} color={Theme.basicTheme_C}>
-              등록상태로 검색하기
-            </Text> */}
-            <Select
-              onChange={(e) => setStatusType(e)}
-              style={{ width: `250px` }}
-              size={`small`}
-              value={statusType ? statusType : null}
-              placeholder={"등록상태를 선택해주세요. Ex) NoShow"}
-            >
-              {stateList &&
-                stateList.map((data, idx) => {
-                  return (
-                    <Select.Option key={idx} value={data}>
-                      {data}
-                    </Select.Option>
-                  );
-                })}
-            </Select>
-          </Col>
-
-          <Col>
-            {/* <Text fontSize={`14px`} color={Theme.basicTheme_C}>
+          {/* <Text fontSize={`14px`} color={Theme.basicTheme_C}>
               신청서 등록일 또는 미팅 일자로 검색하기
             </Text> */}
-            <DatePicker
-              size="small"
-              showTime
-              minuteStep={10}
-              format="YYYY-MM-DD hh:mm"
-              onChange={(e) => onChangeDate(e)}
-            ></DatePicker>
 
-            {/* <Select
-              placeholder={
-                "신청서 등록일 또는 미팅 일자로 검색하기. Ex) NoShow"
-              }
-              style={{ width: `250px` }}
-              size={`small`}
-              value={isTime}
-              onChange={(e) => onChangeApp(e)}>
-              <Select.Option value={false}>신청서 등록일</Select.Option>
-              <Select.Option value={true}>줌 미팅 시간</Select.Option>
-            </Select> */}
-          </Col>
+          <DatePicker
+            size="small"
+            showTime
+            minuteStep={10}
+            format="YYYY-MM-DD hh:mm"
+            onChange={(e) => onChangeDate(e)}
+          ></DatePicker>
+        </Wrapper>
+        {/* ADMIN TOP MENU END */}
 
-          {/* <Col>
-            <CustomDatePicker
-              style={{ width: `200px` }}
-              onChange={(e) => setTime(e?.format(`YYYY-MM-DD`))}
-              format={`YYYY-MM-DD`}
-            />
-          </Col> */}
-        </RowWrapper>
+        {/* ADMIN GUIDE AREA */}
+        <Wrapper
+          margin={`0px 0px 10px 0px`}
+          radius="5px"
+          bgColor={Theme.lightGrey_C}
+          padding="5px"
+          fontSize="13px"
+          al="flex-start"
+        >
+          <GuideDiv isImpo={true}>
+            학생 등록하면 학생 관리에서 확인할 수 있습니다.
+          </GuideDiv>
+          <GuideDiv isImpo={true}>
+            진행여부, 줌 미팅일 날짜로 신청서를 검색할 수 있습니다.
+          </GuideDiv>
+        </Wrapper>
+        {/* ADMIN GUIDE AREA END*/}
+
         <Table
           rowKey="id"
           columns={columns}
