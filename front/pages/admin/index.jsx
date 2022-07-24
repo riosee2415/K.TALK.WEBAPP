@@ -78,6 +78,7 @@ import {
   NORMAL_NOTICE_DETAIL_MODAL_TOGGLE,
   NORMAL_NOTICE_DETAIL_REQUEST,
   NORMAL_NOTICE_EDITOR_RENDER,
+  NORMAL_NOTICE_FILE_STATE,
   NORMAL_NOTICE_MODAL_TOGGLE,
   NORMAL_NOTICE_UPDATE_REQUEST,
 } from "../../reducers/normalNotice";
@@ -263,10 +264,12 @@ const AdminHome = () => {
     (state) => state.message
   );
 
+
   // NORMAL SELECTOR
   const {
     normalNoticeAdminList,
     normalNoticeDetailData,
+    normalNoticeDetailReceviers,
     normalComments,
     normalCommentsLen,
     normalNoticeFilePath,
@@ -752,6 +755,11 @@ const AdminHome = () => {
     filename.setValue(null);
 
     dispatch({
+      type: NORMAL_NOTICE_FILE_STATE,
+      data: null
+    })
+
+    dispatch({
       type: NORMAL_NOTICE_MODAL_TOGGLE,
     });
   }, [
@@ -760,8 +768,10 @@ const AdminHome = () => {
     normalNoticeUser,
     contentData,
     normalNoticeUpdateData,
+    normalNoticeFilePath,
     filename.value,
   ]);
+  console.log(normalNoticeFilePath)
 
   const normalNoticeUpdateModalToggle = useCallback(
     (data) => {
@@ -826,7 +836,9 @@ const AdminHome = () => {
 
   const normalNoticeUserChangeHandler = useCallback(
     (user) => {
-      setNormalNoticeUser(user);
+      const userDatum = user.map((data) => JSON.parse(data).id);
+
+      setNormalNoticeUser(userDatum);
     },
     [normalNoticeUser]
   );
@@ -1119,9 +1131,13 @@ const AdminHome = () => {
     [createModal]
   );
 
+
   // 일반게시판 추가
   const normalNoticeAdminCreate = useCallback(
     (data) => {
+      const userDatum = data.userId
+        ? data.userId.map((data) => JSON.parse(data).id)
+        : null;
       dispatch({
         type: NORMAL_NOTICE_ADMIN_CREATE_REQUEST,
         data: {
@@ -1130,7 +1146,7 @@ const AdminHome = () => {
           author: "admin",
           level: me.level,
           file: normalNoticeFilePath,
-          receiverId: data.userId,
+          receiverId: userDatum,
           createType:
             normalNoticeType === "강사전체"
               ? 1
@@ -1193,17 +1209,19 @@ const AdminHome = () => {
 
   // 일반 게시판 파일 업로드
   const normalNoticeFileUploadHandler = useCallback((e) => {
-    const formData = new FormData();
-    filename.setValue(e.target.files[0].name);
-
-    [].forEach.call(e.target.files, (file) => {
-      formData.append("file", file);
-    });
-
-    dispatch({
-      type: NORMAL_FILE_UPLOAD_REQUEST,
-      data: formData,
-    });
+    if(e){
+      const formData = new FormData();
+      filename.setValue(e.target.files[0].name);
+      
+      [].forEach.call(e.target.files, (file) => {
+        formData.append("file", file);
+      });
+      
+      dispatch({
+        type: NORMAL_FILE_UPLOAD_REQUEST,
+        data: formData,
+      });
+    }
   }, []);
 
   // 일반 게시판 파일 업로드
@@ -2169,7 +2187,7 @@ const AdminHome = () => {
             <Wrapper
               dr={`row`}
               ju={`space-between`}
-              margin={`0 0 35px`}
+              margin={`0 0 15px`}
               fontSize={width < 700 ? `14px` : `16px`}
             >
               <Text>
@@ -2189,6 +2207,26 @@ const AdminHome = () => {
                   noticeDetailData && noticeDetailData.noticeCreatedAt
                 }`}
               </Text>
+            </Wrapper>
+            <Wrapper
+              dr={`row`}
+              ju={`flex-start`}
+              margin={`0 0 35px`}
+              fontSize={width < 700 ? `14px` : `16px`}
+            >
+              <Text>
+                전송된 사람:&nbsp;
+              </Text>
+              {normalNoticeDetailReceviers && 
+               (normalNoticeDetailReceviers.length === 0 ? (
+                <Text>admin</Text>
+               ):
+              normalNoticeDetailReceviers.map((data, idx) => (
+                  <Text key={idx}>
+                  {data.username}
+                 {idx !== normalNoticeDetailReceviers.length-1 && ','}&nbsp;
+                 </Text>
+              )))}
             </Wrapper>
 
             <Wrapper dr={`row`} ju={`flex-end`}>
@@ -2563,14 +2601,26 @@ const AdminHome = () => {
                         {normalNoticeType === "강사개인"
                           ? teachers &&
                             teachers.map((data) => (
-                              <Select.Option value={data.id} key={data.id}>
+                              <Select.Option
+                                value={JSON.stringify({
+                                  id: data.id,
+                                  username: data.username,
+                                })}
+                                key={data.id}
+                              >
                                 {data.username}
                               </Select.Option>
                             ))
                           : normalNoticeType === "학생개인" &&
                             userStuList &&
                             userStuList.map((data) => (
-                              <Select.Option value={data.id} key={data.id}>
+                              <Select.Option
+                                value={JSON.stringify({
+                                  id: data.id,
+                                  username: data.username,
+                                })}
+                                key={data.id}
+                              >
                                 {data.username}
                               </Select.Option>
                             ))}

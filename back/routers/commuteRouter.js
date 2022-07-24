@@ -2,6 +2,7 @@ const express = require("express");
 const { Commute, Lecture, User, Participant } = require("../models");
 const models = require("../models");
 const moment = require("moment");
+const isLoggedIn = require("../middlewares/isLoggedIn");
 
 const router = express.Router();
 
@@ -226,6 +227,56 @@ router.post("/create", async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("출석을 처리할 수 없습니다.");
+  }
+});
+
+router.patch("/update", isLoggedIn, async (req, res, next) => {
+  const { id, status, lectureId } = req.body;
+
+  const validateQuery = `
+  SELECT  A.id,
+          A.time,
+          A.LectureId,
+          A.UserId,
+          A.status,
+          B.number,
+          B.course,
+          B.UserId      AS teacherId
+    FROM  commutes      A
+   INNER
+    JOIN	lectures			B
+      ON	A.LectureId = B.id
+   WHERE  1 = 1
+     AND  A.LectureId = ${lectureId}
+     AND  A.id = ${id}
+  `;
+
+  const updateQuery = `
+  UPDATE  commutes
+     SET  status = "${status}",
+          updatedAt = now()
+   WHERE  id = ${id}
+  `;
+
+  try {
+    const validate = await models.sequelize.query(validateQuery);
+
+    if (validate[0].length === 0) {
+      return res.status(401).send("존재하지 않는 출석 정보입니다.");
+    }
+
+    if (validate[0][0].teacherId !== req.user.id) {
+      return res
+        .status(401)
+        .send("자신의 강의에 참여중인 학생의 출석 정보만 수정할 수 있습니다.");
+    }
+
+    const updateResult = await models.sequelize.query(updateQuery);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("출석 정보를 수정할 수 없습니다.");
   }
 });
 

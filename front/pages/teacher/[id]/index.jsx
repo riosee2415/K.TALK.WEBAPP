@@ -46,6 +46,8 @@ import {
   message,
   Empty,
   Select,
+  DatePicker,
+  Radio,
 } from "antd";
 import {
   MESSAGE_CREATE_REQUEST,
@@ -61,6 +63,8 @@ import {
   LECTURE_FILE_REQUEST,
   LECTURE_HOMEWORK_CREATE_REQUEST,
   LECTURE_HOMEWORK_LIST_REQUEST,
+  LECTURE_HW_FILE_PATH_REQUEST,
+  LECTURE_HW_UPDATE_REQUEST,
   LECTURE_MEMO_STU_CREATE_REQUEST,
   LECTURE_MEMO_STU_LIST_REQUEST,
   LECTURE_MEMO_STU_UPDATE_REQUEST,
@@ -80,6 +84,7 @@ import {
 import {
   COMMUTE_CREATE_REQUEST,
   COMMUTE_LIST_REQUEST,
+  COMMUTE_UPDATE_REQUEST,
 } from "../../../reducers/commute";
 import { saveAs } from "file-saver";
 import TeacherNotice from "../../../components/lectureNotice/TecherNotice";
@@ -319,6 +324,7 @@ const Index = () => {
     st_lectureDiaryCreateError,
 
     lecturePath,
+    homeWorkFilePath,
     st_lectureFileLoading,
     st_lectureFileDone,
     st_lectureFileError,
@@ -348,6 +354,11 @@ const Index = () => {
 
     st_lectureMemoStuUpdateDone,
     st_lectureMemoStuUpdateError,
+
+    st_lectureHWFilePathLoading,
+
+    st_lectureHWUpdateDone,
+    st_lectureHWUpdateError,
   } = useSelector((state) => state.lecture);
 
   const {
@@ -393,6 +404,9 @@ const Index = () => {
 
     st_commuteCreateDone,
     st_commuteCreateError,
+
+    st_commuteUpdateDone, // 출석 수정
+    st_commuteUpdateError,
   } = useSelector((state) => state.commute);
 
   ////// HOOKS //////
@@ -416,11 +430,15 @@ const Index = () => {
   const [homeworkSubmitform] = Form.useForm();
   const [memoform] = Form.useForm();
   const [memoWriteform] = Form.useForm();
+  const [homeworkUpdateForm] = Form.useForm();
+  const [commuteForm] = Form.useForm();
 
   const imageInput = useRef();
+  const imageInput2 = useRef();
   const homeworkUpload = useRef();
 
   const [isCalendar, setIsCalendar] = useState(false);
+  const [isCalendar2, setIsCalendar2] = useState(false);
 
   const [messageSendModalToggle, setMessageSendModalToggle] = useState(false);
   const [adminSendMessageToggle, setAdminSendMessageToggle] = useState(false);
@@ -452,11 +470,13 @@ const Index = () => {
   const [messageViewToggle, setMessageViewToggle] = useState(false);
 
   const [fileName, setFileName] = useState("");
+  const [fileName2, setFileName2] = useState("");
   const [filePath, setFilePath] = useState("");
 
   const noticeFileName = useInput(null);
 
   const inputDate = useInput("");
+  const inputUpdateDate = useInput("");
   const inputCommuteSearch = useInput("");
   const inputMemoSearch = useInput("");
 
@@ -474,6 +494,12 @@ const Index = () => {
 
   const [homework, setHomework] = useState(null);
   const [homeworkModal, setHomeworkModal] = useState(false);
+
+  const [homeworkModalType, setHomeworkModalType] = useState(false);
+
+  // 출석 수정
+  const [commuteModal, setCommuteModal] = useState(false);
+  const [commuteData, setCommuteData] = useState(null);
 
   ////// REDUX //////
 
@@ -897,6 +923,57 @@ const Index = () => {
     }
   }, [st_messageLectureListError]);
 
+  // 숙제 수정
+  useEffect(() => {
+    if (st_lectureHWUpdateDone) {
+      dispatch({
+        type: LECTURE_HOMEWORK_LIST_REQUEST,
+        data: {
+          LectureId: parseInt(router.query.id),
+          page: 1,
+        },
+      });
+
+      setFileName2("");
+
+      setHomeworkModal(false);
+
+      return message.success("숙제가 수정되었습니다.");
+    }
+  }, [st_lectureHWUpdateDone]);
+
+  useEffect(() => {
+    if (st_lectureHWUpdateError) {
+      return message.error(st_lectureHWUpdateError);
+    }
+  }, [st_lectureHWUpdateError]);
+
+  // 출석 수정
+  useEffect(() => {
+    if (st_commuteUpdateDone) {
+      dispatch({
+        type: COMMUTE_LIST_REQUEST,
+        data: {
+          LectureId: parseInt(router.query.id),
+          page: 1,
+          search: "",
+        },
+      });
+
+      commuteForm.resetFields();
+      setCommuteModal(false);
+      setCommuteData(null);
+
+      return message.success("출석이 수정되었습니다.");
+    }
+  }, [st_commuteUpdateDone]);
+
+  useEffect(() => {
+    if (st_commuteUpdateError) {
+      return message.error(st_commuteUpdateError);
+    }
+  }, [st_commuteUpdateError]);
+
   ////// TOGGLE //////
 
   const studentToggleHanlder = useCallback(() => {
@@ -928,10 +1005,32 @@ const Index = () => {
     router.push(link);
   }, []);
 
-  const homeworksToggle = useCallback((data) => {
-    setHomework(data);
-    setHomeworkModal((prev) => !prev);
-  }, []);
+  const homeworksToggle = useCallback(
+    (data) => {
+      if (data) {
+        setHomeworkModalType(false);
+      }
+      setHomework(data);
+      setHomeworkModal((prev) => !prev);
+    },
+    [homeworkModalType, homework, homeworkModal]
+  );
+
+  // 출석 수정 모달
+  const commuteModalToggle = useCallback(
+    (data) => {
+      if (data) {
+        commuteForm.setFieldsValue({
+          status: data.status,
+        });
+        setCommuteData(data);
+      } else {
+        setCommuteData(null);
+      }
+      setCommuteModal((prev) => !prev);
+    },
+    [commuteModal, commuteData]
+  );
 
   const fileUploadClick = useCallback(() => {
     fileRef.current.click();
@@ -967,6 +1066,21 @@ const Index = () => {
 
     inputDate.setValue(birth);
   }, []);
+
+  const homeworkDateChagneHandler = useCallback(
+    (data) => {
+      const birth = data.format("YYYY-MM-DD");
+
+      if (data) {
+        homeworkUpdateForm.setFieldsValue({
+          date: birth,
+        });
+      }
+
+      inputUpdateDate.setValue(birth);
+    },
+    [inputUpdateDate.value]
+  );
 
   const noteSendFinishHandler = useCallback(
     async (value, checkList) => {
@@ -1116,6 +1230,30 @@ const Index = () => {
       setFileName(e.target.files[0] && e.target.files[0].name);
     },
     [imageInput]
+  );
+
+  const onChangeFiles2 = useCallback(
+    (e) => {
+      const formData = new FormData();
+
+      [].forEach.call(e.target.files, (file) => {
+        formData.append("file", file);
+      });
+
+      if (e.target.files[0].size > 5242880) {
+        message.error("파일 용량 제한 (최대 5MB)");
+        imageInput2.current.value = "";
+        return;
+      }
+
+      dispatch({
+        type: LECTURE_HW_FILE_PATH_REQUEST,
+        data: formData,
+      });
+
+      setFileName2(e.target.files[0] && e.target.files[0].name);
+    },
+    [imageInput2, fileName2]
   );
 
   const diaryFinishHandler = useCallback(
@@ -1357,6 +1495,10 @@ const Index = () => {
     imageInput.current.click();
   }, [imageInput.current]);
 
+  const clickImage2Upload = useCallback(() => {
+    imageInput2.current.click();
+  }, [imageInput2.current]);
+
   const getEditContent = useCallback((contentValue) => {
     setNoticeContent(contentValue);
   }, []);
@@ -1494,6 +1636,50 @@ const Index = () => {
 
     return textSave;
   }, []);
+
+  // 숙제 수정 타입 변경
+  const homeworkModalTypeChange = useCallback(() => {
+    homeworkUpdateForm.setFieldsValue({
+      title: homework.title,
+      content: homework.content,
+      date: moment(homework.date),
+    });
+
+    inputUpdateDate.setValue(homework.date);
+    setHomeworkModalType(!homeworkModalType);
+  }, [homeworkModalType, homework, inputUpdateDate.value]);
+
+  // 숙제 수정
+  const homeworkUpdateHandler = useCallback(
+    (data) => {
+      dispatch({
+        type: LECTURE_HW_UPDATE_REQUEST,
+        data: {
+          id: homework.id,
+          title: data.title,
+          content: data.content,
+          date: inputUpdateDate.value,
+          file: homeWorkFilePath,
+        },
+      });
+    },
+    [homework, inputUpdateDate.value, homeWorkFilePath]
+  );
+
+  // 출석 수정
+  const commuteUpdateHandler = useCallback(
+    (data) => {
+      dispatch({
+        type: COMMUTE_UPDATE_REQUEST,
+        data: {
+          id: commuteData.id,
+          status: data.status,
+          lectureId: commuteData.LectureId,
+        },
+      });
+    },
+    [commuteData]
+  );
 
   ////// DATAVIEW //////
 
@@ -1668,7 +1854,6 @@ const Index = () => {
                             />
                           </Wrapper>
                         </Wrapper>
-
                         <Wrapper
                           dr={`row`}
                           width={width < 1400 ? `100%` : `60%`}
@@ -3262,6 +3447,8 @@ const Index = () => {
             </Wrapper>
           </CustomForm>
         </CustomModal>
+
+        {/* HOMEWORK CONTENT MODAL */}
         <CustomModal
           visible={homeworkModal}
           title="숙제 내용"
@@ -3269,58 +3456,208 @@ const Index = () => {
           footer={null}
           closable={false}
         >
-          <Text
-            fontSize={width < 700 ? `14px` : `18px`}
-            fontWeight={`bold`}
-            margin={`0 0 10px`}
-          >
-            제목
-          </Text>
-          <CustomInput
-            width={`100%`}
-            value={homework && homework.title}
-            disabled
-          />
-          <br />
-          <br />
-          <Text
-            fontSize={width < 700 ? `14px` : `18px`}
-            fontWeight={`bold`}
-            margin={`0 0 10px`}
-          >
-            내용
-          </Text>
-          <CusotmTextArea value={homework && homework.content} disabled />
-          <br />
-          <br />
-          <Text
-            fontSize={width < 700 ? `14px` : `18px`}
-            fontWeight={`bold`}
-            margin={`0 0 10px`}
-          >
-            날짜
-          </Text>
-
-          <Wrapper dr={`row`} ju={`flex-start`}>
-            <CustomInput
-              value={homework && homework.date + "까지"}
-              style={{
-                height: `40px`,
-              }}
-              disabled
-            />
-          </Wrapper>
-          <Wrapper dr={`row`} margin={`20px 0 0`}>
-            <CommonButton
-              margin={`0 5px 0 0`}
-              kindOf={`grey`}
-              color={Theme.darkGrey_C}
-              radius={`5px`}
-              onClick={() => homeworksToggle(null)}
-            >
-              돌아가기
+          <Wrapper al={`flex-end`}>
+            <CommonButton onClick={homeworkModalTypeChange}>
+              숙제수정
             </CommonButton>
           </Wrapper>
+
+          {!homeworkModalType ? (
+            <>
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`bold`}
+                margin={`0 0 10px`}
+              >
+                제목
+              </Text>
+              <CustomInput
+                width={`100%`}
+                value={homework && homework.title}
+                disabled
+              />
+              <br />
+              <br />
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`bold`}
+                margin={`0 0 10px`}
+              >
+                내용
+              </Text>
+              <CusotmTextArea value={homework && homework.content} disabled />
+              <br />
+              <br />
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`bold`}
+                margin={`0 0 10px`}
+              >
+                날짜
+              </Text>
+
+              <Wrapper dr={`row`} ju={`flex-start`}>
+                <CustomInput
+                  value={homework && homework.date + "까지"}
+                  style={{
+                    height: `40px`,
+                  }}
+                  disabled
+                />
+              </Wrapper>
+            </>
+          ) : (
+            <>
+              <CustomForm
+                form={homeworkUpdateForm}
+                onFinish={homeworkUpdateHandler}
+              >
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`bold`}
+                  margin={`0 0 10px`}
+                >
+                  제목
+                </Text>
+                <Form.Item
+                  name="title"
+                  rules={[{ required: true, message: "제목을 입력해주세요." }]}
+                >
+                  <CustomInput
+                    width={`100%`}
+                    placeholder="제목을 입력해주세요."
+                  />
+                </Form.Item>
+
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`bold`}
+                  margin={`0 0 10px`}
+                >
+                  내용
+                </Text>
+                <Form.Item
+                  name="content"
+                  rules={[{ required: true, message: "내용을 입력해주세요." }]}
+                >
+                  <CusotmTextArea placeholder="내용을 입력해주세요." />
+                </Form.Item>
+
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`bold`}
+                  margin={`0 0 10px`}
+                >
+                  날짜
+                </Text>
+                <Form.Item
+                  name="date"
+                  rules={[{ required: true, message: "날짜를 선택해주세요." }]}
+                >
+                  <Wrapper dr={`row`} ju={`flex-start`}>
+                    <CustomInput
+                      placeholder="날짜를 선택해주세요."
+                      width={`90%`}
+                      value={inputUpdateDate.value}
+                      style={{
+                        height: `40px`,
+                        margin: `0 10px 0 0`,
+                      }}
+                      disabled
+                    />
+
+                    <CalendarOutlined
+                      style={{
+                        cursor: `pointer`,
+                        fontSize: 25,
+                        position: `relative`,
+                      }}
+                      validRange={[moment(`1940`), moment()]}
+                      onClick={() => setIsCalendar2(!isCalendar2)}
+                    />
+
+                    <Wrapper
+                      display={isCalendar2 ? "flex" : "none"}
+                      border={`1px solid ${Theme.grey_C}`}
+                      margin={`20px 0 20px`}
+                    >
+                      <Calendar
+                        style={{ width: width < 1350 ? `100%` : `250` }}
+                        fullscreen={false}
+                        onChange={homeworkDateChagneHandler}
+                        validRange={[moment(), moment(`9999-99-99`)]}
+                      />
+                    </Wrapper>
+                  </Wrapper>
+                </Form.Item>
+
+                <Text
+                  fontSize={width < 700 ? `14px` : `18px`}
+                  fontWeight={`bold`}
+                >
+                  파일 업로드
+                </Text>
+
+                <Wrapper al={`flex-start`} margin={`10px 0 0`}>
+                  <input
+                    type="file"
+                    name="file"
+                    // multiple
+                    hidden
+                    ref={imageInput2}
+                    onChange={onChangeFiles2}
+                  />
+                  <Button
+                    icon={<UploadOutlined />}
+                    onClick={clickImage2Upload}
+                    loading={st_lectureHWFilePathLoading}
+                    style={{
+                      height: `40px`,
+                      width: `150px`,
+                      margin: `10px 0 0`,
+                    }}
+                  >
+                    파일 올리기
+                  </Button>
+
+                  <WordbreakText>{`${fileName2}`}</WordbreakText>
+                </Wrapper>
+
+                <Wrapper dr={`row`} margin={`20px 0 0`}>
+                  <CommonButton
+                    margin={`0 5px 0 0`}
+                    kindOf={`grey`}
+                    color={Theme.darkGrey_C}
+                    radius={`5px`}
+                    onClick={() => homeworksToggle(null)}
+                  >
+                    돌아가기
+                  </CommonButton>
+                  <CommonButton
+                    margin={`0 0 0 5px`}
+                    radius={`5px`}
+                    htmlType="submit"
+                  >
+                    수정하기
+                  </CommonButton>
+                </Wrapper>
+              </CustomForm>
+            </>
+          )}
+
+          {!homeworkModalType && (
+            <Wrapper dr={`row`} margin={`20px 0 0`}>
+              <CommonButton
+                margin={`0 5px 0 0`}
+                kindOf={`grey`}
+                color={Theme.darkGrey_C}
+                radius={`5px`}
+                onClick={() => homeworksToggle(null)}
+              >
+                돌아가기
+              </CommonButton>
+            </Wrapper>
+          )}
         </CustomModal>
 
         <CustomModal
@@ -3541,15 +3878,24 @@ const Index = () => {
                     padding={`20px`}
                     radius={`10px`}
                   >
-                    <Text
-                      width={`50%`}
-                      fontSize={width < 700 ? `14px` : `16px`}
-                    >
-                      {data.course}
-                    </Text>
+                    <Wrapper width={`50%`}>
+                      <Text
+                        width={`100%`}
+                        fontSize={width < 700 ? `14px` : `16px`}
+                      >
+                        {data.course}
+                      </Text>
+
+                      <Text
+                        width={`100%`}
+                        fontSize={width < 700 ? `14px` : `16px`}
+                      >
+                        학생명 : {data.username}
+                      </Text>
+                    </Wrapper>
 
                     <Wrapper width={`40%`} dr={width < 1100 ? `column` : `row`}>
-                      <CustomWrapper width={width < 1100 ? `100%` : `50%`}>
+                      <Wrapper width={width < 1100 ? `100%` : `50%`}>
                         <DownloadOutlined
                           onClick={() => fileDownloadHandler(data.file)}
                           style={{
@@ -3566,9 +3912,9 @@ const Index = () => {
                         >
                           파일 업로드
                         </Text>
-                      </CustomWrapper>
+                      </Wrapper>
 
-                      <CustomWrapper
+                      <Wrapper
                         width={width < 1100 ? `100%` : `50%`}
                         beforeBool={false}
                       >
@@ -3583,7 +3929,7 @@ const Index = () => {
                         <Text fontSize={width < 700 ? `14px` : `16px`}>
                           {`${data.date}까지`}
                         </Text>
-                      </CustomWrapper>
+                      </Wrapper>
                     </Wrapper>
 
                     <Wrapper width={`10%`} ju={`center`}>
@@ -3957,14 +4303,14 @@ const Index = () => {
               <Text
                 fontSize={width < 700 ? `14px` : `18px`}
                 fontWeight={`Bold`}
-                width={`45%`}
+                width={`40%`}
               >
                 출석일
               </Text>
               <Text
                 fontSize={width < 700 ? `14px` : `18px`}
                 fontWeight={`Bold`}
-                width={`45%`}
+                width={`40%`}
               >
                 학생명
               </Text>
@@ -3975,6 +4321,13 @@ const Index = () => {
                 width={`10%`}
               >
                 출석
+              </Text>
+              <Text
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`Bold`}
+                width={`10%`}
+              >
+                수정
               </Text>
             </Wrapper>
 
@@ -3998,13 +4351,13 @@ const Index = () => {
                   >
                     <Text
                       fontSize={width < 700 ? `14px` : `16px`}
-                      width={`45%`}
+                      width={`40%`}
                     >
                       {data.time}
                     </Text>
                     <Text
                       fontSize={width < 700 ? `14px` : `16px`}
-                      width={`45%`}
+                      width={`40%`}
                     >
                       {data.username}
                     </Text>
@@ -4014,11 +4367,56 @@ const Index = () => {
                     >
                       {data.status}
                     </Text>
+                    <Text
+                      fontSize={width < 700 ? `14px` : `16px`}
+                      width={`10%`}
+                    >
+                      <Button
+                        size="small"
+                        type="primary"
+                        onClick={() => commuteModalToggle(data)}
+                      >
+                        수정
+                      </Button>
+                    </Text>
                   </Wrapper>
                 );
               })
             )}
           </Wrapper>
+
+          {/* COMMUTE UPDATE */}
+          <Modal
+            width={`600px`}
+            title="출석 수정"
+            visible={commuteModal}
+            onCancel={commuteModalToggle}
+            footer={null}
+          >
+            <CustomForm form={commuteForm} onFinish={commuteUpdateHandler}>
+              <Form.Item
+                label="유형"
+                name="status"
+                rules={[{ required: true, message: "유형을 선택해주세요." }]}
+              >
+                <Radio.Group>
+                  <Radio value={"출석"}>출석</Radio>
+                  <Radio value={"결석"}>결석</Radio>
+                  <Radio value={"지각"}>지각</Radio>
+                </Radio.Group>
+              </Form.Item>
+
+              <Wrapper dr={`row`}>
+                <CommonButton
+                  htmlType="submit"
+                  margin={`0 5px 0 0`}
+                  radius={`5px`}
+                >
+                  수정하기
+                </CommonButton>
+              </Wrapper>
+            </CustomForm>
+          </Modal>
 
           <Wrapper margin={`50px 0`}>
             <CustomPage

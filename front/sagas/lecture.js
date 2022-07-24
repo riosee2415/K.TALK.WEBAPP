@@ -1,6 +1,14 @@
 import { all, call, delay, fork, put, takeLatest } from "redux-saga/effects";
 import axios from "axios";
 import {
+  LECTURE_HW_FILE_PATH_REQUEST,
+  LECTURE_HW_FILE_PATH_SUCCESS,
+  LECTURE_HW_FILE_PATH_FAILURE,
+  //
+  LECTURE_HW_UPDATE_REQUEST,
+  LECTURE_HW_UPDATE_SUCCESS,
+  LECTURE_HW_UPDATE_FAILURE,
+  //
   LECTURE_LIST_REQUEST,
   LECTURE_LIST_SUCCESS,
   LECTURE_LIST_FAILURE,
@@ -113,6 +121,60 @@ import {
   LECTURE_RESTORE_SUCCESS,
   LECTURE_RESTORE_FAILURE,
 } from "../reducers/lecture";
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function lectureHWFilePathAPI(data) {
+  return await axios.post(`/api/lecture/file`, data);
+}
+
+function* lectureHWFilePath(action) {
+  try {
+    const result = yield call(lectureHWFilePathAPI, action.data);
+
+    yield put({
+      type: LECTURE_HW_FILE_PATH_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_HW_FILE_PATH_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function lectureHWFUpdateAPI(data) {
+  return await axios.post(`/api/lecture/homework/update`, data);
+}
+
+function* lectureHWFUpdate(action) {
+  try {
+    const result = yield call(lectureHWFUpdateAPI, action.data);
+
+    yield put({
+      type: LECTURE_HW_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LECTURE_HW_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
@@ -837,6 +899,14 @@ function* lectureRestore(action) {
 // ******************************************************************************************************************
 
 //////////////////////////////////////////////////////////////
+function* watchLectureHWFilePath() {
+  yield takeLatest(LECTURE_HW_FILE_PATH_REQUEST, lectureHWFilePath);
+}
+
+function* watchLectureHWUpdate() {
+  yield takeLatest(LECTURE_HW_UPDATE_REQUEST, lectureHWFUpdate);
+}
+
 function* watchLectureList() {
   yield takeLatest(LECTURE_LIST_REQUEST, lectureList);
 }
@@ -949,6 +1019,8 @@ function* watchLectureRestore() {
 //////////////////////////////////////////////////////////////
 export default function* lectureSaga() {
   yield all([
+    fork(watchLectureHWFilePath),
+    fork(watchLectureHWUpdate),
     fork(watchLectureList),
     fork(watchLectureAllList),
     fork(watchLectureCreate),

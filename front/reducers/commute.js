@@ -16,6 +16,10 @@ export const initialState = {
   st_commuteAdminListLoading: false,
   st_commuteAdminListDone: false,
   st_commuteAdminListError: null,
+  //
+  st_commuteUpdateLoading: false,
+  st_commuteUpdateDone: false,
+  st_commuteUpdateError: null,
 };
 
 export const COMMUTE_LIST_REQUEST = "COMMUTE_LIST_REQUEST";
@@ -29,6 +33,10 @@ export const COMMUTE_CREATE_FAILURE = "COMMUTE_CREATE_FAILURE";
 export const COMMUTE_ADMIN_LIST_REQUEST = "COMMUTE_ADMIN_LIST_REQUEST";
 export const COMMUTE_ADMIN_LIST_SUCCESS = "COMMUTE_ADMIN_LIST_SUCCESS";
 export const COMMUTE_ADMIN_LIST_FAILURE = "COMMUTE_ADMIN_LIST_FAILURE";
+
+export const COMMUTE_UPDATE_REQUEST = "COMMUTE_UPDATE_REQUEST";
+export const COMMUTE_UPDATE_SUCCESS = "COMMUTE_UPDATE_SUCCESS";
+export const COMMUTE_UPDATE_FAILURE = "COMMUTE_UPDATE_FAILURE";
 
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
@@ -90,6 +98,26 @@ const reducer = (state = initialState, action) =>
         draft.st_commuteAdminListLoading = false;
         draft.st_commuteAdminListDone = false;
         draft.st_commuteAdminListError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case COMMUTE_UPDATE_REQUEST: {
+        draft.st_commuteUpdateLoading = true;
+        draft.st_commuteUpdateDone = false;
+        draft.st_commuteUpdateError = null;
+        break;
+      }
+      case COMMUTE_UPDATE_SUCCESS: {
+        draft.st_commuteUpdateLoading = false;
+        draft.st_commuteUpdateDone = true;
+        draft.st_commuteUpdateError = null;
+        break;
+      }
+      case COMMUTE_UPDATE_FAILURE: {
+        draft.st_commuteUpdateLoading = false;
+        draft.st_commuteUpdateDone = false;
+        draft.st_commuteUpdateError = action.error;
         break;
       }
       //////////////////////////////////////////////

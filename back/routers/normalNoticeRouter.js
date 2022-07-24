@@ -44,7 +44,7 @@ const upload = multer({
       );
     },
   }),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  // limits: { fileSize: 20 * 1024 * 1024 }, // 20MB
 });
 
 const router = express.Router();
@@ -83,7 +83,13 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
                   B.hit 					                              AS noticeHit,
                   B.isDelete 												AS	noticeIsDelete,
                   DATE_FORMAT(B.createdAt, "%Y-%m-%d")	        AS noticeCreatedAt,
-                  B.UserId 				                              AS writeUserId
+                  B.UserId 				                              AS writeUserId,
+                  (
+                    SELECT  COUNT(id)
+                      FROM  normalNoticeComments cc
+                     WHERE  cc.NormalNoticeId = A.NormalNoticeId
+                       AND	cc.isDelete = FALSE
+                  )                                             AS commentCnt
             FROM	normalConnects			A
            INNER
             JOIN	normalNotices			  B
@@ -294,7 +300,17 @@ router.post("/detail", isLoggedIn, async (req, res, next) => {
      ORDER  BY A.createdAt DESC
     `;
 
+    const connectQuery = `
+    SELECT  B.username
+      FROM  normalConnects   A
+     INNER
+      JOIN  users            B
+        ON  A.UserId = B.id
+     WHERE  A.NormalNoticeId = ${NormalNoticeId}
+    `;
+
     const comments = await models.sequelize.query(commentQuery);
+    const receviers = await models.sequelize.query(connectQuery);
 
     const commentsLen = await NormalNoticeComment.findAll({
       where: { isDelete: false, NormalNoticeId: parseInt(NormalNoticeId) },
@@ -314,6 +330,7 @@ router.post("/detail", isLoggedIn, async (req, res, next) => {
     return res.status(200).json({
       detailData: detailData[0][0],
       comments: comments[0],
+      receviers: receviers[0],
       commentsLen: commentsLen.length,
     });
   } catch (error) {
@@ -346,7 +363,7 @@ router.post("/student/create", isLoggedIn, async (req, res, next) => {
 
     await NormalConnect.create({
       isAdmin: true,
-      NormalNoticeId: parseInt(createResult.id),
+      NormalNoticeId: parseInt(createResult.id)
     });
 
     return res.status(201).json({ result: true });

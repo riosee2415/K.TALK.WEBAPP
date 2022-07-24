@@ -44,7 +44,7 @@ const upload = multer({
       );
     },
   }),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  // limits: { fileSize: 20 * 1024 * 1024 }, // 20MB
 });
 
 const router = express.Router();
@@ -292,8 +292,7 @@ router.post("/detail", isLoggedIn, async (req, res, next) => {
      INNER
       JOIN	lectures					    C
         ON	B.LectureId = C.id
-     WHERE	A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}
-       AND  B.id = ${LectureNoticeId}
+     WHERE	B.id = ${LectureNoticeId}
        AND  B.isDelete = FALSE
        AND	C.isDelete = FALSE
     `;
@@ -331,7 +330,17 @@ router.post("/detail", isLoggedIn, async (req, res, next) => {
      ORDER  BY A.createdAt DESC
     `;
 
+    const connectQuery = `
+    SELECT  B.username
+      FROM  lectureConnects   A
+     INNER
+      JOIN  users             B
+        ON  A.UserId = B.id
+     WHERE  A.LectureNoticeId = ${LectureNoticeId}
+    `;
+
     const comments = await models.sequelize.query(commentQuery);
+    const users = await models.sequelize.query(connectQuery);
 
     const commentsLen = await LectureNoticeComment.findAll({
       where: { isDelete: false, LectureNoticeId: parseInt(LectureNoticeId) },
@@ -351,6 +360,7 @@ router.post("/detail", isLoggedIn, async (req, res, next) => {
     return res.status(200).json({
       detailData: detailData[0][0],
       comments: comments[0],
+      users: users[0],
       commentsLen: commentsLen.length,
     });
   } catch (error) {
@@ -443,7 +453,17 @@ router.post("/admin/detail", isAdminCheck, async (req, res, next) => {
      ORDER  BY A.createdAt DESC
     `;
 
+    const connectQuery = `
+    SELECT  B.username
+      FROM  lectureConnects   A
+     INNER
+      JOIN  users             B
+        ON  A.UserId = B.id
+     WHERE  A.LectureNoticeId = ${LectureNoticeId}
+    `;
+
     const comments = await models.sequelize.query(commentQuery);
+    const users = await models.sequelize.query(connectQuery);
 
     const commentsLen = await LectureNoticeComment.findAll({
       where: { isDelete: false, LectureNoticeId: parseInt(LectureNoticeId) },
@@ -463,6 +483,7 @@ router.post("/admin/detail", isAdminCheck, async (req, res, next) => {
     return res.status(200).json({
       detailData: detailData[0][0],
       comments: comments[0],
+      users: users[0],
       commentsLen: commentsLen.length,
     });
   } catch (error) {

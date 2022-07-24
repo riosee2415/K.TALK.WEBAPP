@@ -89,6 +89,7 @@ const NormalNoticeDetail = () => {
   //   normalCommentsLen
   const {
     normalNoticeDetailData,
+    normalNoticeDetailReceviers,
     normalComments,
     normalCommentsLen,
 
@@ -560,6 +561,38 @@ const NormalNoticeDetail = () => {
                           normalNoticeDetailData.noticeHit}
                       </Text>
                     </Wrapper>
+                    <Wrapper
+                    dr={`row`}
+                    fontSize={width < 900 ? `13px` : `16px`}
+                    color={Theme.subTheme11_C}
+                    ju={`flex-start`}
+                    borderTop={`1px solid ${Theme.lightGrey3_C}`}
+                  >
+                    <Wrapper
+                      dr={`row`}
+                      width={width < 900 ? `100%` : `calc(100% / 3)`}
+                    >
+                      <Wrapper
+                        width={`120px`}
+                        padding={width < 900 ? `10px 0` : `15px 0`}
+                        bgColor={Theme.lightGrey3_C}
+                      >
+                        {router.query && router.query.type === "stu"
+                          ? "reciver"
+                          : "전송된사람"}
+                      </Wrapper>
+                      <Text width={`calc(100% - 120px)`} padding={`0 0 0 15px`}>
+                        {normalNoticeDetailReceviers && 
+                          (normalNoticeDetailReceviers.length === 0 ? (
+                          "admin"
+                        ) : (
+                          normalNoticeDetailReceviers.map((data, idx) => (
+                            `${data.username}${idx !== normalNoticeDetailReceviers.length-1 ? (", "): ""}`
+                          ))
+                        ))}
+                      </Text>
+                    </Wrapper>
+                  </Wrapper>
                   </Wrapper>
                 ) : (
                   <Wrapper
@@ -649,10 +682,37 @@ const NormalNoticeDetail = () => {
                             normalNoticeDetailData.noticeHit}
                         </Text>
                       </Wrapper>
-                    </Wrapper>
+                      <Wrapper
+                        dr={`row`}
+                        width={`100%`}
+                      >
+                        <Wrapper
+                          width={`120px`}
+                          padding={width < 900 ? `10px 0` : `15px 0`}
+                          bgColor={Theme.lightGrey3_C}
+                        >
+                          {router.query && router.query.type === "stu"
+                          ? "reciver"
+                          : "전송된사람"}
+                      </Wrapper>
+                      <Text   width={`calc(100% - 120px)`}
+                          padding={`0 0 0 15px`}>
+                        {normalNoticeDetailReceviers && 
+                          (normalNoticeDetailReceviers.length === 0 ? (
+                          "admin"
+                        ) : (
+                          normalNoticeDetailReceviers.map((data, idx) => (
+                            `${data.username}${idx !== normalNoticeDetailReceviers.length-1 ? (", "): ""}`
+                          ))
+                        ))}
+                        </Text>
+                      </Wrapper>
+                  </Wrapper>
                   </Wrapper>
                 )}
               </Wrapper>
+
+
             </Wrapper>
 
             <Wrapper>

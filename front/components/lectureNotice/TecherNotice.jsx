@@ -598,7 +598,6 @@ const Notice = ({}) => {
           </Wrapper>
         ) : (
           lectureNotices.map((data) => {
-            console.log(data);
             return (
               <CustomTableHoverWrapper key={data.noticeId}>
                 <Wrapper

@@ -21,6 +21,16 @@ export const initailState = {
   lectureSubmitList: null,
   lectureSubmitLastPage: 1,
 
+  homeWorkFilePath: null, // 숙제 파일 주소
+
+  st_lectureHWFilePathLoading: false, // 숙제 업로드
+  st_lectureHWFilePathDone: false,
+  st_lectureHWFilePathError: false,
+
+  st_lectureHWUpdateLoading: false, // 숙제 수정
+  st_lectureHWUpdateDone: false,
+  st_lectureHWUpdateError: false,
+
   lectureStuMemoDetail: null,
   lectureStuLectureList: null,
   lectureStuCommute: null,
@@ -152,6 +162,14 @@ export const initailState = {
   st_lectureRestoreDone: false,
   st_lectureRestoreError: null,
 };
+
+export const LECTURE_HW_FILE_PATH_REQUEST = "LECTURE_HW_FILE_PATH_REQUEST";
+export const LECTURE_HW_FILE_PATH_SUCCESS = "LECTURE_HW_FILE_PATH_SUCCESS";
+export const LECTURE_HW_FILE_PATH_FAILURE = "LECTURE_HW_FILE_PATH_FAILURE";
+
+export const LECTURE_HW_UPDATE_REQUEST = "LECTURE_HW_UPDATE_REQUEST";
+export const LECTURE_HW_UPDATE_SUCCESS = "LECTURE_HW_UPDATE_SUCCESS";
+export const LECTURE_HW_UPDATE_FAILURE = "LECTURE_HW_UPDATE_FAILURE";
 
 export const LECTURE_LIST_REQUEST = "LECTURE_LIST_REQUEST";
 export const LECTURE_LIST_SUCCESS = "LECTURE_LIST_SUCCESS";
@@ -304,6 +322,45 @@ export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
+      case LECTURE_HW_FILE_PATH_REQUEST: {
+        draft.st_lectureHWFilePathLoading = true;
+        draft.st_lectureHWFilePathDone = false;
+        draft.st_lectureHWFilePathError = null;
+        break;
+      }
+      case LECTURE_HW_FILE_PATH_SUCCESS: {
+        draft.st_lectureHWFilePathLoading = false;
+        draft.st_lectureHWFilePathDone = true;
+        draft.st_lectureHWFilePathError = null;
+        draft.homeWorkFilePath = action.data.path;
+        break;
+      }
+      case LECTURE_HW_FILE_PATH_FAILURE: {
+        draft.st_lectureHWFilePathLoading = false;
+        draft.st_lectureHWFilePathDone = false;
+        draft.st_lectureHWFilePathError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      case LECTURE_HW_UPDATE_REQUEST: {
+        draft.st_lectureHWUpdateLoading = true;
+        draft.st_lectureHWUpdateDone = false;
+        draft.st_lectureHWUpdateError = null;
+        break;
+      }
+      case LECTURE_HW_UPDATE_SUCCESS: {
+        draft.st_lectureHWUpdateLoading = false;
+        draft.st_lectureHWUpdateDone = true;
+        draft.st_lectureHWUpdateError = null;
+        break;
+      }
+      case LECTURE_HW_UPDATE_FAILURE: {
+        draft.st_lectureHWUpdateLoading = false;
+        draft.st_lectureHWUpdateDone = false;
+        draft.st_lectureHWUpdateError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
       case LECTURE_LIST_REQUEST: {
         draft.st_lectureListLoading = true;
         draft.st_lectureListDone = null;

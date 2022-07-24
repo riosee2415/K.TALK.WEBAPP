@@ -2,20 +2,21 @@ import produce from "../util/produce";
 
 export const initialState = {
   // value
-  normalNoticeList: null,
-  normalNoticeLastPage: 1,
+  normalNoticeList: null, // 게시판
+  normalNoticeLastPage: 1, // 게시판 페이지네이션
   //
-  normalNoticeAdminList: null,
+  normalNoticeAdminList: null, // 관리자 게시판
   //
-  normalCommentList: null,
+  normalCommentList: null, // 댓글
   //
-  normalNoticeDetailData: null,
-  normalComments: null,
-  normalCommentsLen: 0,
+  normalNoticeDetailData: null, // 디테일 데이터
+  normalNoticeDetailReceviers: null, // 받는자
+  normalComments: null, // 댓글
+  normalCommentsLen: 0, // 댓글 개수
   //
-  normalNoticeFilePath: null,
+  normalNoticeFilePath: null, // 파일
   //
-  editorRender: null,
+  editorRender: null, // 에디터
 
   // modal
   normalNoticeModal: false,
@@ -146,6 +147,8 @@ export const NORMAL_NOTICE_EDITOR_RENDER = "NORMAL_NOTICE_EDITOR_RENDER";
 export const NORMAL_NOTICE_DETAIL_MODAL_TOGGLE =
   "NORMAL_NOTICE_DETAIL_MODAL_TOGGLE";
 
+export const NORMAL_NOTICE_FILE_STATE = "NORMAL_NOTICE_FILE_STATE";
+
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
@@ -183,6 +186,7 @@ const reducer = (state = initialState, action) =>
         draft.normalNoticeDetailDone = true;
         draft.normalNoticeDetailError = null;
         draft.normalNoticeDetailData = action.data.detailData;
+        draft.normalNoticeDetailReceviers = action.data.receviers;
         draft.normalComments = action.data.comments;
         draft.normalCommentsLen = action.data.commentsLen;
         break;
@@ -436,6 +440,14 @@ const reducer = (state = initialState, action) =>
         draft.editorRender = action.data;
         break;
       }
+
+      //////////////////////////////////////////////
+
+      case NORMAL_NOTICE_FILE_STATE: {
+        draft.normalNoticeFilePath = action.data;
+        break;
+      }
+
 
       //////////////////////////////////////////////
 
