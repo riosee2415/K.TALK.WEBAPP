@@ -681,7 +681,7 @@ const Index = () => {
               </Wrapper>
 
               <CommonButton
-                kindOf={`white2`}
+                kindOf={`white`}
                 width={width < 800 ? `100px` : `160px`}
                 height={`50px`}
                 shadow={`0 2px 10px rgba(0,0,0,0.16)`}
@@ -967,16 +967,21 @@ const Index = () => {
                           top={`0`}
                           left={`0`}
                           height={`100%`}
+                          shadow={`0 3px 6px rgba(0, 0, 0, 0.16)`}
                           src={data.thumbnail}
                         />
                       </Wrapper>
 
-                      <Wrapper al={`flex-start`}>
-                        <Text>{`강의: ${data.course}`}</Text>
-                        <Text>{`제목: ${data.title}`}</Text>
-                        <Text>{`종류: ${data.kinds}`}</Text>
-                        <Text>{`레벨: ${data.level}권 ${data.stage}단원`}</Text>
-                        <Text>{`선생님 이름: ${data.username}`}</Text>
+                      <Wrapper al={`flex-start`} margin={`10px 0 0`}>
+                        <Text
+                          margin={`0 0 2px`}
+                        >{`강의 : ${data.course}`}</Text>
+                        <Text margin={`0 0 2px`}>{`제목 : ${data.title}`}</Text>
+                        <Text margin={`0 0 2px`}>{`종류 : ${data.kinds}`}</Text>
+                        <Text
+                          margin={`0 0 2px`}
+                        >{`레벨 : ${data.level}권 ${data.stage}단원`}</Text>
+                        <Text>{`선생님 이름 : ${data.username}`}</Text>
                       </Wrapper>
                     </ProductWrapper>
                   );
