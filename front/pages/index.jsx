@@ -494,36 +494,6 @@ const Home = ({}) => {
                   shadow={`0 5px 15px rgba(0, 0, 0, 0.05)`}
                   padding={`20px 30px`}
                   dr={`row`}
-                  width={width < 1000 ? `100%` : `35%`}
-                >
-                  <ATag
-                    width={`auto`}
-                    dr={`row`}
-                    href={`mailto:jklc.ktalk@gmail.com`}
-                  >
-                    <Text
-                      fontSize={
-                        width < 900 ? (width < 700 ? `13px` : `14px`) : `18px`
-                      }
-                      fontWeight={`bold`}
-                    >
-                      More infomation
-                    </Text>
-                    <Image
-                      alt="icon"
-                      margin={`0 5px 0 15px`}
-                      width={`24px`}
-                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/icon_mail.png`}
-                    />
-                    <Text fontSize={width < 900 ? `14px` : `18px`}>
-                      jklc.ktalk@gmail.com
-                    </Text>
-                  </ATag>
-                </Wrapper>
-                <Wrapper
-                  shadow={`0 5px 15px rgba(0, 0, 0, 0.05)`}
-                  padding={`20px 30px`}
-                  dr={`row`}
                   width={width < 1000 ? `100%` : `63%`}
                 >
                   <ATag
@@ -564,6 +534,36 @@ const Home = ({}) => {
                     />
                     <Text fontSize={width < 900 ? `14px` : `18px`}>
                       https://www.facebook.com/KtalkLive
+                    </Text>
+                  </ATag>
+                </Wrapper>
+                <Wrapper
+                  shadow={`0 5px 15px rgba(0, 0, 0, 0.05)`}
+                  padding={`20px 30px`}
+                  dr={`row`}
+                  width={width < 1000 ? `100%` : `35%`}
+                >
+                  <ATag
+                    width={`auto`}
+                    dr={`row`}
+                    href={`mailto:jklc.ktalk@gmail.com`}
+                  >
+                    <Text
+                      fontSize={
+                        width < 900 ? (width < 700 ? `13px` : `14px`) : `18px`
+                      }
+                      fontWeight={`bold`}
+                    >
+                      More infomation
+                    </Text>
+                    <Image
+                      alt="icon"
+                      margin={`0 5px 0 15px`}
+                      width={`24px`}
+                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/icon_mail.png`}
+                    />
+                    <Text fontSize={width < 900 ? `14px` : `18px`}>
+                      jklc.ktalk@gmail.com
                     </Text>
                   </ATag>
                 </Wrapper>
