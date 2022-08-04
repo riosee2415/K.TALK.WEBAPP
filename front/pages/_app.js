@@ -6,7 +6,6 @@ import { ThemeProvider } from "styled-components";
 import Theme from "../components/Theme";
 import GlobalStyles from "../components/GlobalStyles";
 import wrapper from "../store/configureStore";
-import WidthProvider from "../components/WidthProvider";
 import Pixcel from "./pixcel";
 
 const Fourleaf = ({ Component }) => {
