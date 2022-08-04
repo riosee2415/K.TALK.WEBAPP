@@ -271,7 +271,7 @@ const Home = ({}) => {
           content={seo_ogImage.length < 1 ? "" : seo_ogImage[0].content}
         />
 
-        <script
+        {/* <script
           dangerouslySetInnerHTML={{
             __html: `!function(f,b,e,v,n,t,s)
           {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -293,7 +293,7 @@ const Home = ({}) => {
             style="display:none"
             src="https://www.facebook.com/tr?id=483937212685511&ev=PageView&noscript=1"
           />
-        </noscript>
+        </noscript> */}
       </Head>
 
       <ClientLayout>
