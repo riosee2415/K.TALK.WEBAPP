@@ -54,7 +54,7 @@ router.post("/file", upload.single("file"), async (req, res, next) => {
 });
 
 router.post("/list", isLoggedIn, async (req, res, next) => {
-  const { page } = req.body;
+  const { page, listType } = req.body;
 
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
@@ -66,6 +66,11 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
 
   const __page = _page - 1;
   const OFFSET = __page * 5;
+
+  const _listType = parseInt(listType) || 3;
+  // 1 === 받는 사람
+  // 2 === 쓴 사람
+  // 3 === 전체
 
   try {
     const lengthQuery = `
@@ -81,7 +86,7 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
                   B.level 				                              AS noticeLevel,
                   B.file 					                              AS noticeFile,
                   B.hit 					                              AS noticeHit,
-                  B.isDelete 												AS	noticeIsDelete,
+                  B.isDelete 												            AS noticeIsDelete,
                   DATE_FORMAT(B.createdAt, "%Y-%m-%d")	        AS noticeCreatedAt,
                   B.UserId 				                              AS writeUserId,
                   (
@@ -94,7 +99,19 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
            INNER
             JOIN	normalNotices			  B
               ON	A.NormalNoticeId  = B.id
-           WHERE	A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}
+           WHERE	
+                  ${
+                    _listType === 1
+                      ? // 타인이 쓴거
+                        `AND A.UserId = ${req.user.id}`
+                      : _listType === 2
+                      ? // 자기가 쓴거
+                        `AND B.UserId = ${req.user.id}`
+                      : _listType === 3
+                      ? // 전체
+                        `A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}`
+                      : `A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}`
+                  }
              AND  B.isDelete = FALSE
            )	X
       WHERE	X.noticeIsDelete = FALSE 
@@ -127,6 +144,18 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
               JOIN	normalNotices			  B
                 ON	A.NormalNoticeId  = B.id
              WHERE	A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}
+                    ${
+                      _listType === 1
+                        ? // 타인이 쓴거
+                          `AND A.UserId = ${req.user.id}`
+                        : _listType === 2
+                        ? // 자기가 쓴거
+                          `AND B.UserId = ${req.user.id}`
+                        : _listType === 3
+                        ? // 전체
+                          `A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}`
+                        : `A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}`
+                    }
                AND  B.isDelete = FALSE
            )	X
      WHERE	X.noticeIsDelete = FALSE 
