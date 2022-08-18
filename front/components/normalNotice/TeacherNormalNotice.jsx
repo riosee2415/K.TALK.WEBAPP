@@ -110,6 +110,11 @@ const FileBox = styled.div`
   justify-content: flex-end;
 `;
 
+const CustomSelect = styled(Select)`
+  width: 150px;
+  margin: 0 5px 0 0;
+`;
+
 const TeacherNormalNotice = () => {
   ////// GLOBAL STATE //////
 
@@ -151,6 +156,7 @@ const TeacherNormalNotice = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [contentData, setContentData] = useState("");
   const [filename, setFilename] = useState(null);
+  const [searchWriter, setSearchWriter] = useState(`3`);
 
   const [normalNoticeForm] = Form.useForm();
 
@@ -171,6 +177,7 @@ const TeacherNormalNotice = () => {
         type: NORMAL_NOTICE_LIST_REQUEST,
         data: {
           page: currentPage,
+          listType: parseInt(searchWriter),
         },
       });
 
@@ -193,6 +200,7 @@ const TeacherNormalNotice = () => {
         type: NORMAL_NOTICE_LIST_REQUEST,
         data: {
           page: currentPage,
+          listType: parseInt(searchWriter),
         },
       });
 
@@ -215,6 +223,7 @@ const TeacherNormalNotice = () => {
         type: NORMAL_NOTICE_LIST_REQUEST,
         data: {
           page: currentPage,
+          listType: parseInt(searchWriter),
         },
       });
 
@@ -282,6 +291,22 @@ const TeacherNormalNotice = () => {
 
   ////// HANDLER //////
 
+  // 일반게시판 검색 선택
+  const searchWriterChangeHandler = useCallback(
+    (type) => {
+      setSearchWriter(type);
+
+      dispatch({
+        type: NORMAL_NOTICE_LIST_REQUEST,
+        data: {
+          page: currentPage,
+          listType: parseInt(type),
+        },
+      });
+    },
+    [searchWriter, currentPage]
+  );
+
   // 일반게시판 페이지 네이션
   const onChangeNormalNoticePage = useCallback(
     (page) => {
@@ -291,10 +316,11 @@ const TeacherNormalNotice = () => {
         type: NORMAL_NOTICE_LIST_REQUEST,
         data: {
           page,
+          listType: parseInt(searchWriter),
         },
       });
     },
-    [currentPage]
+    [currentPage, searchWriter]
   );
 
   // 일반게시판 추가
@@ -397,12 +423,22 @@ const TeacherNormalNotice = () => {
       <Wrapper al={`flex-start`}>
         <Wrapper dr={`row`} ju={`space-between`}>
           <CommonTitle margin={`0 0 20px`}>일반게시판</CommonTitle>
-          <CommonButton
-            onClick={normalNoticeCreateModalToggle}
-            loading={normalNoticeTeacherCreateLoading}
-          >
-            작성하기
-          </CommonButton>
+          <Wrapper dr={`row`} width={`auto`}>
+            <CustomSelect
+              value={searchWriter}
+              onChange={searchWriterChangeHandler}
+            >
+              <Select.Option value={`3`}>전체</Select.Option>
+              <Select.Option value={`2`}>자신</Select.Option>
+              <Select.Option value={`1`}>타인</Select.Option>
+            </CustomSelect>
+            <CommonButton
+              onClick={normalNoticeCreateModalToggle}
+              loading={normalNoticeTeacherCreateLoading}
+            >
+              작성하기
+            </CommonButton>
+          </Wrapper>
         </Wrapper>
 
         <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
