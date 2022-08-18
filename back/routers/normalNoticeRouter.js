@@ -99,19 +99,18 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
            INNER
             JOIN	normalNotices			  B
               ON	A.NormalNoticeId  = B.id
-           WHERE	
-                  ${
-                    _listType === 1
-                      ? // 타인이 쓴거
-                        `AND A.UserId = ${req.user.id}`
-                      : _listType === 2
-                      ? // 자기가 쓴거
-                        `AND B.UserId = ${req.user.id}`
-                      : _listType === 3
-                      ? // 전체
-                        `A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}`
-                      : `A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}`
-                  }
+           WHERE	${
+             _listType === 1
+               ? // 타인이 쓴거
+                 `A.UserId = ${req.user.id}`
+               : _listType === 2
+               ? // 자기가 쓴거
+                 `B.UserId = ${req.user.id}`
+               : _listType === 3
+               ? // 전체
+                 `A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}`
+               : `A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}`
+           }
              AND  B.isDelete = FALSE
            )	X
       WHERE	X.noticeIsDelete = FALSE 
@@ -143,19 +142,18 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
              INNER
               JOIN	normalNotices			  B
                 ON	A.NormalNoticeId  = B.id
-             WHERE	A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}
-                    ${
-                      _listType === 1
-                        ? // 타인이 쓴거
-                          `AND A.UserId = ${req.user.id}`
-                        : _listType === 2
-                        ? // 자기가 쓴거
-                          `AND B.UserId = ${req.user.id}`
-                        : _listType === 3
-                        ? // 전체
-                          `A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}`
-                        : `A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}`
-                    }
+             WHERE	${
+               _listType === 1
+                 ? // 타인이 쓴거
+                   `A.UserId = ${req.user.id}`
+                 : _listType === 2
+                 ? // 자기가 쓴거
+                   `B.UserId = ${req.user.id}`
+                 : _listType === 3
+                 ? // 전체
+                   `A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}`
+                 : `A.UserId = ${req.user.id} OR B.UserId = ${req.user.id}`
+             }
                AND  B.isDelete = FALSE
            )	X
      WHERE	X.noticeIsDelete = FALSE 
