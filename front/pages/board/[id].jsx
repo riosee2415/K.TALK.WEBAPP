@@ -754,8 +754,8 @@ const BoardDetail = () => {
             </Wrapper>
             <Wrapper
               al={`flex-start`}
-              bgColor={Theme.lightGrey2_C}
-              borderTop={`2px solid ${Theme.subTheme7_C}`}
+              bgColor={Theme.subTheme14_C}
+              borderTop={`2px solid ${Theme.subTheme8_C}`}
             >
               <Wrapper dr={`row`} ju={`space-between`} wrap={`nowrap`}>
                 <Text
@@ -783,7 +783,8 @@ const BoardDetail = () => {
                     fontSize={width < 900 ? `13px` : `16px`}
                     color={Theme.subTheme11_C}
                     ju={`flex-start`}
-                    borderTop={`1px solid ${Theme.lightGrey3_C}`}
+                    borderBottom={`1px solid ${Theme.lightGrey3_C}`}
+                    bgColor={Theme.white_C}
                   >
                     <Wrapper
                       dr={`row`}
@@ -792,7 +793,7 @@ const BoardDetail = () => {
                       <Wrapper
                         width={`120px`}
                         padding={width < 900 ? `10px 0` : `15px 0`}
-                        bgColor={Theme.lightGrey3_C}
+                        bgColor={Theme.subTheme9_C}
                       >
                         Writer
                       </Wrapper>
@@ -807,7 +808,7 @@ const BoardDetail = () => {
                       <Wrapper
                         width={`120px`}
                         padding={width < 900 ? `10px 0` : `15px 0`}
-                        bgColor={Theme.lightGrey3_C}
+                        bgColor={Theme.subTheme9_C}
                       >
                         Date time
                       </Wrapper>
@@ -825,7 +826,7 @@ const BoardDetail = () => {
                       <Wrapper
                         width={`120px`}
                         padding={width < 900 ? `10px 0` : `15px 0`}
-                        bgColor={Theme.lightGrey3_C}
+                        bgColor={Theme.subTheme9_C}
                       >
                         View
                       </Wrapper>
@@ -1001,7 +1002,7 @@ const BoardDetail = () => {
               <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 50px`}>
                 <Text
                   fontSize={width < 900 ? `15px` : `18px`}
-                  color={Theme.red_C}
+                  color={Theme.subTheme8_C}
                   fontWeight={`700`}
                   margin={`0 0 10px`}
                 >
