@@ -73,12 +73,12 @@ const AdminContent = styled.div`
   padding: 20px;
 `;
 
-const CustomInput = styled(Input)`
-  width: ${(props) => props.width || `250px`};
-`;
+// const Input = styled(Input)`
+//   width: ${(props) => props.width || `250px`};
+// `;
 
 const FormItem = styled(Form.Item)`
-  width: ${(props) => props.width};
+  width: ${(props) => props.width || `100%`};
 
   @media (max-width: 700px) {
     width: 100%;
@@ -846,25 +846,30 @@ const List = () => {
 
   const column = [
     {
+      width: `3%`,
       title: "번호",
       dataIndex: "stuNo",
     },
 
     {
+      width: `16%`,
       title: "회원이름",
       render: (data) => <div>{data.username}</div>,
     },
     {
+      width: `20%`,
       title: "이메일",
       render: (data) => <div>{data.email}</div>,
     },
 
     {
+      width: `8%`,
       title: "국적",
       render: (data) => <div>{data.stuCountry}</div>,
     },
 
     {
+      width: `6%`,
       title: "권한",
       render: (data) => (
         <div>
@@ -881,9 +886,10 @@ const List = () => {
       ),
     },
     {
-      title: "기능",
-      render: (data) => (
-        <Wrapper>
+      width: `6%`,
+      title: "반 옮기기",
+      render: (data) => {
+        return (
           <Button
             size="small"
             type="primary"
@@ -895,7 +901,14 @@ const List = () => {
           >
             반 옮기기
           </Button>
-
+        );
+      },
+    },
+    {
+      width: `6%`,
+      title: "수업참여",
+      render: (data) => {
+        return (
           <Button
             size="small"
             onClick={() =>
@@ -906,7 +919,14 @@ const List = () => {
           >
             수업참여
           </Button>
-
+        );
+      },
+    },
+    {
+      width: `6%`,
+      title: "수업빼기",
+      render: (data) => {
+        return (
           <Button
             size="small"
             type="primary"
@@ -918,24 +938,28 @@ const List = () => {
           >
             수업빼기
           </Button>
-        </Wrapper>
-      ),
+        );
+      },
     },
-
     {
-      title: "학생 강의 상세",
-      render: (data) => (
-        <Wrapper>
+      width: `8%`,
+      title: "강의내역보기",
+      render: (data) => {
+        return (
+          <Button size="small" onClick={() => detailModalOpen(data)}>
+            강의내역보기
+          </Button>
+        );
+      },
+    },
+    {
+      width: `8%`,
+      title: "학생정보보기",
+      render: (data) => {
+        return (
           <Button
             size="small"
             type="primary"
-            onClick={() => detailModalOpen(data)}
-          >
-            강의내역보기
-          </Button>
-
-          <Button
-            size="small"
             onClick={() =>
               data.level === 5
                 ? message.error("개발사는 권한을 수정할 수 없습니다.")
@@ -944,10 +968,16 @@ const List = () => {
           >
             학생정보보기
           </Button>
-
+        );
+      },
+    },
+    {
+      width: `8%`,
+      title: "학생출석보기",
+      render: (data) => {
+        return (
           <Button
             size="small"
-            type="primary"
             onClick={() =>
               data.level === 5
                 ? message.error("개발사는 권한을 수정할 수 없습니다.")
@@ -956,9 +986,88 @@ const List = () => {
           >
             학생출석보기
           </Button>
-        </Wrapper>
-      ),
+        );
+      },
     },
+    // {
+    //   title: "기능",
+    //   render: (data) => (
+    //     <Wrapper>
+    //       <Button
+    //         size="small"
+    //         type="primary"
+    //         onClick={() =>
+    //           data.level === 5
+    //             ? message.error("개발사는 권한을 수정할 수 없습니다.")
+    //             : classChangeModalOpen(data)
+    //         }
+    //       >
+    //         반 옮기기
+    //       </Button>
+
+    //       <Button
+    //         size="small"
+    //         onClick={() =>
+    //           data.level === 5
+    //             ? message.error("개발사는 권한을 수정할 수 없습니다.")
+    //             : classPartModalOpen(data)
+    //         }
+    //       >
+    //         수업참여
+    //       </Button>
+
+    //       <Button
+    //         size="small"
+    //         type="primary"
+    //         onClick={() =>
+    //           data.level === 5
+    //             ? message.error("개발사는 권한을 수정할 수 없습니다.")
+    //             : classPartEndModalOpen(data)
+    //         }
+    //       >
+    //         수업빼기
+    //       </Button>
+    //     </Wrapper>
+    //   ),
+    // },
+
+    // {
+    //   title: "학생 강의 상세",
+    //   render: (data) => (
+    //     <Wrapper>
+    //       <Button
+    //         size="small"
+    //         type="primary"
+    //         onClick={() => detailModalOpen(data)}
+    //       >
+    //         강의내역보기
+    //       </Button>
+
+    //       <Button
+    //         size="small"
+    //         onClick={() =>
+    //           data.level === 5
+    //             ? message.error("개발사는 권한을 수정할 수 없습니다.")
+    //             : classPartDetailModalOpen(data)
+    //         }
+    //       >
+    //         학생정보보기
+    //       </Button>
+
+    //       <Button
+    //         size="small"
+    //         type="primary"
+    //         onClick={() =>
+    //           data.level === 5
+    //             ? message.error("개발사는 권한을 수정할 수 없습니다.")
+    //             : classStuModalOpen(data)
+    //         }
+    //       >
+    //         학생출석보기
+    //       </Button>
+    //     </Wrapper>
+    //   ),
+    // },
 
     // {
     //   title: "DELETE",
@@ -1444,7 +1553,7 @@ const List = () => {
           margin={`0 0 10px`}
           ju={`space-between`}
         >
-          <Wrapper dr={`row`} ju={`flex-start`} width={`80%`}>
+          <Wrapper dr={`row`} ju={`flex-start`} width={`75%`}>
             <Input
               size="small"
               style={{ width: "30%" }}
@@ -1473,12 +1582,14 @@ const List = () => {
             </Button>
           </Wrapper>
         </Wrapper>
+
+        {/* ADMIN GUIDE AREA */}
         <Wrapper
           margin={`0px 0px 10px 0px`}
           radius="5px"
           bgColor={Theme.lightGrey_C}
           padding="5px"
-          fontSize="15px"
+          fontSize="13px"
           al="flex-start"
         >
           <GuideDiv isImpo={true}>
@@ -1505,6 +1616,8 @@ const List = () => {
         title={`학생 수업 변경`}
         onCancel={classChangeModalClose}
         onOk={onModalOk}
+        okText="수정"
+        cancelText="취소"
       >
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
@@ -1564,6 +1677,8 @@ const List = () => {
         title={`학생 수업 참여`}
         onCancel={classPartModalClose}
         onOk={onModalChangeOk}
+        okText="수정"
+        cancelText="취소"
       >
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
@@ -1581,6 +1696,7 @@ const List = () => {
               rules={[{ required: true, message: "결제 여부를 선택해주세요." }]}
             >
               <Button
+                size="small"
                 style={{ marginRight: 10 }}
                 type={isPayment === 1 && `primary`}
                 onClick={() => buttonHandle(1)}
@@ -1588,6 +1704,7 @@ const List = () => {
                 네
               </Button>
               <Button
+                size="small"
                 type={isPayment === 2 && `primary`}
                 onClick={() => buttonHandle(2)}
               >
@@ -1679,6 +1796,8 @@ const List = () => {
         title={`학생 수업 종료`}
         onCancel={classPartEndModalClose}
         onOk={onSubmitEnd}
+        okText="수정"
+        cancelText="취소"
       >
         <Wrapper padding={`10px`} al={`flex-start`}>
           <Form
@@ -1725,7 +1844,7 @@ const List = () => {
 
       <Modal
         visible={detailToggle}
-        width={`80%`}
+        width={`75%`}
         title={`학생 강의 목록`}
         footer={null}
         onCancel={() => setDetailToggle(false)}
@@ -1829,98 +1948,100 @@ const List = () => {
             <Text fontSize={`16px`} fontWeight={`700`} margin={`0 0 10px`}>
               사용자 정보
             </Text>
-            <Wrapper dr={`row`} al={`flex-start`}>
-              <Wrapper width={`50%`} margin={`0 0 20px`}>
-                <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                  <ColWrapper
-                    width={`120px`}
-                    height={`30px`}
-                    bgColor={Theme.basicTheme_C}
-                    color={Theme.white_C}
-                    margin={`0 5px 0 0`}
-                  >
+            <Wrapper dr={`row`} al={`flex-start`} ju={`space-between`}>
+              <Wrapper width={`48%`} margin={`0 0 20px`}>
+                <Wrapper
+                  padding={`5px 0 3px`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
                     프로필 이미지
-                  </ColWrapper>
-                  <ColWrapper>
-                    <Wrapper
-                      width={`100px`}
-                      height={`100px`}
-                      margin={`0 0 10px`}
+                  </Wrapper>
+                  <Wrapper>
+                    <Image
                       radius={`50%`}
-                    >
-                      <Image
-                        radius={`50%`}
-                        src={
-                          stuDetail
-                            ? `${stuDetail && stuDetail.profileImage}`
-                            : `https://via.placeholder.com/100x100`
-                        }
-                      />
-                    </Wrapper>
-                  </ColWrapper>
-                </RowWrapper>
+                      src={
+                        stuDetail
+                          ? `${stuDetail && stuDetail.profileImage}`
+                          : `https://via.placeholder.com/100x100`
+                      }
+                    />
+                  </Wrapper>
+                </Wrapper>
 
-                <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                  <ColWrapper
-                    width={`120px`}
-                    height={`30px`}
-                    bgColor={Theme.basicTheme_C}
-                    color={Theme.white_C}
-                    margin={`0 5px 0 0`}
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
                   >
                     이름
-                  </ColWrapper>
+                  </Wrapper>
+                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+                    <FormItem name="username">
+                      <Input />
+                    </FormItem>
+                  </Wrapper>
+                </Wrapper>
 
-                  <FormItem name="username">
-                    <CustomInput />
-                  </FormItem>
-                </RowWrapper>
-
-                <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                  <ColWrapper
-                    width={`120px`}
-                    height={`30px`}
-                    bgColor={Theme.basicTheme_C}
-                    color={Theme.white_C}
-                    margin={`0 5px 0 0`}
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
                   >
                     이메일
-                  </ColWrapper>
+                  </Wrapper>
+                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+                    <FormItem name="email">
+                      <Input />
+                    </FormItem>
+                  </Wrapper>
+                </Wrapper>
 
-                  <FormItem name="email">
-                    <CustomInput />
-                  </FormItem>
-                </RowWrapper>
-
-                <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                  <ColWrapper
-                    width={`120px`}
-                    height={`30px`}
-                    bgColor={Theme.basicTheme_C}
-                    color={Theme.white_C}
-                    margin={`0 5px 0 0`}
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
                   >
                     아이디
-                  </ColWrapper>
+                  </Wrapper>
+                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+                    <FormItem name="email">
+                      <Input disabled />
+                    </FormItem>
+                  </Wrapper>
+                </Wrapper>
 
-                  <FormItem name="email">
-                    <CustomInput disabled />
-                  </FormItem>
-                </RowWrapper>
-
-                <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                  <ColWrapper
-                    width={`120px`}
-                    height={`30px`}
-                    bgColor={Theme.basicTheme_C}
-                    color={Theme.white_C}
-                    margin={`0 5px 0 0`}
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
                   >
                     휴대폰 번호
-                  </ColWrapper>
-                  <ColWrapper>
+                  </Wrapper>
+                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
                     <FormItem name="mobile">
-                      <CustomInput
+                      <Input
                         onChange={(e) =>
                           updateStuForm.setFieldsValue({
                             password: e.target.value.slice(-4),
@@ -1928,77 +2049,85 @@ const List = () => {
                         }
                       />
                     </FormItem>
-                  </ColWrapper>
-                </RowWrapper>
+                  </Wrapper>
+                </Wrapper>
 
-                <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                  <ColWrapper
-                    width={`120px`}
-                    height={`30px`}
-                    bgColor={Theme.basicTheme_C}
-                    color={Theme.white_C}
-                    margin={`0 5px 0 0`}
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
                   >
                     비밀번호
-                  </ColWrapper>
-
-                  <ColWrapper>
+                  </Wrapper>
+                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
                     <FormItem name="password">
-                      <CustomInput disabled />
+                      <Input disabled />
                     </FormItem>
-                  </ColWrapper>
-                </RowWrapper>
+                  </Wrapper>
+                </Wrapper>
 
-                <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                  <ColWrapper
-                    width={`120px`}
-                    height={`30px`}
-                    bgColor={Theme.basicTheme_C}
-                    color={Theme.white_C}
-                    margin={`0 5px 0 0`}
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
                   >
                     생년월일
-                  </ColWrapper>
-
-                  <ColWrapper dr={`row`}>
-                    <FormItem name="birth">
-                      <CustomInput disabled />
+                  </Wrapper>
+                  <Wrapper
+                    width={`75%`}
+                    ju={`space-between`}
+                    padding={`0 10px`}
+                    dr={`row`}
+                  >
+                    <FormItem name="birth" width={`calc(100% - 30px)`}>
+                      <Input disabled />
                     </FormItem>
 
                     <CalendarOutlined onClick={calenderToggle} />
-                  </ColWrapper>
-                </RowWrapper>
-
-                <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                  <Wrapper
-                    display={isCalendar ? "flex" : "none"}
-                    width={`auto`}
-                    border={`1px solid ${Theme.grey_C}`}
-                    margin={`0 0 20px`}
-                  >
-                    <Calendar
-                      style={{ width: width < 1350 ? `100%` : `300px` }}
-                      fullscreen={false}
-                      validRange={[moment(`1940`), moment()]}
-                      onChange={dateChagneHandler}
-                    />
                   </Wrapper>
-                </RowWrapper>
+                </Wrapper>
 
-                <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                  <ColWrapper
-                    width={`120px`}
-                    height={`30px`}
-                    bgColor={Theme.basicTheme_C}
-                    color={Theme.white_C}
-                    margin={`0 5px 0 0`}
+                <Wrapper
+                  display={isCalendar ? "flex" : "none"}
+                  width={`auto`}
+                  shadow={`0px 0px 10px ${Theme.lightGrey3_C}`}
+                  border={`1px solid ${Theme.lightGrey3_C}`}
+                  padding={`5px 0`}
+                  margin={`5px 0 0`}
+                >
+                  <Calendar
+                    // style={{ width: width < 1350 ? `100%` : `100%` }}
+                    fullscreen={false}
+                    validRange={[moment(`1940`), moment()]}
+                    onChange={dateChagneHandler}
+                  />
+                </Wrapper>
+
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
                   >
                     국가
-                  </ColWrapper>
-
-                  <ColWrapper>
+                  </Wrapper>
+                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
                     <FormItem name="stuCountry">
-                      <CustomSelect>
+                      <Select>
                         {country &&
                           country.map((data, idx) => {
                             return (
@@ -2007,25 +2136,26 @@ const List = () => {
                               </Select.Option>
                             );
                           })}
-                      </CustomSelect>
+                      </Select>
                     </FormItem>
-                  </ColWrapper>
-                </RowWrapper>
+                  </Wrapper>
+                </Wrapper>
 
-                <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                  <ColWrapper
-                    width={`120px`}
-                    height={`30px`}
-                    bgColor={Theme.basicTheme_C}
-                    color={Theme.white_C}
-                    margin={`0 5px 0 0`}
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
                   >
                     거주 국가
-                  </ColWrapper>
-
-                  <ColWrapper>
+                  </Wrapper>
+                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
                     <FormItem name="stuLiveCon">
-                      <CustomSelect>
+                      <Select>
                         {country &&
                           country.map((data, idx) => {
                             return (
@@ -2034,207 +2164,221 @@ const List = () => {
                               </Select.Option>
                             );
                           })}
-                      </CustomSelect>
+                      </Select>
                     </FormItem>
-                  </ColWrapper>
-                </RowWrapper>
+                  </Wrapper>
+                </Wrapper>
 
-                <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                  <ColWrapper
-                    width={`120px`}
-                    height={`30px`}
-                    bgColor={Theme.basicTheme_C}
-                    color={Theme.white_C}
-                    margin={`0 5px 0 0`}
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
                   >
                     사용언어
-                  </ColWrapper>
-
-                  <ColWrapper>
+                  </Wrapper>
+                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
                     <FormItem name="stuLanguage">
-                      <CustomInput />
+                      <Input />
                     </FormItem>
-                  </ColWrapper>
-                </RowWrapper>
+                  </Wrapper>
+                </Wrapper>
 
-                <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                  <ColWrapper
-                    width={`120px`}
-                    height={`30px`}
-                    bgColor={Theme.basicTheme_C}
-                    color={Theme.white_C}
-                    margin={`0 5px 0 0`}
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
                   >
                     SNS
-                  </ColWrapper>
-
-                  <ColWrapper>
+                  </Wrapper>
+                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
                     <FormItem name="sns">
-                      <CustomInput />
+                      <Input />
                     </FormItem>
-                  </ColWrapper>
-                </RowWrapper>
+                  </Wrapper>
+                </Wrapper>
 
-                <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                  <ColWrapper
-                    width={`120px`}
-                    height={`30px`}
-                    bgColor={Theme.basicTheme_C}
-                    color={Theme.white_C}
-                    margin={`0 5px 0 0`}
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
                   >
                     SNS Id
-                  </ColWrapper>
-
-                  <ColWrapper>
+                  </Wrapper>
+                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
                     <FormItem name="snsId">
-                      <CustomInput />
+                      <Input />
                     </FormItem>
-                  </ColWrapper>
-                </RowWrapper>
+                  </Wrapper>
+                </Wrapper>
 
-                <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                  <ColWrapper
-                    width={`120px`}
-                    height={`30px`}
-                    bgColor={Theme.basicTheme_C}
-                    color={Theme.white_C}
-                    margin={`0 5px 0 0`}
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
                   >
                     회차
-                  </ColWrapper>
-
-                  <ColWrapper>
+                  </Wrapper>
+                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
                     <FormItem name="stuPayCount">
-                      <CustomInput />
+                      <Input />
                     </FormItem>
-                  </ColWrapper>
-                </RowWrapper>
+                  </Wrapper>
+                </Wrapper>
               </Wrapper>
 
-              <Wrapper width={`50%`} margin={`0 0 20px`} al={`flex-start`}>
-                <Wrapper>
-                  <RowWrapper
-                    dr={`row`}
-                    margin={`0 0 10px 0`}
-                    ju={`flex-start`}
-                    al={`flex-start`}
+              <Wrapper width={`50%`} al={`flex-start`}>
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
                   >
-                    <ColWrapper
-                      width={`140px`}
-                      height={`30px`}
-                      bgColor={Theme.basicTheme_C}
-                      color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
-                      시차
-                    </ColWrapper>
-
+                    시차
+                  </Wrapper>
+                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
                     <FormItem name="timeDiff">
-                      <CustomInput />
+                      <Input />
                     </FormItem>
-                  </RowWrapper>
+                  </Wrapper>
+                </Wrapper>
 
-                  <RowWrapper
-                    width={`100%`}
-                    al={`flex-start`}
-                    margin={`0 0 10px 0`}
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
                   >
-                    <ColWrapper
-                      width={`140px`}
-                      height={`30px`}
-                      bgColor={Theme.basicTheme_C}
-                      color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
-                      원하는 시작 날짜
-                    </ColWrapper>
-                    <ColWrapper>
-                      <FormItem name="wantStartDate">
-                        <CustomDatePicker />
-                      </FormItem>
-                    </ColWrapper>
-                  </RowWrapper>
+                    원하는 시작 날짜
+                  </Wrapper>
+                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+                    <FormItem name="wantStartDate">
+                      <CustomDatePicker style={{ width: `100%` }} />
+                    </FormItem>
+                  </Wrapper>
+                </Wrapper>
 
-                  <RowWrapper
-                    width={`100%`}
-                    al={`flex-start`}
-                    margin={`0 0 10px 0`}
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
                   >
-                    <ColWrapper
-                      width={`140px`}
-                      height={`30px`}
-                      bgColor={Theme.basicTheme_C}
-                      color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
-                      무료수업 담당 강사
-                    </ColWrapper>
-                    <ColWrapper>
-                      <FormItem name="freeTeacher">
-                        <Select
-                          style={{ width: `250px` }}
-                          placeholder={`강사를 선택해주세요.`}
-                        >
-                          {teachers &&
-                            teachers.map((data, idx) => {
-                              return (
-                                <Select.Option
-                                  key={data.id}
-                                  value={data.username}
-                                >
-                                  {data.username}
-                                </Select.Option>
-                              );
-                            })}
-                        </Select>
-                      </FormItem>
-                    </ColWrapper>
-                  </RowWrapper>
+                    무료수업 담당 강사
+                  </Wrapper>
+                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+                    <FormItem name="freeTeacher">
+                      <Select placeholder={`강사를 선택해주세요.`}>
+                        {teachers &&
+                          teachers.map((data, idx) => {
+                            return (
+                              <Select.Option
+                                key={data.id}
+                                value={data.username}
+                              >
+                                {data.username}
+                              </Select.Option>
+                            );
+                          })}
+                      </Select>
+                    </FormItem>
+                  </Wrapper>
+                </Wrapper>
 
-                  <RowWrapper
-                    width={`100%`}
-                    al={`flex-start`}
-                    margin={`0 0 10px 0`}
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
                   >
-                    <ColWrapper
-                      width={`140px`}
-                      height={`30px`}
-                      bgColor={Theme.basicTheme_C}
-                      color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
-                      담당 강사
-                    </ColWrapper>
-                    <ColWrapper>
-                      <FormItem name="teacher">
-                        <Select
-                          style={{ width: `250px` }}
-                          placeholder={`수업을 선택해주세요.`}
-                          filterOption={(input, option) =>
-                            option.children
-                              .toLowerCase()
-                              .indexOf(input.toLowerCase()) >= 0
-                          }
-                          showSearch
-                        >
-                          {allLectures &&
-                            allLectures.map((data, idx) => {
-                              return (
-                                <Select.Option
-                                  key={`${data.User.username} ${data.course}`}
-                                  value={data.username}
-                                >
-                                  {`(${data.number}) ${data.User.username} ${data.course}`}
-                                </Select.Option>
-                              );
-                            })}
-                        </Select>
-                      </FormItem>
-                    </ColWrapper>
-                  </RowWrapper>
+                    담당 강사
+                  </Wrapper>
+                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+                    <FormItem name="teacher">
+                      <Select
+                        placeholder={`수업을 선택해주세요.`}
+                        filterOption={(input, option) =>
+                          option.children
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
+                        showSearch
+                      >
+                        {allLectures &&
+                          allLectures.map((data, idx) => {
+                            return (
+                              <Select.Option
+                                key={`${data.User.username} ${data.course}`}
+                                value={data.username}
+                              >
+                                {`(${data.number}) ${data.User.username} ${data.course}`}
+                              </Select.Option>
+                            );
+                          })}
+                      </Select>
+                    </FormItem>
+                  </Wrapper>
+                </Wrapper>
 
-                  {/* <RowWrapper width={`100%`} al={`flex-start`}>
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
+                  >
+                    줌 미팅 시간
+                  </Wrapper>
+                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+                    <FormItem name="meetDate">
+                      <CustomDatePicker
+                        style={{ width: `100%` }}
+                        showTime={{ format: "HH:mm", minuteStep: 10 }}
+                        format="YYYY-MM-DD HH:mm"
+                      />
+                    </FormItem>
+                  </Wrapper>
+                </Wrapper>
+
+                {/* <RowWrapper width={`100%`} al={`flex-start`}>
                     <ColWrapper
                       width={`140px`}
                       height={`30px`}
@@ -2248,89 +2392,57 @@ const List = () => {
                     </ColWrapper>
                   </RowWrapper> */}
 
-                  <RowWrapper
-                    width={`100%`}
-                    al={`flex-start`}
-                    margin={`0 0 10px 0`}
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
                   >
-                    <ColWrapper
-                      width={`140px`}
-                      height={`30px`}
-                      bgColor={Theme.basicTheme_C}
-                      color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
-                      줌 미팅 시간
-                    </ColWrapper>
-                    <ColWrapper>
-                      <FormItem name="meetDate">
-                        <CustomDatePicker
-                          showTime={{ format: "HH:mm", minuteStep: 10 }}
-                          format="YYYY-MM-DD HH:mm"
-                        />
-                      </FormItem>
-                    </ColWrapper>
-                  </RowWrapper>
-
-                  <RowWrapper
-                    width={`100%`}
-                    al={`flex-start`}
-                    margin={`0 0 10px 0`}
-                  >
-                    <ColWrapper
-                      width={`140px`}
-                      height={`30px`}
-                      bgColor={Theme.basicTheme_C}
-                      color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
-                      레벨
-                    </ColWrapper>
-
+                    레벨
+                  </Wrapper>
+                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
                     <FormItem name="level">
-                      <CustomInput />
+                      <Input />
                     </FormItem>
-                  </RowWrapper>
+                  </Wrapper>
+                </Wrapper>
 
-                  <RowWrapper
-                    width={`100%`}
-                    al={`flex-start`}
-                    margin={`0 0 10px 0`}
-                  >
-                    <ColWrapper
-                      width={`140px`}
-                      height={`30px`}
-                      bgColor={Theme.basicTheme_C}
-                      color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
-                      가능한 수업시간
-                    </ColWrapper>
-
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
+                    가능한 수업시간
+                  </Wrapper>
+                  <Wrapper al={`flex-start`}>
                     <FormItem name="classHour">
-                      <CustomTextArea rows={4} />
+                      <CustomTextArea rows={4} width={{ width: `100%` }} />
                     </FormItem>
-                  </RowWrapper>
+                  </Wrapper>
+                </Wrapper>
 
-                  <RowWrapper al={`flex-start`}>
-                    <ColWrapper
-                      width={`140px`}
-                      height={`30px`}
-                      bgColor={Theme.basicTheme_C}
-                      color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
-                      메모
-                    </ColWrapper>
-                    <ColWrapper al={`flex-start`}>
-                      <FormItem name="purpose">
-                        <CustomTextArea
-                          rows={6}
-                          border={`1px solid ${Theme.grey_C} !important`}
-                        />
-                      </FormItem>
-                    </ColWrapper>
-                  </RowWrapper>
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
+                    메모
+                  </Wrapper>
+                  <Wrapper al={`flex-start`}>
+                    <FormItem name="purpose">
+                      <CustomTextArea
+                        style={{ width: `100%` }}
+                        rows={6}
+                        border={`1px solid ${Theme.grey_C} !important`}
+                      />
+                    </FormItem>
+                  </Wrapper>
                 </Wrapper>
 
                 {/* <RowWrapper width={`100%`} margin={`0 0 10px`}>
@@ -2345,7 +2457,7 @@ const List = () => {
 
                   <ColWrapper>
                     <FormItem name="stuPayCount">
-                      <CustomInput />
+                      <Input />
                     </FormItem>
                   </ColWrapper>
                 </RowWrapper> */}
@@ -2377,7 +2489,7 @@ const List = () => {
 
       <Modal
         visible={stuCommuteModal}
-        width={`100%`}
+        width={`1100px`}
         title={`학생 출석 목록`}
         footer={null}
         onCancel={() => stuCancelHandler()}
@@ -2388,6 +2500,7 @@ const List = () => {
             style={{ width: 200 }}
             onChange={(e) => setStuSelect(e)}
             value={stuSelect}
+            size="small"
           >
             {stuCommuteDetail && stuCommuteDetail.Participants.length === 0 ? (
               <Select>{"참여중인 수업이 없습니다."}</Select>
@@ -2404,8 +2517,10 @@ const List = () => {
           </Select>
 
           <Button
+            size="small"
             style={{ marginLeft: 10 }}
             onClick={() => onClickCommuteHandler()}
+            type="primary"
           >
             검색
           </Button>

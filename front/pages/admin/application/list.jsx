@@ -646,13 +646,6 @@ const List = () => {
           borderBottom={`1px dashed ${Theme.lightGrey_C}`}
           padding="5px 0px"
         >
-          <ModalBtn
-            type={!router.query.type && `primary`}
-            size={`small`}
-            onClick={() => onClickAllList()}
-          >
-            전체
-          </ModalBtn>
           {/* <ModalBtn
             type={router.query.type === "true" && `primary`}
             size={`small`}
@@ -672,7 +665,7 @@ const List = () => {
 
           <Select
             onChange={(e) => setStatusType(e)}
-            style={{ width: `250px`, margin: `0 5px` }}
+            style={{ width: `350px` }}
             size={`small`}
             value={statusType ? statusType : null}
             placeholder={"등록상태를 선택해주세요. Ex) NoShow"}
@@ -698,6 +691,13 @@ const List = () => {
             format="YYYY-MM-DD hh:mm"
             onChange={(e) => onChangeDate(e)}
           ></DatePicker>
+          <Button
+            type={!router.query.type && `primary`}
+            size={`small`}
+            onClick={() => onClickAllList()}
+          >
+            전체검색
+          </Button>
         </Wrapper>
         {/* ADMIN TOP MENU END */}
 
@@ -729,28 +729,379 @@ const List = () => {
 
       <Modal
         visible={updateModal}
-        width={`1000px`}
+        width={`800px`}
         title={`신청서`}
         onCancel={() => onReset()}
         onOk={() => updateClick()}
         okText="추가"
         cancelText="취소"
       >
-        <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
-          <Text fontSize={`16px`} fontWeight={`700`} margin={`0 20px 0 0`}>
-            신청일 |&nbsp;{updateData && updateData.createdAt.slice(0, 10)}
-          </Text>
-          <Text fontSize={`16px`} fontWeight={`700`}>
-            처리 완료일 |&nbsp;
+        <Wrapper
+          padding={`5px 0`}
+          dr={`row`}
+          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+        >
+          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
+            신청일
+          </Wrapper>
+          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+            {updateData && updateData.createdAt.slice(0, 10)}
+          </Wrapper>
+        </Wrapper>
+
+        <Wrapper
+          padding={`5px 0`}
+          dr={`row`}
+          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+        >
+          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
+            처리 완료일
+          </Wrapper>
+          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
             {updateData && updateData.completedAt
               ? updateData.completedAt.slice(0, 10)
               : `미완료`}
-          </Text>
+          </Wrapper>
         </Wrapper>
-        <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 50px`}>
-          <Text fontSize={`16px`} fontWeight={`700`} margin={`0 0 10px`}>
-            사용자가 입력한 양식
-          </Text>
+
+        <Text fontSize={`16px`} fontWeight={`700`} margin={`20px 0 10px`}>
+          사용자가 입력한 양식
+        </Text>
+
+        <Wrapper
+          padding={`5px 0`}
+          dr={`row`}
+          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+        >
+          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
+            이름
+          </Wrapper>
+          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+            {updateData && updateData.firstName}&nbsp;
+            {updateData && updateData.lastName}
+          </Wrapper>
+        </Wrapper>
+
+        <Wrapper
+          padding={`5px 0`}
+          dr={`row`}
+          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+        >
+          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
+            생년월일
+          </Wrapper>
+          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+            {updateData && updateData.dateOfBirth}
+          </Wrapper>
+        </Wrapper>
+
+        <Wrapper
+          padding={`5px 0`}
+          dr={`row`}
+          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+        >
+          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
+            이메일
+          </Wrapper>
+          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+            {updateData && updateData.gmailAddress}
+          </Wrapper>
+        </Wrapper>
+
+        <Wrapper
+          padding={`5px 0`}
+          dr={`row`}
+          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+        >
+          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
+            국가
+          </Wrapper>
+          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+            {updateData && updateData.nationality}
+          </Wrapper>
+        </Wrapper>
+
+        <Wrapper
+          padding={`5px 0`}
+          dr={`row`}
+          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+        >
+          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
+            거주 국가
+          </Wrapper>
+          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+            {updateData && updateData.countryOfResidence}
+          </Wrapper>
+        </Wrapper>
+
+        <Wrapper
+          padding={`5px 0`}
+          dr={`row`}
+          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+        >
+          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
+            사용언어
+          </Wrapper>
+          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+            {updateData && updateData.languageYouUse}
+          </Wrapper>
+        </Wrapper>
+
+        <Wrapper
+          padding={`5px 0`}
+          dr={`row`}
+          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+        >
+          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
+            휴대폰번호
+          </Wrapper>
+          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+            {updateData && updateData.phoneNumber}
+            {updateData && updateData.phoneNumber2}
+          </Wrapper>
+        </Wrapper>
+
+        <Wrapper
+          padding={`5px 0`}
+          dr={`row`}
+          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+        >
+          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
+            가능한 수업시간
+          </Wrapper>
+          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+            {updateData && updateData.classHour}
+          </Wrapper>
+        </Wrapper>
+
+        <Wrapper
+          padding={`5px 0`}
+          dr={`row`}
+          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+        >
+          <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
+            내용
+          </Wrapper>
+          <Wrapper
+            al={`flex-start`}
+            padding={`10px`}
+            minHeight={`200px`}
+            ju={`flex-start`}
+          >
+            {updateData &&
+              updateData.comment &&
+              updateData.comment.split(`\n`).map((content, idx) => {
+                return (
+                  <SpanText key={`${content}${idx}`}>
+                    {content}
+                    <br />
+                  </SpanText>
+                );
+              })}
+          </Wrapper>
+        </Wrapper>
+
+        <CustomForm2
+          form={updateForm}
+          onFinish={updateFinish}
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 24 }}
+        >
+          <Wrapper
+            padding={`5px 0`}
+            dr={`row`}
+            borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+          >
+            <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
+              등록상태
+            </Wrapper>
+            <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+              <Form.Item name="status" style={{ width: `100%` }}>
+                <Select
+                  placeholder={`등록상태를 선택해주세요.`}
+                  style={{ width: `100%` }}
+                >
+                  {stateList &&
+                    stateList.map((data, idx) => {
+                      return (
+                        <Select.Option key={idx} value={data}>
+                          {data}
+                        </Select.Option>
+                      );
+                    })}
+                </Select>
+              </Form.Item>
+            </Wrapper>
+          </Wrapper>
+
+          <Wrapper
+            padding={`5px 0`}
+            dr={`row`}
+            borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+          >
+            <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
+              줌 미팅 시간
+            </Wrapper>
+            <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+              <Form.Item name="meetDate" style={{ width: `100%` }}>
+                <CustomDatePicker
+                  showTime={{ format: "HH:mm", minuteStep: 10 }}
+                  format="YYYY-MM-DD HH:mm"
+                  style={{ width: `100%` }}
+                />
+              </Form.Item>
+            </Wrapper>
+          </Wrapper>
+
+          <Wrapper
+            padding={`5px 0`}
+            dr={`row`}
+            borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+          >
+            <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
+              시차
+            </Wrapper>
+            <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+              <Form.Item name="timeDiff" style={{ width: `100%` }}>
+                <Input />
+              </Form.Item>
+            </Wrapper>
+          </Wrapper>
+
+          <Wrapper
+            padding={`5px 0`}
+            dr={`row`}
+            borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+          >
+            <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
+              무료수업 담당 강사
+            </Wrapper>
+            <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+              <Form.Item name="freeTeacher" style={{ width: `100%` }}>
+                <Select
+                  placeholder={`무료수업 담당강사를 선택해주세요.`}
+                  style={{ width: `100%` }}
+                >
+                  {teachers &&
+                    teachers.map((data, idx) => {
+                      return (
+                        <Select.Option key={data.id} value={data.username}>
+                          {data.username}
+                        </Select.Option>
+                      );
+                    })}
+                </Select>
+              </Form.Item>
+            </Wrapper>
+          </Wrapper>
+
+          <Wrapper
+            padding={`5px 0`}
+            dr={`row`}
+            borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+          >
+            <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
+              담당 강사
+            </Wrapper>
+            <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+              <Form.Item name="teacher" style={{ width: `100%` }}>
+                <Select
+                  style={{ width: `100%` }}
+                  placeholder={`수업을 선택해주세요.`}
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  showSearch
+                >
+                  {allLectures &&
+                    allLectures.map((data, idx) => {
+                      return (
+                        <Select.Option
+                          key={`${data.User.username} ${data.course}`}
+                          value={data.username}
+                        >
+                          {`(${data.number}) ${data.User.username} ${data.course}`}
+                        </Select.Option>
+                      );
+                    })}
+                </Select>
+              </Form.Item>
+            </Wrapper>
+          </Wrapper>
+
+          <Wrapper
+            padding={`5px 0`}
+            dr={`row`}
+            borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+          >
+            <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
+              희망 시작일
+            </Wrapper>
+            <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+              <Form.Item name="wantStartDate" style={{ width: `100%` }}>
+                <CustomDatePicker style={{ width: `100%` }} />
+              </Form.Item>
+            </Wrapper>
+          </Wrapper>
+
+          <Wrapper
+            padding={`5px 0`}
+            dr={`row`}
+            borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+          >
+            <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
+              레벨
+            </Wrapper>
+            <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+              <FormItem name="level" style={{ width: `100%` }}>
+                <Input />
+              </FormItem>
+            </Wrapper>
+          </Wrapper>
+
+          <Wrapper
+            padding={`5px 0`}
+            dr={`row`}
+            borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+          >
+            <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
+              직업
+            </Wrapper>
+            <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+              <Form.Item name="job" style={{ width: `100%` }}>
+                <Input />
+              </Form.Item>
+            </Wrapper>
+          </Wrapper>
+
+          <Wrapper
+            padding={`5px 0`}
+            dr={`row`}
+            borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+          >
+            <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
+              메모
+            </Wrapper>
+            <Wrapper al={`flex-start`}>
+              <Form.Item style={{ width: `100%` }} name="purpose">
+                <CustomTextArea
+                  rows={6}
+                  border={`1px solid ${Theme.grey_C} !important`}
+                />
+              </Form.Item>
+            </Wrapper>
+          </Wrapper>
+        </CustomForm2>
+
+        {/*  */}
+        {/*  */}
+        {/*  */}
+        {/*  */}
+        {/*  */}
+        {/*  */}
+        {/* <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 50px`}>
           <Wrapper dr={`row`} al={`flex-start`}>
             <Wrapper width={`50%`} al={`flex-start`} margin={`0 0 20px`}>
               <RowWrapper width={`100%`} margin={`0 0 10px`}>
@@ -1103,7 +1454,7 @@ const List = () => {
                     </ColWrapper>
                   </RowWrapper>
 
-                  {/* <RowWrapper width={`100%`} al={`flex-start`}>
+                  <RowWrapper width={`100%`} al={`flex-start`}>
                 <ColWrapper
                   width={`140px`}
                   height={`30px`}
@@ -1121,7 +1472,7 @@ const List = () => {
                     />
                   </FormItem>
                 </ColWrapper>
-              </RowWrapper> */}
+              </RowWrapper>
 
                   <RowWrapper
                     width={`100%`}
@@ -1187,9 +1538,9 @@ const List = () => {
               </CustomForm2>
             </Wrapper>
           </Wrapper>
-        </Wrapper>
+        </Wrapper> */}
 
-        <Text fontSize={`16px`} fontWeight={`700`} margin={`0 0 10px`}>
+        <Text fontSize={`16px`} fontWeight={`700`} margin={`20px 0 10px`}>
           학생 결제 목록
         </Text>
 

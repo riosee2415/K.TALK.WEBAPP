@@ -546,6 +546,15 @@ const Book = ({}) => {
       />
 
       <AdminContent>
+        <Wrapper al={`flex-end`} margin={`0 0 10px`}>
+          <Button
+            size="small"
+            type={`primary`}
+            onClick={() => setCreateModal(true)}
+          >
+            자료 올리기
+          </Button>
+        </Wrapper>
         <Wrapper margin={"0px 0px 20px 0px"} dr={"row"} ju={`space-between`}>
           <Wrapper
             margin={`0px 0px 10px 0px`}
@@ -697,13 +706,6 @@ const Book = ({}) => {
               </Button>
             </Wrapper>
           </FormTag>
-          <Button
-            size="small"
-            type={`primary`}
-            onClick={() => setCreateModal(true)}
-          >
-            자료 올리기
-          </Button>
         </Wrapper>
 
         <Table
@@ -736,24 +738,31 @@ const Book = ({}) => {
         onCancel={updateData ? updateModalClose : () => modalClose()}
         onOk={modalOk}
         title="교재 등록"
+        okText="등록"
+        cancelText="취소"
       >
         <Wrapper al={`flex-start`}>
           <Form
             form={form}
             ref={formRef}
             onFinish={updateData ? updateSubmit : onSubmit}
+            style={{ width: `100%` }}
           >
             <Form.Item
               rules={[{ required: true, message: "교재 제목을 입력해주세요." }]}
               label={`교재 제목`}
               name={`title`}
+              labelCol={{ span: 5 }}
+              labelAlign={`left`}
             >
-              <TextInput height={`30px`} />
+              <Input placeholder="교재 제목을 입력해주세요." />
             </Form.Item>
             <Form.Item
               rules={[{ required: true, message: "강의를 선택해주세요." }]}
               label={`강의 선택`}
               name={`folder`}
+              labelCol={{ span: 5 }}
+              labelAlign={`left`}
             >
               <Select
                 placeholder="Select a Lecture"
@@ -781,6 +790,8 @@ const Book = ({}) => {
               onBlur={() =>
                 form.getFieldValue(`level`) === "" && setCurrentModalLevel(null)
               }
+              labelCol={{ span: 5 }}
+              labelAlign={`left`}
             >
               {currentModalLevel === "기타" ? (
                 <Input />
@@ -803,6 +814,8 @@ const Book = ({}) => {
               onBlur={() =>
                 form.getFieldValue(`stage`) === "" && setCurrentModalStage(null)
               }
+              labelCol={{ span: 5 }}
+              labelAlign={`left`}
             >
               {currentModalStage === "기타" ? (
                 <Input />
@@ -828,6 +841,8 @@ const Book = ({}) => {
               onBlur={() =>
                 form.getFieldValue(`stage`) === "" && setCurrentModalStage(null)
               }
+              labelCol={{ span: 5 }}
+              labelAlign={`left`}
             >
               {currentModalKinds === "기타" ? (
                 <Input />
@@ -869,12 +884,12 @@ const Book = ({}) => {
                 alt={`thumbnail`}
               />
             </Wrapper>
-            <Button type="primary" onClick={fileUploadClick2}>
+            <Button type="primary" onClick={fileUploadClick2} size="small">
               썸네일 이미지 업로드
             </Button>
           </Wrapper>
 
-          <Wrapper width={`60%`} margin={`20px 0 0`} dr={`row`} ju={`flex-end`}>
+          <Wrapper margin={`20px 0 0`} dr={`row`} ju={`flex-start`}>
             <input
               type="file"
               name="file"
@@ -882,12 +897,14 @@ const Book = ({}) => {
               ref={fileRef}
               onChange={fileChangeHandler}
             />
-            <Text margin={`0 5px 0 0`} width={`calc(100% - 130px - 5px)`}>
-              {filename.value ? filename.value : `파일을 선택해주세요.`}
-            </Text>
-            <Button type="primary" onClick={fileUploadClick}>
+
+            <Button type="primary" onClick={fileUploadClick} size="small">
               교재 파일 업로드
             </Button>
+
+            <Text margin={`0 0 0 5px`}>
+              {filename.value ? filename.value : `파일을 선택해주세요.`}
+            </Text>
           </Wrapper>
         </Wrapper>
       </Modal>

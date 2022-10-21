@@ -204,7 +204,8 @@ const PaymentList = () => {
                 size="small"
                 type="primary"
                 disabled={data.isComplete}
-                onClick={() => modalOpen(data)}>
+                onClick={() => modalOpen(data)}
+              >
                 {data.isComplete ? "입금완료" : "입금승인"}
               </Button>
             )}
@@ -272,20 +273,10 @@ const PaymentList = () => {
       />
 
       <AdminContent>
-        <Wrapper dr={`row`} ju={`flex-start`}>
-          <Wrapper
-            width={`auto`}
-            dr={`row`}
-            ju={`flex-start`}
-            margin={`0 5px 0 0`}>
-            <Button size="small" type="primary" onClick={onClickAllList}>
-              전체
-            </Button>
-          </Wrapper>
-
+        <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
           <Input
             size="small"
-            style={{ width: `200px`, marginRight: 5 }}
+            style={{ width: `200px` }}
             placeholder="이메일"
             {...inputEmail}
             onKeyDown={(e) => e.key === "Enter" && onClickSearch()}
@@ -295,8 +286,9 @@ const PaymentList = () => {
             onChange={(e) => setType(e)}
             size="small"
             value={type || null}
-            style={{ width: `200px`, marginRight: 5 }}
-            placeholder="결제유형을 선택해주세요.">
+            style={{ width: `200px` }}
+            placeholder="결제유형을 선택해주세요."
+          >
             <Select.Option value={"Paypal"}>Paypal</Select.Option>
             <Select.Option value={"계좌이체"}>계좌이체</Select.Option>
           </Select>
@@ -307,13 +299,17 @@ const PaymentList = () => {
             size="small"
             value={listType || null}
             style={{ width: `200px` }}
-            placeholder="입금승인 선택해주세요.">
+            placeholder="입금승인 선택해주세요."
+          >
             <Select.Option value={1}>미승인</Select.Option>
             <Select.Option value={2}>승인</Select.Option>
           </Select>
           <Button size="small" onClick={() => onClickSearch()}>
             <SearchOutlined />
             검색
+          </Button>
+          <Button size="small" type="primary" onClick={onClickAllList}>
+            전체검색
           </Button>
 
           {/* <Button size="small" onClick={() => onClickTypeHandler("PayPal")}>
@@ -349,7 +345,8 @@ const PaymentList = () => {
         width="900px"
         onOk={onModalOkHandler}
         onCancel={onCancelHandler}
-        title="입금확인">
+        title="입금확인"
+      >
         <Wrapper>입금확인 내역은 다시 복구할 수 없습니다.</Wrapper>
         <Wrapper>정말 승인하시겠습니까?</Wrapper>
       </Modal>

@@ -20,7 +20,11 @@ import { SearchOutlined } from "@ant-design/icons";
 import wrapper from "../../../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
-import { Wrapper } from "../../../../../components/commonComponents";
+import {
+  SpanText,
+  Text,
+  Wrapper,
+} from "../../../../../components/commonComponents";
 import {
   LOAD_MY_INFO_REQUEST,
   USER_TEA_LIST_REQUEST,
@@ -28,6 +32,7 @@ import {
 import { useRouter, withRouter } from "next/router";
 import { LECTURE_ALL_LIST_REQUEST } from "../../../../../reducers/lecture";
 import { TEACHER_ADMIN_PAY_LIST_REQUEST } from "../../../../../reducers/teacherpay";
+import Theme from "../../../../../components/Theme";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -175,7 +180,7 @@ const UserList = () => {
           >
             <FormTag form={form} onFinish={searchHandler}>
               <Row>
-                <FormItem name={`TeacherId`}>
+                <Form.Item name={`TeacherId`} style={{ width: `200px` }}>
                   <Select size="small" placeholder="강사">
                     {teacherList &&
                       teacherList.map((data) => {
@@ -186,17 +191,17 @@ const UserList = () => {
                         );
                       })}
                   </Select>
-                </FormItem>
+                </Form.Item>
 
-                <FormItem name={`date`}>
+                <Form.Item name={`date`}>
                   <DatePicker.RangePicker
                     size="small"
                     placeholder={["start", "end"]}
                     format={`YYYY-MM-DD`}
                   />
-                </FormItem>
+                </Form.Item>
 
-                <FormItem name={`type`}>
+                <Form.Item name={`type`} style={{ width: `150px` }}>
                   <Select size="small" placeholder="유형">
                     <Select.Option value={``}>전체</Select.Option>
                     {typeArr.map((data) => {
@@ -207,9 +212,9 @@ const UserList = () => {
                       );
                     })}
                   </Select>
-                </FormItem>
+                </Form.Item>
 
-                <FormItem name={`LectureId`}>
+                <Form.Item name={`LectureId`} style={{ width: `200px` }}>
                   <Select size="small" placeholder="강의">
                     <Select.Option value={null}>전체</Select.Option>
                     {allLectures &&
@@ -221,7 +226,7 @@ const UserList = () => {
                         );
                       })}
                   </Select>
-                </FormItem>
+                </Form.Item>
 
                 <Wrapper width={`auto`} height={`32px`}>
                   <Button widt={`80px`} size="small" htmlType={`submit`}>
@@ -241,14 +246,18 @@ const UserList = () => {
           size="small"
         />
 
-        <Wrapper
-          margin={`10px 0 0`}
-          al={`flex-end`}
-          fontSize={`16px`}
-        >{`총 가격: ${String(teacherPayAdminPrice).replace(
-          /\B(?=(\d{3})+(?!\d))/g,
-          ","
-        )}원`}</Wrapper>
+        <Wrapper margin={`10px 0 0`} al={`flex-end`}>
+          <Text fontSize={`20px`} fontWeight={`700`}>
+            총 가격 :{" "}
+            <SpanText color={Theme.basicTheme_C}>
+              {String(teacherPayAdminPrice).replace(
+                /\B(?=(\d{3})+(?!\d))/g,
+                ","
+              )}
+            </SpanText>
+            원
+          </Text>
+        </Wrapper>
       </AdminContent>
     </AdminLayout>
   );

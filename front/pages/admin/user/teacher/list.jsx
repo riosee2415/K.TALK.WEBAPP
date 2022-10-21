@@ -412,6 +412,8 @@ const UserList = ({}) => {
         <Popconfirm
           onConfirm={() => TeacherFireUpdateHandler(data)}
           title={`강사를 ${data.isFire ? `재계약` : `해지`} 하시겠습니까?`}
+          okText={data.isFire ? `재계약` : `해지`}
+          cancelText="취소"
         >
           <Button size="small" type={data.isFire ? `primary` : `danger`}>
             {data.isFire ? `재계약` : `해지`}
@@ -423,12 +425,8 @@ const UserList = ({}) => {
     {
       title: "해지/재계약 기록",
       render: (data) => (
-        <Button
-          size="small"
-          type="primary"
-          onClick={() => logModalToggle(data)}
-        >
-          DETAIL
+        <Button size="small" onClick={() => logModalToggle(data)} type="dashed">
+          상세보기
         </Button>
       ),
     },

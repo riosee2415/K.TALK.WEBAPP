@@ -562,7 +562,7 @@ const UserList = ({}) => {
           </Select>
           <Input
             size="small"
-            style={{ width: "20%", margin: `0 10px` }}
+            style={{ width: "20%" }}
             placeholder="사용자명"
             {...inputName}
           />
@@ -573,7 +573,6 @@ const UserList = ({}) => {
             {...inputEmail}
           />
           <Button
-            style={{ margin: `0 10px` }}
             size="small"
             onClick={() =>
               moveLinkHandler(
@@ -600,6 +599,8 @@ const UserList = ({}) => {
         title={`사용자 레벨 수정`}
         onCancel={updateModalClose}
         onOk={onSubmitUpdate}
+        okText="수정"
+        cancelText="취소"
       >
         <Wrapper padding={`10px`} al={`flex-start`}>
           <div>사용자 레벨</div>
@@ -626,6 +627,8 @@ const UserList = ({}) => {
         title="회원 생성"
         footer={null}
         width={1000}
+        okText="생성"
+        cancelText="취소"
       >
         <Form
           labelCol={{ span: 4 }}

@@ -4,7 +4,7 @@ import wrapper from "../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
 
-import styled from "styled-components";
+import styled, { ThemeContext } from "styled-components";
 import AdminLayout from "../../components/AdminLayout";
 import {
   Wrapper,
@@ -95,7 +95,7 @@ const FileBox = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
 `;
 
 const WordbreakText = styled(Text)`
@@ -1367,7 +1367,7 @@ const AdminHome = () => {
     },
     {
       title: "조회수",
-      width: `10%`,
+      width: `5%`,
       dataIndex: "noticeHit",
     },
 
@@ -1376,12 +1376,11 @@ const AdminHome = () => {
       width: `10%`,
       dataIndex: "noticeCreatedAt",
     },
-
     {
-      title: "기능",
-      width: `10%`,
-      render: (data) => (
-        <Wrapper dr={`row`}>
+      title: "수정",
+      width: `5%`,
+      render: (data) => {
+        return (
           <Button
             type="primary"
             size="small"
@@ -1390,7 +1389,14 @@ const AdminHome = () => {
           >
             수정
           </Button>
-
+        );
+      },
+    },
+    {
+      title: "삭제",
+      width: `5%`,
+      render: (data) => {
+        return (
           <Popconfirm
             title="삭젬하시겠습니까?"
             okText="삭제"
@@ -1406,8 +1412,8 @@ const AdminHome = () => {
               삭제
             </ModalBtn>
           </Popconfirm>
-        </Wrapper>
-      ),
+        );
+      },
     },
   ];
 
@@ -1448,13 +1454,13 @@ const AdminHome = () => {
 
     {
       title: "댓글수",
-      width: `10%`,
+      width: `5%`,
       dataIndex: "commentCnt",
     },
 
     {
       title: "조회수",
-      width: `10%`,
+      width: `5%`,
       dataIndex: "noticeHit",
     },
 
@@ -1546,6 +1552,8 @@ const AdminHome = () => {
                     </Wrapper>
                   </Wrapper>
                 </Wrapper>
+
+                {/* ADMIN GUIDE AREA */}
                 <Wrapper
                   margin={`0px 0px 10px 0px`}
                   radius="5px"
@@ -1561,7 +1569,11 @@ const AdminHome = () => {
                     게시판은 수정시 즉시 반영되기 때문에 수정 할 시 신중하게
                     처리바랍니다.
                   </GuideDiv>
+                  <GuideDiv isImpo={true}>
+                    삭제된 데이터는 복구할 수 없습니다.
+                  </GuideDiv>
                 </Wrapper>
+
                 <Table
                   rowKey="id"
                   dataSource={
@@ -1612,6 +1624,7 @@ const AdminHome = () => {
               </Wrapper>
               <Wrapper dr={`row`} ju={`flex-start`}>
                 <Select
+                  size="small"
                   style={{ width: `200px`, marginRight: 10 }}
                   placeholder={`정렬을 선택해주세요.`}
                   value={listType}
@@ -1629,6 +1642,7 @@ const AdminHome = () => {
                 </Select>
 
                 <Select
+                  size="small"
                   style={{ width: `200px`, marginRight: 10 }}
                   placeholder={`강사를 선택해주세요.`}
                   onChange={(e) => setCurrentTeacher(e)}
@@ -1654,6 +1668,7 @@ const AdminHome = () => {
 
                 <Wrapper width={`auto`} margin={`0 10px 0 0`}>
                   <TimeInput
+                    size="small"
                     placeholder={`강의시간을 선택해주세요.`}
                     width={`200px`}
                     format={`HH:mm`}
@@ -1663,6 +1678,7 @@ const AdminHome = () => {
 
                 <Wrapper width={`auto`} margin={`0 10px 0 0`}>
                   <Select
+                    size="small"
                     style={{ width: `200px` }}
                     placeholder={`학생을 선택해주세요.`}
                     onChange={(e) => setSearchStuName(e)}
@@ -1701,7 +1717,11 @@ const AdminHome = () => {
                     margin={`0 10px 0 0`}
                   >
                     <FormItem width={`70px`}>
-                      <Select onChange={(e) => setSearchLevel(e)} allowClear>
+                      <Select
+                        onChange={(e) => setSearchLevel(e)}
+                        allowClear={true}
+                        size="small"
+                      >
                         <Select.Option value={`1`}>1</Select.Option>
                         <Select.Option value={`2`}>2</Select.Option>
                         <Select.Option value={`3`}>3</Select.Option>
@@ -1720,7 +1740,11 @@ const AdminHome = () => {
                     margin={`0 10px 0 0`}
                   >
                     <FormItem width={`70px`}>
-                      <Select onChange={(e) => setSearchStep(e)} allowClear>
+                      <Select
+                        onChange={(e) => setSearchStep(e)}
+                        allowClear={true}
+                        size="small"
+                      >
                         <Select.Option value={`1`}>1</Select.Option>
                         <Select.Option value={`2`}>2</Select.Option>
                         <Select.Option value={`3`}>3</Select.Option>
@@ -1740,6 +1764,7 @@ const AdminHome = () => {
 
                   <Button
                     type="primary"
+                    size="small"
                     onClick={() => onClickSearchLevelHandle()}
                   >
                     검색
@@ -1764,6 +1789,7 @@ const AdminHome = () => {
                         minHeight={`370px`}
                         radius={`10px`}
                         shadow={`0 5px 15px rgba(0,0,0,0.05)`}
+                        border={`1px solid ${Theme.subTheme8_C}`}
                         margin={
                           (idx + 1) % 3 === 0 ? `0 0 30px 0` : `0 10px 30px 0`
                         }
@@ -1776,7 +1802,7 @@ const AdminHome = () => {
                             ju={`space-between`}
                             al={`flex-start`}
                             padding={`0 0 20px`}
-                            borderBottom={`1px solid ${Theme.grey2_C}`}
+                            borderBottom={`1px solid ${Theme.subTheme8_C}`}
                           >
                             <Wrapper width={`auto`}>
                               <Wrapper
@@ -1799,10 +1825,10 @@ const AdminHome = () => {
                                   width={`calc(100% - 44px)`}
                                   al={`flex-start`}
                                 >
-                                  <Text fontSize={`16px`} fontWeight={`700`}>
+                                  <Text fontSize={`14px`} fontWeight={`700`}>
                                     {data.day}
                                   </Text>
-                                  <Text fontSize={`16px`} fontWeight={`700`}>
+                                  <Text fontSize={`14px`} fontWeight={`700`}>
                                     {data.time}
                                   </Text>
                                 </Wrapper>
@@ -1824,7 +1850,7 @@ const AdminHome = () => {
                                   />
                                 </Wrapper>
 
-                                <Text fontSize={`16px`} fontWeight={`700`}>
+                                <Text fontSize={`14px`} fontWeight={`700`}>
                                   {data.User.username}&nbsp;/&nbsp;{data.course}
                                 </Text>
                               </Wrapper>
@@ -1840,7 +1866,7 @@ const AdminHome = () => {
                                     alt={`icon_lecture`}
                                   />
                                 </Wrapper>
-                                <Text fontSize={`16px`} fontWeight={`700`}>
+                                <Text fontSize={`14px`} fontWeight={`700`}>
                                   {data.number}
                                 </Text>
                               </Wrapper>
@@ -1852,10 +1878,10 @@ const AdminHome = () => {
                               al={width < 1350 ? `flex-start` : `flex-end`}
                               margin={width < 1350 ? `20px 0 0` : `0`}
                             >
-                              <Text fontSize={`14px`} fontWeight={`bold`}>
+                              <Text fontSize={`12px`} fontWeight={`bold`}>
                                 {data.startLv}
                               </Text>
-                              <Text>
+                              <Text fontSize={`12px`}>
                                 수업 시작일 :{" "}
                                 {data.startDate
                                   .replace(/\//g, "-")
@@ -1877,6 +1903,7 @@ const AdminHome = () => {
                                     al={`flex-start`}
                                     key={data.id}
                                     margin={`0 15px 0 0`}
+                                    fontSize={`12px`}
                                   >
                                     {data.User.username}
                                   </Wrapper>
@@ -1887,11 +1914,12 @@ const AdminHome = () => {
                         <Wrapper dr={`row`}>
                           <CommonButton
                             padding={`0`}
-                            width={`100px`}
-                            height={`35px`}
+                            width={`80px`}
+                            height={`30px`}
                             radius={`5px`}
                             margin={`0 10px 0 0`}
-                            fontSize={`14px`}
+                            fontSize={`13px`}
+                            kindOf={`white`}
                             onClick={() =>
                               moveLinkHandler(`/admin/class/${data.id}`)
                             }
@@ -1900,10 +1928,10 @@ const AdminHome = () => {
                           </CommonButton>
                           <CommonButton
                             padding={`0`}
-                            width={`100px`}
-                            height={`35px`}
+                            width={`80px`}
+                            height={`30px`}
                             radius={`5px`}
-                            fontSize={`14px`}
+                            fontSize={`13px`}
                             onClick={() => updateModalOpen(data)}
                           >
                             수정
@@ -2183,130 +2211,170 @@ const AdminHome = () => {
           >
             <Wrapper
               dr={`row`}
-              ju={`space-between`}
-              margin={`0 0 15px`}
-              fontSize={width < 700 ? `14px` : `16px`}
+              padding={`3px 0`}
+              borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
             >
-              <Text>
-                {`작성자: ${
-                  noticeDetailData && noticeDetailData.noticeAuthor
-                }(${
-                  noticeDetailData &&
+              <Wrapper
+                width={`10%`}
+                bgColor={Theme.lightGrey3_C}
+                padding={`3px`}
+              >
+                작성자
+              </Wrapper>
+              <Wrapper width={`90%`} al={`flex-start`} padding={`0 10px`}>
+                {noticeDetailData && noticeDetailData.noticeAuthor} (
+                {noticeDetailData &&
                   (noticeDetailData.noticeLevel === 1
                     ? "학생"
                     : noticeDetailData.noticeLevel === 2
                     ? "강사"
-                    : "관리자")
-                })`}
-              </Text>
-              <Text>
-                {`작성일: ${
-                  noticeDetailData && noticeDetailData.noticeCreatedAt
-                }`}
-              </Text>
-            </Wrapper>
-            <Wrapper
-              dr={`row`}
-              ju={`flex-start`}
-              margin={`0 0 35px`}
-              fontSize={width < 700 ? `14px` : `16px`}
-            >
-              <Text>전송된 사람:&nbsp;</Text>
-              {normalNoticeDetailReceviers &&
-                (normalNoticeDetailReceviers.length === 0 ? (
-                  <Text>admin</Text>
-                ) : (
-                  normalNoticeDetailReceviers.map((data, idx) => (
-                    <Text key={idx}>
-                      {data.username}
-                      {idx !== normalNoticeDetailReceviers.length - 1 && ","}
-                      &nbsp;
-                    </Text>
-                  ))
-                ))}
+                    : "관리자")}
+                )
+              </Wrapper>
             </Wrapper>
 
-            <Wrapper dr={`row`} ju={`flex-end`}>
-              <Text margin={`0 10px 0 0`} fontSize={`15px`}>
+            <Wrapper
+              dr={`row`}
+              padding={`3px 0`}
+              borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+            >
+              <Wrapper
+                width={`10%`}
+                bgColor={Theme.lightGrey3_C}
+                padding={`3px`}
+              >
+                작성일
+              </Wrapper>
+              <Wrapper width={`90%`} al={`flex-start`} padding={`0 10px`}>
+                {noticeDetailData && noticeDetailData.noticeCreatedAt}
+              </Wrapper>
+            </Wrapper>
+
+            <Wrapper
+              dr={`row`}
+              padding={`3px 0`}
+              borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+            >
+              <Wrapper
+                width={`10%`}
+                bgColor={Theme.lightGrey3_C}
+                padding={`3px`}
+              >
+                전송된 사람
+              </Wrapper>
+              <Wrapper width={`90%`} al={`flex-start`} padding={`0 10px`}>
+                {normalNoticeDetailReceviers &&
+                  (normalNoticeDetailReceviers.length === 0 ? (
+                    <Text>admin</Text>
+                  ) : (
+                    normalNoticeDetailReceviers.map((data, idx) => (
+                      <Text key={idx}>
+                        {data.username}
+                        {idx !== normalNoticeDetailReceviers.length - 1 && ","}
+                        &nbsp;
+                      </Text>
+                    ))
+                  ))}
+              </Wrapper>
+            </Wrapper>
+
+            <Wrapper
+              dr={`row`}
+              padding={`3px 0`}
+              borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+              margin={`0 0 20px`}
+            >
+              <Wrapper
+                width={`10%`}
+                bgColor={Theme.lightGrey3_C}
+                padding={`3px`}
+              >
                 첨부파일
-              </Text>
-              {noticeDetailData && noticeDetailData.noticeFile ? (
-                <CommonButton
-                  size={`small`}
-                  radius={`5px`}
-                  fontSize={`14px`}
-                  onClick={() =>
-                    fileDownloadHandler(noticeDetailData.noticeFile)
-                  }
-                >
-                  다운로드
-                </CommonButton>
-              ) : (
-                <Text>첨부파일이 없습니다.</Text>
+              </Wrapper>
+
+              <Wrapper width={`90%`} al={`flex-start`} padding={`0 10px`}>
+                {noticeDetailData && noticeDetailData.noticeFile ? (
+                  <CommonButton
+                    size={`small`}
+                    radius={`5px`}
+                    fontSize={`14px`}
+                    onClick={() =>
+                      fileDownloadHandler(noticeDetailData.noticeFile)
+                    }
+                  >
+                    다운로드
+                  </CommonButton>
+                ) : (
+                  <Text>첨부파일이 없습니다.</Text>
+                )}
+              </Wrapper>
+            </Wrapper>
+
+            <Wrapper
+              dr={`row`}
+              padding={`3px 0`}
+              borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+            >
+              <Wrapper
+                width={`10%`}
+                bgColor={Theme.lightGrey3_C}
+                padding={`3px`}
+              >
+                제목
+              </Wrapper>
+              <Wrapper width={`90%`} al={`flex-start`} padding={`0 10px`}>
+                {noticeDetailData && noticeDetailData.noticeTitle}
+              </Wrapper>
+            </Wrapper>
+
+            <Wrapper
+              dr={`row`}
+              padding={`3px 0`}
+              borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+            >
+              <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
+                내용
+              </Wrapper>
+
+              {noticeDetailData && (
+                <Wrapper
+                  border={`1px solid ${Theme.lightGrey3_C}`}
+                  padding={`10px`}
+                  al={`flex-start`}
+                  ju={`flex-start`}
+                  minHeight={`300px`}
+                  dangerouslySetInnerHTML={{
+                    __html: noticeDetailData.noticeContent,
+                  }}
+                />
               )}
             </Wrapper>
 
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              제목
-            </Text>
-            <Wrapper
-              padding={`10px`}
-              fontSize={width < 700 ? `14px` : `16px`}
-              border={`1px solid ${Theme.lightGrey3_C}`}
-            >
-              <WordbreakText>
-                {noticeDetailData && noticeDetailData.noticeTitle}
-              </WordbreakText>
-            </Wrapper>
-
-            <Text fontSize={`18px`} fontWeight={`bold`}>
-              내용
-            </Text>
-            {noticeDetailData && (
-              <Wrapper
-                border={`1px solid ${Theme.lightGrey3_C}`}
-                padding={`10px`}
-                fontSize={width < 700 ? `14px` : `16px`}
-                al={`flex-start`}
-                ju={`flex-start`}
-                minHeight={`300px`}
-                dangerouslySetInnerHTML={{
-                  __html: noticeDetailData.noticeContent,
-                }}
-              />
-            )}
-
             <FormTag form={commentForm} onFinish={commentSubmit}>
-              <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 50px`}>
-                <Text
-                  fontSize={width < 900 ? `15px` : `18px`}
-                  color={Theme.red_C}
-                  fontWeight={`700`}
-                  margin={`0 0 10px`}
-                >
-                  댓글&nbsp;{normalCommentsLen}
-                </Text>
-                <FormItem
-                  width={`100%`}
-                  name={`comment`}
-                  rules={[{ required: true, message: "댓글을 입력해주세요." }]}
-                >
-                  <TextArea
+              <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 10px`}>
+                <Wrapper dr={`row`} padding={`3px 0`}>
+                  <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
+                    댓글&nbsp;{normalCommentsLen}
+                  </Wrapper>
+
+                  <FormItem
                     width={`100%`}
-                    height={`115px`}
-                    placeholder={`댓글을 입력해주세요.`}
-                  />
-                </FormItem>
-                <Wrapper al={`flex-end`}>
-                  <CommonButton
-                    htmlType={`submit`}
-                    width={`100px`}
-                    height={`35px`}
-                    fontSize={`18px`}
-                    padding={`0`}
+                    name={`comment`}
+                    rules={[
+                      { required: true, message: "댓글을 입력해주세요." },
+                    ]}
                   >
-                    작성
-                  </CommonButton>
+                    <TextArea
+                      width={`100%`}
+                      height={`115px`}
+                      placeholder={`댓글을 입력해주세요.`}
+                    />
+                  </FormItem>
+                  <Wrapper al={`flex-end`} margin={`10px 0 0`}>
+                    <Button htmlType={`submit`} type="primary">
+                      작성
+                    </Button>
+                  </Wrapper>
                 </Wrapper>
               </Wrapper>
             </FormTag>
@@ -2324,7 +2392,7 @@ const AdminHome = () => {
                     <>
                       <Wrapper
                         al={`flex-start`}
-                        padding={`30px 10px`}
+                        padding={`20px 0 20px 20px`}
                         borderTop={`1px solid ${Theme.lightGrey3_C}`}
                         borderBottom={`1px solid ${Theme.lightGrey3_C}`}
                         cursor={`pointer`}
@@ -2336,10 +2404,7 @@ const AdminHome = () => {
                           al={width < 900 ? `center` : `flex-start`}
                           margin={`0 0 13px`}
                         >
-                          <Text
-                            fontSize={width < 900 ? `15px` : `18px`}
-                            fontWeight={`700`}
-                          >
+                          <Text fontSize={`16px`} fontWeight={`700`}>
                             {data.name}(
                             {data.level === 1
                               ? "학생"
@@ -2348,7 +2413,7 @@ const AdminHome = () => {
                               : "관리자"}
                             )
                             <SpanText
-                              fontSize={width < 900 ? `13px` : `16px`}
+                              fontSize={`13px`}
                               fontWeight={`400`}
                               color={Theme.grey2_C}
                               margin={`0 0 0 15px`}
@@ -2382,6 +2447,18 @@ const AdminHome = () => {
                                 </CommonButton>
                               )}
                             </Wrapper>
+                          </Wrapper>
+                        </Wrapper>
+
+                        <Wrapper dr={`row`} margin={`10px 0 0`} al={`flex-end`}>
+                          <Wrapper
+                            width={`85%`}
+                            al={`flex-start`}
+                            wordBreak={`break-all`}
+                          >
+                            {data.content}
+                          </Wrapper>
+                          <Wrapper width={`15%`} al={`flex-end`}>
                             {me && data.UserId === me.id && (
                               <Wrapper dr={`row`} width={`auto`}>
                                 <HoverText
@@ -2394,8 +2471,8 @@ const AdminHome = () => {
                                 <Popconfirm
                                   placement="bottomRight"
                                   title={`삭제하시겠습니까?`}
-                                  okText="Delete"
-                                  cancelText="Cancel"
+                                  okText="삭제"
+                                  cancelText="취소"
                                   onConfirm={() => deleteCommentHandler(data)}
                                 >
                                   <HoverText color={Theme.red_C}>
@@ -2406,7 +2483,6 @@ const AdminHome = () => {
                             )}
                           </Wrapper>
                         </Wrapper>
-                        {data.content}
                       </Wrapper>
 
                       {/* 대댓글 영역 */}
@@ -2423,19 +2499,14 @@ const AdminHome = () => {
                                   : `30px 0 30px ${v.lev * 15}px`
                               }
                               al={`flex-start`}
-                              borderTop={`1px solid ${Theme.lightGrey_C}`}
+                              borderTop={`1px dashed ${Theme.grey_C}`}
                               bgColor={
                                 v.lev === 2
                                   ? Theme.lightGrey4_C
                                   : Theme.lightGrey2_C
                               }
                             >
-                              <Wrapper
-                                dr={`row`}
-                                ju={`space-between`}
-                                margin={`0 0 10px`}
-                                width={`calc(100% - 15px)`}
-                              >
+                              <Wrapper dr={`row`} ju={`space-between`}>
                                 <Wrapper
                                   dr={`row`}
                                   ju={`flex-start`}
@@ -2453,10 +2524,7 @@ const AdminHome = () => {
                                     ></Wrapper>
                                     <Icon width={`${v.lev * 10}px`}></Icon>
                                   </Wrapper>
-                                  <Text
-                                    fontSize={width < 900 ? `15px` : `18px`}
-                                    fontWeight={`700`}
-                                  >
+                                  <Text fontWeight={`700`} fontSize={`16px`}>
                                     {v.name}(
                                     {v.level === 1
                                       ? "학생"
@@ -2466,7 +2534,7 @@ const AdminHome = () => {
                                     )
                                   </Text>
                                   <Text
-                                    fontSize={width < 900 ? `13px` : `16px`}
+                                    fontSize={`13px`}
                                     margin={`0 15px`}
                                     color={Theme.grey2_C}
                                   >
@@ -2475,14 +2543,36 @@ const AdminHome = () => {
                                 </Wrapper>
                                 <Wrapper width={`auto`} al={`flex-end`}>
                                   {me && (
-                                    <HoverText
-                                      margin={`0 0 10px`}
+                                    <CommonButton
+                                      padding={`0 10px`}
+                                      kindOf={`black`}
+                                      margin={`0 0 0 10px`}
+                                      fontSize={`14px`}
                                       onClick={() => openRecommentToggle(v)}
                                     >
                                       댓글 작성
-                                    </HoverText>
+                                    </CommonButton>
                                   )}
+                                </Wrapper>
+                              </Wrapper>
 
+                              <Wrapper
+                                dr={`row`}
+                                margin={`10px 0 0`}
+                                al={`flex-end`}
+                              >
+                                <Wrapper
+                                  width={`85%`}
+                                  al={`flex-start`}
+                                  wordBreak={`break-all`}
+                                >
+                                  {v.isDelete === 1 ? (
+                                    <Text>삭제된 댓글입니다.</Text>
+                                  ) : (
+                                    <Text>{v.content.split("ㄴ")[1]}</Text>
+                                  )}
+                                </Wrapper>
+                                <Wrapper width={`15%`} al={`flex-end`}>
                                   {v.isDelete === 0 &&
                                     me &&
                                     v.UserId === me.id && (
@@ -2498,8 +2588,8 @@ const AdminHome = () => {
                                         <Popconfirm
                                           placement="bottomRight"
                                           title={`삭제하시겠습니까?`}
-                                          okText="Delete"
-                                          cancelText="Cancel"
+                                          okText="삭제"
+                                          cancelText="취소"
                                           onConfirm={() =>
                                             deleteCommentHandler(v)
                                           }
@@ -2509,17 +2599,6 @@ const AdminHome = () => {
                                       </Wrapper>
                                     )}
                                 </Wrapper>
-                              </Wrapper>
-
-                              <Wrapper
-                                al={`flex-start`}
-                                margin={`0 0 15px 15px`}
-                              >
-                                {v.isDelete === 1 ? (
-                                  <Text>삭제된 댓글입니다.</Text>
-                                ) : (
-                                  <Text>{v.content.split("ㄴ")[1]}</Text>
-                                )}
                               </Wrapper>
                             </Wrapper>
                           );
@@ -2557,6 +2636,7 @@ const AdminHome = () => {
                     ]}
                   >
                     <Select
+                      size="small"
                       showSearch
                       style={{ width: `100%` }}
                       placeholder="유형을 선택해 주세요."
@@ -2586,6 +2666,7 @@ const AdminHome = () => {
                       ]}
                     >
                       <Select
+                        size="small"
                         mode="multiple"
                         showSearch
                         style={{ width: `100%` }}
@@ -2630,13 +2711,19 @@ const AdminHome = () => {
                   name="title"
                   rules={[{ required: true, message: "제목을 입력해 주세요" }]}
                 >
-                  <Input allowClear placeholder="제목을 입력해주세요." />
+                  <Input
+                    style={{ boxShadow: `none` }}
+                    size="small"
+                    allowClear
+                    placeholder="제목을 입력해주세요."
+                  />
                 </Form.Item>
 
                 <Form.Item
                   label="본문"
                   name="content"
                   rules={[{ required: true, message: "본문을 입력해 주세요." }]}
+                  style={{ margin: `0` }}
                 >
                   <ToastEditorComponentMix
                     action={getEditContent}
@@ -2658,20 +2745,21 @@ const AdminHome = () => {
                     ref={normalNoticeFileRef}
                     onChange={normalNoticeFileUploadHandler}
                   />
-                  <Text margin={`0 10px 0 0`}>
+                  <Button
+                    size="small"
+                    type="primary"
+                    onClick={normalNoticeFileClickHandler}
+                  >
+                    파일업로드
+                  </Button>
+
+                  <Text margin={`0 0 0 10px`}>
                     {normalNoticeUpdateData && normalNoticeUpdateData.noticeFile
                       ? `첨부파일`
                       : filename.value
                       ? filename.value
                       : `파일을 선택해주세요.`}
                   </Text>
-                  <Button
-                    size="small"
-                    type="primary"
-                    onClick={normalNoticeFileClickHandler}
-                  >
-                    FILE UPLOAD
-                  </Button>
                 </FileBox>
               </Form>
             </Wrapper>
@@ -2713,15 +2801,27 @@ const AdminHome = () => {
           >
             {currentData && (
               <Wrapper padding={`10px`}>
-                <FormItem width={`100%`} label="댓글">
-                  <Text>
+                <Wrapper
+                  dr={`row`}
+                  padding={`3px 0`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                  margin={`0 0 10px`}
+                >
+                  <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
+                    댓글 내용
+                  </Wrapper>
+
+                  <Wrapper wordBreak={`break-all`} al={`flex-start`}>
                     {currentData.isDelete === 1
                       ? "삭제된 댓글입니다."
                       : currentData.parent === 0
                       ? currentData.content
                       : currentData.content.split("ㄴ")[1]}
-                  </Text>
-                </FormItem>
+                  </Wrapper>
+                </Wrapper>
+                {/* <FormItem width={`100%`} label="댓글">
+                  <Text></Text>
+                </FormItem> */}
 
                 <FormTag form={childCommentForm} onFinish={childCommentSubmit}>
                   <FormItem
@@ -2741,9 +2841,8 @@ const AdminHome = () => {
                   <Wrapper al={`flex-end`}>
                     <CommonButton
                       htmlType={`submit`}
-                      width={`100px`}
-                      height={`35px`}
-                      fontSize={`18px`}
+                      width={`80px`}
+                      height={`30px`}
                       padding={`0`}
                     >
                       작성

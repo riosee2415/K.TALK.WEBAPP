@@ -138,6 +138,7 @@ export const Wrapper = styled.div`
   background-repeat: no-repeat;
   background-attachment: ${(props) => props.attachment};
   background-position: ${(props) => props.bgPosition || `center`};
+  word-break: ${(props) => props.wordBreak};
 
   transition: ${(props) => props.transition || `0.2s`};
   cursor: ${(props) => props.cursor};
