@@ -444,13 +444,13 @@ const StudentNormalNotice = () => {
           </Wrapper>
         </Wrapper>
 
-        <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
+        <Wrapper>
           <Wrapper
             dr={`row`}
             textAlign={`center`}
             padding={`20px 0`}
-            bgColor={Theme.subTheme9_C}
-            borderBottom={`1px solid ${Theme.grey_C}`}
+            bgColor={Theme.subTheme14_C}
+            borderTop={`1px solid ${Theme.subTheme8_C}`}
           >
             <WordbreakText
               fontSize={width < 700 ? `14px` : `18px`}
@@ -460,13 +460,7 @@ const StudentNormalNotice = () => {
             >
               No
             </WordbreakText>
-            <WordbreakText
-              fontSize={width < 700 ? `12px` : `18px`}
-              fontWeight={`Bold`}
-              width={width < 800 ? `18%` : `10%`}
-            >
-              Date
-            </WordbreakText>
+
             <WordbreakText
               fontSize={width < 700 ? `12px` : `18px`}
               fontWeight={`Bold`}
@@ -487,6 +481,13 @@ const StudentNormalNotice = () => {
               width={`10%`}
             >
               Comment
+            </WordbreakText>
+            <WordbreakText
+              fontSize={width < 700 ? `12px` : `18px`}
+              fontWeight={`Bold`}
+              width={width < 800 ? `18%` : `10%`}
+            >
+              Date
             </WordbreakText>
             <WordbreakText
               fontSize={width < 700 ? `12px` : `18px`}
@@ -534,21 +535,7 @@ const StudentNormalNotice = () => {
                     >
                       {data.noticeId}
                     </WordbreakText>
-                    {/* 날짜 */}
-                    <WordbreakText
-                      width={width < 800 ? `18%` : `10%`}
-                      fontSize={width < 700 && `12px`}
-                      onClick={() =>
-                        moveLinkHandler(
-                          `/normalNotice/${data.noticeId}?type=stu`
-                        )
-                      }
-                      isEllipsis
-                    >
-                      {moment(data.noticeCreatedAt, "YYYY/MM/DD").format(
-                        "YYYY/MM/DD"
-                      )}
-                    </WordbreakText>
+
                     {/* 제목 */}
                     <WordbreakText
                       width={width < 800 ? `25%` : `43%`}
@@ -595,6 +582,21 @@ const StudentNormalNotice = () => {
                       }
                     >
                       {data.commentCnt}
+                    </WordbreakText>
+                    {/* 날짜 */}
+                    <WordbreakText
+                      width={width < 800 ? `18%` : `10%`}
+                      fontSize={width < 700 && `12px`}
+                      onClick={() =>
+                        moveLinkHandler(
+                          `/normalNotice/${data.noticeId}?type=stu`
+                        )
+                      }
+                      isEllipsis
+                    >
+                      {moment(data.noticeCreatedAt, "YYYY/MM/DD").format(
+                        "YYYY/MM/DD"
+                      )}
                     </WordbreakText>
                     {/* 기능 */}
                     <Wrapper width={width < 800 ? `22%` : `12%`}>

@@ -1,6 +1,14 @@
 import { createGlobalStyle, css } from "styled-components";
 
-const fontStyle = css``;
+const fontStyle = css`
+  @font-face {
+    font-family: "LeferiPoint-BlackObliqueA";
+    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/LeferiPoint-BlackObliqueA.woff")
+      format("woff");
+    font-weight: normal;
+    font-style: normal;
+  }
+`;
 
 const GlobalStyles = createGlobalStyle`
   ${fontStyle}

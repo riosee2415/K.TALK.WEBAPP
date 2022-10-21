@@ -594,18 +594,7 @@ export const SpanText = styled.span`
 export const CommonTitle = styled(Text)`
   font-size: 22px;
   font-weight: bold;
-  position: relative;
-
-  &:before {
-    content: "";
-    width: 100%;
-    height: 8px;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    background: ${(props) => props.theme.subTheme8_C};
-    z-index: -1;
-  }
+  font-family: "LeferiPoint-BlackObliqueA";
 
   @media (max-width: 800px) {
     font-size: 17px;
