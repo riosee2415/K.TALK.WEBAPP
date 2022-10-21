@@ -7,7 +7,6 @@ import Head from "next/head";
 
 import ClientLayout from "../components/ClientLayout";
 import { useDispatch, useSelector } from "react-redux";
-import Popup from "../components/popup/popup";
 import {
   Text,
   Image,
@@ -26,7 +25,6 @@ import { useRouter } from "next/router";
 import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
 import { SEO_LIST_REQUEST } from "../reducers/seo";
 
-import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import styled from "styled-components";
 import {
   COMMUNITY_CREATE_REQUEST,
@@ -46,33 +44,35 @@ import {
   Modal,
   notification,
   Pagination,
-  Select,
 } from "antd";
 import ToastEditorComponent6 from "../components/editor/ToastEditorComponent6";
-import { FileTextOutlined } from "@ant-design/icons";
+import {
+  CommentOutlined,
+  EyeOutlined,
+  FileTextOutlined,
+} from "@ant-design/icons";
 
 const Box = styled(Wrapper)`
   align-items: flex-start;
   justify-content: flex-start;
   transition: 0.5s;
-  width: calc(50% - 10px);
-  padding: 20px 25px;
-  background-color: ${(props) => props.theme.lightGrey_C};
+  width: calc(100% / 3 - 14px);
+  padding: 30px 25px;
+  background-color: ${(props) => props.theme.lightGrey2_C};
+  border: 1px solid ${Theme.subTheme13_C};
   border-radius: 10px;
   cursor: pointer;
+  margin: 0 20px 20px 0;
+
   &:hover {
     background-color: ${(props) => props.theme.subTheme6_C};
-    & ${Text} {
-      color: ${(props) => props.theme.white_C};
-    }
+    color: ${(props) => props.theme.white_C};
   }
-  & ${Text} {
-    color: ${(props) => props.theme.subTheme11_C};
+
+  &:nth-child(3n) {
+    margin: 0 0 20px;
   }
-  &:nth-child(2n) {
-    margin: 0 0 20px 20px;
-  }
-  margin: 0 0 20px;
+
   @media (max-width: 800px) {
     width: 100%;
     margin: 0 0 20px !important;
@@ -93,27 +93,28 @@ const Home = ({}) => {
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
   );
-
-  ////// HOOKS //////
-  const router = useRouter();
-  const fileRef = useRef();
-  ////// REDUX //////
-  const dispatch = useDispatch();
-  const [form] = Form.useForm();
-  const { communityList, communityMaxLength, createModal } = useSelector(
-    (state) => state.community
-  );
   const { me } = useSelector((state) => state.user);
-  const [modalView, setModalView] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const [contentData, setContentData] = useState("");
   const {
-    communityTypes,
+    communityList,
+    communityMaxLength,
+    createModal,
     st_communityCreateDone,
     st_communityCreateError,
     filePath,
   } = useSelector((state) => state.community);
+
+  ////// HOOKS //////
+  const router = useRouter();
+  const fileRef = useRef();
+
+  ////// REDUX //////
+  const dispatch = useDispatch();
+  const [form] = Form.useForm();
+
+  const [modalView, setModalView] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [contentData, setContentData] = useState("");
+
   ////// USEEFFECT //////
   useEffect(() => {
     if (st_communityCreateDone) {
@@ -282,8 +283,104 @@ const Home = ({}) => {
                 : `https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main-banner/banner1.png`
             }
           />
-          <Wrapper margin={`80px 0 0`}>
+
+          <Wrapper>
             <RsWrapper>
+              <Wrapper al={`flex-start`} ju={`flex-start`} margin={`110px 0 0`}>
+                <Wrapper>
+                  <Image
+                    alt="logo"
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/icon_symbol.png`}
+                    width={`64px`}
+                  />
+                  <Text
+                    fontSize={`32px`}
+                    fontWeight={`700`}
+                    margin={`0 0 20px`}
+                  >
+                    Student's Review
+                  </Text>
+                  <Wrapper al={`flex-end`}>
+                    {me && (
+                      <CommonButton onClick={modalOpen}>Write</CommonButton>
+                    )}
+                  </Wrapper>
+                </Wrapper>
+                <Wrapper dr={`row`} ju={`flex-start`}>
+                  {communityList && communityList.length === 0 ? (
+                    <Wrapper>
+                      <Empty description={`게시물이 없습니다.`} />
+                    </Wrapper>
+                  ) : (
+                    communityList &&
+                    communityList.map((data) => {
+                      return (
+                        <Box
+                          onClick={() => moveLinkHandler(`/board/${data.id}`)}
+                        >
+                          <Text color={Theme.grey3_C} fontSize={`15px`}>
+                            No.{data.id}
+                          </Text>
+                          <Text
+                            margin={`10px 0 5px`}
+                            width={`100%`}
+                            isEllipsis
+                            fontSize={`22px`}
+                            fontWeight={`bold`}
+                          >
+                            {data.file && (
+                              <>
+                                <FileTextOutlined
+                                  style={{ color: Theme.basicTheme_C }}
+                                />
+                                &nbsp;
+                              </>
+                            )}
+                            {data.title}
+                          </Text>
+                          <Text>
+                            {data.createdAt}
+                            <SpanText fontSize={`12px`} margin={`0 5px`}>
+                              |
+                            </SpanText>
+                            {data.username}(
+                            {data.level === 1
+                              ? `Student`
+                              : data.level === 2
+                              ? `Teacher`
+                              : `admin`}
+                            )
+                          </Text>
+                          <Wrapper
+                            dr={`row`}
+                            ju={`flex-end`}
+                            margin={`45px 0 0`}
+                          >
+                            <EyeOutlined />
+                            &nbsp;
+                            {data.hit}
+                            <SpanText fontSize={`12px`} margin={`0 5px`}>
+                              |
+                            </SpanText>
+                            <CommentOutlined />
+                            &nbsp;
+                            {data.commentCnt}
+                          </Wrapper>
+                        </Box>
+                      );
+                    })
+                  )}
+                </Wrapper>
+                <Wrapper margin={`20px 0 100px`}>
+                  <Pagination
+                    defaultCurrent={1}
+                    current={parseInt(currentPage)}
+                    onChange={(page) => otherPageCall(page)}
+                    total={communityMaxLength * 9}
+                  />
+                </Wrapper>
+              </Wrapper>
+
               <Wrapper
                 fontSize={
                   width < 900 ? (width < 700 ? `14px` : `16px`) : `24px`
@@ -370,7 +467,7 @@ const Home = ({}) => {
                   </Wrapper>
                   <Wrapper width={`auto`}>
                     <ATag
-                      href={`https://forms.gle/nsqiuEsEQqMj9qUj7 `}
+                      href={`https://forms.gle/nsqiuEsEQqMj9qUj7`}
                       target={`_blank`}
                     >
                       <CommonButton
@@ -378,7 +475,7 @@ const Home = ({}) => {
                         radius={`25px`}
                         kindOf={`white`}
                         padding={`5px 5px 5px 8px`}
-                        onClick={() => moveLinkHandler(`/application`)}
+                        // onClick={() => moveLinkHandler(`/application`)}
                       >
                         apply here
                         <Image
@@ -498,7 +595,6 @@ const Home = ({}) => {
                 >
                   <ATag
                     width={`auto`}
-                    dr={`row`}
                     href={`https://www.instagram.com/ktalk_live/`}
                     target={`_blank`}
                     margin={width < 900 && `0 0 15px`}
@@ -506,7 +602,7 @@ const Home = ({}) => {
                     <Image
                       alt="icon"
                       margin={`0 5px 0 0px`}
-                      width={`24px`}
+                      width={`50px`}
                       src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/icon_instagram.png`}
                     />
                     <Text fontSize={width < 900 ? `14px` : `18px`}>
@@ -522,14 +618,13 @@ const Home = ({}) => {
                   />
                   <ATag
                     width={`auto`}
-                    dr={`row`}
                     href={`https://www.facebook.com/KtalkLive`}
                     target={`_blank`}
                   >
                     <Image
                       alt="icon"
                       margin={`0 5px 0 0px`}
-                      width={`24px`}
+                      width={`50px`}
                       src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/icon_facebook.png`}
                     />
                     <Text fontSize={width < 900 ? `14px` : `18px`}>
@@ -543,92 +638,31 @@ const Home = ({}) => {
                   dr={`row`}
                   width={width < 1000 ? `100%` : `35%`}
                 >
-                  <ATag
-                    width={`auto`}
-                    dr={`row`}
-                    href={`mailto:jklc.ktalk@gmail.com`}
-                  >
-                    <Text
-                      fontSize={
-                        width < 900 ? (width < 700 ? `13px` : `14px`) : `18px`
-                      }
-                      fontWeight={`bold`}
-                    >
-                      More infomation
-                    </Text>
+                  <ATag width={`auto`} href={`mailto:jklc.ktalk@gmail.com`}>
                     <Image
                       alt="icon"
                       margin={`0 5px 0 15px`}
-                      width={`24px`}
+                      width={`50px`}
                       src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/icon_mail.png`}
                     />
-                    <Text fontSize={width < 900 ? `14px` : `18px`}>
-                      jklc.ktalk@gmail.com
-                    </Text>
+                    <Wrapper dr={`row`}>
+                      <Text
+                        fontSize={
+                          width < 900 ? (width < 700 ? `13px` : `14px`) : `18px`
+                        }
+                        fontWeight={`bold`}
+                        margin={`0 5px 0 0`}
+                      >
+                        More infomation
+                      </Text>
+                      <Text fontSize={width < 900 ? `14px` : `18px`}>
+                        jklc.ktalk@gmail.com
+                      </Text>
+                    </Wrapper>
                   </ATag>
                 </Wrapper>
               </Wrapper>
 
-              <Wrapper al={`flex-start`} ju={`flex-start`} margin={`110px 0 0`}>
-                <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 20px`}>
-                  <Text fontSize={`24px`} fontWeight={`700`}>
-                    Student's Review
-                  </Text>
-                  {me && <CommonButton onClick={modalOpen}>Write</CommonButton>}
-                </Wrapper>
-                <Wrapper dr={`row`} ju={`flex-start`}>
-                  {communityList && communityList.length === 0 ? (
-                    <Wrapper>
-                      <Empty description={`게시물이 없습니다.`} />
-                    </Wrapper>
-                  ) : (
-                    communityList &&
-                    communityList.map((data) => {
-                      return (
-                        <Box
-                          onClick={() => moveLinkHandler(`/board/${data.id}`)}
-                        >
-                          <Text>No.{data.id}</Text>
-                          <Text margin={`0 0 40px`} width={`100%`} isEllipsis>
-                            {data.file && (
-                              <>
-                                <FileTextOutlined
-                                  style={{ color: Theme.basicTheme_C }}
-                                />
-                                &nbsp;
-                              </>
-                            )}
-                            {data.title}
-                          </Text>
-                          <Wrapper dr={`row`} ju={`space-between`}>
-                            <Text>
-                              {data.createdAt} | {data.username}(
-                              {data.level === 1
-                                ? `Student`
-                                : data.level === 2
-                                ? `Teacher`
-                                : `admin`}
-                              )
-                            </Text>
-                            <Text>
-                              View&nbsp;{data.hit}&nbsp;| Comments&nbsp;
-                              {data.commentCnt}
-                            </Text>
-                          </Wrapper>
-                        </Box>
-                      );
-                    })
-                  )}
-                </Wrapper>
-                <Wrapper margin={`20px 0 0`}>
-                  <Pagination
-                    defaultCurrent={1}
-                    current={parseInt(currentPage)}
-                    onChange={(page) => otherPageCall(page)}
-                    total={communityMaxLength * 10}
-                  />
-                </Wrapper>
-              </Wrapper>
               <Modal
                 title={`Write`}
                 visible={createModal}
@@ -690,7 +724,6 @@ const Home = ({}) => {
               </Modal>
             </RsWrapper>
           </Wrapper>
-          <Popup />
         </WholeWrapper>
       </ClientLayout>
     </>
