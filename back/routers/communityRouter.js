@@ -174,12 +174,12 @@ router.post("/list", async (req, res, next) => {
   //   return res.status(403).send("로그인 후 이용 가능합니다.");
   // }
 
-  const LIMIT = 10;
+  const LIMIT = 9;
 
   const _page = page ? page : 1;
 
   const __page = _page - 1;
-  const OFFSET = __page * 10;
+  const OFFSET = __page * 9;
 
   const _searchTitle = searchTitle ? searchTitle : ``;
   const _searchName = searchName ? searchName : ``;
