@@ -548,7 +548,7 @@ export const ATag = styled.a`
   height: ${(props) => props.height};
   min-height: ${(props) => props.minHeight};
   display: ${(props) => props.display || `flex`};
-  flex-direction: ${(props) => props.dr};
+  flex-direction: ${(props) => props.dr || `column`};
   align-items: ${(props) => props.al || `center`};
   justify-content: ${(props) => props.ju || `center`};
   flex-wrap: ${(props) => props.wrap || `wrap`};
@@ -595,18 +595,7 @@ export const SpanText = styled.span`
 export const CommonTitle = styled(Text)`
   font-size: 22px;
   font-weight: bold;
-  position: relative;
-
-  &:before {
-    content: "";
-    width: 100%;
-    height: 8px;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    background: ${(props) => props.theme.subTheme8_C};
-    z-index: -1;
-  }
+  font-family: "LeferiPoint-BlackObliqueA";
 
   @media (max-width: 800px) {
     font-size: 17px;
@@ -616,7 +605,7 @@ export const CommonTitle = styled(Text)`
 export const TextInput = styled.input`
   width: ${(props) => props.width};
   height: ${(props) => props.height || `40px`};
-  border: ${(props) => props.border || `none`};
+  border: ${(props) => props.border || `1px solid ${props.theme.lightGrey3_C}`};
   border-bottom: ${(props) => props.borderBottom};
   padding: ${(props) => props.padding || `10px`};
   transition: ${(props) => props.transition || props.theme.transition};
@@ -626,7 +615,6 @@ export const TextInput = styled.input`
   font-size: ${(props) => props.fontSize};
   cursor: ${(props) => props.cursor};
   transition: 0.3s;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
 
   &:focus {
     outline: none;
@@ -653,14 +641,14 @@ export const TextArea = styled.textarea`
   width: ${(props) => props.width};
   height: ${(props) => props.height || `100px`};
   padding: ${(props) => props.padding || `10px`};
-  border: ${(props) => props.border || `none`};
+  border: ${(props) => props.border || `1px solid ${props.theme.lightGrey3_C}`};
   border-radius: ${(props) => props.theme.radius};
   background: ${(props) => props.bgColor};
   transition: ${(props) => props.transition || props.theme.transition};
   margin: ${(props) => props.margin};
   resize: none;
   border-radius: ${(props) => props.radius};
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
+  transition: 0.5s;
 
   &:focus {
     outline: none;

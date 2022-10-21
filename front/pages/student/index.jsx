@@ -55,6 +55,7 @@ import {
   LECTURE_SUBMIT_CREATE_REQUEST,
 } from "../../reducers/lecture";
 import {
+  CarryOutOutlined,
   CloseOutlined,
   RightCircleFilled,
   SyncOutlined,
@@ -1046,17 +1047,15 @@ const Student = () => {
               padding={width < 700 ? `15px 10px 10px` : `40px 30px 35px`}
               dr={`row`}
               ju={`space-between`}
+              radius={`10px`}
               bgColor={Theme.white_C}
               shadow={`0px 2px 10px rgba(0, 0, 0, 0.05)`}
               margin={`0 0 86px`}
             >
-              <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 20px`}>
-                <Text
-                  fontSize={width < 800 ? `18px` : `22px`}
-                  fontWeight={`bold`}
-                >
-                  <CommonTitle>My schedule</CommonTitle>
-                </Text>
+              <Wrapper dr={`row`} ju={`space-between`}>
+                <CommonTitle>
+                  <CarryOutOutlined /> My schedule
+                </CommonTitle>
               </Wrapper>
               {lectureStuLectureList && lectureStuLectureList.length === 0 ? (
                 <Wrapper marign={`50px 0`}>
@@ -1182,8 +1181,6 @@ const Student = () => {
               )}
             </Wrapper>
 
-            <StudentNormalNotice />
-
             {/* my class */}
 
             <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 40px`}>
@@ -1203,112 +1200,123 @@ const Student = () => {
                       <Wrapper
                         width={`100%`}
                         dr={`row`}
-                        ju={`flex-start`}
+                        ju={`space-between`}
                         margin={`0 0 30px`}
                       >
-                        <Image
-                          top={`0`}
-                          left={`0`}
-                          width={width < 800 ? `60px` : `80px`}
-                          height={width < 800 ? `60px` : `80px`}
-                          radius={`5px`}
-                          src={
-                            data.profileImage
-                              ? data.profileImage
-                              : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile_big.png"
-                          }
-                          alt="student_thumbnail"
-                        />
-                        <Wrapper
-                          padding={`0 0 0 16px`}
-                          width={
-                            width < 800
-                              ? `calc(100% - 80px)`
-                              : `calc(100% - 184px)`
-                          }
-                        >
-                          <Wrapper margin={`10px 0 0 0`} al={`flex-start`}>
-                            <Text
-                              fontSize={width < 800 ? `14px` : `16px`}
-                              margin={`0 0 10px`}
-                            >
-                              {data.course}
-                            </Text>
-
-                            <Wrapper
-                              dr={width < 800 ? `column` : `row`}
-                              ju={width < 800 ? `center` : `flex-start`}
-                              al={width < 800 ? `flex-start` : `center`}
-                              width={`auto`}
-                              fontSize={width < 800 ? `14px` : `16px`}
-                            >
-                              <Text
-                                fontSize={width < 800 ? `14px` : `16px`}
-                                margin={`0 10px 0 0`}
-                              >
-                                Lecturer: {data.username}
-                              </Text>
+                        <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
+                          <Image
+                            top={`0`}
+                            left={`0`}
+                            width={width < 800 ? `60px` : `139px`}
+                            height={width < 800 ? `60px` : `139px`}
+                            radius={`5px`}
+                            src={
+                              data.profileImage
+                                ? data.profileImage
+                                : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile_big.png"
+                            }
+                            alt="student_thumbnail"
+                          />
+                          <Wrapper padding={`0 0 0 16px`} width={`auto`}>
+                            <Wrapper margin={`10px 0 0 0`} al={`flex-start`}>
                               <Wrapper
-                                display={width < 1100 && `none`}
-                                width={`1px`}
-                                height={`20px`}
-                                margin={`0 10px`}
-                                borderRight={
-                                  width < 1100
-                                    ? `0`
-                                    : `1px dashed ${Theme.grey_C}`
-                                }
-                              />
-                              <Text margin={width < 800 ? `0` : `0 20px 0 0`}>
-                                Leanrning at chapter&nbsp;
-                                {data.startLv.split(` `)[1].split(`단원`)[0]} of
-                                Book&nbsp;
-                                {data.startLv.split(` `)[0].split(`권`)[0]}
-                                &nbsp;(Page&nbsp;
-                                {data.startLv.split(` `)[2].split(`페이지`)[0]})
-                              </Text>
-                              <Button
-                                type={`primary`}
-                                size={`small`}
-                                onClick={() => attendanceToggle(data)}
+                                width={`auto`}
+                                dr={`row`}
+                                fontSize={width < 800 ? `16px` : `20px`}
+                                margin={`0 0 25px`}
+                                padding={`8px 15px`}
+                                radius={`20px`}
+                                bgColor={Theme.lightGrey2_C}
                               >
-                                My Attendance
-                              </Button>
+                                {data.course}
+                              </Wrapper>
+
+                              <Wrapper
+                                ju={width < 800 ? `center` : `flex-start`}
+                                al={`flex-start`}
+                                width={`auto`}
+                                fontSize={width < 800 ? `14px` : `16px`}
+                              >
+                                <Text
+                                  fontSize={width < 800 ? `14px` : `16px`}
+                                  margin={`0 10px 0 0`}
+                                >
+                                  Lecturer : {data.username}
+                                </Text>
+
+                                <Wrapper width={`auto`} dr={`row`}>
+                                  <Text
+                                    margin={width < 800 ? `0` : `0 20px 0 0`}
+                                    fontWeight={`600`}
+                                  >
+                                    Leanrning at chapter&nbsp;
+                                    {
+                                      data.startLv
+                                        .split(` `)[1]
+                                        .split(`단원`)[0]
+                                    }
+                                    of Book&nbsp;
+                                    {data.startLv.split(` `)[0].split(`권`)[0]}
+                                    &nbsp;(Page&nbsp;
+                                    {
+                                      data.startLv
+                                        .split(` `)[2]
+                                        .split(`페이지`)[0]
+                                    }
+                                    )
+                                  </Text>
+                                  <Button
+                                    type={`primary`}
+                                    size={`small`}
+                                    onClick={() => attendanceToggle(data)}
+                                  >
+                                    My Attendance
+                                  </Button>
+                                </Wrapper>
+                              </Wrapper>
                             </Wrapper>
                           </Wrapper>
                         </Wrapper>
-                      </Wrapper>
-                      <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
-                        <Wrapper
-                          dr={`row`}
-                          textAlign={`center`}
-                          height={`80px`}
-                          bgColor={Theme.subTheme9_C}
-                          borderBottom={`1px solid ${Theme.grey_C}`}
-                        >
-                          <Wrapper width={`50%`} dr={`row`} height={`100%`}>
-                            <Wrapper width={`50%`}>
-                              Registration Frequency
-                            </Wrapper>
-                            <Wrapper
-                              width={`50%`}
-                              bgColor={Theme.white_C}
-                              height={`100%`}
+
+                        <Wrapper dr={`row`} width={`auto`}>
+                          <Wrapper
+                            width={`200px`}
+                            height={`auto`}
+                            bgColor={Theme.lightGrey2_C}
+                            radius={`10px`}
+                            minHeight={`140px`}
+                            margin={`0 10px 0 0`}
+                          >
+                            <Text color={Theme.grey2_C}>Registration</Text>
+                            <Text color={Theme.grey2_C} margin={`0 0 14px`}>
+                              Frequency
+                            </Text>
+                            <Text
+                              fontSize={`22px`}
+                              fontWeight={`bold`}
+                              color={Theme.basicTheme_C}
                             >
                               {data.stuPayCount}
-                            </Wrapper>
+                            </Text>
                           </Wrapper>
-                          <Wrapper width={`50%`} dr={`row`} height={`100%`}>
-                            <Wrapper width={`50%`}>
-                              Date of my first lessons
-                            </Wrapper>
-                            <Wrapper
-                              width={`50%`}
-                              bgColor={Theme.white_C}
-                              height={`100%`}
+                          <Wrapper
+                            width={`200px`}
+                            height={`auto`}
+                            bgColor={Theme.lightGrey2_C}
+                            radius={`10px`}
+                            minHeight={`140px`}
+                          >
+                            <Text color={Theme.grey2_C}>Date of</Text>
+                            <Text color={Theme.grey2_C} margin={`0 0 14px`}>
+                              my first lessons
+                            </Text>
+                            <Text
+                              fontSize={`22px`}
+                              fontWeight={`bold`}
+                              color={Theme.basicTheme_C}
                             >
                               {data.PartCreatedAt.slice(0, 10)}
-                            </Wrapper>
+                            </Text>
                           </Wrapper>
                         </Wrapper>
                       </Wrapper>
@@ -1339,8 +1347,8 @@ const Student = () => {
                       dr={`row`}
                       textAlign={`center`}
                       padding={`20px 0`}
-                      bgColor={Theme.subTheme9_C}
-                      borderBottom={`1px solid ${Theme.grey_C}`}
+                      bgColor={Theme.subTheme14_C}
+                      borderTop={`1px solid ${Theme.subTheme8_C}`}
                     >
                       <Text
                         fontSize={width < 700 ? `14px` : `18px`}
@@ -1350,13 +1358,7 @@ const Student = () => {
                       >
                         No
                       </Text>
-                      <Text
-                        fontSize={width < 700 ? `12px` : `18px`}
-                        fontWeight={`Bold`}
-                        width={width < 800 ? `18%` : `10%`}
-                      >
-                        Date
-                      </Text>
+
                       <Text
                         fontSize={width < 700 ? `12px` : `18px`}
                         fontWeight={`Bold`}
@@ -1377,6 +1379,13 @@ const Student = () => {
                         width={width < 800 ? `20%` : `15%`}
                       >
                         Writer
+                      </Text>
+                      <Text
+                        fontSize={width < 700 ? `12px` : `18px`}
+                        fontWeight={`Bold`}
+                        width={width < 800 ? `18%` : `10%`}
+                      >
+                        Date
                       </Text>
                     </Wrapper>
 
@@ -1403,12 +1412,7 @@ const Student = () => {
                               >
                                 {lec.noticeId}
                               </Wrapper>
-                              <Wrapper
-                                width={width < 800 ? `18%` : `10%`}
-                                fontSize={width < 700 && `12px`}
-                              >
-                                {lec.noticeCreatedAt}
-                              </Wrapper>
+
                               <Wrapper
                                 width={width < 800 ? `30%` : `55%`}
                                 al={`flex-start`}
@@ -1440,6 +1444,12 @@ const Student = () => {
                                   : "admin"}
                                 )
                               </Wrapper>
+                              <Wrapper
+                                width={width < 800 ? `18%` : `10%`}
+                                fontSize={width < 700 && `12px`}
+                              >
+                                {lec.noticeCreatedAt}
+                              </Wrapper>
                             </CustomTableHoverWrapper>
                           );
                         })
@@ -1449,6 +1459,8 @@ const Student = () => {
               })
             )}
 
+            <StudentNormalNotice />
+
             {/* View your homework */}
 
             <Wrapper dr={`row`} ju={`flex-start`} margin={`80px 0 20px`}>
@@ -1456,7 +1468,10 @@ const Student = () => {
               <CommonTitle>submit your homework</CommonTitle>
             </Wrapper>
 
-            <Wrapper margin={`0 0 40px`}>
+            <Wrapper
+              margin={`0 0 40px`}
+              borderTop={`1px solid ${Theme.subTheme8_C}`}
+            >
               {lectureHomeworkStuList &&
                 (lectureHomeworkStuList.length === 0 ? (
                   <Wrapper margin={`50px 0`}>
@@ -1471,7 +1486,6 @@ const Student = () => {
                         dr={`row`}
                         ju={`space-between`}
                         padding={width < 1100 ? `20px 10px` : `25px`}
-                        borderTop={idx === 0 && `1px solid ${Theme.grey_C}`}
                         borderBottom={`1px solid ${Theme.grey_C}`}
                         bgColor={
                           idx % 2 === 0 ? Theme.white_C : Theme.lightGrey_C
@@ -1509,12 +1523,11 @@ const Student = () => {
 
                         {/* 20% */}
                         <Wrapper
-                          dr={`row`}
-                          ju={`space-between`}
+                          al={`flex-start`}
                           width={width < 1100 ? `100%` : `20%`}
                           margin={width < 1100 && `0 0 10px`}
                         >
-                          <Text margin={`0 30px 0 0`}>
+                          <Text margin={`0 30px 5px 0`}>
                             <SpanText fontWeight={`700`}>Subject :</SpanText>
                             {data.title}
                           </Text>

@@ -111,6 +111,11 @@ const FileBox = styled.div`
   justify-content: flex-end;
 `;
 
+const CustomSelect = styled(Select)`
+  width: 150px;
+  margin: 0 5px 0 0;
+`;
+
 const StudentNormalNotice = () => {
   ////// GLOBAL STATE //////
 
@@ -152,6 +157,7 @@ const StudentNormalNotice = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [contentData, setContentData] = useState("");
   const [filename, setFilename] = useState(null);
+  const [searchWriter, setSearchWriter] = useState(`3`);
 
   const [normalNoticeForm] = Form.useForm();
 
@@ -165,6 +171,7 @@ const StudentNormalNotice = () => {
         type: NORMAL_NOTICE_LIST_REQUEST,
         data: {
           page: 1,
+          listType: parseInt(searchWriter),
         },
       });
     }
@@ -183,6 +190,7 @@ const StudentNormalNotice = () => {
         type: NORMAL_NOTICE_LIST_REQUEST,
         data: {
           page: currentPage,
+          listType: parseInt(searchWriter),
         },
       });
 
@@ -205,6 +213,7 @@ const StudentNormalNotice = () => {
         type: NORMAL_NOTICE_LIST_REQUEST,
         data: {
           page: currentPage,
+          listType: parseInt(searchWriter),
         },
       });
 
@@ -227,6 +236,7 @@ const StudentNormalNotice = () => {
         type: NORMAL_NOTICE_LIST_REQUEST,
         data: {
           page: currentPage,
+          listType: parseInt(searchWriter),
         },
       });
 
@@ -294,6 +304,22 @@ const StudentNormalNotice = () => {
 
   ////// HANDLER //////
 
+  // 일반게시판 검색 선택
+  const searchWriterChangeHandler = useCallback(
+    (type) => {
+      setSearchWriter(type);
+
+      dispatch({
+        type: NORMAL_NOTICE_LIST_REQUEST,
+        data: {
+          page: currentPage,
+          listType: parseInt(type),
+        },
+      });
+    },
+    [searchWriter, currentPage]
+  );
+
   // 일반게시판 페이지 네이션
   const onChangeNormalNoticePage = useCallback(
     (page) => {
@@ -303,10 +329,11 @@ const StudentNormalNotice = () => {
         type: NORMAL_NOTICE_LIST_REQUEST,
         data: {
           page,
+          listType: parseInt(searchWriter),
         },
       });
     },
-    [currentPage]
+    [currentPage, searchWriter]
   );
 
   // 일반게시판 추가
@@ -399,21 +426,31 @@ const StudentNormalNotice = () => {
       <Wrapper al={`flex-start`} margin={`40px 0 0`}>
         <Wrapper dr={`row`} ju={`space-between`}>
           <CommonTitle margin={`0 0 20px`}>School Board</CommonTitle>
-          <CommonButton
-            onClick={normalNoticeCreateModalToggle}
-            loading={normalNoticeStuCreateLoading}
-          >
-            Write
-          </CommonButton>
+          <Wrapper dr={`row`} width={`auto`}>
+            <CustomSelect
+              value={searchWriter}
+              onChange={searchWriterChangeHandler}
+            >
+              <Select.Option value={`3`}>whole</Select.Option>
+              <Select.Option value={`2`}>self</Select.Option>
+              <Select.Option value={`1`}>others</Select.Option>
+            </CustomSelect>
+            <CommonButton
+              onClick={normalNoticeCreateModalToggle}
+              loading={normalNoticeStuCreateLoading}
+            >
+              Write
+            </CommonButton>
+          </Wrapper>
         </Wrapper>
 
-        <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
+        <Wrapper>
           <Wrapper
             dr={`row`}
             textAlign={`center`}
             padding={`20px 0`}
-            bgColor={Theme.subTheme9_C}
-            borderBottom={`1px solid ${Theme.grey_C}`}
+            bgColor={Theme.subTheme14_C}
+            borderTop={`1px solid ${Theme.subTheme8_C}`}
           >
             <WordbreakText
               fontSize={width < 700 ? `14px` : `18px`}
@@ -423,13 +460,7 @@ const StudentNormalNotice = () => {
             >
               No
             </WordbreakText>
-            <WordbreakText
-              fontSize={width < 700 ? `12px` : `18px`}
-              fontWeight={`Bold`}
-              width={width < 800 ? `18%` : `10%`}
-            >
-              Date
-            </WordbreakText>
+
             <WordbreakText
               fontSize={width < 700 ? `12px` : `18px`}
               fontWeight={`Bold`}
@@ -450,6 +481,13 @@ const StudentNormalNotice = () => {
               width={`10%`}
             >
               Comment
+            </WordbreakText>
+            <WordbreakText
+              fontSize={width < 700 ? `12px` : `18px`}
+              fontWeight={`Bold`}
+              width={width < 800 ? `18%` : `10%`}
+            >
+              Date
             </WordbreakText>
             <WordbreakText
               fontSize={width < 700 ? `12px` : `18px`}
@@ -497,21 +535,7 @@ const StudentNormalNotice = () => {
                     >
                       {data.noticeId}
                     </WordbreakText>
-                    {/* 날짜 */}
-                    <WordbreakText
-                      width={width < 800 ? `18%` : `10%`}
-                      fontSize={width < 700 && `12px`}
-                      onClick={() =>
-                        moveLinkHandler(
-                          `/normalNotice/${data.noticeId}?type=stu`
-                        )
-                      }
-                      isEllipsis
-                    >
-                      {moment(data.noticeCreatedAt, "YYYY/MM/DD").format(
-                        "YYYY/MM/DD"
-                      )}
-                    </WordbreakText>
+
                     {/* 제목 */}
                     <WordbreakText
                       width={width < 800 ? `25%` : `43%`}
@@ -558,6 +582,21 @@ const StudentNormalNotice = () => {
                       }
                     >
                       {data.commentCnt}
+                    </WordbreakText>
+                    {/* 날짜 */}
+                    <WordbreakText
+                      width={width < 800 ? `18%` : `10%`}
+                      fontSize={width < 700 && `12px`}
+                      onClick={() =>
+                        moveLinkHandler(
+                          `/normalNotice/${data.noticeId}?type=stu`
+                        )
+                      }
+                      isEllipsis
+                    >
+                      {moment(data.noticeCreatedAt, "YYYY/MM/DD").format(
+                        "YYYY/MM/DD"
+                      )}
                     </WordbreakText>
                     {/* 기능 */}
                     <Wrapper width={width < 800 ? `22%` : `12%`}>
