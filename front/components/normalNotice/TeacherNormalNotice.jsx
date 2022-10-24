@@ -435,8 +435,8 @@ const TeacherNormalNotice = () => {
   return (
     <>
       <Wrapper al={`flex-start`}>
-        <Wrapper dr={`row`} ju={`space-between`}>
-          <CommonTitle margin={`0 0 20px`}>일반게시판</CommonTitle>
+        <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 20px`}>
+          <CommonTitle>일반게시판</CommonTitle>
           <Wrapper dr={`row`} width={`auto`}>
             <CustomSelect
               value={searchWriter}
@@ -479,22 +479,27 @@ const TeacherNormalNotice = () => {
           </WordbreakText> */}
           <WordbreakText
             fontSize={width < 700 ? `12px` : `18px`}
-            width={width < 800 ? `43%` : `53%`}
+            width={width < 800 ? `60%` : `53%`}
           >
             Title
           </WordbreakText>
-          <WordbreakText fontSize={width < 700 ? `12px` : `18px`} width={`10%`}>
+          <WordbreakText
+            fontSize={width < 700 ? `12px` : `18px`}
+            width={`10%`}
+            display={width < 700 ? `none` : `flex`}
+          >
             Comment
           </WordbreakText>
           <WordbreakText
             fontSize={width < 700 ? `12px` : `18px`}
             width={width < 800 ? `20%` : `15%`}
+            display={width < 700 ? `none` : `flex`}
           >
             작성자
           </WordbreakText>
           <WordbreakText
             fontSize={width < 700 ? `12px` : `18px`}
-            width={width < 800 ? `22%` : `12%`}
+            width={width < 800 ? `40%` : `12%`}
           >
             Edit │ Delete
           </WordbreakText>
@@ -555,7 +560,7 @@ const TeacherNormalNotice = () => {
                   </WordbreakText> */}
                   {/* 제목 */}
                   <WordbreakText
-                    width={width < 800 ? `43%` : `53%`}
+                    width={width < 800 ? `60%` : `53%`}
                     al={`flex-start`}
                     padding={`0 0 0 10px`}
                     fontSize={width < 700 && `12px`}
@@ -578,6 +583,7 @@ const TeacherNormalNotice = () => {
                         `/normalNotice/${data.noticeId}?type=teacher`
                       )
                     }
+                    display={width < 700 ? `none` : `flex`}
                   >
                     {data.commentCnt}
                   </WordbreakText>
@@ -590,6 +596,7 @@ const TeacherNormalNotice = () => {
                         `/normalNotice/${data.noticeId}?type=teacher`
                       )
                     }
+                    display={width < 700 ? `none` : `flex`}
                   >
                     {data.noticeAuthor} (
                     {data.noticeLevel === 1
@@ -600,7 +607,7 @@ const TeacherNormalNotice = () => {
                     )
                   </WordbreakText>
                   {/* 기능 */}
-                  <Wrapper width={width < 800 ? `22%` : `12%`}>
+                  <Wrapper width={width < 800 ? `40%` : `12%`}>
                     {me && me.id === data.writeUserId ? (
                       <Wrapper dr={width < 800 ? `column` : `row`}>
                         <UpdateBtn
@@ -658,7 +665,7 @@ const TeacherNormalNotice = () => {
                         </Popconfirm> */}
                       </Wrapper>
                     ) : (
-                      <Text>권한이 없습니다.</Text>
+                      <Text fontSize={`14px`}>권한이 없습니다.</Text>
                     )}
                   </Wrapper>
                 </Wrapper>

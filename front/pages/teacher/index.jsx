@@ -1268,7 +1268,7 @@ const Index = () => {
                 return (
                   <>
                     <Wrapper
-                      padding={`30px`}
+                      padding={width < 700 ? `20px 15px` : `30px`}
                       borderTop={`1px solid ${Theme.subTheme8_C}`}
                       borderBottom={`1px solid ${Theme.grey_C}`}
                       dr={`row`}
@@ -1278,20 +1278,27 @@ const Index = () => {
                       <Wrapper dr={`row`} width={`auto`}>
                         <Wrapper
                           dr={`row`}
-                          width={`auto`}
-                          margin={`0 20px 0 0`}
+                          width={width < 700 ? `100%` : `auto`}
+                          margin={width < 700 ? ` 0 0 10px` : `0 20px 0 0`}
                         >
                           <Image
                             width={width < 900 ? `15px` : `22px`}
                             height={width < 900 ? `15px` : `22px`}
                             src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
                             alt="clock_icon"
-                            margin={`0 10px 0 0`}
+                            margin={width < 700 ? `0 5px 0 0` : `0 10px 0 0`}
                           />
 
-                          <Text fontSize={`16px`}>
+                          <Wrapper
+                            width={
+                              width < 700
+                                ? `calc(100% - 15px - 5px)`
+                                : `calc(100% - 22px - 10px)`
+                            }
+                            fontSize={width < 700 ? `12px` : `16px`}
+                          >
                             {divideLecture(data && data.day, data && data.time)}
-                          </Text>
+                          </Wrapper>
                         </Wrapper>
 
                         <Wrapper
@@ -1306,7 +1313,7 @@ const Index = () => {
                             alt="calender_icon"
                             margin={`0 10px 0 0`}
                           />
-                          <Text fontSize={`16px`}>
+                          <Text fontSize={width < 700 ? `12px` : `16px`}>
                             {moment(data.startDate, "YYYY/MM/DD").format(
                               "YYYY/MM/DD"
                             )}
@@ -1325,7 +1332,9 @@ const Index = () => {
                             alt="calender_icon"
                             margin={`0 10px 0 0`}
                           />
-                          <Text fontSize={`16px`}>{`${data.number}`}</Text>
+                          <Text
+                            fontSize={width < 700 ? `12px` : `16px`}
+                          >{`${data.number}`}</Text>
                         </Wrapper>
 
                         <Wrapper dr={`row`} width={`auto`}>
@@ -1336,11 +1345,17 @@ const Index = () => {
                             alt="calender_icon"
                             margin={`0 10px 0 0`}
                           />
-                          <Text fontSize={`16px`}>{data.course}</Text>
+                          <Text fontSize={width < 700 ? `12px` : `16px`}>
+                            {data.course}
+                          </Text>
                         </Wrapper>
                       </Wrapper>
 
-                      <Wrapper dr={`row`} width={`auto`}>
+                      <Wrapper
+                        dr={`row`}
+                        width={width < 700 ? `100%` : `auto`}
+                        margin={width < 700 ? `10px 0 0` : `0`}
+                      >
                         <CommonButton
                           kindOf={`subTheme14`}
                           margin={`0 5px 0 0`}
@@ -1358,10 +1373,10 @@ const Index = () => {
                     </Wrapper>
 
                     <Wrapper
-                      padding={`50px 30px`}
+                      padding={width < 700 ? `30px` : `50px 30px`}
                       ju={`flex-start`}
                       dr={`row`}
-                      fontSize={`16px`}
+                      fontSize={width < 700 ? `14px` : `16px`}
                       bgColor={Theme.lightGrey2_C}
                       margin={`0 0 30px`}
                     >
@@ -1378,7 +1393,7 @@ const Index = () => {
               })
             )}
 
-            <Wrapper margin={`50px 0`}>
+            <Wrapper margin={width < 700 ? `30px 0 50px` : `50px 0`}>
               <CustomPage
                 current={currentPage2}
                 total={noticeLastPage * 10}
