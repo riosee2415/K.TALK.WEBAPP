@@ -2835,35 +2835,31 @@ const DetailClass = () => {
         visible={stuChangeModal}
         footer={null}
         onCancel={changeModalClose}
+        title="만기일 수정"
       >
-        <Wrapper al={`flex-start`} ju={`flex-start`}>
-          <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
-            만기일 수정
+        <Wrapper dr={`row`} ju={`flex-start`}>
+          <Text>
+            시작일:&nbsp;
+            {stuChangeDetail &&
+              moment(stuChangeDetail.createdAt, `YYYY-MM-DD`).format(
+                `YYYY-MM-DD`
+              )}
           </Text>
-          <Wrapper dr={`row`} ju={`flex-start`}>
-            <Text>
-              시작일:&nbsp;
-              {stuChangeDetail &&
-                moment(stuChangeDetail.createdAt, `YYYY-MM-DD`).format(
-                  `YYYY-MM-DD`
-                )}
-            </Text>
-            &nbsp; &nbsp; &nbsp;
-            <Text>
-              만기일:&nbsp;
-              <DatePicker
-                value={
-                  stuChangeDate
-                    ? stuChangeDate
-                    : stuChangeDetail &&
-                      moment(stuChangeDetail.endDate, `YYYY-MM-DD`)
-                }
-                placeholder={"변경할 만기일"}
-                onChange={(e) => stuDateChangeHandler(e)}
-                allowClear={false}
-              />
-            </Text>
-          </Wrapper>
+          &nbsp; &nbsp; &nbsp;
+          <Text>
+            만기일:&nbsp;
+            <DatePicker
+              value={
+                stuChangeDate
+                  ? stuChangeDate
+                  : stuChangeDetail &&
+                    moment(stuChangeDetail.endDate, `YYYY-MM-DD`)
+              }
+              placeholder={"변경할 만기일"}
+              onChange={(e) => stuDateChangeHandler(e)}
+              allowClear={false}
+            />
+          </Text>
         </Wrapper>
 
         <Wrapper al={`flex-end`}>
