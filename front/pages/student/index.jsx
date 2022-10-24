@@ -270,7 +270,6 @@ const CustomTableHoverWrapper = styled(Wrapper)`
   font-size: 16px;
   border-bottom: 1px solid ${Theme.grey_C};
   background-color: ${Theme.white_C};
-  margin-bottom: 20px;
   cursor: pointer;
   &:hover {
     background-color: ${Theme.lightGrey_C};
@@ -1217,7 +1216,7 @@ const Student = () => {
                                 width={`auto`}
                                 dr={`row`}
                                 fontSize={width < 800 ? `16px` : `20px`}
-                                margin={`0 0 25px`}
+                                margin={`0 0 15px`}
                                 padding={`8px 15px`}
                                 radius={`20px`}
                                 bgColor={Theme.lightGrey2_C}
