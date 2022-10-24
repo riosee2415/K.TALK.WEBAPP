@@ -286,6 +286,7 @@ const Student = () => {
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
   );
+
   const {
     me,
     meUpdateModal,
