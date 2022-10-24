@@ -15,7 +15,7 @@ module.exports = class Book extends Model {
         },
         file: {
           type: DataTypes.STRING(600),
-          allowNull: false,
+          allowNull: true,
         },
         level: {
           type: DataTypes.STRING(100), // 교제 레벨

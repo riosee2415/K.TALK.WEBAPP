@@ -222,7 +222,7 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
     const createResult = await Book.create({
       thumbnail,
       title,
-      file,
+      file: file ? file : null,
       level: level ? level : null,
       stage: stage ? stage : null,
       kinds: kinds ? kinds : null,
@@ -276,7 +276,7 @@ router.patch("/update", isLoggedIn, async (req, res, next) => {
       {
         thumbnail,
         title,
-        file,
+        file: file ? file : null,
         level: level ? level : null,
         stage: stage ? stage : null,
         kinds: kinds ? kinds : null,
@@ -374,7 +374,7 @@ router.patch("/admin/update", isAdminCheck, async (req, res, next) => {
       {
         thumbnail,
         title,
-        file,
+        file: file ? file : null,
         level: level ? level : null,
         stage: stage ? stage : null,
         kinds: kinds ? kinds : null,
