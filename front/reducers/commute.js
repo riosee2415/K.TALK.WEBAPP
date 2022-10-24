@@ -43,13 +43,14 @@ const reducer = (state = initialState, action) =>
     switch (action.type) {
       case COMMUTE_LIST_REQUEST: {
         draft.st_commuteListLoading = true;
-        draft.st_commuteListDone = null;
-        draft.st_commuteListError = false;
+        draft.st_commuteListDone = false;
+        draft.st_commuteListError = null;
         break;
       }
       case COMMUTE_LIST_SUCCESS: {
         draft.st_commuteListLoading = false;
         draft.st_commuteListDone = true;
+        draft.st_commuteListError = null;
         draft.commuteList = action.data.commute;
         draft.commuteLastPage = action.data.lastPage;
         break;
@@ -84,13 +85,14 @@ const reducer = (state = initialState, action) =>
 
       case COMMUTE_ADMIN_LIST_REQUEST: {
         draft.st_commuteAdminListLoading = true;
-        draft.st_commuteAdminListDone = null;
-        draft.st_commuteAdminListError = false;
+        draft.st_commuteAdminListDone = false;
+        draft.st_commuteAdminListError = null;
         break;
       }
       case COMMUTE_ADMIN_LIST_SUCCESS: {
         draft.st_commuteAdminListLoading = false;
         draft.st_commuteAdminListDone = true;
+        draft.st_commuteAdminListError = null;
         draft.commuteAdminList = action.data.commute;
         break;
       }

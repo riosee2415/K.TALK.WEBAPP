@@ -75,6 +75,7 @@ import {
 } from "../../../reducers/lectureMemo";
 import { PRICE_UPDATE_REQUEST } from "../../../reducers/payment";
 import ClassNotice from "../../../components/admin/ClassNotice";
+import { COMMUTE_ADMIN_LIST_REQUEST } from "../../../reducers/commute";
 
 const CustomTextArea = styled(Input.TextArea)`
   width: ${(props) => props.width || `250px`};
@@ -183,6 +184,8 @@ const DetailClass = () => {
   const { st_priceUpdateDone, st_priceUpdateError } = useSelector(
     (state) => state.payment
   );
+
+  const { commuteAdminList } = useSelector((state) => state.commute);
 
   const {
     lectureMemoList,
@@ -612,9 +615,22 @@ const DetailClass = () => {
   }, []);
 
   const detailCommutesOpen = useCallback((data) => {
-    setCurrentStudentId(data.UserId);
+    if (data) {
+      dispatch({
+        type: COMMUTE_ADMIN_LIST_REQUEST,
+        data: {
+          LectureId: data.LectureId,
+          UserId: data.UserId,
+        },
+      });
+    }
+
+    // setCurrentStudentId(data.UserId);
     setCommutesModal(true);
   }, []);
+
+  console.log(commuteAdminList);
+
   const detailCommutesClose = useCallback(() => {
     setCurrentStudentId(null);
     setCommutesModal(false);
@@ -1313,7 +1329,12 @@ const DetailClass = () => {
 
     {
       title: "출석일",
-      render: (data) => <Text>{data.time}</Text>,
+      render: (data) => (
+        <Text>
+          {console.log(data)}
+          {data.time}
+        </Text>
+      ),
     },
     {
       title: "출석 여부",
@@ -2036,13 +2057,20 @@ const DetailClass = () => {
               style={{ width: `100%` }}
               size={`small`}
               columns={commutesListColumns}
-              dataSource={partAdminList.commutes}
+              dataSource={commuteAdminList}
+            />
+
+            {/* <Table
+              style={{ width: `100%` }}
+              size={`small`}
+              columns={commutesListColumns}
+              dataSource={commuteAdminList}
               pagination={{
                 current: parseInt(currentPage),
                 total: lectureMemoStuLastPage * 10,
                 onChange: (page) => setCurrentPage(page),
               }}
-            />
+            /> */}
           </Wrapper>
         </Wrapper>
       </Modal>
@@ -2062,7 +2090,7 @@ const DetailClass = () => {
           <Wrapper al={`flex-start`} ju={`flex-start`} height={`500px`}>
             {detailMemo &&
               detailMemo.memo.split(`\n`).map((data, idx) => (
-                <SpanText key={idx}>
+                <SpanText key={data.id}>
                   {data}
                   <br />
                 </SpanText>
@@ -2085,7 +2113,7 @@ const DetailClass = () => {
           <Wrapper al={`flex-start`} ju={`flex-start`} minHeight={`300px`}>
             {lecMemoData &&
               lecMemoData.lectureMemo.split(`\n`).map((data, idx) => (
-                <SpanText key={idx}>
+                <SpanText key={data.id}>
                   {data}
                   <br />
                 </SpanText>
@@ -2454,7 +2482,7 @@ const DetailClass = () => {
                         {country &&
                           country.map((data, idx) => {
                             return (
-                              <Select.Option key={idx} value={data}>
+                              <Select.Option key={data.id} value={data}>
                                 {data}
                               </Select.Option>
                             );
@@ -2481,7 +2509,7 @@ const DetailClass = () => {
                         {country &&
                           country.map((data, idx) => {
                             return (
-                              <Select.Option key={idx} value={data}>
+                              <Select.Option key={data.id} value={data}>
                                 {data}
                               </Select.Option>
                             );
