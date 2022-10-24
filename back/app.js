@@ -37,6 +37,7 @@ const lectureMemoRouter = require("./routers/lectureMemoRouter");
 const communityRouter = require("./routers/communityRouter");
 const lectureNoticeRouter = require("./routers/lectureNoticeRouter");
 const normalNoticeRouter = require("./routers/normalNoticeRouter");
+const tddRouter = require("./routers/tddRouter");
 
 // Config Settings
 db.sequelize
@@ -128,6 +129,7 @@ app.use("/api/lectureMemo", lectureMemoRouter);
 app.use("/api/community", communityRouter);
 app.use("/api/lectureNotice", lectureNoticeRouter);
 app.use("/api/normalNotice", normalNoticeRouter);
+app.use("/api/tdd", tddRouter);
 
 // second minute hour day-of-month month day-of-week
 const task = cron.schedule(
