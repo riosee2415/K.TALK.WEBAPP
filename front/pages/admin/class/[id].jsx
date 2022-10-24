@@ -629,8 +629,6 @@ const DetailClass = () => {
     setCommutesModal(true);
   }, []);
 
-  console.log(commuteAdminList);
-
   const detailCommutesClose = useCallback(() => {
     setCurrentStudentId(null);
     setCommutesModal(false);
@@ -1822,17 +1820,6 @@ const DetailClass = () => {
             >
               강의 목록
             </CommonButton>
-
-            <CommonButton
-              radius={`5px`}
-              width={`130px`}
-              margin={`0 6px`}
-              kindOf={`white`}
-              padding={`0`}
-              onClick={() => moveLinkHandler(`/admin/board/message/list`)}
-            >
-              쪽지
-            </CommonButton>
           </Wrapper>
         </Wrapper>
 
@@ -2022,24 +2009,24 @@ const DetailClass = () => {
         />
       </AdminContent>
 
-      <Modal visible={memoModal} footer={null} onCancel={detailMemoClose}>
+      <Modal
+        visible={memoModal}
+        footer={null}
+        onCancel={detailMemoClose}
+        title={`메모`}
+      >
         <Wrapper al={`flex-start`}>
-          <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
-            메모
-          </Text>
-          <Wrapper al={`flex-start`} ju={`flex-start`}>
-            <Table
-              style={{ width: `100%` }}
-              size={`small`}
-              columns={memoListColumns}
-              dataSource={lectureMemoStuList}
-              pagination={{
-                current: parseInt(currentPage),
-                total: lectureMemoStuLastPage * 10,
-                onChange: (page) => setCurrentPage(page),
-              }}
-            />
-          </Wrapper>
+          <Table
+            style={{ width: `100%` }}
+            size={`small`}
+            columns={memoListColumns}
+            dataSource={lectureMemoStuList}
+            pagination={{
+              current: parseInt(currentPage),
+              total: lectureMemoStuLastPage * 10,
+              onChange: (page) => setCurrentPage(page),
+            }}
+          />
         </Wrapper>
       </Modal>
 
@@ -2047,20 +2034,17 @@ const DetailClass = () => {
         visible={commutesModal}
         footer={null}
         onCancel={detailCommutesClose}
+        title="출석기록"
       >
         <Wrapper al={`flex-start`}>
-          <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
-            출석 기록
-          </Text>
-          <Wrapper al={`flex-start`} ju={`flex-start`}>
-            <Table
-              style={{ width: `100%` }}
-              size={`small`}
-              columns={commutesListColumns}
-              dataSource={commuteAdminList}
-            />
+          <Table
+            style={{ width: `100%` }}
+            size={`small`}
+            columns={commutesListColumns}
+            dataSource={commuteAdminList}
+          />
 
-            {/* <Table
+          {/* <Table
               style={{ width: `100%` }}
               size={`small`}
               columns={commutesListColumns}
@@ -2071,7 +2055,6 @@ const DetailClass = () => {
                 onChange: (page) => setCurrentPage(page),
               }}
             /> */}
-          </Wrapper>
         </Wrapper>
       </Modal>
 

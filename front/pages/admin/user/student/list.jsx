@@ -1559,12 +1559,14 @@ const List = () => {
               style={{ width: "30%" }}
               placeholder="사용자명"
               {...inputName}
+              onKeyDown={(e) => e.keyCode === 13 && onSeachStuHandler()}
             />
             <Input
               size="small"
               style={{ width: "30%" }}
               placeholder="이메일"
               {...inputEmail}
+              onKeyDown={(e) => e.keyCode === 13 && onSeachStuHandler()}
             />
             <Button size="small" onClick={() => onSeachStuHandler()}>
               <SearchOutlined />

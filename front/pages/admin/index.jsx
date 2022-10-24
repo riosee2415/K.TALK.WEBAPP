@@ -770,7 +770,6 @@ const AdminHome = () => {
     normalNoticeFilePath,
     filename.value,
   ]);
-  console.log(normalNoticeFilePath);
 
   const normalNoticeUpdateModalToggle = useCallback(
     (data) => {
