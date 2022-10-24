@@ -86,7 +86,8 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
     const lengthQuery = `
     SELECT	 *
       FROM   (
-                SELECT	A.LectureNoticeId 									              AS connectLectureId,
+                SELECT	ROW_NUMBER()  OVER(ORDER BY B.createdAt)          AS num,
+                        A.LectureNoticeId 									              AS connectLectureId,
                         B.title,
                         B.id					                                    AS noticeId,
                         B.title 				                                  AS noticeTitle,
@@ -126,7 +127,8 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
     const selectQuery = `
     SELECT	 *
       FROM   (
-                SELECT	A.LectureNoticeId 									              AS connectLectureId,
+                SELECT	ROW_NUMBER()  OVER(ORDER BY B.createdAt)          AS num,
+                        A.LectureNoticeId 									              AS connectLectureId,
                         B.title,
                         B.id					                                    AS noticeId,
                         B.title 				                                  AS noticeTitle,
@@ -160,7 +162,7 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
                  GROUP  BY A.LectureNoticeId
               )	X
      WHERE	X.noticeIsDelete = FALSE 
-     ORDER	BY X.noticeId DESC
+     ORDER	BY X.num DESC
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
     `;
@@ -207,6 +209,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
 
     const selectQuery = `
     SELECT	DISTINCT
+            ROW_NUMBER()  OVER(ORDER BY B.createdAt)      AS num,
             A.LectureNoticeId			                        AS connectNoticeId,
             B.id					                                AS noticeId,
             B.title 				                              AS noticeTitle,
@@ -236,6 +239,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
        ${_LectureId ? `AND B.LectureId = ${_LectureId}` : ``}
        AND  B.isDelete = FALSE
        AND	C.isDelete = FALSE
+     ORDER  BY num DESC
     `;
 
     const notice = await models.sequelize.query(selectQuery);

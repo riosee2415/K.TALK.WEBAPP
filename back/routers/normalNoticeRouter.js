@@ -77,6 +77,7 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
     SELECT  *
       FROM (
           SELECT	DISTINCT
+                  ROW_NUMBER()  OVER(ORDER BY B.createdAt)      AS num,
                   A.isAdmin				                              AS connectIsAdmin,
                   A.NormalNoticeId		                          AS connectNoticeId,
                   B.id					                                AS noticeId,
@@ -120,6 +121,7 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
     SELECT  *
       FROM (
             SELECT	DISTINCT
+                    ROW_NUMBER()  OVER(ORDER BY B.createdAt)      AS num,
                     A.isAdmin				                              AS connectIsAdmin,
                     A.NormalNoticeId		                          AS connectNoticeId,
                     B.id					                                AS noticeId,
@@ -157,7 +159,7 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
                AND  B.isDelete = FALSE
            )	X
      WHERE	X.noticeIsDelete = FALSE 
-     ORDER	BY X.noticeId DESC
+     ORDER	BY X.num DESC
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
     `;
@@ -205,6 +207,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
   try {
     const selectQuery = `  
     SELECT	DISTINCT
+            ROW_NUMBER()  OVER(ORDER BY B.createdAt)      AS num,
             A.isAdmin				                              AS connectIsAdmin,
             A.NormalNoticeId		                          AS connectNoticeId,
             B.id					                                AS noticeId,
@@ -239,7 +242,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
                 ? ``
                 : ``
             }
-     ORDER  BY B.id DESC
+     ORDER  BY num DESC
     `;
 
     const notice = await models.sequelize.query(selectQuery);
