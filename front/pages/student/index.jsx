@@ -1267,6 +1267,10 @@ const Student = () => {
                                     My Attendance
                                   </Button>
                                 </Wrapper>
+
+                                <Wrapper al={`flex-start`}>
+                                  Class Expiration Date : {data.endDate}
+                                </Wrapper>
                               </Wrapper>
                             </Wrapper>
                           </Wrapper>
