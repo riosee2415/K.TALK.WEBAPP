@@ -140,6 +140,8 @@ const List = ({}) => {
     },
   ];
 
+  console.log(partLastDateList);
+
   return (
     <AdminLayout>
       <PageHeader

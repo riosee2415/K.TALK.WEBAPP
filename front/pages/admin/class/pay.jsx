@@ -29,6 +29,7 @@ import {
   Text,
   TextInput,
   TextArea,
+  GuideDiv,
 } from "../../../components/commonComponents";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import {
@@ -233,8 +234,7 @@ const Pay = ({}) => {
       dispatch({
         type: CREATE_MODAL_OPEN_REQUEST,
       });
-
-      setTimeout(() => {
+      if (data) {
         cForm.setFieldsValue({
           course: data.name,
           price: data.price,
@@ -245,8 +245,8 @@ const Pay = ({}) => {
           week: data.week,
           lecture: data.LectureId,
         });
-      }, 500);
-      setUpdateData(data);
+        setUpdateData(data);
+      }
     },
     [cForm]
   );
@@ -342,7 +342,7 @@ const Pay = ({}) => {
             size={`small`}
             onClick={() => updateModalOpen(data)}
           >
-            DETAIL
+            상세보기
           </Button>
         );
       },
@@ -353,13 +353,13 @@ const Pay = ({}) => {
         return (
           <Popconfirm
             placement="rightTop"
-            title={"삭제하시겠습니까?"}
+            title={"데이터를 삭제하시겠습니까?"}
             onConfirm={() => onSubmitDelete(data)}
-            okText="Yes"
-            cancelText="No"
+            okText="삭제"
+            cancelText="취소"
           >
             <Button type={`danger`} size={`small`}>
-              DELETE
+              데이터 삭제
             </Button>
           </Popconfirm>
         );
@@ -376,10 +376,30 @@ const Pay = ({}) => {
       />
 
       <AdminContent>
-        <Wrapper margin="0px 0px 20px 0px" dr="row" ju="flex-end">
+        <Wrapper
+          margin="0px 0px 10px 0px"
+          dr="row"
+          ju="flex-end"
+          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+          padding="5px 0px"
+        >
           <ModalBtn type="primary" size="small" onClick={modalOpen}>
-            + 추가
+            + 결제 클래스 추가
           </ModalBtn>
+        </Wrapper>
+
+        {/* ADMIN GUIDE AREA */}
+        <Wrapper
+          margin={`0px 0px 10px 0px`}
+          radius="5px"
+          bgColor={Theme.lightGrey3_C}
+          padding="5px"
+          fontSize="13px"
+          al="flex-start"
+        >
+          <GuideDiv isImpo={true}>결재 클래스를 관리할 수 있습니다.</GuideDiv>
+          <GuideDiv isImpo={true}>결제 클래스는 수정할 수 없습니다.</GuideDiv>
+          <GuideDiv isImpo={true}>삭제된 데이터는 복구할 수 없습니다.</GuideDiv>
         </Wrapper>
 
         <Table
@@ -396,6 +416,7 @@ const Pay = ({}) => {
         onOk={updateData ? updateModalClose : modalOk}
         onCancel={updateData ? updateModalClose : modalClose}
         title={updateData ? "상세보기" : "결제 클래스 생성"}
+        footer={null}
       >
         <Wrapper>
           <FormTag form={cForm} onFinish={onSubmit}>

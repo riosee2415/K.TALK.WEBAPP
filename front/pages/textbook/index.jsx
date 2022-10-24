@@ -266,6 +266,7 @@ const Index = () => {
           level: updateData.level,
           stage: updateData.stage,
           kinds: updateData.kinds,
+          link: data.link,
         });
       }, 500);
     }
@@ -388,6 +389,7 @@ const Index = () => {
           level: data.level,
           stage: data.stage,
           kinds: data.kinds,
+          link: data.link,
         },
       });
     },
@@ -440,6 +442,18 @@ const Index = () => {
 
   const onSubmit = useCallback(
     (data) => {
+      if (!data.title) {
+        return message.error("교재 제목을 입력해주세요.");
+      }
+
+      if (!data.link) {
+        return message.error("링크를 입력해주세요.");
+      }
+
+      if (!uploadPathTh) {
+        return message.error("썸네일을 업로드해주세요.");
+      }
+
       dispatch({
         type: BOOK_CREATE_REQUEST,
         data: {
@@ -450,6 +464,7 @@ const Index = () => {
           level: data.level,
           stage: data.stage,
           kinds: data.kinds,
+          link: data.link,
         },
       });
     },
@@ -469,6 +484,7 @@ const Index = () => {
           level: data.level,
           stage: data.stage,
           kinds: data.kinds,
+          link: data.link,
         },
       });
     },
@@ -977,11 +993,24 @@ const Index = () => {
                           margin={`0 0 2px`}
                         >{`강의 : ${data.course}`}</Text>
                         <Text margin={`0 0 2px`}>{`제목 : ${data.title}`}</Text>
-                        <Text margin={`0 0 2px`}>{`종류 : ${data.kinds}`}</Text>
+                        {data.kinds && (
+                          <Text
+                            margin={`0 0 2px`}
+                          >{`종류 : ${data.kinds}`}</Text>
+                        )}
+                        {data.level && (
+                          <Text
+                            margin={`0 0 2px`}
+                          >{`레벨 : ${data.level}권 ${data.stage}단원`}</Text>
+                        )}
                         <Text
                           margin={`0 0 2px`}
-                        >{`레벨 : ${data.level}권 ${data.stage}단원`}</Text>
-                        <Text>{`선생님 이름 : ${data.username}`}</Text>
+                        >{`선생님 이름 : ${data.username}`}</Text>
+                        {data.link && (
+                          <a href={data.link} target={`_blank`}>
+                            <CommonButton>교재보러가기</CommonButton>
+                          </a>
+                        )}
                       </Wrapper>
                     </ProductWrapper>
                   );
@@ -1001,6 +1030,7 @@ const Index = () => {
             visible={createModal}
             onCancel={updateData ? updateModalClose : createModalClose}
             onOk={modalOk}
+            title="교재 등록하기"
           >
             <Wrapper al={`flex-start`}>
               <Form form={form} onFinish={updateData ? updateSubmit : onSubmit}>
@@ -1038,7 +1068,7 @@ const Index = () => {
                   </Select>
                 </Form.Item>
                 <Form.Item
-                  rules={[{ required: true, message: "권을 선택해주세요." }]}
+                  // rules={[{ required: true, message: "권을 선택해주세요." }]}
                   label={`권`}
                   name={`level`}
                   onBlur={() =>
@@ -1061,7 +1091,7 @@ const Index = () => {
                   )}
                 </Form.Item>
                 <Form.Item
-                  rules={[{ required: true, message: "단원을 선택해주세요." }]}
+                  // rules={[{ required: true, message: "단원을 선택해주세요." }]}
                   label={`단원`}
                   name={`stage`}
                   onBlur={() =>
@@ -1085,7 +1115,7 @@ const Index = () => {
                 </Form.Item>
 
                 <Form.Item
-                  rules={[{ required: true, message: "유형을 선택해주세요." }]}
+                  // rules={[{ required: true, message: "유형을 선택해주세요." }]}
                   label={`유형`}
                   name={`kinds`}
                   onBlur={() =>
@@ -1108,6 +1138,20 @@ const Index = () => {
                       )}
                     </Select>
                   )}
+                </Form.Item>
+
+                <Form.Item
+                  labelCol={{ span: 7 }}
+                  labelAlign={`left`}
+                  rules={[{ required: true, message: "링크를 입력해주세요." }]}
+                  label={`링크`}
+                  name={`link`}
+                >
+                  <TextInput
+                    width={`100%`}
+                    placeholder="링크를 입력해주세요."
+                    height={`30px`}
+                  />
                 </Form.Item>
               </Form>
             </Wrapper>

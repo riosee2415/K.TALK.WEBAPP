@@ -627,13 +627,6 @@ const Delete = () => {
       {me && me.level >= 3 ? (
         <AdminLayout>
           <AdminContent>
-            <Wrapper
-              dr={`row`}
-              ju={`space-between`}
-              al={`flex-start`}
-              margin={`0 0 30px`}
-            ></Wrapper>
-
             <Wrapper al={`flex-start`} margin={`0 0 10px`}>
               <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 16px`}>
                 <Text
@@ -778,13 +771,18 @@ const Delete = () => {
                   <Button
                     style={{ marginRight: 10 }}
                     type="primary"
+                    size="small"
                     onClick={() => onClickSearchLevelHandle()}
                   >
                     검색
                   </Button>
                 </Wrapper>
 
-                <Button type="primary" onClick={() => router.back()}>
+                <Button
+                  type="primary"
+                  size="small"
+                  onClick={() => router.back()}
+                >
                   뒤로가기
                 </Button>
               </Wrapper>
@@ -904,15 +902,11 @@ const Delete = () => {
                               </Text>
                             </Wrapper>
                           </Wrapper>
-                          <Wrapper
-                            margin={`20px 0 0`}
-                            dr={`row`}
-                            ju={`flex-start`}
-                          >
+                          <Wrapper margin={`20px 0 0`} al={`flex-start`}>
                             {data.Participants &&
                               data.Participants.map((data) => {
                                 return (
-                                  <Text key={data.id} margin={`0 15px 0 0`}>
+                                  <Text key={data.id} margin={`0 0 5px`}>
                                     {data.User.username}
                                   </Text>
                                 );
@@ -920,19 +914,16 @@ const Delete = () => {
                           </Wrapper>
                         </Wrapper>
                         <Wrapper dr={`row`}>
-                          <CommonButton
-                            padding={`0`}
-                            width={`80px`}
-                            height={`35px`}
-                            radius={`5px`}
-                            margin={`0 10px 0 0`}
-                            fontSize={`14px`}
+                          <Button
+                            size="small"
+                            type="primary"
+                            style={{ margin: `0 10px 0 0` }}
                             onClick={() =>
                               moveLinkHandler(`/admin/class/${data.id}`)
                             }
                           >
                             자세히 보기
-                          </CommonButton>
+                          </Button>
                           {/* <CommonButton
                             padding={`0`}
                             width={`80px`}
@@ -943,11 +934,13 @@ const Delete = () => {
                             onClick={() => updateModalOpen(data)}>
                             수정
                           </CommonButton> */}
-                          <CustomButton
+                          <Button
+                            size="small"
+                            type="primary"
                             onClick={() => deletePopToggle(data.id)}
                           >
                             복구
-                          </CustomButton>
+                          </Button>
                         </Wrapper>
                       </Wrapper>
                     );
