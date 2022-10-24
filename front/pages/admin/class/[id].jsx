@@ -1869,7 +1869,7 @@ const DetailClass = () => {
               {lectureDetail && lectureDetail[0].course}
             </Text>
           </Wrapper>
-          <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
+          {/* <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
             <Wrapper width={`auto`} margin={`0 10px 0 0`} padding={`8px`}>
               <Image
                 width={`18px`}
@@ -1877,12 +1877,10 @@ const DetailClass = () => {
                 alt="book_icon"
               />
             </Wrapper>
-            <Text fontSize={`18px`}>
               <Button type={`primary`} size={`small`} onClick={detailBookOpen}>
                 교재 리스트
               </Button>
-            </Text>
-          </Wrapper>
+          </Wrapper> */}
 
           <Wrapper
             width={`100%`}

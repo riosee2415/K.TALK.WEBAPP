@@ -1911,41 +1911,35 @@ const AdminHome = () => {
                           </Wrapper>
                         </Wrapper>
                         <Wrapper dr={`row`}>
-                          <CommonButton
-                            padding={`0`}
-                            width={`80px`}
-                            height={`30px`}
-                            radius={`5px`}
-                            margin={`0 10px 0 0`}
-                            fontSize={`13px`}
-                            kindOf={`white`}
+                          <Button
+                            type="primary"
+                            style={{ margin: `0 10px 0 0` }}
+                            size="small"
                             onClick={() =>
                               moveLinkHandler(`/admin/class/${data.id}`)
                             }
                           >
                             자세히 보기
-                          </CommonButton>
-                          <CommonButton
-                            padding={`0`}
-                            width={`80px`}
-                            height={`30px`}
-                            radius={`5px`}
-                            fontSize={`13px`}
+                          </Button>
+
+                          <Button
+                            type="primary"
+                            size="small"
                             onClick={() => updateModalOpen(data)}
                           >
                             수정
-                          </CommonButton>
-
+                          </Button>
                           {data.Participants &&
                             data.Participants.filter(
                               (data) => !data.isChange && !data.isDelete
                             ).length === 0 && (
-                              <CustomButton
-                                type={`danger`}
+                              <Button
+                                size="small"
+                                type="danger"
                                 onClick={() => deletePopToggle(data.id)}
                               >
                                 종료
-                              </CustomButton>
+                              </Button>
                             )}
                         </Wrapper>
                       </Wrapper>
