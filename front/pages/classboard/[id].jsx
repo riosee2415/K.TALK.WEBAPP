@@ -447,8 +447,8 @@ const Classboard = () => {
           <RsWrapper>
             <Wrapper
               al={`flex-start`}
-              bgColor={Theme.lightGrey2_C}
-              borderTop={`2px solid ${Theme.subTheme7_C}`}
+              bgColor={Theme.subTheme14_C}
+              borderTop={`2px solid ${Theme.subTheme8_C}`}
             >
               <Wrapper dr={`row`} ju={`space-between`} wrap={`nowrap`}>
                 <Text
@@ -477,7 +477,8 @@ const Classboard = () => {
                     fontSize={width < 900 ? `13px` : `16px`}
                     color={Theme.subTheme11_C}
                     ju={`flex-start`}
-                    borderTop={`1px solid ${Theme.lightGrey3_C}`}
+                    borderBottom={`1px solid ${Theme.lightGrey3_C}`}
+                    bgColor={Theme.white_C}
                   >
                     <Wrapper
                       dr={`row`}
@@ -486,7 +487,7 @@ const Classboard = () => {
                       <Wrapper
                         width={`120px`}
                         padding={width < 900 ? `10px 0` : `15px 0`}
-                        bgColor={Theme.lightGrey3_C}
+                        bgColor={Theme.subTheme9_C}
                       >
                         Writer
                       </Wrapper>
@@ -510,7 +511,7 @@ const Classboard = () => {
                       <Wrapper
                         width={`120px`}
                         padding={width < 900 ? `10px 0` : `15px 0`}
-                        bgColor={Theme.lightGrey3_C}
+                        bgColor={Theme.subTheme9_C}
                       >
                         Date time
                       </Wrapper>
@@ -527,7 +528,7 @@ const Classboard = () => {
                       <Wrapper
                         width={`120px`}
                         padding={width < 900 ? `10px 0` : `15px 0`}
-                        bgColor={Theme.lightGrey3_C}
+                        bgColor={Theme.subTheme9_C}
                       >
                         View
                       </Wrapper>
@@ -535,11 +536,14 @@ const Classboard = () => {
                         {lectureNoticeDetail && lectureNoticeDetail.noticeHit}
                       </Text>
                     </Wrapper>
-                    <Wrapper dr={`row`}>
+                    <Wrapper
+                      dr={`row`}
+                      borderTop={`1px solid ${Theme.lightGrey3_C}`}
+                    >
                       <Wrapper
                         width={`120px`}
                         padding={width < 900 ? `10px 0` : `15px 0`}
-                        bgColor={Theme.lightGrey3_C}
+                        bgColor={Theme.subTheme9_C}
                       >
                         reciver
                       </Wrapper>

@@ -532,7 +532,7 @@ const StudentNormalNotice = () => {
                         )
                       }
                     >
-                      {data.noticeId}
+                      {data.num}
                     </WordbreakText>
 
                     {/* 제목 */}
