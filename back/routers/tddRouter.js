@@ -18,16 +18,16 @@ const SUN = 7;
 router.post("/list", async (req, res, next) => {
   const { lectureId } = req.body;
 
-  const TEMP_LECTUREID = 18;
+  //   const TEMP_LECTUREID = 18;
 
   const selectQ = `
     SELECT	A.id,
             A.isDelete,
             A.isChange,
             A.date,
-            DATE_FORMAT(A.endDate, "%Y년 %m월 %d일")		  as viewEndDate,
-            DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일")		as viewCreatedAt,
-            DATE_FORMAT(A.endDate, "%Y년 %m월 %d일")		  as viewUpdatedAt,
+            DATE_FORMAT(A.endDate, "%Y년 %m월 %d일")		  AS viewEndDate,
+            DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일")		  AS viewCreatedAt,
+            DATE_FORMAT(A.endDate, "%Y년 %m월 %d일")		  AS viewUpdatedAt,
             CASE
               WHEN	DATE_FORMAT(NOW(), "%Y%m%d") < DATE_FORMAT(A.endDate, "%Y%m%d") THEN DATEDIFF(DATE_FORMAT(A.endDate, "%Y%m%d"), DATE_FORMAT(NOW(), "%Y%m%d")) 
               ELSE    0
@@ -36,6 +36,11 @@ router.post("/list", async (req, res, next) => {
             A.LectureId,
             B.day,
             B.count,
+            C.userId,
+            C.username,
+            C.level,
+            C.birth,
+            C.stuCountry,
             CASE DAYOFWEEK(NOW()) 
               WHEN '1' THEN '7'
               WHEN '2' THEN '1'
@@ -48,9 +53,12 @@ router.post("/list", async (req, res, next) => {
       FROM	participants		A
      INNER
       JOIN	lectures 			B
-        ON	A.LectureId = B.id 
+        ON	A.LectureId = B.id
+     INNER
+      JOIN  users               C
+        ON  A.UserId = C.id
      WHERE	A.isDelete = 0
-       AND	A.LectureId = ${TEMP_LECTUREID}
+       AND	A.LectureId = ${lectureId}
        AND  B.isDelete = 0
   `;
 
