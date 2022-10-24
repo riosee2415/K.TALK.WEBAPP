@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import moment from "moment";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import axios from "axios";
@@ -17,8 +16,6 @@ import {
   Pagination,
   Popconfirm,
   Select,
-  Slider,
-  Table,
 } from "antd";
 import styled from "styled-components";
 import useWidth from "../../../hooks/useWidth";
@@ -30,8 +27,6 @@ import {
   RsWrapper,
   SpanText,
   Text,
-  TextArea,
-  TextInput,
   WholeWrapper,
   Wrapper,
 } from "../../../components/commonComponents";
@@ -48,6 +43,7 @@ import {
 import ToastEditorLectureNotice from "../../../components/editor/ToastEditorLectureNotice";
 import { LECTURE_DETAIL_REQUEST } from "../../../reducers/lecture";
 import { PARTICIPANT_STUDENT_LIST_REQUEST } from "../../../reducers/participant";
+import { DeleteOutlined, FormOutlined } from "@ant-design/icons";
 
 const CustomTableHoverWrapper = styled(Wrapper)`
   flex-direction: row;
@@ -580,8 +576,8 @@ const Notice = ({}) => {
               dr={`row`}
               textAlign={`center`}
               padding={`20px 0`}
-              bgColor={Theme.subTheme9_C}
-              borderBottom={`1px solid ${Theme.grey_C}`}
+              bgColor={Theme.subTheme14_C}
+              borderTop={`1px solid ${Theme.subTheme8_C}`}
             >
               <Text
                 fontSize={width < 700 ? `14px` : `18px`}
@@ -591,13 +587,7 @@ const Notice = ({}) => {
               >
                 No
               </Text>
-              <Text
-                fontSize={width < 700 ? `12px` : `18px`}
-                fontWeight={`Bold`}
-                width={width < 800 ? `18%` : `10%`}
-              >
-                Date
-              </Text>
+
               <Text
                 fontSize={width < 700 ? `12px` : `18px`}
                 fontWeight={`Bold`}
@@ -622,9 +612,16 @@ const Notice = ({}) => {
               <Text
                 fontSize={width < 700 ? `12px` : `18px`}
                 fontWeight={`Bold`}
+                width={width < 800 ? `18%` : `10%`}
+              >
+                Date
+              </Text>
+              <Text
+                fontSize={width < 700 ? `12px` : `18px`}
+                fontWeight={`Bold`}
                 width={width < 800 ? `27%` : `12%`}
               >
-                Update | Delete
+                Edit | Delete
               </Text>
             </Wrapper>
             {lectureNotices &&
@@ -642,12 +639,7 @@ const Notice = ({}) => {
                       >
                         {data.noticeId}
                       </Wrapper>
-                      <Wrapper
-                        width={width < 800 ? `18%` : `10%`}
-                        fontSize={width < 700 && `12px`}
-                      >
-                        {data.noticeCreatedAt}
-                      </Wrapper>
+
                       <Wrapper
                         width={width < 800 ? `30%` : `47%`}
                         al={`flex-start`}
@@ -682,14 +674,24 @@ const Notice = ({}) => {
                           : "admin"}
                         )
                       </Wrapper>
+                      <Wrapper
+                        width={width < 800 ? `18%` : `10%`}
+                        fontSize={width < 700 && `12px`}
+                      >
+                        {data.noticeCreatedAt}
+                      </Wrapper>
                       <Wrapper width={width < 800 ? `27%` : `12%`}>
                         {data.writeUserId === (me && me.id) ? (
                           <Wrapper dr={`row`}>
                             <CommonButton
-                              width={width < 900 ? `100%` : `50%`}
+                              width={`auto`}
+                              fontSize={`20px`}
+                              padding={`5px 10px`}
+                              height={`auto`}
+                              margin={`0 20px 0 0`}
                               onClick={() => lectureNoticeModalToggle(data)}
                             >
-                              Update
+                              <FormOutlined />
                             </CommonButton>
                             <Popconfirm
                               title="Are you sure you want to delete it?"
@@ -698,11 +700,13 @@ const Notice = ({}) => {
                               onConfirm={() => deleteHandler(data)}
                             >
                               <CommonButton
-                                width={width < 900 ? `100%` : `50%`}
-                                fontSize={`13px`}
+                                width={`auto`}
+                                fontSize={`20px`}
+                                padding={`5px 10px`}
+                                height={`auto`}
                                 kindOf={`delete`}
                               >
-                                Delete
+                                <DeleteOutlined />
                               </CommonButton>
                             </Popconfirm>
                           </Wrapper>
@@ -746,7 +750,10 @@ const Notice = ({}) => {
                 <></>
               ) : (
                 <Form.Item label={`Send`} name={`lSend`}>
-                  <Select onChange={(data) => userValueChange(data)}>
+                  <Select
+                    onChange={(data) => userValueChange(data)}
+                    placeholder="---select---"
+                  >
                     <Select.Option value={"강사"}>Teacher</Select.Option>
                     <Select.Option value={"반전체"}>All class</Select.Option>
                   </Select>

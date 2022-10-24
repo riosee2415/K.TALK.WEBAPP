@@ -1,7 +1,7 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
-import { Empty, Form, Input, message, Modal, Popconfirm, Select } from "antd";
+import { Empty, Form, message, Modal, Popconfirm } from "antd";
 
 import { END } from "redux-saga";
 import Head from "next/head";
@@ -14,12 +14,9 @@ import {
   WholeWrapper,
   Wrapper,
   Text,
-  TextInput,
   TextArea,
   CommonButton,
   SpanText,
-  ATag,
-  Image,
 } from "../../components/commonComponents";
 
 import Theme from "../../components/Theme";
@@ -452,8 +449,8 @@ const NormalNoticeDetail = () => {
           <RsWrapper>
             <Wrapper
               al={`flex-start`}
-              bgColor={Theme.lightGrey2_C}
-              borderTop={`2px solid ${Theme.subTheme7_C}`}
+              bgColor={Theme.subTheme14_C}
+              borderTop={`2px solid ${Theme.subTheme8_C}`}
             >
               <Wrapper dr={`row`} ju={`space-between`} wrap={`nowrap`}>
                 <Text
@@ -497,7 +494,7 @@ const NormalNoticeDetail = () => {
                       <Wrapper
                         width={`120px`}
                         padding={width < 900 ? `10px 0` : `15px 0`}
-                        bgColor={Theme.lightGrey3_C}
+                        bgColor={Theme.subTheme9_C}
                       >
                         {router.query && router.query.type === "stu"
                           ? "Writer"
@@ -531,7 +528,7 @@ const NormalNoticeDetail = () => {
                       <Wrapper
                         width={`120px`}
                         padding={width < 900 ? `10px 0` : `15px 0`}
-                        bgColor={Theme.lightGrey3_C}
+                        bgColor={Theme.subTheme9_C}
                       >
                         {router.query && router.query.type === "stu"
                           ? "Date time"
@@ -550,7 +547,7 @@ const NormalNoticeDetail = () => {
                       <Wrapper
                         width={`120px`}
                         padding={width < 900 ? `10px 0` : `15px 0`}
-                        bgColor={Theme.lightGrey3_C}
+                        bgColor={Theme.subTheme9_C}
                       >
                         {router.query && router.query.type === "stu"
                           ? "View"
@@ -572,7 +569,7 @@ const NormalNoticeDetail = () => {
                         <Wrapper
                           width={`120px`}
                           padding={width < 900 ? `10px 0` : `15px 0`}
-                          bgColor={Theme.lightGrey3_C}
+                          bgColor={Theme.subTheme9_C}
                         >
                           {router.query && router.query.type === "stu"
                             ? "reciver"

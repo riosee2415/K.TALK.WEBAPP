@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { END } from "redux-saga";
 import wrapper from "../../store/configureStore";
-import { SEO_LIST_REQUEST } from "../../reducers/seo";
 import {
   LOAD_MY_INFO_REQUEST,
   ME_UPDATE_MODAL_TOGGLE,
@@ -18,7 +17,6 @@ import {
   Button,
   Empty,
   Form,
-  Input,
   message,
   Modal,
   Pagination,
@@ -56,14 +54,12 @@ import {
 } from "../../reducers/lecture";
 import {
   CarryOutOutlined,
-  CloseOutlined,
   RightCircleFilled,
   SyncOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
 import { saveAs } from "file-saver";
 import { BOOK_LIST_REQUEST } from "../../reducers/book";
-import { CalendarOutlined } from "@ant-design/icons";
 import { PAY_CLASS_LEC_DETAIL_REQUEST } from "../../reducers/payClass";
 import StudentNormalNotice from "../../components/normalNotice/StudentNormalNotice";
 import { LECTURE_NOTICE_LIST_REQUEST } from "../../reducers/lectureNotice";
@@ -287,8 +283,6 @@ const CustomTableHoverWrapper = styled(Wrapper)`
 
 const Student = () => {
   ////// GLOBAL STATE //////
-
-  const { Option } = Select;
 
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
@@ -1529,7 +1523,7 @@ const Student = () => {
                         >
                           <Text margin={`0 30px 5px 0`}>
                             <SpanText fontWeight={`700`}>Subject :</SpanText>
-                            {data.title}
+                            &nbsp;{data.title}
                           </Text>
                           <Button
                             size={`small`}

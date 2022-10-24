@@ -28,11 +28,10 @@ import {
 import styled from "styled-components";
 import Theme from "../Theme";
 import useWidth from "../../hooks/useWidth";
-import { saveAs } from "file-saver";
 import moment from "moment";
 import ToastEditorComponentMix from "../../components/editor/ToastEditorComponentMix";
 import { useRouter } from "next/router";
-import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
+import { DeleteOutlined, FormOutlined } from "@ant-design/icons";
 
 const CustomPage = styled(Pagination)`
   & .ant-pagination-next > button {
@@ -494,7 +493,7 @@ const StudentNormalNotice = () => {
               fontWeight={`Bold`}
               width={width < 800 ? `22%` : `12%`}
             >
-              Update | Delete
+              Edit | Delete
             </WordbreakText>
           </Wrapper>
           {normalNoticeListLoading ? (
@@ -603,13 +602,15 @@ const StudentNormalNotice = () => {
                       {me && me.id === data.writeUserId ? (
                         <Wrapper dr={width < 800 ? `column` : `row`}>
                           <CommonButton
-                            width={width < 800 ? `100%` : `50%`}
-                            padding={`0`}
-                            fontSize={`13px`}
+                            width={`auto`}
+                            fontSize={`20px`}
+                            padding={`5px 10px`}
+                            height={`auto`}
+                            margin={`0 20px 0 0`}
                             onClick={() => normalNoticeUpdateModalToggle(data)}
                             loading={normalNoticeUpdateLoading}
                           >
-                            Update
+                            <FormOutlined />
                           </CommonButton>
                           <Popconfirm
                             title="Are you sure you want to delete it?"
@@ -620,12 +621,13 @@ const StudentNormalNotice = () => {
                             loading={normalNoticeDeleteLoading}
                           >
                             <CommonButton
-                              width={width < 800 ? `100%` : `50%`}
-                              padding={`0`}
-                              fontSize={`13px`}
+                              width={`auto`}
+                              fontSize={`20px`}
+                              padding={`5px 10px`}
+                              height={`auto`}
                               kindOf={`delete`}
                             >
-                              Delete
+                              <DeleteOutlined />
                             </CommonButton>
                           </Popconfirm>
                         </Wrapper>

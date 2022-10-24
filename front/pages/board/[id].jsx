@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import {
   Button,
-  Calendar,
   Checkbox,
   Empty,
   Form,
@@ -14,7 +13,6 @@ import {
   Popconfirm,
   Select,
 } from "antd";
-import { CalendarOutlined, CaretDownOutlined } from "@ant-design/icons";
 
 import { END } from "redux-saga";
 import Head from "next/head";
@@ -31,7 +29,6 @@ import {
   TextArea,
   CommonButton,
   SpanText,
-  ATag,
   Image,
 } from "../../components/commonComponents";
 
@@ -59,6 +56,7 @@ import {
 } from "../../reducers/community";
 import ToastEditorComponent5 from "../../components/editor/ToastEditorComponent5";
 import { saveAs } from "file-saver";
+
 const Icon = styled(Wrapper)`
   height: 1px;
   background: ${Theme.darkGrey_C};

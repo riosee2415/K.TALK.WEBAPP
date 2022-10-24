@@ -45,8 +45,6 @@ const GlobalStyles = createGlobalStyle`
   }
 
   .ant-input{
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
-    border:none;
 
     &:focus {
       border: 1px solid ${(props) => props.theme.subTheme7_C};
