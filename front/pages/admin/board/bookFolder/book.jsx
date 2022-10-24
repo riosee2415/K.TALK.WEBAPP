@@ -160,6 +160,7 @@ const Book = ({}) => {
         level: data.level,
         stage: data.stage,
         kinds: data.kinds,
+        link: data.link,
       },
     });
   }, []);
@@ -281,6 +282,7 @@ const Book = ({}) => {
       level: data.level,
       stage: data.stage,
       kinds: data.kinds,
+      link: data.link,
     });
 
     setImagePathTh(data.thumbnail);
@@ -347,12 +349,16 @@ const Book = ({}) => {
 
   const onSubmit = useCallback(
     (data) => {
-      if (!imagePathTh || imagePathTh.trim() === "") {
-        return message.error("이미지를 업로드 해주세요.");
+      if (!data.title) {
+        return message.error("교재 제목을 입력해주세요.");
       }
 
-      if (!filename.value || filename.value.trim() === "") {
-        return message.error("파일을 업로드 해주세요.");
+      if (!data.link) {
+        return message.error("링크를 입력해주세요.");
+      }
+
+      if (!uploadPathTh) {
+        return message.error("썸네일을 업로드해주세요.");
       }
 
       dispatch({
@@ -365,6 +371,7 @@ const Book = ({}) => {
           level: data.level,
           stage: data.stage,
           kinds: data.kinds,
+          link: data.link,
         },
       });
     },
@@ -384,6 +391,7 @@ const Book = ({}) => {
           level: data.level,
           stage: data.stage,
           kinds: data.kinds,
+          link: data.link,
         },
       });
     },
@@ -473,14 +481,25 @@ const Book = ({}) => {
     },
 
     {
-      title: "종류",
-      render: (data) => <Text>{data.kinds}</Text>,
+      title: "링크",
+      render: (data) => (
+        <Text>
+          <a href={data.link} target={`_blank`}>
+            {data.link}
+          </a>
+        </Text>
+      ),
     },
 
-    {
-      title: "레벨",
-      render: (data) => <Text>{`${data.level}권${data.stage}단원`}</Text>,
-    },
+    // {
+    //   title: "종류",
+    //   render: (data) => <Text>{data.kinds}</Text>,
+    // },
+
+    // {
+    //   title: "레벨",
+    //   render: (data) => <Text>{`${data.level}권${data.stage}단원`}</Text>,
+    // },
     {
       title: "강의 이름",
       render: (data) => <Text>{data.course}</Text>,
@@ -512,9 +531,9 @@ const Book = ({}) => {
       render: (data) => (
         <Button
           type="primary"
+          disabled={data.file ? false : true}
           onClick={() => fileDownloadHandler(data.file)}
           size={`small`}
-          pri
         >
           다운로드
         </Button>
@@ -784,7 +803,7 @@ const Book = ({}) => {
             </Form.Item>
 
             <Form.Item
-              rules={[{ required: true, message: "권을 선택해주세요." }]}
+              // rules={[{ required: true, message: "권을 선택해주세요." }]}
               label={`권`}
               name={`level`}
               onBlur={() =>
@@ -808,7 +827,7 @@ const Book = ({}) => {
               )}
             </Form.Item>
             <Form.Item
-              rules={[{ required: true, message: "단원을 선택해주세요." }]}
+              // rules={[{ required: true, message: "단원을 선택해주세요." }]}
               label={`단원`}
               name={`stage`}
               onBlur={() =>
@@ -835,7 +854,7 @@ const Book = ({}) => {
             </Form.Item>
 
             <Form.Item
-              rules={[{ required: true, message: "유형을 선택해주세요." }]}
+              // rules={[{ required: true, message: "유형을 선택해주세요." }]}
               label={`유형`}
               name={`kinds`}
               onBlur={() =>
@@ -859,6 +878,20 @@ const Book = ({}) => {
                   )}
                 </Select>
               )}
+            </Form.Item>
+
+            <Form.Item
+              labelCol={{ span: 5 }}
+              labelAlign={`left`}
+              rules={[{ required: true, message: "링크를 입력해주세요." }]}
+              label={`링크`}
+              name={`link`}
+            >
+              <TextInput
+                width={`100%`}
+                placeholder="링크를 입력해주세요."
+                height={`30px`}
+              />
             </Form.Item>
           </Form>
         </Wrapper>

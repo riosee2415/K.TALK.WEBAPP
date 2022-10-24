@@ -96,10 +96,6 @@ const AdminMenu = () => {
           <MenuName>관리자 메인 (클래스 관리)</MenuName>
         </Menu.Item>
 
-        <Menu.Item key="/admin/class/pay">
-          <MenuName>결제 클래스 관리</MenuName>
-        </Menu.Item>
-
         <Menu.Item key="/admin/user/student/list">
           <MenuName>학생 관리</MenuName>
         </Menu.Item>
@@ -112,12 +108,16 @@ const AdminMenu = () => {
           <MenuName>강사료 산정 관리</MenuName>
         </Menu.Item>
 
-        <Menu.Item key="/admin/user/userList">
+        {/* <Menu.Item key="/admin/user/userList">
           <MenuName>회원 목록</MenuName>
-        </Menu.Item>
+        </Menu.Item> */}
 
         <Menu.Item key="/admin/lectureDay/list">
           <MenuName>수업 만료일 관리</MenuName>
+        </Menu.Item>
+
+        <Menu.Item key="/admin/class/pay">
+          <MenuName>결제 클래스 관리</MenuName>
         </Menu.Item>
 
         <Menu.Item key="/admin/payment/list">
@@ -132,29 +132,31 @@ const AdminMenu = () => {
           <MenuName>교재 관리</MenuName>
         </Menu.Item>
 
-        {/* <Menu.Item key="/admin/board/notice/list">
-          <MenuName>게시판 관리</MenuName>
-        </Menu.Item> */}
-
-        <Menu.Item key="/admin/board/message/list">
-          <MenuName>쪽지 관리</MenuName>
-        </Menu.Item>
-
         <Menu.Item key="/admin/board/community/list">
           <MenuName>자유게시판 관리</MenuName>
         </Menu.Item>
 
-        {/* <Menu.Item key="/admin/processApply/list">
+        {/* 
+         <Menu.Item key="/admin/board/notice/list">
+          <MenuName>게시판 관리</MenuName>
+        </Menu.Item> 
+
+        <Menu.Item key="/admin/board/message/list">
+          <MenuName>쪽지 관리</MenuName>
+        </Menu.Item>
+        
+        <Menu.Item key="/admin/processApply/list">
           <MenuName>설명회 참가신청서</MenuName>
         </Menu.Item>
 
         <Menu.Item key="/admin/processApply2/list">
           <MenuName>정규과정 등록신청서</MenuName>
-        </Menu.Item> */}
+        </Menu.Item> 
 
         <Menu.Item key="/admin/logs/acceptLogs">
           <MenuName>접속자 통계</MenuName>
         </Menu.Item>
+        */}
       </Menu>
     </>
   );

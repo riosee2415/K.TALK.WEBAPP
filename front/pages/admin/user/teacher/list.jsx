@@ -514,12 +514,14 @@ const UserList = ({}) => {
               style={{ width: "20%" }}
               placeholder="사용자명"
               {...inputName}
+              onKeyDown={(e) => e.keyCode === 13 && onSeachTeaHandler()}
             />
             <Input
               size="small"
               style={{ width: "20%" }}
               placeholder="이메일"
               {...inputEmail}
+              onKeyDown={(e) => e.keyCode === 13 && onSeachTeaHandler()}
             />
             <Button
               widt={`80px`}
