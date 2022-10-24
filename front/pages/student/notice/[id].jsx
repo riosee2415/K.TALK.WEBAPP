@@ -637,7 +637,7 @@ const Notice = ({}) => {
                         width={width < 800 ? `15%` : `7%`}
                         display={width < 900 ? `none` : `flex`}
                       >
-                        {data.noticeId}
+                        {data.num}
                       </Wrapper>
 
                       <Wrapper

@@ -1080,7 +1080,7 @@ const Student = () => {
                           margin={`0 0 10px`}
                         >
                           <Text fontSize={width < 800 ? `16px` : `18px`}>
-                            Class number:&nbsp;
+                            Class number :&nbsp;
                             {data.number}
                           </Text>
                           &nbsp;
@@ -1121,11 +1121,11 @@ const Student = () => {
                           <Text
                             margin={width < 800 ? `0 30px 0 0` : `0 80px 0 0`}
                           >
-                            <SpanText fontWeight={`bold`}>From:</SpanText>
+                            <SpanText fontWeight={`bold`}>From :</SpanText>
                             &nbsp;{data.PartCreatedAt.slice(0, 10)}
                           </Text>
                           <Text margin={`0 10px 0 0`}>
-                            <SpanText fontWeight={`bold`}>To:</SpanText>
+                            <SpanText fontWeight={`bold`}>To :</SpanText>
                             &nbsp;{data.endDate}
                           </Text>
                         </Wrapper>
@@ -1404,7 +1404,7 @@ const Student = () => {
                                 width={width < 800 ? `15%` : `10%`}
                                 display={width < 900 ? `none` : `flex`}
                               >
-                                {lec.noticeId}
+                                {lec.num}
                               </Wrapper>
 
                               <Wrapper

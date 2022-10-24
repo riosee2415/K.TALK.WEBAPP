@@ -286,108 +286,13 @@ const Home = ({}) => {
 
           <Wrapper>
             <RsWrapper>
-              <Wrapper al={`flex-start`} ju={`flex-start`} margin={`110px 0 0`}>
-                <Wrapper>
-                  <Image
-                    alt="logo"
-                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/icon_symbol.png`}
-                    width={`64px`}
-                  />
-                  <Text
-                    fontSize={`32px`}
-                    fontWeight={`700`}
-                    margin={`0 0 20px`}
-                  >
-                    Student's Review
-                  </Text>
-                  <Wrapper al={`flex-end`}>
-                    {me && (
-                      <CommonButton onClick={modalOpen}>Write</CommonButton>
-                    )}
-                  </Wrapper>
-                </Wrapper>
-                <Wrapper dr={`row`} ju={`flex-start`}>
-                  {communityList && communityList.length === 0 ? (
-                    <Wrapper>
-                      <Empty description={`게시물이 없습니다.`} />
-                    </Wrapper>
-                  ) : (
-                    communityList &&
-                    communityList.map((data) => {
-                      return (
-                        <Box
-                          onClick={() => moveLinkHandler(`/board/${data.id}`)}
-                        >
-                          <Text color={Theme.grey3_C} fontSize={`15px`}>
-                            No.{data.id}
-                          </Text>
-                          <Text
-                            margin={`10px 0 5px`}
-                            width={`100%`}
-                            isEllipsis
-                            fontSize={`22px`}
-                            fontWeight={`bold`}
-                          >
-                            {data.file && (
-                              <>
-                                <FileTextOutlined
-                                  style={{ color: Theme.basicTheme_C }}
-                                />
-                                &nbsp;
-                              </>
-                            )}
-                            {data.title}
-                          </Text>
-                          <Text>
-                            {data.createdAt}
-                            <SpanText fontSize={`12px`} margin={`0 5px`}>
-                              |
-                            </SpanText>
-                            {data.username}(
-                            {data.level === 1
-                              ? `Student`
-                              : data.level === 2
-                              ? `Teacher`
-                              : `admin`}
-                            )
-                          </Text>
-                          <Wrapper
-                            dr={`row`}
-                            ju={`flex-end`}
-                            margin={`45px 0 0`}
-                          >
-                            <EyeOutlined />
-                            &nbsp;
-                            {data.hit}
-                            <SpanText fontSize={`12px`} margin={`0 5px`}>
-                              |
-                            </SpanText>
-                            <CommentOutlined />
-                            &nbsp;
-                            {data.commentCnt}
-                          </Wrapper>
-                        </Box>
-                      );
-                    })
-                  )}
-                </Wrapper>
-                <Wrapper margin={`20px 0 100px`}>
-                  <Pagination
-                    defaultCurrent={1}
-                    current={parseInt(currentPage)}
-                    onChange={(page) => otherPageCall(page)}
-                    total={communityMaxLength * 9}
-                  />
-                </Wrapper>
-              </Wrapper>
-
               <Wrapper
                 fontSize={
                   width < 900 ? (width < 700 ? `14px` : `16px`) : `24px`
                 }
                 color={Theme.basicTheme_C}
                 fontWeight={`bold`}
-                margin={`0 0 20px`}
+                margin={`100px 0 20px`}
               >
                 <Text>
                   <SpanText color={Theme.subTheme6_C}>K-talk Live</SpanText>
@@ -586,7 +491,102 @@ const Home = ({}) => {
                   </CommonButton>
                 </Wrapper>
               </Wrapper>
-              <Wrapper dr={`row`} margin={`60px 0 0`} ju={`space-between`}>
+
+              <Wrapper al={`flex-start`} ju={`flex-start`} margin={`110px 0 0`}>
+                <Wrapper>
+                  <Image
+                    alt="logo"
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/icon_symbol.png`}
+                    width={`64px`}
+                  />
+                  <Text
+                    fontSize={`32px`}
+                    fontWeight={`700`}
+                    margin={`0 0 20px`}
+                  >
+                    Student's Review
+                  </Text>
+                  <Wrapper al={`flex-end`}>
+                    {me && (
+                      <CommonButton onClick={modalOpen}>Write</CommonButton>
+                    )}
+                  </Wrapper>
+                </Wrapper>
+                <Wrapper dr={`row`} ju={`flex-start`} margin={`10px 0 0`}>
+                  {communityList && communityList.length === 0 ? (
+                    <Wrapper>
+                      <Empty description={`게시물이 없습니다.`} />
+                    </Wrapper>
+                  ) : (
+                    communityList &&
+                    communityList.map((data) => {
+                      return (
+                        <Box
+                          onClick={() => moveLinkHandler(`/board/${data.id}`)}
+                        >
+                          <Text color={Theme.grey3_C} fontSize={`15px`}>
+                            No.{data.id}
+                          </Text>
+                          <Text
+                            margin={`10px 0 5px`}
+                            width={`100%`}
+                            isEllipsis
+                            fontSize={`22px`}
+                            fontWeight={`bold`}
+                          >
+                            {data.file && (
+                              <>
+                                <FileTextOutlined
+                                  style={{ color: Theme.basicTheme_C }}
+                                />
+                                &nbsp;
+                              </>
+                            )}
+                            {data.title}
+                          </Text>
+                          <Text>
+                            {data.createdAt}
+                            <SpanText fontSize={`12px`} margin={`0 5px`}>
+                              |
+                            </SpanText>
+                            {data.username}(
+                            {data.level === 1
+                              ? `Student`
+                              : data.level === 2
+                              ? `Teacher`
+                              : `admin`}
+                            )
+                          </Text>
+                          <Wrapper
+                            dr={`row`}
+                            ju={`flex-end`}
+                            margin={`45px 0 0`}
+                          >
+                            <EyeOutlined />
+                            &nbsp;
+                            {data.hit}
+                            <SpanText fontSize={`12px`} margin={`0 5px`}>
+                              |
+                            </SpanText>
+                            <CommentOutlined />
+                            &nbsp;
+                            {data.commentCnt}
+                          </Wrapper>
+                        </Box>
+                      );
+                    })
+                  )}
+                </Wrapper>
+                <Wrapper margin={`20px 0 100px`}>
+                  <Pagination
+                    defaultCurrent={1}
+                    current={parseInt(currentPage)}
+                    onChange={(page) => otherPageCall(page)}
+                    total={communityMaxLength * 9}
+                  />
+                </Wrapper>
+              </Wrapper>
+              <Wrapper dr={`row`} ju={`space-between`}>
                 <Wrapper
                   shadow={`0 5px 15px rgba(0, 0, 0, 0.05)`}
                   padding={`20px 30px`}
