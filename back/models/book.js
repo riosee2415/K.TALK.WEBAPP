@@ -19,14 +19,18 @@ module.exports = class Book extends Model {
         },
         level: {
           type: DataTypes.STRING(100), // 교제 레벨
-          allowNull: false,
+          allowNull: true,
         },
         stage: {
           type: DataTypes.STRING(100), // 단원
-          allowNull: false,
+          allowNull: true,
         },
         kinds: {
           type: DataTypes.STRING(100), // 교재 종류
+          allowNull: true,
+        },
+        link: {
+          type: DataTypes.STRING(300), // 링크
           allowNull: false,
         },
         isDelete: {

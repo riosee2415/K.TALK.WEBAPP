@@ -70,6 +70,7 @@ router.post("/list", async (req, res, next) => {
             A.level,
             A.stage,
             A.kinds,
+            A.link,
             B.course,
             C.username
       FROM	books					    A
@@ -98,6 +99,7 @@ router.post("/list", async (req, res, next) => {
             A.level,
             A.stage,
             A.kinds,
+            A.link,
             B.course,
             C.username
       FROM	books					    A
@@ -175,6 +177,7 @@ router.get("/detail/:bookId", async (req, res, next) => {
             A.level,
             A.stage,
             A.kinds,
+            A.link,
             B.course
       FROM	books					    A
      INNER
@@ -200,7 +203,8 @@ router.post("/image", upload.single("image"), async (req, res, next) => {
 });
 
 router.post("/create", isLoggedIn, async (req, res, next) => {
-  const { thumbnail, title, file, LectureId, level, stage, kinds } = req.body;
+  const { thumbnail, title, file, LectureId, level, stage, kinds, link } =
+    req.body;
 
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
@@ -219,10 +223,11 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
       thumbnail,
       title,
       file,
-      level,
-      stage,
-      kinds,
+      level: level ? level : null,
+      stage: stage ? stage : null,
+      kinds: kinds ? kinds : null,
       LectureId: parseInt(LectureId),
+      link,
     });
 
     if (!createResult) {
@@ -237,7 +242,7 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
 });
 
 router.patch("/update", isLoggedIn, async (req, res, next) => {
-  const { id, thumbnail, title, file, LectureId, level, stage, kinds } =
+  const { id, thumbnail, title, file, LectureId, level, stage, kinds, link } =
     req.body;
 
   if (!req.user) {
@@ -272,10 +277,11 @@ router.patch("/update", isLoggedIn, async (req, res, next) => {
         thumbnail,
         title,
         file,
-        level,
-        stage,
-        kinds,
+        level: level ? level : null,
+        stage: stage ? stage : null,
+        kinds: kinds ? kinds : null,
         LectureId: parseInt(LectureId),
+        link,
       },
       {
         where: { id: parseInt(id) },
@@ -344,7 +350,7 @@ router.delete("/delete/:bookId", isAdminCheck, async (req, res, next) => {
 });
 
 router.patch("/admin/update", isAdminCheck, async (req, res, next) => {
-  const { id, thumbnail, title, file, LectureId, level, stage, kinds } =
+  const { id, thumbnail, title, file, LectureId, level, stage, kinds, link } =
     req.body;
 
   try {
@@ -369,10 +375,11 @@ router.patch("/admin/update", isAdminCheck, async (req, res, next) => {
         thumbnail,
         title,
         file,
-        level,
-        stage,
-        kinds,
+        level: level ? level : null,
+        stage: stage ? stage : null,
+        kinds: kinds ? kinds : null,
         LectureId: parseInt(LectureId),
+        link,
       },
       {
         where: { id: parseInt(id) },
