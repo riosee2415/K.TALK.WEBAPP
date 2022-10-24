@@ -32,6 +32,20 @@ import { saveAs } from "file-saver";
 import moment from "moment";
 import ToastEditorComponentMix from "../../components/editor/ToastEditorComponentMix";
 import { useRouter } from "next/router";
+import { DeleteOutlined, FormOutlined } from "@ant-design/icons";
+
+const UpdateBtn = styled(Wrapper)`
+  width: 35px;
+  height: 35px;
+  color: ${Theme.white_C};
+  font-size: 20px;
+  border-radius: 5px;
+
+  &:hover {
+    background: ${(props) => props.hoverBgColor};
+    color: ${(props) => props.hoverColor};
+  }
+`;
 
 const CustomPage = styled(Pagination)`
   & .ant-pagination-next > button {
@@ -441,197 +455,217 @@ const TeacherNormalNotice = () => {
           </Wrapper>
         </Wrapper>
 
-        <Wrapper borderTop={`2px solid ${Theme.black_C}`}>
-          <Wrapper
-            dr={`row`}
-            textAlign={`center`}
-            padding={`20px 0`}
-            bgColor={Theme.subTheme9_C}
-            borderBottom={`1px solid ${Theme.grey_C}`}
+        <Wrapper
+          borderTop={`2px solid ${Theme.subTheme8_C}`}
+          dr={`row`}
+          textAlign={`center`}
+          padding={`20px 0`}
+          bgColor={Theme.subTheme14_C}
+          borderBottom={`1px solid ${Theme.grey_C}`}
+        >
+          <WordbreakText
+            fontSize={width < 700 ? `14px` : `18px`}
+            width={width < 800 ? `15%` : `10%`}
+            display={width < 900 ? `none` : `block`}
           >
-            <WordbreakText
-              fontSize={width < 700 ? `14px` : `18px`}
-              fontWeight={`Bold`}
-              width={width < 800 ? `15%` : `10%`}
-              display={width < 900 ? `none` : `block`}
-            >
-              번호
-            </WordbreakText>
-            <WordbreakText
-              fontSize={width < 700 ? `12px` : `18px`}
-              fontWeight={`Bold`}
-              width={width < 800 ? `18%` : `10%`}
-            >
-              날짜
-            </WordbreakText>
-            <WordbreakText
-              fontSize={width < 700 ? `12px` : `18px`}
-              fontWeight={`Bold`}
-              width={width < 800 ? `25%` : `43%`}
-            >
-              제목
-            </WordbreakText>
-            <WordbreakText
-              fontSize={width < 700 ? `12px` : `18px`}
-              fontWeight={`Bold`}
-              width={width < 800 ? `20%` : `15%`}
-            >
-              작성자
-            </WordbreakText>
-            <WordbreakText
-              fontSize={width < 700 ? `12px` : `18px`}
-              fontWeight={`Bold`}
-              width={`10%`}
-            >
-              댓글수
-            </WordbreakText>
-            <WordbreakText
-              fontSize={width < 700 ? `12px` : `18px`}
-              fontWeight={`Bold`}
-              width={width < 800 ? `22%` : `12%`}
-            >
-              기능
-            </WordbreakText>
+            No
+          </WordbreakText>
+          {/* <WordbreakText
+            fontSize={width < 700 ? `12px` : `18px`}
+ 
+            width={width < 800 ? `18%` : `10%`}
+          >
+            날짜
+          </WordbreakText> */}
+          <WordbreakText
+            fontSize={width < 700 ? `12px` : `18px`}
+            width={width < 800 ? `43%` : `53%`}
+          >
+            Title
+          </WordbreakText>
+          <WordbreakText fontSize={width < 700 ? `12px` : `18px`} width={`10%`}>
+            Comment
+          </WordbreakText>
+          <WordbreakText
+            fontSize={width < 700 ? `12px` : `18px`}
+            width={width < 800 ? `20%` : `15%`}
+          >
+            작성자
+          </WordbreakText>
+          <WordbreakText
+            fontSize={width < 700 ? `12px` : `18px`}
+            width={width < 800 ? `22%` : `12%`}
+          >
+            Edit │ Delete
+          </WordbreakText>
+        </Wrapper>
+        {normalNoticeListLoading ? (
+          <Wrapper>
+            <Spin />
+            <Text>일반게시판을 불러오고 있습니다.</Text>
           </Wrapper>
-          {normalNoticeListLoading ? (
-            <Wrapper>
-              <Spin />
-              <Text>일반게시판을 불러오고 있습니다.</Text>
+        ) : (
+          normalNoticeList &&
+          (normalNoticeList.length === 0 ? (
+            <Wrapper margin={`30px 0`}>
+              <Empty description="조회된 일반게시판이 없습니다." />
             </Wrapper>
           ) : (
-            normalNoticeList &&
-            (normalNoticeList.length === 0 ? (
-              <Wrapper margin={`30px 0`}>
-                <Empty description="조회된 일반게시판이 없습니다." />
-              </Wrapper>
-            ) : (
-              normalNoticeList.map((data, idx) => {
-                return (
-                  <Wrapper
-                    key={data.id}
-                    dr={`row`}
-                    textAlign={`center`}
-                    ju={`flex-start`}
-                    padding={`25px 0 20px`}
-                    cursor={`pointer`}
-                    bgColor={idx % 2 === 1 && Theme.subTheme_C}
-                    borderBottom={`1px solid ${Theme.grey_C}`}
-                  >
-                    {/* 번호 */}
-                    <WordbreakText
-                      fontSize={width < 700 ? `14px` : `16px`}
-                      width={width < 800 ? `15%` : `10%`}
-                      display={width < 900 ? `none` : `block`}
-                      wordBreak={`break-word`}
-                      onClick={() =>
-                        moveLinkHandler(
-                          `/no
+            normalNoticeList.map((data, idx) => {
+              return (
+                <Wrapper
+                  key={data.id}
+                  dr={`row`}
+                  textAlign={`center`}
+                  ju={`flex-start`}
+                  padding={`25px 0 20px`}
+                  cursor={`pointer`}
+                  bgColor={idx % 2 === 1 && Theme.subTheme_C}
+                  borderBottom={`1px solid ${Theme.grey_C}`}
+                >
+                  {/* 번호 */}
+                  <WordbreakText
+                    fontSize={width < 700 ? `14px` : `16px`}
+                    width={width < 800 ? `15%` : `10%`}
+                    display={width < 900 ? `none` : `block`}
+                    wordBreak={`break-word`}
+                    onClick={() =>
+                      moveLinkHandler(
+                        `/no
                           rmalNotice/${data.noticeId}?type=teacher`
-                        )
-                      }
-                    >
-                      {data.noticeId}
-                    </WordbreakText>
-                    {/* 날짜 */}
-                    <WordbreakText
-                      width={width < 800 ? `18%` : `10%`}
-                      fontSize={width < 700 && `12px`}
-                      onClick={() =>
-                        moveLinkHandler(
-                          `/normalNotice/${data.noticeId}?type=teacher`
-                        )
-                      }
-                      isEllipsis
-                    >
-                      {moment(data.noticeCreatedAt, "YYYY/MM/DD").format(
-                        "YYYY/MM/DD"
-                      )}
-                    </WordbreakText>
-                    {/* 제목 */}
-                    <WordbreakText
-                      width={width < 800 ? `25%` : `43%`}
-                      al={`flex-start`}
-                      padding={`0 0 0 10px`}
-                      fontSize={width < 700 && `12px`}
-                      onClick={() =>
-                        moveLinkHandler(
-                          `/normalNotice/${data.noticeId}?type=teacher`
-                        )
-                      }
-                      textAlign={`left`}
-                      isEllipsis
-                    >
-                      {data.noticeTitle}
-                    </WordbreakText>
-                    {/* 작성자 */}
-                    <WordbreakText
-                      width={width < 800 ? `20%` : `15%`}
-                      fontSize={width < 800 ? `12px` : `14px`}
-                      onClick={() =>
-                        moveLinkHandler(
-                          `/normalNotice/${data.noticeId}?type=teacher`
-                        )
-                      }
-                    >
-                      {data.noticeAuthor} (
-                      {data.noticeLevel === 1
-                        ? "학생"
-                        : data.noticeLevel === 2
-                        ? "강사"
-                        : "관리자"}
                       )
-                    </WordbreakText>
-                    {/* 댓글수 */}
-                    <WordbreakText
-                      width={`10%`}
-                      fontSize={width < 800 ? `12px` : `14px`}
-                      onClick={() =>
-                        moveLinkHandler(
-                          `/normalNotice/${data.noticeId}?type=teacher`
-                        )
-                      }
-                    >
-                      {data.commentCnt}
-                    </WordbreakText>
-                    {/* 기능 */}
-                    <Wrapper width={width < 800 ? `22%` : `12%`}>
-                      {me && me.id === data.writeUserId ? (
-                        <Wrapper dr={width < 800 ? `column` : `row`}>
+                    }
+                  >
+                    {data.num}
+                  </WordbreakText>
+                  {/* 날짜 */}
+                  {/* <WordbreakText
+                    width={width < 800 ? `18%` : `10%`}
+                    fontSize={width < 700 && `12px`}
+                    onClick={() =>
+                      moveLinkHandler(
+                        `/normalNotice/${data.noticeId}?type=teacher`
+                      )
+                    }
+                    isEllipsis
+                  >
+                    {moment(data.noticeCreatedAt, "YYYY/MM/DD").format(
+                      "YYYY/MM/DD"
+                    )}
+                  </WordbreakText> */}
+                  {/* 제목 */}
+                  <WordbreakText
+                    width={width < 800 ? `43%` : `53%`}
+                    al={`flex-start`}
+                    padding={`0 0 0 10px`}
+                    fontSize={width < 700 && `12px`}
+                    onClick={() =>
+                      moveLinkHandler(
+                        `/normalNotice/${data.noticeId}?type=teacher`
+                      )
+                    }
+                    textAlign={`left`}
+                    isEllipsis
+                  >
+                    {data.noticeTitle}
+                  </WordbreakText>
+                  {/* 댓글수 */}
+                  <WordbreakText
+                    width={`10%`}
+                    fontSize={width < 800 ? `12px` : `14px`}
+                    onClick={() =>
+                      moveLinkHandler(
+                        `/normalNotice/${data.noticeId}?type=teacher`
+                      )
+                    }
+                  >
+                    {data.commentCnt}
+                  </WordbreakText>
+                  {/* 작성자 */}
+                  <WordbreakText
+                    width={width < 800 ? `20%` : `15%`}
+                    fontSize={width < 800 ? `12px` : `14px`}
+                    onClick={() =>
+                      moveLinkHandler(
+                        `/normalNotice/${data.noticeId}?type=teacher`
+                      )
+                    }
+                  >
+                    {data.noticeAuthor} (
+                    {data.noticeLevel === 1
+                      ? "학생"
+                      : data.noticeLevel === 2
+                      ? "강사"
+                      : "관리자"}
+                    )
+                  </WordbreakText>
+                  {/* 기능 */}
+                  <Wrapper width={width < 800 ? `22%` : `12%`}>
+                    {me && me.id === data.writeUserId ? (
+                      <Wrapper dr={width < 800 ? `column` : `row`}>
+                        <UpdateBtn
+                          border={`1px solid ${Theme.subTheme8_C}`}
+                          bgColor={Theme.subTheme8_C}
+                          hoverBgColor={Theme.white_C}
+                          hoverColor={Theme.subTheme8_C}
+                          margin={`0 10px 0 0`}
+                          onClick={() => normalNoticeUpdateModalToggle(data)}
+                          loading={normalNoticeUpdateLoading}
+                        >
+                          <FormOutlined />
+                        </UpdateBtn>
+
+                        <Popconfirm
+                          title="삭제하시겠습니까?"
+                          okText="삭제"
+                          cancelText="취소"
+                          placement="topRight"
+                          onConfirm={() => normalNoticeDelete(data)}
+                          loading={normalNoticeDeleteLoading}
+                        >
+                          <UpdateBtn
+                            border={`1px solid ${Theme.red_C}`}
+                            bgColor={Theme.red_C}
+                            hoverBgColor={Theme.white_C}
+                            hoverColor={Theme.red_C}
+                          >
+                            <DeleteOutlined />
+                          </UpdateBtn>
+                        </Popconfirm>
+                        {/* <CommonButton
+                          width={width < 800 ? `100%` : `50%`}
+                          fontSize={`13px`}
+                          onClick={() => normalNoticeUpdateModalToggle(data)}
+                          loading={normalNoticeUpdateLoading}
+                        >
+                          수정
+                        </CommonButton>
+                        <Popconfirm
+                          title="삭제하시겠습니까?"
+                          okText="삭제"
+                          cancelText="취소"
+                          placement="topRight"
+                          onConfirm={() => normalNoticeDelete(data)}
+                          loading={normalNoticeDeleteLoading}
+                        >
                           <CommonButton
                             width={width < 800 ? `100%` : `50%`}
                             fontSize={`13px`}
-                            onClick={() => normalNoticeUpdateModalToggle(data)}
-                            loading={normalNoticeUpdateLoading}
+                            kindOf={`delete`}
                           >
-                            수정
+                            삭제
                           </CommonButton>
-                          <Popconfirm
-                            title="삭제하시겠습니까?"
-                            okText="삭제"
-                            cancelText="취소"
-                            placement="topRight"
-                            onConfirm={() => normalNoticeDelete(data)}
-                            loading={normalNoticeDeleteLoading}
-                          >
-                            <CommonButton
-                              width={width < 800 ? `100%` : `50%`}
-                              fontSize={`13px`}
-                              kindOf={`delete`}
-                            >
-                              삭제
-                            </CommonButton>
-                          </Popconfirm>
-                        </Wrapper>
-                      ) : (
-                        <Text>권한이 없습니다.</Text>
-                      )}
-                    </Wrapper>
+                        </Popconfirm> */}
+                      </Wrapper>
+                    ) : (
+                      <Text>권한이 없습니다.</Text>
+                    )}
                   </Wrapper>
-                );
-              })
-            ))
-          )}
-        </Wrapper>
+                </Wrapper>
+              );
+            })
+          ))
+        )}
 
         <Wrapper margin={`65px 0 85px`}>
           <CustomPage

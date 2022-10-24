@@ -79,6 +79,44 @@ import TeacherNormalNotice from "../../components/normalNotice/TeacherNormalNoti
 const PROFILE_WIDTH = `150`;
 const PROFILE_HEIGHT = `150`;
 
+const TopButton = styled(Wrapper)`
+  width: calc(100% / 4 - 10px);
+  padding: 20px 0;
+  flex-direction: row;
+  font-size: 16px;
+  font-family: "LeferiPoint-BlackObliqueA";
+  background: ${Theme.subTheme9_C};
+  border-radius: 10px;
+  cursor: pointer;
+
+  & .noHover,
+  .hover {
+    transition: 0.5s;
+  }
+
+  & .hover {
+    opacity: 0;
+  }
+
+  &:hover {
+    & .noHover {
+      opacity: 0;
+    }
+
+    & .hover {
+      opacity: 1;
+    }
+    background: ${Theme.subTheme14_C};
+    color: ${Theme.basicTheme_C};
+  }
+
+  @media (max-width: 700px) {
+    width: calc(100% / 2 - 10px);
+    margin: 0 0 10px;
+    font-size: 14px;
+  }
+`;
+
 const CustomPage = styled(Pagination)`
   & .ant-pagination-next > button {
     border: none;
@@ -930,7 +968,7 @@ const Index = () => {
       if (idx === saveDay.length - 1) {
         textSave += `${data} ${saveTime[idx]}`;
       } else {
-        textSave += `${data} ${saveTime[idx]} | `;
+        textSave += `${data} ${saveTime[idx]}  •  `;
       }
     });
 
@@ -1055,7 +1093,7 @@ const Index = () => {
         <WholeWrapper margin={width < 900 ? `52px 0 0` : `100px 0 0`}>
           <Wrapper
             bgImg={`url("https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/student/subBanner.png")`}
-            padding={width < 700 ? `30px 0` : `60px 0`}
+            padding={width < 700 ? `50px 0` : `100px 0`}
             color={Theme.white_C}
           >
             <RsWrapper dr={`row`} ju={width < 900 ? `center` : `flex-start`}>
@@ -1077,7 +1115,7 @@ const Index = () => {
                   alt="teacher_thumbnail"
                 />
                 <Text
-                  fontSize={width < 700 ? `20px` : `28px`}
+                  fontSize={width < 700 ? `16px` : `28px`}
                   fontWeight={`bold`}
                   padding={`0 0 0 15px`}
                 >
@@ -1092,7 +1130,7 @@ const Index = () => {
                 <CommonButton
                   radius={`20px`}
                   kindOf={`subTheme3`}
-                  margin={width < 900 ? `20px 0 0` : `0 0 0 20px`}
+                  margin={width < 900 ? `10px 0` : `0 0 0 20px`}
                   onClick={meUpdateModalToggle}
                 >
                   <SyncOutlined /> Upload My ID picture
@@ -1100,11 +1138,258 @@ const Index = () => {
               </Wrapper>
             </RsWrapper>
           </Wrapper>
-          <RsWrapper margin={`80px 0 0`}>
+
+          <RsWrapper>
+            <Wrapper dr={`row`} ju={`space-between`} margin={`-20px 0 80px`}>
+              <TopButton onClick={() => moveLinkHandler(`/textbook`)}>
+                <Wrapper width={`auto`} position={`relative`}>
+                  <Image
+                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_document_h_221021.png"
+                    alt="icon"
+                    width={`20px`}
+                    margin={`0 10px 0 0`}
+                    className="hover"
+                    position={`absolute`}
+                    top={`0`}
+                    left={`0`}
+                  />
+
+                  <Image
+                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_document_221021.png"
+                    alt="icon"
+                    width={`20px`}
+                    margin={`0 10px 0 0`}
+                    className="noHover"
+                  />
+                </Wrapper>
+
+                <Text>교재 찾기 / 올리기</Text>
+              </TopButton>
+
+              <TopButton>
+                <Wrapper width={`auto`} position={`relative`}>
+                  <Image
+                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_rule_h_221021.png"
+                    alt="icon"
+                    width={`20px`}
+                    margin={`0 10px 0 0`}
+                    className="hover"
+                    position={`absolute`}
+                    top={`0`}
+                    left={`0`}
+                  />
+
+                  <Image
+                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_rule_221021.png"
+                    alt="icon"
+                    width={`20px`}
+                    margin={`0 10px 0 0`}
+                    className="noHover"
+                  />
+                </Wrapper>
+
+                <Text>복무 규정</Text>
+              </TopButton>
+
+              <TopButton>
+                <Wrapper width={`auto`} position={`relative`}>
+                  <Image
+                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_contract_h_221021.png"
+                    alt="icon"
+                    width={`20px`}
+                    margin={`0 10px 0 0`}
+                    className="hover"
+                    position={`absolute`}
+                    top={`0`}
+                    left={`0`}
+                  />
+
+                  <Image
+                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_contract_221021.png"
+                    alt="icon"
+                    width={`20px`}
+                    margin={`0 10px 0 0`}
+                    className="noHover"
+                  />
+                </Wrapper>
+
+                <Text>강사 계약서</Text>
+              </TopButton>
+
+              <TopButton onClick={() => moveLinkHandler(`/teacher/teacherPay`)}>
+                <Wrapper width={`auto`} position={`relative`}>
+                  <Image
+                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_pay_h_221021.png"
+                    alt="icon"
+                    width={`20px`}
+                    margin={`0 10px 0 0`}
+                    className="hover"
+                    position={`absolute`}
+                    top={`0`}
+                    left={`0`}
+                  />
+
+                  <Image
+                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_pay_221021.png"
+                    alt="icon"
+                    width={`20px`}
+                    margin={`0 10px 0 0`}
+                    className="noHover"
+                  />
+                </Wrapper>
+
+                <Text>강의료 산정</Text>
+              </TopButton>
+            </Wrapper>
+
+            {/* 내수업 */}
+            <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 20px`}>
+              <CommonTitle>내 수업</CommonTitle>
+
+              <Wrapper dr={`row`} width={`auto`}>
+                <TextInput
+                  height={`25px`}
+                  margin={`0 10px 0 0`}
+                  placeholder="검색어를 입력해주세요."
+                />
+                <CommonButton height={`25px`} padding={`0 10px`}>
+                  작성하기
+                </CommonButton>
+              </Wrapper>
+            </Wrapper>
+
+            {lectureTeacherList && lectureTeacherList.length === 0 ? (
+              <Wrapper margin={`30px 0`}>
+                <Empty description="조회된 수업 리스트가 없습니다." />
+              </Wrapper>
+            ) : (
+              lectureTeacherList &&
+              lectureTeacherList.map((data, idx) => {
+                return (
+                  <>
+                    <Wrapper
+                      padding={`30px`}
+                      borderTop={`1px solid ${Theme.subTheme8_C}`}
+                      borderBottom={`1px solid ${Theme.grey_C}`}
+                      dr={`row`}
+                      ju={`space-between`}
+                      key={idx}
+                    >
+                      <Wrapper dr={`row`} width={`auto`}>
+                        <Wrapper
+                          dr={`row`}
+                          width={`auto`}
+                          margin={`0 20px 0 0`}
+                        >
+                          <Image
+                            width={width < 900 ? `15px` : `22px`}
+                            height={width < 900 ? `15px` : `22px`}
+                            src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_clock.png"
+                            alt="clock_icon"
+                            margin={`0 10px 0 0`}
+                          />
+
+                          <Text fontSize={`16px`}>
+                            {divideLecture(data && data.day, data && data.time)}
+                          </Text>
+                        </Wrapper>
+
+                        <Wrapper
+                          dr={`row`}
+                          width={`auto`}
+                          margin={`0 20px 0 0`}
+                        >
+                          <Image
+                            width={width < 900 ? `15px` : `22px`}
+                            height={width < 900 ? `15px` : `22px`}
+                            src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_calender_y.png"
+                            alt="calender_icon"
+                            margin={`0 10px 0 0`}
+                          />
+                          <Text fontSize={`16px`}>
+                            {moment(data.startDate, "YYYY/MM/DD").format(
+                              "YYYY/MM/DD"
+                            )}
+                          </Text>
+                        </Wrapper>
+
+                        <Wrapper
+                          dr={`row`}
+                          width={`auto`}
+                          margin={`0 20px 0 0`}
+                        >
+                          <Image
+                            width={width < 900 ? `15px` : `22px`}
+                            height={width < 900 ? `15px` : `22px`}
+                            src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_number.png"
+                            alt="calender_icon"
+                            margin={`0 10px 0 0`}
+                          />
+                          <Text fontSize={`16px`}>{`${data.number}`}</Text>
+                        </Wrapper>
+
+                        <Wrapper dr={`row`} width={`auto`}>
+                          <Image
+                            width={width < 900 ? `15px` : `22px`}
+                            height={width < 900 ? `15px` : `22px`}
+                            src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/icon_lecture.png"
+                            alt="calender_icon"
+                            margin={`0 10px 0 0`}
+                          />
+                          <Text fontSize={`16px`}>{data.course}</Text>
+                        </Wrapper>
+                      </Wrapper>
+
+                      <Wrapper dr={`row`} width={`auto`}>
+                        <CommonButton
+                          kindOf={`subTheme14`}
+                          margin={`0 5px 0 0`}
+                          onClick={() => textbookModalHandler(data)}
+                        >
+                          교재 등록하기
+                        </CommonButton>
+                        <CommonButton
+                          kindOf={`subTheme14`}
+                          onClick={() => moveLinkHandler(`/teacher/${data.id}`)}
+                        >
+                          수업상세 보러가기
+                        </CommonButton>
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper
+                      padding={`50px 30px`}
+                      ju={`flex-start`}
+                      dr={`row`}
+                      fontSize={`16px`}
+                      bgColor={Theme.lightGrey2_C}
+                      margin={`0 0 30px`}
+                    >
+                      {lectureTeacherStudents.map((data2) => {
+                        if (data2.LectureId === data.id) {
+                          return <Name>{data2.username}</Name>;
+                        } else {
+                          return null;
+                        }
+                      })}
+                    </Wrapper>
+                  </>
+                );
+              })
+            )}
+
+            <Wrapper margin={`50px 0`}>
+              <CustomPage
+                current={currentPage2}
+                total={noticeLastPage * 10}
+                onChange={(page) => onChangeLecturePage(page)}
+              ></CustomPage>
+            </Wrapper>
+
             {/* NORMAL NOTICE TABLE */}
             <TeacherNormalNotice />
 
-            <Wrapper al={`flex-start`}>
+            {/* <Wrapper al={`flex-start`}>
               <CommonTitle margin={`0 0 20px`}>내 수업</CommonTitle>
 
               {lectureTeacherList && lectureTeacherList.length === 0 ? (
@@ -1282,9 +1567,9 @@ const Index = () => {
                   onChange={(page) => onChangeLecturePage(page)}
                 ></CustomPage>
               </Wrapper>
-            </Wrapper>
+            </Wrapper> */}
 
-            <Wrapper
+            {/* <Wrapper
               dr={`row`}
               margin={`100px 0`}
               ju={width < 700 ? `flex-start` : "center"}
@@ -1299,7 +1584,7 @@ const Index = () => {
               >
                 강의료 산정
               </CustomButton>
-            </Wrapper>
+            </Wrapper> */}
           </RsWrapper>
 
           <CustomModal
