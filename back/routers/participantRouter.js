@@ -565,7 +565,7 @@ router.post("/user/delete/list", isAdminCheck, async (req, res, next) => {
   }
 });
 
-// 몇일 남았는지 체크
+// 몇일 남았는지 체크 => 수업종료일기준으로 바뀌어야함
 router.post("/user/limit/list", isAdminCheck, async (req, res, next) => {
   const { UserId } = req.body;
 
@@ -659,6 +659,7 @@ router.post("/user/limit/list", isAdminCheck, async (req, res, next) => {
   }
 });
 
+// 결제 만료일이 아니라 수업종료일이 보여져야함 그리고 남은일수가 아니라 남은 수업횟수로 체인지
 router.post("/lastDate/list", isAdminCheck, async (req, res, next) => {
   const { search } = req.body;
 
