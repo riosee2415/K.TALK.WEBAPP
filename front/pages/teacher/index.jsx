@@ -29,11 +29,7 @@ import {
   Button,
   Spin,
 } from "antd";
-import {
-  SyncOutlined,
-  UserOutlined,
-  CalendarOutlined,
-} from "@ant-design/icons";
+import { SyncOutlined, CalendarOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 import useWidth from "../../hooks/useWidth";
 import ClientLayout from "../../components/ClientLayout";
@@ -63,17 +59,12 @@ import { saveAs } from "file-saver";
 import {
   BOOK_ALL_LIST_REQUEST,
   BOOK_CREATE_REQUEST,
+  BOOK_FILE_INIT,
   BOOK_UPLOAD_REQUEST,
   BOOK_UPLOAD_TH_REQUEST,
 } from "../../reducers/book";
 import useInput from "../../hooks/useInput";
-import {
-  NORMAL_NOTICE_LIST_REQUEST,
-  NORMAL_NOTICE_MODAL_TOGGLE,
-  NORMAL_NOTICE_STU_CREATE_REQUEST,
-  NORMAL_NOTICE_TEACHER_CREATE_REQUEST,
-} from "../../reducers/normalNotice";
-import ToastEditorComponentMix from "../../components/editor/ToastEditorComponentMix";
+import { NORMAL_NOTICE_LIST_REQUEST } from "../../reducers/normalNotice";
 import TeacherNormalNotice from "../../components/normalNotice/TeacherNormalNotice";
 
 const PROFILE_WIDTH = `150`;
@@ -162,78 +153,6 @@ const CustomPage = styled(Pagination)`
   @media (max-width: 800px) {
     width: 18px;
     height: 18px !important;
-  }
-`;
-
-const CustomButton = styled.button`
-  width: calc(100% / 4 - 30px);
-  color: ${Theme.black_3C};
-  font-size: 18px;
-  margin: 0 30px 0 0;
-  height: 70px;
-  border: none;
-  background-color: ${Theme.white_C};
-  border: 1px solid ${Theme.basicTheme_C};
-  box-shadow: 0px 0px 5px rgb(0, 0, 0, 0.16);
-  cursor: pointer;
-
-  &:hover {
-    transition: all 0.2s;
-    border: 1px solid ${Theme.basicTheme_C};
-    background-color: ${Theme.basicTheme_C};
-    color: ${Theme.white_C};
-  }
-
-  @media (max-width: 700px) {
-    font-size: 14px;
-    width: calc(100% / 2 - 10px);
-    margin: 10px 10px 0 0;
-  }
-`;
-
-const CustomText2 = styled(Text)`
-  font-size: 18px;
-  font-weight: ${(props) => props.fontWeight || `Bold`};
-  color: ${Theme.black_2C};
-  margin: 0;
-
-  &::after {
-    content: "";
-    margin: ${(props) => props.margin || `0 20px`};
-    border-right: 1px dashed ${Theme.grey_C};
-  }
-
-  @media (max-width: 1400px) {
-    &::after {
-      border-right: ${(props) => props.borderRightBool && `0px`};
-    }
-  }
-
-  @media (max-width: 700px) {
-    font-size: 14px;
-    &::after {
-      margin: ${(props) => props.margin || `0 5px`};
-    }
-  }
-`;
-
-const CustomText3 = styled(Text)`
-  font-size: 18px;
-  font-weight: Bold;
-  margin: 0 20px 0 0;
-
-  &::before {
-    content: "";
-    margin: 0 20px 0 0;
-    border-right: 1px dashed ${Theme.grey_C};
-    color: ${Theme.grey_C};
-  }
-
-  @media (max-width: 700px) {
-    font-size: 14px;
-    &::before {
-      margin: 0 10px;
-    }
   }
 `;
 
@@ -344,13 +263,6 @@ const WordbreakText = styled(Text)`
   word-wrap: break-all;
 `;
 
-const FileBox = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-`;
-
 const Index = () => {
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
@@ -381,45 +293,20 @@ const Index = () => {
   } = useSelector((state) => state.lecture);
 
   const {
-    noticeList,
     noticeLastPage,
     st_noticeListDone,
     st_noticeListError,
 
-    noticeLectureList,
-    noticeLectureLastPage,
     st_noticeLectureListError,
   } = useSelector((state) => state.notice);
 
   const {
-    normalNoticeList,
-    normalNoticeLastPage,
-    normalNoticeModal,
-    //
-    normalNoticeListLoading,
-    normalNoticeListError,
-    //
-    normalNoticeTeacherCreateLoading,
-    normalNoticeTeacherCreateDone,
-    normalNoticeTeacherCreateError,
-  } = useSelector((state) => state.normalNotice);
-
-  const {
-    messageUserList,
-    messageUserLastPage,
-
     st_messageUserListError,
 
     st_messageCreateDone,
     st_messageCreateError,
 
-    messageAllList,
-    messageAllLastPage,
-
     st_messageAllListError,
-
-    messageSenderList,
-    messageSenderLastPage,
   } = useSelector((state) => state.message);
 
   const {
@@ -433,7 +320,6 @@ const Index = () => {
 
     st_bookUploadLoading,
     st_bookUploadDone,
-    st_bookUploadError,
 
     st_bookUploadThLoading,
     st_bookUploadThDone,
@@ -458,12 +344,7 @@ const Index = () => {
   const [textBookUploadform] = Form.useForm();
   const [form] = Form.useForm();
 
-  const [currentPage1, setCurrentPage1] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
-  const [currentPage3, setCurrentPage3] = useState(1);
-  const [currentPage4, setCurrentPage4] = useState(1);
-  const [currentPage5, setCurrentPage5] = useState(1);
-  const [currentPage6, setCurrentPage6] = useState(1);
 
   const [zoomLinkToggle, setZoomLinkToggle] = useState(false);
   const [messageViewToggle, setMessageViewToggle] = useState(false);
@@ -475,8 +356,6 @@ const Index = () => {
 
   const [textbookToggle, setTextbookToggle] = useState(false);
   const [textbookData, setTextbookData] = useState("");
-
-  const [selectLectureValue, setSelectLectureValue] = useState("");
 
   const [lectureId, setLectureId] = useState("");
 
@@ -532,6 +411,7 @@ const Index = () => {
   useEffect(() => {
     if (st_bookCreateDone) {
       onReset();
+      textBookUploadform.resetFields();
       textbookModalHandler(null);
       setTextbookToggle(false);
       return message.success("교재 등록이 완료되었습니다.");
@@ -744,28 +624,14 @@ const Index = () => {
   }, []);
 
   ////// HANDLER //////
-  const lectureReceiveHandler = useCallback((data) => {
-    let change = JSON.parse(data);
-
-    dispatch({
-      type: NOTICE_LECTURE_LIST_REQUEST,
-      data: {
-        page: 1,
-        LectureId: change.id,
-      },
-    });
-
-    setSelectLectureValue(change);
-  }, []);
-
-  const onClickNoticeHandler = useCallback((data) => {
-    setNoticeViewDatum(data);
-    setNoticeViewModal(true);
-  }, []);
 
   const onReset = useCallback(() => {
     answerform.resetFields();
     textBookUploadform.resetFields();
+
+    dispatch({
+      type: BOOK_FILE_INIT,
+    });
 
     filename.setValue("");
     setThumbnail("");
@@ -802,79 +668,28 @@ const Index = () => {
     });
   }, []);
 
-  const meUpdateHandler = useCallback(
-    (data) => {
-      if (!userProfilePath || userProfilePath.trim().length === 0) {
-        return message.error("프로필 사진을 업로드해주세요");
-      }
+  const meUpdateHandler = useCallback(() => {
+    if (!userProfilePath || userProfilePath.trim().length === 0) {
+      return message.error("프로필 사진을 업로드해주세요");
+    }
 
-      dispatch({
-        type: USER_UPDATE_REQUEST,
-        data: {
-          profileImage: userProfilePath,
-        },
-      });
-    },
-    [userProfilePath]
-  );
+    dispatch({
+      type: USER_UPDATE_REQUEST,
+      data: {
+        profileImage: userProfilePath,
+      },
+    });
+  }, [userProfilePath]);
 
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
-
-  const onChangeNoticePage = useCallback((page) => {
-    setCurrentPage1(page);
-
-    dispatch({
-      type: NOTICE_LIST_REQUEST,
-      data: {
-        page,
-      },
-    });
-  }, []);
-
-  const onChangeNoticeLecturePage = useCallback(
-    (page) => {
-      setCurrentPage5(page);
-
-      dispatch({
-        type: NOTICE_LECTURE_LIST_REQUEST,
-        data: {
-          page,
-          LectureId: id,
-        },
-      });
-    },
-    [selectLectureValue]
-  );
 
   const onChangeLecturePage = useCallback((page) => {
     setCurrentPage2(page);
 
     dispatch({
       type: NOTICE_LIST_REQUEST,
-      data: {
-        page,
-      },
-    });
-  }, []);
-
-  const onChangeMessagePage = useCallback((page) => {
-    setCurrentPage3(page);
-
-    dispatch({
-      type: MESSAGE_USER_LIST_REQUEST,
-      data: {
-        page,
-      },
-    });
-  }, []);
-
-  const onChangeSenderMessagePage = useCallback((page) => {
-    setCurrentPage6(page);
-
-    dispatch({
-      type: MESSAGE_SENDER_LIST_REQUEST,
       data: {
         page,
       },
@@ -903,15 +718,6 @@ const Index = () => {
       });
     }
   };
-
-  const messageViewModalHanlder = useCallback((data, isSender) => {
-    setMessageViewToggle(true);
-    if (isSender) {
-      setSenderModal(true);
-    }
-
-    setMessageDatum(data);
-  }, []);
 
   const answerFinishHandler = useCallback(
     (data, messageData) => {
@@ -946,16 +752,6 @@ const Index = () => {
     const originName = `첨부파일.${ext}`;
 
     saveAs(file, originName);
-  }, []);
-
-  const allmessageChangePage = useCallback((page) => {
-    setCurrentPage4(page);
-    dispatch({
-      type: MESSAGE_ALL_LIST_REQUEST,
-      data: {
-        page,
-      },
-    });
   }, []);
 
   const divideLecture = useCallback((day, time) => {
@@ -1019,6 +815,18 @@ const Index = () => {
 
   const onSubmit = useCallback(
     (data) => {
+      if (!data.title) {
+        return message.error("교재 제목을 입력해주세요.");
+      }
+
+      if (!data.link) {
+        return message.error("링크를 입력해주세요.");
+      }
+
+      if (!uploadPathTh) {
+        return message.error("썸네일을 업로드해주세요.");
+      }
+
       dispatch({
         type: BOOK_CREATE_REQUEST,
         data: {
@@ -1029,11 +837,14 @@ const Index = () => {
           level: data.level,
           stage: data.stage,
           kinds: data.kinds,
+          link: data.link,
         },
       });
     },
     [uploadPathTh, uploadPath, textbookData, router.query]
   );
+
+  console.log(uploadPath);
 
   const modalOk = useCallback(() => {
     textBookUploadform.submit();
@@ -1602,7 +1413,7 @@ const Index = () => {
             </Wrapper> */}
           </RsWrapper>
 
-          <CustomModal
+          <Modal
             width={`700px`}
             visible={meUpdateModal}
             footer={null}
@@ -1667,7 +1478,7 @@ const Index = () => {
                 </CommonButton>
               </Wrapper>
             </CustomForm>
-          </CustomModal>
+          </Modal>
 
           <CustomModal
             width={`700px`}
@@ -1989,8 +1800,198 @@ const Index = () => {
           cancelText="취소"
           onCancel={() => onReset()}
           onOk={modalOk}
+          footer={null}
+          width="850px"
         >
-          <Wrapper al={`flex-start`}>
+          <Wrapper dr={`row`} ju={`space-between`} al={`flex-start`}>
+            <Wrapper width={`30%`} dr={`row`} al={`flex-start`}>
+              <input
+                type="file"
+                name="file"
+                accept=".png, .jpg"
+                hidden
+                ref={fileRef2}
+                onChange={fileChangeHandler2}
+              />
+
+              <Wrapper margin={`0 0 10px`}>
+                <Image
+                  src={
+                    thumbnail
+                      ? thumbnail
+                      : `https://via.placeholder.com/${`80`}x${`100`}`
+                  }
+                  alt={`thumbnail`}
+                />
+              </Wrapper>
+              <Button
+                type="primary"
+                size="small"
+                style={{ width: `100%` }}
+                onClick={fileUploadClick2}
+                loading={st_bookUploadThLoading}
+              >
+                썸네일 이미지 업로드
+              </Button>
+            </Wrapper>
+
+            <Wrapper width={`65%`}>
+              <Form
+                style={{ width: `100%` }}
+                form={textBookUploadform}
+                onFinish={onSubmit}
+              >
+                <Form.Item
+                  labelCol={{ span: 7 }}
+                  labelAlign={`left`}
+                  rules={[
+                    { required: true, message: "교재 제목을 입력해주세요." },
+                  ]}
+                  label={`교재 제목`}
+                  name={`title`}
+                >
+                  <TextInput
+                    height={`30px`}
+                    width={`100%`}
+                    placeholder="교재 제목을 입력해주세요."
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  labelCol={{ span: 7 }}
+                  labelAlign={`left`}
+                  // rules={[{ required: true, message: "권을 선택해주세요." }]}
+                  label={`권`}
+                  name={`level`}
+                  onBlur={() =>
+                    textBookUploadform.getFieldValue(`level`) === "" &&
+                    setCurrentModalLevel(null)
+                  }
+                >
+                  {currentModalLevel === "기타" ? (
+                    <TextInput width={`100%`} />
+                  ) : (
+                    <Select
+                      onSelect={(e) => setCurrentModalLevel(e)}
+                      placeholder="권을 선택해주세요."
+                    >
+                      {[`기타`, 1, 2, 3, 4, 5, 6].map((data, idx) => {
+                        return (
+                          <Select.Option value={data} key={idx}>
+                            {data}
+                          </Select.Option>
+                        );
+                      })}
+                    </Select>
+                  )}
+                </Form.Item>
+
+                <Form.Item
+                  labelCol={{ span: 7 }}
+                  labelAlign={`left`}
+                  // rules={[{ required: true, message: "단원을 선택해주세요." }]}
+                  label={`단원`}
+                  name={`stage`}
+                  onBlur={() =>
+                    textBookUploadform.getFieldValue(`stage`) === "" &&
+                    setCurrentModalStage(null)
+                  }
+                >
+                  {currentModalStage === "기타" ? (
+                    <TextInput width={`100%`} />
+                  ) : (
+                    <Select
+                      onSelect={(e) => setCurrentModalStage(e)}
+                      placeholder="단원을 선택해주세요."
+                    >
+                      {[`기타`, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((data, idx) => {
+                        return (
+                          <Select.Option value={data} key={idx}>
+                            {data}
+                          </Select.Option>
+                        );
+                      })}
+                    </Select>
+                  )}
+                </Form.Item>
+
+                <Form.Item
+                  labelCol={{ span: 7 }}
+                  labelAlign={`left`}
+                  // rules={[{ required: true, message: "유형을 선택해주세요." }]}
+                  label={`유형`}
+                  name={`kinds`}
+                  onBlur={() =>
+                    textBookUploadform.getFieldValue(`kinds`) === "" &&
+                    setCurrentModalKinds(null)
+                  }
+                >
+                  {currentModalKinds === "기타" ? (
+                    <Input />
+                  ) : (
+                    <Select
+                      onSelect={(e) => setCurrentModalKinds(e)}
+                      placeholder="유형을 선택해주세요."
+                    >
+                      {[`기타`, `교과서`, `워크북`, `듣기파일`, `토픽`].map(
+                        (data, idx) => {
+                          return (
+                            <Select.Option value={data} key={idx}>
+                              {data}
+                            </Select.Option>
+                          );
+                        }
+                      )}
+                    </Select>
+                  )}
+                </Form.Item>
+
+                <Form.Item
+                  labelCol={{ span: 7 }}
+                  labelAlign={`left`}
+                  rules={[{ required: true, message: "링크를 입력해주세요." }]}
+                  label={`링크`}
+                  name={`link`}
+                >
+                  <TextInput
+                    width={`100%`}
+                    placeholder="링크를 입력해주세요."
+                    height={`30px`}
+                  />
+                </Form.Item>
+
+                <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
+                  <Button
+                    type="primary"
+                    onClick={fileUploadClick}
+                    loading={st_bookUploadLoading}
+                    size="small"
+                  >
+                    교재 파일 업로드
+                  </Button>
+
+                  <input
+                    type="file"
+                    name="file"
+                    hidden
+                    ref={fileRef}
+                    onChange={fileChangeHandler}
+                  />
+                  <Text margin={`0 0 0 10px`}>
+                    {filename.value ? filename.value : `파일을 선택해주세요.`}
+                  </Text>
+                </Wrapper>
+
+                <Wrapper al={`flex-end`}>
+                  <Button size="small" type="primary" htmlType="submit">
+                    등록하기
+                  </Button>
+                </Wrapper>
+              </Form>
+            </Wrapper>
+          </Wrapper>
+
+          {/* <Wrapper al={`flex-start`}>
             <Form form={textBookUploadform} onFinish={onSubmit}>
               <Form.Item
                 rules={[
@@ -2130,7 +2131,7 @@ const Index = () => {
                 교재 파일 업로드
               </Button>
             </Wrapper>
-          </Wrapper>
+          </Wrapper> */}
         </CustomModal>
       </ClientLayout>
     </>

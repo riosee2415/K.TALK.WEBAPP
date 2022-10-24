@@ -418,7 +418,7 @@ ${(props) =>
   ${(props) =>
       props.kindOf === `subTheme12` &&
       `border : 1px solid ${props.theme.subTheme12_C};`}
-      
+
   ${(props) =>
       props.kindOf === `subTheme14` &&
       `background : ${props.theme.basicTheme_C};`}
@@ -652,6 +652,7 @@ export const TextInput = styled.input`
   &::placeholder {
     font-size: 14px;
     line-height: 1.6;
+    color: ${(props) => props.theme.grey3_C};
   }
 `;
 

@@ -36,8 +36,9 @@ const GlobalStyles = createGlobalStyle`
   }
   
   .ant-modal-header{
-    background:${(props) => props.theme.subTheme7_C};
+    background:${(props) => props.theme.basicTheme_C};
     color:${(props) => props.theme.white_C};
+    border-radius : 0 !important;
   }
 
   .ant-modal-title, .ant-modal-close{
