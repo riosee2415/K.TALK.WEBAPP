@@ -1327,12 +1327,7 @@ const DetailClass = () => {
 
     {
       title: "출석일",
-      render: (data) => (
-        <Text>
-          {console.log(data)}
-          {data.time}
-        </Text>
-      ),
+      render: (data) => <Text>{data.time}</Text>,
     },
     {
       title: "출석 여부",

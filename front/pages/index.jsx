@@ -691,14 +691,13 @@ const Home = ({}) => {
           {currentFormToggle && modalView && (
             <Wrapper
               position={`fixed`}
-              top={`0`}
+              top={`100px`}
               left={`0`}
               zIndex={`100`}
-              height={`100vh`}
+              height={`calc(100vh - 100px)`}
               wrap={`nowrap`}
               overflow={`auto`}
               ju={`flex-start`}
-              padding={`100px 0 0`}
             >
               <RsWrapper position={`relative`}>
                 <Wrapper
@@ -707,6 +706,7 @@ const Home = ({}) => {
                   top={`40px`}
                   right={`0`}
                   fontSize={`30px`}
+                  width={`auto`}
                   onClick={appModal}
                   cursor={`pointer`}
                 >
