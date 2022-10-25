@@ -416,7 +416,6 @@ const Pay = ({}) => {
         onOk={updateData ? updateModalClose : modalOk}
         onCancel={updateData ? updateModalClose : modalClose}
         title={updateData ? "상세보기" : "결제 클래스 생성"}
-        footer={null}
       >
         <Wrapper>
           <FormTag form={cForm} onFinish={onSubmit}>
