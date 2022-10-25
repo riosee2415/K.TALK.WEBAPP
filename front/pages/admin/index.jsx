@@ -29,6 +29,7 @@ import {
   Pagination,
   Popconfirm,
   Select,
+  Switch,
   Table,
   TimePicker,
 } from "antd";
@@ -1486,6 +1487,20 @@ const AdminHome = () => {
             <Text fontSize={`24px`} fontWeight={`bold`} margin={`0 0 30px`}>
               관리자 메인페이지
             </Text>
+
+            <Wrapper
+              margin={`0 0 30px`}
+              dr={`row`}
+              fontSize={`16px`}
+              ju={`flex-start`}
+              padding={`10px`}
+              bgColor={Theme.subTheme14_C}
+            >
+              홈페이지 메인화면에 Application Form 화면을 보여주시겠습니까?
+              <Wrapper width={`auto`} margin={`0 0 0 50px`}>
+                <Switch />
+              </Wrapper>
+            </Wrapper>
             <Wrapper
               dr={`row`}
               ju={`space-between`}

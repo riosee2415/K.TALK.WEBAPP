@@ -99,6 +99,9 @@ const AdminMenu = () => {
         <Menu.Item key="/admin/user/student/list">
           <MenuName>학생 관리</MenuName>
         </Menu.Item>
+        {/* <Menu.Item key="/admin/info/popup">
+          <MenuName>팝업 관리</MenuName>
+        </Menu.Item> */}
 
         <Menu.Item key="/admin/user/teacher/list">
           <MenuName>강사 관리</MenuName>
@@ -144,7 +147,7 @@ const AdminMenu = () => {
         <Menu.Item key="/admin/board/message/list">
           <MenuName>쪽지 관리</MenuName>
         </Menu.Item>
-        
+
         <Menu.Item key="/admin/processApply/list">
           <MenuName>설명회 참가신청서</MenuName>
         </Menu.Item>
