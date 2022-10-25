@@ -27,7 +27,6 @@ import useWidth from "../../hooks/useWidth";
 import moment from "moment";
 import { useRouter } from "next/router";
 
-import { SEO_LIST_REQUEST } from "../../reducers/seo";
 import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 import { APP_CREATE_REQUEST } from "../../reducers/application";
 
@@ -138,16 +137,11 @@ const CusotmArea = styled(TextArea)`
 
 const Application = () => {
   ////// GLOBAL STATE //////
-  const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
-    (state) => state.seo
-  );
-
   const { st_appCreateDone, st_appCreateError } = useSelector(
     (state) => state.app
   );
 
   ////// HOOKS //////
-
   const width = useWidth();
   const dispatch = useDispatch();
   const router = useRouter();
@@ -1572,49 +1566,7 @@ const Application = () => {
   return (
     <>
       <Head>
-        <title>
-          {seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
-        </title>
-
-        <meta
-          name="subject"
-          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
-        />
-        <meta
-          name="title"
-          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
-        />
-        <meta name="keywords" content={seo_keywords} />
-        <meta
-          name="description"
-          content={
-            seo_desc.length < 1
-              ? "REAL-TIME ONLINE KOREAN LESSONS"
-              : seo_desc[0].content
-          }
-        />
-        {/* <!-- OG tag  --> */}
-        <meta
-          property="og:title"
-          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
-        />
-        <meta
-          property="og:site_name"
-          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
-        />
-        <meta
-          property="og:description"
-          content={
-            seo_desc.length < 1
-              ? "REAL-TIME ONLINE KOREAN LESSONS"
-              : seo_desc[0].content
-          }
-        />
-        <meta property="og:keywords" content={seo_keywords} />
-        <meta
-          property="og:image"
-          content={seo_ogImage.length < 1 ? "" : seo_ogImage[0].content}
-        />
+        <title>K-talk Live | Application Form</title>
       </Head>
 
       <ClientLayout>
@@ -1841,7 +1793,10 @@ const Application = () => {
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
                   <Form.Item name="nationality" rules={[{ required: true }]}>
-                    <CustomSelect margin={`0 10px 0 0`}>
+                    <CustomSelect
+                      margin={`0 10px 0 0`}
+                      placeholder="---select---"
+                    >
                       {country &&
                         country.map((data, idx) => {
                           return (
@@ -1890,6 +1845,7 @@ const Application = () => {
                   >
                     <Form.Item name="phoneNumber" rules={[{ required: true }]}>
                       <CustomSelect
+                        placeholder="---select---"
                         suffixIcon={() => {
                           return <CaretDownOutlined />;
                         }}
@@ -2048,10 +2004,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
-    });
-
-    context.store.dispatch({
-      type: SEO_LIST_REQUEST,
     });
 
     // 구현부 종료
