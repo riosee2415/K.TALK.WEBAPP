@@ -372,6 +372,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
               B.username,
               B.level,
               B.birth,
+              DATE_FORMAT(B.birth, "%Y년 %m월 %d일")                                   AS viewBirth,
               B.profileImage,
               B.sns,
               B.snsId,
@@ -590,8 +591,13 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
       }
     );
 
-    if (isPay === 1) {
-    }
+    // if (isPay === 1) {
+    //   const insertQuery = `
+    //   SELECT
+    //     FROM  users
+    //    WHERE
+    //   `;
+    // }
 
     if (updateResult[0] > 0) {
       return res.status(200).json({ result: true });
