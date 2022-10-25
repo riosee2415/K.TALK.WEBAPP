@@ -1034,7 +1034,7 @@ const Student = () => {
             </RsWrapper>
           </Wrapper>
 
-          <RsWrapper margin={width < 800 ? `0` : `-94px 0 0`}>
+          <RsWrapper margin={width < 900 ? `0` : `-94px 0 0`}>
             {/* my schedule */}
 
             <Wrapper
@@ -1079,12 +1079,12 @@ const Student = () => {
                           ju={`flex-start`}
                           margin={`0 0 10px`}
                         >
-                          <Text fontSize={width < 800 ? `16px` : `18px`}>
+                          <Text fontSize={width < 900 ? `16px` : `18px`}>
                             Class number :&nbsp;
                             {data.number}
                           </Text>
                           &nbsp;
-                          <Text fontSize={width < 800 ? `16px` : `18px`}>
+                          <Text fontSize={width < 900 ? `16px` : `18px`}>
                             ({divideLecture(data.day, data.time)})
                           </Text>
                           {/* dash */}
@@ -1098,7 +1098,7 @@ const Student = () => {
                             }
                           />
                           {/* dash */}
-                          <Text fontSize={width < 800 ? `16px` : `18px`}>
+                          <Text fontSize={width < 900 ? `16px` : `18px`}>
                             {`${stepHanlder2(
                               moment().format("YYYY-MM-DD"),
                               // data.endDate,
@@ -1115,11 +1115,11 @@ const Student = () => {
                         <Wrapper
                           dr={`row`}
                           width={`auto`}
-                          fontSize={width < 800 ? `16px` : `18px`}
+                          fontSize={width < 900 ? `16px` : `18px`}
                           margin={`0 0 10px`}
                         >
                           <Text
-                            margin={width < 800 ? `0 30px 0 0` : `0 80px 0 0`}
+                            margin={width < 900 ? `0 30px 0 0` : `0 80px 0 0`}
                           >
                             <SpanText fontWeight={`bold`}>From :</SpanText>
                             &nbsp;{data.PartCreatedAt.slice(0, 10)}
@@ -1190,7 +1190,7 @@ const Student = () => {
               lectureStuLectureList.map((data) => {
                 return (
                   <>
-                    <Wrapper key={data.id} margin={`0 0 20px`}>
+                    <Wrapper key={data.id} margin={`20px 0`}>
                       <Wrapper
                         width={`100%`}
                         dr={`row`}
@@ -1201,8 +1201,8 @@ const Student = () => {
                           <Image
                             top={`0`}
                             left={`0`}
-                            width={width < 800 ? `60px` : `139px`}
-                            height={width < 800 ? `60px` : `139px`}
+                            width={width < 900 ? `80px` : `139px`}
+                            height={width < 900 ? `80px` : `139px`}
                             radius={`5px`}
                             src={
                               data.profileImage
@@ -1211,12 +1211,15 @@ const Student = () => {
                             }
                             alt="student_thumbnail"
                           />
-                          <Wrapper padding={`0 0 0 16px`} width={`auto`}>
+                          <Wrapper
+                            padding={`0 0 0 16px`}
+                            width={width < 900 ? `calc(100% - 80px)` : `auto`}
+                          >
                             <Wrapper margin={`10px 0 0 0`} al={`flex-start`}>
                               <Wrapper
                                 width={`auto`}
                                 dr={`row`}
-                                fontSize={width < 800 ? `16px` : `20px`}
+                                fontSize={width < 900 ? `16px` : `20px`}
                                 margin={`0 0 15px`}
                                 padding={`8px 15px`}
                                 radius={`20px`}
@@ -1226,13 +1229,13 @@ const Student = () => {
                               </Wrapper>
 
                               <Wrapper
-                                ju={width < 800 ? `center` : `flex-start`}
+                                ju={width < 900 ? `center` : `flex-start`}
                                 al={`flex-start`}
                                 width={`auto`}
-                                fontSize={width < 800 ? `14px` : `16px`}
+                                fontSize={width < 900 ? `14px` : `16px`}
                               >
                                 <Text
-                                  fontSize={width < 800 ? `14px` : `16px`}
+                                  fontSize={width < 900 ? `14px` : `16px`}
                                   margin={`0 10px 0 0`}
                                 >
                                   Lecturer : {data.username}
@@ -1240,7 +1243,7 @@ const Student = () => {
 
                                 <Wrapper width={`auto`} dr={`row`}>
                                   <Text
-                                    margin={width < 800 ? `0` : `0 20px 0 0`}
+                                    margin={width < 900 ? `0` : `0 20px 0 0`}
                                     fontWeight={`600`}
                                   >
                                     Leanrning at chapter&nbsp;
@@ -1276,9 +1279,13 @@ const Student = () => {
                           </Wrapper>
                         </Wrapper>
 
-                        <Wrapper dr={`row`} width={`auto`}>
+                        <Wrapper
+                          dr={`row`}
+                          width={width < 900 ? `100%` : `auto`}
+                          margin={width < 900 && `15px 0 0`}
+                        >
                           <Wrapper
-                            width={`200px`}
+                            width={width < 900 ? `150px` : `200px`}
                             height={`auto`}
                             bgColor={Theme.lightGrey2_C}
                             radius={`10px`}
@@ -1298,7 +1305,7 @@ const Student = () => {
                             </Text>
                           </Wrapper>
                           <Wrapper
-                            width={`200px`}
+                            width={width < 900 ? `150px` : `200px`}
                             height={`auto`}
                             bgColor={Theme.lightGrey2_C}
                             radius={`10px`}
@@ -1351,7 +1358,7 @@ const Student = () => {
                       <Text
                         fontSize={width < 700 ? `14px` : `18px`}
                         fontWeight={`Bold`}
-                        width={width < 800 ? `15%` : `10%`}
+                        width={width < 900 ? `15%` : `10%`}
                         display={width < 900 ? `none` : `block`}
                       >
                         No
@@ -1360,28 +1367,28 @@ const Student = () => {
                       <Text
                         fontSize={width < 700 ? `12px` : `18px`}
                         fontWeight={`Bold`}
-                        width={width < 800 ? `30%` : `55%`}
+                        width={width < 900 ? `30%` : `55%`}
                       >
                         Title
                       </Text>
                       <Text
                         fontSize={width < 700 ? `12px` : `18px`}
                         fontWeight={`Bold`}
-                        width={width < 800 ? `20%` : `10%`}
+                        width={width < 900 ? `20%` : `10%`}
                       >
                         Comments
                       </Text>
                       <Text
                         fontSize={width < 700 ? `12px` : `18px`}
                         fontWeight={`Bold`}
-                        width={width < 800 ? `20%` : `15%`}
+                        width={width < 900 ? `20%` : `15%`}
                       >
                         Writer
                       </Text>
                       <Text
                         fontSize={width < 700 ? `12px` : `18px`}
                         fontWeight={`Bold`}
-                        width={width < 800 ? `18%` : `10%`}
+                        width={width < 900 ? `18%` : `10%`}
                       >
                         Date
                       </Text>
@@ -1405,14 +1412,14 @@ const Student = () => {
                               }
                             >
                               <Wrapper
-                                width={width < 800 ? `15%` : `10%`}
+                                width={width < 900 ? `15%` : `10%`}
                                 display={width < 900 ? `none` : `flex`}
                               >
                                 {lec.num}
                               </Wrapper>
 
                               <Wrapper
-                                width={width < 800 ? `30%` : `55%`}
+                                width={width < 900 ? `30%` : `55%`}
                                 al={`flex-start`}
                                 padding={`0 0 0 10px`}
                               >
@@ -1425,14 +1432,14 @@ const Student = () => {
                                 </Text>
                               </Wrapper>
                               <Wrapper
-                                width={width < 800 ? `20%` : `10%`}
-                                fontSize={width < 800 ? `10px` : `14px`}
+                                width={width < 900 ? `20%` : `10%`}
+                                fontSize={width < 900 ? `10px` : `14px`}
                               >
                                 {lec.commentCnt}
                               </Wrapper>
                               <Wrapper
-                                width={width < 800 ? `20%` : `15%`}
-                                fontSize={width < 800 ? `10px` : `14px`}
+                                width={width < 900 ? `20%` : `15%`}
+                                fontSize={width < 900 ? `10px` : `14px`}
                               >
                                 {lec.noticeAuthor}(
                                 {lec.noticeLevel === 1
@@ -1443,7 +1450,7 @@ const Student = () => {
                                 )
                               </Wrapper>
                               <Wrapper
-                                width={width < 800 ? `18%` : `10%`}
+                                width={width < 900 ? `18%` : `10%`}
                                 fontSize={width < 700 && `12px`}
                               >
                                 {lec.noticeCreatedAt}
