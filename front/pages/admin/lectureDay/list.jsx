@@ -12,10 +12,11 @@ import { useRouter, withRouter } from "next/router";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
-import { Wrapper } from "../../../components/commonComponents";
+import { GuideDiv, Wrapper } from "../../../components/commonComponents";
 
 import { PART_LAST_LIST_REQUEST } from "../../../reducers/participant";
 import { useState } from "react";
+import Theme from "../../../components/Theme";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -140,16 +141,22 @@ const List = ({}) => {
       />
 
       <AdminContent>
-        <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
+        <Wrapper
+          dr={`row`}
+          ju={`flex-start`}
+          margin={`0 0 10px`}
+          padding="5px 0px"
+          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+        >
           <SearchForm form={searchForm}>
             <Form.Item name="user">
               <Select
                 size="small"
-                placeholder="유저를 선택해주세요."
+                placeholder="학생을 선택해주세요."
                 onChange={selectHandler}
               >
                 <Select.Option value={false} disabled>
-                  유저를 선택해주세요.
+                  학생을 선택해주세요.
                 </Select.Option>
                 {userStuList &&
                   userStuList.map((data) => (
@@ -164,6 +171,24 @@ const List = ({}) => {
             전체 조회
           </Button>
         </Wrapper>
+
+        {/* ADMIN GUIDE AREA */}
+        <Wrapper
+          margin={`0px 0px 10px 0px`}
+          radius="5px"
+          bgColor={Theme.lightGrey3_C}
+          padding="5px"
+          fontSize="13px"
+          al="flex-start"
+        >
+          <GuideDiv isImpo={true}>
+            학생들의 수업 종료일 및 남은 수업 횟수를 확인할 수 있습니다.
+          </GuideDiv>
+          <GuideDiv isImpo={true}>
+            수업 종료일을 학생별로 검색할 수 있습니다.
+          </GuideDiv>
+        </Wrapper>
+        {/* ADMIN GUIDE AREA END */}
 
         <Table
           rowKey="id"
