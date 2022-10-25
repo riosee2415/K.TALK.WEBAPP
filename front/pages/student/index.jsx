@@ -938,49 +938,7 @@ const Student = () => {
   return (
     <>
       <Head>
-        <title>
-          {seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
-        </title>
-
-        <meta
-          name="subject"
-          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
-        />
-        <meta
-          name="title"
-          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
-        />
-        <meta name="keywords" content={seo_keywords} />
-        <meta
-          name="description"
-          content={
-            seo_desc.length < 1
-              ? "REAL-TIME ONLINE KOREAN LESSONS"
-              : seo_desc[0].content
-          }
-        />
-        {/* <!-- OG tag  --> */}
-        <meta
-          property="og:title"
-          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
-        />
-        <meta
-          property="og:site_name"
-          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
-        />
-        <meta
-          property="og:description"
-          content={
-            seo_desc.length < 1
-              ? "REAL-TIME ONLINE KOREAN LESSONS"
-              : seo_desc[0].content
-          }
-        />
-        <meta property="og:keywords" content={seo_keywords} />
-        <meta
-          property="og:image"
-          content={seo_ogImage.length < 1 ? "" : seo_ogImage[0].content}
-        />
+        <title>K-talk Live | student</title>
       </Head>
       <ClientLayout>
         <WholeWrapper margin={width < 900 ? `52px 0` : `100px 0`}>
@@ -1119,14 +1077,22 @@ const Student = () => {
                           margin={`0 0 10px`}
                         >
                           <Text
-                            margin={width < 900 ? `0 30px 0 0` : `0 80px 0 0`}
+                            margin={width < 900 ? `0 20px 0 0` : `0 50px 0 0`}
                           >
                             <SpanText fontWeight={`bold`}>From :</SpanText>
                             &nbsp;{data.PartCreatedAt.slice(0, 10)}
                           </Text>
-                          <Text margin={`0 10px 0 0`}>
+                          <Text
+                            margin={width < 900 ? `0 20px 0 0` : `0 50px 0 0`}
+                          >
                             <SpanText fontWeight={`bold`}>To :</SpanText>
                             &nbsp;{data.endDate}
+                          </Text>
+                          <Text margin={`0 10px 0 0`}>
+                            <SpanText fontWeight={`bold`}>
+                              Residuum Class Count :
+                            </SpanText>
+                            &nbsp;{data.ingyerCnt ? data.ingyerCnt : 0}
                           </Text>
                         </Wrapper>
 
@@ -1273,6 +1239,10 @@ const Student = () => {
 
                                 <Wrapper al={`flex-start`}>
                                   Class Expiration Date : {data.endDate}
+                                </Wrapper>
+                                <Wrapper al={`flex-start`}>
+                                  Residuum Class Count : &nbsp;
+                                  {data.ingyerCnt ? data.ingyerCnt : 0}
                                 </Wrapper>
                               </Wrapper>
                             </Wrapper>
@@ -1909,14 +1879,17 @@ const Student = () => {
           {/* 추가 결제 Modal START */}
 
           <Modal
-            title={`추가 결제`}
+            title={`Add payment`}
             visible={payModal}
             footer={null}
             onCancel={payModalToggle}
           >
             <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
-              <Text width={`80px`}>강의명 :&nbsp;</Text>
-              <CustomSelect onSelect={(e) => setSelectPayClass(e)}>
+              <Text width={`80px`}>Lecture :&nbsp;</Text>
+              <CustomSelect
+                onSelect={(e) => setSelectPayClass(e)}
+                placeholder="---select---"
+              >
                 {payClassLecDetail &&
                   payClassLecDetail.map((data) => {
                     return (
@@ -1930,7 +1903,7 @@ const Student = () => {
             {selectPayClass && (
               <>
                 <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
-                  <Text width={`80px`}>메모 :&nbsp;</Text>
+                  <Text width={`80px`}>memo :&nbsp;</Text>
                   <Wrapper
                     width={`calc(100% - 80px)`}
                     ju={`flex-start`}
@@ -1951,7 +1924,7 @@ const Student = () => {
                 </Wrapper>
 
                 <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
-                  <Text width={`80px`}>가격 :&nbsp;</Text>
+                  <Text width={`80px`}>price :&nbsp;</Text>
                   <Wrapper
                     width={`calc(100% - 80px)`}
                     ju={`flex-start`}
@@ -1963,7 +1936,7 @@ const Student = () => {
 
                 {selectPayClass && JSON.parse(selectPayClass).discount !== 0 && (
                   <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
-                    <Text width={`80px`}>할인율 :&nbsp;</Text>
+                    <Text width={`80px`}>discount rate :&nbsp;</Text>
                     <Wrapper
                       width={`calc(100% - 80px)`}
                       ju={`flex-start`}
@@ -1975,7 +1948,7 @@ const Student = () => {
                 )}
 
                 <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
-                  <Text width={`80px`}>강의 기간 :&nbsp;</Text>
+                  <Text width={`80px`}>lecture period :&nbsp;</Text>
                   <Wrapper
                     width={`calc(100% - 80px)`}
                     ju={`flex-start`}
@@ -1986,7 +1959,7 @@ const Student = () => {
                 </Wrapper>
 
                 <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
-                  <Text width={`80px`}>결제할 가격 :&nbsp;</Text>
+                  <Text width={`80px`}>price :&nbsp;</Text>
                   <Wrapper
                     width={`calc(100% - 80px)`}
                     ju={`flex-start`}
@@ -2005,7 +1978,7 @@ const Student = () => {
               </>
             )}
             <Wrapper>
-              <CommonButton
+              <Button
                 size={`small`}
                 type={`primary`}
                 onClick={() =>
@@ -2016,8 +1989,8 @@ const Student = () => {
                   )
                 }
               >
-                결제하러 가기
-              </CommonButton>
+                make a payment
+              </Button>
             </Wrapper>
           </Modal>
         </WholeWrapper>
