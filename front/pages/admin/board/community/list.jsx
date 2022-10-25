@@ -23,6 +23,7 @@ import {
   Image,
 } from "antd";
 import {
+  GuideDiv,
   RowWrapper,
   Text,
   Wrapper,
@@ -48,6 +49,7 @@ import {
 } from "../../../../reducers/community";
 import ToastEditorComponent5 from "../../../../components/editor/ToastEditorComponent5";
 import ToastEditorComponent6 from "../../../../components/editor/ToastEditorComponent6";
+import Theme from "../../../../components/Theme";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -472,14 +474,37 @@ const NoticeList = ({ router }) => {
   return (
     <AdminLayout>
       <PageHeader
-        breadcrumbs={["자유게시판 관리", "자유게시판"]}
-        title={`자유게시판 목록`}
-        subTitle={`사용자에게 제공하는 자유게시판을 관리할 수 있습니다.`}
+        breadcrumbs={["리뷰게시판 관리", "리뷰게시판"]}
+        title={`리뷰게시판 목록`}
+        subTitle={`사용자에게 제공하는 리뷰게시판을 관리할 수 있습니다.`}
       />
 
-      <AdminTop createButton={true} createButtonAction={createModalOpen} />
-
       <AdminContent>
+        <Wrapper al={`flex-end`} margin={`0 0 10px`}>
+          <Button
+            size="small"
+            type={`primary`}
+            onClick={() => createModalOpen()}
+          >
+            게시판 작성하기
+          </Button>
+        </Wrapper>
+        <Wrapper
+          margin={`0px 0px 10px 0px`}
+          radius="5px"
+          bgColor={Theme.lightGrey_C}
+          padding="5px"
+          fontSize="13px"
+          al="flex-start"
+        >
+          <GuideDiv isImpo={true}>
+            홈페이지 메인화면에 보여지는 리뷰를 관리할 수 있습니다.
+          </GuideDiv>
+          <GuideDiv isImpo={true}>
+            글 작성 또는 수정시 즉시 화면에 반영되기 때문에 신중하게
+            처리바랍니다.
+          </GuideDiv>
+        </Wrapper>
         <RowWrapper margin={`0 0 10px`} gutter={5}>
           <Col>
             <Button

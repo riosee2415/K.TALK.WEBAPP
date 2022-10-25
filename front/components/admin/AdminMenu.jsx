@@ -136,7 +136,7 @@ const AdminMenu = () => {
         </Menu.Item>
 
         <Menu.Item key="/admin/board/community/list">
-          <MenuName>자유게시판 관리</MenuName>
+          <MenuName>리뷰게시판 관리</MenuName>
         </Menu.Item>
 
         {/* 
