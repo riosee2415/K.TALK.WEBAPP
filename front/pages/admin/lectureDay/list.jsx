@@ -106,7 +106,7 @@ const List = ({}) => {
   const columns = [
     {
       title: "번호",
-      dataIndex: "id",
+      dataIndex: "num",
     },
     {
       title: "이름",
@@ -120,7 +120,10 @@ const List = ({}) => {
       title: "국적",
       dataIndex: "stuCountry",
     },
-
+    {
+      title: "강의이름",
+      dataIndex: "course",
+    },
     {
       title: "남은 수업 횟수",
       render: (data) => <div>{data.ingyerCnt ? data.ingyerCnt : 0}</div>,
@@ -191,7 +194,7 @@ const List = ({}) => {
         {/* ADMIN GUIDE AREA END */}
 
         <Table
-          rowKey="id"
+          rowKey="num"
           columns={columns}
           dataSource={partLastList}
           size="small"

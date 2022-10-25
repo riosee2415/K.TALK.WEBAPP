@@ -37,7 +37,8 @@ router.post("/last/list", async (req, res, next) => {
   //   const TEMP_LECTUREID = 18;
 
   const selectQ = `
-    SELECT	A.id,
+    SELECT	ROW_NUMBER()  OVER(ORDER BY C.username)      AS num,
+            A.id,
             A.isDelete,
             A.isChange,
             A.date,
@@ -50,6 +51,7 @@ router.post("/last/list", async (req, res, next) => {
             END as compareDate,
             A.UserId,
             A.LectureId,
+            B.course,
             B.day,
             B.count,
             C.userId,
@@ -77,6 +79,7 @@ router.post("/last/list", async (req, res, next) => {
        ${_userId ? `AND A.UserId = ${_userId}` : ``}
        ${_lectureId ? `AND	A.LectureId = ${_lectureId}` : ``}
        AND  B.isDelete = 0
+     ORDER  BY num ASC
   `;
 
   try {

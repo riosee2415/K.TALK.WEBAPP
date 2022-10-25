@@ -543,7 +543,19 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
             C.username,
             C.profileImage,
             C.level,
-            C.stuPayCount
+            C.stuPayCount,
+            (
+              SELECT  COUNT(*)
+                FROM  payments  p
+               INNER
+                JOIN  payClass  pc
+                  ON  p.PayClassId = pc.id
+               INNER
+                JOIN  users	    u
+                  ON  u.email = p.email
+               WHERE  p.isComplete = 1
+                 AND  pc.LectureId = B.id
+            )						      AS frequecy
       FROM	participants		A
      INNER
       JOIN	lectures 			B
