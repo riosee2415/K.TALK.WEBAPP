@@ -24,11 +24,9 @@ const List = ({}) => {
 
   const { me, st_loadMyInfoDone } = useSelector((state) => state.user);
 
-  const {
-    partLastDateList,
-    st_participantLastDateListDone,
-    st_participantLastDateListError,
-  } = useSelector((state) => state.participant);
+  const { partLastDateList, st_participantLastDateListError } = useSelector(
+    (state) => state.participant
+  );
 
   const router = useRouter();
 
@@ -53,24 +51,10 @@ const List = ({}) => {
   ////// USEEFFECT //////
 
   useEffect(() => {
-    if (st_participantLastDateListDone) {
-    }
-  }, [st_participantLastDateListDone]);
-
-  useEffect(() => {
     if (st_participantLastDateListError) {
       return message.error(st_participantLastDateListError);
     }
   }, [st_participantLastDateListError]);
-
-  useEffect(() => {
-    dispatch({
-      type: PARTICIPANT_LASTDATE_LIST_REQUEST,
-      data: {
-        search: "",
-      },
-    });
-  }, []);
 
   ////// TOGGLE //////
 

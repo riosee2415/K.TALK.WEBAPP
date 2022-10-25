@@ -14,6 +14,7 @@ export const initialState = {
   partUserCurrentList: [],
   partUserLimitList: [],
   partLastDateList: [],
+  partLastList: [], // 남은수업횟수
 
   studentLists: null, // 학생이 학생목록 조회
   //
@@ -68,6 +69,10 @@ export const initialState = {
   st_participantStudentListLoading: false, // 학생이 학생목록 조회
   st_participantStudentListDone: false,
   st_participantStudentListError: null,
+  //
+  st_partLastListLoading: false, // 남은 횟수 조회
+  st_partLastListDone: false,
+  st_partLastListError: null,
 };
 
 export const PARTICIPANT_LIST_REQUEST = "PARTICIPANT_LIST_REQUEST";
@@ -145,6 +150,10 @@ export const PARTICIPANT_STUDENT_LIST_SUCCESS =
   "PARTICIPANT_STUDENT_LIST_SUCCESS";
 export const PARTICIPANT_STUDENT_LIST_FAILURE =
   "PARTICIPANT_STUDENT_LIST_FAILURE";
+
+export const PART_LAST_LIST_REQUEST = "PART_LAST_LIST_REQUEST";
+export const PART_LAST_LIST_SUCCESS = "PART_LAST_LIST_SUCCESS";
+export const PART_LAST_LIST_FAILURE = "PART_LAST_LIST_FAILURE";
 
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
@@ -420,6 +429,28 @@ const reducer = (state = initialState, action) =>
         draft.st_participantStudentListLoading = false;
         draft.st_participantStudentListDone = false;
         draft.st_participantStudentListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case PART_LAST_LIST_REQUEST: {
+        draft.st_partLastListLoading = true;
+        draft.st_partLastListDone = false;
+        draft.st_partLastListError = null;
+        break;
+      }
+      case PART_LAST_LIST_SUCCESS: {
+        draft.st_partLastListLoading = false;
+        draft.st_partLastListDone = true;
+        draft.st_partLastListError = null;
+        draft.partLastList = action.data;
+        break;
+      }
+      case PART_LAST_LIST_FAILURE: {
+        draft.st_partLastListLoading = false;
+        draft.st_partLastListDone = false;
+        draft.st_partLastListError = action.error;
         break;
       }
 
