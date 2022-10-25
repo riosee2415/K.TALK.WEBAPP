@@ -1037,15 +1037,13 @@ const Student = () => {
                           ju={`flex-start`}
                           margin={`0 0 10px`}
                         >
-                          <Text fontSize={width < 900 ? `16px` : `18px`}>
-                            Class number :&nbsp;
-                            {data.number}
+                          {" "}
+                          <Text
+                            fontSize={width < 900 ? `16px` : `18px`}
+                            fontWeight={`bold`}
+                          >
+                            {data.course}
                           </Text>
-                          &nbsp;
-                          <Text fontSize={width < 900 ? `16px` : `18px`}>
-                            ({divideLecture(data.day, data.time)})
-                          </Text>
-                          {/* dash */}
                           <Wrapper
                             display={width < 800 && `none`}
                             width={`1px`}
@@ -1055,7 +1053,25 @@ const Student = () => {
                               width < 1100 ? `0` : `1px dashed ${Theme.grey_C}`
                             }
                           />
+                          <Text fontSize={width < 900 ? `16px` : `18px`}>
+                            Class number :&nbsp;
+                            {data.number}
+                          </Text>
+                          &nbsp;
+                          <Text fontSize={width < 900 ? `16px` : `18px`}>
+                            ({divideLecture(data.day, data.time)})
+                          </Text>
                           {/* dash */}
+                          {/* <Wrapper
+                            display={width < 800 && `none`}
+                            width={`1px`}
+                            height={`21px`}
+                            margin={`0 20px`}
+                            borderRight={
+                              width < 1100 ? `0` : `1px dashed ${Theme.grey_C}`
+                            }
+                          />
+                    
                           <Text fontSize={width < 900 ? `16px` : `18px`}>
                             {`${stepHanlder2(
                               moment().format("YYYY-MM-DD"),
@@ -1067,7 +1083,7 @@ const Student = () => {
                               data.endDate,
                               data.day
                             )}`}
-                          </Text>
+                          </Text> */}
                         </Wrapper>
 
                         <Wrapper
@@ -1218,7 +1234,7 @@ const Student = () => {
                                         .split(` `)[1]
                                         .split(`단원`)[0]
                                     }
-                                    of Book&nbsp;
+                                    &nbsp;of Book&nbsp;
                                     {data.startLv.split(` `)[0].split(`권`)[0]}
                                     &nbsp;(Page&nbsp;
                                     {

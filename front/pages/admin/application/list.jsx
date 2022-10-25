@@ -54,6 +54,7 @@ import moment from "moment";
 import { CalendarOutlined, DownOutlined } from "@ant-design/icons";
 import ColumnGroup from "antd/lib/table/ColumnGroup";
 import {
+  PARTICIPANT_CREATE_REQUEST,
   PARTICIPANT_DELETE_REQUEST,
   PARTICIPANT_USER_CURRENT_LIST_REQUEST,
   PARTICIPANT_USER_DELETE_LIST_REQUEST,
@@ -61,6 +62,7 @@ import {
   PARTICIPANT_USER_MOVE_LIST_REQUEST,
 } from "../../../reducers/participant";
 import { COMMUTE_ADMIN_LIST_REQUEST } from "../../../reducers/commute";
+import useInput from "../../../hooks/useInput";
 
 const FormItem = styled(Form.Item)`
   width: ${(props) => props.width || `100%`};
@@ -143,6 +145,7 @@ const List = () => {
     st_userChangeDone,
     //
     st_userAdminUpdateDone,
+    //
   } = useSelector((state) => state.user);
 
   const router = useRouter();
@@ -217,6 +220,9 @@ const List = () => {
     st_participantUserDeleteListDone,
     //
     st_participantDeleteDone,
+    //
+    st_participantCreateDone,
+    st_participantCreateError,
   } = useSelector((state) => state.participant);
 
   const { commuteAdminList } = useSelector((state) => state.commute);
@@ -235,12 +241,45 @@ const List = () => {
   const [opt2, setOpt2] = useState(null); // 참가시킬 강의 목록
   const [isPay, setIsPay] = useState("네"); // 결제여부
   const [uData, setUData] = useState(null); // 학생 반 옮기기 정보 담기
+  const [noData, setNoData] = useState(null); // 결제여부 아니요 였을 시 강의목록
   const [isJoin, setIsJoin] = useState(false); // 회원가입여부
+  const [yesData, setYesData] = useState(null); // 결제여부 네 였을 시 강의 목록
+  const [isBirth, setIsBirth] = useState(false); // 생년월일 달력 열고닫기
   const [userData, setUserData] = useState(null); // 학생상세정보
   const [stuSelect, setStuSelect] = useState(""); // 학생 출석 목록 내 강의 검색
-  const [isBirth, setIsBirth] = useState(false); // 생년월일 달력 열고닫기
+
+  const numberInput = useInput(); // 강의기간 (form안에 form이여서 input 쓸수밖에 없음)
 
   ////// USEEFFECT //////
+
+  // 수업 참여 후 처리
+  useEffect(() => {
+    if (st_participantCreateError) {
+      return message.error(st_participantCreateError);
+    }
+  }, [st_participantCreateError]);
+
+  // 수업 참여 후 처리
+  useEffect(() => {
+    if (st_participantCreateDone) {
+      // 학생이 참여하고 있는 강의 가져오기
+      dispatch({
+        type: PARTICIPANT_USER_CURRENT_LIST_REQUEST,
+        data: {
+          UserId: applicationDetail[0].userPkId,
+          isDelete: "0",
+          isChange: "0",
+        },
+      });
+
+      setIsPay("네");
+      setNoData(null);
+      setYesData(null);
+      numberInput.setValue(``);
+
+      return message.success("학생이 수업에 참여했습니다.");
+    }
+  }, [st_participantCreateDone]);
 
   // 학생 정보 수정 후처리
   useEffect(() => {
@@ -263,10 +302,23 @@ const List = () => {
       setUModal(false);
       stuUForm.resetFields();
 
+      // 학생 반 이동 내역 가져오기
       dispatch({
-        type: APP_DETAIL_REQUEST,
+        type: PARTICIPANT_USER_MOVE_LIST_REQUEST,
         data: {
-          email: userData && userData.gmailAddress,
+          UserId: applicationDetail[0].userPkId,
+          isDelete: "0",
+          isChange: "1",
+        },
+      });
+
+      // 학생이 참여하고 있는 강의 가져오기
+      dispatch({
+        type: PARTICIPANT_USER_CURRENT_LIST_REQUEST,
+        data: {
+          UserId: applicationDetail[0].userPkId,
+          isDelete: "0",
+          isChange: "0",
         },
       });
 
@@ -277,10 +329,23 @@ const List = () => {
   // 학생 수업 빼기 후 처리
   useEffect(() => {
     if (st_participantDeleteDone) {
+      // 학생이 참여하고 있는 강의 가져오기
       dispatch({
-        type: APP_DETAIL_REQUEST,
+        type: PARTICIPANT_USER_CURRENT_LIST_REQUEST,
         data: {
-          email: userData && userData.gmailAddress,
+          UserId: applicationDetail[0].userPkId,
+          isDelete: "0",
+          isChange: "0",
+        },
+      });
+
+      // 종료된 강의 가져오기
+      dispatch({
+        type: PARTICIPANT_USER_DELETE_LIST_REQUEST,
+        data: {
+          UserId: applicationDetail[0].userPkId,
+          isDelete: "1",
+          isChange: "0",
         },
       });
 
@@ -372,7 +437,13 @@ const List = () => {
 
   useEffect(() => {
     if (st_userStuCreateDone) {
-      onReset();
+      userForm.resetFields();
+      stuForm.resetFields();
+      stuUForm.resetFields();
+      setYesData(null);
+      setNoData(null);
+      numberInput.setValue(``);
+      setIsPay("네");
 
       const qs = router.query;
 
@@ -411,6 +482,7 @@ const List = () => {
   ////////////////////////////////////////
   ////////////////////////////////////////
   ////////////////////////////////////////
+  console.log(applicationDetail);
 
   useEffect(() => {
     if (st_appDetailDone) {
@@ -423,14 +495,17 @@ const List = () => {
             ? moment(applicationDetail[0].wantStartDate)
             : "",
           teacher: applicationDetail[0].teacher,
-          meetDate: applicationDetail[0].wantStartDate
-            ? moment(applicationDetail[0].meetDate)
-            : "",
+          meetDate:
+            userData && userData.meetDate
+              ? moment(userData && userData.meetDate)
+              : "",
           level: applicationDetail[0].level,
           purpose: applicationDetail[0].purpose,
           freeTeacher: applicationDetail[0].freeTeacher,
           username: applicationDetail[0].username,
-          email: applicationDetail[0].email,
+          email: isJoin
+            ? applicationDetail[0].email
+            : userData && userData.gmailAddress,
           userId: applicationDetail[0].userId,
           sns: applicationDetail[0].sns,
           snsId: applicationDetail[0].snsId,
@@ -507,7 +582,9 @@ const List = () => {
         });
       }
     }
-  }, [userForm, st_appDetailDone, applicationDetail, isJoin]);
+  }, [userForm, st_appDetailDone, applicationDetail, isJoin, userData]);
+
+  console.log(userData, "userData");
 
   // 참가시킬 강의 정보 세팅
   useEffect(() => {
@@ -552,6 +629,11 @@ const List = () => {
 
   ////// HANDLER //////
 
+  // 결제여부 어떤걸 선택하든 강의 목록 기능
+  const noLectureHandler = useCallback((data) => {
+    setNoData(data);
+  }, []);
+
   // 달력 날짜 수정 기능
   const dateChagneHandler = useCallback((data) => {
     const birth = data.format("YYYY-MM-DD");
@@ -561,28 +643,33 @@ const List = () => {
   }, []);
 
   // 학생 수업 수정 기능
-  const stuUpdateHandler = useCallback((data) => {
-    if (!data.changelecture) {
-      return message.error(`바꿀 강의를 선택해주세요.`);
-    }
+  const stuUpdateHandler = useCallback(
+    (data) => {
+      if (!data.changelecture) {
+        return message.error(`바꿀 강의를 선택해주세요.`);
+      }
 
-    let Day = Math.ceil(
-      Math.abs(
-        moment.duration(moment().diff(moment(uData && uData.endDate))).asDays()
-      )
-    );
+      let Day = Math.ceil(
+        Math.abs(
+          moment
+            .duration(moment().diff(moment(uData && uData.endDate)))
+            .asDays()
+        )
+      );
 
-    dispatch({
-      type: USER_CLASS_CHANGE_REQUEST,
-      data: {
-        UserId: uData && uData.UserId,
-        LectureId: uData && uData.LectureId,
-        ChangeLectureId: data.changelecture,
-        date: Day,
-        endDate: uData.endDate,
-      },
-    });
-  }, []);
+      dispatch({
+        type: USER_CLASS_CHANGE_REQUEST,
+        data: {
+          UserId: uData && uData.UserId,
+          LectureId: uData && uData.LectureId,
+          ChangeLectureId: data.changelecture,
+          date: Day,
+          endDate: uData.endDate,
+        },
+      });
+    },
+    [uData]
+  );
 
   // 수업 빼기 기능
   const onEndClassSubmit = useCallback((data) => {
@@ -618,52 +705,52 @@ const List = () => {
         });
       }
     });
+
+    setYesData(arr);
   }, []);
 
   // 학생 수업 참여 기능
-  const onUpdateClassSubmit = useCallback(
-    (data) => {
-      let partLecture = data.partLecture && JSON.parse(data.partLecture);
-      let lectureList = data.lectureList && JSON.parse(data.lectureList);
+  const onUpdateClassSubmit = useCallback(() => {
+    let partLecture = yesData ? JSON.parse(yesData) : null;
+    let lectureList = noData ? JSON.parse(noData) : null; // 아니오 했을 시 선택된 강의 정보
 
-      // if (lectureList) {
-      //   if (moment() < moment(lectureList.startDate)) {
-      //     return message.error(
-      //       "수업 참여일이 수업 시작 날짜보다 과거일 수 없습니다."
-      //     );
-      //   }
-      // } else if (partLecture) {
-      //   if (moment() < moment(partLecture.startDate.slice(0, 10))) {
-      //     return message.error(
-      //       "수업 참여일이 수업 시작 날짜보다 과거일 수 없습니다."
-      //     );
-      //   }
-      // }
+    // // if (lectureList) {
+    // //   if (moment() < moment(lectureList.startDate)) {
+    // //     return message.error(
+    // //       "수업 참여일이 수업 시작 날짜보다 과거일 수 없습니다."
+    // //     );
+    // //   }
+    // // } else if (partLecture) {
+    // //   if (moment() < moment(partLecture.startDate.slice(0, 10))) {
+    // //     return message.error(
+    // //       "수업 참여일이 수업 시작 날짜보다 과거일 수 없습니다."
+    // //     );
+    // //   }
+    // // }
 
-      dispatch({
-        type: PARTICIPANT_CREATE_REQUEST,
-        data: {
-          UserId: applicationDetail && applicationDetail[0].userPkId,
-          LectureId: lectureList ? lectureList.id : partLecture.LetureId,
-          date: lectureList
-            ? parseInt(data.date) * 7
-            : parseInt(partLecture.week) * 7,
-          endDate: lectureList
-            ? moment()
-                .add(parseInt(data.date * 7 - 1), "days")
-                .format("YYYY-MM-DD")
-            : moment()
-                .add(parseInt(partLecture.week * 7 - 1), "days")
-                .format("YYYY-MM-DD"),
-          PaymentId: lectureList ? null : partLecture.id,
-        },
-      });
-    },
-    [applicationDetail, allLectures]
-  );
+    // data : 강의기간 (주차 * 7) == 일수
+    // endDate : 강의 안에 만료일
+    // paymentId : payclass안의 강의의 ID / "아니오" === null
 
-  console.log(userData, "userData");
-  console.log(applicationDetail, "applicationDetail");
+    dispatch({
+      type: PARTICIPANT_CREATE_REQUEST,
+      data: {
+        UserId: applicationDetail && applicationDetail[0].userPkId,
+        LectureId: lectureList ? lectureList.id : partLecture.LetureId,
+        date: lectureList
+          ? parseInt(numberInput.value) * 7
+          : parseInt(partLecture.week) * 7,
+        endDate: lectureList
+          ? moment()
+              .add(parseInt(numberInput.value * 7 - 1), "days")
+              .format("YYYY-MM-DD")
+          : moment()
+              .add(parseInt(partLecture.week * 7 - 1), "days")
+              .format("YYYY-MM-DD"),
+        PaymentId: lectureList ? null : partLecture.id,
+      },
+    });
+  }, [noData, yesData, numberInput.value, applicationDetail]);
 
   // 결제여부 선택기능
   const paySelectHandler = useCallback((data) => {
@@ -781,8 +868,8 @@ const List = () => {
         return message.error("결제 여부를 선택해주세요.");
       }
 
-      let partLecture = data.paymentList && JSON.parse(data.paymentList);
-      let lectureList = data.lectureList && JSON.parse(data.lectureList);
+      let partLecture = yesData ? JSON.parse(yesData) : null;
+      let lectureList = noData ? JSON.parse(noData) : null; // 아니오 했을 시 선택된 강의 정보
 
       // if (lectureList) {
       //   if (moment() < moment(lectureList.startDate)) {
@@ -801,7 +888,7 @@ const List = () => {
       dispatch({
         type: USER_STU_CREATE_REQUEST,
         data: {
-          userId: applicationDetail[0].userPkId,
+          userId: data.email,
           password: data.password,
           username: data.username,
           mobile: data.mobile,
@@ -812,26 +899,27 @@ const List = () => {
           birth: data.birth,
           stuCountry: data.stuCountry,
           stuLiveCon: data.stuLiveCon,
+          stuPayCount: data.stuPayCount,
           sns: data.sns,
           snsId: data.snsId,
           stuJob: data.job,
           gender: data.gender,
-          PaymentId: lectureList ? null : partLecture.id,
           LectureId: lectureList ? lectureList.id : partLecture.LetureId,
           date: lectureList
-            ? parseInt(data.date) * 7
+            ? parseInt(numberInput.value) * 7
             : parseInt(partLecture.week) * 7,
           endDate: lectureList
             ? moment()
-                .add(parseInt(data.date * 7 - 1), "days")
+                .add(parseInt(numberInput.value * 7 - 1), "days")
                 .format("YYYY-MM-DD")
             : moment()
                 .add(parseInt(partLecture.week * 7 - 1), "days")
                 .format("YYYY-MM-DD"),
+          PaymentId: lectureList ? null : partLecture.id,
         },
       });
     },
-    [isPay, applicationDetail]
+    [isPay, numberInput, yesData, noData]
   );
 
   ////////////////////////////////////////
@@ -894,7 +982,7 @@ const List = () => {
         status: "",
       },
     });
-    setIsTime(false);
+    setTime(null);
     setStatusType("");
   }, []);
 
@@ -1477,6 +1565,7 @@ const List = () => {
             minuteStep={10}
             format="YYYY-MM-DD hh:mm"
             onChange={(e) => onChangeDate(e)}
+            value={isTime}
           ></DatePicker>
 
           <Button
@@ -1529,6 +1618,7 @@ const List = () => {
             onFinish={isJoin ? updateStuFinish : createFinish}
           >
             <Wrapper
+              // width={`60%`}
               height={`670px`}
               border={`1px solid ${Theme.lightGrey3_C}`}
             >
@@ -1550,157 +1640,138 @@ const List = () => {
                 ju={`flex-start`}
                 wrap={`nowrap`}
               >
-                {isJoin ? (
-                  <>
-                    {/* 학생 수업 참여 */}
-                    <Wrapper dr={`row`} ju={`flex-start`}>
-                      <Text
-                        fontWeight={`700`}
-                        color={Theme.basicTheme_C}
-                        margin={`0 0 5px`}
-                      >
-                        학생 수업 참여
+                {/* 학생 수업 참여 */}
+                <Wrapper dr={`row`} ju={`flex-start`}>
+                  <Text
+                    fontWeight={`700`}
+                    color={Theme.basicTheme_C}
+                    margin={`0 0 5px`}
+                  >
+                    학생 수업 참여
+                  </Text>
+
+                  <Wrapper
+                    margin={`0px 0px 10px 0px`}
+                    radius="5px"
+                    bgColor={Theme.lightGrey_C}
+                    padding="5px"
+                    fontSize="13px"
+                    al="flex-start"
+                  >
+                    <GuideDiv isImpo={true}>
+                      학생의 결제여부 및 강의목록, 강의기간을 선택하여 수업에
+                      참여시킬 수 있습니다.
+                    </GuideDiv>
+                    <GuideDiv isImpo={true}>
+                      결제여부 및 강의목록, 강의기간은 필수입니다.
+                    </GuideDiv>
+                  </Wrapper>
+                </Wrapper>
+
+                <Wrapper al={`flex-start`} margin={`0 0 20px`}>
+                  <Text fontWeight={`700`} margin={`0 0 5px`}>
+                    학생 이름
+                  </Text>
+                  <TextInput
+                    readOnly={true}
+                    value={`${userData && userData.firstName} ${
+                      userData && userData.lastName
+                    }`}
+                    width={`100%`}
+                  />
+
+                  <Text fontWeight={`700`} margin={`5px 0`}>
+                    결제 여부
+                  </Text>
+                  <Select
+                    defaultValue="네"
+                    onChange={paySelectHandler}
+                    value={isPay}
+                    style={{ width: `100%` }}
+                  >
+                    <Select.Option value="네">네</Select.Option>
+                    <Select.Option value="아니오">아니오</Select.Option>
+                  </Select>
+
+                  {isPay === "네" ? (
+                    <>
+                      <Text fontWeight={`700`} margin={`5px 0`}>
+                        강의 목록
                       </Text>
 
-                      <Wrapper
-                        margin={`0px 0px 10px 0px`}
-                        radius="5px"
-                        bgColor={Theme.lightGrey_C}
-                        padding="5px"
-                        fontSize="13px"
-                        al="flex-start"
+                      <Select
+                        style={{ width: `100%` }}
+                        height={`32px`}
+                        showSearch
+                        onChange={(LectureId) =>
+                          onSeachHandler(LectureId, paymentList)
+                        }
+                        value={yesData}
+                        filterOption={(input, option) =>
+                          option.children
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
+                        placeholder="참가시킬 강의를 선택해주세요."
                       >
-                        <GuideDiv isImpo={true}>
-                          학생의 결제여부 및 강의목록, 강의기간을 선택하여
-                          수업에 참여시킬 수 있습니다.
-                        </GuideDiv>
-                        <GuideDiv isImpo={true}>
-                          결제여부 및 강의목록, 강의기간은 필수입니다.
-                        </GuideDiv>
-                      </Wrapper>
-                    </Wrapper>
+                        {opt2}
+                      </Select>
+                    </>
+                  ) : (
+                    <>
+                      <Text fontWeight={`700`} margin={`5px 0`}>
+                        강의 목록
+                      </Text>
+                      <Select
+                        showSearch={true}
+                        placeholder="강의목록을 선택해주세요."
+                        style={{ width: `100%` }}
+                        onChange={noLectureHandler}
+                        value={noData}
+                      >
+                        {allLectures && allLectures.length === 0
+                          ? ""
+                          : allLectures &&
+                            allLectures.map((data, idx) => {
+                              return (
+                                <Select.Option
+                                  key={data.id}
+                                  value={JSON.stringify(data)}
+                                >
+                                  {`${data.number} | ${data.course} | ${data.User.username}`}
+                                </Select.Option>
+                              );
+                            })}
+                      </Select>
 
-                    <Form
-                      style={{ width: `100%` }}
-                      form={stuForm}
-                      onFinish={onUpdateClassSubmit}
+                      <Text fontWeight={`700`} margin={`5px 0`}>
+                        강의 기간
+                      </Text>
+                      <Input
+                        type="number"
+                        placeholder="강의 기간을 입력해주세요."
+                        {...numberInput}
+                      />
+                    </>
+                  )}
+
+                  <Wrapper
+                    al={`flex-end`}
+                    margin={`20px 0 0`}
+                    display={isJoin ? `flex` : `none`}
+                  >
+                    <Button
+                      type="primary"
+                      size="small"
+                      onClick={onUpdateClassSubmit}
                     >
-                      <Form.Item
-                        labelCol={{ span: 4 }}
-                        labelAlign={`left`}
-                        name="name"
-                        label="학생 이름"
-                      >
-                        <TextInput readOnly={true} />
-                      </Form.Item>
+                      수업 참여하기
+                    </Button>
+                  </Wrapper>
+                </Wrapper>
 
-                      <Form.Item
-                        required={{
-                          require: true,
-                        }}
-                        labelCol={{ span: 4 }}
-                        labelAlign={`left`}
-                        name="pay"
-                        label="결제 여부"
-                      >
-                        <Select
-                          defaultValue="네"
-                          onChange={paySelectHandler}
-                          value={isPay}
-                        >
-                          <Select.Option value="네">네</Select.Option>
-                          <Select.Option value="아니오">아니오</Select.Option>
-                        </Select>
-                      </Form.Item>
-
-                      {isPay === "네" ? (
-                        <Form.Item
-                          required={[
-                            {
-                              require: true,
-                              message: "참가시킬 강의를 선택해주세요.",
-                            },
-                          ]}
-                          labelCol={{ span: 4 }}
-                          labelAlign={`left`}
-                          name="payLecture"
-                          label="참가시킬 강의"
-                        >
-                          <Select
-                            width={`100%`}
-                            height={`32px`}
-                            showSearch
-                            onChange={(LectureId) =>
-                              onSeachHandler(LectureId, paymentList)
-                            }
-                            filterOption={(input, option) =>
-                              option.children
-                                .toLowerCase()
-                                .indexOf(input.toLowerCase()) >= 0
-                            }
-                            placeholder="참가시킬 강의를 선택해주세요."
-                          >
-                            {opt2}
-                          </Select>
-                        </Form.Item>
-                      ) : (
-                        <>
-                          <Form.Item
-                            rules={[
-                              {
-                                message: "강의목록을 선택해주세요.",
-                                required: true,
-                              },
-                            ]}
-                            labelCol={{ span: 4 }}
-                            labelAlign={`left`}
-                            name="lectureList"
-                            label="강의 목록"
-                          >
-                            <Select
-                              showSearch={true}
-                              placeholder="강의목록을 선택해주세요."
-                            >
-                              {allLectures && allLectures.length === 0
-                                ? ""
-                                : allLectures &&
-                                  allLectures.map((data, idx) => {
-                                    return (
-                                      <Select.Option
-                                        key={data.id}
-                                        value={JSON.stringify(data)}
-                                      >
-                                        {`${data.number} | ${data.course} | ${data.User.username}`}
-                                      </Select.Option>
-                                    );
-                                  })}
-                            </Select>
-                          </Form.Item>
-
-                          <Form.Item
-                            required={{
-                              require: true,
-                            }}
-                            labelCol={{ span: 4 }}
-                            labelAlign={`left`}
-                            name="lecturePeriod"
-                            label="강의 기간"
-                          >
-                            <Input
-                              type="number"
-                              placeholder="강의 기간을 입력해주세요."
-                            />
-                          </Form.Item>
-                        </>
-                      )}
-
-                      <Wrapper al={`flex-end`} margin={`0 0 20px`}>
-                        <Button type="primary" size="small" htmlType="submit">
-                          수업 참여하기
-                        </Button>
-                      </Wrapper>
-                    </Form>
-
+                {isJoin && (
+                  <>
                     {/* 학생이 참여하고 있는 강의 */}
                     <Wrapper dr={`row`} ju={`flex-start`}>
                       <Text
@@ -1947,147 +2018,6 @@ const List = () => {
                       size="small"
                     />
                   </>
-                ) : (
-                  <>
-                    {/* 학생 수업 참여 */}
-                    <Wrapper dr={`row`} ju={`flex-start`}>
-                      <Text
-                        fontWeight={`700`}
-                        color={Theme.basicTheme_C}
-                        margin={`0 0 5px`}
-                      >
-                        학생 수업 참여
-                      </Text>
-
-                      <Wrapper
-                        margin={`0px 0px 10px 0px`}
-                        radius="5px"
-                        bgColor={Theme.lightGrey_C}
-                        padding="5px"
-                        fontSize="13px"
-                        al="flex-start"
-                      >
-                        <GuideDiv isImpo={true}>
-                          학생이 회원가입 하기 전에 사용하는 수업참여
-                          기능입니다.
-                        </GuideDiv>
-                      </Wrapper>
-                    </Wrapper>
-
-                    <Form.Item
-                      labelCol={{ span: 4 }}
-                      labelAlign={`left`}
-                      name="username"
-                      label="학생 이름"
-                      style={{ width: `100%` }}
-                    >
-                      <TextInput readOnly={true} />
-                    </Form.Item>
-
-                    <Form.Item
-                      required={{
-                        require: true,
-                      }}
-                      labelCol={{ span: 4 }}
-                      labelAlign={`left`}
-                      name="pay"
-                      label="결제 여부"
-                      style={{ width: `100%` }}
-                    >
-                      <Select
-                        defaultValue="네"
-                        onChange={paySelectHandler}
-                        value={isPay}
-                      >
-                        <Select.Option value="네">네</Select.Option>
-                        <Select.Option value="아니오">아니오</Select.Option>
-                      </Select>
-                    </Form.Item>
-
-                    {isPay === "네" ? (
-                      <Form.Item
-                        required={[
-                          {
-                            require: true,
-                            message: "참가시킬 강의를 선택해주세요.",
-                          },
-                        ]}
-                        labelCol={{ span: 4 }}
-                        labelAlign={`left`}
-                        name="payLecture"
-                        label="참가시킬 강의"
-                        style={{ width: `100%` }}
-                      >
-                        <Select
-                          width={`100%`}
-                          height={`32px`}
-                          showSearch
-                          onChange={(LectureId) =>
-                            onSeachHandler(LectureId, paymentList)
-                          }
-                          filterOption={(input, option) =>
-                            option.children
-                              .toLowerCase()
-                              .indexOf(input.toLowerCase()) >= 0
-                          }
-                          placeholder="참가시킬 강의를 선택해주세요."
-                        >
-                          {opt2}
-                        </Select>
-                      </Form.Item>
-                    ) : (
-                      <>
-                        <Form.Item
-                          rules={[
-                            {
-                              message: "강의목록을 선택해주세요.",
-                              required: true,
-                            },
-                          ]}
-                          labelCol={{ span: 4 }}
-                          labelAlign={`left`}
-                          name="lectureList"
-                          label="강의 목록"
-                          style={{ width: `100%` }}
-                        >
-                          <Select
-                            showSearch={true}
-                            placeholder="강의목록을 선택해주세요."
-                          >
-                            {allLectures && allLectures.length === 0
-                              ? ""
-                              : allLectures &&
-                                allLectures.map((data, idx) => {
-                                  return (
-                                    <Select.Option
-                                      key={data.id}
-                                      value={JSON.stringify(data)}
-                                    >
-                                      {`${data.number} | ${data.course} | ${data.User.username}`}
-                                    </Select.Option>
-                                  );
-                                })}
-                          </Select>
-                        </Form.Item>
-
-                        <Form.Item
-                          required={{
-                            require: true,
-                          }}
-                          labelCol={{ span: 4 }}
-                          labelAlign={`left`}
-                          name="lecturePeriod"
-                          label="강의 기간"
-                          style={{ width: `100%` }}
-                        >
-                          <Input
-                            type="number"
-                            placeholder="강의 기간을 입력해주세요."
-                          />
-                        </Form.Item>
-                      </>
-                    )}
-                  </>
                 )}
 
                 {/* 학생 상세정보 */}
@@ -2118,6 +2048,9 @@ const List = () => {
                     <GuideDiv isImpo={true}>
                       학생이 회원가입 하기 전에도 사용할 수 있으며, 각 정보를
                       메모처럼 사용할 수 있습니다.
+                    </GuideDiv>
+                    <GuideDiv isImpo={true}>
+                      이메일 변경은 개발사에 문의해주세요.
                     </GuideDiv>
                   </Wrapper>
                 </Wrapper>
@@ -2178,7 +2111,10 @@ const List = () => {
                   </Wrapper>
                   <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
                     <FormItem name="email">
-                      <Input placeholder="이메일을 입력해주세요." />
+                      <Input
+                        placeholder="이메일을 입력해주세요."
+                        disabled={true}
+                      />
                     </FormItem>
                   </Wrapper>
                 </Wrapper>
@@ -2222,7 +2158,7 @@ const List = () => {
                       <Input
                         placeholder="전화번호를 입력해주세요."
                         onChange={(e) =>
-                          updateStuForm.setFieldsValue({
+                          userForm.setFieldsValue({
                             password: e.target.value.slice(-4),
                           })
                         }
