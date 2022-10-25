@@ -423,13 +423,6 @@ const Student = () => {
 
   useEffect(() => {
     dispatch({
-      type: NOTICE_LIST_REQUEST,
-      data: {
-        page: 1,
-      },
-    });
-
-    dispatch({
       type: LECTURE_HOMEWORK_STU_LIST_REQUEST,
       data: {
         page: 1,
@@ -439,13 +432,6 @@ const Student = () => {
 
     dispatch({
       type: NOTICE_MY_LECTURE_LIST_REQUEST,
-      data: {
-        page: 1,
-      },
-    });
-
-    dispatch({
-      type: MESSAGE_SENDER_LIST_REQUEST,
       data: {
         page: 1,
       },
@@ -2032,6 +2018,13 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LECTURE_STU_LECTURE_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: NOTICE_LIST_REQUEST,
+      data: {
+        page: 1,
+      },
     });
 
     // 구현부 종료
