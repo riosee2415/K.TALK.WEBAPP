@@ -84,6 +84,7 @@ import {
   NORMAL_NOTICE_UPDATE_REQUEST,
 } from "../../reducers/normalNotice";
 import { setContext } from "redux-saga/effects";
+import { APP_USE_UPDATE_REQUEST } from "../../reducers/application";
 // let Line;
 
 // if (typeof window !== "undefined") {
@@ -260,10 +261,6 @@ const AdminHome = () => {
     st_noticeUpdateError,
     st_noticeUpdateDone,
   } = useSelector((state) => state.notice);
-
-  const { messageAdminMainList, messageAdminMainMaxPage } = useSelector(
-    (state) => state.message
-  );
 
   // NORMAL SELECTOR
   const {
@@ -2961,6 +2958,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
     context.store.dispatch({
       type: USER_STU_LIST_REQUEST,
     });
+
     context.store.dispatch({
       type: USER_TEACHER_LIST_REQUEST,
     });
