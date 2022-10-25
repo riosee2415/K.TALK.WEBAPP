@@ -85,35 +85,48 @@ router.post("/detail", isAdminCheck, async (req, res, next) => {
     }
 
     const selectQuery = `
-     SELECT	    id,
-                firstName,
-                lastName,
-                dateOfBirth,
-                gmailAddress,
-                nationality,
-                countryOfResidence,
-                languageYouUse,
-                phoneNumber,
-                phoneNumber2,
-                classHour,
-                comment,
-                isPaid,
-                isComplete,
-                DATE_FORMAT(payDate,       "%Y/%m/%d : %H:%i")						  AS	payDate,
-                DATE_FORMAT(completedAt,   "%Y/%m/%d : %H:%i")						  AS	completedAt,
-                DATE_FORMAT(createdAt,     "%Y/%m/%d : %H:%i")							AS	createdAt,
-                DATE_FORMAT(updatedAt,     "%Y/%m/%d : %H:%i") 					   	AS	updatedAt,
-                timeDiff,
-                wantStartDate,
-                teacher,
-                freeTeacher,
-                isDiscount,
-                meetDate,
-                level,
-                job,
-                status,
-                purpose
-      FROM	    applications
+     SELECT	    A.id,
+                A.firstName,
+                A.lastName,
+                A.dateOfBirth,
+                A.gmailAddress,
+                A.nationality,
+                A.countryOfResidence,
+                A.languageYouUse,
+                A.phoneNumber,
+                A.phoneNumber2,
+                A.classHour,
+                A.comment,
+                A.isPaid,
+                A.isComplete,
+                DATE_FORMAT(A.payDate,       "%Y/%m/%d : %H:%i")						  AS	payDate,
+                DATE_FORMAT(A.completedAt,   "%Y/%m/%d : %H:%i")						  AS	completedAt,
+                DATE_FORMAT(A.createdAt,     "%Y/%m/%d : %H:%i")							AS	createdAt,
+                DATE_FORMAT(A.updatedAt,     "%Y/%m/%d : %H:%i") 					   	AS	updatedAt,
+                A.timeDiff,
+                A.wantStartDate,
+                A.teacher,
+                A.freeTeacher,
+                A.isDiscount,
+                A.meetDate,
+                A.level,
+                A.job,
+                A.status,
+                A.purpose,
+                B.userId,
+                B.profileImage,
+                B.username,
+                B.mobile,
+                B.email,
+                B.stuNo,
+                B.sns,
+                B.snsId,
+                B.gender
+      FROM	    applications    A
+      LEFT
+     OUTER
+      JOIN      users           B
+        ON      A.gmailAddress = B.email
      WHERE      1 = 1
        AND      gmailAddress = "${email}"
     `;
