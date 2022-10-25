@@ -37,6 +37,7 @@ const lecturenoticecomment = require("./lecturenoticecomment");
 const normalnotice = require("./normalnotice");
 const normalconnect = require("./normalconnect");
 const normalnoticecomment = require("./normalnoticecomment");
+const appboolean = require("./appboolean");
 
 const env = process.env.NODE_ENV || "development";
 const config = require("../config/config")[env];
@@ -86,6 +87,7 @@ db.LectureNoticeComment = lecturenoticecomment;
 db.NormalNotice = normalnotice;
 db.NormalConnect = normalconnect;
 db.NormalNoticeComment = normalnoticecomment;
+db.AppBoolean = appboolean;
 
 Object.keys(db).forEach((modelName) => {
   db[modelName].init(sequelize);

@@ -6,6 +6,26 @@ const models = require("../models");
 
 const router = express.Router();
 
+router.post("/useYn", isAdminCheck, async (req, res, next) => {
+  const { id, useYn } = req.body;
+
+  const updateQuery = `
+  UPDATE  appBooleans
+     SET  useYn = ${useYn},
+          lastUseDate = NOW()
+   WHERE  id = ${id}
+  `;
+
+  try {
+    await models.sequelize.query(updateQuery);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("데이터를 조회할 수 없습니다.");
+  }
+});
+
 router.post("/list", isAdminCheck, async (req, res, next) => {
   const { isComplete, isTime, time, status } = req.body;
 
