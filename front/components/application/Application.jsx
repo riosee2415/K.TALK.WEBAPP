@@ -5,10 +5,8 @@ import { Calendar, Checkbox, Form, InputNumber, message, Select } from "antd";
 import { CalendarOutlined, CaretDownOutlined } from "@ant-design/icons";
 
 import { END } from "redux-saga";
-import Head from "next/head";
 import axios from "axios";
 import wrapper from "../../store/configureStore";
-import ClientLayout from "../../components/ClientLayout";
 import {
   RsWrapper,
   WholeWrapper,
