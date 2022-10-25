@@ -688,7 +688,7 @@ const Home = ({}) => {
             </RsWrapper>
           </Wrapper>
 
-          {currentFormToggle && modalView && (
+          {!me && currentFormToggle && modalView && (
             <Wrapper
               position={`fixed`}
               top={`100px`}

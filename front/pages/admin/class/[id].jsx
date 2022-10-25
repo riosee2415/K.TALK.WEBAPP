@@ -927,7 +927,7 @@ const DetailClass = () => {
     {
       title: "수강생 이름(출생년도)",
       render: (data) => {
-        return `${data.username}(${data.birth})`;
+        return `${data.username}(${data.viewBirth})`;
       },
     },
     {
@@ -1040,7 +1040,7 @@ const DetailClass = () => {
     {
       title: "수강생 이름(출생년도)",
       render: (data) => {
-        return `${data.username}(${data.birth})`;
+        return `${data.username}(${data.viewBirth})`;
       },
     },
     {
@@ -1240,7 +1240,7 @@ const DetailClass = () => {
     {
       title: "학생이름(생년월일)",
       render: (data) => {
-        return <div>{`${data.username}(${data.birth})`}</div>;
+        return <div>{`${data.username}(${data.viewBirth})`}</div>;
       },
     },
     {
