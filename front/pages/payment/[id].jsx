@@ -138,7 +138,6 @@ const Index = () => {
               (payClassDetail.price * payClassDetail.discount) / 100,
           type: "PayPal",
           name: successData.address.recipient_name,
-          userId: me ? me.id : null,
         },
       });
     }
@@ -206,7 +205,6 @@ const Index = () => {
           type: "계좌이체",
           name: data.name,
           bankNo: data.account,
-          userId: me ? me.id : null,
         },
       });
     },

@@ -99,6 +99,7 @@ router.post("/create", async (req, res, next) => {
         name,
         bankNo,
         isComplete: false,
+        UserId: req.user ? req.user.id : null,
       });
 
       if (!createResult) {
@@ -116,6 +117,7 @@ router.post("/create", async (req, res, next) => {
         type: "PayPal",
         name,
         isComplete: true,
+        UserId: req.user ? req.user.id : null,
       });
 
       if (!createResult) {

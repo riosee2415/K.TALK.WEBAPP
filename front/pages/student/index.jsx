@@ -1273,7 +1273,7 @@ const Student = () => {
                               fontWeight={`bold`}
                               color={Theme.basicTheme_C}
                             >
-                              {data.stuPayCount}
+                              {data.frequecy}
                             </Text>
                           </Wrapper>
                           <Wrapper
