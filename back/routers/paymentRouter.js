@@ -239,4 +239,5 @@ router.patch("/permit", isAdminCheck, async (req, res, next) => {
     return res.status(401).send("결제정보를 승인할 수 없습니다.");
   }
 });
+
 module.exports = router;
