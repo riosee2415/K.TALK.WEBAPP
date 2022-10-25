@@ -51,6 +51,7 @@ router.post("/last/list", async (req, res, next) => {
             END as compareDate,
             A.UserId,
             A.LectureId,
+            B.course,
             B.day,
             B.count,
             C.userId,
