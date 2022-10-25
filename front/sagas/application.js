@@ -16,6 +16,10 @@ import {
   APP_DETAIL_REQUEST,
   APP_DETAIL_SUCCESS,
   APP_DETAIL_FAILURE,
+  //
+  APP_USE_UPDATE_REQUEST,
+  APP_USE_UPDATE_SUCCESS,
+  APP_USE_UPDATE_FAILURE,
   /////////////////////////////
 } from "../reducers/application";
 
@@ -131,6 +135,34 @@ function* appDetail(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function appUseUpdateAPI(data) {
+  return await axios.post(`/api/app/useYn`, data);
+}
+
+function* appUseUpdate(action) {
+  try {
+    const result = yield call(appUseUpdateAPI, action.data);
+
+    yield put({
+      type: APP_USE_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: APP_USE_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchAppCreate() {
   yield takeLatest(APP_CREATE_REQUEST, appCreate);
@@ -148,6 +180,10 @@ function* watchAppDetail() {
   yield takeLatest(APP_DETAIL_REQUEST, appDetail);
 }
 
+function* watchAppUseUpdate() {
+  yield takeLatest(APP_USE_UPDATE_REQUEST, appUseUpdate);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* appSaga() {
   yield all([
@@ -155,6 +191,7 @@ export default function* appSaga() {
     fork(watchAppList),
     fork(watchAppUpdate),
     fork(watchAppDetail),
+    fork(watchAppUseUpdate),
     //
   ]);
 }

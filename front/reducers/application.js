@@ -20,6 +20,10 @@ export const initialState = {
   st_appDetailDone: false,
   st_appDetailError: null,
   //
+  st_appUseUpdateLoading: false,
+  st_appUseUpdateDone: false,
+  st_appUseUpdateError: null,
+  //
   updateModal: false,
 };
 
@@ -38,6 +42,10 @@ export const APP_UPDATE_FAILURE = "APP_UPDATE_FAILURE";
 export const APP_DETAIL_REQUEST = "APP_DETAIL_REQUEST";
 export const APP_DETAIL_SUCCESS = "APP_DETAIL_SUCCESS";
 export const APP_DETAIL_FAILURE = "APP_DETAIL_FAILURE";
+
+export const APP_USE_UPDATE_REQUEST = "APP_USE_UPDATE_REQUEST";
+export const APP_USE_UPDATE_SUCCESS = "APP_USE_UPDATE_SUCCESS";
+export const APP_USE_UPDATE_FAILURE = "APP_USE_UPDATE_FAILURE";
 
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
@@ -125,6 +133,27 @@ const reducer = (state = initialState, action) =>
         draft.st_appDetailLoading = false;
         draft.st_appDetailDone = false;
         draft.st_appDetailError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case APP_USE_UPDATE_REQUEST: {
+        draft.st_appUseUpdateLoading = true;
+        draft.st_appUseUpdateDone = null;
+        draft.st_appUseUpdateError = false;
+        break;
+      }
+      case APP_USE_UPDATE_SUCCESS: {
+        draft.st_appUseUpdateLoading = false;
+        draft.st_appUseUpdateDone = true;
+        draft.st_appUseUpdateError = null;
+        break;
+      }
+      case APP_USE_UPDATE_FAILURE: {
+        draft.st_appUseUpdateLoading = false;
+        draft.st_appUseUpdateDone = false;
+        draft.st_appUseUpdateError = action.error;
         break;
       }
 
