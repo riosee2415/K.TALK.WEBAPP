@@ -91,21 +91,8 @@ const FileBox = styled.div`
   justify-content: flex-start;
 `;
 
-const WordbreakText = styled(Text)`
-  width: 100%;
-  word-wrap: break-all;
-`;
-
 const AdminContent = styled.div`
   padding: 20px;
-`;
-
-const CustomButton = styled(Button)`
-  padding: 0;
-  width: 80px;
-  height: 35px;
-  border-radius: 5px;
-  font-size: 14px;
 `;
 
 const CusotmInput = styled(TextInput)`
@@ -251,8 +238,6 @@ const AdminHome = () => {
   } = useSelector((state) => state.app);
 
   const {
-    noticeAdminMain,
-    noticeAdminMainMaxPage,
     uploadPath,
     createModal,
     ///
