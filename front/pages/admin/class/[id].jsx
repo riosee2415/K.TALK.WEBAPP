@@ -737,7 +737,7 @@ const DetailClass = () => {
         updateStuForm.setFieldsValue({
           sns: data.sns,
           snsId: data.snsId,
-          birth: data.birth.slice(0, 10),
+          birth: data.birth,
           mobile: data.mobile,
           password: data.mobile,
           stuLiveCon: data.stuLiveCon,
@@ -927,7 +927,7 @@ const DetailClass = () => {
     {
       title: "수강생 이름(출생년도)",
       render: (data) => {
-        return `${data.username}(${data.birth.slice(0, 10)})`;
+        return `${data.username}(${data.viewBirth})`;
       },
     },
     {
@@ -1040,7 +1040,7 @@ const DetailClass = () => {
     {
       title: "수강생 이름(출생년도)",
       render: (data) => {
-        return `${data.username}(${data.birth.slice(0, 10)})`;
+        return `${data.username}(${data.viewBirth})`;
       },
     },
     {
@@ -1240,7 +1240,7 @@ const DetailClass = () => {
     {
       title: "학생이름(생년월일)",
       render: (data) => {
-        return <div>{`${data.username}(${data.birth.slice(0, 10)})`}</div>;
+        return <div>{`${data.username}(${data.viewBirth})`}</div>;
       },
     },
     {
@@ -1327,12 +1327,7 @@ const DetailClass = () => {
 
     {
       title: "출석일",
-      render: (data) => (
-        <Text>
-          {console.log(data)}
-          {data.time}
-        </Text>
-      ),
+      render: (data) => <Text>{data.time}</Text>,
     },
     {
       title: "출석 여부",

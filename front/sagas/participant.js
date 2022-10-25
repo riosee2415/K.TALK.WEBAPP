@@ -4,47 +4,47 @@ import {
   PARTICIPANT_LIST_REQUEST,
   PARTICIPANT_LIST_SUCCESS,
   PARTICIPANT_LIST_FAILURE,
-  //////////////////////////////////////////////////////////
+  //
   PARTICIPANT_LECTURE_LIST_REQUEST,
   PARTICIPANT_LECTURE_LIST_SUCCESS,
   PARTICIPANT_LECTURE_LIST_FAILURE,
-  //////////////////////////////////////////////////////////
+  //
   PARTICIPANT_ADMIN_LIST_REQUEST,
   PARTICIPANT_ADMIN_LIST_SUCCESS,
   PARTICIPANT_ADMIN_LIST_FAILURE,
-  //////////////////////////////////////////////////////////
+  //
   PARTICIPANT_CREATE_REQUEST,
   PARTICIPANT_CREATE_SUCCESS,
   PARTICIPANT_CREATE_FAILURE,
-  //////////////////////////////////////////////////////////
+  //
   PARTICIPANT_DELETE_REQUEST,
   PARTICIPANT_DELETE_SUCCESS,
   PARTICIPANT_DELETE_FAILURE,
-  //////////////////////////////////////////////////////////
+  //
   PARTICIPANT_USER_DELETE_LIST_REQUEST,
   PARTICIPANT_USER_DELETE_LIST_SUCCESS,
   PARTICIPANT_USER_DELETE_LIST_FAILURE,
-  //////////////////////////////////////////////////////////
+  //
   PARTICIPANT_USER_MOVE_LIST_REQUEST,
   PARTICIPANT_USER_MOVE_LIST_SUCCESS,
   PARTICIPANT_USER_MOVE_LIST_FAILURE,
-  //////////////////////////////////////////////////////////
+  //
   PARTICIPANT_USER_LIMIT_LIST_REQUEST,
   PARTICIPANT_USER_LIMIT_LIST_SUCCESS,
   PARTICIPANT_USER_LIMIT_LIST_FAILURE,
-  //////////////////////////////////////////////////////////
+  //
   PARTICIPANT_USER_CURRENT_LIST_REQUEST,
   PARTICIPANT_USER_CURRENT_LIST_SUCCESS,
   PARTICIPANT_USER_CURRENT_LIST_FAILURE,
-  //////////////////////////////////////////////////////////
+  //
   PARTICIPANT_LASTDATE_LIST_REQUEST,
   PARTICIPANT_LASTDATE_LIST_SUCCESS,
   PARTICIPANT_LASTDATE_LIST_FAILURE,
-  //////////////////////////////////////////////////////////
+  //
   TEACHER_PARTICIPANT_LIST_REQUEST,
   TEACHER_PARTICIPANT_LIST_SUCCESS,
   TEACHER_PARTICIPANT_LIST_FAILURE,
-  //////////////////////////////////////////////////////////
+  //
   PARTICIPANT_UPDATE_REQUEST,
   PARTICIPANT_UPDATE_SUCCESS,
   PARTICIPANT_UPDATE_FAILURE,
@@ -52,6 +52,10 @@ import {
   PARTICIPANT_STUDENT_LIST_REQUEST,
   PARTICIPANT_STUDENT_LIST_SUCCESS,
   PARTICIPANT_STUDENT_LIST_FAILURE,
+  //
+  PART_LAST_LIST_REQUEST,
+  PART_LAST_LIST_SUCCESS,
+  PART_LAST_LIST_FAILURE,
 } from "../reducers/participant";
 
 // ******************************************************************************************************************
@@ -406,6 +410,33 @@ function* participantStudentList(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function partLastListAPI(data) {
+  return await axios.post(`/api/part/last/list`, data);
+}
+
+function* partLastList(action) {
+  try {
+    const result = yield call(partLastListAPI, action.data);
+
+    yield put({
+      type: PART_LAST_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: PART_LAST_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchParticipantList() {
@@ -470,6 +501,10 @@ function* watchParticipantStudentList() {
   yield takeLatest(PARTICIPANT_STUDENT_LIST_REQUEST, participantStudentList);
 }
 
+function* watchPartLastList() {
+  yield takeLatest(PART_LAST_LIST_REQUEST, partLastList);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* participantSaga() {
   yield all([
@@ -486,6 +521,7 @@ export default function* participantSaga() {
     fork(watchParticipantTeacherList),
     fork(watchParticipantUpdate),
     fork(watchParticipantStudentList),
+    fork(watchPartLastList),
 
     //
   ]);

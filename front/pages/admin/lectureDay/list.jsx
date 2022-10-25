@@ -3,39 +3,62 @@ import AdminLayout from "../../../components/AdminLayout";
 import PageHeader from "../../../components/admin/PageHeader";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
-import { Table, Button, message, Input } from "antd";
+import {
+  LOAD_MY_INFO_REQUEST,
+  USER_STU_LIST_REQUEST,
+} from "../../../reducers/user";
+import { Table, Button, message, Input, Select, Form } from "antd";
 import { useRouter, withRouter } from "next/router";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
-import { Wrapper } from "../../../components/commonComponents";
+import { GuideDiv, Wrapper } from "../../../components/commonComponents";
 
-import { PARTICIPANT_LASTDATE_LIST_REQUEST } from "../../../reducers/participant";
-import useInput from "../../../hooks//useInput";
-import { SearchOutlined } from "@ant-design/icons";
+import { PART_LAST_LIST_REQUEST } from "../../../reducers/participant";
+import { useState } from "react";
+import Theme from "../../../components/Theme";
 
 const AdminContent = styled.div`
   padding: 20px;
 `;
 
+const SearchForm = styled(Form)`
+  display: flex;
+  flex-direction: row;
+  width: auto;
+
+  & .ant-form-item {
+    width: 200px;
+    margin: 0;
+  }
+
+  & .ant-form-item,
+  & .ant-form-item-control-input {
+    min-height: 0;
+  }
+`;
+
 const List = ({}) => {
-  // LOAD CURRENT INFO AREA /////////////////////////////////////////////
+  ////// GLOBAL STATE //////
 
-  const { me, st_loadMyInfoDone } = useSelector((state) => state.user);
+  const { me, st_loadMyInfoDone, userStuList } = useSelector(
+    (state) => state.user
+  );
 
-  const {
-    partLastDateList,
-    st_participantLastDateListDone,
-    st_participantLastDateListError,
-  } = useSelector((state) => state.participant);
+  const { partLastList, st_participantLastDateListError } = useSelector(
+    (state) => state.participant
+  );
 
+  ////// HOOKS //////
   const router = useRouter();
 
-  const moveLinkHandler = useCallback((link) => {
-    router.push(link);
-  }, []);
+  const dispatch = useDispatch();
 
+  const [searchForm] = Form.useForm();
+
+  const [userId, setUserId] = useState(false);
+
+  ////// USEEFFECT //////
   useEffect(() => {
     if (st_loadMyInfoDone) {
       if (!me || parseInt(me.level) < 3) {
@@ -43,19 +66,15 @@ const List = ({}) => {
       }
     }
   }, [st_loadMyInfoDone]);
-  /////////////////////////////////////////////////////////////////////////
-
-  ////// HOOKS //////
-  const dispatch = useDispatch();
-
-  const inputSearch = useInput("");
-
-  ////// USEEFFECT //////
 
   useEffect(() => {
-    if (st_participantLastDateListDone) {
-    }
-  }, [st_participantLastDateListDone]);
+    dispatch({
+      type: PART_LAST_LIST_REQUEST,
+      data: {
+        userId,
+      },
+    });
+  }, [userId]);
 
   useEffect(() => {
     if (st_participantLastDateListError) {
@@ -63,84 +82,58 @@ const List = ({}) => {
     }
   }, [st_participantLastDateListError]);
 
-  useEffect(() => {
-    dispatch({
-      type: PARTICIPANT_LASTDATE_LIST_REQUEST,
-      data: {
-        search: "",
-      },
-    });
-  }, []);
-
   ////// TOGGLE //////
 
   ////// HANDLER //////
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
+  }, []);
 
-  const onSeachStuHandler = useCallback(() => {
-    dispatch({
-      type: PARTICIPANT_LASTDATE_LIST_REQUEST,
-      data: {
-        search: inputSearch.value,
-      },
-    });
-  }, [inputSearch.value]);
+  const selectHandler = useCallback(
+    (data) => {
+      setUserId(data);
+    },
+    [userId]
+  );
+
+  const allHandler = useCallback(() => {
+    setUserId(false);
+    searchForm.resetFields();
+  }, [userId]);
 
   ////// DATAVIEW //////
 
   const columns = [
     {
       title: "번호",
-      dataIndex: "id",
+      dataIndex: "num",
     },
     {
       title: "이름",
-      dataIndex: "studentName",
+      dataIndex: "username",
     },
     {
-      title: "이메일",
-      dataIndex: "email",
+      title: "아이디",
+      dataIndex: "userId",
     },
     {
       title: "국적",
       dataIndex: "stuCountry",
     },
     {
-      title: "강사명",
-      dataIndex: "teacherName",
+      title: "강의이름",
+      dataIndex: "course",
+    },
+    {
+      title: "남은 수업 횟수",
+      render: (data) => <div>{data.ingyerCnt ? data.ingyerCnt : 0}</div>,
     },
 
     {
-      title: "강의 번호",
-      dataIndex: "number",
-    },
-    {
-      title: "결제 날짜",
-      render: (data) => <div>{`${data.createdAt.slice(0, 10)}`}</div>,
-    },
-    {
-      title: "결제 금액",
-      render: (data) => <div>{`$ ${data.price}`}</div>,
-    },
-    {
-      title: "남은 일수",
-      render: (data) => (
-        <div>
-          {data.limitDate < 0
-            ? `D+${Math.abs(data.limitDate)}`
-            : data.limitDate === 0
-            ? `D-day`
-            : `D-${data.limitDate}`}
-        </div>
-      ),
-    },
-
-    {
-      title: "결제 만료일",
-      render: (data) => <div>{`${data.compareDate}`}</div>,
+      title: "수업 종료일",
+      dataIndex: "viewEndDate",
     },
   ];
-
-  console.log(partLastDateList);
 
   return (
     <AdminLayout>
@@ -149,27 +142,61 @@ const List = ({}) => {
         title={`수업 만료일 목록`}
         subTitle={`홈페이지에 학생들에 수업 만료일을 확인할 수 있습니다.`}
       />
-      {/* <AdminTop createButton={true} createButtonAction={() => {})} /> */}
 
       <AdminContent>
-        <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 10px`}>
-          <Input
-            size="small"
-            style={{ width: "20%" }}
-            placeholder="수업 만료일 수 ex) 7일, 27일"
-            {...inputSearch}
-            onKeyDown={(e) => e.keyCode === 13 && onSeachStuHandler()}
-          />
-          <Button size="small" onClick={() => onSeachStuHandler()}>
-            <SearchOutlined />
-            검색
+        <Wrapper
+          dr={`row`}
+          ju={`flex-start`}
+          margin={`0 0 10px`}
+          padding="5px 0px"
+          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+        >
+          <SearchForm form={searchForm}>
+            <Form.Item name="user">
+              <Select
+                size="small"
+                placeholder="학생을 선택해주세요."
+                onChange={selectHandler}
+              >
+                <Select.Option value={false} disabled>
+                  학생을 선택해주세요.
+                </Select.Option>
+                {userStuList &&
+                  userStuList.map((data) => (
+                    <Select.Option key={data.id} value={data.id}>
+                      {data.username}
+                    </Select.Option>
+                  ))}
+              </Select>
+            </Form.Item>
+          </SearchForm>
+          <Button size="small" type="primary" onClick={allHandler}>
+            전체 조회
           </Button>
         </Wrapper>
 
+        {/* ADMIN GUIDE AREA */}
+        <Wrapper
+          margin={`0px 0px 10px 0px`}
+          radius="5px"
+          bgColor={Theme.lightGrey3_C}
+          padding="5px"
+          fontSize="13px"
+          al="flex-start"
+        >
+          <GuideDiv isImpo={true}>
+            학생들의 수업 종료일 및 남은 수업 횟수를 확인할 수 있습니다.
+          </GuideDiv>
+          <GuideDiv isImpo={true}>
+            수업 종료일을 학생별로 검색할 수 있습니다.
+          </GuideDiv>
+        </Wrapper>
+        {/* ADMIN GUIDE AREA END */}
+
         <Table
-          rowKey="id"
+          rowKey="num"
           columns={columns}
-          dataSource={partLastDateList ? partLastDateList : []}
+          dataSource={partLastList}
           size="small"
         />
       </AdminContent>
@@ -193,10 +220,11 @@ export const getServerSideProps = wrapper.getServerSideProps(
     });
 
     context.store.dispatch({
-      type: PARTICIPANT_LASTDATE_LIST_REQUEST,
-      data: {
-        search: "",
-      },
+      type: PART_LAST_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: USER_STU_LIST_REQUEST,
     });
 
     // 구현부 종료

@@ -844,8 +844,6 @@ const Index = () => {
     [uploadPathTh, uploadPath, textbookData, router.query]
   );
 
-  console.log(uploadPath);
-
   const modalOk = useCallback(() => {
     textBookUploadform.submit();
   }, [form]);

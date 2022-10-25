@@ -52,6 +52,7 @@ import {
   FileTextOutlined,
 } from "@ant-design/icons";
 import Application from "../components/application/Application";
+import { APP_USE_LIST_REQUEST } from "../reducers/application";
 
 const Box = styled(Wrapper)`
   align-items: flex-start;
@@ -100,6 +101,7 @@ const Home = ({}) => {
     st_communityCreateError,
     filePath,
   } = useSelector((state) => state.community);
+  const { currentFormToggle } = useSelector((state) => state.app);
 
   ////// HOOKS //////
   const router = useRouter();
@@ -686,17 +688,16 @@ const Home = ({}) => {
             </RsWrapper>
           </Wrapper>
 
-          {modalView && (
+          {!me && currentFormToggle && modalView && (
             <Wrapper
               position={`fixed`}
-              top={`0`}
+              top={`100px`}
               left={`0`}
               zIndex={`100`}
-              height={`100vh`}
+              height={`calc(100vh - 100px)`}
               wrap={`nowrap`}
               overflow={`auto`}
               ju={`flex-start`}
-              padding={`100px 0 0`}
             >
               <RsWrapper position={`relative`}>
                 <Wrapper
@@ -705,6 +706,7 @@ const Home = ({}) => {
                   top={`40px`}
                   right={`0`}
                   fontSize={`30px`}
+                  width={`auto`}
                   onClick={appModal}
                   cursor={`pointer`}
                 >
@@ -737,6 +739,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: COMMUNITY_TYPE_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: APP_USE_LIST_REQUEST,
     });
 
     // 구현부 종료

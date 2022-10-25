@@ -37,7 +37,8 @@ router.post("/last/list", async (req, res, next) => {
   //   const TEMP_LECTUREID = 18;
 
   const selectQ = `
-    SELECT	A.id,
+    SELECT	ROW_NUMBER()  OVER(ORDER BY C.username)      AS num,
+            A.id,
             A.isDelete,
             A.isChange,
             A.date,
@@ -50,6 +51,7 @@ router.post("/last/list", async (req, res, next) => {
             END as compareDate,
             A.UserId,
             A.LectureId,
+            B.course,
             B.day,
             B.count,
             C.userId,
@@ -77,6 +79,8 @@ router.post("/last/list", async (req, res, next) => {
        ${_userId ? `AND A.UserId = ${_userId}` : ``}
        ${_lectureId ? `AND	A.LectureId = ${_lectureId}` : ``}
        AND  B.isDelete = 0
+       AND  B.isChange = 0
+     ORDER  BY num ASC
   `;
 
   try {
@@ -368,6 +372,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
               B.username,
               B.level,
               B.birth,
+              DATE_FORMAT(B.birth, "%Y년 %m월 %d일")                                   AS viewBirth,
               B.profileImage,
               B.sns,
               B.snsId,
@@ -566,7 +571,7 @@ router.post("/student/notice/list", isLoggedIn, async (req, res, next) => {
 });
 
 router.patch("/update", isAdminCheck, async (req, res, next) => {
-  const { partId, createdAt, endDate } = req.body;
+  const { partId, createdAt, endDate, isPay } = req.body;
   try {
     const exPart = await Participant.findOne({
       where: { id: parseInt(partId) },
@@ -585,6 +590,14 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
         where: { id: parseInt(partId) },
       }
     );
+
+    // if (isPay === 1) {
+    //   const insertQuery = `
+    //   SELECT
+    //     FROM  users
+    //    WHERE
+    //   `;
+    // }
 
     if (updateResult[0] > 0) {
       return res.status(200).json({ result: true });
