@@ -79,6 +79,7 @@ router.post("/last/list", async (req, res, next) => {
        ${_userId ? `AND A.UserId = ${_userId}` : ``}
        ${_lectureId ? `AND	A.LectureId = ${_lectureId}` : ``}
        AND  B.isDelete = 0
+       AND  B.isChange = 0
      ORDER  BY num ASC
   `;
 
