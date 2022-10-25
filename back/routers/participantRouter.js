@@ -569,7 +569,7 @@ router.post("/student/notice/list", isLoggedIn, async (req, res, next) => {
 });
 
 router.patch("/update", isAdminCheck, async (req, res, next) => {
-  const { partId, createdAt, endDate } = req.body;
+  const { partId, createdAt, endDate, isPay } = req.body;
   try {
     const exPart = await Participant.findOne({
       where: { id: parseInt(partId) },
@@ -588,6 +588,9 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
         where: { id: parseInt(partId) },
       }
     );
+
+    if (isPay === 1) {
+    }
 
     if (updateResult[0] > 0) {
       return res.status(200).json({ result: true });
