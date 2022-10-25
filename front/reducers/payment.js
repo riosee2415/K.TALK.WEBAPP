@@ -41,13 +41,14 @@ const reducer = (state = initialState, action) =>
     switch (action.type) {
       case PAYMENT_LIST_REQUEST: {
         draft.st_paymentListLoading = true;
-        draft.st_paymentListDone = null;
-        draft.st_paymentListError = false;
+        draft.st_paymentListDone = false;
+        draft.st_paymentListError = null;
         break;
       }
       case PAYMENT_LIST_SUCCESS: {
         draft.st_paymentListLoading = false;
         draft.st_paymentListDone = true;
+        draft.st_paymentListError = null;
         draft.paymentList = action.data.list;
         break;
       }

@@ -117,6 +117,7 @@ const reducer = (state = initialState, action) =>
       case APP_DETAIL_SUCCESS: {
         draft.st_appDetailLoading = false;
         draft.st_appDetailDone = true;
+        draft.st_appDetailError = null;
         draft.applicationDetail = action.data.lists;
         break;
       }

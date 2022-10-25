@@ -257,13 +257,15 @@ const reducer = (state = initialState, action) =>
 
       case PARTICIPANT_DELETE_REQUEST: {
         draft.st_participantDeleteLoading = true;
-        draft.st_participantDeleteDone = null;
-        draft.st_participantDeleteError = false;
+        draft.st_participantDeleteDone = false;
+        draft.st_participantDeleteError = null;
         break;
       }
       case PARTICIPANT_DELETE_SUCCESS: {
-        draft.st_participantDeleteDone = true;
         draft.st_participantDeleteLoading = false;
+        draft.st_participantDeleteDone = true;
+        draft.st_participantDeleteError = null;
+
         break;
       }
       case PARTICIPANT_DELETE_FAILURE: {
@@ -298,8 +300,8 @@ const reducer = (state = initialState, action) =>
 
       case PARTICIPANT_USER_MOVE_LIST_REQUEST: {
         draft.st_participantUserMoveListLoading = true;
-        draft.st_participantUserMoveListDone = null;
-        draft.st_participantUserMoveListError = false;
+        draft.st_participantUserMoveListDone = false;
+        draft.st_participantUserMoveListError = null;
         break;
       }
       case PARTICIPANT_USER_MOVE_LIST_SUCCESS: {
@@ -319,8 +321,8 @@ const reducer = (state = initialState, action) =>
 
       case PARTICIPANT_USER_CURRENT_LIST_REQUEST: {
         draft.st_participantUserCurrentListLoading = true;
-        draft.st_participantUserCurrentListDone = null;
-        draft.st_participantUserCurrentListError = false;
+        draft.st_participantUserCurrentListDone = false;
+        draft.st_participantUserCurrentListError = null;
         break;
       }
       case PARTICIPANT_USER_CURRENT_LIST_SUCCESS: {
@@ -340,13 +342,14 @@ const reducer = (state = initialState, action) =>
 
       case PARTICIPANT_USER_LIMIT_LIST_REQUEST: {
         draft.st_participantUserLimitListLoading = true;
-        draft.st_participantUserLimitListDone = null;
-        draft.st_participantUserLimitListError = false;
+        draft.st_participantUserLimitListDone = false;
+        draft.st_participantUserLimitListError = null;
         break;
       }
       case PARTICIPANT_USER_LIMIT_LIST_SUCCESS: {
         draft.st_participantUserLimitListDone = true;
         draft.st_participantUserLimitListLoading = false;
+        draft.st_participantUserLimitListError = null;
         draft.partUserLimitList = action.data.list;
         break;
       }

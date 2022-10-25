@@ -377,13 +377,14 @@ const reducer = (state = initailState, action) =>
 
       case USER_ALL_LIST_REQUEST: {
         draft.st_userAllListLoading = true;
-        draft.st_userAllListDone = null;
-        draft.st_userAllListError = false;
+        draft.st_userAllListDone = false;
+        draft.st_userAllListError = null;
         break;
       }
       case USER_ALL_LIST_SUCCESS: {
         draft.st_userAllListLoading = false;
         draft.st_userAllListDone = true;
+        draft.st_userAllListError = null;
         draft.allUsers = action.data;
         break;
       }
