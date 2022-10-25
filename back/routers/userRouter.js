@@ -1248,22 +1248,26 @@ router.patch("/admin/user/update", isAdminCheck, async (req, res, next) => {
     }
 
     if (email) {
-      const exUser2 = await User.findOne({
-        where: { email: email },
-      });
+      if (email !== exUser.email) {
+        const exUser2 = await User.findOne({
+          where: { email: email },
+        });
 
-      if (exUser2) {
-        return res.status(401).send("이미 존재하는 이메일입니다.");
+        if (exUser2) {
+          return res.status(401).send("이미 존재하는 이메일입니다.");
+        }
       }
     }
 
     if (userId) {
-      const exUser3 = await User.findOne({
-        where: { userId: userId },
-      });
+      if (userId !== exUser.userId) {
+        const exUser3 = await User.findOne({
+          where: { userId: userId },
+        });
 
-      if (exUser3) {
-        return res.status(401).send("이미 존재하는 이메일입니다.");
+        if (exUser3) {
+          return res.status(401).send("이미 존재하는 아이디입니다.");
+        }
       }
     }
 
