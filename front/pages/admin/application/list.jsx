@@ -402,18 +402,32 @@ const List = () => {
           level: applicationDetail[0].level,
           purpose: applicationDetail[0].purpose,
           freeTeacher: applicationDetail[0].freeTeacher,
-          username: applicationDetail[0].username,
+          username: isJoin
+            ? applicationDetail[0].username
+            : `${userData && userData.firstName} ${
+                userData && userData.lastName
+              }`,
           email: isJoin
             ? applicationDetail[0].email
             : userData && userData.gmailAddress,
-          userId: applicationDetail[0].userId,
+          userId: isJoin
+            ? applicationDetail[0].userId
+            : userData && userData.gmailAdress,
           sns: applicationDetail[0].sns,
           snsId: applicationDetail[0].snsId,
-          birth: applicationDetail[0].dateOfBirth,
-          mobile: applicationDetail[0].mobile,
-          password: applicationDetail[0].mobile
-            ? applicationDetail[0].mobile.slice(-4)
-            : "",
+          birth: isJoin
+            ? applicationDetail[0].dateOfBirth
+            : userData && userData.dateOfBirth,
+          mobile: isJoin
+            ? applicationDetail[0].mobile
+            : `${userData && userData.phoneNumber} ${
+                userData && userData.phoneNumber2
+              }`,
+          password: isJoin
+            ? applicationDetail[0].mobile
+              ? applicationDetail[0].mobile.slice(-4)
+              : ""
+            : userData && userData.phoneNumber2.slice(-4),
           stuLiveCon: applicationDetail[0].countryOfResidence,
           stuCountry: applicationDetail[0].nationality,
           stuLanguage: applicationDetail[0].languageYouUse,
@@ -1906,6 +1920,48 @@ const List = () => {
                             }`
                           : `https://via.placeholder.com/100x100`
                       }
+                    />
+                  </Wrapper>
+                </Wrapper>
+
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
+                  >
+                    신청일
+                  </Wrapper>
+                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+                    <Input
+                      disabled={true}
+                      value={userData && userData.createdAt.slice(0, 10)}
+                    />
+                  </Wrapper>
+                </Wrapper>
+
+                {console.log(userData)}
+
+                <Wrapper
+                  padding={`5px 0`}
+                  dr={`row`}
+                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                >
+                  <Wrapper
+                    width={`25%`}
+                    bgColor={Theme.lightGrey3_C}
+                    padding={`3px`}
+                  >
+                    회원가입일
+                  </Wrapper>
+                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
+                    <Input
+                      disabled={true}
+                      value={userData && userData.completedAt.slice(0, 10)}
                     />
                   </Wrapper>
                 </Wrapper>
