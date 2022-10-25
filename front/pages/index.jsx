@@ -23,7 +23,6 @@ import Theme from "../components/Theme";
 import { useRouter } from "next/router";
 
 import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
-import { SEO_LIST_REQUEST } from "../reducers/seo";
 
 import styled from "styled-components";
 import {
@@ -47,10 +46,12 @@ import {
 } from "antd";
 import ToastEditorComponent6 from "../components/editor/ToastEditorComponent6";
 import {
+  CloseCircleOutlined,
   CommentOutlined,
   EyeOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
+import Application from "../components/application/Application";
 
 const Box = styled(Wrapper)`
   align-items: flex-start;
@@ -90,9 +91,6 @@ const LoadNotification = (msg, content) => {
 const Home = ({}) => {
   const width = useWidth();
   ////// GLOBAL STATE //////
-  const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
-    (state) => state.seo
-  );
   const { me } = useSelector((state) => state.user);
   const {
     communityList,
@@ -111,7 +109,7 @@ const Home = ({}) => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
 
-  const [modalView, setModalView] = useState(false);
+  const [modalView, setModalView] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [contentData, setContentData] = useState("");
 
@@ -146,8 +144,8 @@ const Home = ({}) => {
       message.error(st_communityCreateError);
     }
   }, [st_communityCreateError]);
-  ////// TOGGLE //////
 
+  ////// TOGGLE //////
   const modalOpen = useCallback(() => {
     dispatch({
       type: CREATE_MODAL_OPEN_REQUEST,
@@ -159,6 +157,11 @@ const Home = ({}) => {
     });
     form.resetFields();
   }, []);
+
+  const appModal = useCallback(() => {
+    setModalView((prev) => !prev);
+  }, modalView);
+
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
@@ -228,49 +231,7 @@ const Home = ({}) => {
   return (
     <>
       <Head>
-        <title>
-          {seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
-        </title>
-
-        <meta
-          name="subject"
-          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
-        />
-        <meta
-          name="title"
-          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
-        />
-        <meta name="keywords" content={seo_keywords} />
-        <meta
-          name="description"
-          content={
-            seo_desc.length < 1
-              ? "REAL-TIME ONLINE KOREAN LESSONS"
-              : seo_desc[0].content
-          }
-        />
-        {/* <!-- OG tag  --> */}
-        <meta
-          property="og:title"
-          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
-        />
-        <meta
-          property="og:site_name"
-          content={seo_title.length < 1 ? "K-talk Live" : seo_title[0].content}
-        />
-        <meta
-          property="og:description"
-          content={
-            seo_desc.length < 1
-              ? "REAL-TIME ONLINE KOREAN LESSONS"
-              : seo_desc[0].content
-          }
-        />
-        <meta property="og:keywords" content={seo_keywords} />
-        <meta
-          property="og:image"
-          content={seo_ogImage.length < 1 ? "" : seo_ogImage[0].content}
-        />
+        <title>K-talk Live</title>
       </Head>
 
       <ClientLayout>
@@ -725,15 +686,34 @@ const Home = ({}) => {
             </RsWrapper>
           </Wrapper>
 
-          {/* <Wrapper
-            position={`fixed`}
-            top={`0`}
-            left={`0`}
-            height={`100vh`}
-            zIndex={`100`}
-          >
-
-          </Wrapper> */}
+          {modalView && (
+            <Wrapper
+              position={`fixed`}
+              top={`0`}
+              left={`0`}
+              zIndex={`100`}
+              height={`100vh`}
+              wrap={`nowrap`}
+              overflow={`auto`}
+              ju={`flex-start`}
+              padding={`100px 0 0`}
+            >
+              <RsWrapper position={`relative`}>
+                <Wrapper
+                  al={`flex-end`}
+                  position={`absolute`}
+                  top={`40px`}
+                  right={`0`}
+                  fontSize={`30px`}
+                  onClick={appModal}
+                  cursor={`pointer`}
+                >
+                  <CloseCircleOutlined />
+                </Wrapper>
+              </RsWrapper>
+              <Application />
+            </Wrapper>
+          )}
         </WholeWrapper>
       </ClientLayout>
     </>
@@ -753,10 +733,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
-    });
-
-    context.store.dispatch({
-      type: SEO_LIST_REQUEST,
     });
 
     context.store.dispatch({
