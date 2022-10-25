@@ -118,7 +118,7 @@ router.post("/detail", isAdminCheck, async (req, res, next) => {
                 B.username,
                 B.mobile,
                 B.email,
-                B.stuNo,
+                B.stuPayCount,
                 B.sns,
                 B.snsId,
                 B.gender
