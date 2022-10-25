@@ -4,7 +4,7 @@ import wrapper from "../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
 
-import styled, { ThemeContext } from "styled-components";
+import styled from "styled-components";
 import AdminLayout from "../../components/AdminLayout";
 import {
   Wrapper,
@@ -26,7 +26,6 @@ import {
   message,
   Modal,
   notification,
-  Pagination,
   Popconfirm,
   Select,
   Switch,
@@ -60,11 +59,8 @@ import {
   CREATE_MODAL_CLOSE_REQUEST,
   CREATE_MODAL_OPEN_REQUEST,
   NOTICE_ADMIN_MAIN_LIST_REQUEST,
-  NOTICE_UPDATE_REQUEST,
-  NOTICE_UPLOAD_REQUEST,
 } from "../../reducers/notice";
 
-import ToastEditorComponent3 from "../../components/editor/ToastEditorComponent3";
 import ToastEditorComponentMix from "../../components/editor/ToastEditorComponentMix";
 import { saveAs } from "file-saver";
 import {
@@ -83,15 +79,10 @@ import {
   NORMAL_NOTICE_MODAL_TOGGLE,
   NORMAL_NOTICE_UPDATE_REQUEST,
 } from "../../reducers/normalNotice";
-import { setContext } from "redux-saga/effects";
-import { APP_USE_UPDATE_REQUEST } from "../../reducers/application";
-// let Line;
-
-// if (typeof window !== "undefined") {
-//   const { Line: prevLine } = require("@ant-design/charts");
-
-//   Line = prevLine;
-// }
+import {
+  APP_USE_LIST_REQUEST,
+  APP_USE_UPDATE_REQUEST,
+} from "../../reducers/application";
 
 const FileBox = styled.div`
   display: flex;
@@ -253,6 +244,13 @@ const AdminHome = () => {
   } = useSelector((state) => state.user);
 
   const {
+    currentFormToggle,
+    st_appUseUpdateDone,
+    st_appUseUpdateError,
+    st_appUseUpdateLoading,
+  } = useSelector((state) => state.app);
+
+  const {
     noticeAdminMain,
     noticeAdminMainMaxPage,
     uploadPath,
@@ -324,6 +322,12 @@ const AdminHome = () => {
   const [cocommentToggle, setCocommentToggle] = useState(null);
 
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    dispatch({
+      type: APP_USE_LIST_REQUEST,
+    });
+  }, []);
 
   // useEffect(() => {
   //   dispatch({
@@ -400,6 +404,22 @@ const AdminHome = () => {
       });
     }
   }, [st_loginAdminDone]);
+
+  useEffect(() => {
+    if (st_appUseUpdateDone) {
+      dispatch({
+        type: APP_USE_LIST_REQUEST,
+      });
+
+      return message.info("어플리케이션 폼의 적용값이 변경되었습니다.");
+    }
+  }, [st_appUseUpdateDone]);
+
+  useEffect(() => {
+    if (st_appUseUpdateError) {
+      return message.error(st_appUseUpdateError);
+    }
+  }, [st_appUseUpdateError]);
 
   useEffect(() => {
     if (st_lectureDeleteDone) {
@@ -1476,6 +1496,17 @@ const AdminHome = () => {
     "학생 및 강사 전체",
   ];
 
+  const useAppToggleHandler = useCallback(() => {
+    const nextToggle = parseInt(currentFormToggle) === 0 ? 1 : 0;
+
+    dispatch({
+      type: APP_USE_UPDATE_REQUEST,
+      data: {
+        useYn: nextToggle,
+      },
+    });
+  }, [currentFormToggle]);
+
   return (
     <>
       {me && me.level >= 3 ? (
@@ -1495,7 +1526,11 @@ const AdminHome = () => {
             >
               홈페이지 메인화면에 Application Form 화면을 보여주시겠습니까?
               <Wrapper width={`auto`} margin={`0 0 0 50px`}>
-                <Switch />
+                <Switch
+                  checked={currentFormToggle}
+                  onChange={useAppToggleHandler}
+                  loading={st_appUseUpdateLoading}
+                />
               </Wrapper>
             </Wrapper>
             <Wrapper

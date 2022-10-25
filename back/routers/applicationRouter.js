@@ -6,14 +6,28 @@ const models = require("../models");
 
 const router = express.Router();
 
+router.post("/useYn/data", async (req, res, next) => {
+  const selectQ = `
+  SELECT useYn FROM appBooleans
+  `;
+
+  try {
+    const response = await models.sequelize.query(selectQ);
+
+    return res.status(200).json(response[0][0].useYn);
+  } catch (error) {
+    console.log();
+  }
+});
+
 router.post("/useYn", isAdminCheck, async (req, res, next) => {
-  const { id, useYn } = req.body;
+  const { useYn } = req.body;
 
   const updateQuery = `
   UPDATE  appBooleans
      SET  useYn = ${useYn},
           lastUseDate = NOW()
-   WHERE  id = ${id}
+   WHERE  id = 1
   `;
 
   try {
