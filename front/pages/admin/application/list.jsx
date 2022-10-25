@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
@@ -15,9 +15,6 @@ import {
   Form,
   Select,
   DatePicker,
-  Badge,
-  Space,
-  Dropdown,
   Calendar,
   Image,
   Popconfirm,
@@ -25,17 +22,11 @@ import {
 import {
   Wrapper,
   Text,
-  SpanText,
   TextInput,
   GuideDiv,
-  ModalBtn,
 } from "../../../components/commonComponents";
-import { ColWrapper, RowWrapper } from "../../../components/commonComponents";
 import Theme from "../../../components/Theme";
 import {
-  UPDATE_MODAL_CLOSE_REQUEST,
-  UPDATE_MODAL_OPEN_REQUEST,
-  APP_UPDATE_REQUEST,
   APP_LIST_REQUEST,
   APP_DETAIL_REQUEST,
 } from "../../../reducers/application";
@@ -51,9 +42,9 @@ import { PAYMENT_LIST_REQUEST } from "../../../reducers/payment";
 import { LECTURE_ALL_LIST_REQUEST } from "../../../reducers/lecture";
 import { useRouter } from "next/router";
 import moment from "moment";
-import { CalendarOutlined, DownOutlined } from "@ant-design/icons";
-import ColumnGroup from "antd/lib/table/ColumnGroup";
+import { CalendarOutlined } from "@ant-design/icons";
 import {
+  PARTICIPANT_CREATE_REQUEST,
   PARTICIPANT_DELETE_REQUEST,
   PARTICIPANT_USER_CURRENT_LIST_REQUEST,
   PARTICIPANT_USER_DELETE_LIST_REQUEST,
@@ -61,32 +52,11 @@ import {
   PARTICIPANT_USER_MOVE_LIST_REQUEST,
 } from "../../../reducers/participant";
 import { COMMUTE_ADMIN_LIST_REQUEST } from "../../../reducers/commute";
+import useInput from "../../../hooks/useInput";
 
 const FormItem = styled(Form.Item)`
   width: ${(props) => props.width || `100%`};
   margin: 0px;
-`;
-
-const CustomSelect = styled(Select)`
-  margin: ${(props) => props.margin};
-
-  &:not(.ant-select-customize-input) .ant-select-selector {
-    border-radius: 5px;
-    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.16);
-  }
-
-  & .ant-select-selector {
-    width: 350px !important;
-    padding: 0 5px !important;
-  }
-
-  & .ant-select-arrow span svg {
-    color: ${Theme.black_C};
-  }
-
-  & .ant-select-selection-placeholder {
-    color: ${Theme.grey2_C};
-  }
 `;
 
 const CustomTextArea = styled(Input.TextArea)`
@@ -95,35 +65,6 @@ const CustomTextArea = styled(Input.TextArea)`
 
 const CustomDatePicker = styled(DatePicker)`
   width: ${(props) => props.width || `350px`};
-`;
-
-const CustomInput = styled(Input)`
-  width: ${(props) => props.width || `350px`};
-`;
-
-const CustomForm = styled(Form)`
-  width: 100%;
-
-  & .ant-form-item {
-    width: 100%;
-    margin: 0 0 48px;
-  }
-
-  @media (max-width: 700px) {
-    width: 100%;
-
-    & .ant-form-item {
-      margin: 0 0 28px;
-    }
-  }
-`;
-
-const CustomForm2 = styled(Form)`
-  width: 100%;
-
-  & .ant-form-item {
-    margin: 0;
-  }
 `;
 
 const AdminContent = styled.div`
@@ -143,7 +84,50 @@ const List = () => {
     st_userChangeDone,
     //
     st_userAdminUpdateDone,
+    //
   } = useSelector((state) => state.user);
+
+  const { paymentList, st_paymentListDone, st_paymentListError } = useSelector(
+    (state) => state.payment
+  );
+
+  const {
+    applicationList,
+    applicationDetail,
+    //
+    st_appListError,
+    //
+    st_appUpdateDone,
+    st_appUpdateError,
+    //
+    st_appDetailDone,
+    st_appDetailError,
+  } = useSelector((state) => state.app);
+
+  const { st_lectureAllListError, allLectures } = useSelector(
+    (state) => state.lecture
+  );
+
+  const {
+    //
+    partUserMoveList,
+    st_participantUserMoveListDone,
+    //
+    partUserCurrentList,
+    //
+    partUserLimitList,
+    st_participantUserLimitListDone,
+    //
+    partUserDeleteList,
+    st_participantUserDeleteListDone,
+    //
+    st_participantDeleteDone,
+    //
+    st_participantCreateDone,
+    st_participantCreateError,
+  } = useSelector((state) => state.participant);
+
+  const { commuteAdminList } = useSelector((state) => state.commute);
 
   const router = useRouter();
 
@@ -163,69 +147,6 @@ const List = () => {
   ////// HOOKS //////
   const dispatch = useDispatch();
 
-  const [createData, setCreateData] = useState(null);
-  const [createModal, setCreateModal] = useState(false);
-
-  const [updateData, setUpdateData] = useState(null);
-
-  const [createForm] = Form.useForm();
-  const [updateForm] = Form.useForm();
-
-  const [paymentOpt, setPaymentOpt] = useState(null);
-
-  const [isPayment, setIsPayment] = useState();
-  const [isTime, setIsTime] = useState("");
-
-  const [time, setTime] = useState(false);
-
-  const [statusType, setStatusType] = useState("");
-
-  const { paymentList, st_paymentListDone, st_paymentListError } = useSelector(
-    (state) => state.payment
-  );
-
-  const {
-    updateModal,
-    applicationList,
-    applicationDetail,
-    //
-    st_appListDone,
-    st_appListError,
-    //
-    st_appUpdateDone,
-    st_appUpdateError,
-    //
-    st_appDetailDone,
-    st_appDetailError,
-  } = useSelector((state) => state.app);
-
-  const { st_lectureAllListDone, st_lectureAllListError, allLectures } =
-    useSelector((state) => state.lecture);
-
-  const {
-    //
-    partUserMoveList,
-    st_participantUserMoveListDone,
-    //
-    partUserCurrentList,
-    st_participantUserMoveListError,
-    //
-    partUserLimitList,
-    st_participantUserLimitListDone,
-    //
-    partUserDeleteList,
-    st_participantUserDeleteListDone,
-    //
-    st_participantDeleteDone,
-  } = useSelector((state) => state.participant);
-
-  const { commuteAdminList } = useSelector((state) => state.commute);
-  ////////////////////////////////////
-  ////////////////////////////////////
-  ////////////////////////////////////
-  ////////////////////////////////////
-  ////////////////////////////////////
-
   const [userForm] = Form.useForm(); // 학생 정보 폼
   const [stuForm] = Form.useForm(); // 학생 수업 참여 폼
   const [stuUForm] = Form.useForm(); // 학생 수업 수정 폼
@@ -233,14 +154,58 @@ const List = () => {
   const [uModal, setUModal] = useState(false); // 반 옮기기 모달 토글
 
   const [opt2, setOpt2] = useState(null); // 참가시킬 강의 목록
+  const [time, setTime] = useState(false); // 줌 미팅 시간 값
   const [isPay, setIsPay] = useState("네"); // 결제여부
   const [uData, setUData] = useState(null); // 학생 반 옮기기 정보 담기
+  const [noData, setNoData] = useState(null); // 결제여부 아니요 였을 시 강의목록
   const [isJoin, setIsJoin] = useState(false); // 회원가입여부
+  const [yesData, setYesData] = useState(null); // 결제여부 네 였을 시 강의 목록
+  const [isBirth, setIsBirth] = useState(false); // 생년월일 달력 열고닫기
   const [userData, setUserData] = useState(null); // 학생상세정보
   const [stuSelect, setStuSelect] = useState(""); // 학생 출석 목록 내 강의 검색
-  const [isBirth, setIsBirth] = useState(false); // 생년월일 달력 열고닫기
+  const [statusType, setStatusType] = useState(""); // 등록상태 검색 값
+
+  const numberInput = useInput(); // 강의기간 (form안에 form이여서 input 쓸수밖에 없음)
 
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    const qs = router.query;
+
+    dispatch({
+      type: APP_LIST_REQUEST,
+      data: {
+        isComplete: qs.type ? qs.type : null,
+        isTime: time,
+        time,
+        status: statusType,
+      },
+    });
+  }, [router.query, time, statusType]);
+
+  // ========= SUCCESS ========= //
+
+  // 수업 참여 후 처리
+  useEffect(() => {
+    if (st_participantCreateDone) {
+      // 학생이 참여하고 있는 강의 가져오기
+      dispatch({
+        type: PARTICIPANT_USER_CURRENT_LIST_REQUEST,
+        data: {
+          UserId: applicationDetail[0].userPkId,
+          isDelete: "0",
+          isChange: "0",
+        },
+      });
+
+      setIsPay("네");
+      setNoData(null);
+      setYesData(null);
+      numberInput.setValue(``);
+
+      return message.success("학생이 수업에 참여했습니다.");
+    }
+  }, [st_participantCreateDone]);
 
   // 학생 정보 수정 후처리
   useEffect(() => {
@@ -263,10 +228,23 @@ const List = () => {
       setUModal(false);
       stuUForm.resetFields();
 
+      // 학생 반 이동 내역 가져오기
       dispatch({
-        type: APP_DETAIL_REQUEST,
+        type: PARTICIPANT_USER_MOVE_LIST_REQUEST,
         data: {
-          email: userData && userData.gmailAddress,
+          UserId: applicationDetail[0].userPkId,
+          isDelete: "0",
+          isChange: "1",
+        },
+      });
+
+      // 학생이 참여하고 있는 강의 가져오기
+      dispatch({
+        type: PARTICIPANT_USER_CURRENT_LIST_REQUEST,
+        data: {
+          UserId: applicationDetail[0].userPkId,
+          isDelete: "0",
+          isChange: "0",
         },
       });
 
@@ -277,10 +255,23 @@ const List = () => {
   // 학생 수업 빼기 후 처리
   useEffect(() => {
     if (st_participantDeleteDone) {
+      // 학생이 참여하고 있는 강의 가져오기
       dispatch({
-        type: APP_DETAIL_REQUEST,
+        type: PARTICIPANT_USER_CURRENT_LIST_REQUEST,
         data: {
-          email: userData && userData.gmailAddress,
+          UserId: applicationDetail[0].userPkId,
+          isDelete: "0",
+          isChange: "0",
+        },
+      });
+
+      // 종료된 강의 가져오기
+      dispatch({
+        type: PARTICIPANT_USER_DELETE_LIST_REQUEST,
+        data: {
+          UserId: applicationDetail[0].userPkId,
+          isDelete: "1",
+          isChange: "0",
         },
       });
 
@@ -288,44 +279,69 @@ const List = () => {
     }
   }, [st_participantDeleteDone]);
 
-  ////////////////////////////////////////
-  ////////////////////////////////////////
-  ////////////////////////////////////////
-  ////////////////////////////////////////
-  ////////////////////////////////////////
+  useEffect(() => {
+    if (st_paymentListDone) {
+      const payOpt =
+        paymentList &&
+        paymentList.map((data) => {
+          if (data.isComplete === 0) {
+            return;
+          }
+          return (
+            <Select.Option key={data.id} value={JSON.stringify(data)}>
+              {`결제일: ${data.createdAt.slice(0, 10)} | ${data.course} | `}
+              {`결제한 가격: $${data.price} |  ${data.email}`}
+            </Select.Option>
+          );
+        });
+    }
+  }, [st_paymentListDone]);
 
   useEffect(() => {
-    const qs = router.query;
+    if (st_userStuCreateDone) {
+      userForm.resetFields();
+      stuForm.resetFields();
+      stuUForm.resetFields();
+      setYesData(null);
+      setNoData(null);
+      numberInput.setValue(``);
+      setIsPay("네");
 
-    dispatch({
-      type: APP_LIST_REQUEST,
-      data: {
-        isComplete: qs.type ? qs.type : null,
-        isTime,
-        time,
-        status: statusType,
-      },
-    });
-  }, [router.query, isTime, time, statusType]);
+      const qs = router.query;
 
-  // useEffect(() => {
-  //   if (st_appUpdateDone) {
-  //     onReset();
+      dispatch({
+        type: APP_LIST_REQUEST,
+        data: {
+          isComplete: qs.type ? qs.type : null,
+          isTime: false,
+          time: "",
+        },
+      });
 
-  //     const qs = router.query;
+      return message.success("회원을 생성 했습니다.");
+    }
+  }, [st_userStuCreateDone]);
 
-  //     dispatch({
-  //       type: APP_LIST_REQUEST,
-  //       data: {
-  //         isComplete: qs.type ? qs.type : null,
-  //         isTime: false,
-  //         time: "",
-  //       },
-  //     });
+  // =========== ERROR ============== //
 
-  //     return message.success("신청서 정보를 추가 및 수정했습니다.");
-  //   }
-  // }, [st_appUpdateDone]);
+  useEffect(() => {
+    if (st_lectureAllListError) {
+      return message.error(st_lectureAllListError);
+    }
+  }, [st_lectureAllListError]);
+
+  useEffect(() => {
+    if (st_appDetailError) {
+      return message.error(st_appDetailError);
+    }
+  }, [st_appDetailError]);
+
+  // 수업 참여 후 처리
+  useEffect(() => {
+    if (st_participantCreateError) {
+      return message.error(st_participantCreateError);
+    }
+  }, [st_participantCreateError]);
 
   useEffect(() => {
     if (st_appUpdateDone) {
@@ -345,60 +361,16 @@ const List = () => {
   }, [st_appListError]);
 
   useEffect(() => {
-    if (st_paymentListDone) {
-      const payOpt =
-        paymentList &&
-        paymentList.map((data) => {
-          if (data.isComplete === 0) {
-            return;
-          }
-          return (
-            <Select.Option key={data.id} value={JSON.stringify(data)}>
-              {`결제일: ${data.createdAt.slice(0, 10)} | ${data.course} | `}
-              {`결제한 가격: $${data.price} |  ${data.email}`}
-            </Select.Option>
-          );
-        });
-
-      setPaymentOpt(payOpt);
-    }
-  }, [st_paymentListDone]);
-
-  useEffect(() => {
     if (st_paymentListError) {
       return message.error(st_paymentListError);
     }
   }, [st_paymentListError]);
 
   useEffect(() => {
-    if (st_userStuCreateDone) {
-      onReset();
-
-      const qs = router.query;
-
-      dispatch({
-        type: APP_LIST_REQUEST,
-        data: {
-          isComplete: qs.type ? qs.type : null,
-          isTime: false,
-          time: "",
-        },
-      });
-
-      return message.success("회원을 생성 했습니다.");
-    }
-  }, [st_userStuCreateDone]);
-
-  useEffect(() => {
     if (st_userStuCreateError) {
       return message.error(st_userStuCreateError);
     }
   }, [st_userStuCreateError]);
-
-  useEffect(() => {
-    if (st_lectureAllListDone) {
-    }
-  }, [st_lectureAllListDone]);
 
   useEffect(() => {
     if (st_lectureAllListError) {
@@ -423,14 +395,17 @@ const List = () => {
             ? moment(applicationDetail[0].wantStartDate)
             : "",
           teacher: applicationDetail[0].teacher,
-          meetDate: applicationDetail[0].wantStartDate
-            ? moment(applicationDetail[0].meetDate)
-            : "",
+          meetDate:
+            userData && userData.meetDate
+              ? moment(userData && userData.meetDate)
+              : "",
           level: applicationDetail[0].level,
           purpose: applicationDetail[0].purpose,
           freeTeacher: applicationDetail[0].freeTeacher,
           username: applicationDetail[0].username,
-          email: applicationDetail[0].email,
+          email: isJoin
+            ? applicationDetail[0].email
+            : userData && userData.gmailAddress,
           userId: applicationDetail[0].userId,
           sns: applicationDetail[0].sns,
           snsId: applicationDetail[0].snsId,
@@ -507,7 +482,7 @@ const List = () => {
         });
       }
     }
-  }, [userForm, st_appDetailDone, applicationDetail, isJoin]);
+  }, [userForm, st_appDetailDone, applicationDetail, isJoin, userData]);
 
   // 참가시킬 강의 정보 세팅
   useEffect(() => {
@@ -552,6 +527,11 @@ const List = () => {
 
   ////// HANDLER //////
 
+  // 결제여부 어떤걸 선택하든 강의 목록 기능
+  const noLectureHandler = useCallback((data) => {
+    setNoData(data);
+  }, []);
+
   // 달력 날짜 수정 기능
   const dateChagneHandler = useCallback((data) => {
     const birth = data.format("YYYY-MM-DD");
@@ -561,28 +541,33 @@ const List = () => {
   }, []);
 
   // 학생 수업 수정 기능
-  const stuUpdateHandler = useCallback((data) => {
-    if (!data.changelecture) {
-      return message.error(`바꿀 강의를 선택해주세요.`);
-    }
+  const stuUpdateHandler = useCallback(
+    (data) => {
+      if (!data.changelecture) {
+        return message.error(`바꿀 강의를 선택해주세요.`);
+      }
 
-    let Day = Math.ceil(
-      Math.abs(
-        moment.duration(moment().diff(moment(uData && uData.endDate))).asDays()
-      )
-    );
+      let Day = Math.ceil(
+        Math.abs(
+          moment
+            .duration(moment().diff(moment(uData && uData.endDate)))
+            .asDays()
+        )
+      );
 
-    dispatch({
-      type: USER_CLASS_CHANGE_REQUEST,
-      data: {
-        UserId: uData && uData.UserId,
-        LectureId: uData && uData.LectureId,
-        ChangeLectureId: data.changelecture,
-        date: Day,
-        endDate: uData.endDate,
-      },
-    });
-  }, []);
+      dispatch({
+        type: USER_CLASS_CHANGE_REQUEST,
+        data: {
+          UserId: uData && uData.UserId,
+          LectureId: uData && uData.LectureId,
+          ChangeLectureId: data.changelecture,
+          date: Day,
+          endDate: uData.endDate,
+        },
+      });
+    },
+    [uData]
+  );
 
   // 수업 빼기 기능
   const onEndClassSubmit = useCallback((data) => {
@@ -618,52 +603,52 @@ const List = () => {
         });
       }
     });
+
+    setYesData(arr);
   }, []);
 
   // 학생 수업 참여 기능
-  const onUpdateClassSubmit = useCallback(
-    (data) => {
-      let partLecture = data.partLecture && JSON.parse(data.partLecture);
-      let lectureList = data.lectureList && JSON.parse(data.lectureList);
+  const onUpdateClassSubmit = useCallback(() => {
+    let partLecture = yesData ? JSON.parse(yesData) : null;
+    let lectureList = noData ? JSON.parse(noData) : null; // 아니오 했을 시 선택된 강의 정보
 
-      // if (lectureList) {
-      //   if (moment() < moment(lectureList.startDate)) {
-      //     return message.error(
-      //       "수업 참여일이 수업 시작 날짜보다 과거일 수 없습니다."
-      //     );
-      //   }
-      // } else if (partLecture) {
-      //   if (moment() < moment(partLecture.startDate.slice(0, 10))) {
-      //     return message.error(
-      //       "수업 참여일이 수업 시작 날짜보다 과거일 수 없습니다."
-      //     );
-      //   }
-      // }
+    // // if (lectureList) {
+    // //   if (moment() < moment(lectureList.startDate)) {
+    // //     return message.error(
+    // //       "수업 참여일이 수업 시작 날짜보다 과거일 수 없습니다."
+    // //     );
+    // //   }
+    // // } else if (partLecture) {
+    // //   if (moment() < moment(partLecture.startDate.slice(0, 10))) {
+    // //     return message.error(
+    // //       "수업 참여일이 수업 시작 날짜보다 과거일 수 없습니다."
+    // //     );
+    // //   }
+    // // }
 
-      dispatch({
-        type: PARTICIPANT_CREATE_REQUEST,
-        data: {
-          UserId: applicationDetail && applicationDetail[0].userPkId,
-          LectureId: lectureList ? lectureList.id : partLecture.LetureId,
-          date: lectureList
-            ? parseInt(data.date) * 7
-            : parseInt(partLecture.week) * 7,
-          endDate: lectureList
-            ? moment()
-                .add(parseInt(data.date * 7 - 1), "days")
-                .format("YYYY-MM-DD")
-            : moment()
-                .add(parseInt(partLecture.week * 7 - 1), "days")
-                .format("YYYY-MM-DD"),
-          PaymentId: lectureList ? null : partLecture.id,
-        },
-      });
-    },
-    [applicationDetail, allLectures]
-  );
+    // data : 강의기간 (주차 * 7) == 일수
+    // endDate : 강의 안에 만료일
+    // paymentId : payclass안의 강의의 ID / "아니오" === null
 
-  console.log(userData, "userData");
-  console.log(applicationDetail, "applicationDetail");
+    dispatch({
+      type: PARTICIPANT_CREATE_REQUEST,
+      data: {
+        UserId: applicationDetail && applicationDetail[0].userPkId,
+        LectureId: lectureList ? lectureList.id : partLecture.LetureId,
+        date: lectureList
+          ? parseInt(numberInput.value) * 7
+          : parseInt(partLecture.week) * 7,
+        endDate: lectureList
+          ? moment()
+              .add(parseInt(numberInput.value * 7 - 1), "days")
+              .format("YYYY-MM-DD")
+          : moment()
+              .add(parseInt(partLecture.week * 7 - 1), "days")
+              .format("YYYY-MM-DD"),
+        PaymentId: lectureList ? null : partLecture.id,
+      },
+    });
+  }, [noData, yesData, numberInput.value, applicationDetail]);
 
   // 결제여부 선택기능
   const paySelectHandler = useCallback((data) => {
@@ -781,8 +766,8 @@ const List = () => {
         return message.error("결제 여부를 선택해주세요.");
       }
 
-      let partLecture = data.paymentList && JSON.parse(data.paymentList);
-      let lectureList = data.lectureList && JSON.parse(data.lectureList);
+      let partLecture = yesData ? JSON.parse(yesData) : null;
+      let lectureList = noData ? JSON.parse(noData) : null; // 아니오 했을 시 선택된 강의 정보
 
       // if (lectureList) {
       //   if (moment() < moment(lectureList.startDate)) {
@@ -801,7 +786,7 @@ const List = () => {
       dispatch({
         type: USER_STU_CREATE_REQUEST,
         data: {
-          userId: applicationDetail[0].userPkId,
+          userId: data.email,
           password: data.password,
           username: data.username,
           mobile: data.mobile,
@@ -812,78 +797,30 @@ const List = () => {
           birth: data.birth,
           stuCountry: data.stuCountry,
           stuLiveCon: data.stuLiveCon,
+          stuPayCount: data.stuPayCount,
           sns: data.sns,
           snsId: data.snsId,
           stuJob: data.job,
           gender: data.gender,
-          PaymentId: lectureList ? null : partLecture.id,
           LectureId: lectureList ? lectureList.id : partLecture.LetureId,
           date: lectureList
-            ? parseInt(data.date) * 7
+            ? parseInt(numberInput.value) * 7
             : parseInt(partLecture.week) * 7,
           endDate: lectureList
             ? moment()
-                .add(parseInt(data.date * 7 - 1), "days")
+                .add(parseInt(numberInput.value * 7 - 1), "days")
                 .format("YYYY-MM-DD")
             : moment()
                 .add(parseInt(partLecture.week * 7 - 1), "days")
                 .format("YYYY-MM-DD"),
+          PaymentId: lectureList ? null : partLecture.id,
         },
       });
     },
-    [isPay, applicationDetail]
+    [isPay, numberInput, yesData, noData]
   );
 
-  ////////////////////////////////////////
-  ////////////////////////////////////////
-  ////////////////////////////////////////
-  ////////////////////////////////////////
-  ////////////////////////////////////////
-
-  const onReset = useCallback(() => {
-    createForm.resetFields();
-    updateForm.resetFields();
-
-    dispatch({
-      type: UPDATE_MODAL_CLOSE_REQUEST,
-    });
-
-    setIsPayment(0);
-    setCreateModal(false);
-    setCreateData(null);
-    setUpdateData(null);
-  }, [updateData, createData, createModal, updateModal, isPayment]);
-
-  const updateClick = useCallback(() => {
-    updateForm.submit();
-  }, [updateForm]);
-
-  const updateFinish = useCallback(
-    (data) => {
-      dispatch({
-        type: APP_UPDATE_REQUEST,
-        data: {
-          id: updateData.id,
-          timeDiff: data.timeDiff ? data.timeDiff : "",
-          wantStartDate: data.wantStartDate
-            ? data.wantStartDate.format("YYYY-MM-DD")
-            : "",
-          teacher: data.teacher ? data.teacher : "",
-          freeTeacher: data.freeTeacher,
-          isDiscount: data.isDiscount,
-          meetDate: data.meetDate
-            ? data.meetDate.format("YYYY-MM-DD HH:mm")
-            : "",
-          level: data.level ? data.level : "",
-          job: data.job ? data.job : "",
-          purpose: data.purpose ? data.purpose : "",
-          status: data.status,
-        },
-      });
-    },
-    [updateData]
-  );
-
+  // 전체검색 기능
   const onClickAllList = useCallback(() => {
     dispatch({
       type: APP_LIST_REQUEST,
@@ -894,10 +831,11 @@ const List = () => {
         status: "",
       },
     });
-    setIsTime(false);
+    setTime(null);
     setStatusType("");
   }, []);
 
+  // 줌 미팅 시간 기능
   const onChangeDate = useCallback((date) => {
     if (date) {
       setTime(date.format("YYYY-MM-DD hh:mm"));
@@ -909,24 +847,6 @@ const List = () => {
 
   // 등록상태
   const stateList = ["등록", "잠정등록", "NoShow", "연기"];
-
-  // 학생 수업 변경
-  const studentUpdateTable = [
-    { title: "학생이름" },
-    { title: "현재 강의" },
-    { title: "변경할 강의" },
-  ];
-
-  // 학생 수업 종료
-  const studentEndTable = [{ title: "학생이름" }, { title: "종료할 강의" }];
-
-  // 학생 수업 참여
-  const studentTable = [
-    { title: "학생이름" },
-    { title: "결제 여부" },
-    { title: "강의 목록" },
-    { title: "강의 기간" },
-  ];
 
   // 학생 출석 목록 TABLE
   const columnCommute = [
@@ -1477,6 +1397,7 @@ const List = () => {
             minuteStep={10}
             format="YYYY-MM-DD hh:mm"
             onChange={(e) => onChangeDate(e)}
+            value={time}
           ></DatePicker>
 
           <Button
@@ -1529,6 +1450,7 @@ const List = () => {
             onFinish={isJoin ? updateStuFinish : createFinish}
           >
             <Wrapper
+              // width={`60%`}
               height={`670px`}
               border={`1px solid ${Theme.lightGrey3_C}`}
             >
@@ -1550,157 +1472,138 @@ const List = () => {
                 ju={`flex-start`}
                 wrap={`nowrap`}
               >
-                {isJoin ? (
-                  <>
-                    {/* 학생 수업 참여 */}
-                    <Wrapper dr={`row`} ju={`flex-start`}>
-                      <Text
-                        fontWeight={`700`}
-                        color={Theme.basicTheme_C}
-                        margin={`0 0 5px`}
-                      >
-                        학생 수업 참여
+                {/* 학생 수업 참여 */}
+                <Wrapper dr={`row`} ju={`flex-start`}>
+                  <Text
+                    fontWeight={`700`}
+                    color={Theme.basicTheme_C}
+                    margin={`0 0 5px`}
+                  >
+                    학생 수업 참여
+                  </Text>
+
+                  <Wrapper
+                    margin={`0px 0px 10px 0px`}
+                    radius="5px"
+                    bgColor={Theme.lightGrey_C}
+                    padding="5px"
+                    fontSize="13px"
+                    al="flex-start"
+                  >
+                    <GuideDiv isImpo={true}>
+                      학생의 결제여부 및 강의목록, 강의기간을 선택하여 수업에
+                      참여시킬 수 있습니다.
+                    </GuideDiv>
+                    <GuideDiv isImpo={true}>
+                      결제여부 및 강의목록, 강의기간은 필수입니다.
+                    </GuideDiv>
+                  </Wrapper>
+                </Wrapper>
+
+                <Wrapper al={`flex-start`} margin={`0 0 20px`}>
+                  <Text fontWeight={`700`} margin={`0 0 5px`}>
+                    학생 이름
+                  </Text>
+                  <TextInput
+                    readOnly={true}
+                    value={`${userData && userData.firstName} ${
+                      userData && userData.lastName
+                    }`}
+                    width={`100%`}
+                  />
+
+                  <Text fontWeight={`700`} margin={`5px 0`}>
+                    결제 여부
+                  </Text>
+                  <Select
+                    defaultValue="네"
+                    onChange={paySelectHandler}
+                    value={isPay}
+                    style={{ width: `100%` }}
+                  >
+                    <Select.Option value="네">네</Select.Option>
+                    <Select.Option value="아니오">아니오</Select.Option>
+                  </Select>
+
+                  {isPay === "네" ? (
+                    <>
+                      <Text fontWeight={`700`} margin={`5px 0`}>
+                        강의 목록
                       </Text>
 
-                      <Wrapper
-                        margin={`0px 0px 10px 0px`}
-                        radius="5px"
-                        bgColor={Theme.lightGrey_C}
-                        padding="5px"
-                        fontSize="13px"
-                        al="flex-start"
+                      <Select
+                        style={{ width: `100%` }}
+                        height={`32px`}
+                        showSearch
+                        onChange={(LectureId) =>
+                          onSeachHandler(LectureId, paymentList)
+                        }
+                        value={yesData}
+                        filterOption={(input, option) =>
+                          option.children
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
+                        placeholder="참가시킬 강의를 선택해주세요."
                       >
-                        <GuideDiv isImpo={true}>
-                          학생의 결제여부 및 강의목록, 강의기간을 선택하여
-                          수업에 참여시킬 수 있습니다.
-                        </GuideDiv>
-                        <GuideDiv isImpo={true}>
-                          결제여부 및 강의목록, 강의기간은 필수입니다.
-                        </GuideDiv>
-                      </Wrapper>
-                    </Wrapper>
+                        {opt2}
+                      </Select>
+                    </>
+                  ) : (
+                    <>
+                      <Text fontWeight={`700`} margin={`5px 0`}>
+                        강의 목록
+                      </Text>
+                      <Select
+                        showSearch={true}
+                        placeholder="강의목록을 선택해주세요."
+                        style={{ width: `100%` }}
+                        onChange={noLectureHandler}
+                        value={noData}
+                      >
+                        {allLectures && allLectures.length === 0
+                          ? ""
+                          : allLectures &&
+                            allLectures.map((data, idx) => {
+                              return (
+                                <Select.Option
+                                  key={data.id}
+                                  value={JSON.stringify(data)}
+                                >
+                                  {`${data.number} | ${data.course} | ${data.User.username}`}
+                                </Select.Option>
+                              );
+                            })}
+                      </Select>
 
-                    <Form
-                      style={{ width: `100%` }}
-                      form={stuForm}
-                      onFinish={onUpdateClassSubmit}
+                      <Text fontWeight={`700`} margin={`5px 0`}>
+                        강의 기간
+                      </Text>
+                      <Input
+                        type="number"
+                        placeholder="강의 기간을 입력해주세요."
+                        {...numberInput}
+                      />
+                    </>
+                  )}
+
+                  <Wrapper
+                    al={`flex-end`}
+                    margin={`20px 0 0`}
+                    display={isJoin ? `flex` : `none`}
+                  >
+                    <Button
+                      type="primary"
+                      size="small"
+                      onClick={onUpdateClassSubmit}
                     >
-                      <Form.Item
-                        labelCol={{ span: 4 }}
-                        labelAlign={`left`}
-                        name="name"
-                        label="학생 이름"
-                      >
-                        <TextInput readOnly={true} />
-                      </Form.Item>
+                      수업 참여하기
+                    </Button>
+                  </Wrapper>
+                </Wrapper>
 
-                      <Form.Item
-                        required={{
-                          require: true,
-                        }}
-                        labelCol={{ span: 4 }}
-                        labelAlign={`left`}
-                        name="pay"
-                        label="결제 여부"
-                      >
-                        <Select
-                          defaultValue="네"
-                          onChange={paySelectHandler}
-                          value={isPay}
-                        >
-                          <Select.Option value="네">네</Select.Option>
-                          <Select.Option value="아니오">아니오</Select.Option>
-                        </Select>
-                      </Form.Item>
-
-                      {isPay === "네" ? (
-                        <Form.Item
-                          required={[
-                            {
-                              require: true,
-                              message: "참가시킬 강의를 선택해주세요.",
-                            },
-                          ]}
-                          labelCol={{ span: 4 }}
-                          labelAlign={`left`}
-                          name="payLecture"
-                          label="참가시킬 강의"
-                        >
-                          <Select
-                            width={`100%`}
-                            height={`32px`}
-                            showSearch
-                            onChange={(LectureId) =>
-                              onSeachHandler(LectureId, paymentList)
-                            }
-                            filterOption={(input, option) =>
-                              option.children
-                                .toLowerCase()
-                                .indexOf(input.toLowerCase()) >= 0
-                            }
-                            placeholder="참가시킬 강의를 선택해주세요."
-                          >
-                            {opt2}
-                          </Select>
-                        </Form.Item>
-                      ) : (
-                        <>
-                          <Form.Item
-                            rules={[
-                              {
-                                message: "강의목록을 선택해주세요.",
-                                required: true,
-                              },
-                            ]}
-                            labelCol={{ span: 4 }}
-                            labelAlign={`left`}
-                            name="lectureList"
-                            label="강의 목록"
-                          >
-                            <Select
-                              showSearch={true}
-                              placeholder="강의목록을 선택해주세요."
-                            >
-                              {allLectures && allLectures.length === 0
-                                ? ""
-                                : allLectures &&
-                                  allLectures.map((data, idx) => {
-                                    return (
-                                      <Select.Option
-                                        key={data.id}
-                                        value={JSON.stringify(data)}
-                                      >
-                                        {`${data.number} | ${data.course} | ${data.User.username}`}
-                                      </Select.Option>
-                                    );
-                                  })}
-                            </Select>
-                          </Form.Item>
-
-                          <Form.Item
-                            required={{
-                              require: true,
-                            }}
-                            labelCol={{ span: 4 }}
-                            labelAlign={`left`}
-                            name="lecturePeriod"
-                            label="강의 기간"
-                          >
-                            <Input
-                              type="number"
-                              placeholder="강의 기간을 입력해주세요."
-                            />
-                          </Form.Item>
-                        </>
-                      )}
-
-                      <Wrapper al={`flex-end`} margin={`0 0 20px`}>
-                        <Button type="primary" size="small" htmlType="submit">
-                          수업 참여하기
-                        </Button>
-                      </Wrapper>
-                    </Form>
-
+                {isJoin && (
+                  <>
                     {/* 학생이 참여하고 있는 강의 */}
                     <Wrapper dr={`row`} ju={`flex-start`}>
                       <Text
@@ -1947,147 +1850,6 @@ const List = () => {
                       size="small"
                     />
                   </>
-                ) : (
-                  <>
-                    {/* 학생 수업 참여 */}
-                    <Wrapper dr={`row`} ju={`flex-start`}>
-                      <Text
-                        fontWeight={`700`}
-                        color={Theme.basicTheme_C}
-                        margin={`0 0 5px`}
-                      >
-                        학생 수업 참여
-                      </Text>
-
-                      <Wrapper
-                        margin={`0px 0px 10px 0px`}
-                        radius="5px"
-                        bgColor={Theme.lightGrey_C}
-                        padding="5px"
-                        fontSize="13px"
-                        al="flex-start"
-                      >
-                        <GuideDiv isImpo={true}>
-                          학생이 회원가입 하기 전에 사용하는 수업참여
-                          기능입니다.
-                        </GuideDiv>
-                      </Wrapper>
-                    </Wrapper>
-
-                    <Form.Item
-                      labelCol={{ span: 4 }}
-                      labelAlign={`left`}
-                      name="username"
-                      label="학생 이름"
-                      style={{ width: `100%` }}
-                    >
-                      <TextInput readOnly={true} />
-                    </Form.Item>
-
-                    <Form.Item
-                      required={{
-                        require: true,
-                      }}
-                      labelCol={{ span: 4 }}
-                      labelAlign={`left`}
-                      name="pay"
-                      label="결제 여부"
-                      style={{ width: `100%` }}
-                    >
-                      <Select
-                        defaultValue="네"
-                        onChange={paySelectHandler}
-                        value={isPay}
-                      >
-                        <Select.Option value="네">네</Select.Option>
-                        <Select.Option value="아니오">아니오</Select.Option>
-                      </Select>
-                    </Form.Item>
-
-                    {isPay === "네" ? (
-                      <Form.Item
-                        required={[
-                          {
-                            require: true,
-                            message: "참가시킬 강의를 선택해주세요.",
-                          },
-                        ]}
-                        labelCol={{ span: 4 }}
-                        labelAlign={`left`}
-                        name="payLecture"
-                        label="참가시킬 강의"
-                        style={{ width: `100%` }}
-                      >
-                        <Select
-                          width={`100%`}
-                          height={`32px`}
-                          showSearch
-                          onChange={(LectureId) =>
-                            onSeachHandler(LectureId, paymentList)
-                          }
-                          filterOption={(input, option) =>
-                            option.children
-                              .toLowerCase()
-                              .indexOf(input.toLowerCase()) >= 0
-                          }
-                          placeholder="참가시킬 강의를 선택해주세요."
-                        >
-                          {opt2}
-                        </Select>
-                      </Form.Item>
-                    ) : (
-                      <>
-                        <Form.Item
-                          rules={[
-                            {
-                              message: "강의목록을 선택해주세요.",
-                              required: true,
-                            },
-                          ]}
-                          labelCol={{ span: 4 }}
-                          labelAlign={`left`}
-                          name="lectureList"
-                          label="강의 목록"
-                          style={{ width: `100%` }}
-                        >
-                          <Select
-                            showSearch={true}
-                            placeholder="강의목록을 선택해주세요."
-                          >
-                            {allLectures && allLectures.length === 0
-                              ? ""
-                              : allLectures &&
-                                allLectures.map((data, idx) => {
-                                  return (
-                                    <Select.Option
-                                      key={data.id}
-                                      value={JSON.stringify(data)}
-                                    >
-                                      {`${data.number} | ${data.course} | ${data.User.username}`}
-                                    </Select.Option>
-                                  );
-                                })}
-                          </Select>
-                        </Form.Item>
-
-                        <Form.Item
-                          required={{
-                            require: true,
-                          }}
-                          labelCol={{ span: 4 }}
-                          labelAlign={`left`}
-                          name="lecturePeriod"
-                          label="강의 기간"
-                          style={{ width: `100%` }}
-                        >
-                          <Input
-                            type="number"
-                            placeholder="강의 기간을 입력해주세요."
-                          />
-                        </Form.Item>
-                      </>
-                    )}
-                  </>
                 )}
 
                 {/* 학생 상세정보 */}
@@ -2118,6 +1880,9 @@ const List = () => {
                     <GuideDiv isImpo={true}>
                       학생이 회원가입 하기 전에도 사용할 수 있으며, 각 정보를
                       메모처럼 사용할 수 있습니다.
+                    </GuideDiv>
+                    <GuideDiv isImpo={true}>
+                      이메일 변경은 개발사에 문의해주세요.
                     </GuideDiv>
                   </Wrapper>
                 </Wrapper>
@@ -2178,7 +1943,10 @@ const List = () => {
                   </Wrapper>
                   <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
                     <FormItem name="email">
-                      <Input placeholder="이메일을 입력해주세요." />
+                      <Input
+                        placeholder="이메일을 입력해주세요."
+                        disabled={true}
+                      />
                     </FormItem>
                   </Wrapper>
                 </Wrapper>
@@ -2222,7 +1990,7 @@ const List = () => {
                       <Input
                         placeholder="전화번호를 입력해주세요."
                         onChange={(e) =>
-                          updateStuForm.setFieldsValue({
+                          userForm.setFieldsValue({
                             password: e.target.value.slice(-4),
                           })
                         }
@@ -2706,996 +2474,6 @@ const List = () => {
           </Form>
         </Wrapper>
       </AdminContent>
-      {/*  */}
-      {/*  */}
-      {/*  */}
-      {/*  */}
-      {/*  */}
-      {/*  */}
-      {/*  */}
-      {/*  */}
-      {/*  */}
-      {/*  */}
-      {/*  */}
-
-      <Modal
-        visible={updateModal}
-        width={`800px`}
-        title={`신청서`}
-        onCancel={() => onReset()}
-        onOk={() => updateClick()}
-        okText="추가"
-        cancelText="취소"
-      >
-        <Wrapper
-          padding={`5px 0`}
-          dr={`row`}
-          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-        >
-          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
-            신청일
-          </Wrapper>
-          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-            {updateData && updateData.createdAt.slice(0, 10)}
-          </Wrapper>
-        </Wrapper>
-
-        <Wrapper
-          padding={`5px 0`}
-          dr={`row`}
-          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-        >
-          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
-            처리 완료일
-          </Wrapper>
-          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-            {updateData && updateData.completedAt
-              ? updateData.completedAt.slice(0, 10)
-              : `미완료`}
-          </Wrapper>
-        </Wrapper>
-
-        <Text fontSize={`16px`} fontWeight={`700`} margin={`20px 0 10px`}>
-          사용자가 입력한 양식
-        </Text>
-
-        <Wrapper
-          padding={`5px 0`}
-          dr={`row`}
-          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-        >
-          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
-            이름
-          </Wrapper>
-          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-            {updateData && updateData.firstName}&nbsp;
-            {updateData && updateData.lastName}
-          </Wrapper>
-        </Wrapper>
-
-        <Wrapper
-          padding={`5px 0`}
-          dr={`row`}
-          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-        >
-          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
-            생년월일
-          </Wrapper>
-          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-            {updateData && updateData.dateOfBirth}
-          </Wrapper>
-        </Wrapper>
-
-        <Wrapper
-          padding={`5px 0`}
-          dr={`row`}
-          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-        >
-          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
-            이메일
-          </Wrapper>
-          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-            {updateData && updateData.gmailAddress}
-          </Wrapper>
-        </Wrapper>
-
-        <Wrapper
-          padding={`5px 0`}
-          dr={`row`}
-          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-        >
-          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
-            국가
-          </Wrapper>
-          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-            {updateData && updateData.nationality}
-          </Wrapper>
-        </Wrapper>
-
-        <Wrapper
-          padding={`5px 0`}
-          dr={`row`}
-          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-        >
-          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
-            거주 국가
-          </Wrapper>
-          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-            {updateData && updateData.countryOfResidence}
-          </Wrapper>
-        </Wrapper>
-
-        <Wrapper
-          padding={`5px 0`}
-          dr={`row`}
-          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-        >
-          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
-            사용언어
-          </Wrapper>
-          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-            {updateData && updateData.languageYouUse}
-          </Wrapper>
-        </Wrapper>
-
-        <Wrapper
-          padding={`5px 0`}
-          dr={`row`}
-          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-        >
-          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
-            휴대폰번호
-          </Wrapper>
-          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-            {updateData && updateData.phoneNumber}
-            {updateData && updateData.phoneNumber2}
-          </Wrapper>
-        </Wrapper>
-
-        <Wrapper
-          padding={`5px 0`}
-          dr={`row`}
-          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-        >
-          <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
-            가능한 수업시간
-          </Wrapper>
-          <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-            {updateData && updateData.classHour}
-          </Wrapper>
-        </Wrapper>
-
-        <Wrapper
-          padding={`5px 0`}
-          dr={`row`}
-          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-        >
-          <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
-            내용
-          </Wrapper>
-          <Wrapper
-            al={`flex-start`}
-            padding={`10px`}
-            minHeight={`200px`}
-            ju={`flex-start`}
-          >
-            {updateData &&
-              updateData.comment &&
-              updateData.comment.split(`\n`).map((content, idx) => {
-                return (
-                  <SpanText key={`${content}${idx}`}>
-                    {content}
-                    <br />
-                  </SpanText>
-                );
-              })}
-          </Wrapper>
-        </Wrapper>
-
-        <CustomForm2
-          form={updateForm}
-          onFinish={updateFinish}
-          labelCol={{ span: 4 }}
-          wrapperCol={{ span: 24 }}
-        >
-          <Wrapper
-            padding={`5px 0`}
-            dr={`row`}
-            borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-          >
-            <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
-              등록상태
-            </Wrapper>
-            <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-              <Form.Item name="status" style={{ width: `100%` }}>
-                <Select
-                  placeholder={`등록상태를 선택해주세요.`}
-                  style={{ width: `100%` }}
-                >
-                  {stateList &&
-                    stateList.map((data, idx) => {
-                      return (
-                        <Select.Option key={idx} value={data}>
-                          {data}
-                        </Select.Option>
-                      );
-                    })}
-                </Select>
-              </Form.Item>
-            </Wrapper>
-          </Wrapper>
-
-          <Wrapper
-            padding={`5px 0`}
-            dr={`row`}
-            borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-          >
-            <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
-              줌 미팅 시간
-            </Wrapper>
-            <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-              <Form.Item name="meetDate" style={{ width: `100%` }}>
-                <CustomDatePicker
-                  showTime={{ format: "HH:mm", minuteStep: 10 }}
-                  format="YYYY-MM-DD HH:mm"
-                  style={{ width: `100%` }}
-                />
-              </Form.Item>
-            </Wrapper>
-          </Wrapper>
-
-          <Wrapper
-            padding={`5px 0`}
-            dr={`row`}
-            borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-          >
-            <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
-              시차
-            </Wrapper>
-            <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-              <Form.Item name="timeDiff" style={{ width: `100%` }}>
-                <Input />
-              </Form.Item>
-            </Wrapper>
-          </Wrapper>
-
-          <Wrapper
-            padding={`5px 0`}
-            dr={`row`}
-            borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-          >
-            <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
-              무료수업 담당 강사
-            </Wrapper>
-            <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-              <Form.Item name="freeTeacher" style={{ width: `100%` }}>
-                <Select
-                  placeholder={`무료수업 담당강사를 선택해주세요.`}
-                  style={{ width: `100%` }}
-                >
-                  {teachers &&
-                    teachers.map((data, idx) => {
-                      return (
-                        <Select.Option key={data.id} value={data.username}>
-                          {data.username}
-                        </Select.Option>
-                      );
-                    })}
-                </Select>
-              </Form.Item>
-            </Wrapper>
-          </Wrapper>
-
-          <Wrapper
-            padding={`5px 0`}
-            dr={`row`}
-            borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-          >
-            <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
-              담당 강사
-            </Wrapper>
-            <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-              <Form.Item name="teacher" style={{ width: `100%` }}>
-                <Select
-                  style={{ width: `100%` }}
-                  placeholder={`수업을 선택해주세요.`}
-                  filterOption={(input, option) =>
-                    option.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
-                  showSearch
-                >
-                  {allLectures &&
-                    allLectures.map((data, idx) => {
-                      return (
-                        <Select.Option
-                          key={`${data.User.username} ${data.course}`}
-                          value={data.username}
-                        >
-                          {`(${data.number}) ${data.User.username} ${data.course}`}
-                        </Select.Option>
-                      );
-                    })}
-                </Select>
-              </Form.Item>
-            </Wrapper>
-          </Wrapper>
-
-          <Wrapper
-            padding={`5px 0`}
-            dr={`row`}
-            borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-          >
-            <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
-              희망 시작일
-            </Wrapper>
-            <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-              <Form.Item name="wantStartDate" style={{ width: `100%` }}>
-                <CustomDatePicker style={{ width: `100%` }} />
-              </Form.Item>
-            </Wrapper>
-          </Wrapper>
-
-          <Wrapper
-            padding={`5px 0`}
-            dr={`row`}
-            borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-          >
-            <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
-              레벨
-            </Wrapper>
-            <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-              <FormItem name="level" style={{ width: `100%` }}>
-                <Input />
-              </FormItem>
-            </Wrapper>
-          </Wrapper>
-
-          <Wrapper
-            padding={`5px 0`}
-            dr={`row`}
-            borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-          >
-            <Wrapper width={`25%`} bgColor={Theme.lightGrey3_C} padding={`3px`}>
-              직업
-            </Wrapper>
-            <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-              <Form.Item name="job" style={{ width: `100%` }}>
-                <Input />
-              </Form.Item>
-            </Wrapper>
-          </Wrapper>
-
-          <Wrapper
-            padding={`5px 0`}
-            dr={`row`}
-            borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-          >
-            <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
-              메모
-            </Wrapper>
-            <Wrapper al={`flex-start`}>
-              <Form.Item style={{ width: `100%` }} name="purpose">
-                <CustomTextArea
-                  rows={6}
-                  border={`1px solid ${Theme.grey_C} !important`}
-                />
-              </Form.Item>
-            </Wrapper>
-          </Wrapper>
-        </CustomForm2>
-
-        {/*  */}
-        {/*  */}
-        {/*  */}
-        {/*  */}
-        {/*  */}
-        {/*  */}
-        {/* <Wrapper al={`flex-start`} ju={`flex-start`} margin={`0 0 50px`}>
-          <Wrapper dr={`row`} al={`flex-start`}>
-            <Wrapper width={`50%`} al={`flex-start`} margin={`0 0 20px`}>
-              <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                <ColWrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
-                  이름
-                </ColWrapper>
-                <ColWrapper
-                  al={`flex-start`}
-                  width={`calc(100% - 140px - 10px)`}
-                >
-                  {updateData && updateData.firstName}&nbsp;
-                  {updateData && updateData.lastName}
-                </ColWrapper>
-              </RowWrapper>
-
-              <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                <ColWrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
-                  생년월일
-                </ColWrapper>
-                <ColWrapper
-                  al={`flex-start`}
-                  width={`calc(100% - 140px - 10px)`}
-                >
-                  {updateData && updateData.dateOfBirth}
-                </ColWrapper>
-              </RowWrapper>
-
-              <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                <ColWrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
-                  이메일
-                </ColWrapper>
-                <ColWrapper
-                  al={`flex-start`}
-                  width={`calc(100% - 140px - 10px)`}
-                >
-                  {updateData && updateData.gmailAddress}
-                </ColWrapper>
-              </RowWrapper>
-
-              <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                <ColWrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
-                  국가
-                </ColWrapper>
-                <ColWrapper
-                  al={`flex-start`}
-                  width={`calc(100% - 140px - 10px)`}
-                >
-                  {updateData && updateData.nationality}
-                </ColWrapper>
-              </RowWrapper>
-
-              <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                <ColWrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
-                  거주 국가
-                </ColWrapper>
-                <ColWrapper
-                  al={`flex-start`}
-                  width={`calc(100% - 140px - 10px)`}
-                >
-                  {updateData && updateData.countryOfResidence}
-                </ColWrapper>
-              </RowWrapper>
-
-              <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                <ColWrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
-                  사용언어
-                </ColWrapper>
-                <ColWrapper
-                  al={`flex-start`}
-                  width={`calc(100% - 140px - 10px)`}
-                >
-                  {updateData && updateData.languageYouUse}
-                </ColWrapper>
-              </RowWrapper>
-
-              <RowWrapper width={`100%`} margin={`0 0 10px`}>
-                <ColWrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
-                  휴대폰번호
-                </ColWrapper>
-                <ColWrapper
-                  al={`flex-start`}
-                  width={`calc(100% - 140px - 10px)`}
-                >
-                  {updateData && updateData.phoneNumber}
-                  {updateData && updateData.phoneNumber2}
-                </ColWrapper>
-              </RowWrapper>
-
-              <RowWrapper margin={`0 0 10px`}>
-                <ColWrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
-                  가능한 수업시간
-                </ColWrapper>
-                <ColWrapper
-                  al={`flex-start`}
-                  width={`calc(100% - 140px - 10px)`}
-                >
-                  {updateData && updateData.classHour}
-                </ColWrapper>
-              </RowWrapper>
-            </Wrapper>
-            <Wrapper width={`50%`} margin={`0 0 10px`} al={`flex-start`}>
-              <ColWrapper
-                width={`100%`}
-                height={`30px`}
-                bgColor={Theme.basicTheme_C}
-                color={Theme.white_C}
-                margin={`0 5px 0 0`}
-              >
-                내용
-              </ColWrapper>
-              <ColWrapper width={`100%`} al={`flex-start`}>
-                {updateData &&
-                  updateData.comment &&
-                  updateData.comment.split(`\n`).map((content, idx) => {
-                    return (
-                      <SpanText key={`${content}${idx}`}>
-                        {content}
-                        <br />
-                      </SpanText>
-                    );
-                  })}
-              </ColWrapper>
-            </Wrapper>
-
-            <Wrapper al={`flex-start`}>
-              <CustomForm2
-                form={updateForm}
-                onFinish={updateFinish}
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 24 }}
-              >
-                <Wrapper>
-                  <RowWrapper
-                    width={`100%`}
-                    al={`flex-start`}
-                    margin={`0 0 10px 0`}
-                  >
-                    <ColWrapper
-                      width={`140px`}
-                      height={`30px`}
-                      bgColor={Theme.basicTheme_C}
-                      color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
-                      등록상태
-                    </ColWrapper>
-                    <ColWrapper>
-                      <Form.Item name="status">
-                        <CustomSelect placeholder={`등록상태를 선택해주세요.`}>
-                          {stateList &&
-                            stateList.map((data, idx) => {
-                              return (
-                                <Select.Option key={idx} value={data}>
-                                  {data}
-                                </Select.Option>
-                              );
-                            })}
-                        </CustomSelect>
-                      </Form.Item>
-                    </ColWrapper>
-                  </RowWrapper>
-
-                  <RowWrapper
-                    width={`100%`}
-                    al={`flex-start`}
-                    margin={`0 0 10px 0`}
-                  >
-                    <ColWrapper
-                      width={`140px`}
-                      height={`30px`}
-                      bgColor={Theme.basicTheme_C}
-                      color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
-                      줌 미팅 시간
-                    </ColWrapper>
-                    <ColWrapper>
-                      <Form.Item name="meetDate">
-                        <CustomDatePicker
-                          showTime={{ format: "HH:mm", minuteStep: 10 }}
-                          format="YYYY-MM-DD HH:mm"
-                        />
-                      </Form.Item>
-                    </ColWrapper>
-                  </RowWrapper>
-
-                  <RowWrapper
-                    dr={`row`}
-                    ju={`flex-start`}
-                    al={`flex-start`}
-                    margin={`0 0 10px 0`}
-                  >
-                    <ColWrapper
-                      width={`140px`}
-                      height={`30px`}
-                      bgColor={Theme.basicTheme_C}
-                      color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
-                      시차
-                    </ColWrapper>
-
-                    <FormItem name="timeDiff">
-                      <CustomInput />
-                    </FormItem>
-                  </RowWrapper>
-
-                  <RowWrapper
-                    width={`100%`}
-                    al={`flex-start`}
-                    margin={`0 0 10px 0`}
-                  >
-                    <ColWrapper
-                      width={`140px`}
-                      height={`30px`}
-                      bgColor={Theme.basicTheme_C}
-                      color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
-                      무료수업 담당 강사
-                    </ColWrapper>
-                    <ColWrapper>
-                      <Form.Item name="freeTeacher">
-                        <CustomSelect
-                          placeholder={`무료수업 담당강사를 선택해주세요.`}
-                        >
-                          {teachers &&
-                            teachers.map((data, idx) => {
-                              return (
-                                <Select.Option
-                                  key={data.id}
-                                  value={data.username}
-                                >
-                                  {data.username}
-                                </Select.Option>
-                              );
-                            })}
-                        </CustomSelect>
-                      </Form.Item>
-                    </ColWrapper>
-                  </RowWrapper>
-
-                  <RowWrapper
-                    width={`100%`}
-                    al={`flex-start`}
-                    margin={`0 0 10px 0`}
-                  >
-                    <ColWrapper
-                      width={`140px`}
-                      height={`30px`}
-                      bgColor={Theme.basicTheme_C}
-                      color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
-                      담당 강사
-                    </ColWrapper>
-                    <ColWrapper dr={`row`}>
-                      <Form.Item name="teacher">
-                        <CustomSelect
-                          placeholder={`수업을 선택해주세요.`}
-                          filterOption={(input, option) =>
-                            option.children
-                              .toLowerCase()
-                              .indexOf(input.toLowerCase()) >= 0
-                          }
-                          showSearch
-                        >
-                          {allLectures &&
-                            allLectures.map((data, idx) => {
-                              return (
-                                <Select.Option
-                                  key={`${data.User.username} ${data.course}`}
-                                  value={data.username}
-                                >
-                                  {`(${data.number}) ${data.User.username} ${data.course}`}
-                                </Select.Option>
-                              );
-                            })}
-                        </CustomSelect>
-                      </Form.Item>
-                    </ColWrapper>
-                  </RowWrapper>
-
-                  <RowWrapper
-                    width={`100%`}
-                    al={`flex-start`}
-                    margin={`0 0 10px 0`}
-                  >
-                    <ColWrapper
-                      width={`140px`}
-                      height={`30px`}
-                      bgColor={Theme.basicTheme_C}
-                      color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
-                      희망 시작일
-                    </ColWrapper>
-                    <ColWrapper>
-                      <Form.Item name="wantStartDate">
-                        <CustomDatePicker />
-                      </Form.Item>
-                    </ColWrapper>
-                  </RowWrapper>
-
-                  <RowWrapper width={`100%`} al={`flex-start`}>
-                <ColWrapper
-                  width={`140px`}
-                  height={`30px`}
-                  bgColor={Theme.basicTheme_C}
-                  color={Theme.white_C}
-                  margin={`0 5px 0 0`}
-                >
-                  할인 여부
-                </ColWrapper>
-                <ColWrapper>
-                  <FormItem name="isDiscount">
-                    <Switch
-                      defaultChecked={updateForm.getFieldValue("isDiscount")}
-                      onChange={(e) => onChangeSwitch(e)}
-                    />
-                  </FormItem>
-                </ColWrapper>
-              </RowWrapper>
-
-                  <RowWrapper
-                    width={`100%`}
-                    al={`flex-start`}
-                    margin={`0 0 10px 0`}
-                  >
-                    <ColWrapper
-                      width={`140px`}
-                      height={`30px`}
-                      bgColor={Theme.basicTheme_C}
-                      color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
-                      레벨
-                    </ColWrapper>
-
-                    <FormItem name="level">
-                      <CustomInput />
-                    </FormItem>
-                  </RowWrapper>
-
-                  <RowWrapper
-                    width={`100%`}
-                    al={`flex-start`}
-                    margin={`0 0 10px 0`}
-                  >
-                    <ColWrapper
-                      width={`140px`}
-                      height={`30px`}
-                      bgColor={Theme.basicTheme_C}
-                      color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
-                      직업
-                    </ColWrapper>
-                    <ColWrapper>
-                      <Form.Item name="job">
-                        <CustomInput />
-                      </Form.Item>
-                    </ColWrapper>
-                  </RowWrapper>
-
-                  <RowWrapper al={`flex-start`}>
-                    <ColWrapper
-                      width={`140px`}
-                      height={`30px`}
-                      bgColor={Theme.basicTheme_C}
-                      color={Theme.white_C}
-                      margin={`0 5px 0 0`}
-                    >
-                      메모
-                    </ColWrapper>
-                    <ColWrapper width={`80%`} al={`flex-start`}>
-                      <FormItem width={`100%`} name="purpose">
-                        <CustomTextArea
-                          rows={6}
-                          border={`1px solid ${Theme.grey_C} !important`}
-                        />
-                      </FormItem>
-                    </ColWrapper>
-                  </RowWrapper>
-                </Wrapper>
-              </CustomForm2>
-            </Wrapper>
-          </Wrapper>
-        </Wrapper> */}
-
-        <Text fontSize={`16px`} fontWeight={`700`} margin={`20px 0 10px`}>
-          학생 결제 목록
-        </Text>
-
-        <Table
-          rowKey="id"
-          columns={columnsPayList}
-          dataSource={paymentList ? paymentList : []}
-          size="small"
-        />
-      </Modal>
-
-      {/* 학생 생성 */}
-      {/* <Modal
-        visible={createModal}
-        width={`1000px`}
-        title={`학생 등록`}
-        onCancel={() => onReset()}
-        onOk={() => createClick()}
-        okText="생성"
-        cancelText="취소"
-      >
-        <CustomForm
-          form={createForm}
-          onFinish={createFinish}
-          labelCol={{ span: 4 }}
-          wrapperCol={{ span: 20 }}
-        >
-          <Form.Item
-            label="이메일"
-            name="email"
-            onChange={(e) =>
-              createForm.setFieldsValue({
-                userId: e.target.value,
-              })
-            }
-          >
-            <Input type="email" />
-          </Form.Item>
-          <Form.Item label="회원아이디" name="userId">
-            <Input disabled />
-          </Form.Item>
-          <Form.Item label="회원이름" name="username">
-            <Input />
-          </Form.Item>
-          <Form.Item label="생년월일" name="birth">
-            <Input />
-          </Form.Item>
-          <Form.Item label="전화번호" name="mobile">
-            <Input />
-          </Form.Item>
-          <Form.Item label="학생 직업" name="stuJob">
-            <Input />
-          </Form.Item>
-          <Form.Item label="학생 언어" name="stuLanguage">
-            <Input />
-          </Form.Item>
-          <Form.Item label="학생 나라" name="stuCountry">
-            <Input />
-          </Form.Item>
-          <Form.Item label="현재 거주 나라" name="stuLiveCon">
-            <Input />
-          </Form.Item>
-          <Form.Item label="결제 여부" name="isPayment">
-            <Button
-              style={{ marginRight: 10 }}
-              type={isPayment === 1 && `primary`}
-              onClick={() => buttonHandle(1)}
-            >
-              네
-            </Button>
-
-            <Button
-              type={isPayment === 2 && `primary`}
-              onClick={() => buttonHandle(2)}
-            >
-              아니요
-            </Button>
-
-  
-          </Form.Item>
-
-          {isPayment === 1 && (
-            <Form.Item
-              label="결제 목록"
-              name="paymentList"
-              rules={[{ message: "결제 목록을 선택해주세요.", required: true }]}
-            >
-              <Select showSearch placeholder="Select a Lecture">
-                {paymentOpt}
-              </Select>
-            </Form.Item>
-          )}
-
-          {isPayment === 2 && (
-            <>
-              <Form.Item
-                label="강의 목록"
-                name="lectureList"
-                rules={[
-                  { message: "강의목록을 선택해주세요.", required: true },
-                ]}
-              >
-                <Select showSearch placeholder="Select a Lecture">
-                  {allLectures && allLectures.length === 0
-                    ? ""
-                    : allLectures &&
-                      allLectures.map((data, idx) => {
-                        return (
-                          <Select.Option
-                            key={data.id}
-                            value={JSON.stringify(data)}
-                          >
-                            {`${data.number} | ${data.course} | ${data.User.username} | ${data.day} | ${data.time}`}
-                          </Select.Option>
-                        );
-                      })}
-                </Select>
-              </Form.Item>
-
-              <Form.Item
-                label="강의 기간"
-                name="date"
-                rules={[{ message: "강의기간 입력해주세요.", required: true }]}
-              >
-                <Wrapper dr={`row`}>
-                  <TextInput
-                    width={`calc(100% - 30px)`}
-                    type={`number`}
-                    min={1}
-                  />
-                  <Text width={`30px`} padding={`10px`}>
-                    주
-                  </Text>
-                </Wrapper>
-              </Form.Item>
-            </>
-          )}
-
-          <Form.Item
-            label="성별"
-            rules={[{ required: true, message: "생별을 선택해주세요." }]}
-            name="gender"
-          >
-            <Select>
-              <Select.Option value={`남`}>남자</Select.Option>
-              <Select.Option value={`여`}>여자</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label="주소"
-            rules={[{ message: "주소를 입력해주세요." }]}
-            name="address"
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item label="sns" name="sns">
-            <Input />
-          </Form.Item>
-          <Form.Item label="sns아이디" name="snsId">
-            <Input />
-          </Form.Item>
-        </CustomForm>
-      </Modal> */}
 
       <Modal
         title="학생 수업 수정"

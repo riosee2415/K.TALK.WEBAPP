@@ -1225,6 +1225,7 @@ router.patch("/admin/user/update", isAdminCheck, async (req, res, next) => {
     mobile,
     password,
     adminMemo,
+    gender,
     sns,
     snsId,
     stuPayCount,
@@ -1294,6 +1295,7 @@ router.patch("/admin/user/update", isAdminCheck, async (req, res, next) => {
         snsId,
         stuPayCount,
         stuJob,
+        gender,
       },
       {
         where: { id: parseInt(id) },
