@@ -2,7 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import { Calendar, Checkbox, Form, InputNumber, message, Select } from "antd";
-import { CalendarOutlined, CaretDownOutlined } from "@ant-design/icons";
+import { CaretDownOutlined } from "@ant-design/icons";
 
 import { END } from "redux-saga";
 import Head from "next/head";
@@ -29,6 +29,7 @@ import { useRouter } from "next/router";
 
 import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 import { APP_CREATE_REQUEST } from "../../reducers/application";
+import { dateArr, monthArr, yearArr } from "../../components/selectArr";
 
 const CustomForm = styled(Form)`
   width: 718px;
@@ -1693,46 +1694,52 @@ const Application = () => {
                   Date of Birth
                 </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
-                  <Wrapper width={`calc(100% / 3 - 16px)`}>
+                  <Wrapper width={`calc(100% / 3 - 6px)`}>
                     <Form.Item name="year" rules={[{ required: true }]}>
-                      <CusotmInput
-                        readOnly
-                        width={`100%`}
-                        radius={`5px`}
-                        placeholder={"Year"}
-                      />
+                      <CustomSelect margin={`0 10px 0 0`} placeholder="Year">
+                        {yearArr &&
+                          yearArr.map((data, idx) => (
+                            <Select.Option key={idx} value={data}>
+                              {data}
+                            </Select.Option>
+                          ))}
+                      </CustomSelect>
                     </Form.Item>
                   </Wrapper>
 
-                  <Wrapper width={`calc(100% / 3 - 16px)`} margin={`0 9px`}>
+                  <Wrapper width={`calc(100% / 3 - 6px)`} margin={`0 9px`}>
                     <Form.Item name="month" rules={[{ required: true }]}>
-                      <CusotmInput
-                        readOnly
-                        width={`100%`}
-                        radius={`5px`}
-                        placeholder={"Month"}
-                      />
+                      <CustomSelect margin={`0 10px 0 0`} placeholder="Month">
+                        {monthArr &&
+                          monthArr.map((data, idx) => (
+                            <Select.Option key={idx} value={data}>
+                              {data}
+                            </Select.Option>
+                          ))}
+                      </CustomSelect>
                     </Form.Item>
                   </Wrapper>
 
-                  <Wrapper width={`calc(100% / 3 - 16px)`}>
+                  <Wrapper width={`calc(100% / 3 - 6px)`}>
                     <Form.Item name="date" rules={[{ required: true }]}>
-                      <CusotmInput
-                        readOnly
-                        width={`100%`}
-                        radius={`5px`}
-                        placeholder={"Date"}
-                      />
+                      <CustomSelect margin={`0 10px 0 0`} placeholder="Date">
+                        {dateArr &&
+                          dateArr.map((data, idx) => (
+                            <Select.Option key={idx} value={data}>
+                              {data}
+                            </Select.Option>
+                          ))}
+                      </CustomSelect>
                     </Form.Item>
                   </Wrapper>
 
-                  <Wrapper
-                    width={`30px`}
-                    margin={width < 700 ? `0 0 28px` : `0 0 48px`}
-                    fontSize={width < 700 ? `20px` : `30px`}
-                  >
-                    <CalendarOutlined onClick={calenderToggle} />
-                  </Wrapper>
+                  {/* <Wrapper
+                width={`30px`}
+                margin={width < 700 ? `0 0 28px` : `0 0 48px`}
+                fontSize={width < 700 ? `20px` : `30px`}
+              >
+                <CalendarOutlined onClick={calenderToggle} />
+              </Wrapper> */}
                 </Wrapper>
                 <Wrapper
                   display={isCalendar ? "flex" : "none"}
