@@ -3,6 +3,7 @@ import produce from "../util/produce";
 export const initialState = {
   applicationList: null,
   applicationDetail: null,
+  currentFormToggle: false,
   //
   st_appCreateLoading: false, // 신청서 생성
   st_appCreateDone: false,
@@ -23,6 +24,10 @@ export const initialState = {
   st_appUseUpdateLoading: false,
   st_appUseUpdateDone: false,
   st_appUseUpdateError: null,
+  //
+  st_appUseListLoading: false,
+  st_appUseListDone: false,
+  st_appUseListError: null,
   //
   updateModal: false,
 };
@@ -46,6 +51,10 @@ export const APP_DETAIL_FAILURE = "APP_DETAIL_FAILURE";
 export const APP_USE_UPDATE_REQUEST = "APP_USE_UPDATE_REQUEST";
 export const APP_USE_UPDATE_SUCCESS = "APP_USE_UPDATE_SUCCESS";
 export const APP_USE_UPDATE_FAILURE = "APP_USE_UPDATE_FAILURE";
+
+export const APP_USE_LIST_REQUEST = "APP_USE_LIST_REQUEST";
+export const APP_USE_LIST_SUCCESS = "APP_USE_LIST_SUCCESS";
+export const APP_USE_LIST_FAILURE = "APP_USE_LIST_FAILURE";
 
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
@@ -154,6 +163,28 @@ const reducer = (state = initialState, action) =>
         draft.st_appUseUpdateLoading = false;
         draft.st_appUseUpdateDone = false;
         draft.st_appUseUpdateError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+
+      case APP_USE_LIST_REQUEST: {
+        draft.st_appUseListLoading = true;
+        draft.st_appUseListDone = null;
+        draft.st_appUseListError = false;
+        break;
+      }
+      case APP_USE_LIST_SUCCESS: {
+        draft.st_appUseListLoading = false;
+        draft.st_appUseListDone = true;
+        draft.st_appUseListError = null;
+        draft.currentFormToggle = action.data;
+        break;
+      }
+      case APP_USE_LIST_FAILURE: {
+        draft.st_appUseListLoading = false;
+        draft.st_appUseListDone = false;
+        draft.st_appUseListError = action.error;
         break;
       }
 
