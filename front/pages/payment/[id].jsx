@@ -138,12 +138,11 @@ const Index = () => {
               (payClassDetail.price * payClassDetail.discount) / 100,
           type: "PayPal",
           name: successData.address.recipient_name,
+          lectureId: payClassDetail && payClassDetail.LectureId,
         },
       });
     }
   }, [successData]);
-
-  console.log(payClassDetail);
 
   ////// TOGGLE //////
   ////// HANDLER //////
