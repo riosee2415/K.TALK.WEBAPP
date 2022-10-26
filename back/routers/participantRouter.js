@@ -721,6 +721,14 @@ router.post("/delete", isAdminCheck, async (req, res, next) => {
 router.post("/user/delete/list", isAdminCheck, async (req, res, next) => {
   const { UserId, isDelete, isChange } = req.body;
 
+  const MON = 1;
+  const TUE = 2;
+  const WHS = 3;
+  const THS = 4;
+  const FRI = 5;
+  const SAT = 6;
+  const SUN = 7;
+
   let _isDelete = isDelete || null;
   let _isChange = isChange || null;
 
@@ -741,17 +749,31 @@ router.post("/user/delete/list", isAdminCheck, async (req, res, next) => {
     SELECT	A.id,
             A.date,
             A.endDate,
+            DATE_FORMAT(A.endDate, "%Y-%m-%d")		  AS viewEndDate,
             A.createdAt,
             A.updatedAt,
             A.LectureId,
             A.UserId,
             A.isDelete,
+            CASE
+              WHEN	DATE_FORMAT(NOW(), "%Y%m%d") < DATE_FORMAT(A.endDate, "%Y%m%d") THEN DATEDIFF(DATE_FORMAT(A.endDate, "%Y%m%d"), DATE_FORMAT(NOW(), "%Y%m%d")) 
+              ELSE    0
+            END                 AS compareDate,
             B.number,
             B.time,
             B.course,
             B.day,
             B.UserId 						AS TeacherId,
-            C.username          AS TeacherName
+            C.username          AS TeacherName,
+            CASE DAYOFWEEK(NOW()) 
+              WHEN '1' THEN '7'
+              WHEN '2' THEN '1'
+              WHEN '3' THEN '2'
+              WHEN '4' THEN '3'
+              WHEN '5' THEN '4'
+              WHEN '6' THEN '5'
+              WHEN '7' THEN '6'
+            END                 AS todayDay
       FROM	participants	A
      INNER
       JOIN	lectures 			B	
@@ -767,7 +789,95 @@ router.post("/user/delete/list", isAdminCheck, async (req, res, next) => {
 
     const list = await models.sequelize.query(selectQuery);
 
-    return res.status(200).json({ list: list[0] });
+    const datum = list[0];
+
+    // 요일 숫자데이터 구하기
+    datum.map((data) => {
+      const tempDays = [];
+      const arr = String(data.day).split(" ");
+
+      arr.map((v) => {
+        switch (v) {
+          case "월":
+            tempDays.push(MON);
+            break;
+          case "화":
+            tempDays.push(TUE);
+            break;
+          case "수":
+            tempDays.push(WHS);
+            break;
+          case "목":
+            tempDays.push(THS);
+            break;
+          case "금":
+            tempDays.push(FRI);
+            break;
+          case "토":
+            tempDays.push(SAT);
+            break;
+          case "일":
+            tempDays.push(SUN);
+            break;
+
+          default:
+            break;
+        }
+      });
+
+      data["afterDay"] = tempDays;
+    });
+
+    // 잔여 주 차 구하기
+    datum.map((data) => {
+      const compareDate = data.compareDate;
+
+      const value =
+        compareDate % 7 > 0
+          ? parseInt(compareDate / 7) + 1
+          : parseInt(compareDate / 7);
+
+      data["ingyerWeek"] = value;
+    });
+
+    // 요일 갯 수 구하기
+    datum.map((data) => {
+      if (data.compareDate < 1) return null;
+
+      const tempDay = [];
+
+      let today = parseInt(data.todayDay);
+      for (let i = 0; i < data.compareDate; i++) {
+        if (today === 7) {
+          today = 1;
+        } else {
+          today += 1;
+        }
+
+        tempDay.push(today);
+      }
+
+      data["dayList"] = tempDay;
+    });
+
+    // 남은 요일 갯수 구하기
+    datum.map((data) => {
+      if (data.compareDate < 1) return null;
+
+      let cnt = 0;
+
+      data.afterDay.map((v) => {
+        data.dayList.map((v2) => {
+          if (v === v2) {
+            cnt += 1;
+          }
+        });
+      });
+
+      data["ingyerCnt"] = cnt;
+    });
+
+    return res.status(200).json(list[0]);
   } catch (error) {
     console.error(error);
     return res.status(401).send("반을 옮긴 학생 목록을 불러올 수 없습니다.");
