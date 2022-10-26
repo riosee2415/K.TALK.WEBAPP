@@ -559,6 +559,8 @@ const List = () => {
       if (data) {
         setUData(data);
       }
+
+      stuUForm.resetFields();
       setUModal(!uModal);
     },
     [uModal]
@@ -1130,6 +1132,11 @@ const List = () => {
     {
       title: "시간",
       render: (data) => <div>{data.time}</div>,
+    },
+
+    {
+      title: "남은 횟수",
+      render: (data) => <div>{data.ingyerCnt}</div>,
     },
 
     {
