@@ -1113,6 +1113,11 @@ const List = () => {
     },
 
     {
+      title: "남은 횟수",
+      render: (data) => <div>{data.ingyerCnt}</div>,
+    },
+
+    {
       title: "수업 참여일",
       render: (data) => (
         <div>{data.createdAt && data.createdAt.slice(0, 10)}</div>
@@ -1918,7 +1923,7 @@ const List = () => {
           size="small"
         />
 
-        <Text
+        {/* <Text
           padding={`16px 0px`}
           color={Theme.black_2C}
           fontSize={`16px`}
@@ -1934,7 +1939,7 @@ const List = () => {
           columns={columns7End}
           dataSource={st_participantUserLimitListDone ? partUserLimitList : []}
           size="small"
-        />
+        /> */}
 
         <Text fontSize={`16px`} fontWeight={`700`} margin={`0 0 10px`}>
           학생 결제 목록

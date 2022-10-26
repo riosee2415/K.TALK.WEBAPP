@@ -965,6 +965,10 @@ const DetailClass = () => {
       },
     },
     {
+      title: "남은 횟수",
+      dataIndex: "ingyerCnt",
+    },
+    {
       title: "출석 기록",
       render: (data) => (
         <Button
@@ -1076,6 +1080,10 @@ const DetailClass = () => {
       render: (data) => {
         return <Text>{data.endDate}</Text>;
       },
+    },
+    {
+      title: "남은 횟수",
+      dataIndex: "ingyerCnt",
     },
     {
       title: "출석 기록",
@@ -1433,6 +1441,11 @@ const DetailClass = () => {
     {
       title: "시간",
       render: (data) => <div>{data.time}</div>,
+    },
+
+    {
+      title: "남은 횟수",
+      render: (data) => <div>{data.ingyerCnt}</div>,
     },
 
     {
@@ -2249,6 +2262,7 @@ const DetailClass = () => {
             *수업 참여일:관리자가 학생의 수업을 참여시킨 날짜
           </SpanText>
         </Text>
+
         <Table
           rowKey="id"
           columns={columnsList}
@@ -2294,7 +2308,7 @@ const DetailClass = () => {
           size="small"
         />
 
-        <Text
+        {/* <Text
           padding={`16px 0px`}
           color={Theme.black_2C}
           fontSize={`16px`}
@@ -2310,7 +2324,7 @@ const DetailClass = () => {
           columns={columns7End}
           dataSource={st_participantUserLimitListDone ? partUserLimitList : []}
           size="small"
-        />
+        /> */}
       </Modal>
 
       {/* 학생 정보 */}

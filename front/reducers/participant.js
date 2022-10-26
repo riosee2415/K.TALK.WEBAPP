@@ -337,7 +337,7 @@ const reducer = (state = initialState, action) =>
       case PARTICIPANT_USER_CURRENT_LIST_SUCCESS: {
         draft.st_participantUserCurrentListLoading = true;
         draft.st_participantUserCurrentListDone = false;
-        draft.partUserCurrentList = action.data.list;
+        draft.partUserCurrentList = action.data;
         break;
       }
       case PARTICIPANT_USER_CURRENT_LIST_FAILURE: {
