@@ -95,7 +95,9 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
             B.startDate,
             B.week,
             C.id                  AS LetureId,
-            C.course
+            C.course,
+            C.number,
+            D.username            AS teacherName
       FROM  payments		A
      INNER
       JOIN  payClass 		B
@@ -103,6 +105,9 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
      INNER 
       JOIN  lectures 		C
         ON  A.lectureId = C.id
+     INNER 
+      JOIN  users 		  D
+        ON  C.UserId = D.id
      WHERE  1 = 1
        ${_email ? `AND A.email LIKE '%${_email}%'` : ``}
        ${_type !== `` ? `AND A.type ='${_type}'` : ``}
