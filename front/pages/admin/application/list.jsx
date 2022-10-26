@@ -169,7 +169,7 @@ const List = () => {
   const [userData, setUserData] = useState(null); // 학생상세정보
   const [stuSelect, setStuSelect] = useState(""); // 학생 출석 목록 내 강의 검색
   const [statusType, setStatusType] = useState(""); // 등록상태 검색 값
-  const [isType, setIsType] = useState("등록"); // 등록인지 수정인지 값 ( 회원가입 전 )
+  const [isType, setIsType] = useState(null); // 등록인지 수정인지 값 ( 회원가입 전 )
 
   const numberInput = useInput(); // 강의기간 (form안에 form이여서 input 쓸수밖에 없음)
 
@@ -2401,7 +2401,7 @@ const List = () => {
                       )}
                     </Wrapper>
 
-                    {isType === "등록" || (
+                    {(isType === "등록" || isType === null) && (
                       <Wrapper
                         padding={`5px 0`}
                         dr={`row`}
@@ -2631,238 +2631,234 @@ const List = () => {
                       </Wrapper>
                     </Wrapper>
 
-                    {isJoin && (
-                      <>
-                        <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                        >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
-                          >
-                            시차
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            al={`flex-start`}
-                            padding={`0 10px`}
-                          >
-                            <FormItem name="timeDiff">
-                              <Input placeholder="시차를 입력해주세요." />
-                            </FormItem>
-                          </Wrapper>
-                        </Wrapper>
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        시차
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="timeDiff">
+                          <Input placeholder="시차를 입력해주세요." />
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
 
-                        <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                        >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
-                          >
-                            원하는 시작 날짜
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            al={`flex-start`}
-                            padding={`0 10px`}
-                          >
-                            <FormItem name="wantStartDate">
-                              <CustomDatePicker
-                                style={{ width: `100%` }}
-                                placeholder="원하시는 시작 날짜를 선택해주세요."
-                              />
-                            </FormItem>
-                          </Wrapper>
-                        </Wrapper>
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        원하는 시작 날짜
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="wantStartDate">
+                          <CustomDatePicker
+                            style={{ width: `100%` }}
+                            placeholder="원하시는 시작 날짜를 선택해주세요."
+                          />
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
 
-                        <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                        >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        무료수업 담당 강사
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="freeTeacher">
+                          <Select
+                            placeholder={`무료수업 담당 강사를 선택해주세요.`}
                           >
-                            무료수업 담당 강사
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            al={`flex-start`}
-                            padding={`0 10px`}
-                          >
-                            <FormItem name="freeTeacher">
-                              <Select
-                                placeholder={`무료수업 담당 강사를 선택해주세요.`}
-                              >
-                                {teachers &&
-                                  teachers.map((data, idx) => {
-                                    return (
-                                      <Select.Option
-                                        key={data.id}
-                                        value={data.username}
-                                      >
-                                        {data.username}
-                                      </Select.Option>
-                                    );
-                                  })}
-                              </Select>
-                            </FormItem>
-                          </Wrapper>
-                        </Wrapper>
+                            {teachers &&
+                              teachers.map((data, idx) => {
+                                return (
+                                  <Select.Option
+                                    key={data.id}
+                                    value={data.username}
+                                  >
+                                    {data.username}
+                                  </Select.Option>
+                                );
+                              })}
+                          </Select>
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
 
-                        <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                        >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        담당 강사
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="teacher">
+                          <Select
+                            placeholder={`담당 강사를 선택해주세요.`}
+                            filterOption={(input, option) =>
+                              option.children
+                                .toLowerCase()
+                                .indexOf(input.toLowerCase()) >= 0
+                            }
+                            showSearch
                           >
-                            담당 강사
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            al={`flex-start`}
-                            padding={`0 10px`}
-                          >
-                            <FormItem name="teacher">
-                              <Select
-                                placeholder={`담당 강사를 선택해주세요.`}
-                                filterOption={(input, option) =>
-                                  option.children
-                                    .toLowerCase()
-                                    .indexOf(input.toLowerCase()) >= 0
-                                }
-                                showSearch
-                              >
-                                {allLectures &&
-                                  allLectures.map((data, idx) => {
-                                    return (
-                                      <Select.Option
-                                        key={`${data.User.username} ${data.course}`}
-                                        value={data.username}
-                                      >
-                                        {`(${data.number}) ${data.User.username} ${data.course}`}
-                                      </Select.Option>
-                                    );
-                                  })}
-                              </Select>
-                            </FormItem>
-                          </Wrapper>
-                        </Wrapper>
+                            {allLectures &&
+                              allLectures.map((data, idx) => {
+                                return (
+                                  <Select.Option
+                                    key={`${data.User.username} ${data.course}`}
+                                    value={data.username}
+                                  >
+                                    {`(${data.number}) ${data.User.username} ${data.course}`}
+                                  </Select.Option>
+                                );
+                              })}
+                          </Select>
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
 
-                        <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                        >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
-                          >
-                            줌 미팅 시간
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            al={`flex-start`}
-                            padding={`0 10px`}
-                          >
-                            <FormItem name="meetDate">
-                              <CustomDatePicker
-                                style={{ width: `100%` }}
-                                showTime={{ format: "HH:mm", minuteStep: 10 }}
-                                format="YYYY-MM-DD HH:mm"
-                                placeholder="줌 미팅 시간을 선택해주세요."
-                              />
-                            </FormItem>
-                          </Wrapper>
-                        </Wrapper>
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        줌 미팅 시간
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="meetDate">
+                          <CustomDatePicker
+                            style={{ width: `100%` }}
+                            showTime={{ format: "HH:mm", minuteStep: 10 }}
+                            format="YYYY-MM-DD HH:mm"
+                            placeholder="줌 미팅 시간을 선택해주세요."
+                          />
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
 
-                        <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                        >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
-                          >
-                            레벨
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            al={`flex-start`}
-                            padding={`0 10px`}
-                          >
-                            <FormItem name="level">
-                              <Input
-                                type="number"
-                                placeholder={`레벨을 입력해주세요.`}
-                              />
-                            </FormItem>
-                          </Wrapper>
-                        </Wrapper>
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        레벨
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="level">
+                          <Input
+                            type="number"
+                            placeholder={`레벨을 입력해주세요.`}
+                          />
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
 
-                        <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                        >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
-                          >
-                            직업
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            al={`flex-start`}
-                            padding={`0 10px`}
-                          >
-                            <FormItem name="job">
-                              <Input
-                                type="job"
-                                placeholder={`직업을 입력해주세요.`}
-                              />
-                            </FormItem>
-                          </Wrapper>
-                        </Wrapper>
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        직업
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="job">
+                          <Input
+                            type="job"
+                            placeholder={`직업을 입력해주세요.`}
+                          />
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
 
-                        <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                        >
-                          <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
-                            메모
-                          </Wrapper>
-                          <Wrapper al={`flex-start`}>
-                            <FormItem name="purpose">
-                              <CustomTextArea
-                                placeholder={`메모를 입력해주세요.`}
-                                style={{ width: `100%` }}
-                                rows={6}
-                                border={`1px solid ${Theme.grey_C} !important`}
-                              />
-                            </FormItem>
-                          </Wrapper>
-                        </Wrapper>
-                      </>
-                    )}
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
+                        메모
+                      </Wrapper>
+                      <Wrapper al={`flex-start`}>
+                        <FormItem name="purpose">
+                          <CustomTextArea
+                            placeholder={`메모를 입력해주세요.`}
+                            style={{ width: `100%` }}
+                            rows={6}
+                            border={`1px solid ${Theme.grey_C} !important`}
+                          />
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
 
                     <Wrapper
                       padding={`5px 0`}
