@@ -329,7 +329,7 @@ const Pay = ({}) => {
     {
       title: "생성일",
       render: (data) => {
-        return <Text>{data.createdAt.slice(0, 10)}</Text>;
+        return <Text>{data.createdAt && data.createdAt.slice(0, 10)}</Text>;
       },
     },
 

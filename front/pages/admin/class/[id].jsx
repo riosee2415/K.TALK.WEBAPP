@@ -1153,7 +1153,7 @@ const DetailClass = () => {
     },
     {
       title: "날짜",
-      render: (data) => data.createdAt.slice(0, 10),
+      render: (data) => data.createdAt && data.createdAt.slice(0, 10),
     },
     {
       title: "강사명",
@@ -1195,7 +1195,7 @@ const DetailClass = () => {
     {
       title: "작성일",
 
-      render: (data) => <div>{data.createdAt.slice(0, 15)}</div>,
+      render: (data) => data.createdAt && data.createdAt.slice(0, 15),
     },
 
     {
@@ -1249,7 +1249,7 @@ const DetailClass = () => {
     },
     {
       title: "출석일",
-      render: (data) => data.time.slice(0, 10),
+      render: (data) => data.time && data.time.slice(0, 10),
     },
     {
       title: "출석 여부",
@@ -1301,7 +1301,7 @@ const DetailClass = () => {
     },
     {
       title: "작성일",
-      render: (data) => <Text>{data.createdAt.slice(0, 13)}</Text>,
+      render: (data) => data.createdAt && data.createdAt.slice(0, 13),
     },
     {
       title: "메모 보기",
@@ -1422,7 +1422,9 @@ const DetailClass = () => {
 
     {
       title: "수업 참여일",
-      render: (data) => <div>{data.createdAt.slice(0, 10)}</div>,
+      render: (data) => (
+        <div>{data.createdAt && data.createdAt.slice(0, 10)}</div>
+      ),
     },
 
     {
@@ -1465,7 +1467,9 @@ const DetailClass = () => {
 
     {
       title: "수업 변경일",
-      render: (data) => <div>{data.updatedAt.slice(0, 10)}</div>,
+      render: (data) => (
+        <div>{data.updatedAt && data.updatedAt.slice(0, 10)}</div>
+      ),
     },
   ];
 
@@ -1492,7 +1496,9 @@ const DetailClass = () => {
 
     {
       title: "수업 종료일",
-      render: (data) => <div>{data.updatedAt.slice(0, 10)}</div>,
+      render: (data) => (
+        <div>{data.updatedAt && data.updatedAt.slice(0, 10)}</div>
+      ),
     },
   ];
 
@@ -1838,7 +1844,9 @@ const DetailClass = () => {
                 />
               </Wrapper>
               <Text fontSize={`18px`}>
-                {lectureDetail && lectureDetail[0].startDate.slice(0, 10)}
+                {lectureDetail &&
+                  lectureDetail[0].startDate &&
+                  lectureDetail[0].startDate.slice(0, 10)}
               </Text>
             </Wrapper>
             <Text padding={`0 0 0 44px`}>
@@ -2061,7 +2069,9 @@ const DetailClass = () => {
         <Wrapper al={`flex-start`}>
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
             {detailMemo && detailMemo.username} &nbsp;| &nbsp;
-            {detailMemo && detailMemo.createdAt.slice(0, 13)}
+            {detailMemo &&
+              detailMemo.createdAt &&
+              detailMemo.createdAt.slice(0, 13)}
           </Text>
           <Wrapper al={`flex-start`} ju={`flex-start`} height={`500px`}>
             {detailMemo &&
@@ -2084,7 +2094,9 @@ const DetailClass = () => {
       >
         <Wrapper al={`flex-start`}>
           <Text margin={`0 0 20px`} fontSize={`18px`} fontWeight={`700`}>
-            {lecMemoData && lecMemoData.createdAt.slice(0, 10)}
+            {lecMemoData &&
+              lecMemoData.createdAt &&
+              lecMemoData.createdAt.slice(0, 10)}
           </Text>
           <Wrapper al={`flex-start`} ju={`flex-start`} minHeight={`300px`}>
             {lecMemoData &&
@@ -2134,7 +2146,11 @@ const DetailClass = () => {
         <Wrapper al={`flex-start`}>
           <Wrapper dr={`row`} ju={`flex-start`}>
             <Text fontWeight={`700`}>작성일 : </Text>
-            <Text>{noticeDetail && noticeDetail.createdAt.slice(0, 13)}</Text>
+            <Text>
+              {noticeDetail &&
+                noticeDetail.createdAt &&
+                noticeDetail.createdAt.slice(0, 13)}
+            </Text>
           </Wrapper>
 
           <Wrapper dr={`row`} ju={`flex-start`}>
@@ -2169,7 +2185,11 @@ const DetailClass = () => {
         <Wrapper al={`flex-start`}>
           <Wrapper dr={`row`} ju={`flex-start`}>
             <Text fontWeight={`700`}>작성일 : </Text>
-            <Text>{messageDetail && messageDetail.createdAt.slice(0, 13)}</Text>
+            <Text>
+              {messageDetail &&
+                messageDetail.createdAt &&
+                messageDetail.createdAt.slice(0, 13)}
+            </Text>
           </Wrapper>
 
           <Wrapper dr={`row`} ju={`flex-start`}>

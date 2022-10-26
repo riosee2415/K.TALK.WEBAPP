@@ -239,7 +239,7 @@ const PaymentList = () => {
         return (
           <Text>
             {data.type === "PayPal" || data.type === ""
-              ? data.createdAt.slice(0, 10)
+              ? data.createdAt && data.createdAt.slice(0, 10)
               : data.completedAt}
           </Text>
         );
