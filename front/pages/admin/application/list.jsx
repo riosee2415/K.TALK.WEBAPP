@@ -1555,7 +1555,7 @@ const List = () => {
 
           <Form
             form={userForm}
-            style={{ width: `60%` }}
+            style={{ width: `62%` }}
             onFinish={isJoin ? updateStuFinish : createFinish}
           >
             <Wrapper
@@ -1587,6 +1587,7 @@ const List = () => {
                 {userData === null ? (
                   <Wrapper fontWeight={`700`} fontSize={`20px`} height={`100%`}>
                     학생을 선택해주세요.
+                    <Text>이름 오른쪽 동그라미를 클릭해주세요.</Text>
                   </Wrapper>
                 ) : (
                   <>
@@ -1938,7 +1939,7 @@ const List = () => {
                         />
 
                         {/* 일주일 이하로 남은 강의 내역 */}
-                        <Wrapper dr={`row`} ju={`flex-start`}>
+                        {/* <Wrapper dr={`row`} ju={`flex-start`}>
                           <Text
                             fontWeight={`700`}
                             color={Theme.basicTheme_C}
@@ -1971,7 +1972,7 @@ const List = () => {
                               : []
                           }
                           size="small"
-                        />
+                        />*/}
                       </>
                     )}
 
@@ -2031,14 +2032,14 @@ const List = () => {
                         <Image
                           width={`100px`}
                           height={`100px`}
-                          radius={`50%`}
                           src={
-                            applicationDetail
+                            applicationDetail &&
+                            applicationDetail[0].profileImage
                               ? `${
                                   applicationDetail[0] &&
                                   applicationDetail[0].profileImage
                                 }`
-                              : `https://via.placeholder.com/100x100`
+                              : `https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/common/img_default-profile.png`
                           }
                         />
                       </Wrapper>
