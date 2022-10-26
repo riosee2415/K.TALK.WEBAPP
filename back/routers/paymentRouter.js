@@ -10,7 +10,8 @@ const router = express.Router();
 router.post("/user/list", isLoggedIn, async (req, res, next) => {
   try {
     const selectQuery = `
-    SELECT  A.id,
+    SELECT  ROW_NUMBER() OVER(ORDER BY A.createdAt)     AS num,
+            A.id,
             A.price,
             A.email,
             A.type,
@@ -19,6 +20,7 @@ router.post("/user/list", isLoggedIn, async (req, res, next) => {
             A.isComplete,
             DATE_FORMAT(A.completedAt, "%Y-%m-%d")      AS completedAt,
             A.createdAt,
+            DATE_FORMAT(A.createdAt, "%Y-%m-%d")        AS viewCreatedAt,
             A.updatedAt,
             A.bankNo,
             A.UserId,
@@ -26,7 +28,8 @@ router.post("/user/list", isLoggedIn, async (req, res, next) => {
             B.startDate,
             B.week,
             C.id                  AS LetureId,
-            C.course
+            C.course,
+            D.username            AS teacherName
       FROM  payments		A
      INNER
       JOIN  payClass 		B
@@ -34,6 +37,9 @@ router.post("/user/list", isLoggedIn, async (req, res, next) => {
      INNER 
       JOIN  lectures 		C
         ON  A.lectureId = C.id
+     INNER 
+      JOIN  users 		  D
+        ON  C.UserId = D.id
      WHERE  1 = 1
        AND  A.UserId = ${req.user.id}
      ORDER  BY A.createdAt DESC
