@@ -173,8 +173,6 @@ const DetailClass = () => {
     st_participantUpdateError,
   } = useSelector((state) => state.participant);
 
-  console.log(partUserLimitList);
-
   const { bookList, bookMaxLength } = useSelector((state) => state.book);
   const { noticeLectureList } = useSelector((state) => state.notice);
   const { messageLectureList, messageLectureLastPage } = useSelector(
@@ -843,7 +841,6 @@ const DetailClass = () => {
 
   const changeModalOpen = useCallback(
     (data) => {
-      console.log(data);
       setStuChangeModal(true);
       setStuChangeDetail(data);
       setStuChangeDate(moment(data.endDate, "YYYY-MM-DD"));
@@ -2892,7 +2889,6 @@ const DetailClass = () => {
           &nbsp; &nbsp; &nbsp;
           <Text>
             만기일:&nbsp;
-            {console.log(stuChangeDetail && stuChangeDetail.endDate)}
             {stuChangeDetail && (
               <DatePicker
                 value={
