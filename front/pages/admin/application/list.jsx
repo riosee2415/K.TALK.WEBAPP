@@ -24,6 +24,7 @@ import {
   Text,
   TextInput,
   GuideDiv,
+  SpanText,
 } from "../../../components/commonComponents";
 import Theme from "../../../components/Theme";
 import {
@@ -168,10 +169,20 @@ const List = () => {
   const [userData, setUserData] = useState(null); // 학생상세정보
   const [stuSelect, setStuSelect] = useState(""); // 학생 출석 목록 내 강의 검색
   const [statusType, setStatusType] = useState(""); // 등록상태 검색 값
+  const [isGender, setIsGender] = useState(false);
+  const [isType, setIsType] = useState("등록");
 
   const numberInput = useInput(); // 강의기간 (form안에 form이여서 input 쓸수밖에 없음)
 
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (noData !== null || yesData !== null) {
+      setIsGender(true);
+    } else {
+      setIsGender(false);
+    }
+  }, [noData, yesData]);
 
   useEffect(() => {
     const qs = router.query;
@@ -568,6 +579,11 @@ const List = () => {
 
   ////// HANDLER //////
 
+  // 등록 수정 선택
+  const typeHandler = useCallback((data) => {
+    setIsType(data);
+  }, []);
+
   // 왼쪽 테이블 선택
   const row = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -613,6 +629,9 @@ const List = () => {
       // 결제여부 네 기능시 가져오는 강의목록
       setYesData(null);
       numberInput.setValue(``);
+
+      // 결제여부 아니요 기능시 가져오는 강의목록
+      setNoData(null);
     },
   };
 
@@ -737,6 +756,10 @@ const List = () => {
         PaymentId: lectureList ? null : partLecture.id,
       },
     });
+
+    // paymentCreate
+    // 강의목록 리셋
+    // 아니오일때 type : "-" , email, name, UserId (userPkId) , lectureId
   }, [noData, yesData, numberInput.value, applicationDetail]);
 
   // 결제여부 선택기능
@@ -2005,13 +2028,32 @@ const List = () => {
 
                     {/* 학생 상세정보 */}
                     <Wrapper dr={`row`} ju={`flex-start`}>
-                      <Text
-                        fontWeight={`700`}
-                        color={Theme.basicTheme_C}
+                      <Wrapper
+                        dr={`row`}
+                        ju={`space-between`}
                         margin={`0 0 5px`}
                       >
-                        학생 상세정보
-                      </Text>
+                        <Text fontWeight={`700`} color={Theme.basicTheme_C}>
+                          학생 상세정보
+                        </Text>
+
+                        <Wrapper dr={`row`} width={`auto`}>
+                          <Button
+                            size="small"
+                            type={isType === "등록" ? `primary` : `default`}
+                            onClick={() => typeHandler("등록")}
+                          >
+                            등록
+                          </Button>
+                          <Button
+                            size="small"
+                            type={isType !== "등록" ? `primary` : `default`}
+                            onClick={() => typeHandler("수정")}
+                          >
+                            수정
+                          </Button>
+                        </Wrapper>
+                      </Wrapper>
 
                       <Wrapper
                         margin={`0px 0px 10px 0px`}
@@ -2034,6 +2076,17 @@ const List = () => {
                         </GuideDiv>
                         <GuideDiv isImpo={true}>
                           이메일 변경은 개발사에 문의해주세요.
+                        </GuideDiv>
+                        <GuideDiv isImpo={true}>
+                          회원이 등록이 되지 않았을 시 등록할 때만 수정이
+                          가능하며, 맨 위 학생 수업 참여 중 강의목록을 선택했을
+                          시 등록할 수 있습니다.
+                        </GuideDiv>
+                        <GuideDiv isImpo={true}>
+                          등록하기 전 성별 제외 한 내용은 수정이 가능합니다.
+                        </GuideDiv>
+                        <GuideDiv isImpo={true}>
+                          성별은 필수 값 입니다.
                         </GuideDiv>
                       </Wrapper>
                     </Wrapper>
@@ -2100,33 +2153,35 @@ const List = () => {
                       </Wrapper>
                     </Wrapper>
 
-                    <Wrapper
-                      padding={`5px 0`}
-                      dr={`row`}
-                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                    >
+                    {isJoin && (
                       <Wrapper
-                        width={`25%`}
-                        bgColor={Theme.lightGrey3_C}
-                        padding={`3px`}
+                        padding={`5px 0`}
+                        dr={`row`}
+                        borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
                       >
-                        회원가입일
+                        <Wrapper
+                          width={`25%`}
+                          bgColor={Theme.lightGrey3_C}
+                          padding={`3px`}
+                        >
+                          회원가입일
+                        </Wrapper>
+                        <Wrapper
+                          width={`75%`}
+                          al={`flex-start`}
+                          padding={`0 10px`}
+                        >
+                          <Input
+                            disabled={true}
+                            value={
+                              userData && userData.completedAt
+                                ? userData.completedAt.slice(0, 10)
+                                : ""
+                            }
+                          />
+                        </Wrapper>
                       </Wrapper>
-                      <Wrapper
-                        width={`75%`}
-                        al={`flex-start`}
-                        padding={`0 10px`}
-                      >
-                        <Input
-                          disabled={true}
-                          value={
-                            userData && userData.completedAt
-                              ? userData.completedAt.slice(0, 10)
-                              : ""
-                          }
-                        />
-                      </Wrapper>
-                    </Wrapper>
+                    )}
 
                     <Wrapper
                       padding={`5px 0`}
@@ -2203,51 +2258,55 @@ const List = () => {
                       </Wrapper>
                     </Wrapper>
 
-                    <Wrapper
-                      padding={`5px 0`}
-                      dr={`row`}
-                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                    >
-                      <Wrapper
-                        width={`25%`}
-                        bgColor={Theme.lightGrey3_C}
-                        padding={`3px`}
-                      >
-                        주소
-                      </Wrapper>
-                      <Wrapper
-                        width={`75%`}
-                        al={`flex-start`}
-                        padding={`0 10px`}
-                      >
-                        <FormItem name="address">
-                          <Input placeholder="주소를 입력해주세요." />
-                        </FormItem>
-                      </Wrapper>
-                    </Wrapper>
+                    {isJoin && (
+                      <>
+                        <Wrapper
+                          padding={`5px 0`}
+                          dr={`row`}
+                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                        >
+                          <Wrapper
+                            width={`25%`}
+                            bgColor={Theme.lightGrey3_C}
+                            padding={`3px`}
+                          >
+                            주소
+                          </Wrapper>
+                          <Wrapper
+                            width={`75%`}
+                            al={`flex-start`}
+                            padding={`0 10px`}
+                          >
+                            <FormItem name="address">
+                              <Input placeholder="주소를 입력해주세요." />
+                            </FormItem>
+                          </Wrapper>
+                        </Wrapper>
 
-                    <Wrapper
-                      padding={`5px 0`}
-                      dr={`row`}
-                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                    >
-                      <Wrapper
-                        width={`25%`}
-                        bgColor={Theme.lightGrey3_C}
-                        padding={`3px`}
-                      >
-                        상세주소
-                      </Wrapper>
-                      <Wrapper
-                        width={`75%`}
-                        al={`flex-start`}
-                        padding={`0 10px`}
-                      >
-                        <FormItem name="detailAddress">
-                          <Input placeholder="상세주소를 입력해주세요." />
-                        </FormItem>
-                      </Wrapper>
-                    </Wrapper>
+                        <Wrapper
+                          padding={`5px 0`}
+                          dr={`row`}
+                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                        >
+                          <Wrapper
+                            width={`25%`}
+                            bgColor={Theme.lightGrey3_C}
+                            padding={`3px`}
+                          >
+                            상세주소
+                          </Wrapper>
+                          <Wrapper
+                            width={`75%`}
+                            al={`flex-start`}
+                            padding={`0 10px`}
+                          >
+                            <FormItem name="detailAddress">
+                              <Input placeholder="상세주소를 입력해주세요." />
+                            </FormItem>
+                          </Wrapper>
+                        </Wrapper>
+                      </>
+                    )}
 
                     <Wrapper
                       padding={`5px 0`}
@@ -2362,7 +2421,10 @@ const List = () => {
                         bgColor={Theme.lightGrey3_C}
                         padding={`3px`}
                       >
-                        성별
+                        <Text>
+                          성별
+                          <SpanText color={Theme.red_C}>*</SpanText>
+                        </Text>
                       </Wrapper>
                       <Wrapper
                         width={`75%`}
@@ -2370,7 +2432,10 @@ const List = () => {
                         padding={`0 10px`}
                       >
                         <FormItem name="gender">
-                          <Select placeholder="성별을 선택해주세요.">
+                          <Select
+                            placeholder="성별을 선택해주세요."
+                            disabled={isGender ? false : true}
+                          >
                             <Select.Option value="여">여</Select.Option>
                             <Select.Option value="남">남</Select.Option>
                             <Select.Option value="상관없음">
@@ -2468,51 +2533,55 @@ const List = () => {
                       </Wrapper>
                     </Wrapper>
 
-                    <Wrapper
-                      padding={`5px 0`}
-                      dr={`row`}
-                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                    >
-                      <Wrapper
-                        width={`25%`}
-                        bgColor={Theme.lightGrey3_C}
-                        padding={`3px`}
-                      >
-                        SNS
-                      </Wrapper>
-                      <Wrapper
-                        width={`75%`}
-                        al={`flex-start`}
-                        padding={`0 10px`}
-                      >
-                        <FormItem name="sns">
-                          <Input placeholder="SNS를 입력해주세요." />
-                        </FormItem>
-                      </Wrapper>
-                    </Wrapper>
+                    {isJoin && (
+                      <>
+                        <Wrapper
+                          padding={`5px 0`}
+                          dr={`row`}
+                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                        >
+                          <Wrapper
+                            width={`25%`}
+                            bgColor={Theme.lightGrey3_C}
+                            padding={`3px`}
+                          >
+                            SNS
+                          </Wrapper>
+                          <Wrapper
+                            width={`75%`}
+                            al={`flex-start`}
+                            padding={`0 10px`}
+                          >
+                            <FormItem name="sns">
+                              <Input placeholder="SNS를 입력해주세요." />
+                            </FormItem>
+                          </Wrapper>
+                        </Wrapper>
 
-                    <Wrapper
-                      padding={`5px 0`}
-                      dr={`row`}
-                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                    >
-                      <Wrapper
-                        width={`25%`}
-                        bgColor={Theme.lightGrey3_C}
-                        padding={`3px`}
-                      >
-                        SNS Id
-                      </Wrapper>
-                      <Wrapper
-                        width={`75%`}
-                        al={`flex-start`}
-                        padding={`0 10px`}
-                      >
-                        <FormItem name="snsId">
-                          <Input placeholder="SNS ID를 입력해주세요." />
-                        </FormItem>
-                      </Wrapper>
-                    </Wrapper>
+                        <Wrapper
+                          padding={`5px 0`}
+                          dr={`row`}
+                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                        >
+                          <Wrapper
+                            width={`25%`}
+                            bgColor={Theme.lightGrey3_C}
+                            padding={`3px`}
+                          >
+                            SNS Id
+                          </Wrapper>
+                          <Wrapper
+                            width={`75%`}
+                            al={`flex-start`}
+                            padding={`0 10px`}
+                          >
+                            <FormItem name="snsId">
+                              <Input placeholder="SNS ID를 입력해주세요." />
+                            </FormItem>
+                          </Wrapper>
+                        </Wrapper>
+                      </>
+                    )}
 
                     <Wrapper
                       padding={`5px 0`}
