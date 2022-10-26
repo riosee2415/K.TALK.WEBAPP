@@ -25,6 +25,10 @@ module.exports = class Payment extends Model {
           type: DataTypes.STRING(100),
           allowNull: true,
         },
+        lectureId: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+        },
         isComplete: {
           type: DataTypes.BOOLEAN,
           allowNull: false,

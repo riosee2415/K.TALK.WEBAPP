@@ -242,7 +242,7 @@ const UserList = ({}) => {
           bankNo: data.bankNo,
           gender: data.gender,
           teaLanguage: data.teaLanguage,
-          createdAt: data.createdAt.slice(0, 13),
+          createdAt: data.createdAt && data.createdAt.slice(0, 13),
           mobile: data.mobile,
           bankName: data.bankName,
           detailAddress: data.detailAddress,
@@ -461,8 +461,8 @@ const UserList = ({}) => {
         return (
           <Text>
             {data.isFire
-              ? data.updatedAt.slice(0, 13)
-              : data.createdAt.slice(0, 13)}
+              ? data.updatedAt && data.updatedAt.slice(0, 13)
+              : data.createdAt && data.createdAt.slice(0, 13)}
           </Text>
         );
       },

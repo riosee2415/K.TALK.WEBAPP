@@ -310,7 +310,9 @@ const List = () => {
               value={JSON.stringify(data)}
               // value={`${data.id},${data.LetureId},${data.week}`}
             >
-              {`결제일: ${data.createdAt.slice(0, 10)} | ${data.course} | `}
+              {`결제일: ${data.createdAt && data.createdAt.slice(0, 10)} | ${
+                data.course
+              } | `}
               {`결제한 가격: $${data.price} |  ${data.email}`}
             </Option>
           );
@@ -550,7 +552,7 @@ const List = () => {
         userId: data.userId,
         sns: data.sns,
         snsId: data.snsId,
-        birth: data.birth.slice(0, 10),
+        birth: data.birth && data.birth.slice(0, 10),
         mobile: data.mobile,
         password: data.mobile.slice(-4),
         stuLiveCon: data.stuLiveCon,
@@ -1112,7 +1114,9 @@ const List = () => {
 
     {
       title: "수업 참여일",
-      render: (data) => <div>{data.createdAt.slice(0, 10)}</div>,
+      render: (data) => (
+        <div>{data.createdAt && data.createdAt.slice(0, 10)}</div>
+      ),
     },
 
     {
@@ -1161,7 +1165,9 @@ const List = () => {
 
     {
       title: "수업 변경일",
-      render: (data) => <div>{data.updatedAt.slice(0, 10)}</div>,
+      render: (data) => (
+        <div>{data.updatedAt && data.updatedAt.slice(0, 10)}</div>
+      ),
     },
   ];
 
@@ -1198,7 +1204,9 @@ const List = () => {
 
     {
       title: "수업 종료일",
-      render: (data) => <div>{data.createdAt.slice(0, 10)}</div>,
+      render: (data) => (
+        <div>{data.createdAt && data.createdAt.slice(0, 10)}</div>
+      ),
     },
   ];
 
@@ -1264,7 +1272,9 @@ const List = () => {
 
     {
       title: "출석일",
-      render: (data) => <div>{`${data.createdAt.slice(0, 13)}`}</div>,
+      render: (data) => (
+        <div>{`${data.createdAt && data.createdAt.slice(0, 13)}`}</div>
+      ),
     },
   ];
 
