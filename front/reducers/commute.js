@@ -38,6 +38,8 @@ export const COMMUTE_UPDATE_REQUEST = "COMMUTE_UPDATE_REQUEST";
 export const COMMUTE_UPDATE_SUCCESS = "COMMUTE_UPDATE_SUCCESS";
 export const COMMUTE_UPDATE_FAILURE = "COMMUTE_UPDATE_FAILURE";
 
+export const COMMUTE_RESET = "COMMUTE_RESET";
+
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
@@ -123,6 +125,10 @@ const reducer = (state = initialState, action) =>
         break;
       }
       //////////////////////////////////////////////
+
+      case COMMUTE_RESET: {
+        draft.commuteAdminList = [];
+      }
 
       default:
         break;

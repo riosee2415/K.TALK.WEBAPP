@@ -432,7 +432,7 @@ const StudentNormalNotice = () => {
             >
               <Select.Option value={`3`}>whole</Select.Option>
               <Select.Option value={`2`}>self</Select.Option>
-              <Select.Option value={`1`}>others</Select.Option>
+              {/* <Select.Option value={`1`}>others</Select.Option> */}
             </CustomSelect>
             <CommonButton
               onClick={normalNoticeCreateModalToggle}
