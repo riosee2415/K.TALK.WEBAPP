@@ -782,6 +782,7 @@ router.post("/user/delete/list", isAdminCheck, async (req, res, next) => {
       JOIN	users 			  C	
         ON	B.UserId = C.id
      WHERE	1 = 1
+       AND  B.isDelete = 0
       ${_isDelete ? `AND A.isDelete = ${_isDelete}` : ``}
       ${_isChange ? `AND A.isChange = ${_isChange}` : ``}
        AND	A.UserId = ${UserId}
