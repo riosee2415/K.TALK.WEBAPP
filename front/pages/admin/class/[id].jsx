@@ -2285,6 +2285,7 @@ const DetailClass = () => {
           dataSource={st_participantUserMoveListDone ? partUserMoveList : []}
           size="small"
         />
+
         <Text
           padding={`16px 0px`}
           color={Theme.black_2C}
