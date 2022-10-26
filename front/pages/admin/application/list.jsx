@@ -597,6 +597,13 @@ const List = () => {
       dispatch({
         type: COMMUTE_RESET,
       });
+
+      // 학생수업참여 기능 리셋
+      setIsPay("네");
+
+      // 결제여부 네 기능시 가져오는 강의목록
+      setYesData(null);
+      numberInput.setValue(``);
     },
   };
 
@@ -956,10 +963,18 @@ const List = () => {
   // 학생 결제 목록 TABLE
   const columnsPayList = [
     {
+      title: "수업 번호",
+      render: (data) => <div>{data.number}</div>,
+    },
+
+    {
+      title: "이름",
+      render: (data) => <div>{data.teacherName}</div>,
+    },
+    {
       title: "결제한 강의",
       dataIndex: "course",
     },
-
     {
       title: "결제한 가격",
 
@@ -967,7 +982,6 @@ const List = () => {
         return <div>{`$${data.price}`}</div>;
       },
     },
-
     {
       title: "결제일",
       render: (data) => {
@@ -1497,10 +1511,8 @@ const List = () => {
           al="flex-start"
         >
           <GuideDiv isImpo={true}>
-            진행여부, 줌 미팅일 날짜로 신청서를 검색할 수 있습니다.
-          </GuideDiv>
-          <GuideDiv isImpo={true}>
-            회원을 등록하면 화면이 새로고침 됩니다.
+            리스트의 오른쪽 동그라미를 선택했을 시 오른쪽 박스에 학생 상세정보를
+            확인 할 수 있습니다.
           </GuideDiv>
           <GuideDiv isImpo={true}>
             회원 등록하지 않은 리스트는 등록하실때 수업을 꼭 기입해주셔야 등록이
@@ -1508,6 +1520,12 @@ const List = () => {
           </GuideDiv>
           <GuideDiv isImpo={true}>
             회원 등록 진행 후 회원의 정보를 추가, 수정할 수 있습니다.
+          </GuideDiv>
+          <GuideDiv isImpo={true}>
+            진행여부, 줌 미팅일 날짜로 신청서를 검색할 수 있습니다.
+          </GuideDiv>
+          <GuideDiv isImpo={true}>
+            회원을 등록하면 화면이 새로고침 됩니다.
           </GuideDiv>
         </Wrapper>
         {/* ADMIN GUIDE AREA END*/}
@@ -1550,10 +1568,13 @@ const List = () => {
                 borderBottom={`1px solid ${Theme.lightGrey3_C}`}
                 dr={`row`}
                 padding={`0 10px`}
-                ju={`flex-start`}
+                ju={`space-between`}
                 bgColor={Theme.lightGrey2_C}
               >
-                학생 상세정보
+                <Text>학생 상세정보</Text>
+                <Button type="primary" size="small" htmlType="submit">
+                  {isJoin ? "수정하기" : "등록하기"}
+                </Button>
               </Wrapper>
 
               <Wrapper
@@ -1994,11 +2015,22 @@ const List = () => {
                       dr={`row`}
                       borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
                     >
-                      <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                        height={`100px`}
+                      >
                         프로필 이미지
                       </Wrapper>
-                      <Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
                         <Image
+                          width={`100px`}
+                          height={`100px`}
                           radius={`50%`}
                           src={
                             applicationDetail
@@ -2765,12 +2797,6 @@ const List = () => {
                   </>
                 )}
               </Wrapper>
-            </Wrapper>
-
-            <Wrapper al={`flex-end`} margin={`10px 0 0`}>
-              <Button type="primary" size="small" htmlType="submit">
-                {isJoin ? "수정하기" : "등록하기"}
-              </Button>
             </Wrapper>
           </Form>
         </Wrapper>
