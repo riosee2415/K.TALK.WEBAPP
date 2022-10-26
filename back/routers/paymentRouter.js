@@ -42,7 +42,7 @@ router.post("/user/list", isLoggedIn, async (req, res, next) => {
         ON  C.UserId = D.id
      WHERE  1 = 1
        AND  A.UserId = ${req.user.id}
-     ORDER  BY A.createdAt DESC
+     ORDER  BY num DESC
     `;
 
     const list = await models.sequelize.query(selectQuery);
