@@ -1280,7 +1280,7 @@ const List = () => {
 
   const columnsPayList = [
     {
-      title: "번호",
+      title: "No",
       dataIndex: "id",
     },
 
