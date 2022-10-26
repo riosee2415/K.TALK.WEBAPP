@@ -288,14 +288,15 @@ const reducer = (state = initialState, action) =>
 
       case PARTICIPANT_USER_DELETE_LIST_REQUEST: {
         draft.st_participantUserDeleteListLoading = true;
-        draft.st_participantUserDeleteListDone = null;
-        draft.st_participantUserDeleteListError = false;
+        draft.st_participantUserDeleteListDone = false;
+        draft.st_participantUserDeleteListError = null;
         break;
       }
       case PARTICIPANT_USER_DELETE_LIST_SUCCESS: {
-        draft.st_participantUserDeleteListDone = true;
         draft.st_participantUserDeleteListLoading = false;
-        draft.partUserDeleteList = action.data.list;
+        draft.st_participantUserDeleteListDone = true;
+        draft.st_participantUserDeleteListError = null;
+        draft.partUserDeleteList = action.data;
         break;
       }
       case PARTICIPANT_USER_DELETE_LIST_FAILURE: {
@@ -314,9 +315,10 @@ const reducer = (state = initialState, action) =>
         break;
       }
       case PARTICIPANT_USER_MOVE_LIST_SUCCESS: {
-        draft.st_participantUserMoveListDone = true;
         draft.st_participantUserMoveListLoading = false;
-        draft.partUserMoveList = action.data.list;
+        draft.st_participantUserMoveListDone = true;
+        draft.st_participantUserMoveListError = null;
+        draft.partUserMoveList = action.data;
         break;
       }
       case PARTICIPANT_USER_MOVE_LIST_FAILURE: {
