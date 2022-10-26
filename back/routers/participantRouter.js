@@ -573,15 +573,6 @@ router.post("/student/notice/list", isLoggedIn, async (req, res, next) => {
 router.patch("/update", isAdminCheck, async (req, res, next) => {
   const { partId, createdAt, endDate, isPay, lectureId } = req.body;
 
-  console.log("🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩");
-
-  console.log(partId);
-  console.log(createdAt);
-  console.log(endDate);
-  console.log(isPay);
-  console.log(lectureId);
-
-  console.log("🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩");
   try {
     const exPart = await Participant.findOne({
       where: { id: parseInt(partId) },
