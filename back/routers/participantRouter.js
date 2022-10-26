@@ -139,9 +139,9 @@ router.post("/last/list", async (req, res, next) => {
 
     // 요일 갯 수 구하기
     datum.map((data) => {
-      if (data.compareDate < 1) return null;
-
       const tempDay = [];
+
+      if (data.compareDate < 1) tempDay.push(0);
 
       let today = parseInt(data.todayDay);
       for (let i = 0; i < data.compareDate; i++) {
@@ -159,9 +159,8 @@ router.post("/last/list", async (req, res, next) => {
 
     // 남은 요일 갯수 구하기
     datum.map((data) => {
-      if (data.compareDate < 1) return null;
-
       let cnt = 0;
+      if (data.compareDate < 1) cnt = 0;
 
       data.afterDay.map((v) => {
         data.dayList.map((v2) => {
@@ -352,6 +351,14 @@ router.post("/lecture/list", isLoggedIn, async (req, res, next) => {
 router.post("/admin/list", isAdminCheck, async (req, res, next) => {
   const { UserId, LectureId, isDelete, isChange } = req.body;
 
+  const MON = 1;
+  const TUE = 2;
+  const WHS = 3;
+  const THS = 4;
+  const FRI = 5;
+  const SAT = 6;
+  const SUN = 7;
+
   const _UserId = UserId || ``;
   const _LectureId = LectureId || ``;
 
@@ -366,6 +373,10 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
               A.LectureId,
               A.date,
               A.endDate,
+              CASE
+                WHEN	DATE_FORMAT(NOW(), "%Y%m%d") < DATE_FORMAT(A.endDate, "%Y%m%d") THEN DATEDIFF(DATE_FORMAT(A.endDate, "%Y%m%d"), DATE_FORMAT(NOW(), "%Y%m%d")) 
+                ELSE    0
+              END as compareDate,
               DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
               B.userId,
               B.email,
@@ -388,7 +399,16 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
               C.startLv,
               C.startDate             AS LectureStartDate,
               C.day,
-              C.count
+              C.count,
+              CASE DAYOFWEEK(NOW()) 
+                WHEN '1' THEN '7'
+                WHEN '2' THEN '1'
+                WHEN '3' THEN '2'
+                WHEN '4' THEN '3'
+                WHEN '5' THEN '4'
+                WHEN '6' THEN '5'
+                WHEN '7' THEN '6'
+              END                     AS todayDay
         FROM	participants				A
        INNER
         JOIN	users						    B
@@ -406,6 +426,93 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
 
     const partList = await models.sequelize.query(selectQuery);
 
+    const datum = partList[0];
+
+    datum.map((data) => {
+      const tempDays = [];
+      const arr = String(data.day).split(" ");
+
+      arr.map((v) => {
+        switch (v) {
+          case "월":
+            tempDays.push(MON);
+            break;
+          case "화":
+            tempDays.push(TUE);
+            break;
+          case "수":
+            tempDays.push(WHS);
+            break;
+          case "목":
+            tempDays.push(THS);
+            break;
+          case "금":
+            tempDays.push(FRI);
+            break;
+          case "토":
+            tempDays.push(SAT);
+            break;
+          case "일":
+            tempDays.push(SUN);
+            break;
+
+          default:
+            break;
+        }
+      });
+
+      data["afterDay"] = tempDays;
+    });
+
+    // 잔여 주 차 구하기
+    datum.map((data) => {
+      const compareDate = data.compareDate;
+
+      const value =
+        compareDate % 7 > 0
+          ? parseInt(compareDate / 7) + 1
+          : parseInt(compareDate / 7);
+
+      data["ingyerWeek"] = value;
+    });
+
+    // 요일 갯 수 구하기
+    datum.map((data) => {
+      const tempDay = [];
+
+      if (data.compareDate < 1) tempDay.push(0);
+
+      let today = parseInt(data.todayDay);
+      for (let i = 0; i < data.compareDate; i++) {
+        if (today === 7) {
+          today = 1;
+        } else {
+          today += 1;
+        }
+
+        tempDay.push(today);
+      }
+
+      data["dayList"] = tempDay;
+    });
+
+    // 남은 요일 갯수 구하기
+    datum.map((data) => {
+      let cnt = 0;
+
+      if (data.compareDate < 1) cnt = 0;
+
+      data.afterDay.map((v) => {
+        data.dayList.map((v2) => {
+          if (v === v2) {
+            cnt += 1;
+          }
+        });
+      });
+
+      data["ingyerCnt"] = cnt;
+    });
+
     let userIds = [];
 
     for (let i = 0; i < partList[0].length; i++) {
@@ -417,41 +524,45 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
     let commutes = [];
 
     if (userIds.length !== 0) {
-      const priceQuery = `
-      SELECT  A.id,
-              A.price,
-              A.UserId,
-              B.LectureId
-        FROM  payments    A
-       INNER
-        JOIN  payClass    B
-          ON  A.PayClassId = B.id
-       WHERE  1 = 1
-         AND  A.UserId IN (${parseInt(userIds)})
-         AND  A.lectureId = ${LectureId}
-    `;
-
-      price = await models.sequelize.query(priceQuery);
-
-      const commuteQuery = `
-      SELECT	id,
-              time,
-              status,
-              createdAt,
-              LectureId,
-              UserId 
-        FROM	commutes
-       WHERE  1 = 1
-         AND  UserId IN (${parseInt(userIds)})
-         AND  LectureId = ${LectureId}
+      if (_LectureId !== ``) {
+        const priceQuery = `
+        SELECT  A.id,
+                A.price,
+                A.UserId,
+                B.LectureId
+          FROM  payments    A
+         INNER
+          JOIN  payClass    B
+            ON  A.PayClassId = B.id
+         WHERE  1 = 1
+           AND  A.UserId IN (${parseInt(userIds)})
+           AND  A.lectureId = ${LectureId}
       `;
 
-      commutes = await models.sequelize.query(commuteQuery);
+        price = await models.sequelize.query(priceQuery);
+
+        const commuteQuery = `
+        SELECT	id,
+                time,
+                status,
+                createdAt,
+                LectureId,
+                UserId 
+          FROM	commutes
+         WHERE  1 = 1
+           AND  UserId IN (${parseInt(userIds)})
+           AND  LectureId = ${LectureId}
+        `;
+
+        commutes = await models.sequelize.query(commuteQuery);
+      }
     }
 
-    return res
-      .status(200)
-      .json({ partList: partList[0], price: price[0], commutes: commutes[0] });
+    return res.status(200).json({
+      partList: partList[0],
+      price: price.length === 0 ? [] : price[0],
+      commutes: commutes.length === 0 ? [] : commutes[0],
+    });
   } catch (error) {
     console.error(error);
     return res.status(401).send("강의 참여 리스트를 불러올 수 없습니다.");
@@ -843,9 +954,9 @@ router.post("/user/delete/list", isAdminCheck, async (req, res, next) => {
 
     // 요일 갯 수 구하기
     datum.map((data) => {
-      if (data.compareDate < 1) return null;
-
       const tempDay = [];
+
+      if (data.compareDate < 1) tempDay.push(0);
 
       let today = parseInt(data.todayDay);
       for (let i = 0; i < data.compareDate; i++) {
@@ -863,9 +974,9 @@ router.post("/user/delete/list", isAdminCheck, async (req, res, next) => {
 
     // 남은 요일 갯수 구하기
     datum.map((data) => {
-      if (data.compareDate < 1) return null;
-
       let cnt = 0;
+
+      if (data.compareDate < 1) cnt = 0;
 
       data.afterDay.map((v) => {
         data.dayList.map((v2) => {
