@@ -133,7 +133,8 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
 });
 
 router.post("/create", async (req, res, next) => {
-  const { type, price, email, PayClassId, name, bankNo, lectureId } = req.body;
+  const { type, price, email, PayClassId, name, bankNo, lectureId, userId } =
+    req.body;
 
   try {
     const exPayClass = await PayClass.findOne({
@@ -173,6 +174,25 @@ router.post("/create", async (req, res, next) => {
         name,
         isComplete: true,
         UserId: req.user ? req.user.id : null,
+        lectureId,
+      });
+
+      if (!createResult) {
+        return res.status(401).send("처리중 문제가 발생하였습니다.");
+      }
+
+      return res.status(201).json({ result: true });
+    }
+
+    if (type === "-") {
+      const createResult = await Payment.create({
+        PayClassId: null,
+        email,
+        price: 0,
+        type: "-",
+        name,
+        isComplete: true,
+        UserId: userId,
         lectureId,
       });
 
