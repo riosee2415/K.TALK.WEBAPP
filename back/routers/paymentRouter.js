@@ -36,6 +36,7 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
             A.email,
             A.type,
             A.name,
+            A.lectureId,
             A.isComplete,
             DATE_FORMAT(A.completedAt, "%Y-%m-%d")      AS completedAt,
             A.createdAt,
@@ -53,7 +54,7 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
         ON  A.PayClassId = B.id
      INNER 
       JOIN  lectures 		C
-        ON  B.LectureId = C.id
+        ON  A.lectureId = C.id
      WHERE  1 = 1
        ${_email ? `AND A.email LIKE '%${_email}%'` : ``}
        ${_type !== `` ? `AND A.type ='${_type}'` : ``}
@@ -100,7 +101,7 @@ router.post("/create", async (req, res, next) => {
         bankNo,
         isComplete: false,
         UserId: req.user ? req.user.id : null,
-        // lectureId,
+        lectureId,
       });
 
       if (!createResult) {
@@ -119,7 +120,7 @@ router.post("/create", async (req, res, next) => {
         name,
         isComplete: true,
         UserId: req.user ? req.user.id : null,
-        // lectureId,
+        lectureId,
       });
 
       if (!createResult) {
