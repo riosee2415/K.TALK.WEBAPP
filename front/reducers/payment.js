@@ -2,10 +2,15 @@ import produce from "../util/produce";
 
 export const initialState = {
   paymentList: [],
+  stuPaymentList: [],
   //
   st_paymentListLoading: false,
   st_paymentListDone: false,
   st_paymentListError: null,
+  //
+  st_stuPaymentListLoading: false,
+  st_stuPaymentListDone: false,
+  st_stuPaymentListError: null,
 
   st_paymentCreateLoading: false,
   st_paymentCreateDone: false,
@@ -23,6 +28,10 @@ export const initialState = {
 export const PAYMENT_LIST_REQUEST = "PAYMENT_LIST_REQUEST";
 export const PAYMENT_LIST_SUCCESS = "PAYMENT_LIST_SUCCESS";
 export const PAYMENT_LIST_FAILURE = "PAYMENT_LIST_FAILURE";
+
+export const STU_PAYMENT_LIST_REQUEST = "STU_PAYMENT_LIST_REQUEST";
+export const STU_PAYMENT_LIST_SUCCESS = "STU_PAYMENT_LIST_SUCCESS";
+export const STU_PAYMENT_LIST_FAILURE = "STU_PAYMENT_LIST_FAILURE";
 
 export const PAYMENT_CREATE_REQUEST = "PAYMENT_CREATE_REQUEST";
 export const PAYMENT_CREATE_SUCCESS = "PAYMENT_CREATE_SUCCESS";
@@ -56,6 +65,27 @@ const reducer = (state = initialState, action) =>
         draft.st_paymentListLoading = false;
         draft.st_paymentListDone = false;
         draft.st_paymentListError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+      case STU_PAYMENT_LIST_REQUEST: {
+        draft.st_stuPaymentListLoading = true;
+        draft.st_stuPaymentListDone = false;
+        draft.st_stuPaymentListError = null;
+        break;
+      }
+      case STU_PAYMENT_LIST_SUCCESS: {
+        draft.st_stuPaymentListLoading = false;
+        draft.st_stuPaymentListDone = true;
+        draft.st_stuPaymentListError = null;
+        draft.stuPaymentList = action.data.list;
+        break;
+      }
+      case STU_PAYMENT_LIST_FAILURE: {
+        draft.st_stuPaymentListLoading = false;
+        draft.st_stuPaymentListDone = false;
+        draft.st_stuPaymentListError = action.error;
         break;
       }
 

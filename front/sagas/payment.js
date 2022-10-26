@@ -5,6 +5,10 @@ import {
   PAYMENT_LIST_SUCCESS,
   PAYMENT_LIST_FAILURE,
   //////////////////////////
+  STU_PAYMENT_LIST_REQUEST,
+  STU_PAYMENT_LIST_SUCCESS,
+  STU_PAYMENT_LIST_FAILURE,
+  //////////////////////////
   PAYMENT_CREATE_REQUEST,
   PAYMENT_CREATE_SUCCESS,
   PAYMENT_CREATE_FAILURE,
@@ -36,6 +40,34 @@ function* paymentList(action) {
     console.error(err);
     yield put({
       type: PAYMENT_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function stuPaymentListAPI(data) {
+  return axios.post(`/api/payment/user/list`, data);
+}
+
+function* stuPaymentList(action) {
+  try {
+    const result = yield call(stuPaymentListAPI, action.data);
+
+    yield put({
+      type: STU_PAYMENT_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: STU_PAYMENT_LIST_FAILURE,
       error: err.response.data,
     });
   }
@@ -131,6 +163,10 @@ function* watchPaymentList() {
   yield takeLatest(PAYMENT_LIST_REQUEST, paymentList);
 }
 
+function* watchStuPaymentList() {
+  yield takeLatest(STU_PAYMENT_LIST_REQUEST, stuPaymentList);
+}
+
 function* watchPaymentCreate() {
   yield takeLatest(PAYMENT_CREATE_REQUEST, paymentCreate);
 }
@@ -147,6 +183,7 @@ function* watchPriceUpdate() {
 export default function* paymentSaga() {
   yield all([
     fork(watchPaymentList),
+    fork(watchStuPaymentList),
     fork(watchPaymentCreate),
     fork(watchPaymentPermit),
     fork(watchPriceUpdate),

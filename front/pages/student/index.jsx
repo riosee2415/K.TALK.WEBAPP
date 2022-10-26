@@ -63,7 +63,7 @@ import { BOOK_LIST_REQUEST } from "../../reducers/book";
 import { PAY_CLASS_LEC_DETAIL_REQUEST } from "../../reducers/payClass";
 import StudentNormalNotice from "../../components/normalNotice/StudentNormalNotice";
 import { LECTURE_NOTICE_LIST_REQUEST } from "../../reducers/lectureNotice";
-import { PAYMENT_LIST_REQUEST } from "../../reducers/payment";
+import { STU_PAYMENT_LIST_REQUEST } from "../../reducers/payment";
 
 const PROFILE_WIDTH = `150`;
 const PROFILE_HEIGHT = `150`;
@@ -284,9 +284,7 @@ const CustomTableHoverWrapper = styled(Wrapper)`
 const Student = () => {
   ////// GLOBAL STATE //////
 
-  const { paymentList, st_paymentListDone, st_paymentListError } = useSelector(
-    (state) => state.payment
-  );
+  const { stuPaymentList } = useSelector((state) => state.payment);
 
   const {
     me,
@@ -421,12 +419,6 @@ const Student = () => {
     // },
   ];
   ////// USEEFFECT //////
-
-  useEffect(() => {
-    dispatch({
-      type: PAYMENT_LIST_REQUEST,
-    });
-  }, []);
 
   useEffect(() => {
     dispatch({
@@ -896,7 +888,7 @@ const Student = () => {
             : data === "화"
             ? "Tue"
             : data === "수"
-            ? data === "Wed"
+            ? "Wed"
             : data === "목"
             ? "Thu"
             : data === "금"
@@ -1030,7 +1022,6 @@ const Student = () => {
                           ju={`flex-start`}
                           margin={`0 0 10px`}
                         >
-                          {" "}
                           <Text
                             fontSize={width < 900 ? `16px` : `18px`}
                             fontWeight={`bold`}
@@ -1640,19 +1631,22 @@ const Student = () => {
                 <Wrapper width={`20%`}>Lecture Price</Wrapper>
                 <Wrapper width={`20%`}>Lecture Date</Wrapper>
               </Wrapper>
-              {paymentList && paymentList.length === 0 ? (
+              {stuPaymentList && stuPaymentList.length === 0 ? (
                 <Wrapper height={`300px`}>
                   <Empty />
                 </Wrapper>
               ) : (
-                paymentList.map(() => {
-                  <CustomTableHoverWrapper>
-                    <Wrapper width={`10%`}>No</Wrapper>
-                    <Wrapper width={`20%`}>Teacher Name</Wrapper>
-                    <Wrapper width={`30%`}>Lecture Name</Wrapper>
-                    <Wrapper width={`20%`}>Lecture Price</Wrapper>
-                    <Wrapper width={`20%`}>Lecture Date</Wrapper>
-                  </CustomTableHoverWrapper>;
+                stuPaymentList &&
+                stuPaymentList.map((data) => {
+                  return (
+                    <CustomTableHoverWrapper key={data.id}>
+                      <Wrapper width={`10%`}>{data.num}</Wrapper>
+                      <Wrapper width={`20%`}>{data.teacherName}</Wrapper>
+                      <Wrapper width={`30%`}>{data.course}</Wrapper>
+                      <Wrapper width={`20%`}>${data.price}</Wrapper>
+                      <Wrapper width={`20%`}>{data.viewCreatedAt}</Wrapper>
+                    </CustomTableHoverWrapper>
+                  );
                 })
               )}
             </Wrapper>
@@ -2064,6 +2058,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LECTURE_STU_LECTURE_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: STU_PAYMENT_LIST_REQUEST,
     });
 
     context.store.dispatch({
