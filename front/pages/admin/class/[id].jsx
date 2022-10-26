@@ -172,6 +172,8 @@ const DetailClass = () => {
     st_participantUpdateError,
   } = useSelector((state) => state.participant);
 
+  console.log(partUserLimitList);
+
   const { bookList, bookMaxLength } = useSelector((state) => state.book);
   const { noticeLectureList } = useSelector((state) => state.notice);
   const { messageLectureList, messageLectureLastPage } = useSelector(

@@ -222,10 +222,6 @@ const Application = () => {
     [agreeCheck]
   );
 
-  const calenderToggle = useCallback(() => {
-    setIsCalendar(!isCalendar);
-  }, [isCalendar]);
-
   ////// HANDLER //////
 
   const submissionHandler = useCallback(
