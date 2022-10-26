@@ -157,7 +157,9 @@ router.post("/detail", isAdminCheck, async (req, res, next) => {
                 B.stuPayCount,
                 B.sns,
                 B.snsId,
-                B.gender
+                B.gender,
+                B.address,
+                B.detailAddress
       FROM	    applications    A
       LEFT
      OUTER

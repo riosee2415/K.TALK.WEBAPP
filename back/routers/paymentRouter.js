@@ -79,7 +79,7 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
 });
 
 router.post("/create", async (req, res, next) => {
-  const { type, price, email, PayClassId, name, bankNo } = req.body;
+  const { type, price, email, PayClassId, name, bankNo, lectureId } = req.body;
 
   try {
     const exPayClass = await PayClass.findOne({
@@ -100,6 +100,7 @@ router.post("/create", async (req, res, next) => {
         bankNo,
         isComplete: false,
         UserId: req.user ? req.user.id : null,
+        // lectureId,
       });
 
       if (!createResult) {
@@ -118,6 +119,7 @@ router.post("/create", async (req, res, next) => {
         name,
         isComplete: true,
         UserId: req.user ? req.user.id : null,
+        // lectureId,
       });
 
       if (!createResult) {
