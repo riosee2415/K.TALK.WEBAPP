@@ -571,7 +571,7 @@ router.post("/student/notice/list", isLoggedIn, async (req, res, next) => {
 });
 
 router.patch("/update", isAdminCheck, async (req, res, next) => {
-  const { partId, createdAt, endDate, isPay } = req.body;
+  const { partId, createdAt, endDate, isPay, lectureId } = req.body;
   try {
     const exPart = await Participant.findOne({
       where: { id: parseInt(partId) },
@@ -580,6 +580,16 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
     if (!exPart) {
       return res.status(401).send("존재하지 않는 참여 내역입니다.");
     }
+
+    // const findUser = `
+    // SELECT  id,
+    //         email,
+    //         username
+    //   FROM  users
+    //  WHERE  id = ${exPart.UserId}
+    // `;
+
+    // const findUserData = await models.sequelize.query(findUser);
 
     const updateResult = await Participant.update(
       {
@@ -593,10 +603,33 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
 
     // if (isPay === 1) {
     //   const insertQuery = `
-    //   SELECT
-    //     FROM  users
-    //    WHERE
+    //   INSERT  INTO  payments
+    //   (
+    //     price,
+    //     email,
+    //     type,
+    //     name,
+    //     bankNo,
+    //     isComplete,
+    //     completedAt,
+    //     UserId,
+    //     lectureId
+    //   )
+    //   VALUES
+    //   (
+    //     1,
+    //     "${findUserData[0][0].email}",
+    //     "-",
+    //     "${findUserData[0][0].username}",
+    //     null,
+    //     1,
+    //     NOW(),
+    //     ${findUserData[0][0].id},
+    //     ${lectureId}
+    //   )
     //   `;
+
+    //   await models.sequelize.query(insertQuery);
     // }
 
     if (updateResult[0] > 0) {
