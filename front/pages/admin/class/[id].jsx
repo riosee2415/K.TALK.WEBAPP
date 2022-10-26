@@ -841,10 +841,15 @@ const DetailClass = () => {
     onStuFill(data);
   }, []);
 
-  const changeModalOpen = useCallback((data) => {
-    setStuChangeModal(true);
-    setStuChangeDetail(data);
-  }, []);
+  const changeModalOpen = useCallback(
+    (data) => {
+      console.log(data);
+      setStuChangeModal(true);
+      setStuChangeDetail(data);
+      setStuChangeDate(moment(data.endDate, "YYYY-MM-DD"));
+    },
+    [stuChangeModal, stuChangeDetail, stuChangeDate]
+  );
 
   const priceChangeModalToggle = useCallback((data) => {
     setPriceChangeModal((prev) => !prev);
@@ -861,7 +866,7 @@ const DetailClass = () => {
     setStuChangeModal(false);
     setStuChangeDetail(null);
     setStuChangeDate("");
-  }, []);
+  }, [stuChangeModal, stuChangeDetail, stuChangeDate]);
 
   const memoCreateToggle = useCallback(
     (data, create) => {
@@ -2873,6 +2878,7 @@ const DetailClass = () => {
           &nbsp; &nbsp; &nbsp;
           <Text>
             만기일:&nbsp;
+            {console.log(stuChangeDetail && stuChangeDetail.endDate)}
             {stuChangeDetail && (
               <DatePicker
                 value={
