@@ -51,7 +51,10 @@ import {
   PARTICIPANT_USER_LIMIT_LIST_REQUEST,
   PARTICIPANT_USER_MOVE_LIST_REQUEST,
 } from "../../../reducers/participant";
-import { COMMUTE_ADMIN_LIST_REQUEST } from "../../../reducers/commute";
+import {
+  COMMUTE_ADMIN_LIST_REQUEST,
+  COMMUTE_RESET,
+} from "../../../reducers/commute";
 import useInput from "../../../hooks/useInput";
 
 const FormItem = styled(Form.Item)`
@@ -306,15 +309,12 @@ const List = () => {
       setNoData(null);
       numberInput.setValue(``);
       setIsPay("네");
-
-      const qs = router.query;
+      setIsJoin(true);
 
       dispatch({
-        type: APP_LIST_REQUEST,
+        type: APP_DETAIL_REQUEST,
         data: {
-          isComplete: qs.type ? qs.type : null,
-          isTime: false,
-          time: "",
+          email: userData && userData.gmailAddress,
         },
       });
 
@@ -389,51 +389,83 @@ const List = () => {
       // 학생 정보 세팅
       if (applicationDetail[0]) {
         userForm.setFieldsValue({
+          // 가능한 수업시간
           classHour: applicationDetail[0].classHour,
+          // 시차
           timeDiff: applicationDetail[0].timeDiff,
+          // 원하는 시작 날짜
           wantStartDate: applicationDetail[0].wantStartDate
             ? moment(applicationDetail[0].wantStartDate)
             : "",
+          // 담당강사
           teacher: applicationDetail[0].teacher,
+          // 줌 미팅 시간
           meetDate:
-            userData && userData.meetDate
-              ? moment(userData && userData.meetDate)
+            applicationDetail[0] && applicationDetail[0].meetDate
+              ? moment(applicationDetail[0] && applicationDetail[0].meetDate)
               : "",
+          // 레벨
           level: applicationDetail[0].level,
+          // 메모
           purpose: applicationDetail[0].purpose,
+          // 무료수업 담당 강사
           freeTeacher: applicationDetail[0].freeTeacher,
+          // 이름
           username: isJoin
             ? applicationDetail[0].username
             : `${userData && userData.firstName} ${
                 userData && userData.lastName
               }`,
+          // 이메일
           email: isJoin
             ? applicationDetail[0].email
             : userData && userData.gmailAddress,
+          // 아이디
           userId: isJoin
             ? applicationDetail[0].userId
             : userData && userData.gmailAdress,
+          // sns
           sns: applicationDetail[0].sns,
+          // snsId
           snsId: applicationDetail[0].snsId,
-          birth: isJoin
-            ? applicationDetail[0].dateOfBirth
+          // 생년월일
+          birth: applicationDetail[0].birth
+            ? applicationDetail[0].birth.slice(0, 10)
             : userData && userData.dateOfBirth,
+          // 전화번호
           mobile: isJoin
             ? applicationDetail[0].mobile
             : `${userData && userData.phoneNumber} ${
                 userData && userData.phoneNumber2
               }`,
+          // 비밀번호
           password: isJoin
             ? applicationDetail[0].mobile
               ? applicationDetail[0].mobile.slice(-4)
               : ""
             : userData && userData.phoneNumber2.slice(-4),
-          stuLiveCon: applicationDetail[0].countryOfResidence,
-          stuCountry: applicationDetail[0].nationality,
-          stuLanguage: applicationDetail[0].languageYouUse,
+          // 거주국가
+          stuLiveCon:
+            applicationDetail[0] && applicationDetail[0].stuLiveCon
+              ? applicationDetail[0].stuLiveCon
+              : applicationDetail[0].countryOfResidence,
+          // 국가
+          stuCountry:
+            applicationDetail[0] && applicationDetail[0].stuCountry
+              ? applicationDetail[0].stuCountry
+              : applicationDetail[0].nationality,
+          // 사용언어
+          stuLanguage:
+            applicationDetail[0] && applicationDetail[0].stuLanguage
+              ? applicationDetail[0].stuLanguage
+              : applicationDetail[0].languageYouUse,
+          // 회차
           stuPayCount: applicationDetail[0].stuPayCount,
+          // 직업
           job: applicationDetail[0].job,
+          // 등록상태
           status: applicationDetail[0].status,
+          // 성별
           gender: applicationDetail[0].gender,
         });
       }
@@ -540,6 +572,47 @@ const List = () => {
   );
 
   ////// HANDLER //////
+
+  // 왼쪽 테이블 선택
+  const row = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      // 학생 회원가입 여부 기능
+      setIsJoin(selectedRows[0].isComplete === 0 ? false : true);
+
+      // 학생 정보담기
+      setUserData(selectedRows[0]);
+
+      // 학생 정보 불러오기
+      dispatch({
+        type: APP_DETAIL_REQUEST,
+        data: {
+          email: selectedRows[0].gmailAddress,
+        },
+      });
+
+      // 학생 수업 참여 정보 세팅
+      stuForm.setFieldsValue({
+        name: `${selectedRows[0].firstName} ${selectedRows[0].lastName}`,
+      });
+
+      // 학생 수업 참여 강의 전체 목록 가져오기
+      dispatch({
+        type: LECTURE_ALL_LIST_REQUEST,
+        data: {
+          TeacherId: "",
+          studentName: "",
+          time: "",
+          startLv: "",
+        },
+      });
+
+      // 학생 출석목록 select 초기화
+      setStuSelect(null);
+      dispatch({
+        type: COMMUTE_RESET,
+      });
+    },
+  };
 
   // 결제여부 어떤걸 선택하든 강의 목록 기능
   const noLectureHandler = useCallback((data) => {
@@ -672,105 +745,107 @@ const List = () => {
   // 학생 상세정보 업데이트
   const updateStuFinish = useCallback(
     (data) => {
-      if (data.email === applicationDetail[0].gmailAddress) {
-        dispatch({
-          type: USER_ADMIN_UPDATE_REQUEST,
-          data: {
-            id: applicationDetail[0].userPkId,
-            username: data.username,
-            birth: data.birth,
-            mobile: data.mobile,
-            password: data.password,
-            stuCountry: data.stuCountry,
-            stuLiveCon: data.stuLiveCon,
-            stuLanguage: data.stuLanguage,
-            sns: data.sns,
-            snsId: data.snsId,
-            stuPayCount: data.stuPayCount,
-            classHour: data.classHour,
-            timeDiff: data.timeDiff,
-            wantStartDate: data.wantStartDate
-              ? data.wantStartDate.format("YYYY-MM-DD")
-              : "",
-            teacher: data.teacher,
-            freeTeacher: data.freeTeacher,
-            meetDate: data.meetDate
-              ? data.meetDate.format("YYYY-MM-DD hh:mm")
-              : "",
-            level: data.level,
-            purpose: data.purpose,
-          },
-        });
-      } else {
-        dispatch({
-          type: USER_ADMIN_UPDATE_REQUEST,
-          data: {
-            id: applicationDetail[0].userPkId,
-            username: data.username,
-            userId: data.email,
-            email: data.email,
-            birth: data.birth,
-            mobile: data.mobile,
-            password: data.password,
-            stuCountry: data.stuCountry,
-            stuLiveCon: data.stuLiveCon,
-            stuLanguage: data.stuLanguage,
-            sns: data.sns,
-            snsId: data.snsId,
-            stuPayCount: data.stuPayCount,
-            classHour: data.classHour,
-            timeDiff: data.timeDiff,
-            wantStartDate: data.wantStartDate
-              ? data.wantStartDate.format("YYYY-MM-DD")
-              : "",
-            teacher: data.teacher,
-            freeTeacher: data.freeTeacher,
-            meetDate: data.meetDate
-              ? data.meetDate.format("YYYY-MM-DD hh:mm")
-              : "",
-            level: data.level,
-            purpose: data.purpose,
-          },
-        });
-      }
+      dispatch({
+        type: USER_ADMIN_UPDATE_REQUEST,
+        data: {
+          id: applicationDetail[0].userPkId,
+          username: data.username,
+          birth: data.birth,
+          userId: data.email,
+          email: data.email,
+          mobile: data.mobile,
+          password: data.password,
+          stuCountry: data.stuCountry,
+          stuLiveCon: data.stuLiveCon,
+          stuLanguage: data.stuLanguage,
+          sns: data.sns,
+          snsId: data.snsId,
+          stuPayCount: data.stuPayCount,
+          classHour: data.classHour,
+          timeDiff: data.timeDiff,
+          wantStartDate: data.wantStartDate
+            ? data.wantStartDate.format("YYYY-MM-DD")
+            : "",
+          teacher: data.teacher,
+          freeTeacher: data.freeTeacher,
+          meetDate: data.meetDate
+            ? data.meetDate.format("YYYY-MM-DD hh:mm")
+            : "",
+          level: data.level,
+          purpose: data.purpose,
+          gender: data.gender,
+          stuJob: data.job,
+          // adminMemo : "",
+        },
+      });
+
+      // if (data.email === applicationDetail[0].email) {
+      //   dispatch({
+      //     type: USER_ADMIN_UPDATE_REQUEST,
+      //     data: {
+      //       id: applicationDetail[0].userPkId,
+      //       username: data.username,
+      //       birth: data.birth,
+      //       mobile: data.mobile,
+      //       password: data.password,
+      //       stuCountry: data.stuCountry,
+      //       stuLiveCon: data.stuLiveCon,
+      //       stuLanguage: data.stuLanguage,
+      //       sns: data.sns,
+      //       snsId: data.snsId,
+      //       stuPayCount: data.stuPayCount,
+      //       classHour: data.classHour,
+      //       timeDiff: data.timeDiff,
+      //       wantStartDate: data.wantStartDate
+      //         ? data.wantStartDate.format("YYYY-MM-DD")
+      //         : "",
+      //       teacher: data.teacher,
+      //       freeTeacher: data.freeTeacher,
+      //       meetDate: data.meetDate
+      //         ? data.meetDate.format("YYYY-MM-DD hh:mm")
+      //         : "",
+      //       level: data.level,
+      //       purpose: data.purpose,
+      //       gender: data.gender,
+      //       stuJob: data.job,
+      //     },
+      //   });
+      // } else {
+      //   dispatch({
+      //     type: USER_ADMIN_UPDATE_REQUEST,
+      //     data: {
+      //       id: applicationDetail[0].userPkId,
+      //       username: data.username,
+      //       userId: data.email,
+      //       email: data.email,
+      //       birth: data.birth,
+      //       mobile: data.mobile,
+      //       password: data.password,
+      //       stuCountry: data.stuCountry,
+      //       stuLiveCon: data.stuLiveCon,
+      //       stuLanguage: data.stuLanguage,
+      //       sns: data.sns,
+      //       snsId: data.snsId,
+      //       stuPayCount: data.stuPayCount,
+      //       classHour: data.classHour,
+      //       timeDiff: data.timeDiff,
+      //       wantStartDate: data.wantStartDate
+      //         ? data.wantStartDate.format("YYYY-MM-DD")
+      //         : "",
+      //       teacher: data.teacher,
+      //       freeTeacher: data.freeTeacher,
+      //       meetDate: data.meetDate
+      //         ? data.meetDate.format("YYYY-MM-DD hh:mm")
+      //         : "",
+      //       level: data.level,
+      //       purpose: data.purpose,
+      //       gender: data.gender,
+      //       stuJob: data.job,
+      //     },
+      //   });
+      // }
     },
     [applicationDetail]
-  );
-
-  // 왼쪽 테이블 선택
-  const tableHandler = useCallback(
-    (data) => {
-      // 학생 회원가입 여부 기능
-      setIsJoin(data.isComplete === 0 ? false : true);
-
-      // 학생 정보담기
-      setUserData(data);
-
-      // 학생 정보 불러오기
-      dispatch({
-        type: APP_DETAIL_REQUEST,
-        data: {
-          email: data.gmailAddress,
-        },
-      });
-
-      // 학생 수업 참여 정보 세팅
-      stuForm.setFieldsValue({
-        name: `${data.firstName} ${data.lastName}`,
-      });
-
-      // 학생 수업 참여 강의 전체 목록 가져오기
-      dispatch({
-        type: LECTURE_ALL_LIST_REQUEST,
-        data: {
-          TeacherId: "",
-          studentName: "",
-          time: "",
-          startLv: "",
-        },
-      });
-    },
-    [userForm]
   );
 
   // 학생 생성하기
@@ -1448,13 +1523,20 @@ const List = () => {
             rowKey="id"
             columns={leftTable}
             dataSource={applicationList ? applicationList : []}
-            onRow={(data) => {
-              return {
-                onClick: () => {
-                  tableHandler(data);
-                },
-              };
+            // rowSelection={{
+            //   type: `radio`,
+            // }}
+            rowSelection={{
+              type: `radio`,
+              ...row,
             }}
+            // onRow={(data) => {
+            //   return {
+            //     onClick: () => {
+            //       tableHandler(data);
+            //     },
+            //   };
+            // }}
             // size="small"
           />
 
@@ -1486,1039 +1568,1156 @@ const List = () => {
                 ju={`flex-start`}
                 wrap={`nowrap`}
               >
-                {/* 학생 수업 참여 */}
-                <Wrapper dr={`row`} ju={`flex-start`}>
-                  <Text
-                    fontWeight={`700`}
-                    color={Theme.basicTheme_C}
-                    margin={`0 0 5px`}
-                  >
-                    학생 수업 참여
-                  </Text>
-
-                  <Wrapper
-                    margin={`0px 0px 10px 0px`}
-                    radius="5px"
-                    bgColor={Theme.lightGrey_C}
-                    padding="5px"
-                    fontSize="13px"
-                    al="flex-start"
-                  >
-                    <GuideDiv isImpo={true}>
-                      학생의 결제여부 및 강의목록, 강의기간을 선택하여 수업에
-                      참여시킬 수 있습니다.
-                    </GuideDiv>
-                    <GuideDiv isImpo={true}>
-                      결제여부 및 강의목록, 강의기간은 필수입니다.
-                    </GuideDiv>
+                {userData === null ? (
+                  <Wrapper fontWeight={`700`} fontSize={`20px`} height={`100%`}>
+                    학생을 선택해주세요.
                   </Wrapper>
-                </Wrapper>
-
-                <Wrapper al={`flex-start`} margin={`0 0 20px`}>
-                  <Text fontWeight={`700`} margin={`0 0 5px`}>
-                    학생 이름
-                  </Text>
-                  <TextInput
-                    readOnly={true}
-                    value={`${userData && userData.firstName} ${
-                      userData && userData.lastName
-                    }`}
-                    width={`100%`}
-                  />
-
-                  <Text fontWeight={`700`} margin={`5px 0`}>
-                    결제 여부
-                  </Text>
-                  <Select
-                    defaultValue="네"
-                    onChange={paySelectHandler}
-                    value={isPay}
-                    style={{ width: `100%` }}
-                  >
-                    <Select.Option value="네">네</Select.Option>
-                    <Select.Option value="아니오">아니오</Select.Option>
-                  </Select>
-
-                  {isPay === "네" ? (
-                    <>
-                      <Text fontWeight={`700`} margin={`5px 0`}>
-                        강의 목록
+                ) : (
+                  <>
+                    {/* 학생 수업 참여 */}
+                    <Wrapper dr={`row`} ju={`flex-start`}>
+                      <Text
+                        fontWeight={`700`}
+                        color={Theme.basicTheme_C}
+                        margin={`0 0 5px`}
+                      >
+                        학생 수업 참여
                       </Text>
 
-                      <Select
-                        style={{ width: `100%` }}
-                        height={`32px`}
-                        showSearch
-                        onChange={(LectureId) =>
-                          onSeachHandler(LectureId, paymentList)
-                        }
-                        value={yesData}
-                        filterOption={(input, option) =>
-                          option.children
-                            .toLowerCase()
-                            .indexOf(input.toLowerCase()) >= 0
-                        }
-                        placeholder="참가시킬 강의를 선택해주세요."
+                      <Wrapper
+                        margin={`0px 0px 10px 0px`}
+                        radius="5px"
+                        bgColor={Theme.lightGrey_C}
+                        padding="5px"
+                        fontSize="13px"
+                        al="flex-start"
                       >
-                        {opt2}
+                        <GuideDiv isImpo={true}>
+                          학생의 결제여부 및 강의목록, 강의기간을 선택하여
+                          수업에 참여시킬 수 있습니다.
+                        </GuideDiv>
+                        <GuideDiv isImpo={true}>
+                          결제여부 및 강의목록, 강의기간은 필수입니다.
+                        </GuideDiv>
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper al={`flex-start`} margin={`0 0 20px`}>
+                      <Text fontWeight={`700`} margin={`0 0 5px`}>
+                        학생 이름
+                      </Text>
+                      <TextInput
+                        readOnly={true}
+                        value={`${userData && userData.firstName} ${
+                          userData && userData.lastName
+                        }`}
+                        width={`100%`}
+                      />
+
+                      <Text fontWeight={`700`} margin={`5px 0`}>
+                        결제 여부
+                      </Text>
+                      <Select
+                        defaultValue="네"
+                        onChange={paySelectHandler}
+                        value={isPay}
+                        style={{ width: `100%` }}
+                      >
+                        <Select.Option value="네">네</Select.Option>
+                        <Select.Option value="아니오">아니오</Select.Option>
                       </Select>
-                    </>
-                  ) : (
-                    <>
-                      <Text fontWeight={`700`} margin={`5px 0`}>
-                        강의 목록
-                      </Text>
-                      <Select
-                        showSearch={true}
-                        placeholder="강의목록을 선택해주세요."
-                        style={{ width: `100%` }}
-                        onChange={noLectureHandler}
-                        value={noData}
+
+                      {isPay === "네" ? (
+                        <>
+                          <Text fontWeight={`700`} margin={`5px 0`}>
+                            강의 목록
+                          </Text>
+
+                          <Select
+                            style={{ width: `100%` }}
+                            height={`32px`}
+                            showSearch
+                            onChange={(LectureId) =>
+                              onSeachHandler(LectureId, paymentList)
+                            }
+                            value={yesData}
+                            filterOption={(input, option) =>
+                              option.children
+                                .toLowerCase()
+                                .indexOf(input.toLowerCase()) >= 0
+                            }
+                            placeholder="참가시킬 강의를 선택해주세요."
+                          >
+                            {opt2}
+                          </Select>
+                        </>
+                      ) : (
+                        <>
+                          <Text fontWeight={`700`} margin={`5px 0`}>
+                            강의 목록
+                          </Text>
+                          <Select
+                            showSearch={true}
+                            placeholder="강의목록을 선택해주세요."
+                            style={{ width: `100%` }}
+                            onChange={noLectureHandler}
+                            value={noData}
+                          >
+                            {allLectures && allLectures.length === 0
+                              ? ""
+                              : allLectures &&
+                                allLectures.map((data, idx) => {
+                                  return (
+                                    <Select.Option
+                                      key={data.id}
+                                      value={JSON.stringify(data)}
+                                    >
+                                      {`${data.number} | ${data.course} | ${data.User.username}`}
+                                    </Select.Option>
+                                  );
+                                })}
+                          </Select>
+
+                          <Text fontWeight={`700`} margin={`5px 0`}>
+                            강의 기간
+                          </Text>
+                          <Input
+                            type="number"
+                            placeholder="강의 기간을 입력해주세요."
+                            {...numberInput}
+                          />
+                        </>
+                      )}
+
+                      <Wrapper
+                        al={`flex-end`}
+                        margin={`20px 0 0`}
+                        display={isJoin ? `flex` : `none`}
                       >
-                        {allLectures && allLectures.length === 0
-                          ? ""
-                          : allLectures &&
-                            allLectures.map((data, idx) => {
+                        <Button
+                          type="primary"
+                          size="small"
+                          onClick={onUpdateClassSubmit}
+                        >
+                          수업 참여하기
+                        </Button>
+                      </Wrapper>
+                    </Wrapper>
+
+                    {isJoin && (
+                      <>
+                        {/* 학생이 참여하고 있는 강의 */}
+                        <Wrapper dr={`row`} ju={`flex-start`}>
+                          <Text
+                            fontWeight={`700`}
+                            color={Theme.basicTheme_C}
+                            margin={`0 0 5px`}
+                          >
+                            참여하고 있는 강의
+                          </Text>
+
+                          <Wrapper
+                            margin={`0px 0px 10px 0px`}
+                            radius="5px"
+                            bgColor={Theme.lightGrey_C}
+                            padding="5px"
+                            fontSize="13px"
+                            al="flex-start"
+                          >
+                            <GuideDiv isImpo={true}>
+                              학생이 참여하고 있는 강의 목록을 확인 할 수
+                              있습니다.
+                            </GuideDiv>
+                            <GuideDiv isImpo={true}>
+                              수업 참여일은 관리자가 학생의 수업을 참여시킨
+                              날짜입니다.
+                            </GuideDiv>
+                            <GuideDiv isImpo={true}></GuideDiv>
+                          </Wrapper>
+                        </Wrapper>
+                        <Table
+                          style={{ width: `100%`, margin: `0 0 30px` }}
+                          rowKey="id"
+                          columns={columnsList}
+                          dataSource={partUserCurrentList}
+                          size="small"
+                        />
+
+                        {/* 학생 결제 목록 */}
+                        <Wrapper dr={`row`} ju={`flex-start`}>
+                          <Text
+                            fontWeight={`700`}
+                            color={Theme.basicTheme_C}
+                            margin={`0 0 5px`}
+                          >
+                            학생 결제 목록
+                          </Text>
+
+                          <Wrapper
+                            margin={`0px 0px 10px 0px`}
+                            radius="5px"
+                            bgColor={Theme.lightGrey_C}
+                            padding="5px"
+                            fontSize="13px"
+                            al="flex-start"
+                          >
+                            <GuideDiv isImpo={true}>
+                              학생이 결제한 목록을 확인 할 수 있습니다.
+                            </GuideDiv>
+                          </Wrapper>
+                        </Wrapper>
+                        <Table
+                          style={{ width: `100%`, margin: `0 0 30px` }}
+                          rowKey="id"
+                          columns={columnsPayList}
+                          dataSource={paymentList ? paymentList : []}
+                          size="small"
+                        />
+
+                        {/* 학생 출석 목록 */}
+                        <Wrapper dr={`row`} ju={`flex-start`}>
+                          <Wrapper dr={`row`} ju={`space-between`}>
+                            <Text
+                              fontWeight={`700`}
+                              color={Theme.basicTheme_C}
+                              margin={`0 0 5px`}
+                            >
+                              학생 출석 목록
+                            </Text>
+
+                            <Wrapper
+                              dr={`row`}
+                              ju={`flex-start`}
+                              margin={`0 0 10px 0`}
+                            >
+                              <Select
+                                style={{ width: 300 }}
+                                onChange={(e) => setStuSelect(e)}
+                                value={stuSelect}
+                                size="small"
+                                placeholder="강의를 선택해주세요."
+                              >
+                                {partUserCurrentList &&
+                                partUserCurrentList.length === 0 ? (
+                                  <Select>{"참여중인 수업이 없습니다."}</Select>
+                                ) : (
+                                  partUserCurrentList &&
+                                  partUserCurrentList.map((data, idx) => {
+                                    return (
+                                      <Select.Option
+                                        key={data.id}
+                                        value={data.LectureId}
+                                      >
+                                        {data.course}
+                                      </Select.Option>
+                                    );
+                                  })
+                                )}
+                              </Select>
+
+                              <Button
+                                size="small"
+                                style={{ marginLeft: 10 }}
+                                onClick={() => onClickCommuteHandler()}
+                                type="primary"
+                              >
+                                검색
+                              </Button>
+                            </Wrapper>
+                          </Wrapper>
+
+                          <Wrapper
+                            margin={`0px 0px 10px 0px`}
+                            radius="5px"
+                            bgColor={Theme.lightGrey_C}
+                            padding="5px"
+                            fontSize="13px"
+                            al="flex-start"
+                          >
+                            <GuideDiv isImpo={true}>
+                              학생이 강의 출석한 기록을 확인 할 수 있습니다.
+                            </GuideDiv>
+                            <GuideDiv isImpo={true}>
+                              강의를 선택 후 출석 목록을 확인 할 수 있습니다.
+                              무조건적으로 강의를 하나 선택해주세요.
+                            </GuideDiv>
+                          </Wrapper>
+                        </Wrapper>
+                        <Table
+                          style={{ width: `100%`, margin: `0 0 30px` }}
+                          rowKey="id"
+                          columns={columnCommute}
+                          dataSource={commuteAdminList ? commuteAdminList : []}
+                          size="small"
+                        />
+
+                        {/* 학생이 수업을 이동한 내역 */}
+                        <Wrapper dr={`row`} ju={`flex-start`}>
+                          <Text
+                            fontWeight={`700`}
+                            color={Theme.basicTheme_C}
+                            margin={`0 0 5px`}
+                          >
+                            반 이동 내역
+                          </Text>
+
+                          <Wrapper
+                            margin={`0px 0px 10px 0px`}
+                            radius="5px"
+                            bgColor={Theme.lightGrey_C}
+                            padding="5px"
+                            fontSize="13px"
+                            al="flex-start"
+                          >
+                            <GuideDiv isImpo={true}>
+                              학생이 수업을 이동한 내역을 확인 할 수 있습니다.
+                            </GuideDiv>
+                          </Wrapper>
+                        </Wrapper>
+                        <Table
+                          style={{ width: `100%`, margin: `0 0 30px` }}
+                          rowKey="id"
+                          columns={columnsMove}
+                          dataSource={
+                            st_participantUserMoveListDone
+                              ? partUserMoveList
+                              : []
+                          }
+                          size="small"
+                        />
+
+                        {/* 종료된 강의 내역 */}
+                        <Wrapper dr={`row`} ju={`flex-start`}>
+                          <Text
+                            fontWeight={`700`}
+                            color={Theme.basicTheme_C}
+                            margin={`0 0 5px`}
+                          >
+                            종료된 강의 내역
+                          </Text>
+
+                          <Wrapper
+                            margin={`0px 0px 10px 0px`}
+                            radius="5px"
+                            bgColor={Theme.lightGrey_C}
+                            padding="5px"
+                            fontSize="13px"
+                            al="flex-start"
+                          >
+                            <GuideDiv isImpo={true}>
+                              학생의 수업이 종료된 강의를 확인 할 수 있습니다.
+                            </GuideDiv>
+                          </Wrapper>
+                        </Wrapper>
+                        <Table
+                          style={{ width: `100%`, margin: `0 0 30px` }}
+                          rowKey="id"
+                          columns={columnsEnd}
+                          dataSource={
+                            st_participantUserDeleteListDone
+                              ? partUserDeleteList
+                              : []
+                          }
+                          size="small"
+                        />
+
+                        {/* 일주일 이하로 남은 강의 내역 */}
+                        <Wrapper dr={`row`} ju={`flex-start`}>
+                          <Text
+                            fontWeight={`700`}
+                            color={Theme.basicTheme_C}
+                            margin={`0 0 5px`}
+                          >
+                            일주일 이하로 남은 강의 내역
+                          </Text>
+
+                          <Wrapper
+                            margin={`0px 0px 10px 0px`}
+                            radius="5px"
+                            bgColor={Theme.lightGrey_C}
+                            padding="5px"
+                            fontSize="13px"
+                            al="flex-start"
+                          >
+                            <GuideDiv isImpo={true}>
+                              학생의 수업이 일주일 이하로 남은 강의 내역을 확인
+                              할 수 있습니다.
+                            </GuideDiv>
+                          </Wrapper>
+                        </Wrapper>
+                        <Table
+                          style={{ width: `100%`, margin: `0 0 30px` }}
+                          rowKey="id"
+                          columns={columns7End}
+                          dataSource={
+                            st_participantUserLimitListDone
+                              ? partUserLimitList
+                              : []
+                          }
+                          size="small"
+                        />
+                      </>
+                    )}
+
+                    {/* 학생 상세정보 */}
+                    <Wrapper dr={`row`} ju={`flex-start`}>
+                      <Text
+                        fontWeight={`700`}
+                        color={Theme.basicTheme_C}
+                        margin={`0 0 5px`}
+                      >
+                        학생 상세정보
+                      </Text>
+
+                      <Wrapper
+                        margin={`0px 0px 10px 0px`}
+                        radius="5px"
+                        bgColor={Theme.lightGrey_C}
+                        padding="5px"
+                        fontSize="13px"
+                        al="flex-start"
+                      >
+                        <GuideDiv isImpo={true}>
+                          학생의 상세정보를 확인 할 수 있습니다.
+                        </GuideDiv>
+                        <GuideDiv isImpo={true}>
+                          학생의 정보를 수정할 때 아래의 수정하기 버튼을 눌러
+                          수정 할 수 있습니다.
+                        </GuideDiv>
+                        <GuideDiv isImpo={true}>
+                          학생이 회원가입 하기 전에도 사용할 수 있으며, 각
+                          정보를 메모처럼 사용할 수 있습니다.
+                        </GuideDiv>
+                        <GuideDiv isImpo={true}>
+                          이메일 변경은 개발사에 문의해주세요.
+                        </GuideDiv>
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper
+                      padding={`5px 0 3px`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
+                        프로필 이미지
+                      </Wrapper>
+                      <Wrapper>
+                        <Image
+                          radius={`50%`}
+                          src={
+                            applicationDetail
+                              ? `${
+                                  applicationDetail[0] &&
+                                  applicationDetail[0].profileImage
+                                }`
+                              : `https://via.placeholder.com/100x100`
+                          }
+                        />
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        신청일
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <Input
+                          disabled={true}
+                          value={
+                            userData && userData.createdAt
+                              ? userData && userData.createdAt.slice(0, 10)
+                              : ""
+                          }
+                        />
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        회원가입일
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <Input
+                          disabled={true}
+                          value={
+                            userData && userData.completedAt
+                              ? userData.completedAt.slice(0, 10)
+                              : ""
+                          }
+                        />
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        이름
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="username">
+                          <Input placeholder="이름을 입력해주세요." />
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        이메일
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="email">
+                          <Input
+                            placeholder="이메일을 입력해주세요."
+                            disabled={true}
+                          />
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        아이디
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="email">
+                          <Input
+                            disabled={true}
+                            placeholder="아이디를 입력해주세요."
+                          />
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        휴대폰 번호
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="mobile">
+                          <Input
+                            placeholder="전화번호를 입력해주세요."
+                            onChange={(e) =>
+                              userForm.setFieldsValue({
+                                password: e.target.value.slice(-4),
+                              })
+                            }
+                          />
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        비밀번호
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="password">
+                          <Input
+                            disabled={true}
+                            placeholder="비밀번호를 입력해주세요."
+                          />
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        생년월일
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        ju={`space-between`}
+                        padding={`0 10px`}
+                        dr={`row`}
+                      >
+                        <FormItem name="birth" width={`calc(100% - 30px)`}>
+                          <Input
+                            disabled={true}
+                            placeholder="생년월일을 입력해주세요."
+                          />
+                        </FormItem>
+
+                        <CalendarOutlined onClick={isBirthToggle} />
+                      </Wrapper>
+
+                      {isBirth && (
+                        <Wrapper
+                          // display={isCalendar ? "flex" : "none"}
+                          width={`auto`}
+                          shadow={`0px 0px 10px ${Theme.lightGrey3_C}`}
+                          border={`1px solid ${Theme.lightGrey3_C}`}
+                          padding={`5px 0`}
+                          margin={`5px 0 0`}
+                        >
+                          <Calendar
+                            // style={{ width: width < 1350 ? `100%` : `100%` }}
+                            fullscreen={false}
+                            validRange={[moment(`1940`), moment()]}
+                            onChange={dateChagneHandler}
+                          />
+                        </Wrapper>
+                      )}
+                    </Wrapper>
+
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        성별
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="gender">
+                          <Select placeholder="성별을 선택해주세요.">
+                            <Select.Option value="여">여</Select.Option>
+                            <Select.Option value="남">남</Select.Option>
+                            <Select.Option value="상관없음">
+                              상관없음
+                            </Select.Option>
+                          </Select>
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        국가
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="stuCountry">
+                          <Select placeholder="국가를 입력해주세요.">
+                            {country &&
+                              country.map((data, idx) => {
+                                return (
+                                  <Select.Option key={idx} value={data}>
+                                    {data}
+                                  </Select.Option>
+                                );
+                              })}
+                          </Select>
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        거주 국가
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="stuLiveCon">
+                          <Select placeholder="거주국가를 입력해주세요.">
+                            {country &&
+                              country.map((data, idx) => {
+                                return (
+                                  <Select.Option key={idx} value={data}>
+                                    {data}
+                                  </Select.Option>
+                                );
+                              })}
+                          </Select>
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        사용언어
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="stuLanguage">
+                          <Input placeholder="사용언어를 입력해주세요." />
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        SNS
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="sns">
+                          <Input placeholder="SNS를 입력해주세요." />
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        SNS Id
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="snsId">
+                          <Input placeholder="SNS ID를 입력해주세요." />
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        회차
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="stuPayCount">
+                          <Input
+                            placeholder="회차를 입력해주세요."
+                            type="number"
+                          />
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        등록상태
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="status">
+                          <Select placeholder="등록상태를 선택해주세요.">
+                            {stateList.map((data) => {
                               return (
-                                <Select.Option
-                                  key={data.id}
-                                  value={JSON.stringify(data)}
-                                >
-                                  {`${data.number} | ${data.course} | ${data.User.username}`}
+                                <Select.Option value={data}>
+                                  {data}
                                 </Select.Option>
                               );
                             })}
-                      </Select>
+                          </Select>
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
 
-                      <Text fontWeight={`700`} margin={`5px 0`}>
-                        강의 기간
-                      </Text>
-                      <Input
-                        type="number"
-                        placeholder="강의 기간을 입력해주세요."
-                        {...numberInput}
-                      />
-                    </>
-                  )}
-
-                  <Wrapper
-                    al={`flex-end`}
-                    margin={`20px 0 0`}
-                    display={isJoin ? `flex` : `none`}
-                  >
-                    <Button
-                      type="primary"
-                      size="small"
-                      onClick={onUpdateClassSubmit}
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
                     >
-                      수업 참여하기
-                    </Button>
-                  </Wrapper>
-                </Wrapper>
-
-                {isJoin && (
-                  <>
-                    {/* 학생이 참여하고 있는 강의 */}
-                    <Wrapper dr={`row`} ju={`flex-start`}>
-                      <Text
-                        fontWeight={`700`}
-                        color={Theme.basicTheme_C}
-                        margin={`0 0 5px`}
-                      >
-                        참여하고 있는 강의
-                      </Text>
-
                       <Wrapper
-                        margin={`0px 0px 10px 0px`}
-                        radius="5px"
-                        bgColor={Theme.lightGrey_C}
-                        padding="5px"
-                        fontSize="13px"
-                        al="flex-start"
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
                       >
-                        <GuideDiv isImpo={true}>
-                          학생이 참여하고 있는 강의 목록을 확인 할 수 있습니다.
-                        </GuideDiv>
-                        <GuideDiv isImpo={true}>
-                          수업 참여일은 관리자가 학생의 수업을 참여시킨
-                          날짜입니다.
-                        </GuideDiv>
-                        <GuideDiv isImpo={true}></GuideDiv>
+                        시차
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="timeDiff">
+                          <Input placeholder="시차를 입력해주세요." />
+                        </FormItem>
                       </Wrapper>
                     </Wrapper>
-                    <Table
-                      style={{ width: `100%`, margin: `0 0 30px` }}
-                      rowKey="id"
-                      columns={columnsList}
-                      dataSource={partUserCurrentList}
-                      size="small"
-                    />
 
-                    {/* 학생 결제 목록 */}
-                    <Wrapper dr={`row`} ju={`flex-start`}>
-                      <Text
-                        fontWeight={`700`}
-                        color={Theme.basicTheme_C}
-                        margin={`0 0 5px`}
-                      >
-                        학생 결제 목록
-                      </Text>
-
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
                       <Wrapper
-                        margin={`0px 0px 10px 0px`}
-                        radius="5px"
-                        bgColor={Theme.lightGrey_C}
-                        padding="5px"
-                        fontSize="13px"
-                        al="flex-start"
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
                       >
-                        <GuideDiv isImpo={true}>
-                          학생이 결제한 목록을 확인 할 수 있습니다.
-                        </GuideDiv>
+                        원하는 시작 날짜
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="wantStartDate">
+                          <CustomDatePicker
+                            style={{ width: `100%` }}
+                            placeholder="원하시는 시작 날짜를 선택해주세요."
+                          />
+                        </FormItem>
                       </Wrapper>
                     </Wrapper>
-                    <Table
-                      style={{ width: `100%`, margin: `0 0 30px` }}
-                      rowKey="id"
-                      columns={columnsPayList}
-                      dataSource={paymentList ? paymentList : []}
-                      size="small"
-                    />
 
-                    {/* 학생 출석 목록 */}
-                    <Wrapper dr={`row`} ju={`flex-start`}>
-                      <Wrapper dr={`row`} ju={`space-between`}>
-                        <Text
-                          fontWeight={`700`}
-                          color={Theme.basicTheme_C}
-                          margin={`0 0 5px`}
-                        >
-                          학생 출석 목록
-                        </Text>
-
-                        <Wrapper
-                          dr={`row`}
-                          ju={`flex-start`}
-                          margin={`0 0 10px 0`}
-                        >
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        무료수업 담당 강사
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="freeTeacher">
                           <Select
-                            style={{ width: 300 }}
-                            onChange={(e) => setStuSelect(e)}
-                            value={stuSelect}
-                            size="small"
-                            placeholder="강의를 선택해주세요."
+                            placeholder={`무료수업 담당 강사를 선택해주세요.`}
                           >
-                            {partUserCurrentList &&
-                            partUserCurrentList.length === 0 ? (
-                              <Select>{"참여중인 수업이 없습니다."}</Select>
-                            ) : (
-                              partUserCurrentList &&
-                              partUserCurrentList.map((data, idx) => {
+                            {teachers &&
+                              teachers.map((data, idx) => {
                                 return (
                                   <Select.Option
                                     key={data.id}
-                                    value={data.LectureId}
+                                    value={data.username}
                                   >
-                                    {data.course}
+                                    {data.username}
                                   </Select.Option>
                                 );
-                              })
-                            )}
+                              })}
                           </Select>
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
 
-                          <Button
-                            size="small"
-                            style={{ marginLeft: 10 }}
-                            onClick={() => onClickCommuteHandler()}
-                            type="primary"
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
+                      >
+                        담당 강사
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="teacher">
+                          <Select
+                            placeholder={`담당 강사를 선택해주세요.`}
+                            filterOption={(input, option) =>
+                              option.children
+                                .toLowerCase()
+                                .indexOf(input.toLowerCase()) >= 0
+                            }
+                            showSearch
                           >
-                            검색
-                          </Button>
-                        </Wrapper>
-                      </Wrapper>
-
-                      <Wrapper
-                        margin={`0px 0px 10px 0px`}
-                        radius="5px"
-                        bgColor={Theme.lightGrey_C}
-                        padding="5px"
-                        fontSize="13px"
-                        al="flex-start"
-                      >
-                        <GuideDiv isImpo={true}>
-                          학생이 강의 출석한 기록을 확인 할 수 있습니다.
-                        </GuideDiv>
-                        <GuideDiv isImpo={true}>
-                          강의를 선택 후 출석 목록을 확인 할 수 있습니다.
-                          무조건적으로 강의를 하나 선택해주세요.
-                        </GuideDiv>
+                            {allLectures &&
+                              allLectures.map((data, idx) => {
+                                return (
+                                  <Select.Option
+                                    key={`${data.User.username} ${data.course}`}
+                                    value={data.username}
+                                  >
+                                    {`(${data.number}) ${data.User.username} ${data.course}`}
+                                  </Select.Option>
+                                );
+                              })}
+                          </Select>
+                        </FormItem>
                       </Wrapper>
                     </Wrapper>
-                    <Table
-                      style={{ width: `100%`, margin: `0 0 30px` }}
-                      rowKey="id"
-                      columns={columnCommute}
-                      dataSource={commuteAdminList ? commuteAdminList : []}
-                      size="small"
-                    />
 
-                    {/* 학생이 수업을 이동한 내역 */}
-                    <Wrapper dr={`row`} ju={`flex-start`}>
-                      <Text
-                        fontWeight={`700`}
-                        color={Theme.basicTheme_C}
-                        margin={`0 0 5px`}
-                      >
-                        반 이동 내역
-                      </Text>
-
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
                       <Wrapper
-                        margin={`0px 0px 10px 0px`}
-                        radius="5px"
-                        bgColor={Theme.lightGrey_C}
-                        padding="5px"
-                        fontSize="13px"
-                        al="flex-start"
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
                       >
-                        <GuideDiv isImpo={true}>
-                          학생이 수업을 이동한 내역을 확인 할 수 있습니다.
-                        </GuideDiv>
+                        줌 미팅 시간
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="meetDate">
+                          <CustomDatePicker
+                            style={{ width: `100%` }}
+                            showTime={{ format: "HH:mm", minuteStep: 10 }}
+                            format="YYYY-MM-DD HH:mm"
+                            placeholder="줌 미팅 시간을 선택해주세요."
+                          />
+                        </FormItem>
                       </Wrapper>
                     </Wrapper>
-                    <Table
-                      style={{ width: `100%`, margin: `0 0 30px` }}
-                      rowKey="id"
-                      columns={columnsMove}
-                      dataSource={
-                        st_participantUserMoveListDone ? partUserMoveList : []
-                      }
-                      size="small"
-                    />
 
-                    {/* 종료된 강의 내역 */}
-                    <Wrapper dr={`row`} ju={`flex-start`}>
-                      <Text
-                        fontWeight={`700`}
-                        color={Theme.basicTheme_C}
-                        margin={`0 0 5px`}
-                      >
-                        종료된 강의 내역
-                      </Text>
-
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
                       <Wrapper
-                        margin={`0px 0px 10px 0px`}
-                        radius="5px"
-                        bgColor={Theme.lightGrey_C}
-                        padding="5px"
-                        fontSize="13px"
-                        al="flex-start"
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
                       >
-                        <GuideDiv isImpo={true}>
-                          학생의 수업이 종료된 강의를 확인 할 수 있습니다.
-                        </GuideDiv>
+                        레벨
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="level">
+                          <Input
+                            type="number"
+                            placeholder={`레벨을 입력해주세요.`}
+                          />
+                        </FormItem>
                       </Wrapper>
                     </Wrapper>
-                    <Table
-                      style={{ width: `100%`, margin: `0 0 30px` }}
-                      rowKey="id"
-                      columns={columnsEnd}
-                      dataSource={
-                        st_participantUserDeleteListDone
-                          ? partUserDeleteList
-                          : []
-                      }
-                      size="small"
-                    />
 
-                    {/* 일주일 이하로 남은 강의 내역 */}
-                    <Wrapper dr={`row`} ju={`flex-start`}>
-                      <Text
-                        fontWeight={`700`}
-                        color={Theme.basicTheme_C}
-                        margin={`0 0 5px`}
-                      >
-                        일주일 이하로 남은 강의 내역
-                      </Text>
-
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
                       <Wrapper
-                        margin={`0px 0px 10px 0px`}
-                        radius="5px"
-                        bgColor={Theme.lightGrey_C}
-                        padding="5px"
-                        fontSize="13px"
-                        al="flex-start"
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
                       >
-                        <GuideDiv isImpo={true}>
-                          학생의 수업이 일주일 이하로 남은 강의 내역을 확인 할
-                          수 있습니다.
-                        </GuideDiv>
+                        직업
+                      </Wrapper>
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <FormItem name="job">
+                          <Input
+                            type="job"
+                            placeholder={`직업을 입력해주세요.`}
+                          />
+                        </FormItem>
                       </Wrapper>
                     </Wrapper>
-                    <Table
-                      style={{ width: `100%`, margin: `0 0 30px` }}
-                      rowKey="id"
-                      columns={columns7End}
-                      dataSource={
-                        st_participantUserLimitListDone ? partUserLimitList : []
-                      }
-                      size="small"
-                    />
+
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
+                        가능한 수업시간
+                      </Wrapper>
+                      <Wrapper al={`flex-start`}>
+                        <FormItem name="classHour">
+                          <CustomTextArea
+                            rows={4}
+                            placeholder={`가능한 수업시간을 입력해주세요.`}
+                          />
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
+
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
+                      <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
+                        메모
+                      </Wrapper>
+                      <Wrapper al={`flex-start`}>
+                        <FormItem name="purpose">
+                          <CustomTextArea
+                            placeholder={`메모를 입력해주세요.`}
+                            style={{ width: `100%` }}
+                            rows={6}
+                            border={`1px solid ${Theme.grey_C} !important`}
+                          />
+                        </FormItem>
+                      </Wrapper>
+                    </Wrapper>
                   </>
                 )}
-
-                {/* 학생 상세정보 */}
-                <Wrapper dr={`row`} ju={`flex-start`}>
-                  <Text
-                    fontWeight={`700`}
-                    color={Theme.basicTheme_C}
-                    margin={`0 0 5px`}
-                  >
-                    학생 상세정보
-                  </Text>
-
-                  <Wrapper
-                    margin={`0px 0px 10px 0px`}
-                    radius="5px"
-                    bgColor={Theme.lightGrey_C}
-                    padding="5px"
-                    fontSize="13px"
-                    al="flex-start"
-                  >
-                    <GuideDiv isImpo={true}>
-                      학생의 상세정보를 확인 할 수 있습니다.
-                    </GuideDiv>
-                    <GuideDiv isImpo={true}>
-                      학생의 정보를 수정할 때 아래의 수정하기 버튼을 눌러 수정
-                      할 수 있습니다.
-                    </GuideDiv>
-                    <GuideDiv isImpo={true}>
-                      학생이 회원가입 하기 전에도 사용할 수 있으며, 각 정보를
-                      메모처럼 사용할 수 있습니다.
-                    </GuideDiv>
-                    <GuideDiv isImpo={true}>
-                      이메일 변경은 개발사에 문의해주세요.
-                    </GuideDiv>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0 3px`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
-                    프로필 이미지
-                  </Wrapper>
-                  <Wrapper>
-                    <Image
-                      radius={`50%`}
-                      src={
-                        applicationDetail
-                          ? `${
-                              applicationDetail[0] &&
-                              applicationDetail[0].profileImage
-                            }`
-                          : `https://via.placeholder.com/100x100`
-                      }
-                    />
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    신청일
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <Input
-                      disabled={true}
-                      value={userData && userData.createdAt.slice(0, 10)}
-                    />
-                  </Wrapper>
-                </Wrapper>
-
-                {console.log(userData)}
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    회원가입일
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <Input
-                      disabled={true}
-                      value={userData && userData.completedAt.slice(0, 10)}
-                    />
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    이름
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="username">
-                      <Input placeholder="이름을 입력해주세요." />
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    이메일
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="email">
-                      <Input
-                        placeholder="이메일을 입력해주세요."
-                        disabled={true}
-                      />
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    아이디
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="email">
-                      <Input
-                        disabled={true}
-                        placeholder="아이디를 입력해주세요."
-                      />
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    휴대폰 번호
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="mobile">
-                      <Input
-                        placeholder="전화번호를 입력해주세요."
-                        onChange={(e) =>
-                          userForm.setFieldsValue({
-                            password: e.target.value.slice(-4),
-                          })
-                        }
-                      />
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    비밀번호
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="password">
-                      <Input
-                        disabled={true}
-                        placeholder="비밀번호를 입력해주세요."
-                      />
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    생년월일
-                  </Wrapper>
-                  <Wrapper
-                    width={`75%`}
-                    ju={`space-between`}
-                    padding={`0 10px`}
-                    dr={`row`}
-                  >
-                    <FormItem name="birth" width={`calc(100% - 30px)`}>
-                      <Input
-                        disabled={true}
-                        placeholder="생년월일을 입력해주세요."
-                      />
-                    </FormItem>
-
-                    <CalendarOutlined onClick={isBirthToggle} />
-                  </Wrapper>
-
-                  {isBirth && (
-                    <Wrapper
-                      // display={isCalendar ? "flex" : "none"}
-                      width={`auto`}
-                      shadow={`0px 0px 10px ${Theme.lightGrey3_C}`}
-                      border={`1px solid ${Theme.lightGrey3_C}`}
-                      padding={`5px 0`}
-                      margin={`5px 0 0`}
-                    >
-                      <Calendar
-                        // style={{ width: width < 1350 ? `100%` : `100%` }}
-                        fullscreen={false}
-                        validRange={[moment(`1940`), moment()]}
-                        onChange={dateChagneHandler}
-                      />
-                    </Wrapper>
-                  )}
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    성별
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="gender">
-                      <Select placeholder="성별을 선택해주세요.">
-                        <Select.Option value="여">여</Select.Option>
-                        <Select.Option value="남">남</Select.Option>
-                        <Select.Option value="상관없음">상관없음</Select.Option>
-                      </Select>
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    국가
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="stuCountry">
-                      <Select placeholder="국가를 입력해주세요.">
-                        {country &&
-                          country.map((data, idx) => {
-                            return (
-                              <Select.Option key={idx} value={data}>
-                                {data}
-                              </Select.Option>
-                            );
-                          })}
-                      </Select>
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    거주 국가
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="stuLiveCon">
-                      <Select placeholder="거주국가를 입력해주세요.">
-                        {country &&
-                          country.map((data, idx) => {
-                            return (
-                              <Select.Option key={idx} value={data}>
-                                {data}
-                              </Select.Option>
-                            );
-                          })}
-                      </Select>
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    사용언어
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="stuLanguage">
-                      <Input placeholder="사용언어를 입력해주세요." />
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    SNS
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="sns">
-                      <Input placeholder="SNS를 입력해주세요." />
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    SNS Id
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="snsId">
-                      <Input placeholder="SNS ID를 입력해주세요." />
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    회차
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="stuPayCount">
-                      <Input placeholder="회차를 입력해주세요." />
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    등록상태
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="status">
-                      <Select placeholder="등록상태를 선택해주세요.">
-                        {stateList.map((data) => {
-                          return (
-                            <Select.Option value={data}>{data}</Select.Option>
-                          );
-                        })}
-                      </Select>
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    시차
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="timeDiff">
-                      <Input placeholder="시차를 입력해주세요." />
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    원하는 시작 날짜
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="wantStartDate">
-                      <CustomDatePicker
-                        style={{ width: `100%` }}
-                        placeholder="원하시는 시작 날짜를 선택해주세요."
-                      />
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    무료수업 담당 강사
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="freeTeacher">
-                      <Select
-                        placeholder={`무료수업 담당 강사를 선택해주세요.`}
-                      >
-                        {teachers &&
-                          teachers.map((data, idx) => {
-                            return (
-                              <Select.Option
-                                key={data.id}
-                                value={data.username}
-                              >
-                                {data.username}
-                              </Select.Option>
-                            );
-                          })}
-                      </Select>
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    담당 강사
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="teacher">
-                      <Select
-                        placeholder={`담당 강사를 선택해주세요.`}
-                        filterOption={(input, option) =>
-                          option.children
-                            .toLowerCase()
-                            .indexOf(input.toLowerCase()) >= 0
-                        }
-                        showSearch
-                      >
-                        {allLectures &&
-                          allLectures.map((data, idx) => {
-                            return (
-                              <Select.Option
-                                key={`${data.User.username} ${data.course}`}
-                                value={data.username}
-                              >
-                                {`(${data.number}) ${data.User.username} ${data.course}`}
-                              </Select.Option>
-                            );
-                          })}
-                      </Select>
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    줌 미팅 시간
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="meetDate">
-                      <CustomDatePicker
-                        style={{ width: `100%` }}
-                        showTime={{ format: "HH:mm", minuteStep: 10 }}
-                        format="YYYY-MM-DD HH:mm"
-                        placeholder="줌 미팅 시간을 선택해주세요."
-                      />
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    레벨
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="level">
-                      <Input
-                        type="number"
-                        placeholder={`레벨을 입력해주세요.`}
-                      />
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper
-                    width={`25%`}
-                    bgColor={Theme.lightGrey3_C}
-                    padding={`3px`}
-                  >
-                    직업
-                  </Wrapper>
-                  <Wrapper width={`75%`} al={`flex-start`} padding={`0 10px`}>
-                    <FormItem name="job">
-                      <Input type="job" placeholder={`직업을 입력해주세요.`} />
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
-                    가능한 수업시간
-                  </Wrapper>
-                  <Wrapper al={`flex-start`}>
-                    <FormItem name="classHour">
-                      <CustomTextArea
-                        rows={4}
-                        placeholder={`가능한 수업시간을 입력해주세요.`}
-                      />
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
-
-                <Wrapper
-                  padding={`5px 0`}
-                  dr={`row`}
-                  borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                >
-                  <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
-                    메모
-                  </Wrapper>
-                  <Wrapper al={`flex-start`}>
-                    <FormItem name="purpose">
-                      <CustomTextArea
-                        placeholder={`메모를 입력해주세요.`}
-                        style={{ width: `100%` }}
-                        rows={6}
-                        border={`1px solid ${Theme.grey_C} !important`}
-                      />
-                    </FormItem>
-                  </Wrapper>
-                </Wrapper>
               </Wrapper>
             </Wrapper>
 
