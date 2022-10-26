@@ -154,12 +154,16 @@ router.post("/detail", isAdminCheck, async (req, res, next) => {
                 B.username,
                 B.mobile,
                 B.email,
+                B.birth,
                 B.stuPayCount,
                 B.sns,
                 B.snsId,
                 B.gender,
                 B.address,
-                B.detailAddress
+                B.detailAddress,
+                B.stuCountry,
+                B.stuLiveCon,
+                B.stuLanguage
       FROM	    applications    A
       LEFT
      OUTER
