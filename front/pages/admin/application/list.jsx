@@ -302,22 +302,6 @@ const List = () => {
 
   useEffect(() => {
     if (st_userStuCreateDone) {
-      // userForm.resetFields();
-      // stuForm.resetFields();
-      // stuUForm.resetFields();
-      // setYesData(null);
-      // setNoData(null);
-      // numberInput.setValue(``);
-      // setIsPay("네");
-      // setIsJoin(true);
-
-      // dispatch({
-      //   type: APP_DETAIL_REQUEST,
-      //   data: {
-      //     email: userData && userData.gmailAddress,
-      //   },
-      // });
-
       window.location.reload();
 
       return message.success("회원을 생성 했습니다.");
@@ -1513,10 +1497,17 @@ const List = () => {
           al="flex-start"
         >
           <GuideDiv isImpo={true}>
-            학생 등록하면 학생 관리에서 확인할 수 있습니다.
+            진행여부, 줌 미팅일 날짜로 신청서를 검색할 수 있습니다.
           </GuideDiv>
           <GuideDiv isImpo={true}>
-            진행여부, 줌 미팅일 날짜로 신청서를 검색할 수 있습니다.
+            회원을 등록하면 화면이 새로고침 됩니다.
+          </GuideDiv>
+          <GuideDiv isImpo={true}>
+            회원 등록하지 않은 리스트는 등록하실때 수업을 꼭 기입해주셔야 등록이
+            가능합니다.
+          </GuideDiv>
+          <GuideDiv isImpo={true}>
+            회원 등록 진행 후 회원의 정보를 추가, 수정할 수 있습니다.
           </GuideDiv>
         </Wrapper>
         {/* ADMIN GUIDE AREA END*/}
