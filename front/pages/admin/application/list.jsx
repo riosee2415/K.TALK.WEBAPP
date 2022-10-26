@@ -1173,18 +1173,26 @@ const List = () => {
     {
       title: "이름",
       render: (data) => (
-        <div>
+        <Wrapper al={`flex-start`} width={`90px`}>
           {data.firstName}&nbsp;{data.lastName}
-        </div>
+        </Wrapper>
       ),
     },
     {
       title: "이메일",
-      render: (data) => <div>{data.gmailAddress}</div>,
+      render: (data) => (
+        <Wrapper al={`flex-start`} width={`calc(100% - 130px)`}>
+          {data.gmailAddress}
+        </Wrapper>
+      ),
     },
     {
       title: "회원가입여부",
-      render: (data) => <div>{data.completedAt ? `완료` : `미완료`}</div>,
+      render: (data) => (
+        <Wrapper al={`flex-start`} width={`40px`}>
+          {data.completedAt ? `완료` : `미완료`}
+        </Wrapper>
+      ),
     },
   ];
 
@@ -1530,9 +1538,14 @@ const List = () => {
         </Wrapper>
         {/* ADMIN GUIDE AREA END*/}
 
-        <Wrapper dr={`row`} al={`flex-start`} ju={`space-between`}>
+        <Wrapper
+          dr={`row`}
+          al={`flex-start`}
+          wrap={`nowrap`}
+          ju={`space-between`}
+        >
           <Table
-            style={{ width: `38%`, cursor: `pointer` }}
+            style={{ width: `38%`, cursor: `pointer`, minWidth: `550px` }}
             rowKey="id"
             columns={leftTable}
             dataSource={applicationList ? applicationList : []}
