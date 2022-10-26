@@ -331,7 +331,7 @@ router.post("/lecture/list", isLoggedIn, async (req, res, next) => {
       JOIN  payClass    B
         ON  A.PayClassId = B.id
      WHERE  UserId in (${userIds})
-       AND  B.LectureId = ${LectureId}
+       AND  A.lectureId = ${LectureId}
   `;
 
     const price = await models.sequelize.query(priceQuery);
@@ -428,7 +428,7 @@ router.post("/admin/list", isAdminCheck, async (req, res, next) => {
           ON  A.PayClassId = B.id
        WHERE  1 = 1
          AND  A.UserId IN (${parseInt(userIds)})
-         AND  B.LectureId = ${LectureId}
+         AND  A.lectureId = ${LectureId}
     `;
 
       price = await models.sequelize.query(priceQuery);
@@ -581,15 +581,15 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 참여 내역입니다.");
     }
 
-    // const findUser = `
-    // SELECT  id,
-    //         email,
-    //         username
-    //   FROM  users
-    //  WHERE  id = ${exPart.UserId}
-    // `;
+    const findUser = `
+    SELECT  id,
+            email,
+            username
+      FROM  users
+     WHERE  id = ${exPart.UserId}
+    `;
 
-    // const findUserData = await models.sequelize.query(findUser);
+    const findUserData = await models.sequelize.query(findUser);
 
     const updateResult = await Participant.update(
       {
@@ -601,36 +601,40 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
       }
     );
 
-    // if (isPay === 1) {
-    //   const insertQuery = `
-    //   INSERT  INTO  payments
-    //   (
-    //     price,
-    //     email,
-    //     type,
-    //     name,
-    //     bankNo,
-    //     isComplete,
-    //     completedAt,
-    //     UserId,
-    //     lectureId
-    //   )
-    //   VALUES
-    //   (
-    //     1,
-    //     "${findUserData[0][0].email}",
-    //     "-",
-    //     "${findUserData[0][0].username}",
-    //     null,
-    //     1,
-    //     NOW(),
-    //     ${findUserData[0][0].id},
-    //     ${lectureId}
-    //   )
-    //   `;
+    if (parseInt(isPay) === 1) {
+      const insertQuery = `
+      INSERT  INTO  payments
+      (
+        price,
+        email,
+        type,
+        name,
+        bankNo,
+        isComplete,
+        completedAt,
+        UserId,
+        lectureId,
+        createdAt,
+        updatedAt
+      )
+      VALUES
+      (
+        1,
+        "${findUserData[0][0].email}",
+        "-",
+        "${findUserData[0][0].username}",
+        null,
+        1,
+        NOW(),
+        ${findUserData[0][0].id},
+        ${lectureId},
+        NOW(),
+        NOW()
+      )
+      `;
 
-    //   await models.sequelize.query(insertQuery);
-    // }
+      await models.sequelize.query(insertQuery);
+    }
 
     if (updateResult[0] > 0) {
       return res.status(200).json({ result: true });
@@ -840,7 +844,7 @@ router.post("/user/limit/list", isAdminCheck, async (req, res, next) => {
                     ON	A.PayClassId = B.id
                  INNER
                   JOIN	lectures 			C
-                    ON	B.LectureId = C.id
+                    ON	A.lectureId = C.id
                  INNER
                   JOIN	users				  D
                     ON	C.UserId = D.id
@@ -914,7 +918,7 @@ router.post("/lastDate/list", isAdminCheck, async (req, res, next) => {
                     ON	A.PayClassId = B.id
                  INNER
                   JOIN	lectures 			C
-                    ON	B.LectureId = C.id
+                    ON	A.lectureId = C.id
                  INNER
                   JOIN	users				D
                     ON	C.UserId = D.id
