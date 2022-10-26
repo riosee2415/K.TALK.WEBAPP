@@ -1,10 +1,52 @@
 const express = require("express");
 const { Op } = require("sequelize");
 const isAdminCheck = require("../middlewares/isAdminCheck");
-const { PayClass, Payment, User, Lecture } = require("../models");
+const isLoggedIn = require("../middlewares/isLoggedIn");
+const { PayClass, Payment, User } = require("../models");
 const models = require("../models");
 
 const router = express.Router();
+
+router.post("/user/list", isLoggedIn, async (req, res, next) => {
+  try {
+    const selectQuery = `
+    SELECT  A.id,
+            A.price,
+            A.email,
+            A.type,
+            A.name,
+            A.lectureId,
+            A.isComplete,
+            DATE_FORMAT(A.completedAt, "%Y-%m-%d")      AS completedAt,
+            A.createdAt,
+            A.updatedAt,
+            A.bankNo,
+            A.UserId,
+            A.PayClassId,
+            B.startDate,
+            B.week,
+            C.id                  AS LetureId,
+            C.course
+      FROM  payments		A
+     INNER
+      JOIN  payClass 		B
+        ON  A.PayClassId = B.id
+     INNER 
+      JOIN  lectures 		C
+        ON  A.lectureId = C.id
+     WHERE  1 = 1
+       AND  A.UserId = ${req.user.id}
+     ORDER  BY A.createdAt DESC
+    `;
+
+    const list = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json({ list: list[0] });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("결제내역을 불러올 수 없습니다.");
+  }
+});
 
 router.post("/list", isAdminCheck, async (req, res, next) => {
   const { email, type, listType } = req.body;
