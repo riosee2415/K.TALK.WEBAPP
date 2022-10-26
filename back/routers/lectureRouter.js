@@ -665,9 +665,8 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
 
     // 요일 갯 수 구하기
     datum.map((data) => {
-      if (data.compareDate < 1) return null;
-
       const tempDay = [];
+      if (data.compareDate < 1) tempDay.push(0);
 
       let today = parseInt(data.todayDay);
       for (let i = 0; i < data.compareDate; i++) {
@@ -685,9 +684,8 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
 
     // 남은 요일 갯수 구하기
     datum.map((data) => {
-      if (data.compareDate < 1) return null;
-
       let cnt = 0;
+      if (data.compareDate < 1) cnt = 0;
 
       data.afterDay.map((v) => {
         data.dayList.map((v2) => {
