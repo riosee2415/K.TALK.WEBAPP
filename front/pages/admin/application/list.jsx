@@ -85,6 +85,7 @@ const List = () => {
     st_userStuCreateError,
     //
     st_userChangeDone,
+    st_userChangeError,
     //
     st_userAdminUpdateDone,
     //
@@ -254,6 +255,12 @@ const List = () => {
       return message.success("학생의 수업을 수정하였습니다.");
     }
   }, [st_userChangeDone]);
+
+  useEffect(() => {
+    if (st_userChangeError) {
+      return message.error(st_userChangeError);
+    }
+  }, [st_userChangeError]);
 
   // 학생 수업 빼기 후 처리
   useEffect(() => {

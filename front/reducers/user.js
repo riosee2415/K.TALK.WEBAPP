@@ -580,13 +580,14 @@ const reducer = (state = initailState, action) =>
 
       case USER_CLASS_CHANGE_REQUEST: {
         draft.st_userChangeLoading = true;
-        draft.st_userChangeDone = null;
-        draft.st_userChangeError = false;
+        draft.st_userChangeDone = false;
+        draft.st_userChangeError = null;
         break;
       }
       case USER_CLASS_CHANGE_SUCCESS: {
         draft.st_userChangeLoading = false;
         draft.st_userChangeDone = true;
+        draft.st_userChangeError = null;
         break;
       }
       case USER_CLASS_CHANGE_FAILURE: {
