@@ -169,20 +169,11 @@ const List = () => {
   const [userData, setUserData] = useState(null); // 학생상세정보
   const [stuSelect, setStuSelect] = useState(""); // 학생 출석 목록 내 강의 검색
   const [statusType, setStatusType] = useState(""); // 등록상태 검색 값
-  const [isGender, setIsGender] = useState(false);
-  const [isType, setIsType] = useState("등록");
+  const [isType, setIsType] = useState("등록"); // 등록인지 수정인지 값 ( 회원가입 전 )
 
   const numberInput = useInput(); // 강의기간 (form안에 form이여서 input 쓸수밖에 없음)
 
   ////// USEEFFECT //////
-
-  useEffect(() => {
-    if (noData !== null || yesData !== null) {
-      setIsGender(true);
-    } else {
-      setIsGender(false);
-    }
-  }, [noData, yesData]);
 
   useEffect(() => {
     const qs = router.query;
@@ -2037,22 +2028,24 @@ const List = () => {
                           학생 상세정보
                         </Text>
 
-                        <Wrapper dr={`row`} width={`auto`}>
-                          <Button
-                            size="small"
-                            type={isType === "등록" ? `primary` : `default`}
-                            onClick={() => typeHandler("등록")}
-                          >
-                            등록
-                          </Button>
-                          <Button
-                            size="small"
-                            type={isType !== "등록" ? `primary` : `default`}
-                            onClick={() => typeHandler("수정")}
-                          >
-                            수정
-                          </Button>
-                        </Wrapper>
+                        {!isJoin && (
+                          <Wrapper dr={`row`} width={`auto`}>
+                            <Button
+                              size="small"
+                              type={isType === "등록" ? `primary` : `default`}
+                              onClick={() => typeHandler("등록")}
+                            >
+                              등록
+                            </Button>
+                            <Button
+                              size="small"
+                              type={isType !== "등록" ? `primary` : `default`}
+                              onClick={() => typeHandler("수정")}
+                            >
+                              수정
+                            </Button>
+                          </Wrapper>
+                        )}
                       </Wrapper>
 
                       <Wrapper
@@ -2078,13 +2071,10 @@ const List = () => {
                           이메일 변경은 개발사에 문의해주세요.
                         </GuideDiv>
                         <GuideDiv isImpo={true}>
-                          회원이 등록이 되지 않았을 시 등록할 때만 수정이
-                          가능하며, 맨 위 학생 수업 참여 중 강의목록을 선택했을
-                          시 등록할 수 있습니다.
+                          등록하기전 수정을 원하시면 오른쪽 수정 버튼을
+                          클릭해주시기 바랍니다.
                         </GuideDiv>
-                        <GuideDiv isImpo={true}>
-                          등록하기 전 성별 제외 한 내용은 수정이 가능합니다.
-                        </GuideDiv>
+
                         <GuideDiv isImpo={true}>
                           성별은 필수 값 입니다.
                         </GuideDiv>
@@ -2411,40 +2401,41 @@ const List = () => {
                       )}
                     </Wrapper>
 
-                    <Wrapper
-                      padding={`5px 0`}
-                      dr={`row`}
-                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
-                    >
+                    {isType === "등록" || (
                       <Wrapper
-                        width={`25%`}
-                        bgColor={Theme.lightGrey3_C}
-                        padding={`3px`}
+                        padding={`5px 0`}
+                        dr={`row`}
+                        borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
                       >
-                        <Text>
-                          성별
-                          <SpanText color={Theme.red_C}>*</SpanText>
-                        </Text>
+                        <Wrapper
+                          width={`25%`}
+                          bgColor={Theme.lightGrey3_C}
+                          padding={`3px`}
+                        >
+                          <Text>
+                            성별
+                            {!isJoin && (
+                              <SpanText color={Theme.red_C}>*</SpanText>
+                            )}
+                          </Text>
+                        </Wrapper>
+                        <Wrapper
+                          width={`75%`}
+                          al={`flex-start`}
+                          padding={`0 10px`}
+                        >
+                          <FormItem name="gender">
+                            <Select placeholder="성별을 선택해주세요.">
+                              <Select.Option value="여">여</Select.Option>
+                              <Select.Option value="남">남</Select.Option>
+                              <Select.Option value="상관없음">
+                                상관없음
+                              </Select.Option>
+                            </Select>
+                          </FormItem>
+                        </Wrapper>
                       </Wrapper>
-                      <Wrapper
-                        width={`75%`}
-                        al={`flex-start`}
-                        padding={`0 10px`}
-                      >
-                        <FormItem name="gender">
-                          <Select
-                            placeholder="성별을 선택해주세요."
-                            disabled={isGender ? false : true}
-                          >
-                            <Select.Option value="여">여</Select.Option>
-                            <Select.Option value="남">남</Select.Option>
-                            <Select.Option value="상관없음">
-                              상관없음
-                            </Select.Option>
-                          </Select>
-                        </FormItem>
-                      </Wrapper>
-                    </Wrapper>
+                    )}
 
                     <Wrapper
                       padding={`5px 0`}
