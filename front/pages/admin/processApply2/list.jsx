@@ -221,12 +221,15 @@ const List = ({ location }) => {
       >
         <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 20px`}>
           <Text fontSize={`16px`} fontWeight={`700`} margin={`0 20px 0 0`}>
-            신청일 |&nbsp;{updateData && updateData.createdAt.slice(0, 10)}
+            신청일 |&nbsp;
+            {updateData &&
+              updateData.createdAt &&
+              updateData.createdAt.slice(0, 10)}
           </Text>
           <Text fontSize={`16px`} fontWeight={`700`}>
             처리 완료일 |&nbsp;
             {updateData && updateData.completedAt
-              ? updateData.completedAt.slice(0, 10)
+              ? updateData.completedAt && updateData.completedAt.slice(0, 10)
               : `-`}
           </Text>
         </Wrapper>

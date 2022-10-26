@@ -896,9 +896,10 @@ const Delete = () => {
                               </Text>
                               <Text>
                                 수업 시작일 :{" "}
-                                {data.startDate
-                                  .replace(/\//g, "-")
-                                  .slice(0, 10)}
+                                {data.startDate &&
+                                  data.startDate
+                                    .replace(/\//g, "-")
+                                    .slice(0, 10)}
                               </Text>
                             </Wrapper>
                           </Wrapper>

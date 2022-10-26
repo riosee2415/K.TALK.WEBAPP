@@ -2025,7 +2025,7 @@ const Index = () => {
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`25%`}
                             >
-                              {data.birth.slice(0, 10)}
+                              {data.birth && data.birth.slice(0, 10)}
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
@@ -2346,7 +2346,7 @@ const Index = () => {
                               fontSize={width < 700 ? `14px` : `16px`}
                               width={`10%`}
                             >
-                              {data.birth.slice(0, 10)}
+                              {data.birth && data.birth.slice(0, 10)}
                             </Text>
                             <Text
                               fontSize={width < 700 ? `14px` : `16px`}
@@ -2369,7 +2369,7 @@ const Index = () => {
                               width={`20%`}
                               wordBreak={`break-word`}
                             >
-                              {data.endDate.slice(0, 10)}
+                              {data.endDate && data.endDate.slice(0, 10)}
 
                               <SpanText color={Theme.red_C}>
                                 {`(${stepEnd(data.endDate, data.day)}회)`}
@@ -2618,7 +2618,7 @@ const Index = () => {
                           fontSize={width < 700 ? `14px` : `16px`}
                           width={`25%`}
                         >
-                          {data.createdAt.slice(0, 10)}
+                          {data.createdAt && data.createdAt.slice(0, 10)}
                         </Text>
                       </Wrapper>
                     );
