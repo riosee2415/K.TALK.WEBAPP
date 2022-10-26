@@ -63,6 +63,7 @@ import { BOOK_LIST_REQUEST } from "../../reducers/book";
 import { PAY_CLASS_LEC_DETAIL_REQUEST } from "../../reducers/payClass";
 import StudentNormalNotice from "../../components/normalNotice/StudentNormalNotice";
 import { LECTURE_NOTICE_LIST_REQUEST } from "../../reducers/lectureNotice";
+import { PAYMENT_LIST_REQUEST } from "../../reducers/payment";
 
 const PROFILE_WIDTH = `150`;
 const PROFILE_HEIGHT = `150`;
@@ -283,8 +284,8 @@ const CustomTableHoverWrapper = styled(Wrapper)`
 const Student = () => {
   ////// GLOBAL STATE //////
 
-  const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
-    (state) => state.seo
+  const { paymentList, st_paymentListDone, st_paymentListError } = useSelector(
+    (state) => state.payment
   );
 
   const {
@@ -420,6 +421,12 @@ const Student = () => {
     // },
   ];
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    dispatch({
+      type: PAYMENT_LIST_REQUEST,
+    });
+  }, []);
 
   useEffect(() => {
     dispatch({
@@ -1452,7 +1459,7 @@ const Student = () => {
               {lectureHomeworkStuList &&
                 (lectureHomeworkStuList.length === 0 ? (
                   <Wrapper margin={`50px 0`}>
-                    <Empty description="숙제가 없습니다." />
+                    <Empty description="No homework." />
                   </Wrapper>
                 ) : (
                   lectureHomeworkStuList &&
@@ -1610,6 +1617,42 @@ const Student = () => {
               total={lectureHomeworkStuLastPage * 10}
               onChange={(page) => onChangeHomeworkPage(page)}
             />
+
+            {/* Payment history */}
+            <Wrapper al={`flex-start`} margin={`80px 0 0`}>
+              <CommonTitle>Payment history</CommonTitle>
+
+              <Wrapper
+                dr={`row`}
+                padding={`20px 0`}
+                bgColor={Theme.subTheme14_C}
+                borderTop={`1px solid ${Theme.subTheme8_C}`}
+                fontSize={width < 700 ? `14px` : `18px`}
+                fontWeight={`Bold`}
+                margin={`20px 0 0`}
+              >
+                <Wrapper width={`10%`}>No</Wrapper>
+                <Wrapper width={`20%`}>Teacher Name</Wrapper>
+                <Wrapper width={`30%`}>Lecture Name</Wrapper>
+                <Wrapper width={`20%`}>Lecture Price</Wrapper>
+                <Wrapper width={`20%`}>Lecture Date</Wrapper>
+              </Wrapper>
+              {paymentList && paymentList.length === 0 ? (
+                <Wrapper height={`300px`}>
+                  <Empty />
+                </Wrapper>
+              ) : (
+                paymentList.map(() => {
+                  <CustomTableHoverWrapper>
+                    <Wrapper width={`10%`}>No</Wrapper>
+                    <Wrapper width={`20%`}>Teacher Name</Wrapper>
+                    <Wrapper width={`30%`}>Lecture Name</Wrapper>
+                    <Wrapper width={`20%`}>Lecture Price</Wrapper>
+                    <Wrapper width={`20%`}>Lecture Date</Wrapper>
+                  </CustomTableHoverWrapper>;
+                })
+              )}
+            </Wrapper>
           </RsWrapper>
 
           {/* Upload My ID picture Modal START */}
