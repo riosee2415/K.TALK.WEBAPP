@@ -18,6 +18,7 @@ import PageHeader from "../../../components/admin/PageHeader";
 import {
   Button,
   Calendar,
+  Checkbox,
   DatePicker,
   Form,
   Input,
@@ -262,6 +263,8 @@ const DetailClass = () => {
 
   const [memoCreateModal, setMemoCreateModal] = useState("");
   const [memoUpdateData, setMemoUpdateData] = useState("");
+
+  const [isPayCheck, setIsPayCheck] = useState(false);
 
   const [updateStuForm] = Form.useForm();
 
@@ -714,10 +717,6 @@ const DetailClass = () => {
   );
 
   const onClicStuHandler = useCallback(() => {
-    if (moment(stuChangeDate) < moment(stuChangeDetail.createdAt)) {
-      return message.error("만기일은 시작일보다 과거일 수 없습니다.");
-    }
-
     dispatch({
       type: PARTICIPANT_UPDATE_REQUEST,
       data: {
@@ -726,12 +725,17 @@ const DetailClass = () => {
         createdAt:
           stuChangeDetail &&
           moment(stuChangeDetail.createdAt, "YYYY-MM-DD").format("YYYY-MM-DD"),
+
+        isPay: isPayCheck ? 1 : 0,
+        lectureId: stuChangeDetail && stuChangeDetail.LectureId,
       },
     });
+
     setStuChangeDate(null);
     setStuDetail(null);
     setStuChangeModal(false);
-  }, [stuChangeDetail, stuChangeDate]);
+    setIsPayCheck(false);
+  }, [isPayCheck, stuChangeDetail, stuChangeDate]);
 
   const onStuFill = useCallback(
     (data) => {
@@ -761,6 +765,10 @@ const DetailClass = () => {
     });
   }, []);
   ////// TOGGLE //////
+
+  const isPayCheckToggle = useCallback(() => {
+    setIsPayCheck((prev) => !prev);
+  }, [isPayCheck]);
 
   const noticeToggle = useCallback((data) => {
     setNoticeModal((prev) => !prev);
@@ -2865,18 +2873,29 @@ const DetailClass = () => {
           &nbsp; &nbsp; &nbsp;
           <Text>
             만기일:&nbsp;
-            <DatePicker
-              value={
-                stuChangeDate
-                  ? stuChangeDate
-                  : stuChangeDetail &&
-                    moment(stuChangeDetail.endDate, `YYYY-MM-DD`)
-              }
-              placeholder={"변경할 만기일"}
-              onChange={(e) => stuDateChangeHandler(e)}
-              allowClear={false}
-            />
+            {stuChangeDetail && (
+              <DatePicker
+                value={
+                  stuChangeDate
+                    ? stuChangeDate
+                    : stuChangeDetail &&
+                      moment(stuChangeDetail.endDate, `YYYY-MM-DD`)
+                }
+                disabledDate={(date) =>
+                  date <= moment(stuChangeDetail.createdAt, "YYYY-MM-DD")
+                }
+                placeholder={"변경할 만기일"}
+                onChange={(e) => stuDateChangeHandler(e)}
+                allowClear={false}
+              />
+            )}
           </Text>
+        </Wrapper>
+
+        <Wrapper al={`flex-start`} margin={`20px 0`}>
+          <Checkbox onChange={isPayCheckToggle} checked={isPayCheck}>
+            학생의 강의결제 횟수를 추가하시겠습니까?
+          </Checkbox>
         </Wrapper>
 
         <Wrapper al={`flex-end`}>
