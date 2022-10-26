@@ -867,7 +867,7 @@ const LectureAll = () => {
     },
     {
       title: "Attendacne",
-      render: (data) => data.createdAt.slice(0, 10),
+      render: (data) => data.createdAt && data.createdAt.slice(0, 10),
     },
 
     {
@@ -900,7 +900,7 @@ const LectureAll = () => {
     },
     {
       title: "Date of participation",
-      render: (data) => data.createdAt.slice(0, 10),
+      render: (data) => data.createdAt && data.createdAt.slice(0, 10),
     },
 
     {
@@ -1552,7 +1552,8 @@ const LectureAll = () => {
                             bgColor={Theme.white_C}
                             height={`100%`}
                           >
-                            {data.PartCreatedAt.slice(0, 10)}
+                            {data.PartCreatedAt &&
+                              data.PartCreatedAt.slice(0, 10)}
                           </Wrapper>
                         </Wrapper>
                       </Wrapper>

@@ -1082,7 +1082,9 @@ const Student = () => {
                             margin={width < 900 ? `0 20px 0 0` : `0 50px 0 0`}
                           >
                             <SpanText fontWeight={`bold`}>From :</SpanText>
-                            &nbsp;{data.PartCreatedAt.slice(0, 10)}
+                            &nbsp;
+                            {data.PartCreatedAt &&
+                              data.PartCreatedAt.slice(0, 10)}
                           </Text>
                           <Text
                             margin={width < 900 ? `0 20px 0 0` : `0 50px 0 0`}
@@ -1292,7 +1294,8 @@ const Student = () => {
                               fontWeight={`bold`}
                               color={Theme.basicTheme_C}
                             >
-                              {data.PartCreatedAt.slice(0, 10)}
+                              {data.PartCreatedAt &&
+                                data.PartCreatedAt.slice(0, 10)}
                             </Text>
                           </Wrapper>
                         </Wrapper>

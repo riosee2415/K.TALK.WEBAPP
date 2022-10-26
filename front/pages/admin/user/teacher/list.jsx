@@ -461,8 +461,8 @@ const UserList = ({}) => {
         return (
           <Text>
             {data.isFire
-              ? data.updatedAt.slice(0, 13)
-              : data.createdAt.slice(0, 13)}
+              ? data.updatedAt && data.updatedAt.slice(0, 13)
+              : data.createdAt && data.createdAt.slice(0, 13)}
           </Text>
         );
       },
