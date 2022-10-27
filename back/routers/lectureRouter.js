@@ -555,12 +555,9 @@ router.get("/student/lecture/list", isLoggedIn, async (req, res, next) => {
             C.stuPayCount,
             (
               SELECT  COUNT(*)
-                FROM  payments  p
-               INNER
-                JOIN  users	    u
-                  ON  u.email = p.email
-               WHERE  p.isComplete = 1
-                 AND  p.lectureId = B.id
+                FROM  payments
+               WHERE  UserId = ${req.user.id}
+                 AND  lectureId = A.LectureId
             )						      AS frequecy,
             CASE
               WHEN	DATE_FORMAT(NOW(), "%Y%m%d") < DATE_FORMAT(A.endDate, "%Y%m%d") THEN DATEDIFF(DATE_FORMAT(A.endDate, "%Y%m%d"), DATE_FORMAT(NOW(), "%Y%m%d")) 
