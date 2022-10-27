@@ -1035,6 +1035,7 @@ const List = () => {
     setTime(null);
     setCurrentTab(3);
     setStatusType("");
+    setUserData(null);
   }, []);
 
   // 줌 미팅 시간 기능
