@@ -78,6 +78,8 @@ const Book = ({}) => {
     st_bookAdminDeleteDone,
     st_bookAdminDeleteError,
     st_bookUploadThDone,
+    st_bookUploadThError,
+    st_bookUploadError,
   } = useSelector((state) => state.book);
 
   const { allLectures } = useSelector((state) => state.lecture);
@@ -169,6 +171,18 @@ const Book = ({}) => {
       setImagePathTh(uploadPathTh);
     }
   }, [st_bookUploadThDone]);
+
+  useEffect(() => {
+    if (st_bookUploadThError) {
+      return message.error(st_bookUploadThError);
+    }
+  }, [st_bookUploadThError]);
+
+  useEffect(() => {
+    if (st_bookUploadError) {
+      return message.error(st_bookUploadError);
+    }
+  }, [st_bookUploadError]);
 
   useEffect(() => {
     if (st_bookCreateDone) {
