@@ -1229,6 +1229,7 @@ router.patch("/admin/user/update", isAdminCheck, async (req, res, next) => {
     sns,
     snsId,
     stuPayCount,
+    address,
     ////////////
     classHour,
     timeDiff,
@@ -1288,6 +1289,7 @@ router.patch("/admin/user/update", isAdminCheck, async (req, res, next) => {
         stuCountry,
         stuLiveCon,
         stuLanguage,
+        address,
         mobile,
         password: hashedPassword,
         adminMemo,
