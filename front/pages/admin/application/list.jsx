@@ -99,8 +99,10 @@ const List = () => {
 
   const {
     paymentList,
+    //
     st_paymentListDone,
     st_paymentListError,
+    //
     st_paymentCreateDone,
   } = useSelector((state) => state.payment);
 
@@ -222,6 +224,20 @@ const List = () => {
         },
       });
 
+      if (noData) {
+        // 프리퀀시 올리기 (결제내역생성)
+        dispatch({
+          type: PAYMENT_CREATE_REQUEST,
+          data: {
+            type: "-",
+            email: applicationDetail[0].gmailAddress,
+            name: applicationDetail[0].username,
+            userId: applicationDetail[0].userPkId,
+            lectureId: JSON.parse(noData).id,
+          },
+        });
+      }
+
       setIsPay("네");
       setNoData(null);
       setYesData(null);
@@ -338,7 +354,7 @@ const List = () => {
             name: `${userData && userData.firstName} ${
               userData && userData.lastName
             }`,
-            UserId: createId,
+            userId: createId,
             lectureId: JSON.parse(noData).id,
           },
         });
@@ -499,6 +515,8 @@ const List = () => {
           status: applicationDetail[0].status,
           // 성별
           gender: applicationDetail[0].gender,
+          // 주소
+          address: applicationDetail[0].address,
         });
       }
 
@@ -828,6 +846,7 @@ const List = () => {
           gender: data.gender,
           stuJob: data.job,
           address: data.address,
+          status: data.status,
           // detailAddress : data.detailAddress,
           // adminMemo : "",
         },
