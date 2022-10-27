@@ -149,6 +149,7 @@ router.post("/detail", isAdminCheck, async (req, res, next) => {
                 A.purpose,
                 B.id                                                          AS userPkId,
                 B.stuNo,
+                B.stuJob,
                 B.userId,
                 B.profileImage,
                 B.username,
