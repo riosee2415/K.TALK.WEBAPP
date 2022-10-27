@@ -207,6 +207,20 @@ router.post("/create", async (req, res, next) => {
     comment,
   } = req.body;
   try {
+    const findExistQuery = `
+    SELECT  id
+      FROM  applications
+     WHERE  gmailAddress = "${gmailAddress}"
+    `;
+
+    const exData = await models.sequelize.query(findExistQuery);
+
+    if (exData[0].length !== 0) {
+      return res
+        .status(401)
+        .send("이미 해당 이메일로 등록된 신청서 양식이 존재합니다.");
+    }
+
     const createResult = await Application.create({
       firstName,
       lastName,
