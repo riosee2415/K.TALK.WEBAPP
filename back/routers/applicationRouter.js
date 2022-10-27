@@ -100,7 +100,11 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
                     ? ``
                     : 1
                 }
-                ${_time !== `` ? `AND meetDate LIKE '${_time}' ` : ``}
+                ${
+                  _time !== ``
+                    ? `AND DATE_FORMAT(meetDate, "%Y-%m-%d") = DATE_FORMAT("${_time}", "%Y-%m-%d)`
+                    : ``
+                }
                 ${_status !== `` ? `AND status LIKE '${_status}' ` : ``}
        ORDER    BY  ${orderName} ${orderSC}
       `;
