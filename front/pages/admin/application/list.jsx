@@ -181,6 +181,7 @@ const List = () => {
   const [stuSelect, setStuSelect] = useState(""); // 학생 출석 목록 내 강의 검색
   const [statusType, setStatusType] = useState(""); // 등록상태 검색 값
   const [isType, setIsType] = useState(null); // 등록인지 수정인지 값 ( 회원가입 전 )
+  const [currentTab, setCurrentTab] = useState(3); // 3 = 전체, 2 = 완료, 1 = 미완료
 
   const numberInput = useInput(); // 강의기간 (form안에 form이여서 input 쓸수밖에 없음)
 
@@ -201,13 +202,12 @@ const List = () => {
     dispatch({
       type: APP_LIST_REQUEST,
       data: {
-        isComplete: qs.type ? qs.type : null,
+        isComplete: currentTab,
         isTime: time,
-        time,
         status: statusType,
       },
     });
-  }, [router.query, time, statusType]);
+  }, [router.query, time, statusType, currentTab]);
 
   // ========= SUCCESS ========= //
 
@@ -691,7 +691,7 @@ const List = () => {
 
   // 달력 날짜 수정 기능
   const dateChagneHandler = useCallback((data) => {
-    const birth = data.format("YYYY-MM-DD");
+    const birth = moment(data).format("YYYY-MM-DD");
     userForm.setFieldsValue({
       birth: birth,
     });
@@ -834,12 +834,12 @@ const List = () => {
           classHour: data.classHour,
           timeDiff: data.timeDiff,
           wantStartDate: data.wantStartDate
-            ? data.wantStartDate.format("YYYY-MM-DD")
+            ? moment(data.wantStartDate).format("YYYY-MM-DD")
             : "",
           teacher: data.teacher,
           freeTeacher: data.freeTeacher,
           meetDate: data.meetDate
-            ? data.meetDate.format("YYYY-MM-DD hh:mm")
+            ? moment(data.meetDate).format("YYYY-MM-DD hh:mm")
             : "",
           level: data.level,
           purpose: data.purpose,
@@ -1005,11 +1005,11 @@ const List = () => {
           data: {
             id: userData && userData.id,
             timeDiff: data.timeDiff,
-            wantStartDate: data.wantStartDate.format("YY-MM-DD"),
+            wantStartDate: moment(data.wantStartDate).format("YYYY-MM-DD"),
             teacher: data.teacher,
             freeTeacher: data.freeTeacher,
             isDiscount: false,
-            meetDate: data.meetDate.format("YY-MM-DD"),
+            meetDate: moment(data.meetDate).format("YYYY-MM-DD"),
             level: data.level,
             job: data.job,
             purpose: data.purpose,
@@ -1033,13 +1033,14 @@ const List = () => {
       },
     });
     setTime(null);
+    setCurrentTab(3);
     setStatusType("");
   }, []);
 
   // 줌 미팅 시간 기능
-  const onChangeDate = useCallback((date) => {
-    if (date) {
-      setTime(date.format("YYYY-MM-DD hh:mm"));
+  const onChangeDate = useCallback((data) => {
+    if (data) {
+      setTime(moment(data));
     } else {
       setTime(null);
     }
@@ -1578,22 +1579,27 @@ const List = () => {
           borderBottom={`1px dashed ${Theme.lightGrey_C}`}
           padding="5px 0px"
         >
-          {/* <ModalBtn
-            type={router.query.type === "true" && `primary`}
+          <Button
+            type={currentTab === 3 ? "primary" : `default`}
             size={`small`}
-            onClick={() => moveLinkHandler(`/admin/application/list?type=true`)}
+            onClick={() => setCurrentTab(3)}
           >
-            처리완료
-          </ModalBtn>
-          <ModalBtn
-            type={router.query.type === "false" && `primary`}
+            전체
+          </Button>
+          <Button
+            type={currentTab === 1 ? "primary" : `default`}
             size={`small`}
-            onClick={() =>
-              moveLinkHandler(`/admin/application/list?type=false`)
-            }
+            onClick={() => setCurrentTab(1)}
           >
-            미처리
-          </ModalBtn> */}
+            미완료
+          </Button>
+          <Button
+            type={currentTab === 2 ? "primary" : `default`}
+            size={`small`}
+            onClick={() => setCurrentTab(2)}
+          >
+            완료
+          </Button>
 
           <Select
             onChange={(e) => setStatusType(e)}
@@ -1617,8 +1623,10 @@ const List = () => {
             showTime
             minuteStep={10}
             format="YYYY-MM-DD hh:mm"
-            onChange={(e) => onChangeDate(e)}
+            onChange={onChangeDate}
             value={time}
+            style={{ width: `250px` }}
+            placeholder="줌 미팅 시간을 선택해주세요."
           ></DatePicker>
 
           <Button
