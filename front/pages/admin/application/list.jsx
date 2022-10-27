@@ -203,7 +203,7 @@ const List = () => {
       type: APP_LIST_REQUEST,
       data: {
         isComplete: currentTab,
-        isTime: time,
+        time: time,
         status: statusType,
       },
     });
