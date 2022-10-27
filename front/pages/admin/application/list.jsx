@@ -204,11 +204,11 @@ const List = () => {
       type: APP_LIST_REQUEST,
       data: {
         isComplete: currentTab,
-        time: time,
+        time: time ? moment(time).format("YYYY-MM-DD") : null,
         status: statusType,
       },
     });
-  }, [router.query, time, statusType, currentTab]);
+  }, [time, statusType, currentTab]);
 
   // ========= SUCCESS ========= //
 
@@ -843,7 +843,7 @@ const List = () => {
           teacher: data.teacher,
           freeTeacher: data.freeTeacher,
           meetDate: data.meetDate
-            ? moment(data.meetDate).format("YYYY-MM-DD hh:mm")
+            ? moment(data.meetDate).format("YYYY-MM-DD")
             : "",
           level: data.level,
           purpose: data.purpose,
@@ -1628,7 +1628,7 @@ const List = () => {
             size="small"
             showTime
             minuteStep={10}
-            format="YYYY-MM-DD hh:mm"
+            format="YYYY-MM-DD"
             onChange={onChangeDate}
             value={time}
             style={{ width: `250px` }}
@@ -2968,8 +2968,8 @@ const List = () => {
                             <FormItem name="meetDate">
                               <CustomDatePicker
                                 style={{ width: `100%` }}
-                                showTime={{ format: "HH:mm", minuteStep: 10 }}
-                                format="YYYY-MM-DD HH:mm"
+                                // showTime={{ format: "HH:mm", minuteStep: 10 }}
+                                format="YYYY-MM-DD"
                                 placeholder="줌 미팅 시간을 선택해주세요."
                               />
                             </FormItem>
