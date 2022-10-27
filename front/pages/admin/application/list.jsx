@@ -182,6 +182,7 @@ const List = () => {
   const [statusType, setStatusType] = useState(""); // 등록상태 검색 값
   const [isType, setIsType] = useState(null); // 등록인지 수정인지 값 ( 회원가입 전 )
   const [currentTab, setCurrentTab] = useState(3); // 3 = 전체, 2 = 완료, 1 = 미완료
+  const [currentId, setCurrentId] = useState(null); // 테이블 선택 값
 
   const numberInput = useInput(); // 강의기간 (form안에 form이여서 input 쓸수밖에 없음)
 
@@ -633,6 +634,9 @@ const List = () => {
   // 왼쪽 테이블 선택
   const row = {
     onChange: (selectedRowKeys, selectedRows) => {
+      // 아이디 값
+      setCurrentId(selectedRowKeys);
+
       // 유저 폼 리셋 - 값이 없는 폼이 있을수도 있기 때문에
       userForm.resetFields();
 
@@ -1036,6 +1040,7 @@ const List = () => {
     setCurrentTab(3);
     setStatusType("");
     setUserData(null);
+    setCurrentId(null);
   }, []);
 
   // 줌 미팅 시간 기능
@@ -1683,10 +1688,13 @@ const List = () => {
             // rowSelection={{
             //   type: `radio`,
             // }}
+
             rowSelection={{
               type: `radio`,
               ...row,
+              selectedRowKeys: currentId,
             }}
+
             // onRow={(data) => {
             //   return {
             //     onClick: () => {
