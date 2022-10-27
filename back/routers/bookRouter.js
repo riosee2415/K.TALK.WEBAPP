@@ -40,7 +40,7 @@ const upload = multer({
       );
     },
   }),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  limits: { fileSize: 100 * 1024 * 1024 }, // 5MB
 });
 
 router.post("/list", async (req, res, next) => {
@@ -198,8 +198,20 @@ router.get("/detail/:bookId", async (req, res, next) => {
   }
 });
 
-router.post("/image", upload.single("image"), async (req, res, next) => {
-  return res.json({ path: req.file.location });
+router.post("/image", async (req, res, next) => {
+  const uploadImage = upload.single("image");
+
+  await uploadImage(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      return res.status(401).send("첨부 가능한 용량을 초과했습니다.");
+    } else if (err) {
+      return res.status(401).send("업로드 중 문제가 발생했습니다.");
+    }
+
+    return res.json({
+      path: req.file.location,
+    });
+  });
 });
 
 router.post("/create", isLoggedIn, async (req, res, next) => {
