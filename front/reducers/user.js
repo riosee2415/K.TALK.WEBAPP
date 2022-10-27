@@ -18,6 +18,8 @@ export const initailState = {
   classChangeModal: false,
   classPartModal: false,
 
+  createId: null, // 생성된 후 PK값
+
   userStuList: null,
   //
   st_loginLoading: false,
@@ -464,6 +466,7 @@ const reducer = (state = initailState, action) =>
         draft.st_userStuCreateLoading = false;
         draft.st_userStuCreateDone = true;
         draft.st_userStuCreateError = null;
+        draft.createId = action.data.createStudentId;
         break;
       }
       case USER_STU_CREATE_FAILURE: {

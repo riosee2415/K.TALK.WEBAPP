@@ -137,12 +137,14 @@ router.post("/create", async (req, res, next) => {
     req.body;
 
   try {
-    const exPayClass = await PayClass.findOne({
-      where: { id: parseInt(PayClassId) },
-    });
+    if (PayClassId) {
+      const exPayClass = await PayClass.findOne({
+        where: { id: parseInt(PayClassId) },
+      });
 
-    if (!exPayClass) {
-      return res.status(401).send("존재하지 않는 정보입니다.");
+      if (!exPayClass) {
+        return res.status(401).send("존재하지 않는 정보입니다.");
+      }
     }
 
     if (type === "계좌이체") {
