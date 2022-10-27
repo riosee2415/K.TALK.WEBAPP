@@ -924,7 +924,7 @@ router.post("/student/create", isAdminCheck, async (req, res, next) => {
       }
     );
 
-    return res.status(201).json({ result: true });
+    return res.status(201).json({ result: true, createStudentId: result.id });
   } catch (error) {
     console.error(error);
     return res.status(400).send("회원 생성에 실패했습니다.");
