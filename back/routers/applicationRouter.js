@@ -43,7 +43,7 @@ router.post("/useYn", isAdminCheck, async (req, res, next) => {
 router.post("/list", isAdminCheck, async (req, res, next) => {
   const { isComplete, isTime, time, status } = req.body;
 
-  const _isComplete = isComplete || null;
+  const _isComplete = parseInt(isComplete) || 3;
 
   const _status = status || ``;
 
@@ -91,7 +91,15 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
                 purpose
         FROM	  applications
        WHERE    1 = 1
-                ${_isComplete ? `AND   isComplete = ${_isComplete}` : ``}
+                ${
+                  _isComplete === 1
+                    ? `AND isComplete = 0`
+                    : _isComplete === 2
+                    ? `AND isComplete = 1`
+                    : _isComplete === 3
+                    ? ``
+                    : 1
+                }
                 ${_time !== `` ? `AND meetDate LIKE '${_time}' ` : ``}
                 ${_status !== `` ? `AND status LIKE '${_status}' ` : ``}
        ORDER    BY  ${orderName} ${orderSC}
