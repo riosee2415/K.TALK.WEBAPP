@@ -191,7 +191,7 @@ const List = () => {
     if (isJoin) {
       setIsType(null);
     } else {
-      setIsType("등록");
+      setIsType("수정");
     }
   }, [userData]);
 
@@ -2213,35 +2213,33 @@ const List = () => {
                       </Wrapper>
                     )}
 
-                    {(isType === "등록" || isType === null) && (
+                    <Wrapper
+                      padding={`5px 0`}
+                      dr={`row`}
+                      borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                    >
                       <Wrapper
-                        padding={`5px 0`}
-                        dr={`row`}
-                        borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                        width={`25%`}
+                        bgColor={Theme.lightGrey3_C}
+                        padding={`3px`}
                       >
-                        <Wrapper
-                          width={`25%`}
-                          bgColor={Theme.lightGrey3_C}
-                          padding={`3px`}
-                        >
-                          신청일
-                        </Wrapper>
-                        <Wrapper
-                          width={`75%`}
-                          al={`flex-start`}
-                          padding={`0 10px`}
-                        >
-                          <Input
-                            disabled={true}
-                            value={
-                              userData && userData.createdAt
-                                ? userData && userData.createdAt.slice(0, 10)
-                                : ""
-                            }
-                          />
-                        </Wrapper>
+                        신청일
                       </Wrapper>
-                    )}
+                      <Wrapper
+                        width={`75%`}
+                        al={`flex-start`}
+                        padding={`0 10px`}
+                      >
+                        <Input
+                          disabled={true}
+                          value={
+                            userData && userData.createdAt
+                              ? userData && userData.createdAt.slice(0, 10)
+                              : ""
+                          }
+                        />
+                      </Wrapper>
+                    </Wrapper>
 
                     {isJoin && (
                       <Wrapper
@@ -2273,107 +2271,120 @@ const List = () => {
                       </Wrapper>
                     )}
 
-                    {(isType === "등록" || isType === null) && (
-                      <>
+                    <>
+                      <Wrapper
+                        padding={`5px 0`}
+                        dr={`row`}
+                        borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                      >
                         <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                          width={`25%`}
+                          bgColor={Theme.lightGrey3_C}
+                          padding={`3px`}
                         >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
-                          >
-                            이름
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            al={`flex-start`}
-                            padding={`0 10px`}
-                          >
-                            <FormItem name="username">
-                              <Input placeholder="이름을 입력해주세요." />
-                            </FormItem>
-                          </Wrapper>
+                          이름
                         </Wrapper>
-
                         <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                          width={`75%`}
+                          al={`flex-start`}
+                          padding={`0 10px`}
                         >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
-                          >
-                            이메일
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            al={`flex-start`}
-                            padding={`0 10px`}
-                          >
-                            <FormItem name="email">
-                              <Input
-                                placeholder="이메일을 입력해주세요."
-                                disabled={true}
-                              />
-                            </FormItem>
-                          </Wrapper>
+                          <FormItem name="username">
+                            <Input
+                              placeholder="이름을 입력해주세요."
+                              disabled={
+                                isType === "등록" || isType === null
+                                  ? false
+                                  : true
+                              }
+                            />
+                          </FormItem>
                         </Wrapper>
+                      </Wrapper>
 
+                      <Wrapper
+                        padding={`5px 0`}
+                        dr={`row`}
+                        borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                      >
                         <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                          width={`25%`}
+                          bgColor={Theme.lightGrey3_C}
+                          padding={`3px`}
                         >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
-                          >
-                            아이디
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            al={`flex-start`}
-                            padding={`0 10px`}
-                          >
-                            <FormItem name="email">
-                              <Input
-                                disabled={true}
-                                placeholder="아이디를 입력해주세요."
-                              />
-                            </FormItem>
-                          </Wrapper>
+                          이메일
                         </Wrapper>
-
                         <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                          width={`75%`}
+                          al={`flex-start`}
+                          padding={`0 10px`}
                         >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
-                          >
-                            주소
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            al={`flex-start`}
-                            padding={`0 10px`}
-                          >
-                            <FormItem name="address">
-                              <Input placeholder="주소를 입력해주세요." />
-                            </FormItem>
-                          </Wrapper>
+                          <FormItem name="email">
+                            <Input
+                              placeholder="이메일을 입력해주세요."
+                              disabled={true}
+                            />
+                          </FormItem>
                         </Wrapper>
+                      </Wrapper>
 
-                        {/* <Wrapper
+                      <Wrapper
+                        padding={`5px 0`}
+                        dr={`row`}
+                        borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                      >
+                        <Wrapper
+                          width={`25%`}
+                          bgColor={Theme.lightGrey3_C}
+                          padding={`3px`}
+                        >
+                          아이디
+                        </Wrapper>
+                        <Wrapper
+                          width={`75%`}
+                          al={`flex-start`}
+                          padding={`0 10px`}
+                        >
+                          <FormItem name="email">
+                            <Input
+                              disabled={true}
+                              placeholder="아이디를 입력해주세요."
+                            />
+                          </FormItem>
+                        </Wrapper>
+                      </Wrapper>
+
+                      <Wrapper
+                        padding={`5px 0`}
+                        dr={`row`}
+                        borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                      >
+                        <Wrapper
+                          width={`25%`}
+                          bgColor={Theme.lightGrey3_C}
+                          padding={`3px`}
+                        >
+                          주소
+                        </Wrapper>
+                        <Wrapper
+                          width={`75%`}
+                          al={`flex-start`}
+                          padding={`0 10px`}
+                        >
+                          <FormItem name="address">
+                            <Input
+                              placeholder="주소를 입력해주세요."
+                              disabled={
+                                isType === "등록" || isType === null
+                                  ? false
+                                  : true
+                              }
+                            />
+                          </FormItem>
+                        </Wrapper>
+                      </Wrapper>
+
+                      {/* <Wrapper
                           padding={`5px 0`}
                           dr={`row`}
                           borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
@@ -2396,277 +2407,339 @@ const List = () => {
                           </Wrapper>
                         </Wrapper> */}
 
+                      <Wrapper
+                        padding={`5px 0`}
+                        dr={`row`}
+                        borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                      >
                         <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                          width={`25%`}
+                          bgColor={Theme.lightGrey3_C}
+                          padding={`3px`}
                         >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
-                          >
-                            휴대폰 번호
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            al={`flex-start`}
-                            padding={`0 10px`}
-                          >
-                            <FormItem name="mobile">
-                              <Input
-                                placeholder="전화번호를 입력해주세요."
-                                onChange={(e) =>
-                                  userForm.setFieldsValue({
-                                    password: e.target.value.slice(-4),
-                                  })
-                                }
-                              />
-                            </FormItem>
-                          </Wrapper>
+                          휴대폰 번호
                         </Wrapper>
-
                         <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                          width={`75%`}
+                          al={`flex-start`}
+                          padding={`0 10px`}
                         >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
-                          >
-                            비밀번호
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            al={`flex-start`}
-                            padding={`0 10px`}
-                          >
-                            <FormItem name="password">
-                              <Input
-                                disabled={true}
-                                placeholder="비밀번호를 입력해주세요."
-                              />
-                            </FormItem>
-                          </Wrapper>
+                          <FormItem name="mobile">
+                            <Input
+                              disabled={
+                                isType === "등록" || isType === null
+                                  ? false
+                                  : true
+                              }
+                              placeholder="전화번호를 입력해주세요."
+                              onChange={(e) =>
+                                userForm.setFieldsValue({
+                                  password: e.target.value.slice(-4),
+                                })
+                              }
+                            />
+                          </FormItem>
                         </Wrapper>
+                      </Wrapper>
 
+                      <Wrapper
+                        padding={`5px 0`}
+                        dr={`row`}
+                        borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                      >
                         <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                          width={`25%`}
+                          bgColor={Theme.lightGrey3_C}
+                          padding={`3px`}
                         >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
-                          >
-                            생년월일
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            ju={`space-between`}
-                            padding={`0 10px`}
-                            dr={`row`}
-                          >
-                            <FormItem name="birth" width={`calc(100% - 30px)`}>
-                              <Input
-                                disabled={true}
-                                placeholder="생년월일을 입력해주세요."
-                              />
-                            </FormItem>
+                          비밀번호
+                        </Wrapper>
+                        <Wrapper
+                          width={`75%`}
+                          al={`flex-start`}
+                          padding={`0 10px`}
+                        >
+                          <FormItem name="password">
+                            <Input
+                              disabled={true}
+                              placeholder="비밀번호를 입력해주세요."
+                            />
+                          </FormItem>
+                        </Wrapper>
+                      </Wrapper>
 
+                      <Wrapper
+                        padding={`5px 0`}
+                        dr={`row`}
+                        borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                      >
+                        <Wrapper
+                          width={`25%`}
+                          bgColor={Theme.lightGrey3_C}
+                          padding={`3px`}
+                        >
+                          생년월일
+                        </Wrapper>
+                        <Wrapper
+                          width={`75%`}
+                          ju={`space-between`}
+                          padding={`0 10px`}
+                          dr={`row`}
+                        >
+                          <FormItem
+                            name="birth"
+                            width={
+                              isType === "등록" || isType === null
+                                ? `calc(100% - 30px)`
+                                : `100%`
+                            }
+                          >
+                            <Input
+                              disabled={true}
+                              placeholder="생년월일을 입력해주세요."
+                            />
+                          </FormItem>
+
+                          <Wrapper
+                            width={`auto`}
+                            display={
+                              isType === "등록" || isType === null
+                                ? `flex`
+                                : `none`
+                            }
+                          >
                             <CalendarOutlined onClick={isBirthToggle} />
                           </Wrapper>
+                        </Wrapper>
 
-                          {isBirth && (
-                            <Wrapper
-                              // display={isCalendar ? "flex" : "none"}
-                              width={`auto`}
-                              shadow={`0px 0px 10px ${Theme.lightGrey3_C}`}
-                              border={`1px solid ${Theme.lightGrey3_C}`}
-                              padding={`5px 0`}
-                              margin={`5px 0 0`}
+                        {isBirth && (
+                          <Wrapper
+                            // display={isCalendar ? "flex" : "none"}
+                            width={`auto`}
+                            shadow={`0px 0px 10px ${Theme.lightGrey3_C}`}
+                            border={`1px solid ${Theme.lightGrey3_C}`}
+                            padding={`5px 0`}
+                            margin={`5px 0 0`}
+                          >
+                            <Calendar
+                              // style={{ width: width < 1350 ? `100%` : `100%` }}
+                              fullscreen={false}
+                              validRange={[moment(`1940`), moment()]}
+                              onChange={dateChagneHandler}
+                            />
+                          </Wrapper>
+                        )}
+                      </Wrapper>
+
+                      <Wrapper
+                        padding={`5px 0`}
+                        dr={`row`}
+                        borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                      >
+                        <Wrapper
+                          width={`25%`}
+                          bgColor={Theme.lightGrey3_C}
+                          padding={`3px`}
+                        >
+                          <Text>
+                            성별
+                            {!isJoin && (
+                              <SpanText color={Theme.red_C}>*</SpanText>
+                            )}
+                          </Text>
+                        </Wrapper>
+                        <Wrapper
+                          width={`75%`}
+                          al={`flex-start`}
+                          padding={`0 10px`}
+                        >
+                          <FormItem name="gender">
+                            <Select
+                              placeholder="성별을 선택해주세요."
+                              disabled={
+                                isType === "등록" || isType === null
+                                  ? false
+                                  : true
+                              }
                             >
-                              <Calendar
-                                // style={{ width: width < 1350 ? `100%` : `100%` }}
-                                fullscreen={false}
-                                validRange={[moment(`1940`), moment()]}
-                                onChange={dateChagneHandler}
-                              />
-                            </Wrapper>
-                          )}
+                              <Select.Option value="여">여</Select.Option>
+                              <Select.Option value="남">남</Select.Option>
+                              <Select.Option value="상관없음">
+                                상관없음
+                              </Select.Option>
+                            </Select>
+                          </FormItem>
                         </Wrapper>
+                      </Wrapper>
 
+                      <Wrapper
+                        padding={`5px 0`}
+                        dr={`row`}
+                        borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                      >
                         <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                          width={`25%`}
+                          bgColor={Theme.lightGrey3_C}
+                          padding={`3px`}
                         >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
-                          >
-                            <Text>
-                              성별
-                              {!isJoin && (
-                                <SpanText color={Theme.red_C}>*</SpanText>
-                              )}
-                            </Text>
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            al={`flex-start`}
-                            padding={`0 10px`}
-                          >
-                            <FormItem name="gender">
-                              <Select placeholder="성별을 선택해주세요.">
-                                <Select.Option value="여">여</Select.Option>
-                                <Select.Option value="남">남</Select.Option>
-                                <Select.Option value="상관없음">
-                                  상관없음
-                                </Select.Option>
-                              </Select>
-                            </FormItem>
-                          </Wrapper>
+                          국가
                         </Wrapper>
+                        <Wrapper
+                          width={`75%`}
+                          al={`flex-start`}
+                          padding={`0 10px`}
+                        >
+                          <FormItem name="stuCountry">
+                            <Select
+                              placeholder="국가를 입력해주세요."
+                              disabled={
+                                isType === "등록" || isType === null
+                                  ? false
+                                  : true
+                              }
+                            >
+                              {country &&
+                                country.map((data, idx) => {
+                                  return (
+                                    <Select.Option key={idx} value={data}>
+                                      {data}
+                                    </Select.Option>
+                                  );
+                                })}
+                            </Select>
+                          </FormItem>
+                        </Wrapper>
+                      </Wrapper>
 
+                      <Wrapper
+                        padding={`5px 0`}
+                        dr={`row`}
+                        borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                      >
                         <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                          width={`25%`}
+                          bgColor={Theme.lightGrey3_C}
+                          padding={`3px`}
                         >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
-                          >
-                            국가
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            al={`flex-start`}
-                            padding={`0 10px`}
-                          >
-                            <FormItem name="stuCountry">
-                              <Select placeholder="국가를 입력해주세요.">
-                                {country &&
-                                  country.map((data, idx) => {
-                                    return (
-                                      <Select.Option key={idx} value={data}>
-                                        {data}
-                                      </Select.Option>
-                                    );
-                                  })}
-                              </Select>
-                            </FormItem>
-                          </Wrapper>
+                          거주 국가
                         </Wrapper>
+                        <Wrapper
+                          width={`75%`}
+                          al={`flex-start`}
+                          padding={`0 10px`}
+                        >
+                          <FormItem name="stuLiveCon">
+                            <Select
+                              placeholder="거주국가를 입력해주세요."
+                              disabled={
+                                isType === "등록" || isType === null
+                                  ? false
+                                  : true
+                              }
+                            >
+                              {country &&
+                                country.map((data, idx) => {
+                                  return (
+                                    <Select.Option key={idx} value={data}>
+                                      {data}
+                                    </Select.Option>
+                                  );
+                                })}
+                            </Select>
+                          </FormItem>
+                        </Wrapper>
+                      </Wrapper>
 
+                      <Wrapper
+                        padding={`5px 0`}
+                        dr={`row`}
+                        borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                      >
                         <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                          width={`25%`}
+                          bgColor={Theme.lightGrey3_C}
+                          padding={`3px`}
                         >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
-                          >
-                            거주 국가
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            al={`flex-start`}
-                            padding={`0 10px`}
-                          >
-                            <FormItem name="stuLiveCon">
-                              <Select placeholder="거주국가를 입력해주세요.">
-                                {country &&
-                                  country.map((data, idx) => {
-                                    return (
-                                      <Select.Option key={idx} value={data}>
-                                        {data}
-                                      </Select.Option>
-                                    );
-                                  })}
-                              </Select>
-                            </FormItem>
-                          </Wrapper>
+                          사용언어
                         </Wrapper>
+                        <Wrapper
+                          width={`75%`}
+                          al={`flex-start`}
+                          padding={`0 10px`}
+                        >
+                          <FormItem name="stuLanguage">
+                            <Input
+                              placeholder="사용언어를 입력해주세요."
+                              disabled={
+                                isType === "등록" || isType === null
+                                  ? false
+                                  : true
+                              }
+                            />
+                          </FormItem>
+                        </Wrapper>
+                      </Wrapper>
 
+                      <Wrapper
+                        padding={`5px 0`}
+                        dr={`row`}
+                        borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                      >
                         <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                          width={`25%`}
+                          bgColor={Theme.lightGrey3_C}
+                          padding={`3px`}
                         >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
-                          >
-                            사용언어
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            al={`flex-start`}
-                            padding={`0 10px`}
-                          >
-                            <FormItem name="stuLanguage">
-                              <Input placeholder="사용언어를 입력해주세요." />
-                            </FormItem>
-                          </Wrapper>
+                          SNS
                         </Wrapper>
+                        <Wrapper
+                          width={`75%`}
+                          al={`flex-start`}
+                          padding={`0 10px`}
+                        >
+                          <FormItem name="sns">
+                            <Input
+                              placeholder="SNS를 입력해주세요."
+                              disabled={
+                                isType === "등록" || isType === null
+                                  ? false
+                                  : true
+                              }
+                            />
+                          </FormItem>
+                        </Wrapper>
+                      </Wrapper>
 
+                      <Wrapper
+                        padding={`5px 0`}
+                        dr={`row`}
+                        borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                      >
                         <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                          width={`25%`}
+                          bgColor={Theme.lightGrey3_C}
+                          padding={`3px`}
                         >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
-                          >
-                            SNS
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            al={`flex-start`}
-                            padding={`0 10px`}
-                          >
-                            <FormItem name="sns">
-                              <Input placeholder="SNS를 입력해주세요." />
-                            </FormItem>
-                          </Wrapper>
+                          SNS Id
                         </Wrapper>
-
                         <Wrapper
-                          padding={`5px 0`}
-                          dr={`row`}
-                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                          width={`75%`}
+                          al={`flex-start`}
+                          padding={`0 10px`}
                         >
-                          <Wrapper
-                            width={`25%`}
-                            bgColor={Theme.lightGrey3_C}
-                            padding={`3px`}
-                          >
-                            SNS Id
-                          </Wrapper>
-                          <Wrapper
-                            width={`75%`}
-                            al={`flex-start`}
-                            padding={`0 10px`}
-                          >
-                            <FormItem name="snsId">
-                              <Input placeholder="SNS ID를 입력해주세요." />
-                            </FormItem>
-                          </Wrapper>
+                          <FormItem name="snsId">
+                            <Input
+                              placeholder="SNS ID를 입력해주세요."
+                              disabled={
+                                isType === "등록" || isType === null
+                                  ? false
+                                  : true
+                              }
+                            />
+                          </FormItem>
                         </Wrapper>
-                      </>
-                    )}
+                      </Wrapper>
+                    </>
 
                     {isType === null && (
                       <Wrapper
