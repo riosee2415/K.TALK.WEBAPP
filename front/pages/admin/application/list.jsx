@@ -433,6 +433,8 @@ const List = () => {
     }
   }, [st_appUpdateDone]);
 
+  console.log(applicationDetail);
+
   useEffect(() => {
     if (st_appDetailDone) {
       // 학생 정보 세팅
@@ -445,13 +447,18 @@ const List = () => {
           // 원하는 시작 날짜
           wantStartDate: applicationDetail[0].wantStartDate
             ? moment(applicationDetail[0].wantStartDate)
-            : "",
+            : null,
           // 담당강사
           teacher: applicationDetail[0].teacher,
-          // 줌 미팅 시간
+          // 줌 미팅 날짜
           meetDate:
             applicationDetail[0] && applicationDetail[0].meetDate
               ? moment(applicationDetail[0] && applicationDetail[0].meetDate)
+              : null,
+          // 줌 미팅 시간
+          meetDate2:
+            applicationDetail[0] && applicationDetail[0].meetDate2
+              ? applicationDetail[0].meetDate2
               : "",
           // 레벨
           level: applicationDetail[0].level,
@@ -838,13 +845,12 @@ const List = () => {
           classHour: data.classHour,
           timeDiff: data.timeDiff,
           wantStartDate: data.wantStartDate
-            ? moment(data.wantStartDate).format("YYYY-MM-DD")
-            : "",
+            ? data.wantStartDate.format("YYYY-MM-DD")
+            : null,
           teacher: data.teacher,
           freeTeacher: data.freeTeacher,
-          meetDate: data.meetDate
-            ? moment(data.meetDate).format("YYYY-MM-DD")
-            : "",
+          meetDate: data.meetDate ? data.meetDate.format("YYYY-MM-DD") : null,
+          meetDate2: data.meetDate2,
           level: data.level,
           purpose: data.purpose,
           gender: data.gender,
@@ -1014,6 +1020,8 @@ const List = () => {
             freeTeacher: data.freeTeacher,
             isDiscount: false,
             meetDate: moment(data.meetDate).format("YYYY-MM-DD"),
+            meetDate2: data.meetDate2,
+
             level: data.level,
             job: data.job,
             purpose: data.purpose,
@@ -1630,7 +1638,7 @@ const List = () => {
             minuteStep={10}
             format="YYYY-MM-DD"
             onChange={onChangeDate}
-            value={time}
+            // value={time}
             style={{ width: `250px` }}
             placeholder="줌 미팅 시간을 선택해주세요."
           ></DatePicker>
@@ -2958,7 +2966,7 @@ const List = () => {
                             bgColor={Theme.lightGrey3_C}
                             padding={`3px`}
                           >
-                            줌 미팅 시간
+                            줌 미팅 날짜
                           </Wrapper>
                           <Wrapper
                             width={`75%`}
@@ -2970,7 +2978,32 @@ const List = () => {
                                 style={{ width: `100%` }}
                                 // showTime={{ format: "HH:mm", minuteStep: 10 }}
                                 format="YYYY-MM-DD"
-                                placeholder="줌 미팅 시간을 선택해주세요."
+                                placeholder="줌 미팅 날짜를 선택해주세요."
+                              />
+                            </FormItem>
+                          </Wrapper>
+                        </Wrapper>
+
+                        <Wrapper
+                          padding={`5px 0`}
+                          dr={`row`}
+                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                        >
+                          <Wrapper
+                            width={`25%`}
+                            bgColor={Theme.lightGrey3_C}
+                            padding={`3px`}
+                          >
+                            줌 미팅 시간
+                          </Wrapper>
+                          <Wrapper
+                            width={`75%`}
+                            al={`flex-start`}
+                            padding={`0 10px`}
+                          >
+                            <FormItem name="meetDate2">
+                              <Input
+                                placeholder={`줌 미팅 시간을 입력해주세요.`}
                               />
                             </FormItem>
                           </Wrapper>
