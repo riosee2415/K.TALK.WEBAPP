@@ -433,8 +433,6 @@ const List = () => {
     }
   }, [st_appUpdateDone]);
 
-  console.log(applicationDetail);
-
   useEffect(() => {
     if (st_appDetailDone) {
       // 학생 정보 세팅
@@ -1634,8 +1632,6 @@ const List = () => {
 
           <DatePicker
             size="small"
-            showTime
-            minuteStep={10}
             format="YYYY-MM-DD"
             onChange={onChangeDate}
             // value={time}
