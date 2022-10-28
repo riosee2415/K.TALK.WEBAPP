@@ -87,6 +87,10 @@ module.exports = class Application extends Model {
           type: DataTypes.STRING(100),
           allowNull: true,
         },
+        meetDate2: {
+          type: DataTypes.STRING(100),
+          allowNull: true,
+        },
         level: {
           type: DataTypes.STRING(100),
           allowNull: true,
