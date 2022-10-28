@@ -1308,7 +1308,7 @@ const List = () => {
     {
       title: "이름",
       render: (data) => (
-        <Wrapper al={`flex-start`} width={`90px`}>
+        <Wrapper al={`flex-start`} width={`100px`}>
           <Text width={`100%`}>
             {data.firstName}&nbsp;{data.lastName}
           </Text>
@@ -1318,7 +1318,7 @@ const List = () => {
     {
       title: "이메일",
       render: (data) => (
-        <Wrapper al={`flex-start`}>
+        <Wrapper al={`flex-start`} width={`220px`}>
           <Text width={`100%`}>{data.gmailAddress}</Text>
         </Wrapper>
       ),
@@ -1326,7 +1326,7 @@ const List = () => {
     {
       title: "회원가입여부",
       render: (data) => (
-        <Wrapper al={`flex-start`} width={`40px`}>
+        <Wrapper al={`flex-start`} width={`50px`}>
           {data.completedAt ? `완료` : `미완료`}
         </Wrapper>
       ),
@@ -1686,38 +1686,38 @@ const List = () => {
           wrap={`nowrap`}
           ju={`space-between`}
         >
-          <Table
-            style={{ width: `38%`, cursor: `pointer`, minWidth: `550px` }}
-            rowKey="id"
-            columns={leftTable}
-            dataSource={applicationList ? applicationList : []}
-            // rowSelection={{
-            //   type: `radio`,
-            // }}
+          <Wrapper width={`38%`} minWidth={`450px`} overflow={`auto`}>
+            <Table
+              style={{ width: `100%`, cursor: `pointer` }}
+              rowKey="id"
+              columns={leftTable}
+              dataSource={applicationList ? applicationList : []}
+              // rowSelection={{
+              //   type: `radio`,
+              // }}
 
-            rowSelection={{
-              type: `radio`,
-              ...row,
-              selectedRowKeys: currentId,
-            }}
+              rowSelection={{
+                type: `radio`,
+                ...row,
+                selectedRowKeys: currentId,
+              }}
 
-            // onRow={(data) => {
-            //   return {
-            //     onClick: () => {
-            //       tableHandler(data);
-            //     },
-            //   };
-            // }}
-            // size="small"
-          />
-
+              // onRow={(data) => {
+              //   return {
+              //     onClick: () => {
+              //       tableHandler(data);
+              //     },
+              //   };
+              // }}
+              // size="small"
+            />
+          </Wrapper>
           <Form
             form={userForm}
             style={{ width: `62%` }}
             onFinish={isJoin ? updateStuFinish : createFinish}
           >
             <Wrapper
-              // width={`60%`}
               height={`670px`}
               border={`1px solid ${Theme.lightGrey3_C}`}
             >
