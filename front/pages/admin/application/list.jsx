@@ -1309,15 +1309,17 @@ const List = () => {
       title: "이름",
       render: (data) => (
         <Wrapper al={`flex-start`} width={`90px`}>
-          {data.firstName}&nbsp;{data.lastName}
+          <Text width={`100%`}>
+            {data.firstName}&nbsp;{data.lastName}
+          </Text>
         </Wrapper>
       ),
     },
     {
       title: "이메일",
       render: (data) => (
-        <Wrapper al={`flex-start`} width={`calc(100% - 130px)`}>
-          {data.gmailAddress}
+        <Wrapper al={`flex-start`}>
+          <Text width={`100%`}>{data.gmailAddress}</Text>
         </Wrapper>
       ),
     },

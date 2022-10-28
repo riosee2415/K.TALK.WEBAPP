@@ -1763,6 +1763,9 @@ const Application = () => {
                 >
                   Gmail Address
                 </Text>
+                <Text margin={`0 0 5px`} color={Theme.red_C}>
+                  Don't write "@gmail.com".
+                </Text>
                 <Wrapper dr={`row`} ju={`flex-start`}>
                   <Wrapper width={`calc(100% / 2 - 4px)`} margin={`0 8px 0 0`}>
                     <Form.Item name="firstEmail" rules={[{ required: true }]}>
@@ -1785,6 +1788,7 @@ const Application = () => {
                   </Wrapper>
                 </Wrapper>
               </Wrapper>
+
               <Wrapper al={`flex-start`}>
                 <Text
                   fontSize={width < 700 ? `16px` : `18px`}

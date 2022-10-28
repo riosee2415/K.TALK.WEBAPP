@@ -10,7 +10,7 @@ import {
   message,
   Select,
 } from "antd";
-import { CalendarOutlined, CaretDownOutlined } from "@ant-design/icons";
+import { CaretDownOutlined } from "@ant-design/icons";
 
 import { END } from "redux-saga";
 import axios from "axios";
@@ -1753,6 +1753,9 @@ const Application = () => {
               lineHeight={`1.22`}
             >
               Gmail Address
+            </Text>
+            <Text margin={`0 0 5px`} color={Theme.red_C}>
+              Don't write "@gmail.com".
             </Text>
             <Wrapper dr={`row`} ju={`flex-start`}>
               <Wrapper width={`calc(100% / 2 - 4px)`} margin={`0 8px 0 0`}>
