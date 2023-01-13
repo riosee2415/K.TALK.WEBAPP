@@ -294,7 +294,7 @@ const Home = ({}) => {
                   </Wrapper>
                   <Wrapper width={`auto`}>
                     <ATag
-                      href={`https://forms.gle/M4hQxCN8itnWkM3x7`}
+                      href={`https://calendly.com/ktalklive`}
                       target={`_blank`}
                     >
                       <CommonButton
@@ -335,7 +335,7 @@ const Home = ({}) => {
                   </Wrapper>
                   <Wrapper width={`auto`}>
                     <ATag
-                      href={`https://forms.gle/nsqiuEsEQqMj9qUj7`}
+                      href={`https://calendly.com/ktalklive`}
                       target={`_blank`}
                     >
                       <CommonButton
