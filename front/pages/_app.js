@@ -24,6 +24,16 @@ const Fourleaf = ({ Component }) => {
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="canonical" href="https://www.ktalklive.com" />
 
+        <meta
+          name="naver-site-verification"
+          content="d4cad9c4e35a023815c85b4348e963859570b5d5"
+        />
+
+        <meta
+          name="google-site-verification"
+          content="ieJNDE7Fp58-b2Tw6h_v1LGw0ODlkCO-tpkjc822_J8"
+        />
+
         <React.Fragment>
           <script
             dangerouslySetInnerHTML={{
