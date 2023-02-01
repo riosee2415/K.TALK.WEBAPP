@@ -34,12 +34,6 @@ const Fourleaf = ({ Component }) => {
               })(window,document,'script','dataLayer','GTM-K973KPX');`,
             }}
           />
-          <noscript
-            dangerouslySetInnerHTML={{
-              __html: `<img height="1" width="1" style="display:none"
-      src="https://www.facebook.com/tr?id=483937212685511&ev=PageView&noscript=1" />`,
-            }}
-          />
         </React.Fragment>
 
         <noscript>
