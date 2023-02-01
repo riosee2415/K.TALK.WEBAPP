@@ -34,7 +34,7 @@ const Fourleaf = ({ Component }) => {
               })(window,document,'script','dataLayer','GTM-K973KPX');`,
             }}
           />
-        </React.Fragment>
+        </React.Fragment> */}
 
         <noscript>
           <iframe
@@ -43,7 +43,7 @@ const Fourleaf = ({ Component }) => {
             width="0"
             style="display:none;visibility:hidden"
           ></iframe>
-        </noscript> */}
+        </noscript>
 
         <meta
           name="naver-site-verification"
