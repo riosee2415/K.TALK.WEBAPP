@@ -24,6 +24,33 @@ const Fourleaf = ({ Component }) => {
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="canonical" href="https://www.ktalklive.com" />
 
+        <React.Fragment>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+              })(window,document,'script','dataLayer','GTM-K973KPX');`,
+            }}
+          />
+          <noscript
+            dangerouslySetInnerHTML={{
+              __html: `<img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=483937212685511&ev=PageView&noscript=1" />`,
+            }}
+          />
+        </React.Fragment>
+
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-K973KPX"
+            height="0"
+            width="0"
+            style="display:none;visibility:hidden"
+          ></iframe>
+        </noscript>
+
         <meta
           name="naver-site-verification"
           content="d4cad9c4e35a023815c85b4348e963859570b5d5"
