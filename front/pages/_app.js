@@ -24,7 +24,7 @@ const Fourleaf = ({ Component }) => {
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="canonical" href="https://www.ktalklive.com" />
 
-        <React.Fragment>
+        {/* <React.Fragment>
           <script
             dangerouslySetInnerHTML={{
               __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -43,7 +43,7 @@ const Fourleaf = ({ Component }) => {
             width="0"
             style="display:none;visibility:hidden"
           ></iframe>
-        </noscript>
+        </noscript> */}
 
         <meta
           name="naver-site-verification"
