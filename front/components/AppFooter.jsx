@@ -60,7 +60,7 @@ const AppFooter = () => {
             <Image
               alt="logo"
               src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/footer/logo_footer_typo.png`}
-              width={width < 800 ? `100px` : `128px`}
+              width={`128px`}
             />
             <Text fontSize={`12px`} margin={`5px 0 0`} fontWeight={`bold`}>
               Powered by Jeju Korean Language Center

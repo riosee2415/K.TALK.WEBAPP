@@ -112,8 +112,6 @@ const Home = ({}) => {
   } = useSelector((state) => state.community);
   const { currentFormToggle } = useSelector((state) => state.app);
 
-  console.log(communityList);
-
   ////// HOOKS //////
   const router = useRouter();
   const fileRef = useRef();
@@ -249,7 +247,7 @@ const Home = ({}) => {
 
       <ClientLayout>
         <WholeWrapper
-          padding={width < 800 ? `82px 0` : `72px 0`}
+          padding={width < 800 ? `112px 0` : `72px 0`}
           bgColor={Theme.lightGrey4_C}
         >
           <Wrapper height={`calc(100vh - 72px)`}>
@@ -257,25 +255,38 @@ const Home = ({}) => {
               dr={`row`}
               borderBottom={`2px solid ${Theme.darkGrey_C}`}
             >
-              <Wrapper width={`50%`} al={`flex-start`}>
-                <Text fontSize={`32px`} fontWeight={`bold`} margin={`0 0 15px`}>
+              <Wrapper width={width < 900 ? `100%` : `50%`} al={`flex-start`}>
+                <Text
+                  fontSize={width < 900 ? `20px` : `32px`}
+                  fontWeight={`bold`}
+                  margin={`0 0 15px`}
+                >
                   Start learning Korean for Free!
                 </Text>
-                <Text fontSize={`15px`} fontWeight={`bold`}>
+                <Text
+                  fontSize={width < 900 ? `13px` : `15px`}
+                  fontWeight={`bold`}
+                >
                   K-talk Live runs free online lessons every week all year
                   round.
                 </Text>
-                <Text fontSize={`15px`} fontWeight={`bold`}>
+                <Text
+                  fontSize={width < 900 ? `13px` : `15px`}
+                  fontWeight={`bold`}
+                >
                   - 100-minute trial lessons for learners of all levels, every
                   week through Zoom
                 </Text>
                 <a href={`https://calendly.com/ktalklive`} target={`_blank`}>
                   <CommonButton
                     width={`200px`}
-                    height={`60px`}
-                    margin={`20px 0 60px`}
+                    height={width < 900 ? `50px` : `60px`}
+                    margin={width < 900 ? `20px 0` : `20px 0 60px`}
                   >
-                    <Wrapper dr={`row`} fontSize={`18px`}>
+                    <Wrapper
+                      dr={`row`}
+                      fontSize={width < 900 ? `16px` : `18px`}
+                    >
                       Book here
                       <Wrapper
                         width={`30px`}
@@ -296,7 +307,7 @@ const Home = ({}) => {
                   Powered by Jeju Korean Language Center
                 </Text>
               </Wrapper>
-              <Wrapper width={`50%`}>
+              <Wrapper width={width < 900 ? `100%` : `50%`}>
                 <Image
                   alt="banner image"
                   src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/new_main-page/img_main-ban.png`}
@@ -311,7 +322,10 @@ const Home = ({}) => {
             padding={`75px 0`}
           >
             <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 30px`}>
-              <Text fontSize={`18px`} fontWeight={`bold`}>
+              <Text
+                fontSize={width < 900 ? `16px` : `18px`}
+                fontWeight={`bold`}
+              >
                 Student's Review
               </Text>
               <Wrapper width={`auto`} dr={`row`} al={`flex-end`}>
@@ -319,9 +333,14 @@ const Home = ({}) => {
                   defaultCurrent={1}
                   current={parseInt(currentPage)}
                   onChange={(page) => otherPageCall(page)}
-                  total={communityMaxLength * 9}
+                  total={communityMaxLength * 4}
+                  pageSize={4}
                 />
-                {me && <CommonButton onClick={modalOpen}>Write</CommonButton>}
+                {me && (
+                  <CommonButton margin={`0 0 0 10px`} onClick={modalOpen}>
+                    Write
+                  </CommonButton>
+                )}
               </Wrapper>
             </Wrapper>
             <Wrapper dr={`row`} ju={`space-bewteen`}>
@@ -337,17 +356,21 @@ const Home = ({}) => {
                       <Image
                         alt="thumbnail"
                         src={data.profileImage}
-                        width={`186px`}
-                        height={`196px`}
-                        radius={`15px`}
+                        width={width < 900 ? `100px` : `186px`}
+                        height={width < 900 ? `100px` : `196px`}
+                        radius={width < 900 ? `13px` : `15px`}
                       />
                       <Wrapper
-                        width={`calc(100% - 186px)`}
-                        padding={`0 0 0 45px`}
+                        width={
+                          width < 900
+                            ? `calc(100% - 100px)`
+                            : `calc(100% - 186px)`
+                        }
+                        padding={width < 900 ? `0 0 0 15px` : `0 0 0 45px`}
                         al={`flex-start`}
                       >
                         <Text
-                          fontSize={`18px`}
+                          fontSize={width < 900 ? `16px` : `18px`}
                           fontWeight={`bold`}
                           margin={`0 0 14px`}
                         >
@@ -431,20 +454,30 @@ const Home = ({}) => {
           </RsWrapper>
 
           <RsWrapper dr={`row`} id="what">
-            <Wrapper width={`50%`}>
+            <Wrapper width={width < 900 ? `100%` : `50%`}>
               <Image
                 alt="banner image"
                 src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/new_main-page/img_intro_ban.png`}
               />
             </Wrapper>
-            <Wrapper width={`50%`} al={`flex-end`}>
-              <Text fontSize={`32px`} fontWeight={`bold`} margin={`0 0 15px`}>
+            <Wrapper width={width < 900 ? `100%` : `50%`} al={`flex-end`}>
+              <Text
+                fontSize={width < 900 ? `20px` : `32px`}
+                fontWeight={`bold`}
+                margin={`0 0 15px`}
+              >
                 What is K-talk Live?
               </Text>
-              <Text fontSize={`15px`} fontWeight={`bold`}>
+              <Text
+                fontSize={width < 900 ? `13px` : `15px`}
+                fontWeight={`bold`}
+              >
                 Come and meet our best of best native teachers!
               </Text>
-              <Text fontSize={`15px`} fontWeight={`bold`}>
+              <Text
+                fontSize={width < 900 ? `13px` : `15px`}
+                fontWeight={`bold`}
+              >
                 K-talk Live offers the high-quality lectures same as the one we
                 provide in our center.
               </Text>
@@ -458,11 +491,14 @@ const Home = ({}) => {
                 <a>
                   <CommonButton
                     width={`200px`}
-                    height={`60px`}
+                    height={width < 900 ? `50px` : `60px`}
                     margin={`43px 0 0`}
                     kindOf={`delete`}
                   >
-                    <Wrapper dr={`row`} fontSize={`18px`}>
+                    <Wrapper
+                      dr={`row`}
+                      fontSize={width < 900 ? `16px` : `18px`}
+                    >
                       apply here
                       <Wrapper
                         width={`30px`}
@@ -485,10 +521,10 @@ const Home = ({}) => {
           {!me && currentFormToggle && modalView && (
             <Wrapper
               position={`fixed`}
-              top={`100px`}
+              top={`72px`}
               left={`0`}
               zIndex={`100`}
-              height={`calc(100vh - 100px)`}
+              height={`calc(100vh - 72px)`}
               wrap={`nowrap`}
               overflow={`auto`}
               ju={`flex-start`}

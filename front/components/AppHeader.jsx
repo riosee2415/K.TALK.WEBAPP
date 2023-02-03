@@ -24,6 +24,7 @@ import { useRouter } from "next/router";
 import wrapper from "../store/configureStore";
 import axios from "axios";
 import { SEO_LIST_REQUEST } from "../reducers/seo";
+import { MenuOutlined } from "@ant-design/icons";
 
 const AppHeader = ({ width }) => {
   ////////////// - USE STATE- ///////////////
@@ -151,7 +152,11 @@ const AppHeader = ({ width }) => {
       left={`0`}
       zIndex={`100`}
     >
-      <Wrapper dr={`row`} ju={`flex-start`} padding={`0 30px`}>
+      <Wrapper
+        dr={`row`}
+        ju={width < 1230 ? `space-between` : `flex-start`}
+        padding={width < 1230 ? `0 15px` : `0 0 0 30px`}
+      >
         <Image
           alt="logo"
           width={width < 800 ? `130px` : `180px`}
@@ -160,97 +165,171 @@ const AppHeader = ({ width }) => {
           cursor={`pointer`}
           onClick={() => moveLinkHandler(`/`)}
         />
-        <Wrapper width={`auto`} dr={`row`}>
-          {me && me ? (
-            <Wrapper dr={`row`}>
-              <CommonButton
-                radius={`50px`}
-                onClick={() => onClickHandler(me.level)}
-                height={width < 700 ? `30px` : `50px`}
-                width={width < 700 ? `auto` : `110px`}
-                fontSize={width < 700 && `11px`}
-                margin={`0 10px 0 0`}
-              >
-                My page
-              </CommonButton>
-              <CommonButton
-                radius={`50px`}
-                onClick={() => logoutHandler()}
-                height={width < 700 ? `30px` : `50px`}
-                width={width < 700 ? `auto` : `110px`}
-                fontSize={width < 700 && `11px`}
-              >
-                Log-out
-              </CommonButton>
-            </Wrapper>
-          ) : (
-            <>
+        {width < 900 ? <MenuOutlined onClick={drawarToggle} /> : null}
+
+        <Wrapper width={width < 900 ? `100%` : `auto`} dr={`row`}>
+          <>
+            {width < 900 ? null : (
               <Wrapper
                 width={`2px`}
                 height={`18px`}
-                margin={`0 65px`}
+                margin={width < 1480 ? `0 20px` : `0 65px`}
                 bgColor={Theme.darkGrey_C}
               ></Wrapper>
-              <Text
-                isHover
-                fontWeight={`bold`}
-                margin={`0 70px 0 0`}
-                onClick={() => scrollMoveHandler("stu")}
-              >
-                STUDENTS’ REVIEW
-              </Text>
-              <Text
-                isHover
-                fontWeight={`bold`}
-                margin={`0 70px 0 0`}
-                onClick={() => scrollMoveHandler("what")}
-              >
-                WHAT IS K-TALK LIVE?
-              </Text>
-              <Text
-                isHover
-                fontWeight={`bold`}
-                margin={`0 150px 0 0`}
-                onClick={() => scrollMoveHandler("tutor")}
-              >
-                TUTORS
-              </Text>
-              ID
-              <TextInput
-                type={`text`}
-                width={`185px`}
-                height={`30px`}
-                radius={`5px`}
-                placeholder={`ID`}
-                margin={`0 60px 0 20px`}
-                {...inputId}
-                onKeyDown={(e) => e.keyCode === 13 && loginHandler()}
-              />
-              PW
-              <TextInput
-                type={`password`}
-                width={`185px`}
-                height={`30px`}
-                radius={`5px`}
-                margin={`0 45px 0 20px`}
-                placeholder={`PW`}
-                {...inputPw}
-                onKeyDown={(e) => e.keyCode === 13 && loginHandler()}
-              />
-              <CommonButton
-                radius={`10px`}
-                onClick={() => loginHandler()}
-                height={`30px`}
-                width={`65px`}
-                padding={`0`}
-                fontSize={width < 700 && `11px`}
-              >
-                LOGIN
-              </CommonButton>
-            </>
-          )}
+            )}
+
+            {width < 1230 ? (
+              <></>
+            ) : (
+              router.pathname === `/` && (
+                <>
+                  <Text
+                    isHover
+                    fontWeight={`bold`}
+                    margin={width < 1325 ? `0 20px 0 0` : `0 70px 0 0`}
+                    onClick={() => scrollMoveHandler("stu")}
+                  >
+                    STUDENTS’ REVIEW
+                  </Text>
+                  <Text
+                    isHover
+                    fontWeight={`bold`}
+                    margin={width < 1325 ? `0 20px 0 0` : `0 70px 0 0`}
+                    onClick={() => scrollMoveHandler("what")}
+                  >
+                    WHAT IS K-TALK LIVE?
+                  </Text>
+                  <Text
+                    isHover
+                    fontWeight={`bold`}
+                    margin={width < 1580 ? `0 50px 0 0` : `0 150px 0 0`}
+                    onClick={() => scrollMoveHandler("tutor")}
+                  >
+                    TUTORS
+                  </Text>
+                </>
+              )
+            )}
+            {me && me ? (
+              <Wrapper width={`auto`} dr={`row`}>
+                <CommonButton
+                  radius={`10px`}
+                  onClick={() => onClickHandler(me.level)}
+                  height={`30px`}
+                  width={`100px`}
+                  padding={`0`}
+                  fontSize={width < 700 && `11px`}
+                  margin={`0 10px 0 0`}
+                >
+                  My page
+                </CommonButton>
+                <CommonButton
+                  radius={`10px`}
+                  onClick={() => logoutHandler()}
+                  height={`30px`}
+                  width={`100px`}
+                  padding={`0`}
+                  fontSize={width < 700 && `11px`}
+                >
+                  Log-out
+                </CommonButton>
+              </Wrapper>
+            ) : (
+              <Wrapper width={`auto`} dr={`row`}>
+                <Wrapper width={`auto`} dr={`row`}>
+                  ID
+                  <TextInput
+                    type={`text`}
+                    width={width < 900 ? `140px` : `185px`}
+                    height={`30px`}
+                    radius={`5px`}
+                    placeholder={`ID`}
+                    margin={
+                      width < 1390
+                        ? width < 900
+                          ? `0 5px`
+                          : `0 20px`
+                        : `0 60px 0 20px`
+                    }
+                    {...inputId}
+                    onKeyDown={(e) => e.keyCode === 13 && loginHandler()}
+                  />
+                </Wrapper>
+                <Wrapper width={`auto`} dr={`row`}>
+                  PW
+                  <TextInput
+                    type={`password`}
+                    width={width < 900 ? `140px` : `185px`}
+                    height={`30px`}
+                    radius={`5px`}
+                    margin={
+                      width < 1390
+                        ? width < 900
+                          ? `0 5px`
+                          : `0 20px`
+                        : `0 45px 0 20px`
+                    }
+                    placeholder={`PW`}
+                    {...inputPw}
+                    onKeyDown={(e) => e.keyCode === 13 && loginHandler()}
+                  />
+                </Wrapper>
+                <CommonButton
+                  radius={`10px`}
+                  onClick={() => loginHandler()}
+                  height={`30px`}
+                  width={`65px`}
+                  padding={`0`}
+                  fontSize={width < 700 && `11px`}
+                >
+                  LOGIN
+                </CommonButton>
+              </Wrapper>
+            )}
+          </>
         </Wrapper>
+
+        {router.pathname === `/` && width < 1230 ? (
+          width < 900 ? null : (
+            <MenuOutlined onClick={drawarToggle} />
+          )
+        ) : null}
       </Wrapper>
+
+      <Drawer
+        placement="right"
+        closable={true}
+        onClose={drawarToggle}
+        visible={drawar}
+        getContainer={false}
+      >
+        <Wrapper padding={`50px 0 0`}>
+          <Text
+            isHover
+            fontWeight={`bold`}
+            margin={`0 0 30px`}
+            onClick={() => [scrollMoveHandler("stu"), drawarToggle()]}
+          >
+            STUDENTS’ REVIEW
+          </Text>
+          <Text
+            isHover
+            fontWeight={`bold`}
+            margin={`0 0 30px`}
+            onClick={() => [scrollMoveHandler("what"), drawarToggle()]}
+          >
+            WHAT IS K-TALK LIVE?
+          </Text>
+          <Text
+            isHover
+            fontWeight={`bold`}
+            margin={`0 0 30px`}
+            onClick={() => [scrollMoveHandler("tutor"), drawarToggle()]}
+          >
+            TUTORS
+          </Text>
+        </Wrapper>
+      </Drawer>
     </WholeWrapper>
   );
 };

@@ -323,7 +323,7 @@ const Index = () => {
       </Head>
 
       <ClientLayout>
-        <WholeWrapper margin={width < 900 ? `52px 0 0` : `100px 0 0`}>
+        <WholeWrapper margin={width < 900 ? `112px 0 0` : `72px 0 0`}>
           <Wrapper
             bgImg={`url("https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/student/subBanner.png")`}
             padding={width < 700 ? `30px 0` : `60px 0`}

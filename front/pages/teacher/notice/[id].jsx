@@ -570,7 +570,7 @@ const Notice = ({}) => {
         />
       </Head>
       <ClientLayout>
-        <WholeWrapper margin={width < 900 ? `52px 0 0` : `100px 0 0`}>
+        <WholeWrapper margin={width < 900 ? `112px 0 0` : `72px 0 0`}>
           {/* 상단배너 */}
 
           <Wrapper

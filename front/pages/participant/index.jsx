@@ -357,7 +357,7 @@ const Index = () => {
         />
       </Head>
       <ClientLayout>
-        <WholeWrapper margin={`100px 0 0`} bgColor={Theme.subTheme_C}>
+        <WholeWrapper margin={`72px 0 0`} bgColor={Theme.subTheme_C}>
           <RsWrapper>
             <Wrapper
               margin={width < 1100 ? `30px 0` : `60px 0`}

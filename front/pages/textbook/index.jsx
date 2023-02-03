@@ -664,7 +664,7 @@ const Index = () => {
       </Head>
 
       <ClientLayout>
-        <WholeWrapper margin={`100px 0 0`}>
+        <WholeWrapper margin={`72px 0 0`}>
           <RsWrapper padding={`0 0 30px 0`}>
             <Wrapper al={`flex-start`} margin={`70px 0 30px`}>
               <Text

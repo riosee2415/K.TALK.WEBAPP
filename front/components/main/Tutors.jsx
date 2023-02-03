@@ -8,62 +8,33 @@ import { USER_TEA_MAINLIST_REQUEST } from "../../reducers/user";
 import { useRouter } from "next/router";
 import useWidth from "../../hooks/useWidth";
 
-const CustomPage = styled(Pagination)`
-  & .ant-pagination-next > button {
-    border: none;
-  }
-
-  & .ant-pagination-prev > button {
-    border: none;
-  }
-
-  & {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-
-  & .ant-pagination-item,
-  & .ant-pagination-next,
-  & .ant-pagination-prev {
-    border: none;
-    width: 28px;
-    height: 28px !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: ${Theme.white_C} !important;
-    margin: 0 5px !important;
-  }
-
-  & .ant-pagination-item-active a {
-    color: ${Theme.subTheme2_C};
-  }
-
-  & .ant-pagination-item:focus-visible a,
-  .ant-pagination-item:hover a {
-    color: ${Theme.subTheme2_C};
-  }
-
-  & .ant-pagination-item-link svg {
-    font-weight: bold;
-    color: ${Theme.black_2C};
-  }
-
-  @media (max-width: 800px) {
-    width: 18px;
-    height: 18px !important;
-  }
-`;
-
 const HoverText = styled(Text)`
-  font-size: 16px;
   font-weight: 600;
   color: ${(props) => props.theme.subTheme5_C};
   cursor: pointer;
 
   &:hover {
     color: ${(props) => props.theme.subTheme6_C};
+  }
+`;
+
+const Box = styled(Wrapper)`
+  width: calc(100% / 3 - 20px);
+  margin: 0 30px 0 0;
+  background: ${Theme.white_C};
+  border: 1px solid ${Theme.white_C};
+
+  &:nth-child(3n) {
+    margin: 0;
+  }
+
+  &:hover {
+    border: 1px solid ${Theme.basicTheme_Ct};
+  }
+
+  @media (max-width: 900px) {
+    width: 100%;
+    margin: 0 0 20px;
   }
 `;
 
@@ -110,25 +81,26 @@ const Tutors = () => {
   );
 
   return (
-    <Wrapper margin={`100px 0 0`}>
-      <Wrapper al={`flex-start`} margin={`0 0 20px`}>
-        <Text fontSize={`26px`} fontWeight={`600`}>
+    <Wrapper margin={`70px 0 0`}>
+      <Wrapper al={`flex-start`} margin={`0 0 15px`}>
+        <Text fontSize={`18px`} fontWeight={`bold`}>
           Toturs
         </Text>
         <Wrapper dr={`row`} ju={`space-between`}>
-          <Text fontSize={`16px`}>
+          <Text>
             Interact with our native Korean teachers and classmates from all
             over the world at your home
           </Text>
           <Pagination
-            total={teaLastPage * 10}
+            total={teaLastPage * 3}
+            pageSize={3}
             current={currentPage}
             onChange={pageChangeHandler}
           />
         </Wrapper>
       </Wrapper>
 
-      <Wrapper dr={`row`} ju={`space-between`}>
+      <Wrapper dr={`row`} ju={`flex-start`} al={`flex-start`}>
         {teaMainList &&
           (teaMainList.length === 0 ? (
             <Wrapper>
@@ -137,23 +109,21 @@ const Tutors = () => {
           ) : (
             teaMainList.map((data, idx) => {
               return (
-                <Wrapper
-                  margin={`0 0 20px`}
-                  width={width < 700 ? `100%` : `calc(100% / 3 - 20px)`}
+                <Box
                   key={idx}
                   padding={`20px`}
                   radius={`15px`}
                   al={`flex-start`}
                   shadow={`2px 4px 5px ${Theme.grey_C}`}
                 >
-                  <Text fontSize={`26px`} fontWeight={`600`}>
+                  <Text fontSize={`18px`} fontWeight={`bold`}>
                     {data.username}
                   </Text>
-                  <Text>{data.teaCountry}</Text>
-                  <Text>{data.teaLanguage}</Text>
+                  <Text fontSize={`11px`}>{data.teaCountry}</Text>
+                  <Text fontSize={`11px`}>{data.teaLanguage}</Text>
 
                   <Wrapper margin={`20px 0 10px`} al={`flex-start`}>
-                    <Text fontSize={`18px`} fontWeight={`600`}>
+                    <Text fontSize={`15px`} fontWeight={`600`}>
                       {data.title}
                     </Text>
 
@@ -171,10 +141,15 @@ const Tutors = () => {
                   <Image
                     margin={`50px 0 0`}
                     height={`200px`}
-                    src={data.profileImage}
+                    ojectFit={`contain`}
+                    src={
+                      data.profileImage
+                        ? data.profileImage
+                        : `https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/logo/profile-test.png`
+                    }
                     radius={`15px`}
                   />
-                </Wrapper>
+                </Box>
               );
             })
           ))}

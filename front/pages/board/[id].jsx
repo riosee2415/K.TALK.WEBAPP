@@ -718,7 +718,7 @@ const BoardDetail = () => {
       <ClientLayout>
         <WholeWrapper
           padding={`80px 0`}
-          margin={width < 700 ? `50px 0 0` : `100px 0 0`}
+          margin={width < 700 ? `50px 0 0` : `72px 0 0`}
         >
           <RsWrapper>
             <Wrapper al={`flex-end`} margin={`0 0 10px`}>
@@ -1196,27 +1196,31 @@ const BoardDetail = () => {
                                   </HoverText>
                                 )}
 
-                                {v.isDelete === 0 && me && v.UserId === me.id && (
-                                  <Wrapper dr={`row`} width={`auto`}>
-                                    <HoverText
-                                      onClick={() =>
-                                        updateCommentToggle(v, true)
-                                      }
-                                    >
-                                      Edit
-                                    </HoverText>
-                                    &nbsp;|&nbsp;
-                                    <Popconfirm
-                                      placement="bottomRight"
-                                      title={`삭제하시겠습니까?`}
-                                      okText="Delete"
-                                      cancelText="Cancel"
-                                      onConfirm={() => deleteCommentHandler(v)}
-                                    >
-                                      <HoverText>Delete</HoverText>
-                                    </Popconfirm>
-                                  </Wrapper>
-                                )}
+                                {v.isDelete === 0 &&
+                                  me &&
+                                  v.UserId === me.id && (
+                                    <Wrapper dr={`row`} width={`auto`}>
+                                      <HoverText
+                                        onClick={() =>
+                                          updateCommentToggle(v, true)
+                                        }
+                                      >
+                                        Edit
+                                      </HoverText>
+                                      &nbsp;|&nbsp;
+                                      <Popconfirm
+                                        placement="bottomRight"
+                                        title={`삭제하시겠습니까?`}
+                                        okText="Delete"
+                                        cancelText="Cancel"
+                                        onConfirm={() =>
+                                          deleteCommentHandler(v)
+                                        }
+                                      >
+                                        <HoverText>Delete</HoverText>
+                                      </Popconfirm>
+                                    </Wrapper>
+                                  )}
                               </Wrapper>
                             </Wrapper>
 

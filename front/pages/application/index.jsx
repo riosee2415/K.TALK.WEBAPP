@@ -1570,7 +1570,7 @@ const Application = () => {
         <WholeWrapper
           bgColor={Theme.subTheme_C}
           padding={`80px 0`}
-          margin={width < 700 ? `50px 0 0` : `100px 0 0`}
+          margin={width < 700 ? `50px 0 0` : `72px 0 0`}
         >
           <RsWrapper>
             <Text fontSize={width < 700 ? `20px` : `28px`} fontWeight={`bold`}>

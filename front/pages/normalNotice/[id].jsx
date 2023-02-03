@@ -444,7 +444,7 @@ const NormalNoticeDetail = () => {
       <ClientLayout>
         <WholeWrapper
           padding={`80px 0`}
-          margin={width < 700 ? `50px 0 0` : `100px 0 0`}
+          margin={width < 700 ? `50px 0 0` : `72px 0 0`}
         >
           <RsWrapper>
             <Wrapper
@@ -462,19 +462,20 @@ const NormalNoticeDetail = () => {
                   {normalNoticeDetailData && normalNoticeDetailData.noticeTitle}
                 </Text>
                 <Wrapper width={`auto`} dr={`row`}>
-                  {normalNoticeDetailData && normalNoticeDetailData.noticeFile && (
-                    <CommonButton
-                      kindOf={`black`}
-                      fontSize={`14px`}
-                      margin={`0 20px 0 0`}
-                    >
-                      <a href={normalNoticeDetailData.noticeFile}>
-                        {router.query && router.query.type === "stu"
-                          ? "file download"
-                          : "첨부파일 다운로드"}
-                      </a>
-                    </CommonButton>
-                  )}
+                  {normalNoticeDetailData &&
+                    normalNoticeDetailData.noticeFile && (
+                      <CommonButton
+                        kindOf={`black`}
+                        fontSize={`14px`}
+                        margin={`0 20px 0 0`}
+                      >
+                        <a href={normalNoticeDetailData.noticeFile}>
+                          {router.query && router.query.type === "stu"
+                            ? "file download"
+                            : "첨부파일 다운로드"}
+                        </a>
+                      </CommonButton>
+                    )}
                 </Wrapper>
               </Wrapper>
 
@@ -1036,40 +1037,44 @@ const NormalNoticeDetail = () => {
                                   </HoverText>
                                 )}
 
-                                {v.isDelete === 0 && me && v.UserId === me.id && (
-                                  <Wrapper dr={`row`} width={`auto`}>
-                                    <HoverText
-                                      onClick={() =>
-                                        updateCommentToggle(v, true)
-                                      }
-                                    >
-                                      {router.query &&
-                                      router.query.type === "stu"
-                                        ? "Edit"
-                                        : "수정"}
-                                    </HoverText>
-                                    &nbsp;|&nbsp;
-                                    <Popconfirm
-                                      placement="bottomRight"
-                                      title={
-                                        router.query &&
-                                        router.query.type === "stu"
-                                          ? "Do you want to delete?"
-                                          : "삭제하시겠습니까?"
-                                      }
-                                      okText="Delete"
-                                      cancelText="Cancel"
-                                      onConfirm={() => deleteCommentHandler(v)}
-                                    >
-                                      <HoverText>
+                                {v.isDelete === 0 &&
+                                  me &&
+                                  v.UserId === me.id && (
+                                    <Wrapper dr={`row`} width={`auto`}>
+                                      <HoverText
+                                        onClick={() =>
+                                          updateCommentToggle(v, true)
+                                        }
+                                      >
                                         {router.query &&
                                         router.query.type === "stu"
-                                          ? "Delete"
-                                          : "삭제"}
+                                          ? "Edit"
+                                          : "수정"}
                                       </HoverText>
-                                    </Popconfirm>
-                                  </Wrapper>
-                                )}
+                                      &nbsp;|&nbsp;
+                                      <Popconfirm
+                                        placement="bottomRight"
+                                        title={
+                                          router.query &&
+                                          router.query.type === "stu"
+                                            ? "Do you want to delete?"
+                                            : "삭제하시겠습니까?"
+                                        }
+                                        okText="Delete"
+                                        cancelText="Cancel"
+                                        onConfirm={() =>
+                                          deleteCommentHandler(v)
+                                        }
+                                      >
+                                        <HoverText>
+                                          {router.query &&
+                                          router.query.type === "stu"
+                                            ? "Delete"
+                                            : "삭제"}
+                                        </HoverText>
+                                      </Popconfirm>
+                                    </Wrapper>
+                                  )}
                               </Wrapper>
                             </Wrapper>
 

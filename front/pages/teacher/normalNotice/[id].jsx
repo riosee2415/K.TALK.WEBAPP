@@ -443,7 +443,7 @@ const Classboard = () => {
       <ClientLayout>
         <WholeWrapper
           padding={`80px 0`}
-          margin={width < 700 ? `50px 0 0` : `100px 0 0`}
+          margin={width < 700 ? `50px 0 0` : `72px 0 0`}
         >
           <RsWrapper>
             <Wrapper
@@ -461,17 +461,18 @@ const Classboard = () => {
                   {normalNoticeDetailData && normalNoticeDetailData.noticeTitle}
                 </Text>
                 <Wrapper width={`auto`} dr={`row`}>
-                  {normalNoticeDetailData && normalNoticeDetailData.noticeFile && (
-                    <CommonButton
-                      kindOf={`black`}
-                      fontSize={`14px`}
-                      margin={`0 20px 0 0`}
-                    >
-                      <a href={normalNoticeDetailData.noticeFile}>
-                        첨부파일 다운로드
-                      </a>
-                    </CommonButton>
-                  )}
+                  {normalNoticeDetailData &&
+                    normalNoticeDetailData.noticeFile && (
+                      <CommonButton
+                        kindOf={`black`}
+                        fontSize={`14px`}
+                        margin={`0 20px 0 0`}
+                      >
+                        <a href={normalNoticeDetailData.noticeFile}>
+                          첨부파일 다운로드
+                        </a>
+                      </CommonButton>
+                    )}
                 </Wrapper>
               </Wrapper>
 
@@ -896,27 +897,31 @@ const Classboard = () => {
                                   </HoverText>
                                 )}
 
-                                {v.isDelete === 0 && me && v.UserId === me.id && (
-                                  <Wrapper dr={`row`} width={`auto`}>
-                                    <HoverText
-                                      onClick={() =>
-                                        updateCommentToggle(v, true)
-                                      }
-                                    >
-                                      수정
-                                    </HoverText>
-                                    &nbsp;|&nbsp;
-                                    <Popconfirm
-                                      placement="bottomRight"
-                                      title={`삭제하시겠습니까?`}
-                                      okText="Delete"
-                                      cancelText="Cancel"
-                                      onConfirm={() => deleteCommentHandler(v)}
-                                    >
-                                      <HoverText>삭제</HoverText>
-                                    </Popconfirm>
-                                  </Wrapper>
-                                )}
+                                {v.isDelete === 0 &&
+                                  me &&
+                                  v.UserId === me.id && (
+                                    <Wrapper dr={`row`} width={`auto`}>
+                                      <HoverText
+                                        onClick={() =>
+                                          updateCommentToggle(v, true)
+                                        }
+                                      >
+                                        수정
+                                      </HoverText>
+                                      &nbsp;|&nbsp;
+                                      <Popconfirm
+                                        placement="bottomRight"
+                                        title={`삭제하시겠습니까?`}
+                                        okText="Delete"
+                                        cancelText="Cancel"
+                                        onConfirm={() =>
+                                          deleteCommentHandler(v)
+                                        }
+                                      >
+                                        <HoverText>삭제</HoverText>
+                                      </Popconfirm>
+                                    </Wrapper>
+                                  )}
                               </Wrapper>
                             </Wrapper>
 
