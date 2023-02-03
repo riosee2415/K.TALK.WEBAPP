@@ -315,8 +315,6 @@ router.get("/detail/:communityId", async (req, res, next) => {
             A.UserId,
             B.value,
             C.userId,
-            C.stuLanguage,
-            C.stuCountry,
             C.profileImage,
             C.username,
             C.level
@@ -342,8 +340,6 @@ router.get("/detail/:communityId", async (req, res, next) => {
     const commentQuery = `
     SELECT	A.id,
             A.content,
-            A.stuLanguage,
-            A.stuCountry,
             A.isDelete,
             A.deletedAt,
             A.parent,
