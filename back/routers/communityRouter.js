@@ -305,8 +305,6 @@ router.get("/detail/:communityId", async (req, res, next) => {
   SELECT	A.id,
             A.title,
             A.content,
-            A.stuLanguage,
-            A.stuCountry,
             A.file,
             A.hit,
             A.isDelete,
@@ -317,6 +315,8 @@ router.get("/detail/:communityId", async (req, res, next) => {
             A.UserId,
             B.value,
             C.userId,
+            C.stuLanguage,
+            C.stuCountry,
             C.profileImage,
             C.username,
             C.level
