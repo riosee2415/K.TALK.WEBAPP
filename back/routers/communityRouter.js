@@ -174,7 +174,7 @@ router.post("/list", async (req, res, next) => {
   //   return res.status(403).send("로그인 후 이용 가능합니다.");
   // }
 
-  const LIMIT = 9;
+  const LIMIT = 4;
 
   const _page = page ? page : 1;
 
@@ -193,6 +193,8 @@ router.post("/list", async (req, res, next) => {
     SELECT	A.id,
             A.title,
             A.content,
+            A.stuLanguage,
+            A.stuCountry,
             A.file,
             A.hit,
             A.isDelete,
@@ -232,6 +234,8 @@ router.post("/list", async (req, res, next) => {
     SELECT	A.id,
             A.title,
             A.content,
+            A.stuLanguage,
+            A.stuCountry,
             A.file,
             A.hit,
             A.isDelete,
@@ -301,6 +305,8 @@ router.get("/detail/:communityId", async (req, res, next) => {
   SELECT	A.id,
             A.title,
             A.content,
+            A.stuLanguage,
+            A.stuCountry,
             A.file,
             A.hit,
             A.isDelete,
@@ -336,6 +342,8 @@ router.get("/detail/:communityId", async (req, res, next) => {
     const commentQuery = `
     SELECT	A.id,
             A.content,
+            A.stuLanguage,
+            A.stuCountry,
             A.isDelete,
             A.deletedAt,
             A.parent,
