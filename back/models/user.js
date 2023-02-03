@@ -137,6 +137,14 @@ module.exports = class User extends Model {
           allowNull: true,
           defaultValue: false,
         },
+        title: {
+          type: DataTypes.STRING(50), // 강사 한줄소개 제목
+          allowNull: true,
+        },
+        info: {
+          type: DataTypes.TEXT, // 한줄소개
+          allowNull: true,
+        },
         level: {
           // 사용자 권한 [1 : 일반학생, 2 : 강사, 3: 운영자, 4: 최고관리자, 5: 개발사]
           type: DataTypes.INTEGER,

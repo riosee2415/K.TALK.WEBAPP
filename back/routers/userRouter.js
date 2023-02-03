@@ -367,6 +367,111 @@ router.post("/teacher/list", isAdminCheck, async (req, res, next) => {
   }
 });
 
+router.post("/tea/mainList", isAdminCheck, async (req, res, next) => {
+  const { page } = req.body;
+
+  const LIMIT = 3;
+
+  const _page = page ? page : 1;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 3;
+
+  const lengthQuery = `
+  SELECT  A.id,
+          A.title,
+          A.info,
+          A.username,
+          A.teaCountry,
+          A.teaLanguage
+    FROM  users 			A
+   WHERE  A.level = 2
+   ORDER  BY  A.createdAt DESC
+  `;
+
+  const selectQuery = `
+  SELECT  A.id,
+          A.title,
+          A.info,
+          A.username,
+          A.teaCountry,
+          A.teaLanguage
+    FROM  users 			A
+   WHERE  A.level = 2
+   ORDER  BY  A.createdAt DESC
+   LIMIT  ${LIMIT}
+  OFFSET  ${OFFSET}
+  `;
+
+  try {
+    const teachers = await models.sequelize.query(selectQuery);
+    const length = await models.sequelize.query(lengthQuery);
+
+    const teacherlen = length[0].length;
+
+    const lastPage =
+      teacherlen % LIMIT > 0 ? teacherlen / LIMIT + 1 : teacherlen / LIMIT;
+
+    return res
+      .status(200)
+      .json({ teachers: teachers[0], lastPage: parseInt(lastPage) });
+  } catch (error) {
+    return res.status(401).send("강사 목록을 조회할 수 없습니다.");
+  }
+});
+
+router.post("/stu/mainList", isAdminCheck, async (req, res, next) => {
+  const { page } = req.body;
+  const LIMIT = 4;
+
+  const _page = page ? page : 1;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 4;
+
+  const lengthQuery = `
+  SELECT  A.id,
+          A.title,
+          A.content,
+          B.username,
+          B.stuCountry,
+          B.stuLanguage
+    FROM  communitys	A
+   INNER
+    JOIN  users		B
+      ON  A.UserId = B.id
+   WHERE  B.level = 1
+   ORDER  BY  A.createdAt DESC
+  `;
+
+  const selectQuery = `
+  SELECT  A.id,
+          A.title,
+          A.content,
+          B.username,
+          B.stuCountry,
+          B.stuLanguage
+    FROM  communitys	A
+   INNER
+    JOIN  users		B
+      ON  A.UserId = B.id
+   WHERE  B.level = 1
+   ORDER  BY  A.createdAt DESC
+   LIMIT  ${LIMIT}
+  OFFSET  ${OFFSET}
+  `;
+  try {
+    const students = await models.sequelize.query(selectQuery);
+    const length = await models.sequelize.query(lengthQuery);
+
+    return res
+      .status(200)
+      .json({ students: students[0], length: parseInt(length) });
+  } catch (error) {
+    return res.status(401).send("리뷰 목록을 조회할 수 없습니다.");
+  }
+});
+
 router.get("/detail/:UserId", isAdminCheck, async (req, res, next) => {
   const { UserId } = req.params;
 
