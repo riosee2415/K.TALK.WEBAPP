@@ -306,6 +306,7 @@ const Home = ({}) => {
           </Wrapper>
 
           <RsWrapper
+            id="stu"
             borderBottom={`2px solid ${Theme.darkGrey_C}`}
             padding={`75px 0`}
           >
@@ -429,7 +430,7 @@ const Home = ({}) => {
             </Wrapper>
           </RsWrapper>
 
-          <RsWrapper dr={`row`}>
+          <RsWrapper dr={`row`} id="what">
             <Wrapper width={`50%`}>
               <Image
                 alt="banner image"
@@ -510,7 +511,7 @@ const Home = ({}) => {
             </Wrapper>
           )}
 
-          <RsWrapper>
+          <RsWrapper id="tutor">
             <Tutors />
           </RsWrapper>
 

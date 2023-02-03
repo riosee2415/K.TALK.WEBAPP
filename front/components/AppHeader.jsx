@@ -93,6 +93,12 @@ const AppHeader = ({ width }) => {
       : message.error("회원 또는 강사가 아닙니다.");
   }, []);
 
+  // 스크롤 이동
+  const scrollMoveHandler = useCallback((type) => {
+    const element = document.getElementById(type);
+    element.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
   ////////////// - USE EFFECT- //////////////
   useEffect(() => {
     document.addEventListener("scroll", handleScroll);
@@ -185,13 +191,28 @@ const AppHeader = ({ width }) => {
                 margin={`0 65px`}
                 bgColor={Theme.darkGrey_C}
               ></Wrapper>
-              <Text isHover fontWeight={`bold`} margin={`0 70px 0 0`}>
+              <Text
+                isHover
+                fontWeight={`bold`}
+                margin={`0 70px 0 0`}
+                onClick={() => scrollMoveHandler("stu")}
+              >
                 STUDENTS’ REVIEW
               </Text>
-              <Text isHover fontWeight={`bold`} margin={`0 70px 0 0`}>
+              <Text
+                isHover
+                fontWeight={`bold`}
+                margin={`0 70px 0 0`}
+                onClick={() => scrollMoveHandler("what")}
+              >
                 WHAT IS K-TALK LIVE?
               </Text>
-              <Text isHover fontWeight={`bold`} margin={`0 150px 0 0`}>
+              <Text
+                isHover
+                fontWeight={`bold`}
+                margin={`0 150px 0 0`}
+                onClick={() => scrollMoveHandler("tutor")}
+              >
                 TUTORS
               </Text>
               ID
