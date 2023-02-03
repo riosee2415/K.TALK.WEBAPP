@@ -179,7 +179,7 @@ router.post("/list", async (req, res, next) => {
   const _page = page ? page : 1;
 
   const __page = _page - 1;
-  const OFFSET = __page * 9;
+  const OFFSET = __page * 4;
 
   const _searchTitle = searchTitle ? searchTitle : ``;
   const _searchName = searchName ? searchName : ``;
