@@ -174,7 +174,7 @@ router.post("/list", async (req, res, next) => {
   //   return res.status(403).send("로그인 후 이용 가능합니다.");
   // }
 
-  const LIMIT = 9;
+  const LIMIT = 4;
 
   const _page = page ? page : 1;
 
