@@ -56,11 +56,20 @@ import {
 import Application from "../components/application/Application";
 import { APP_USE_LIST_REQUEST } from "../reducers/application";
 import Tutors from "../components/main/Tutors";
+import Link from "next/dist/client/link";
+
+const WordbreakText = styled(Wrapper)`
+  width: 100%;
+  word-wrap: break-all;
+  & img {
+    max-width: 100%;
+  }
+`;
 
 const Box = styled(Wrapper)`
   flex-direction: row;
   transition: 0.5s;
-  width: calc(100% / 2 - 30px);
+  width: calc(100% / 2 - 15px);
   padding: 20px;
   background: ${Theme.white_C};
   border-radius: 10px;
@@ -69,6 +78,10 @@ const Box = styled(Wrapper)`
 
   &:hover {
     background-color: ${(props) => props.theme.subTheme14_C};
+  }
+
+  &:nth-child(2n) {
+    margin: 0 0 30px;
   }
 
   @media (max-width: 800px) {
@@ -256,26 +269,28 @@ const Home = ({}) => {
                   - 100-minute trial lessons for learners of all levels, every
                   week through Zoom
                 </Text>
-                <CommonButton
-                  width={`200px`}
-                  height={`60px`}
-                  margin={`20px 0 60px`}
-                >
-                  <Wrapper dr={`row`} fontSize={`18px`}>
-                    Book here
-                    <Wrapper
-                      width={`30px`}
-                      height={`30px`}
-                      radius={`100%`}
-                      bgColor={Theme.white_C}
-                      color={Theme.basicTheme_C}
-                      fontSize={`20px`}
-                      margin={`0 0 0 10px`}
-                    >
-                      <ArrowRightOutlined />
+                <a href={`https://calendly.com/ktalklive`} target={`_blank`}>
+                  <CommonButton
+                    width={`200px`}
+                    height={`60px`}
+                    margin={`20px 0 60px`}
+                  >
+                    <Wrapper dr={`row`} fontSize={`18px`}>
+                      Book here
+                      <Wrapper
+                        width={`30px`}
+                        height={`30px`}
+                        radius={`100%`}
+                        bgColor={Theme.white_C}
+                        color={Theme.basicTheme_C}
+                        fontSize={`20px`}
+                        margin={`0 0 0 10px`}
+                      >
+                        <ArrowRightOutlined />
+                      </Wrapper>
                     </Wrapper>
-                  </Wrapper>
-                </CommonButton>
+                  </CommonButton>
+                </a>
                 <Text fontWeight={`600`}>Completely free of charge</Text>
                 <Text fontWeight={`600`}>
                   Powered by Jeju Korean Language Center
@@ -343,8 +358,8 @@ const Home = ({}) => {
                             : `admin`}
                           )
                         </Text>
-                        <Text fontSize={`11px`}></Text>
-                        <Text fontSize={`11px`}></Text>
+                        <Text fontSize={`11px`}>Hangeul</Text>
+                        <Text fontSize={`11px`}>Speaks:{data.stuLanguage}</Text>
                         <Text
                           margin={`10px 0 5px`}
                           width={`100%`}
@@ -362,6 +377,17 @@ const Home = ({}) => {
                           )}
                           {data.title}
                         </Text>
+                        <Wrapper
+                          al={`flex-start`}
+                          ju={`flex-start`}
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              data.content.length < 300
+                                ? data.content
+                                : data.content.slice(0, 300) + "...",
+                          }}
+                        ></Wrapper>
+
                         <Text
                           isHover
                           color={Theme.basicTheme_C}
@@ -401,449 +427,59 @@ const Home = ({}) => {
                 })
               )}
             </Wrapper>
-            <Wrapper margin={`20px 0 100px`}></Wrapper>
           </RsWrapper>
 
-          <Wrapper>
-            <RsWrapper>
-              <Wrapper
-                fontSize={
-                  width < 900 ? (width < 700 ? `14px` : `16px`) : `24px`
-                }
-                color={Theme.basicTheme_C}
-                fontWeight={`bold`}
-                margin={`100px 0 20px`}
-              >
-                <Text>
-                  <SpanText color={Theme.subTheme6_C}>K-talk Live</SpanText>
-                  &nbsp;RUNS&nbsp;
-                  <SpanText color={Theme.subTheme6_C}>
-                    FREE ONLINE LESSONS
-                  </SpanText>
-                </Text>
-                <Text>EVERY WEEK ALL YEAR ROUND</Text>
-              </Wrapper>
+          <RsWrapper dr={`row`}>
+            <Wrapper width={`50%`}>
               <Image
-                alt="icon"
-                margin={`10px 0 5px 15px`}
-                width={width < 800 ? `220px` : `280px`}
-                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/img_free-message.png`}
+                alt="banner image"
+                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/new_main-page/img_intro_ban.png`}
               />
-              <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 100px`}>
-                <Wrapper
-                  shadow={`0 5px 15px rgba(0, 0, 0, 0.05)`}
-                  width={width < 1000 ? `100%` : `49%`}
-                  padding={width < 900 ? `20px 10px` : `35px 30px`}
-                  dr={`row`}
-                  ju={`space-around`}
-                >
-                  <Wrapper
-                    width={`auto`}
-                    fontSize={
-                      width < 900 ? (width < 700 ? `13px` : `15px`) : `20px`
-                    }
-                    al={`flex-start`}
-                  >
-                    <Text fontWeight={`bold`}>For absolute beginners</Text>
-                    <Text fontWeight={`300`}>
-                      three 50-minute sessions a week
-                    </Text>
-                  </Wrapper>
-                  <Wrapper width={`auto`}>
-                    <ATag
-                      href={`https://calendly.com/ktalklive`}
-                      target={`_blank`}
-                    >
-                      <CommonButton
-                        height={`40px`}
-                        radius={`25px`}
-                        kindOf={`white`}
-                        padding={`5px 5px 5px 8px`}
-                      >
-                        apply here
-                        <Image
-                          alt="icon"
-                          margin={`0 0 0 15px`}
-                          width={width < 900 ? `25px` : `30px`}
-                          src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/blue-btn.png`}
-                        />
-                      </CommonButton>
-                    </ATag>
-                  </Wrapper>
-                </Wrapper>
-                <Wrapper
-                  shadow={`0 5px 15px rgba(0, 0, 0, 0.05)`}
-                  width={width < 1000 ? `100%` : `49%`}
-                  padding={width < 900 ? `20px 10px` : `35px 30px`}
-                  dr={`row`}
-                  ju={`space-around`}
-                >
-                  <Wrapper
-                    width={`auto`}
-                    fontSize={
-                      width < 900 ? (width < 700 ? `13px` : `15px`) : `20px`
-                    }
-                    al={`flex-start`}
-                  >
-                    <Text fontWeight={`bold`}>
-                      For pre-intermediate learners
-                    </Text>
-                    <Text fontWeight={`300`}>2 sessions a week</Text>
-                  </Wrapper>
-                  <Wrapper width={`auto`}>
-                    <ATag
-                      href={`https://calendly.com/ktalklive`}
-                      target={`_blank`}
-                    >
-                      <CommonButton
-                        height={`40px`}
-                        radius={`25px`}
-                        kindOf={`white`}
-                        padding={`5px 5px 5px 8px`}
-                        // onClick={() => moveLinkHandler(`/application`)}
-                      >
-                        apply here
-                        <Image
-                          alt="icon"
-                          margin={`0 0 0 15px`}
-                          width={width < 900 ? `25px` : `30px`}
-                          src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/blue-btn.png`}
-                        />
-                      </CommonButton>
-                    </ATag>
-                  </Wrapper>
-                </Wrapper>
-              </Wrapper>
-
-              <Wrapper
-                fontSize={
-                  width < 900 ? (width < 700 ? `14px` : `16px`) : `24px`
-                }
-                color={Theme.subTheme2_C}
-                fontWeight={`bold`}
-                margin={`0 0 20px`}
-              >
-                K-talk Live regular paid lessons
-              </Wrapper>
-
-              <Wrapper
-                shadow={`0 5px 15px rgba(0, 0, 0, 0.05)`}
-                padding={width < 900 ? `20px 10px` : `35px 30px`}
-                dr={`row`}
-                ju={width < 900 ? `center` : `space-around`}
-              >
-                <Wrapper
-                  width={`auto`}
-                  al={`flex-start`}
-                  color={Theme.darkGrey_C}
-                  fontSize={
-                    width < 900 ? (width < 700 ? `12px` : `14px`) : `18px`
-                  }
-                  fontWeight={`300`}
-                >
-                  <Text>
-                    Starts every Monday
-                    <SpanText
-                      fontSize={width < 800 ? `12px` : `15px`}
-                      margin={`0 10px`}
-                    >
-                      |
-                    </SpanText>
-                    Suitable for beginner to advanced
-                    <SpanText
-                      fontSize={width < 800 ? `12px` : `15px`}
-                      margin={`0 10px`}
-                    >
-                      |
-                    </SpanText>
-                    Live online group class taught by native Korean teachers
-                  </Text>
-                  <Text margin={width < 700 ? `10px 0` : `20px 0`}>
-                    3 sessions a week (1 session = 50 minutes)
-                    <SpanText
-                      fontSize={width < 800 ? `12px` : `15px`}
-                      margin={`0 10px`}
-                    >
-                      |
-                    </SpanText>
-                    US $144 for 4 weeks (12 sessions over 4 weeks)
-                    <SpanText
-                      fontSize={width < 800 ? `12px` : `15px`}
-                      margin={`0 10px`}
-                    >
-                      |
-                    </SpanText>
-                    Lessons through Zoom
-                  </Text>
-                  <Text>
-                    Payment through Paypal
-                    <SpanText
-                      fontSize={width < 800 ? `12px` : `15px`}
-                      margin={`0 10px`}
-                    >
-                      |
-                    </SpanText>
-                    Money-back guarantee for all lesson
-                    <SpanText
-                      fontSize={width < 800 ? `12px` : `15px`}
-                      margin={`0 10px`}
-                    >
-                      |
-                    </SpanText>
-                    Not more than 7 learners in a class
-                  </Text>
-                </Wrapper>
-                <Wrapper width={`auto`} margin={width < 900 && `15px 0 0`}>
+            </Wrapper>
+            <Wrapper width={`50%`} al={`flex-end`}>
+              <Text fontSize={`32px`} fontWeight={`bold`} margin={`0 0 15px`}>
+                What is K-talk Live?
+              </Text>
+              <Text fontSize={`15px`} fontWeight={`bold`}>
+                Come and meet our best of best native teachers!
+              </Text>
+              <Text fontSize={`15px`} fontWeight={`bold`}>
+                K-talk Live offers the high-quality lectures same as the one we
+                provide in our center.
+              </Text>
+              <Text margin={`25px 0 0`}>· Starts every Monday</Text>
+              <Text>· Absolute beginners to Advanced learners</Text>
+              <Text>· Not more than 6 learners in a class</Text>
+              <Text>
+                · US$144.- / 4 weeks (3 sessions a week, 1 session = 50 min)
+              </Text>
+              <Link href={`/application`}>
+                <a>
                   <CommonButton
-                    height={`40px`}
-                    radius={`25px`}
-                    kindOf={`subTheme`}
-                    padding={`5px 5px 5px 8px`}
-                    onClick={() => moveLinkHandler("/application")}
+                    width={`200px`}
+                    height={`60px`}
+                    margin={`43px 0 0`}
+                    kindOf={`delete`}
                   >
-                    apply here
-                    <Image
-                      alt="icon"
-                      margin={`0 0 0 15px`}
-                      width={width < 900 ? `25px` : `30px`}
-                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/red-btn.png`}
-                    />
-                  </CommonButton>
-                </Wrapper>
-              </Wrapper>
-
-              <Wrapper al={`flex-start`} ju={`flex-start`} margin={`110px 0 0`}>
-                <Wrapper>
-                  <Image
-                    alt="logo"
-                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/icon_symbol.png`}
-                    width={`64px`}
-                  />
-                  <Text
-                    fontSize={`32px`}
-                    fontWeight={`700`}
-                    margin={`0 0 20px`}
-                  >
-                    Student's Review
-                  </Text>
-                  <Wrapper al={`flex-end`}>
-                    {me && (
-                      <CommonButton onClick={modalOpen}>Write</CommonButton>
-                    )}
-                  </Wrapper>
-                </Wrapper>
-                <Wrapper dr={`row`} ju={`flex-start`} margin={`10px 0 0`}>
-                  {communityList && communityList.length === 0 ? (
-                    <Wrapper>
-                      <Empty description={`게시물이 없습니다.`} />
-                    </Wrapper>
-                  ) : (
-                    communityList &&
-                    communityList.map((data) => {
-                      return (
-                        <Box
-                          onClick={() => moveLinkHandler(`/board/${data.id}`)}
-                        >
-                          <Text color={Theme.grey3_C} fontSize={`15px`}>
-                            No.{data.id}
-                          </Text>
-                          <Text
-                            margin={`10px 0 5px`}
-                            width={`100%`}
-                            isEllipsis
-                            fontSize={`22px`}
-                            fontWeight={`bold`}
-                          >
-                            {data.file && (
-                              <>
-                                <FileTextOutlined
-                                  style={{ color: Theme.basicTheme_C }}
-                                />
-                                &nbsp;
-                              </>
-                            )}
-                            {data.title}
-                          </Text>
-                          <Text>
-                            {data.createdAt}
-                            <SpanText fontSize={`12px`} margin={`0 5px`}>
-                              |
-                            </SpanText>
-                            {data.username}(
-                            {data.level === 1
-                              ? `Student`
-                              : data.level === 2
-                              ? `Teacher`
-                              : `admin`}
-                            )
-                          </Text>
-                          <Wrapper
-                            dr={`row`}
-                            ju={`flex-end`}
-                            margin={`45px 0 0`}
-                          >
-                            <EyeOutlined />
-                            &nbsp;
-                            {data.hit}
-                            <SpanText fontSize={`12px`} margin={`0 5px`}>
-                              |
-                            </SpanText>
-                            <CommentOutlined />
-                            &nbsp;
-                            {data.commentCnt}
-                          </Wrapper>
-                        </Box>
-                      );
-                    })
-                  )}
-                </Wrapper>
-                <Wrapper margin={`20px 0 100px`}>
-                  <Pagination
-                    defaultCurrent={1}
-                    current={parseInt(currentPage)}
-                    onChange={(page) => otherPageCall(page)}
-                    total={communityMaxLength * 9}
-                  />
-                </Wrapper>
-              </Wrapper>
-              <Wrapper dr={`row`} ju={`space-between`}>
-                <Wrapper
-                  shadow={`0 5px 15px rgba(0, 0, 0, 0.05)`}
-                  padding={`20px 30px`}
-                  dr={`row`}
-                  width={width < 1000 ? `100%` : `63%`}
-                >
-                  <ATag
-                    width={`auto`}
-                    href={`https://www.instagram.com/ktalk_live/`}
-                    target={`_blank`}
-                    margin={width < 900 && `0 0 15px`}
-                  >
-                    <Image
-                      alt="icon"
-                      margin={`0 5px 0 0px`}
-                      width={`50px`}
-                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/icon_instagram.png`}
-                    />
-                    <Text fontSize={width < 900 ? `14px` : `18px`}>
-                      https://www.instagram.com/ktalk_live/
-                    </Text>
-                  </ATag>
-                  <Image
-                    alt="icon"
-                    margin={`0 15px`}
-                    width={`1px`}
-                    display={width < 900 ? `none` : `block`}
-                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/dot-line.png`}
-                  />
-                  <ATag
-                    width={`auto`}
-                    href={`https://www.facebook.com/KtalkLive`}
-                    target={`_blank`}
-                  >
-                    <Image
-                      alt="icon"
-                      margin={`0 5px 0 0px`}
-                      width={`50px`}
-                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/icon_facebook.png`}
-                    />
-                    <Text fontSize={width < 900 ? `14px` : `18px`}>
-                      https://www.facebook.com/KtalkLive
-                    </Text>
-                  </ATag>
-                </Wrapper>
-                <Wrapper
-                  shadow={`0 5px 15px rgba(0, 0, 0, 0.05)`}
-                  padding={`20px 30px`}
-                  dr={`row`}
-                  width={width < 1000 ? `100%` : `35%`}
-                >
-                  <ATag width={`auto`} href={`mailto:jklc.ktalk@gmail.com`}>
-                    <Image
-                      alt="icon"
-                      margin={`0 5px 0 15px`}
-                      width={`50px`}
-                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main/icon_mail.png`}
-                    />
-                    <Wrapper dr={`row`}>
-                      <Text
-                        fontSize={
-                          width < 900 ? (width < 700 ? `13px` : `14px`) : `18px`
-                        }
-                        fontWeight={`bold`}
-                        margin={`0 5px 0 0`}
+                    <Wrapper dr={`row`} fontSize={`18px`}>
+                      apply here
+                      <Wrapper
+                        width={`30px`}
+                        height={`30px`}
+                        radius={`100%`}
+                        bgColor={Theme.white_C}
+                        color={Theme.red_C}
+                        fontSize={`20px`}
+                        margin={`0 0 0 10px`}
                       >
-                        More infomation
-                      </Text>
-                      <Text fontSize={width < 900 ? `14px` : `18px`}>
-                        jklc.ktalk@gmail.com
-                      </Text>
+                        <ArrowRightOutlined />
+                      </Wrapper>
                     </Wrapper>
-                  </ATag>
-                </Wrapper>
-              </Wrapper>
-
-              <Modal
-                title={`Write`}
-                visible={createModal}
-                onOk={formFinishBoard}
-                onCancel={modalClose}
-                width={`900px`}
-              >
-                <Form
-                  form={form}
-                  labelCol={{ span: 4 }}
-                  wrapperCol={{ span: 20 }}
-                  onFinish={onSubmitBoard}
-                >
-                  <Form.Item label={`Title`} name={`title`}>
-                    <Input />
-                  </Form.Item>
-                  <Form.Item label={`Content`} name={`content`}>
-                    <ToastEditorComponent6
-                      action={getEditContent}
-                      placeholder="Please write a comment."
-                    />
-                  </Form.Item>
-                  {/* <Form.Item label={`Type`} name={`type`}>
-                    <Select>
-                      {communityTypes &&
-                        communityTypes.map((data) => {
-                          return (
-                            <Select.Option value={data.id}>
-                              {data.value}
-                            </Select.Option>
-                          );
-                        })}
-                    </Select>
-                  </Form.Item> */}
-                  {/* review 고정 */}
-                  <Form.Item label={`File`}>
-                    <input
-                      type="file"
-                      name="file"
-                      hidden
-                      ref={fileRef}
-                      onChange={fileChangeHandler}
-                    />
-
-                    <Button
-                      type={`primary`}
-                      size={`small`}
-                      onClick={fileUploadClick}
-                    >
-                      FILE UPLOAD
-                    </Button>
-                  </Form.Item>
-                  {filePath && (
-                    <Form.Item label={`이미지`}>
-                      <Image width={`100px`} src={filePath} />
-                    </Form.Item>
-                  )}
-                </Form>
-              </Modal>
-            </RsWrapper>
-          </Wrapper>
+                  </CommonButton>
+                </a>
+              </Link>
+            </Wrapper>
+          </RsWrapper>
 
           {!me && currentFormToggle && modalView && (
             <Wrapper
@@ -877,6 +513,66 @@ const Home = ({}) => {
           <RsWrapper>
             <Tutors />
           </RsWrapper>
+
+          <Modal
+            title={`Write`}
+            visible={createModal}
+            onOk={formFinishBoard}
+            onCancel={modalClose}
+            width={`900px`}
+          >
+            <Form
+              form={form}
+              labelCol={{ span: 4 }}
+              wrapperCol={{ span: 20 }}
+              onFinish={onSubmitBoard}
+            >
+              <Form.Item label={`Title`} name={`title`}>
+                <Input />
+              </Form.Item>
+              <Form.Item label={`Content`} name={`content`}>
+                <ToastEditorComponent6
+                  action={getEditContent}
+                  placeholder="Please write a comment."
+                />
+              </Form.Item>
+              {/* <Form.Item label={`Type`} name={`type`}>
+                    <Select>
+                      {communityTypes &&
+                        communityTypes.map((data) => {
+                          return (
+                            <Select.Option value={data.id}>
+                              {data.value}
+                            </Select.Option>
+                          );
+                        })}
+                    </Select>
+                  </Form.Item> */}
+              {/* review 고정 */}
+              <Form.Item label={`File`}>
+                <input
+                  type="file"
+                  name="file"
+                  hidden
+                  ref={fileRef}
+                  onChange={fileChangeHandler}
+                />
+
+                <Button
+                  type={`primary`}
+                  size={`small`}
+                  onClick={fileUploadClick}
+                >
+                  FILE UPLOAD
+                </Button>
+              </Form.Item>
+              {filePath && (
+                <Form.Item label={`이미지`}>
+                  <Image width={`100px`} src={filePath} />
+                </Form.Item>
+              )}
+            </Form>
+          </Modal>
         </WholeWrapper>
       </ClientLayout>
     </>

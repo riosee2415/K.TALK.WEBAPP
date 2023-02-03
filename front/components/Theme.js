@@ -27,7 +27,7 @@ export default {
   black_3C: "#000000",
   black_4C: "#2d2d2d",
   // red
-  red_C: "#e74c3c",
+  red_C: "#c31637",
   // grey
   grey_C: "#D8D8D8",
   grey2_C: "#707070",
