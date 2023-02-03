@@ -46,34 +46,29 @@ import {
 } from "antd";
 import ToastEditorComponent6 from "../components/editor/ToastEditorComponent6";
 import {
+  ArrowRightOutlined,
   CloseCircleOutlined,
   CommentOutlined,
   EyeOutlined,
   FileTextOutlined,
+  RightCircleFilled,
 } from "@ant-design/icons";
 import Application from "../components/application/Application";
 import { APP_USE_LIST_REQUEST } from "../reducers/application";
 import Tutors from "../components/main/Tutors";
 
 const Box = styled(Wrapper)`
-  align-items: flex-start;
-  justify-content: flex-start;
+  flex-direction: row;
   transition: 0.5s;
-  width: calc(100% / 3 - 14px);
-  padding: 30px 25px;
-  background-color: ${(props) => props.theme.lightGrey2_C};
-  border: 1px solid ${Theme.subTheme13_C};
+  width: calc(100% / 2 - 30px);
+  padding: 20px;
+  background: ${Theme.white_C};
   border-radius: 10px;
   cursor: pointer;
-  margin: 0 20px 20px 0;
+  margin: 0 30px 30px 0;
 
   &:hover {
-    background-color: ${(props) => props.theme.subTheme6_C};
-    color: ${(props) => props.theme.white_C};
-  }
-
-  &:nth-child(3n) {
-    margin: 0 0 20px;
+    background-color: ${(props) => props.theme.subTheme14_C};
   }
 
   @media (max-width: 800px) {
@@ -103,6 +98,8 @@ const Home = ({}) => {
     filePath,
   } = useSelector((state) => state.community);
   const { currentFormToggle } = useSelector((state) => state.app);
+
+  console.log(communityList);
 
   ////// HOOKS //////
   const router = useRouter();
@@ -238,15 +235,174 @@ const Home = ({}) => {
       </Head>
 
       <ClientLayout>
-        <WholeWrapper padding={width < 800 ? `82px 0` : `100px 0`}>
-          <Image
-            alt="main"
-            src={
-              width < 900
-                ? `https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main-banner/banner1-mobile.png`
-                : `https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/main-banner/banner1.png`
-            }
-          />
+        <WholeWrapper
+          padding={width < 800 ? `82px 0` : `72px 0`}
+          bgColor={Theme.lightGrey4_C}
+        >
+          <Wrapper height={`calc(100vh - 72px)`}>
+            <RsWrapper
+              dr={`row`}
+              borderBottom={`2px solid ${Theme.darkGrey_C}`}
+            >
+              <Wrapper width={`50%`} al={`flex-start`}>
+                <Text fontSize={`32px`} fontWeight={`bold`} margin={`0 0 15px`}>
+                  Start learning Korean for Free!
+                </Text>
+                <Text fontSize={`15px`} fontWeight={`bold`}>
+                  K-talk Live runs free online lessons every week all year
+                  round.
+                </Text>
+                <Text fontSize={`15px`} fontWeight={`bold`}>
+                  - 100-minute trial lessons for learners of all levels, every
+                  week through Zoom
+                </Text>
+                <CommonButton
+                  width={`200px`}
+                  height={`60px`}
+                  margin={`20px 0 60px`}
+                >
+                  <Wrapper dr={`row`} fontSize={`18px`}>
+                    Book here
+                    <Wrapper
+                      width={`30px`}
+                      height={`30px`}
+                      radius={`100%`}
+                      bgColor={Theme.white_C}
+                      color={Theme.basicTheme_C}
+                      fontSize={`20px`}
+                      margin={`0 0 0 10px`}
+                    >
+                      <ArrowRightOutlined />
+                    </Wrapper>
+                  </Wrapper>
+                </CommonButton>
+                <Text fontWeight={`600`}>Completely free of charge</Text>
+                <Text fontWeight={`600`}>
+                  Powered by Jeju Korean Language Center
+                </Text>
+              </Wrapper>
+              <Wrapper width={`50%`}>
+                <Image
+                  alt="banner image"
+                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/new_main-page/img_main-ban.png`}
+                />
+              </Wrapper>
+            </RsWrapper>
+          </Wrapper>
+
+          <RsWrapper
+            borderBottom={`2px solid ${Theme.darkGrey_C}`}
+            padding={`75px 0`}
+          >
+            <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 30px`}>
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                Student's Review
+              </Text>
+              <Wrapper width={`auto`} dr={`row`} al={`flex-end`}>
+                <Pagination
+                  defaultCurrent={1}
+                  current={parseInt(currentPage)}
+                  onChange={(page) => otherPageCall(page)}
+                  total={communityMaxLength * 9}
+                />
+                {me && <CommonButton onClick={modalOpen}>Write</CommonButton>}
+              </Wrapper>
+            </Wrapper>
+            <Wrapper dr={`row`} ju={`space-bewteen`}>
+              {communityList && communityList.length === 0 ? (
+                <Wrapper>
+                  <Empty description={`게시물이 없습니다.`} />
+                </Wrapper>
+              ) : (
+                communityList &&
+                communityList.map((data) => {
+                  return (
+                    <Box key={data.id}>
+                      <Image
+                        alt="thumbnail"
+                        src={data.profileImage}
+                        width={`186px`}
+                        height={`196px`}
+                        radius={`15px`}
+                      />
+                      <Wrapper
+                        width={`calc(100% - 186px)`}
+                        padding={`0 0 0 45px`}
+                        al={`flex-start`}
+                      >
+                        <Text
+                          fontSize={`18px`}
+                          fontWeight={`bold`}
+                          margin={`0 0 14px`}
+                        >
+                          {data.username}(
+                          {data.level === 1
+                            ? `Student`
+                            : data.level === 2
+                            ? `Teacher`
+                            : `admin`}
+                          )
+                        </Text>
+                        <Text fontSize={`11px`}></Text>
+                        <Text fontSize={`11px`}></Text>
+                        <Text
+                          margin={`10px 0 5px`}
+                          width={`100%`}
+                          isEllipsis
+                          fontSize={`13px`}
+                          fontWeight={`bold`}
+                        >
+                          {data.file && (
+                            <>
+                              <FileTextOutlined
+                                style={{ color: Theme.basicTheme_C }}
+                              />
+                              &nbsp;
+                            </>
+                          )}
+                          {data.title}
+                        </Text>
+                        <Text
+                          isHover
+                          color={Theme.basicTheme_C}
+                          fontWeight={`bold`}
+                          margin={`10px 0 0`}
+                          onClick={() => moveLinkHandler(`/board/${data.id}`)}
+                        >
+                          Read More
+                        </Text>
+                        {/* <Text>
+                          {data.createdAt}
+                          <SpanText fontSize={`12px`} margin={`0 5px`}>
+                            |
+                          </SpanText>
+                          {data.username}(
+                          {data.level === 1
+                            ? `Student`
+                            : data.level === 2
+                            ? `Teacher`
+                            : `admin`}
+                          )
+                        </Text>
+                        <Wrapper dr={`row`} ju={`flex-end`} margin={`45px 0 0`}>
+                          <EyeOutlined />
+                          &nbsp;
+                          {data.hit}
+                          <SpanText fontSize={`12px`} margin={`0 5px`}>
+                            |
+                          </SpanText>
+                          <CommentOutlined />
+                          &nbsp;
+                          {data.commentCnt}
+                        </Wrapper> */}
+                      </Wrapper>
+                    </Box>
+                  );
+                })
+              )}
+            </Wrapper>
+            <Wrapper margin={`20px 0 100px`}></Wrapper>
+          </RsWrapper>
 
           <Wrapper>
             <RsWrapper>

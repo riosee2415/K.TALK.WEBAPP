@@ -6,6 +6,7 @@ import {
   Image,
   TextInput,
   CommonButton,
+  Text,
 } from "./commonComponents";
 import { withResizeDetector } from "react-resize-detector";
 import styled from "styled-components";
@@ -136,87 +137,99 @@ const AppHeader = ({ width }) => {
 
   return (
     <WholeWrapper
-      height={width < 900 ? `auto` : `100px`}
+      height={width < 900 ? `auto` : `72px`}
       padding={width < 900 && `10px 0`}
-      bgColor={Theme.white_C}
+      bgColor={Theme.lightGrey4_C}
       position={`fixed`}
       top={`0`}
       left={`0`}
       zIndex={`100`}
     >
-      <RsWrapper>
-        <Wrapper dr={`row`} ju={`space-between`}>
-          <Image
-            alt="logo"
-            width={width < 800 ? `130px` : `250px`}
-            margin={width < 900 ? `0 0 10px` : `0`}
-            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/logo/logo.png`}
-            cursor={`pointer`}
-            onClick={() => moveLinkHandler(`/`)}
-          />
-          <Wrapper width={`auto`} dr={`row`}>
-            {me && me ? (
-              <Wrapper dr={`row`}>
-                <CommonButton
-                  radius={`50px`}
-                  onClick={() => onClickHandler(me.level)}
-                  height={width < 700 ? `30px` : `50px`}
-                  width={width < 700 ? `auto` : `110px`}
-                  fontSize={width < 700 && `11px`}
-                  margin={`0 10px 0 0`}
-                >
-                  My page
-                </CommonButton>
-                <CommonButton
-                  radius={`50px`}
-                  onClick={() => logoutHandler()}
-                  height={width < 700 ? `30px` : `50px`}
-                  width={width < 700 ? `auto` : `110px`}
-                  fontSize={width < 700 && `11px`}
-                >
-                  Log-out
-                </CommonButton>
-              </Wrapper>
-            ) : (
-              <>
-                <TextInput
-                  type={`text`}
-                  width={
-                    width < 1100 ? (width < 700 ? `140px` : `250px`) : `300px`
-                  }
-                  height={width < 700 ? `30px` : `50px`}
-                  radius={`25px`}
-                  placeholder={`ID`}
-                  {...inputId}
-                  onKeyDown={(e) => e.keyCode === 13 && loginHandler()}
-                />
-                <TextInput
-                  type={`password`}
-                  width={
-                    width < 1100 ? (width < 700 ? `140px` : `250px`) : `300px`
-                  }
-                  height={width < 700 ? `30px` : `50px`}
-                  radius={`25px`}
-                  margin={width < 700 ? `0 5px` : `0 10px`}
-                  placeholder={`PW`}
-                  {...inputPw}
-                  onKeyDown={(e) => e.keyCode === 13 && loginHandler()}
-                />
-
-                <CommonButton
-                  radius={`50px`}
-                  onClick={() => loginHandler()}
-                  height={width < 700 ? `30px` : `50px`}
-                  width={width < 700 ? `auto` : `110px`}
-                  fontSize={width < 700 && `11px`}
-                >
-                  LOGIN
-                </CommonButton>
-              </>
-            )}
-          </Wrapper>
+      <Wrapper dr={`row`} ju={`flex-start`} padding={`0 30px`}>
+        <Image
+          alt="logo"
+          width={width < 800 ? `130px` : `180px`}
+          margin={width < 900 ? `0 0 10px` : `0`}
+          src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/logo/logo.png`}
+          cursor={`pointer`}
+          onClick={() => moveLinkHandler(`/`)}
+        />
+        <Wrapper width={`auto`} dr={`row`}>
+          {me && me ? (
+            <Wrapper dr={`row`}>
+              <CommonButton
+                radius={`50px`}
+                onClick={() => onClickHandler(me.level)}
+                height={width < 700 ? `30px` : `50px`}
+                width={width < 700 ? `auto` : `110px`}
+                fontSize={width < 700 && `11px`}
+                margin={`0 10px 0 0`}
+              >
+                My page
+              </CommonButton>
+              <CommonButton
+                radius={`50px`}
+                onClick={() => logoutHandler()}
+                height={width < 700 ? `30px` : `50px`}
+                width={width < 700 ? `auto` : `110px`}
+                fontSize={width < 700 && `11px`}
+              >
+                Log-out
+              </CommonButton>
+            </Wrapper>
+          ) : (
+            <>
+              <Wrapper
+                width={`2px`}
+                height={`18px`}
+                margin={`0 65px`}
+                bgColor={Theme.darkGrey_C}
+              ></Wrapper>
+              <Text isHover fontWeight={`bold`} margin={`0 70px 0 0`}>
+                STUDENTS’ REVIEW
+              </Text>
+              <Text isHover fontWeight={`bold`} margin={`0 70px 0 0`}>
+                WHAT IS K-TALK LIVE?
+              </Text>
+              <Text isHover fontWeight={`bold`} margin={`0 150px 0 0`}>
+                TUTORS
+              </Text>
+              ID
+              <TextInput
+                type={`text`}
+                width={`185px`}
+                height={`30px`}
+                radius={`5px`}
+                placeholder={`ID`}
+                margin={`0 60px 0 20px`}
+                {...inputId}
+                onKeyDown={(e) => e.keyCode === 13 && loginHandler()}
+              />
+              PW
+              <TextInput
+                type={`password`}
+                width={`185px`}
+                height={`30px`}
+                radius={`5px`}
+                margin={`0 45px 0 20px`}
+                placeholder={`PW`}
+                {...inputPw}
+                onKeyDown={(e) => e.keyCode === 13 && loginHandler()}
+              />
+              <CommonButton
+                radius={`10px`}
+                onClick={() => loginHandler()}
+                height={`30px`}
+                width={`65px`}
+                padding={`0`}
+                fontSize={width < 700 && `11px`}
+              >
+                LOGIN
+              </CommonButton>
+            </>
+          )}
         </Wrapper>
-      </RsWrapper>
+      </Wrapper>
     </WholeWrapper>
   );
 };

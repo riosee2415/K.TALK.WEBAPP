@@ -476,6 +476,16 @@ export const Text = styled.p`
     text-overflow: ellipsis;
   `
       : ``}
+
+  ${(props) =>
+    props.isHover &&
+    `
+    transition : 0.5s;
+    cursor:pointer;
+    &:hover{
+      color :${props.theme.basicTheme_C};
+    }
+  `};
 `;
 
 export const PagenationWrapper = styled.div`
