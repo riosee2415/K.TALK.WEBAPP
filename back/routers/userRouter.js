@@ -367,7 +367,7 @@ router.post("/teacher/list", isAdminCheck, async (req, res, next) => {
   }
 });
 
-router.post("/tea/mainList", isAdminCheck, async (req, res, next) => {
+router.post("/tea/mainList", async (req, res, next) => {
   const { page } = req.body;
 
   const LIMIT = 3;
