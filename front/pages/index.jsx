@@ -343,7 +343,7 @@ const Home = ({}) => {
                 )}
               </Wrapper>
             </Wrapper>
-            <Wrapper dr={`row`} ju={`space-bewteen`}>
+            <Wrapper dr={`row`} ju={`space-bewteen`} al={`flex-start`}>
               {communityList && communityList.length === 0 ? (
                 <Wrapper>
                   <Empty description={`게시물이 없습니다.`} />
@@ -355,7 +355,11 @@ const Home = ({}) => {
                     <Box key={data.id}>
                       <Image
                         alt="thumbnail"
-                        src={data.profileImage}
+                        src={
+                          data.profileImage
+                            ? data.profileImage
+                            : `https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/ktalk/assets/images/logo/profile-sample.png`
+                        }
                         width={width < 900 ? `100px` : `186px`}
                         height={width < 900 ? `100px` : `196px`}
                         radius={width < 900 ? `13px` : `15px`}
@@ -402,6 +406,9 @@ const Home = ({}) => {
                           {data.title}
                         </Text>
                         <Wrapper
+                          height={`100px`}
+                          wrap={`nowrap`}
+                          overflow={`auto`}
                           al={`flex-start`}
                           ju={`flex-start`}
                           dangerouslySetInnerHTML={{
