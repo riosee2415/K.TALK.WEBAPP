@@ -8,6 +8,10 @@ export const initailState = {
   teachers: null,
   teacherList: null,
 
+  // main
+  teaMainList: [],
+  teaLastPage: 1,
+
   userProfilePath: null,
   emailCheckBool: null,
 
@@ -117,6 +121,10 @@ export const initailState = {
   st_userAdminTeacherUpdateLoading: false,
   st_userAdminTeacherUpdateDone: false,
   st_userAdminTeacherUpdateError: null,
+  //
+  st_userTeaMainListLoading: false,
+  st_userTeaMainListDone: false,
+  st_userTeaMainListError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -217,6 +225,10 @@ export const USER_ADMIN_TEACHER_UPDATE_SUCCESS =
   "USER_ADMIN_TEACHER_UPDATE_SUCCESS";
 export const USER_ADMIN_TEACHER_UPDATE_FAILURE =
   "USER_ADMIN_TEACHER_UPDATE_FAILURE";
+
+export const USER_TEA_MAINLIST_REQUEST = "USER_TEA_MAINLIST_REQUEST";
+export const USER_TEA_MAINLIST_SUCCESS = "USER_TEA_MAINLIST_SUCCESS";
+export const USER_TEA_MAINLIST_FAILURE = "USER_TEA_MAINLIST_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -720,6 +732,28 @@ const reducer = (state = initailState, action) =>
         draft.st_userAdminUpdateLoading = false;
         draft.st_userAdminUpdateDone = false;
         draft.st_userAdminUpdateError = action.error;
+        break;
+      }
+
+      //////////////////////////////////////////////
+      case USER_TEA_MAINLIST_REQUEST: {
+        draft.st_userTeaMainListLoading = true;
+        draft.st_userTeaMainListDone = false;
+        draft.st_userTeaMainListError = null;
+        break;
+      }
+      case USER_TEA_MAINLIST_SUCCESS: {
+        draft.st_userTeaMainListLoading = false;
+        draft.st_userTeaMainListDone = true;
+        draft.st_userTeaMainListError = null;
+        draft.teaMainList = action.data.teachers;
+        draft.teaLastPage = action.data.lastPage;
+        break;
+      }
+      case USER_TEA_MAINLIST_FAILURE: {
+        draft.st_userTeaMainListLoading = false;
+        draft.st_userTeaMainListDone = false;
+        draft.st_userTeaMainListError = action.error;
         break;
       }
 

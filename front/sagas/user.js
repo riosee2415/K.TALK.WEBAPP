@@ -91,6 +91,10 @@ import {
   USER_ADMIN_TEACHER_UPDATE_REQUEST,
   USER_ADMIN_TEACHER_UPDATE_SUCCESS,
   USER_ADMIN_TEACHER_UPDATE_FAILURE,
+  /////////////////////////////
+  USER_TEA_MAINLIST_REQUEST,
+  USER_TEA_MAINLIST_SUCCESS,
+  USER_TEA_MAINLIST_FAILURE,
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -725,6 +729,33 @@ function* userTeacherUpdate(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function userTeaMainListAPI(data) {
+  return axios.post(`/api/user/tea/mainList`, data);
+}
+
+function* userTeaMainList(action) {
+  try {
+    const result = yield call(userTeaMainListAPI, action.data);
+
+    yield put({
+      type: USER_TEA_MAINLIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_TEA_MAINLIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchLoadMyInfo() {
@@ -819,6 +850,10 @@ function* watchUserTeacherUpdate() {
   yield takeLatest(USER_ADMIN_TEACHER_UPDATE_REQUEST, userTeacherUpdate);
 }
 
+function* watchUserTeaMainList() {
+  yield takeLatest(USER_TEA_MAINLIST_REQUEST, userTeaMainList);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -845,6 +880,7 @@ export default function* userSaga() {
     fork(watchUserFireUpdate),
     fork(watchUserAdminUpdate),
     fork(watchUserTeacherUpdate),
+    fork(watchUserTeaMainList),
     //
   ]);
 }
