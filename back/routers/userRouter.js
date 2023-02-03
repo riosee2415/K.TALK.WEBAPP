@@ -379,6 +379,7 @@ router.post("/tea/mainList", isAdminCheck, async (req, res, next) => {
 
   const lengthQuery = `
   SELECT  A.id,
+          A.profileImage,
           A.title,
           A.info,
           A.username,
@@ -391,6 +392,7 @@ router.post("/tea/mainList", isAdminCheck, async (req, res, next) => {
 
   const selectQuery = `
   SELECT  A.id,
+          A.profileImage,
           A.title,
           A.info,
           A.username,
@@ -431,6 +433,7 @@ router.post("/stu/mainList", isAdminCheck, async (req, res, next) => {
 
   const lengthQuery = `
   SELECT  A.id,
+          A.profileImage,
           A.title,
           A.content,
           B.username,
@@ -446,6 +449,7 @@ router.post("/stu/mainList", isAdminCheck, async (req, res, next) => {
 
   const selectQuery = `
   SELECT  A.id,
+          A.profileImage,
           A.title,
           A.content,
           B.username,

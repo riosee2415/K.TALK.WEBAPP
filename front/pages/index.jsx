@@ -53,6 +53,7 @@ import {
 } from "@ant-design/icons";
 import Application from "../components/application/Application";
 import { APP_USE_LIST_REQUEST } from "../reducers/application";
+import Tutors from "../components/main/Tutors";
 
 const Box = styled(Wrapper)`
   align-items: flex-start;
@@ -716,6 +717,10 @@ const Home = ({}) => {
               <Application />
             </Wrapper>
           )}
+
+          <RsWrapper>
+            <Tutors />
+          </RsWrapper>
         </WholeWrapper>
       </ClientLayout>
     </>
