@@ -24,6 +24,13 @@ const Fourleaf = ({ Component }) => {
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="canonical" href="https://www.ktalklive.com" />
 
+        {/* font */}
+        <link
+          rel="stylesheet"
+          type="text/css"
+          href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css"
+        ></link>
+
         <React.Fragment>
           <script
             dangerouslySetInnerHTML={{

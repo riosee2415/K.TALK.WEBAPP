@@ -14,7 +14,7 @@ const GlobalStyles = createGlobalStyle`
   ${fontStyle}
 
   body {
-    font-family: "noto-sans-cjk-kr", sans-serif;
+    font-family: 'NanumSquare', sans-serif;
   }
 
   a {

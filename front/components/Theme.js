@@ -1,5 +1,5 @@
 export default {
-  basicTheme_C: "#1890FF",
+  basicTheme_C: "#0f4b8b",
 
   subTheme_C: "#FCFDFF",
   subTheme2_C: "#FF4F40",
@@ -10,11 +10,12 @@ export default {
   subTheme7_C: "#010C3A",
   subTheme8_C: "#1890FF",
   subTheme9_C: "#F8F9FB",
-  subTheme10_C: "#3C4468",
+  subTheme10_C: "#384047",
   subTheme11_C: "#161515",
   subTheme12_C: "#000b39",
   subTheme13_C: "#A6ADB4",
   subTheme14_C: "#ECF6FF",
+  subTheme15_C: "#32393f",
 
   kakao_C: "#FAE100",
   naver_C: "#00C73C",
@@ -34,5 +35,6 @@ export default {
   lightGrey_C: "#FBFBFB",
   lightGrey2_C: "#F8F9FB",
   lightGrey3_C: "#EBEBEB",
+  lightGrey4_C: "#f3f3f3",
   darkGrey_C: "#2D2D2D",
 };
