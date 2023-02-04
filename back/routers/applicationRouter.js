@@ -20,7 +20,7 @@ router.post("/useYn/data", async (req, res, next) => {
   }
 });
 
-router.post("/useYn", isAdminCheck, async (req, res, next) => {
+router.post("/useYn", async (req, res, next) => {
   const { useYn } = req.body;
 
   const updateQuery = `
