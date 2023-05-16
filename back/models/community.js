@@ -24,7 +24,7 @@ module.exports = class Community extends Model {
           defaultValue: 0,
         },
         sort: {
-          type: DataTypes.BOOLEAN,
+          type: DataTypes.INTEGER,
           allowNull: true,
         },
         isDelete: {
