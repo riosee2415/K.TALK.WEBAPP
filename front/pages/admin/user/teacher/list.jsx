@@ -13,6 +13,7 @@ import {
   Input,
   Form,
   Popconfirm,
+  Switch,
 } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import wrapper from "../../../../store/configureStore";
@@ -248,6 +249,7 @@ const UserList = ({}) => {
           detailAddress: data.detailAddress,
           address: data.address,
           adminMemo: data.adminMemo,
+          isMain: data.isMain,
         });
       }
     },
@@ -332,6 +334,7 @@ const UserList = ({}) => {
             detailAddress: data.detailAddress,
             teaLanguage: data.teaLanguage,
             adminMemo: data.adminMemo,
+            isMain: data.isMain,
           },
         });
       } else {
@@ -889,6 +892,17 @@ const UserList = ({}) => {
                 width={`100%`}
                 border={`1px solid ${Theme.grey_C} !important`}
               />
+            </Form.Item>
+
+            <Form.Item
+              label={`메인노출여부`}
+              name={`isMain`}
+              labelCol={{ span: 5 }}
+              labelWrap={{ span: 19 }}
+              style={{ width: `100%` }}
+              valuePropName="checked"
+            >
+              <Switch size="small" />
             </Form.Item>
 
             {/* <Wrapper dr={`row`} margin={`0 0 20px`}>
