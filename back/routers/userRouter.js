@@ -350,7 +350,8 @@ router.post("/teacher/list", isAdminCheck, async (req, res, next) => {
             DATE_FORMAT(updatedAt, "%Y년 %m월 %d일 %H시 %i분 %s초") 			AS	updatedAt, 
             partDate,
             fireDate,
-            isFire
+            isFire,
+            info
       FROM	users
      WHERE	1 = 1
        AND  level = 2
@@ -1276,6 +1277,7 @@ router.patch("/admin/teacher/update", isAdminCheck, async (req, res, next) => {
     detailAddress,
     teaLanguage,
     adminMemo,
+    info,
     isMain,
   } = req.body;
   try {
@@ -1327,6 +1329,7 @@ router.patch("/admin/teacher/update", isAdminCheck, async (req, res, next) => {
         detailAddress,
         teaLanguage,
         adminMemo,
+        info,
         isMain,
       },
       {

@@ -249,6 +249,7 @@ const UserList = ({}) => {
           detailAddress: data.detailAddress,
           address: data.address,
           adminMemo: data.adminMemo,
+          info: data.info,
           isMain: data.isMain,
         });
       }
@@ -334,6 +335,7 @@ const UserList = ({}) => {
             detailAddress: data.detailAddress,
             teaLanguage: data.teaLanguage,
             adminMemo: data.adminMemo,
+            info: data.info,
             isMain: data.isMain,
           },
         });
@@ -354,6 +356,8 @@ const UserList = ({}) => {
             detailAddress: data.detailAddress,
             teaLanguage: data.teaLanguage,
             adminMemo: data.adminMemo,
+            info: data.info,
+            isMain: data.isMain,
           },
         });
       }
@@ -874,6 +878,16 @@ const UserList = ({}) => {
             <Form.Item
               label={`상세주소`}
               name={`detailAddress`}
+              labelCol={{ span: 4 }}
+              labelWrap={{ span: 20 }}
+              style={{ width: `100%` }}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label={`한줄소개`}
+              name={`info`}
               labelCol={{ span: 4 }}
               labelWrap={{ span: 20 }}
               style={{ width: `100%` }}
