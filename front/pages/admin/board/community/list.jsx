@@ -6,7 +6,6 @@ import wrapper from "../../../../store/configureStore";
 
 import styled from "styled-components";
 import AdminLayout from "../../../../components/AdminLayout";
-import AdminTop from "../../../../components/admin/AdminTop";
 import PageHeader from "../../../../components/admin/PageHeader";
 import {
   Button,
@@ -15,9 +14,7 @@ import {
   Form,
   Input,
   Select,
-  Switch,
   notification,
-  Row,
   Col,
   message,
   Image,
@@ -25,7 +22,6 @@ import {
 import {
   GuideDiv,
   RowWrapper,
-  Text,
   Wrapper,
 } from "../../../../components/commonComponents";
 
@@ -34,13 +30,12 @@ import { LOAD_MY_INFO_REQUEST } from "../../../../reducers/user";
 import { useDispatch, useSelector } from "react-redux";
 import { withRouter } from "next/router";
 import useInput from "../../../../hooks/useInput";
-import useWidth from "../../../../hooks/useWidth";
 
 import {
   CREATE_MODAL_CLOSE_REQUEST,
   CREATE_MODAL_OPEN_REQUEST,
   COMMUNITY_TYPE_LIST_REQUEST,
-  COMMUNITY_LIST_REQUEST,
+  COMMUNITY_ADMIN_LIST_REQUEST,
   COMMUNITY_UPDATE_REQUEST,
   COMMUNITY_CREATE_REQUEST,
   COMMUNITY_UPLOAD_REQUEST,
@@ -68,10 +63,6 @@ const Filename = styled.span`
   font-size: 13px;
 `;
 
-const SearchRow = styled(Row)`
-  margin-bottom: 10px;
-`;
-
 const LoadNotification = (msg, content) => {
   notification.open({
     message: msg,
@@ -97,8 +88,6 @@ const NoticeList = ({ router }) => {
   }, [st_loadMyInfoDone]);
   /////////////////////////////////////////////////////////////////////////
 
-  const [currentPage, setCurrentPage] = useState(1);
-
   const realFile = useInput(null);
   const filename = useInput(null);
 
@@ -109,7 +98,6 @@ const NoticeList = ({ router }) => {
 
   ////// HOOKS //////
   const dispatch = useDispatch();
-  const width = useWidth();
 
   const fileRef = useRef();
   const formRef = useRef();
@@ -124,7 +112,6 @@ const NoticeList = ({ router }) => {
   ////// REDUX //////
   const {
     filePath,
-    noticeLectureLastPage,
     createModal,
 
     st_communityCreateDone,
@@ -139,8 +126,7 @@ const NoticeList = ({ router }) => {
     st_communityCreateError,
 
     communityTypes,
-    communityList,
-    communityMaxLength,
+    communityAdminList,
   } = useSelector((state) => state.community);
 
   ////// USEEFFECT //////
@@ -175,7 +161,7 @@ const NoticeList = ({ router }) => {
       setCurrentListType(null);
 
       dispatch({
-        type: COMMUNITY_LIST_REQUEST,
+        type: COMMUNITY_ADMIN_LIST_REQUEST,
         data: {
           typeId: null,
         },
@@ -197,7 +183,7 @@ const NoticeList = ({ router }) => {
       setCurrentListType(null);
 
       dispatch({
-        type: COMMUNITY_LIST_REQUEST,
+        type: COMMUNITY_ADMIN_LIST_REQUEST,
         data: {
           level: null,
         },
@@ -216,7 +202,7 @@ const NoticeList = ({ router }) => {
     if (st_communityDeleteDone) {
       message.success("게시글이 삭제되었습니다.");
       dispatch({
-        type: COMMUNITY_LIST_REQUEST,
+        type: COMMUNITY_ADMIN_LIST_REQUEST,
         data: {
           typeId: currentListType,
         },
@@ -234,13 +220,11 @@ const NoticeList = ({ router }) => {
     const typeId = currentListType;
 
     dispatch({
-      type: COMMUNITY_LIST_REQUEST,
+      type: COMMUNITY_ADMIN_LIST_REQUEST,
       data: {
         typeId,
       },
     });
-
-    setCurrentPage(1);
   }, [currentListType]);
 
   useEffect(() => {
@@ -304,6 +288,7 @@ const NoticeList = ({ router }) => {
       title: data.title,
       content: data.content,
       type: data.CommunityTypeId,
+      sort: data.sort,
     });
   }, []);
 
@@ -322,6 +307,7 @@ const NoticeList = ({ router }) => {
           content: contentData,
           file: filePath,
           type: value.type,
+          sort: value.sort,
         },
       });
     },
@@ -335,9 +321,10 @@ const NoticeList = ({ router }) => {
         data: {
           id: updateData.id,
           title: value.title,
-          content: contentData,
+          content: contentData ? contentData : value.content,
           file: filePath ? filePath : updateData.file,
           type: value.type,
+          sort: value.sort,
         },
       });
     },
@@ -388,21 +375,6 @@ const NoticeList = ({ router }) => {
     setCurrentListType(type);
   }, []);
 
-  const otherPageCall = useCallback(
-    (changePage) => {
-      setCurrentPage(changePage);
-
-      dispatch({
-        type: COMMUNITY_LIST_REQUEST,
-        data: {
-          page: changePage,
-          typeId: currentListType,
-        },
-      });
-    },
-    [currentListType]
-  );
-
   const getEditContent = (contentValue) => {
     setContentData(contentValue);
   };
@@ -411,7 +383,7 @@ const NoticeList = ({ router }) => {
   const columns = [
     {
       title: "번호",
-      dataIndex: "id",
+      dataIndex: "num",
     },
     {
       title: "유형",
@@ -426,8 +398,12 @@ const NoticeList = ({ router }) => {
       dataIndex: "username",
     },
     {
+      title: "순서",
+      dataIndex: "sort",
+    },
+    {
       title: "생성일",
-      render: (data) => <div>{data.createdAt.substring(0, 13)}</div>,
+      dataIndex: "createdAt",
     },
     {
       title: "수정",
@@ -514,14 +490,8 @@ const NoticeList = ({ router }) => {
         <Table
           rowKey="id"
           columns={columns}
-          dataSource={communityList ? communityList : []}
+          dataSource={communityAdminList ? communityAdminList : []}
           size="small"
-          pagination={{
-            defaultCurrent: 1,
-            current: parseInt(currentPage),
-            onChange: (page) => otherPageCall(page),
-            total: communityMaxLength * 10,
-          }}
         />
       </AdminContent>
 
@@ -575,6 +545,14 @@ const NoticeList = ({ router }) => {
                     );
                   })}
               </Select>
+            </Form.Item>
+
+            <Form.Item name={"sort"} label="순서">
+              <Input
+                type="number"
+                allowClear
+                placeholder="순서를 입력해 주세요."
+              />
             </Form.Item>
 
             <Form.Item
@@ -659,7 +637,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
     });
 
     context.store.dispatch({
-      type: COMMUNITY_LIST_REQUEST,
+      type: COMMUNITY_ADMIN_LIST_REQUEST,
       data: {
         typeId: null,
       },
