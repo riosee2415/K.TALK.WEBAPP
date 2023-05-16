@@ -29,6 +29,10 @@ import {
   COMMUNITY_LIST_SUCCESS,
   COMMUNITY_LIST_FAILURE,
   //
+  COMMUNITY_ADMIN_LIST_REQUEST,
+  COMMUNITY_ADMIN_LIST_SUCCESS,
+  COMMUNITY_ADMIN_LIST_FAILURE,
+  //
   COMMUNITY_DETAIL_REQUEST,
   COMMUNITY_DETAIL_SUCCESS,
   COMMUNITY_DETAIL_FAILURE,
@@ -67,8 +71,8 @@ import {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function communityUploadAPI(data) {
-  return axios.post(`/api/community/file`, data);
+async function communityUploadAPI(data) {
+  return await axios.post(`/api/community/file`, data);
 }
 
 function* communityUpload(action) {
@@ -96,8 +100,8 @@ function* communityUpload(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function communityTypeListAPI(data) {
-  return axios.get(`/api/community/type/list`, data);
+async function communityTypeListAPI(data) {
+  return await axios.get(`/api/community/type/list`, data);
 }
 
 function* communityTypeList(action) {
@@ -123,8 +127,8 @@ function* communityTypeList(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function communityTypeCreateAPI(data) {
-  return axios.post(`/api/community/type/create`, data);
+async function communityTypeCreateAPI(data) {
+  return await axios.post(`/api/community/type/create`, data);
 }
 
 function* communityTypeCreate(action) {
@@ -150,8 +154,8 @@ function* communityTypeCreate(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function communityTypeUpdateAPI(data) {
-  return axios.patch(`/api/community/type/update`, data);
+async function communityTypeUpdateAPI(data) {
+  return await axios.patch(`/api/community/type/update`, data);
 }
 
 function* communityTypeUpdate(action) {
@@ -177,8 +181,8 @@ function* communityTypeUpdate(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function communityTypeDeleteAPI(data) {
-  return axios.delete(`/api/community/type/delete${data.typeId}`, data);
+async function communityTypeDeleteAPI(data) {
+  return await axios.delete(`/api/community/type/delete${data.typeId}`, data);
 }
 
 function* communityTypeDelete(action) {
@@ -210,8 +214,8 @@ function* communityTypeDelete(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function communityListAPI(data) {
-  return axios.post(`/api/community/list`, data);
+async function communityListAPI(data) {
+  return await axios.post(`/api/community/list`, data);
 }
 
 function* communityList(action) {
@@ -235,10 +239,38 @@ function* communityList(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function communityDetailAPI(data) {
-  return axios.get(`/api/community/detail/${data.communityId}`, data);
+async function communityAdminListAPI(data) {
+  return await axios.post(`/api/community/admin/list`, data);
+}
+
+function* communityAdminList(action) {
+  try {
+    const result = yield call(communityAdminListAPI, action.data);
+
+    yield put({
+      type: COMMUNITY_ADMIN_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: COMMUNITY_ADMIN_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function communityDetailAPI(data) {
+  return await axios.get(`/api/community/detail/${data.communityId}`, data);
 }
 
 function* communityDetail(action) {
@@ -264,8 +296,8 @@ function* communityDetail(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function communityCreateAPI(data) {
-  return axios.post(`/api/community/create`, data);
+async function communityCreateAPI(data) {
+  return await axios.post(`/api/community/create`, data);
 }
 
 function* communityCreate(action) {
@@ -291,8 +323,8 @@ function* communityCreate(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function communityUpdateAPI(data) {
-  return axios.patch(`/api/community/update`, data);
+async function communityUpdateAPI(data) {
+  return await axios.patch(`/api/community/update`, data);
 }
 
 function* communityUpdate(action) {
@@ -318,8 +350,8 @@ function* communityUpdate(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function communityDeleteAPI(data) {
-  return axios.delete(`/api/community/delete/${data.communityId}`, data);
+async function communityDeleteAPI(data) {
+  return await axios.delete(`/api/community/delete/${data.communityId}`, data);
 }
 
 function* communityDelete(action) {
@@ -351,8 +383,8 @@ function* communityDelete(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function communityCommentDetailAPI(data) {
-  return axios.post(`/api/community/comment/detail`, data);
+async function communityCommentDetailAPI(data) {
+  return await axios.post(`/api/community/comment/detail`, data);
 }
 
 function* communityCommentDetail(action) {
@@ -378,8 +410,8 @@ function* communityCommentDetail(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function communityCommentCreateAPI(data) {
-  return axios.post(`/api/community/comment/create`, data);
+async function communityCommentCreateAPI(data) {
+  return await axios.post(`/api/community/comment/create`, data);
 }
 
 function* communityCommentCreate(action) {
@@ -405,8 +437,8 @@ function* communityCommentCreate(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function communityCommentUpdateAPI(data) {
-  return axios.post(`/api/community/comment/update`, data);
+async function communityCommentUpdateAPI(data) {
+  return await axios.post(`/api/community/comment/update`, data);
 }
 
 function* communityCommentUpdate(action) {
@@ -432,8 +464,11 @@ function* communityCommentUpdate(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function communityCommentDeleteAPI(data) {
-  return axios.delete(`/api/community/comment/delete/${data.commentId}`, data);
+async function communityCommentDeleteAPI(data) {
+  return await axios.delete(
+    `/api/community/comment/delete/${data.commentId}`,
+    data
+  );
 }
 
 function* communityCommentDelete(action) {
@@ -481,6 +516,9 @@ function* watchCommunityTypeDelete() {
 function* watchCommunityList() {
   yield takeLatest(COMMUNITY_LIST_REQUEST, communityList);
 }
+function* watchCommunityAdminList() {
+  yield takeLatest(COMMUNITY_ADMIN_LIST_REQUEST, communityAdminList);
+}
 function* watchCommunityDetail() {
   yield takeLatest(COMMUNITY_DETAIL_REQUEST, communityDetail);
 }
@@ -519,6 +557,7 @@ export default function* communitySaga() {
     fork(watchCommunityTypeDelete),
     //
     fork(watchCommunityList),
+    fork(watchCommunityAdminList),
     fork(watchCommunityDetail),
     fork(watchCommunityCreate),
     fork(watchCommunityUpdate),

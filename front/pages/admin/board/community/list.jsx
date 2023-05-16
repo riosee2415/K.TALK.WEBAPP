@@ -116,7 +116,6 @@ const NoticeList = ({ router }) => {
 
   const [isLectureBoard, setIsLectureBoard] = useState(false);
 
-  const [currentLectureId, setCurrentLectureId] = useState(null);
   const [currentListType, setCurrentListType] = useState(null);
   const [contentData, setContentData] = useState("");
 
@@ -138,30 +137,11 @@ const NoticeList = ({ router }) => {
     st_communityUpdateError,
     st_communityDeleteError,
     st_communityCreateError,
+
     communityTypes,
     communityList,
     communityMaxLength,
   } = useSelector((state) => state.community);
-
-  const getQs = () => {
-    const qs = router.query;
-
-    let value = "";
-
-    if (!qs.page) {
-      setCurrentPage(1);
-      value = "?page=1";
-    } else {
-      setCurrentPage(qs.page);
-      value = `?page=${qs.page}`;
-    }
-
-    if (qs.search) {
-      value += `&search=${qs.search}`;
-    }
-
-    return value;
-  };
 
   ////// USEEFFECT //////
 
