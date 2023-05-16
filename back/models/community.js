@@ -23,10 +23,9 @@ module.exports = class Community extends Model {
           allowNull: false,
           defaultValue: 0,
         },
-        isMain: {
+        sort: {
           type: DataTypes.BOOLEAN,
-          allowNull: false,
-          defaultValue: false,
+          allowNull: true,
         },
         isDelete: {
           type: DataTypes.BOOLEAN,

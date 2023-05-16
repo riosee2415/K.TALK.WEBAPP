@@ -168,7 +168,7 @@ router.delete("/type/delete/:typeId", isAdminCheck, async (req, res, next) => {
 ///////////////////////////////////////////////////////////////////////////
 
 router.post("/list", async (req, res, next) => {
-  const { searchTitle, searchName, level, typeId, page, isMain } = req.body;
+  const { searchTitle, searchName, level, typeId, page } = req.body;
 
   // if (!req.user) {
   //   return res.status(403).send("로그인 후 이용 가능합니다.");
@@ -187,7 +187,6 @@ router.post("/list", async (req, res, next) => {
   const _level = level ? level : ``;
 
   const _typeId = typeId || null;
-  const _isMain = parseInt(isMain) || false;
 
   try {
     const lengthQuery = `
@@ -196,6 +195,7 @@ router.post("/list", async (req, res, next) => {
             A.content,
             A.file,
             A.hit,
+            A.sort,
             A.isDelete,
             DATE_FORMAT(A.deletedAt, "%Y-%m-%d")		AS deletedAt,
             DATE_FORMAT(A.createdAt, "%Y-%m-%d")		AS createdAt,
@@ -231,7 +231,6 @@ router.post("/list", async (req, res, next) => {
             }
             ${_level !== `` ? `AND C.level = ${_level}` : ``}
             ${_typeId ? `AND A.CommunityTypeId = ${_typeId}` : ``}
-            ${_isMain ? `AND A.isMain = ${_isMain}` : ``}
     `;
 
     const selectQuery = `
@@ -240,6 +239,7 @@ router.post("/list", async (req, res, next) => {
             A.content,
             A.file,
             A.hit,
+            A.sort,
             A.isDelete,
             DATE_FORMAT(A.deletedAt, "%Y-%m-%d")		AS deletedAt,
             DATE_FORMAT(A.createdAt, "%Y-%m-%d")		AS createdAt,
@@ -274,9 +274,8 @@ router.post("/list", async (req, res, next) => {
               _searchName !== `` ? `AND C.username LIKE '%${_searchName}%'` : ``
             }
             ${_level !== `` ? `AND C.level = ${_level}` : ``}
-            ${_typeId ? `AND A.CommunityTypeId = ${_typeId}` : ``} 
-            ${_isMain ? `AND A.isMain = ${_isMain}` : ``}
-   ORDER    BY A.createdAt DESC
+            ${_typeId ? `AND A.CommunityTypeId = ${_typeId}` : ``}
+   ORDER    BY sort IS NULL ASC, sort ASC, createdAt DESC
    LIMIT    ${LIMIT}
   OFFSET    ${OFFSET}
     `;
@@ -315,9 +314,9 @@ router.post("/admin/list", async (req, res, next) => {
           A.id,
           A.title,
           A.content,
-          A.isMain,
           A.file,
           A.hit,
+          A.sort,
           A.isDelete,
           DATE_FORMAT(A.deletedAt, "%Y-%m-%d")		  AS deletedAt,
           DATE_FORMAT(A.createdAt, "%Y-%m-%d")		  AS createdAt,
@@ -361,25 +360,6 @@ router.post("/admin/list", async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("게시글 목록을 불러올 수 없습니다.");
-  }
-});
-
-router.post("/mainToggle", isAdminCheck, async (req, res, next) => {
-  const { id, isMain } = req.body;
-
-  const updateQuery = `
-  UPDATE  communitys
-     SET  isMain = ${isMain}
-   WHERE  id = ${id}
-  `;
-
-  try {
-    await models.sequelize.query(updateQuery);
-
-    return res.status(200).json({ result: true });
-  } catch (error) {
-    console.error(error);
-    return res.status(401).send("메인 노출 여부를 수정할 수 없습니다.");
   }
 });
 
@@ -518,7 +498,7 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
 });
 
 router.patch("/update", isLoggedIn, async (req, res, next) => {
-  const { id, title, content, file, type } = req.body;
+  const { id, title, content, file, type, sort } = req.body;
 
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
@@ -540,6 +520,7 @@ router.patch("/update", isLoggedIn, async (req, res, next) => {
           content,
           file,
           CommunityTypeId: parseInt(type),
+          sort: sort ? sort : null,
         },
         {
           where: { id: parseInt(id) },
