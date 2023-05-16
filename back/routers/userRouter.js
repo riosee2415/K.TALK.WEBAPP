@@ -333,6 +333,7 @@ router.post("/teacher/list", isAdminCheck, async (req, res, next) => {
             username,
             mobile,
             email,
+            isMain,
             status,
             address,
             detailAddress,
@@ -387,6 +388,7 @@ router.post("/tea/mainList", async (req, res, next) => {
           A.teaLanguage
     FROM  users 			A
    WHERE  A.level = 2
+     AND  A.isMain = 1
    ORDER  BY  A.createdAt DESC
   `;
 
@@ -400,6 +402,7 @@ router.post("/tea/mainList", async (req, res, next) => {
           A.teaLanguage
     FROM  users 			A
    WHERE  A.level = 2
+     AND  A.isMain = 1
    ORDER  BY  A.createdAt DESC
    LIMIT  ${LIMIT}
   OFFSET  ${OFFSET}
@@ -419,6 +422,25 @@ router.post("/tea/mainList", async (req, res, next) => {
       .json({ teachers: teachers[0], lastPage: parseInt(lastPage) });
   } catch (error) {
     return res.status(401).send("강사 목록을 조회할 수 없습니다.");
+  }
+});
+
+router.post("/mainToggle", isAdminCheck, async (req, res, next) => {
+  const { id, isMain } = req.body;
+
+  const updateQuery = `
+  UPDATE  users
+     SET  isMain = ${isMain}
+   WHERE  id = ${id}
+  `;
+
+  try {
+    await models.sequelize.query(updateQuery);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("메인 노출 여부를 수정할 수 없습니다.");
   }
 });
 

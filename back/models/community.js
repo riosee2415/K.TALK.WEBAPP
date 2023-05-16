@@ -23,6 +23,11 @@ module.exports = class Community extends Model {
           allowNull: false,
           defaultValue: 0,
         },
+        isMain: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+        },
         isDelete: {
           type: DataTypes.BOOLEAN,
           allowNull: false,

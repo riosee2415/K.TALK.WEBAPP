@@ -151,6 +151,11 @@ module.exports = class User extends Model {
           allowNull: false, //
           defaultValue: 1,
         },
+        isMain: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+        },
       },
       {
         modelName: "User",
