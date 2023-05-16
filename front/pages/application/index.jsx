@@ -1987,7 +1987,7 @@ const Application = () => {
                   radius={`5px`}
                   htmlType="submit"
                 >
-                  submission
+                  Submit
                 </CommonButton>
               </Wrapper>
             </CustomForm>

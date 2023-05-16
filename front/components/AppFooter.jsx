@@ -66,7 +66,10 @@ const AppFooter = () => {
               Powered by Jeju Korean Language Center
             </Text>
             <Text fontSize={`12px`} margin={`20px 0 0`}>
-              Original page : jejuklc.com
+              Original page :{" "}
+              <a href={`https://www.ktalkjeju.com/`} target={`_blank`}>
+                ktalkjeju.com
+              </a>
             </Text>
             <Wrapper dr={`row`} ju={`flex-start`}>
               <Text fontSize={`12px`} margin={`0 5px 0 0`}>
