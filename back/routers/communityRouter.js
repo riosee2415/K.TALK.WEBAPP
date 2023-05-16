@@ -463,7 +463,7 @@ router.get("/detail/:communityId", async (req, res, next) => {
 });
 
 router.post("/create", isLoggedIn, async (req, res, next) => {
-  const { title, content, file, type } = req.body;
+  const { title, content, file, type, sort } = req.body;
 
   if (!req.user) {
     return res.status(403).send("Please log in");
@@ -484,6 +484,7 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
       file,
       CommunityTypeId: parseInt(type),
       UserId: parseInt(req.user.id),
+      sort: parseInt(sort),
     });
 
     if (!createResult) {
