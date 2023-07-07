@@ -1,7 +1,15 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
-import { Calendar, Checkbox, Form, InputNumber, message, Select } from "antd";
+import {
+  Calendar,
+  Checkbox,
+  Form,
+  InputNumber,
+  message,
+  Modal,
+  Select,
+} from "antd";
 import { CaretDownOutlined } from "@ant-design/icons";
 
 import { END } from "redux-saga";
@@ -153,6 +161,7 @@ const Application = () => {
 
   const [agreeCheck, setAgreeCheck] = useState(false);
   const [isCalendar, setIsCalendar] = useState(false);
+  const [isModal, setIsModal] = useState(false);
 
   const [form] = Form.useForm();
 
@@ -183,7 +192,8 @@ const Application = () => {
 
   useEffect(() => {
     if (st_appCreateError) {
-      return message.error(st_appCreateError);
+      modalToggle();
+      return;
     }
   }, [st_appCreateError]);
 
@@ -221,6 +231,10 @@ const Application = () => {
     },
     [agreeCheck]
   );
+
+  const modalToggle = useCallback(() => {
+    setIsModal((prev) => !prev);
+  }, [isModal]);
 
   ////// HANDLER //////
 
@@ -1887,15 +1901,14 @@ const Application = () => {
                   margin={`0 0 10px`}
                   lineHeight={`1.22`}
                 >
-                  Please choose your available class hours.
+                  Please choose your available class hours in your local time.
                 </Text>
                 <Text
                   fontSize={width < 700 ? `16px` : `18px`}
                   margin={`0 0 10px`}
                   lineHeight={`1.19`}
                 >
-                  Stated time are in Korean Standard Time(GMT +9). Please check
-                  all that apply.
+                  please check all that apply.
                 </Text>
               </Wrapper>
               <Wrapper dr={`row`} margin={`0 0 68px`}>
@@ -1992,6 +2005,18 @@ const Application = () => {
               </Wrapper>
             </CustomForm>
           </RsWrapper>
+
+          <Modal
+            onCancel={modalToggle}
+            visible={isModal}
+            title={"ERROR"}
+            onOk={modalToggle}
+          >
+            <Text fontSize={`18px`}>Cannot Submit This Application.</Text>
+            <Text fontSize={`18px`}>Please check again.</Text>
+            <Text fontSize={`18px`}>Or send a problem by e-mail.</Text>
+            <Text>jklc.ktalk@gmail.com</Text>
+          </Modal>
         </WholeWrapper>
       </ClientLayout>
     </>

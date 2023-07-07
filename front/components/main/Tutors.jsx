@@ -84,7 +84,7 @@ const Tutors = () => {
     <Wrapper margin={`70px 0 0`}>
       <Wrapper al={`flex-start`} margin={`0 0 15px`}>
         <Text fontSize={`18px`} fontWeight={`bold`}>
-          Toturs
+          Tuturs
         </Text>
         <Wrapper dr={`row`} ju={`space-between`}>
           <Text>
