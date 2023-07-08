@@ -1775,11 +1775,9 @@ const Application = () => {
                   margin={`0 0 10px`}
                   lineHeight={`1.22`}
                 >
-                  Gmail Address
+                  Email Address
                 </Text>
-                <Text margin={`0 0 5px`} color={Theme.red_C}>
-                  Don't write "@gmail.com".
-                </Text>
+
                 <Wrapper dr={`row`} ju={`flex-start`}>
                   <Wrapper width={`calc(100% / 2 - 4px)`} margin={`0 8px 0 0`}>
                     <Form.Item name="firstEmail" rules={[{ required: true }]}>
@@ -1845,7 +1843,7 @@ const Application = () => {
                     <CusotmInput
                       width={`100%`}
                       radius={`5px`}
-                      placeholder={"Select Languge"}
+                      placeholder={"Your answer"}
                     />
                   </Form.Item>
                 </Wrapper>
@@ -1953,14 +1951,18 @@ const Application = () => {
                 )}
               </Wrapper>
               <Wrapper>
-                <SpanText
-                  fontSize={width < 700 ? `14px` : `16px`}
-                  margin={`42px 0 28px`}
-                  textDecoration={"underline"}
+                <a
+                  href={`https://drive.google.com/file/d/14ccUCUmYMGk04y-4NF3TK5qP8Vvgc_02/view?usp=sharing`}
+                  target="_blank"
                 >
-                  https://drive.google.com/file/d/14ccUCUmYMGk04y-4NF3TK5qP8Vvgc_02/view?usp=sharing
-                </SpanText>
-
+                  <SpanText
+                    fontSize={width < 700 ? `14px` : `16px`}
+                    margin={`42px 0 28px`}
+                    textDecoration={"underline"}
+                  >
+                    Student Rules
+                  </SpanText>
+                </a>
                 <CustomCheckBox2
                   checked={agreeCheck}
                   onChange={agreeCheckToggle}
