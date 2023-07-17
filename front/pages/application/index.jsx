@@ -162,6 +162,7 @@ const Application = () => {
   const [agreeCheck, setAgreeCheck] = useState(false);
   const [isCalendar, setIsCalendar] = useState(false);
   const [isModal, setIsModal] = useState(false);
+  const [isSModal, setIsSModal] = useState(false);
 
   const [form] = Form.useForm();
 
@@ -186,7 +187,9 @@ const Application = () => {
       setAgreeCheck(false);
       setIsCalendar(false);
 
-      return message.success("Your application has been submitted.");
+      successModalToggle();
+
+      return;
     }
   }, [st_appCreateDone]);
 
@@ -235,6 +238,10 @@ const Application = () => {
   const modalToggle = useCallback(() => {
     setIsModal((prev) => !prev);
   }, [isModal]);
+
+  const successModalToggle = useCallback(() => {
+    setIsSModal((prev) => !prev);
+  }, [isSModal]);
 
   ////// HANDLER //////
 
@@ -1980,14 +1987,20 @@ const Application = () => {
                 >
                   {width < 700 ? (
                     <>
-                      <Text>Do you have any other questions or</Text>
-                      <Text>comments about our program?</Text>
+                      <Text>
+                        Please indicate your current city of residence
+                      </Text>
+                      <Text>if your nationality differs,</Text>
+                      <Text>and provide any other comments you have</Text>
                     </>
                   ) : (
-                    <Text>
-                      Do you have any other questions or comments about our
-                      program?
-                    </Text>
+                    <>
+                      <Text>
+                        Please indicate your current city of residence if your
+                        nationality differs,
+                      </Text>
+                      <Text>and provide any other comments you have</Text>
+                    </>
                   )}
                 </Wrapper>
                 <Form.Item name="comment" rules={[{ requierd: true }]}>
@@ -2018,6 +2031,15 @@ const Application = () => {
             <Text fontSize={`18px`}>Please check again.</Text>
             <Text fontSize={`18px`}>Or send a problem by e-mail.</Text>
             <Text>jklc.ktalk@gmail.com</Text>
+          </Modal>
+
+          <Modal
+            onCancel={successModalToggle}
+            visible={isSModal}
+            title={"SUCCESS"}
+            onOk={successModalToggle}
+          >
+            <Text fontSize={`18px`}>Your application has been submitted.</Text>
           </Modal>
         </WholeWrapper>
       </ClientLayout>
