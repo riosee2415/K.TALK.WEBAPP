@@ -462,6 +462,8 @@ const List = () => {
           level: applicationDetail[0].level,
           // 메모
           purpose: applicationDetail[0].purpose,
+          // comment
+          comment: applicationDetail[0].comment,
           // 무료수업 담당 강사
           freeTeacher: applicationDetail[0].freeTeacher,
           // 이름
@@ -2236,6 +2238,8 @@ const List = () => {
                       </Wrapper>
                     )}
 
+                    {console.log(applicationDetail)}
+
                     <Wrapper
                       padding={`5px 0`}
                       dr={`row`}
@@ -3054,6 +3058,26 @@ const List = () => {
                               <Input
                                 type="job"
                                 placeholder={`직업을 입력해주세요.`}
+                              />
+                            </FormItem>
+                          </Wrapper>
+                        </Wrapper>
+
+                        <Wrapper
+                          padding={`5px 0`}
+                          dr={`row`}
+                          borderBottom={`1px dashed ${Theme.lightGrey3_C}`}
+                        >
+                          <Wrapper bgColor={Theme.lightGrey3_C} padding={`3px`}>
+                            COMMENT
+                          </Wrapper>
+                          <Wrapper al={`flex-start`}>
+                            <FormItem name="comment">
+                              <CustomTextArea
+                                readOnly
+                                style={{ width: `100%` }}
+                                rows={6}
+                                border={`1px solid ${Theme.grey_C} !important`}
                               />
                             </FormItem>
                           </Wrapper>
